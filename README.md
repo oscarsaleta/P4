@@ -15,6 +15,6 @@ In order to build the project it is advisable to use the Qt Creator IDE and buil
 The executable files have to be put in the following tree somewhere in the file system (this repository only contains the source for the three executables *p4*, *lyapunov* and *separatrice*):
 
 - p4
- - bin: p4, lyapunov, separatrice, p4.m, p4gcf.m, p4smallicon.png, portrait.png
- - help: contents of **P4help** repository
- - sum_tables: empty folder
+  - bin: p4, lyapunov, separatrice, p4.m, p4gcf.m, p4smallicon.png, portrait.png
+  - help: contents of **P4help** repository
+  - sum_tables: empty folder
