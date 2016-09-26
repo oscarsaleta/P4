@@ -12,7 +12,7 @@ The *mplstrip* program can be executed using `make` so all the .tex files are pa
 
 ## Binary tree
 
-The executable files have to be put in the following tree somewhere in the file system (this repository only contains the source to generate *p4.m* and *p4cgf.m*):
+The files have to be put in the following tree somewhere in the file system (this repository only contains the source to generate *p4.m* and *p4cgf.m*):
 
 * p4
     * bin: p4, lyapunov, separatrice, p4.m, p4gcf.m, p4smallicon.png, portrait.png
