@@ -16,5 +16,5 @@ The executable files have to be put in the following tree somewhere in the file 
 
 * p4
     * bin: p4, lyapunov, separatrice, p4.m, p4gcf.m, p4smallicon.png, portrait.png
-    * help: contents of **P4help** repository
+    * help: contents of **help** repository
     * sum_tables: empty folder
