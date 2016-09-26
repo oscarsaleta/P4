@@ -1,0 +1,267 @@
+#include <qpushbutton.h>
+#include <qlineedit.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include "custom.h"
+#include "table.h"
+#include "win_p4.h"
+#include "math_p4.h"
+#include "win_separatrices.h"
+#include "win_plot.h"
+#include "win_sphere.h"
+#include "p4application.h"
+
+extern void (* change_epsilon)( QWinSphere *, double );
+extern void (*start_plot_sep)( QWinSphere * );
+extern void (*cont_plot_sep)( QWinSphere * );
+extern void (*plot_next_sep)( QWinSphere * );
+extern void (*select_next_sep)( QWinSphere * );
+extern void SetP4WindowTitle( QWidget *, QString );
+
+QString CurrentSingularityInfo[4] = { "", "", "", "" };
+double CurrentSeparatriceEpsilon = 0;
+
+QSepDlg::QSepDlg( QPlotWnd * plt, QWinSphere * sp )
+    : QWidget(NULL,Qt::Tool | Qt::WindowStaysOnTopHint)
+{
+//  setFont( QFont( FONTSTYLE, FONTSIZE ) );
+
+    mainSphere = sp;
+    plotwnd = plt;
+
+    btn_start = new QPushButton( "&Start integrating sep", this );
+    btn_cont = new QPushButton( "&Cont integrating sep", this );
+    btn_intnext = new QPushButton( "&Integrate next sep", this );
+    btn_selectnext = new QPushButton( "Select &Next sep", this );
+
+    edt_epsilon = new QLineEdit( "", this );
+    QLabel * lbl1 = new QLabel( "&Epsilon = ", this ); lbl1->setBuddy( edt_epsilon );
+
+    lbl_info[0] = new QLabel( "", this );
+    lbl_info[1] = new QLabel( "", this );
+    lbl_info[2] = new QLabel( "", this );
+    lbl_info[3] = new QLabel( "", this );
+
+    // layout
+
+    mainLayout = new QBoxLayout( QBoxLayout::TopToBottom, this );
+
+    mainLayout->addWidget( lbl_info[0] );
+    mainLayout->addWidget( lbl_info[1] );
+    mainLayout->addWidget( lbl_info[2] );
+    mainLayout->addWidget( lbl_info[3] );
+
+    QHBoxLayout * layout3 = new QHBoxLayout();
+    layout3->addWidget( lbl1 );
+    layout3->addWidget( edt_epsilon );
+
+    QHBoxLayout * layout4 = new QHBoxLayout();
+    layout4->addWidget( btn_start );
+    layout4->addWidget( btn_cont );
+
+    QHBoxLayout * layout5 = new QHBoxLayout();
+    layout5->addWidget( btn_intnext );
+    layout5->addWidget( btn_selectnext );
+
+    mainLayout->addLayout( layout3 );
+    mainLayout->addLayout( layout4 );
+    mainLayout->addLayout( layout5 );
+ 
+    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+   setLayout(mainLayout);
+
+#ifdef TOOLTIPS
+    edt_epsilon->setToolTip( "Epsilon value for this separatrix\n"
+                    "Confirm any change by pressing ENTER" );
+    btn_start->setToolTip( "Start integrating this separatrix" );
+    btn_cont->setToolTip( "Continue integrating this separatrix" );
+    btn_intnext->setToolTip( "Select next separatrix, and start integrating"  );
+    btn_selectnext->setToolTip( "Select next separatrix of this singular point" );
+#endif
+
+    // connections
+
+    QObject::connect( btn_selectnext,   SIGNAL(clicked()), this, SLOT(onbtn_selectnext()) );
+    QObject::connect( btn_intnext,      SIGNAL(clicked()), this, SLOT(onbtn_intnext()) );
+    QObject::connect( btn_start,        SIGNAL(clicked()), this, SLOT(onbtn_start()) );
+    QObject::connect( btn_cont,         SIGNAL(clicked()), this, SLOT(onbtn_cont()) );
+    QObject::connect( edt_epsilon,      SIGNAL(returnPressed()), this, SLOT(onepsilon_enter()) );
+
+    // finishing
+
+    Reset();
+
+    SetP4WindowTitle( this, "Separatrices" );
+}
+
+void QSepDlg::setInitialPoint( void )
+{
+    QString buf;
+
+    plotwnd->getDlgData();
+
+    selected = true;
+    started = false;
+    btn_start->setEnabled(true);
+    btn_cont->setEnabled(false);
+    btn_selectnext->setEnabled(true);
+    btn_intnext->setEnabled(true);
+
+    lbl_info[0]->setText( CurrentSingularityInfo[0] );
+    lbl_info[1]->setText( CurrentSingularityInfo[1] );
+    lbl_info[2]->setText( CurrentSingularityInfo[2] );
+    lbl_info[3]->setText( CurrentSingularityInfo[3] );
+    
+    buf.sprintf( "%g", (float)CurrentSeparatriceEpsilon );
+
+    edt_epsilon->setText( buf );
+    show();
+//  raise();
+}
+
+void QSepDlg::onbtn_selectnext( void )
+{
+    if( !selected )
+        return;
+
+    plotwnd->getDlgData();
+
+    started = false;
+
+    btn_start->setEnabled(true);
+    btn_cont->setEnabled(false);
+    btn_selectnext->setEnabled(true);
+    btn_intnext->setEnabled(true);
+
+    mainSphere->prepareDrawing();
+    (*select_next_sep)(mainSphere);
+    mainSphere->finishDrawing();
+}
+
+void QSepDlg::onbtn_intnext( void )
+{
+    if( !selected )
+        return;
+
+    plotwnd->getDlgData();
+
+    started = true;
+
+    btn_start->setEnabled(false);
+    btn_cont->setEnabled(true);
+    btn_selectnext->setEnabled(true);
+    btn_intnext->setEnabled(true);
+
+    mainSphere->prepareDrawing();
+    (*plot_next_sep)(mainSphere);
+    mainSphere->finishDrawing();
+}
+
+void QSepDlg::onbtn_start( void )
+{
+    if( !selected || started )
+        return;
+
+    plotwnd->getDlgData();
+
+    started = true;
+    btn_start->setEnabled(false);
+    btn_cont->setEnabled(true);
+    btn_selectnext->setEnabled(true);
+    btn_intnext->setEnabled(true);
+
+    mainSphere->prepareDrawing();
+    (*start_plot_sep)(mainSphere);
+    mainSphere->finishDrawing();
+}
+
+void QSepDlg::onbtn_cont( void )
+{
+    if( !selected || !started )
+        return;
+
+    plotwnd->getDlgData();
+
+    mainSphere->prepareDrawing();
+    (*cont_plot_sep)(mainSphere);
+    mainSphere->finishDrawing();
+}
+
+void QSepDlg::Reset( void )
+{
+    lbl_info[0]->setText( "no point selected." );
+    lbl_info[1]->setText( "" );
+    lbl_info[2]->setText( "Use Shift+Left Button" );
+    lbl_info[3]->setText( "in the plot window to select." );
+
+    started = false;
+    selected = false;
+
+    btn_start->setEnabled(false);
+    btn_cont->setEnabled(false);
+    btn_selectnext->setEnabled(false);
+    btn_intnext->setEnabled(false);
+}
+
+void QSepDlg::SepEvent( int i )
+{
+    switch( i )
+    {
+    case -1:    setInitialPoint();  break;
+    case 0:     onbtn_cont();       break;
+    case 1:     onbtn_start();      break;
+    case 2:     onbtn_intnext();    break;
+    case 3:     onbtn_selectnext(); break;
+    }
+}
+
+void QSepDlg::MarkBad( QLineEdit * edt )
+{
+    QString t;
+    int i;
+
+    t = edt->text();
+    while( (i = t.indexOf( '?' )) >= 0 )
+        t.remove(i,1);
+    t = t.trimmed();
+    t.append( " ???" );
+
+    edt->setText(t);
+}
+
+void QSepDlg::onepsilon_enter( void )
+{
+    // called when user presses ENTER after changing the epsilon value
+
+    QString s;
+    double eps;
+    bool ok;
+
+    s = edt_epsilon->text();
+    eps = s.toDouble( &ok );
+    if( !ok || eps <= 0 )
+    {
+        MarkBad(edt_epsilon);
+        return;
+    }
+    
+    CurrentSeparatriceEpsilon = eps;
+    s.sprintf( "%g", (float)eps );
+    edt_epsilon->setText(s);
+
+    // pass on to math routines
+
+    if( !selected )
+        return;
+
+    started = false;
+
+    btn_start->setEnabled(true);
+    btn_cont->setEnabled(false);
+    btn_selectnext->setEnabled(true);
+    btn_intnext->setEnabled(true);
+
+    mainSphere->prepareDrawing();
+    (*change_epsilon)(mainSphere,eps);
+    mainSphere->finishDrawing();
+}
