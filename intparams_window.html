@@ -1,0 +1,76 @@
+<HTML>
+<HEAD><TITLE>P4 Parameters of Integration Help Page</TITLE></HEAD>
+<BODY>
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE PARAMETER OF INTEGRATION WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_intparams.png"></CENTER></P>
+
+<FONT SIZE=+1>In this window you may modify the parameters that affect to the integration
+of separatrices and orbits through the <B>Runge-Kutta 7/8</B> method and
+its graphical representation. They only should be modified if you are not
+satisfied with the results you have got, and they must be tested in order
+to chose the best set of values for the particular Polynomial Differential
+System under study.
+<br><ul>
+<li>
+    The Option Set <IMG SRC="field_originalreduced.png">&nbsp;is
+    an option which only has meaning if there is a line of singularites, i.e. if the two components of the
+    Polynomial     Differential System have a non-trivial common factor, or if the line at infinity of the Poincare
+    Disc is filled with singular points. Then, you may choose between calculating the separatrices and orbits of the
+    Polynomial Differential System either in the <i>original</i> system, or in the <i>reduced</i> one, that is, in
+    the system with finitely many singularities.
+
+<br></li><li>
+    The Option Set <img SRC="field_dotsdashes.png">&nbsp;will toggle between whether you get the separatrices
+    and orbits drawn as a sequence of dots or a set of dashes which link all these dots. Normally you will not see
+    the difference between them unless you make a zoom.  Note that you can must make this choice <i>before</i> you
+    integrate the separatrices, you cannot change the type of appearance of an orbit or separatrix that is already
+    calculated.
+
+<br></li><li>
+    The input <IMG SRC="field_stepsize.png">&nbsp; gives
+    the starting step size that we are using when we start to integrate orbits
+    with the <B>Runge-Kutta 7/8</B> method. There is no reason for modifying
+    it because the <B>Runge-Kutta 7/8</B> method improves the size of the step
+    continuously to better follow the orbit.
+
+<br></li><li>
+    The field <IMG SRC="field_currentstepsize.png">&nbsp; gives the current step that <B>Runge-Kutta 7/8</B> method is
+    using, so <B>P4</B> will use this step in the case you ask to continue integrating a separatrix or an orbit
+    further more.
+
+<br></li><li>
+    The input <IMG SRC="field_maxstepsize.png">&nbsp;gives the maximum step size that we will allow when we integrate
+    orbits with the <B>Runge-Kutta 7/8</B> method. Even if some orbits would accept a largest value without
+    increasing the error, then the orbit that you would see would be a piecewise linear curve, so we suggest to
+    leave this value unmodified as it is fast enough. On the contrary, this value may be too fast for certain
+    systems, even producing erroneous crossings of separatrices and/or orbits.  In those cases you are advised to
+    reduce this number and evaluate the plotting.
+
+<br></li><li>
+    The input <IMG SRC="field_minstepsize.png">&nbsp;gives the minimum step size that we will allow when we
+    integrate orbits with the <B>Runge-Kutta 7/8</B> method. Same as before, this value does not need be modified
+    unless you experience strange behaviours of separatrices close to points where it is highly sensitive to small
+    changes. Anyway, this kind of separatrices will always be conflictive ones.
+
+<br></li><li>
+    The input <IMG SRC="field_tolerance.png">&nbsp;gives the value which will make <B>Runge-Kutta 7/8</B> method
+    decide
+    whether it must duplicate the integration step, or divide it by 2. If the difference of the values given by the
+    two integrating functions embedded in the <B>Runge-Kutta 7/8</b> method is greater than this value, it means
+    that we must use a smaller step. If this difference is lower than a cent of this value, then we may run a little
+    more.
+
+<br></li><li>
+    The integer input <IMG SRC="field_points.png">&nbsp;gives the number of points
+    that we will produce each time that we ask to integrate a separatrix or an orbit. This value can be increased
+    without limit but we suggest that it should only be done to study special slow separatrices or orbits.
+<br></li></ul>
+
+<br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>

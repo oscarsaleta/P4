@@ -1,0 +1,169 @@
+<HTML>
+<HEAD><TITLE>P4 Plot Help Page</TITLE></HEAD>
+<body>
+
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE PLOT WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_plot.png"></CENTER></P>
+
+<FONT SIZE=+1>In this window you will be able to produce the phase portrait of the Polynomial
+Differential System you are studying. It may appear in different versions depending on the options you are running.
+
+<BR><OL>
+<LI>
+    The most usual will be the <B>Poincare Disc</B> version. In this one you will get a circle representing the
+    infinity and some symbols representing the finite and infinite singular points of the Polynomial Differential
+    System.
+<br></li>
+<LI>
+    If you had modified the <IMG SRC="field_pq.png">&nbsp;values in the
+    <A HREF="parameters_window.html">Parameters</A>
+    subwindow of the main <a href="p4_window.html">P4</a> window. for the good natural numbers which allow the
+    <B>Poincare-Lyapunov Compactification</B> of your Polynomial Differential System, you will get the
+    <B>Poincare-Lyapunov Disc of degree (p,q)</B>.
+
+        <p><center><img src="window_plotplsphere.png"></center></p>
+
+    You will see
+    two circles, in the inner circle you have all the finite singular points with modulus lower than one. If
+    the modulus of a singular point is greater than 1, you will see it in the annulus limited by the circle of
+    radius 1 and the infinity circle. Then <B>P4</B> makes a transformation of <B>x=cos(a)/r^p</B> and
+    <B>y=sin(a)/r^q</B> where<B> a </B>is the polar angular coordinate. The values <B>p</B> and <B>q</B> have to be
+    introduced by the user in the <A HREF="parameters_window.html">Parameters</A> window. By default they are 1 and
+    that is equivalent to the standard <B>Poincare Disc</B>. You will be interested in this representation if you
+    have one non-elementary singular point at infinity because then, with appropiate values of <B>p</B> and <B>q</B>
+    you will see it splitted in elementary points.  You may see orbits crossing the circle of radius 1, and for
+    such orbits it may appear as if they had non-continuous derivative. This is due to the fact that we are making
+    two different transformations which cannot be connected in a differentiable way on such a circle.
+<br></li>
+<li>
+    In case you decided to study only one singular point, you will see a planar representation of
+    the neighbourhood of such a point.
+
+        <p><center><img src="window_plotplanar.png"></center></p>
+
+<br></li>
+</OL>
+
+<b>Buttons:</b>
+<br><ul>
+<li> The button <IMG SRC="button_close.png">&nbsp;will close this window but it will not stop the program.
+
+<br></li>
+<li> The button <IMG SRC="button_refresh.png">&nbsp;will clear the window and it will redraw everything evaluated
+     up to now, so it may avoid any problem with the screen which may have appeared. It is useful once you have
+     got all separatrices to bring up the singular points which may have been shadowed by the lines,
+     or after you have deleted orbits.
+
+<br></li>
+<li> The button <IMG SRC="button_legend.png">&nbsp;will link you with the
+     <A HREF="legend_window.html">Legend</A> window.
+
+<br></li>
+<li> The button <IMG SRC="button_orbits.png">&nbsp;will link you with the
+     <A HREF="orbits_window.html">Orbits</A> window. You may also access to this window by simply selecting
+     one point with the left button of your mouse, to be the initial conditions of the orbit you want
+     to draw.
+
+<br></li>
+<li> The button <IMG SRC="button_intparams.png">&nbsp;will
+     link you with the <A HREF="intparams_window.html">Parameters of Integration</A> window.
+
+<br></li>
+<li> The button <IMG SRC="button_gcf.png">&nbsp;will link you with the
+     <A HREF="gcf_window.html">GCF</A> window.  This button is disabled if the vector field that you entered
+     did not have a nontrivial greatest common factor.
+
+<br></li>
+<li> The button <img SRC="button_plotsep.png">&nbsp;will link you with
+     the <A HREF="separatrices_window.html">Plot Separatrices</A> window. You may also access to this window
+     by simply selecting one singular point (or close to it) with the left button of your mouse while
+     maintaining pressed the <B>Shift</B> key of your keyboard.
+
+<br></li>
+<li> The button <IMG SRC="button_plotallseps.png">&nbsp;will start the execution of the integration program and
+     it will draw every separatrix available. It is possible that some separatrices appear too short or even
+     do not appear at all. This is due to the fact
+     that we are integrating a fixed number of steps of the separatrix. This
+     number is given in the option <IMG SRC="field_points.png">&nbsp;of the
+     <A HREF="intparams_window.html">Parameters of Integration</A> window. You may either modify
+     this number, or to go to the <A HREF="separatrices_window.html">Plot Separatrices</A> window to deal
+     with these slow separatrices. We highly recommend the latter.
+
+<br></li>
+<li> The button <IMG SRC="button_limitcycles.png"</A> will link you with
+     the <A HREF="limitcycles_window.html">Limit Cycles</A> window.
+
+<br></li>
+<li> The button <img SRC="button_plotview.png">&nbsp;will link you with the
+     <A HREF="view_window.html">Plot View</A> window.  This will allow you to view the phase portrait in
+     one of the charts at infinity, such as the U1 chart:
+
+     <p><center><img src="window_plotu1.png"></center></p>
+
+     The circle at infinity is in this chart shown as a line of infinity.  To the right of this line, one
+     finds the U1 chart; to the left of this line the V1' chart is shown.
+     More information on the charts at infinity is found <a href="p4_charts.html">here</a>.
+
+<br></li>
+<li> The button <img SRC="button_print.png">&nbsp;will link you with the
+     <A HREF="print_window.html">Print</A> window.
+<br></li>
+</ul>
+<br>
+<p><b>Zooming:</b></p>
+Even there is no special button, you may make a <B>ZOOM</B> of any rectangle of the Plot window.
+In order to do it you must press the left button of your mouse together with the <B>Control</B> key of
+your keyboard on the left-up corner. Then you release the <B>Control</B> key and move your mouse
+towards the right-down corner. You will see as a rectangle is formed. Then you click the left button of
+your mouse in the right-down corner and you will get the <B>ZOOM</B> window:
+
+        <P><CENTER><IMG SRC="window_zoom.png"></CENTER></P>
+
+In this window you also have the buttons <IMG SRC="button_close.png">, <IMG SRC="button_refresh.png">&nbsp;
+and <IMG SRC="button_print.png">&nbsp;which work exactly in the same way as described above.
+
+You are not limited to do only one <B>ZOOM</B>, you may do as many as you want.
+
+<b>Changing the size of the plot/zoom windows:</b>
+
+The plot and zoom windows are resizable, just like any other window on your computer.  While resizing,
+you will see that the "aspect ratio" is displayed on the bottom bar:
+
+        <P><CENTER><IMG SRC="window_zoomaspectratio.png"></CENTER></P>
+
+If this aspect ratio is 1.0000, then you have rescaled your window in an euclidean way.  In the picture
+above, the aspect ratio is 0.6333 because only the width of the window was decreased and the height
+remained the same.
+<br>
+<p><B>LET US FINISH BY GIVING THE DIFFERENT WAYS OF SELECTING POINTS IN ANY PLOT OR ZOOM WINDOW:</B></p>
+
+<BR><OL>
+<LI><FONT SIZE=+1>If you select a point by simply clicking it with the
+left button of your mouse, then you enter in the <A HREF="orbits_window.html">Orbits</A>
+window in order to draw the orbit passing through this point. </FONT><BR>
+<BR></LI>
+
+<LI><FONT SIZE=+1>If you select a point by clicking it with the left button
+of your mouse while mantaining pressed the <B>Shift</B> key of your keyboard,
+then you are selecting the closest singular point having separatrices and
+you enter automatically in the <A HREF="separatrices_window.html">Plot
+Separatrices</A> window which will allow you to draw (or to continue) the
+separatrices of this singular point one by one.</FONT><BR>
+<BR></LI>
+
+<LI><FONT SIZE=+1>If you select a point by clicking it with the left button
+of your mouse while mantaining pressed the <B>Control</B> key of your keyboard,
+then you are selecting the left-up corner of the rectangle which you want
+to <B>ZOOM</B>. </FONT>
+<BR></LI>
+</OL>
+
+
+<font size=+1><br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>

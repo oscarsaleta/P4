@@ -1,0 +1,85 @@
+<HTML>
+<HEAD><TITLE>P4 Settings Help Page</TITLE></HEAD>
+<body>
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE MAIN SETTINGS WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_settings.png"></CENTER></P>
+<br>
+<font size=+1>
+The settings window can be reached from the main P4 window, by pressing the <img src="button_about.png">&nbsp;button.
+From within the "P4 About box", you can access the main settings window.
+<br><br>
+The settings that you can set here are to be set after installation.  When you exit P4, these settings
+will be saved (in the windows version using the windows registry, in the linux version using a hidden settings
+file).
+<br><br>
+Most users will not have to edit these settings, except maybe for the setting in the field
+<img src="field_maplepath.png">&nbsp;(see below).
+<br>
+<FONT SIZE=+1>
+<br><ul><li>
+    In the field
+    <p><center><img src="field_p4path.png"></center></p>
+    you can enter the base installation path.  This base installation path should have subdirectories
+    like "help" and "bin".  P4 uses this path to access the help files, to find the executables "lyapunov.exe"
+    and "separatrice.exe", and to find the P4/Reduce and P4/Maple code.
+    The most convenient way to alter this field is by pressing the
+    <img src="button_browse.png">&nbsp;button and browsing towards the installation directory.
+    <br><br>
+    Normally, P4 automatically detects the correct path.
+    <br><br>
+</li><li>
+    In the field
+    <p><center><img src="field_sumpath.png"></center></p>
+    you can enter the sum-table path.  This location should be a writeable location.
+    P4 uses this path to store its sum-tables (during calculation of lyapunov coefficients).  This tables
+    contain lists of sum-decompositions of positive integers in N parts.  Since for large values of N
+    these tables are hard to compute, they are stored on disc so that they only need to be computed the
+    first time they are needed.
+
+    The most convenient way to alter this field is by pressing the
+    <img src="button_browse.png">&nbsp;button and browsing towards the directory of your choice.
+    <br><br>
+    By default, P4 defines the sum-table path as a subdirectory of the installation directory.
+    Change this only if the users of P4 do not always have write access in the installation directory.
+    In that case, it is most convenient to use the system's temporary directory as the sum-table path.
+    <br>
+<br></li><li>
+    In the field
+    <p><center><img src="field_temppath.png"></center></p>
+    you can enter the system's temporary path.  P4 uses this to store temporary files.  Users of P4 need to have
+    write access to this directory.
+    The most convenient way to alter this field is by pressing the
+    <img src="button_browse.png">&nbsp;button and browsing towards the directory of your choice.
+    <br>
+<br></li><li>
+    In the field
+    <p><center><img src="field_maplepath.png"></center></p>
+    you can enter the location of the <i>command-line version</i> of a recent maple installation.
+    The most convenient way to alter this field is by pressing the
+    <img src="button_browse.png">&nbsp;button and browsing towards the executable.  On Windows,
+    you can find the binary files of Maple in the subdirectory "bin.win" of the Maple installation.
+    Up to version 9.5 the command line version was named "cmaple#.#.exe", where #.# contains the version
+    number.  From version 10 the command line version is simply called "cmaple.exe".  On Linux,
+    just enter "cmaple" in this field, and use the Linux command line to
+    define cmaple as a symbolic link towards your version of maple.
+    <br>
+<br></li><li>
+    The "reduce executable" field is not relevant for the Windows version of P4.  On Linux, just enter "reduce"
+    (which is the default choice).
+<br></li></ul>
+
+After you have entered the settings, press the <img src="button_ok.png">&nbsp;to confirm the changes.  Press
+<img src="button_cancel.png">&nbsp;to cancel any changes.<br><br>
+
+The <img src="button_reset.png">&nbsp; button will reset the settings.  In particular P4 will then try to locate Maple automatically by inspecting the windows registry.
+<br>
+<p><b>Note: It is advised to try to study a trivial vector field, like {xdot=-y, ydot=x}, using P4, in order to test the installation.</b></p>
+
+<br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>
