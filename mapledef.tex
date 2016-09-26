@@ -1,0 +1,32 @@
+%
+% TO BE INCLUDED IN THE PREAMBLE OF THE TEX FILE WITH \INPUT{MAPLEDEF}.
+%
+%
+
+\definecolor{maplebgcolor}{rgb}{0.97,.97,.97}
+
+\lstdefinelanguage{maple}
+    {%
+    morestring=[b]",
+    morecomment=[l]\#,
+    sensitive=false,
+    morekeywords=[1]{proc,local,global,end,for,from,to,by,do,%
+            od,if,else,fi,and,or,then,not,restart,type,return,%
+    minus,union,read,save,set,list,member},
+    morekeywords=[2]{simplify,normal,expand,expanded,evalf,map,collect,diff,%
+            subs,eval,op,nops,coeff,rational,float,even,odd,convert,degree,sign,(,),[,]}}
+
+\lstset{%
+    basicstyle=\small,
+    keywordstyle=[1]\bfseries,
+    keywordstyle=[2]\underbar,
+    identifierstyle=\slshape,
+    firstnumber=auto,
+    numbers=left,
+    commentstyle=,
+    stringstyle=\ttfamily,
+    showstringspaces=false,
+    language=maple,
+    backgroundcolor=\color{maplebgcolor},
+    flexiblecolumns=true
+}

@@ -1,0 +1,450 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+\input{mapledef}
+
+\title{P4 Maple routines:\\writelog}
+\author{}
+\date{}
+
+\setlength\marginparwidth{0cm}
+\setlength\marginparsep{0cm}
+\setlength\oddsidemargin{2cm}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2\oddsidemargin}
+\addtolength\oddsidemargin{-1in}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+
+This file describes how the results are written to a table file.  This table file will then
+be read by the C++ part of the P4 program. The file also contains some general tool functions
+that allow to change a polynomial into a coefficient list.
+The maple routines are based on the original reduce file \verb+write_to_log.red+.
+
+\section{Implementation}
+
+\begin{lstlisting}[name=writelog]
+restart;
+read( "tools.m" );
+\end{lstlisting}
+
+\subsection{Some tool functions}
+
+\begin{itemize}
+\item \verb+coeff_degree1+:  Converts a univariate polynomial into a list: $ax^7+bx+c\mapsto [[7,a],[1,b],[0,c]]$.
+\item \verb+coeff_degree2+:  Does the same for bivariate polynomials
+\item \verb+coeff_degree3+:  Does the same for polynomials in three variables (it will be applied to polynomials
+                                in $(r,\cos\theta,\sin\theta)$).
+\end{itemize}
+
+\begin{lstlisting}[name=writelog]
+
+coeff_degree1 := proc( f, x )
+    local g, d, j, L;
+    g := optimizepolynomial1( f, x );
+    d := max(0,degree(g,x)); L := [];
+    for j from 0 to d do
+        if coeff(g,x,j) <> 0 then L := [op(L), [j,coeff(g,x,j)]] end if;
+    end do;
+    if nops(L) = 0 then L := [[0,0]] end if;
+    L
+end proc:
+
+coeff_degree2 := proc( f, x, y )
+    local g, d, j, L, dx, h, k;
+    g := optimizepolynomial2( f, x, y );
+    dx := max(0,degree(g,x)); L := [];
+    for j from 0 to dx do
+        h := coeff( g, x, j );
+        d := max(0,degree(g,y));
+        for k from 0 to d do
+            if coeff(h,y,k) <> 0 then L := [op(L), [j,k,coeff(h,y,k)]] end if
+        end do
+    end do;
+    if nops(L) = 0 then L := [[0,0,0]] end if;
+    L
+end proc:
+
+coeff_degree3 := proc( f, x, y, z )
+    local g, d1, d2, d3, j1, g1, g2, j2, j3, L;
+    g := norpoly3( f, x,y,z );
+    d1 := max(0,degree(g,x)); L := [];
+    for j1 from 0 to d1 do
+        g1 := optimizepolynomial2(coeff(g,x,j1),y,z);
+        d2 := max(0,degree(g1,y));
+        for j2 from 0 to d2 do
+            g2 := coeff(g1,y,j2);
+            d3 := max(0,degree(g2,z));
+            for j3 from 0 to d3 do
+                if coeff(g2,z,j3) <> 0 then L := [op(L), [j1,j2,j3,coeff(g2,z,j3)]] end if
+            end do
+        end do
+    end do;
+    if nops(L)=0 then L := [[0,0,0,0]] end if;
+    L;
+end proc:
+\end{lstlisting}
+
+\subsection{Writing to files}
+
+In this section, one writes information to a file using the \verb+writef+ procedure.  Prior
+to using these routines, the calling routine will have redirected the output so that writef
+stores the information in the correct file.
+
+\subsubsection{Writing vector fields}
+
+A polynomial vector field $\{\dot{x} = f(x,y), \dot{y} = g(x,y)\}$ is encoded as follows:
+\begin{itemize}
+\item
+    The number of terms in $f(x,y)$
+\item
+    For each term in $f$: the degree in $x$, the degree in $y$ and the coefficient.
+\item
+    The number of terms in $g(x,y)$
+\item
+    For each term in $g$: the degree in $x$, the degree in $y$ and the coefficient.
+\end{itemize}
+
+\begin{lstlisting}[name=writelog]
+write_vec_field := proc( vf )
+    local L, j;
+    L := coeff_degree2( vf[1], x, y );
+    writef( "%d\n", nops(L) );
+    for j from 1 to nops(L) do
+        writef( "%d %d %g\n", op(1,L[j]), op(2,L[j]), evalf(op(3,L[j])) );
+    end do;
+    L := coeff_degree2( vf[2], x, y );
+    writef( "%d\n", nops(L) );
+    for j from 1 to nops(L) do
+        writef( "%d %d %g\n", op(1,L[j]), op(2,L[j]), evalf(op(3,L[j])) );
+    end do;
+end proc:
+\end{lstlisting}
+
+A vector field
+\[
+    \left\{\begin{array}{rcl}
+        \dot{r} & = & f(r,\cos\theta,\sin\theta)    \\
+        \dot{\theta} & =& g(r,\cos\theta,\sin\theta)
+    \end{array}\right.
+\]
+that is polynomial in $(r,\cos\theta,\sin\theta)$ is written to the file as follows:
+\begin{itemize}
+\item
+    The number of terms in $f(r,c,s)$
+\item
+    For each term in $f$: the degree in $r$, the degree in $c$, the degree in $s$, and the coefficient.
+\item
+    The number of terms in $g(r,c,s)$
+\item
+    For each term in $g$: the degree in $r$, the degree in $c$, the degree in $s$, and the coefficient.
+\end{itemize}
+
+\begin{lstlisting}[name=writelog]
+write_vec_field_cylinder := proc( vf )
+    local L, j;
+    L := coeff_degree3( vf[1], r, _co, _si );
+    writef( "%d\n", nops(L) );
+    for j from 1 to nops(L) do
+        writef( "%d %d %d %g\n", op(1,L[j]), op(2,L[j]), op(3,L[j]), evalf(op(4,L[j])) );
+    end do;
+    L := coeff_degree3( vf[2], r, _co, _si );
+    writef( "%d\n", nops(L) );
+    for j from 1 to nops(L) do
+        writef( "%d %d %d %g\n", op(1,L[j]), op(2,L[j]), op(3,L[j]), evalf(op(4,L[j])) );
+    end do;
+end proc:
+\end{lstlisting}
+
+\subsubsection{Writing singularities}
+
+Each singularity is written to the file.  The first information that is written is the type of singularity:
+\[
+    \begin{tabular}{lll}
+        type & singularity & extra information \\
+        \hline
+        1 & saddle      & location, transformation matrix, chart number, vector field, separatrices \\
+        2 & node        & location, stability, chart number\\
+        3 & weak focus  & location, subtype, chart number\\
+        4 & strong focus & location, stability, chart number\\
+        5 & semi-elementary& location, transformation matrix, subtype, chart number, separatrices \\
+        6 & degenerate & location, separatrices, chart number
+    \end{tabular}
+\]
+
+The location is given as a coordinate pair; the transformation matrix is given as $(a,b,c,d)$.  The chart number
+determines whether the singularity is located in the finite region or not:
+\[
+    \begin{tabular}{ll}
+        chart number & location \\
+        \hline
+        0            & finite region    \\
+        1            & U1 chart       \\
+        2            & U2 chart        \\
+        3            & V1 chart       \\
+        4            & V2 chart
+        \end{tabular}
+\]\medskip
+
+The reporting of the \emph{saddle} typically reports 2 separatrix connections.  For singularities in the finite region, they will be interpreted as two-sides so there are then 4 separatrices.  For saddles in the circle at infinity, only one separatrix connection is reported (the other one is implicit, it is the circle of infinity).  Each such saddle in the U1,U2 chart is reported another time as well in the V1,V2 chart, in each instance there is a separatrix reported.
+
+\begin{lstlisting}[name=writelog]
+
+write_saddle := proc( x0, y0, a, b, c, d, vf, sep, stype, chart )
+    local L, j, k; openfile( log_file );
+    writef( "%d %g %g\n", 1, evalf(x0), evalf(y0) );
+    writef( "  %g %g %g %g\n", evalf(a), evalf(b), evalf(c), evalf(d) );
+    write_vec_field( vf );
+    writef( "  %d\n", chart );
+    for j from 1 to nops(sep) do
+        writef( "  %d ", stype[j] );
+        L := coeff_degree1( sep[j], t );
+        writef( "%d", nops( L ) );
+        for k from 1 to nops(L) do
+             writef( " %d %g", op(1, L[k]), op(2, L[k]) )
+        end do;
+        writef( "\n" );
+    end do;
+    writef( "  %g\n", epsilon ); openfile( terminal );
+end proc:
+\end{lstlisting}
+
+The nodes, weak foci and strong foci have no separatrix connections and hence do not need a transformation matrix, nor a separatrix list.  They do need stability information.
+It is $1$ for unstable and $-1$ for stable singularities.  In case of a weak focus, it can be either stable (-1), unstable (1), center  (4) or undetermined (0).
+
+\begin{lstlisting}[name=writelog]
+
+write_node := proc( x0, y0, stab, chart ) openfile( log_file );
+    writef( "%d %g %g\n", 2, evalf(x0), evalf(y0) );
+    writef( "  %d %d\n", stab, chart ); openfile( terminal );
+end proc:
+
+write_weak_focus := proc( x0, y0, chart, stype ) openfile( log_file );
+    writef( "%d %g %g\n", 3, evalf(x0), evalf(y0) );
+    writef( "  %d %d\n", stype, chart ); openfile( terminal );
+end proc:
+
+write_strong_focus := proc( x0, y0, stab, chart ) openfile( log_file );
+    writef( "%d %d %g %g\n", 4, stab, evalf(x0), evalf(y0) );
+    writef( "  %d\n", chart ); openfile( terminal );
+end proc:
+
+\end{lstlisting}
+
+The semi-elementary points are classified in 8 different sub-types.  The parameter stype has two parts, the first  is an integer from 1 to 8, the second is a flag (0 or 1).  The flag means: center separatrix present or not.  The only case when the center separatrix is absent, is in case the line at infinity is the center separatrix.  The table below describes the types:
+\[
+\begin{tabular}{lll}
+    stype[1] & configuration \\
+    \hline
+    \hline
+    1   &    model situation $\{\dot{x} = x^2,\dot{y}=y\}$.\\& SN. Center-stable separatrix for $x<0$ + unstable separatrix\\& Center-stable sep absent when stype[2]=0.\\
+    \hline
+    2   &    model situation $\{\dot{x} = x^2,\dot{y}=-y\}$.\\& SN.  Center-unstable separatrix for $x>0$ + stable separatrix\\& Center-unstable sep absent when stype[2]=0.\\
+    \hline
+    3   &    model situation $\{\dot{x} = -x^2,\dot{y}=y\}$.\\& SN. Center-stable separatrix for $x>0$ + unstable separatrix\\& Center-stable sep absent when stype[2]=0.\\
+    \hline
+    4   &    model situation $\{\dot{x} = -x^2,\dot{y}=-y\}$.\\& SN. Center-unstable separatrix for $x<0$ + stable separatrix\\& Center-unstable sep absent when stype[2]=0.\\
+    \hline
+    5   &    model situation $\{\dot{x} = x^3,\dot{y}=y\}$.\\& unstable node, no separatrices reported.\\
+    \hline
+    6   &    model situation $\{\dot{x} = x^3,\dot{y}=-y\}$.\\& saddle.  center-unstable separatrices in both sides + stable separatrix \\& Center-unstable sep absent when stype[2]=0.\\
+    \hline
+    7   &    model situation $\{\dot{x} = -x^3,\dot{y}=y\}$.\\& saddle.  center-stable separatrices in both sides + unstable separatrix \\& Center-stable sep absent when stype[2]=0.\\
+    \hline
+    8   &    model situation $\{\dot{x} = -x^3,\dot{y}=-y\}$.\\& stable node, no separatrices reported.\\\hline\hline
+\end{tabular}
+\]
+
+In case of a singularity at infinity (without line of singularities), we have two cases: either the hyperbolic manifold is the line at infinity (stype[2]=1) or the center manifold is the line at infinity (stype[2]=0).  In the second case, the only sep reported is the (two-sides) hyperbolic stable or unstable manifold.  In the first case, either 0 or 1 seperatrix is reported, depending on whether the center separatrix lies in the correct side or not.
+
+In case of a singularity in the finite region, the first sep reported is the saddle sep, and stype[2] will always be equal to $1$.
+
+\begin{lstlisting}[name=writelog]
+
+write_semi_elementary := proc( x0, y0, a, b, c, d, vf, stype, sep, chart )
+    local L, j, k; openfile( log_file );
+    writef( "%d %g %g\n", 5, evalf(x0), evalf(y0) );
+    writef( "  %g %g %g %g\n", evalf(a), evalf(b), evalf(c), evalf(d) );
+    write_vec_field( vf );
+    writef( "  %d %d %d\n", stype[1], stype[2], chart );
+    if ((chart=0) and member(stype[1],{1,2,3,4,6,7})) or
+       ((chart <> 0) and (stype[2]=0) and member(stype[1],{1,2,3,4,6,7})) or
+       ((chart <> 0) and (stype[2]=1) and member(stype[1],{2,3,6,7})) then
+        for j from 1 to nops(sep) do
+            L := coeff_degree1( sep[j], t );
+            writef( "  %d", nops(L) );
+            for k from 1 to nops(L) do
+                writef( " %d %g", op(1,L[k]), op(2,L[k]) );
+            end do;
+            writef( "\n" );
+        end do;
+    end if;
+    writef( "  %g\n", epsilon ); openfile( terminal );
+end proc:
+\end{lstlisting}
+
+A degenerate point
+
+\begin{lstlisting}[name=writelog]
+
+write_degenerate := proc( x0, y0, trajectors, chart )
+    local j;
+    openfile( log_file );
+    writef( "%d %g %g\n", 6, evalf(x0), evalf(y0) );
+    writef( "%g\n", epsilon );
+    writef( "%d\n", nops(trajectors) );
+    for j from 1 to nops(trajectors) do
+        write_separatrice( trajectors[j] );
+    end do;
+    writef( "%d\n", chart );
+    openfile( terminal );
+end proc:
+
+\end{lstlisting}
+
+\subsubsection{Writing separatrix connections of degenerate points}
+
+Separatrix connections of degenerate points are a bit more complicated than those of saddles or semi-hyperbolic singularities: they keep track of the blow-ups that have been used.
+So the first field is the list of transformations that the separatrix has to undergo in order to be drawn.  Given a separatrix in the form $(x(t),y(t))$, then the actual points to be drawn are
+\[
+    (T_{n}\circ T_{n-1}\circ\dots\circ T_1\circ A) (x(t),y(t)),
+\]
+where $(T_1,\dots,T_{n-1},T_n)$ is the list of transformations reported in the file (in that order) and where $A$ is specified below.  (This is why the procedure below reports the last-used transformation first.)
+
+Each transformation $T_j$ is of the form
+\[
+    (x,y)\mapsto (x_0 + c_1x^{d_1}y^{d_2},y_0 + c_2x^{d_3}y^{d_4}).
+\]
+The numbers $c_i,d_j$ are all integers.  The transformation is reported as
+\[
+    x_0\: y_0\: c_1\: c_2\: d_1\: d_2\: d_3\: d_4\: d.
+\]
+The integer $d$ determines whether the separatrix reported is of the form $(x(t),t)$ ($d=1$) or of the form $(t,y(t))$ ($d=0$).  It is historic mistake to report $d$ together with $T_j$ because it is the same for all $j$ and it is information that really belongs with  $A$.  The transformation $A$ is of the form
+\[
+    (x,y) \mapsto (x_0 + a_{11}x + a_{12}y, y_0 + a_{21}x + a_{22}y)
+\]
+where the following information is reported:
+\[
+    x_0\: y_0\: a_{11}\: a_{12}\: a_{21}\: a_{22}.
+\]
+
+
+\begin{lstlisting}[name=writelog]
+write_separatrice := proc( sep )
+    local trans, j, k, p2, L, a;
+    trans := sep[1];
+    writef( "%d", nops(trans) );
+    for j from nops(trans) to 1 by -1 do
+       a := trans[j];
+       for k from 1 to 2 do writef( " %g", evalf(a[k]) ) end do;
+       for k from 3 to 9 do writef( " %d", a[k] ) end do;
+       writef( "\n" );
+    end do;
+    p2 := sep[2];
+    writef( "%g %g\n", evalf(p2[1]), evalf(p2[2]) );
+    trans := sep[3];
+    writef( "%g %g %g %g\n", evalf( trans[1] ), evalf( trans[2] ), evalf( trans[3] ), evalf( trans[4] ) );
+    write_vec_field( sep[4] );
+    L := coeff_degree1( sep[5], t );
+    writef( "%d", nops(L) );
+    for k from 1 to nops(L) do
+        writef( " %d %g", op(1,L[k]), op(2,L[k]) );
+    end do;
+    writef( "\n" );
+    writef( "%d\n", sep[6] );
+end proc:
+\end{lstlisting}
+
+\subsubsection{Writing greatest common factor}
+
+The greatest common factor, if present, is reported in all different charts (R2, U1, U2, V1, V2) and in case $(p,q)\not=(1,1)$ also in the cylinder chart.  This is done regardless of the fact a study at infinity is requested or not.  If no GCF is present, a simple "0"  is written to the file.
+
+\begin{lstlisting}[name=writelog]
+
+write_gcf := proc( gcff )
+    local j, p, q, z1, z2, s, _co, _si, d, L, g;
+    global user_p, user_q;
+    openfile(vec_table);
+    d := ddeg( gcff, x, y );
+    if d = 0 then
+        writef( "%d\n", 0 )
+    else
+        L := coeff_degree2( gcff, x, y );
+        writef( "%d %d", d, nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+        p := user_p; q := user_q;
+        g := subs( x = 1/z2^p, y = z1/z2^q, gcff );
+        g := norpoly2( g, z1, z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        g := subs( x = z1/z2^p, y = 1/z2^q, gcff );
+        g := norpoly2( g, z1,z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        g := subs( x = -1/z2^p, y = z1/z2^q, gcff );
+        g := norpoly2( g, z1,z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        g := subs( x = z1/z2^p, y = -1/z2^q, gcff );
+        g := norpoly2( g, z1,z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        if p <> 1 or q <> 1 then
+            g := subs( x=_co/s^p, y = _si/s^q, gcff );
+            g := norpoly3( g, s, _co, _si );
+            g := numer( g );
+            L := coeff_degree3( g, s, _co, _si );
+            writef( "%d", nops(L) );
+            for j from 1 to nops(L) do
+                writef( " %d %d %d %g", op(1, L[j]), op(2, L[j]), op(3, L[j]), evalf( op(4,L[j]) ) );
+            end do;
+            writef( "\n" );
+        end if;
+    end if;
+    openfile(terminal);
+end proc:
+\end{lstlisting}
+
+\subsection{Saving the routines in a library}
+
+All global variables and routines are saved in a library "writelog.m".
+
+\begin{lstlisting}[name=writelog]
+save( coeff_degree1, coeff_degree2, coeff_degree3,
+      write_vec_field, write_vec_field_cylinder,
+      write_saddle, write_node, write_weak_focus,
+      write_strong_focus, write_semi_elementary,
+      write_separatrice, write_degenerate, write_gcf, "writelog.m" );
+\end{lstlisting}
+
+\end{document}

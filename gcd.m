@@ -1,0 +1,12 @@
+M7R0
+I'my_gcdf*6$%#_fG%#_gG6+%"fG%"gG%#f2G%#g2G%#ffG%"cG%#gcG%"lG%"rG6"F1C'>8$-%)nor
+poly2G6%9$%"xG%"yG>8%-F66%9%F9F:@$4%(roundedGC$>F4-%(convertG6$F4%)rationalG>F<
+-FF6$F<FH@%3/F4""!0-%%ddegG6%F<F9F:FOC%>8(7$FO""">8)FX>8*F<@%3/F<FO0-FR6%F4F9F:
+FOC%>FV7$FXFO>FZFX>FfnF4@%33FA-%*num_coeffGF\o-FfoFSC'>8+-%$lcmG6$-%&denomG6#F4
+-F_p6#F<>8&*&F4FXFjoFX>8'*&F<FXFjoFX>Ffn-F66%*&-%$gcdG6$FdpFgpFXFjo!""F9F:@%0-F
+R6%FfnF9F:FOC(-%'writefG6$QDThe~system~has~a~common~factor:~%a|+F1Ffn>FZFX>FV7$
+-F66%*&F4FXFfnF`qF9F:-F66%*&F<FXFfnF`qF9F:-Fgq6#QIWe~shall~study~the~differenti
+al~system:|+F1-Fgq6$Q+~~~~x'=%a|+F1&FV6#FX-Fgq6$Q+~~~~y'=%a|+F1&FV6#""#C%-Fgq6#
+QCThe~system~has~no~common~factors.|+F1>FV7$F4F<>FZFOC'>8,FB>FB%%trueG>Ffn-F^q6
+$F4F<@%FbqC(-Fgq6$QDThe~system~has~a~comman~factor:~%a|+F1Ffn>FV7$F_rFbr>FZFXFc
+rFfrF[sC%Fbs>FVFfs>FZFO>FBFjs7%FVFZFfnF16#FBF1F1

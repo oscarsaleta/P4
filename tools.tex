@@ -1,0 +1,400 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+\input{mapledef}
+
+\title{P4 Maple routines:\\tools}
+\author{}
+\date{}
+
+\setlength\marginparwidth{0cm}
+\setlength\marginparsep{0cm}
+\setlength\oddsidemargin{2cm}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2\oddsidemargin}
+\addtolength\oddsidemargin{-1in}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+
+\section{Implementation}
+
+First, let us define some global variables.  The variable \verb+Hardware_precision+ is not
+used in the program, except to define \verb+user_precision+.  This is the number of digits
+that is used in numeric calculations.  By setting it to the hardware precision, maximum
+performance is reached (because the processor's capacity is used in full).  The boolean
+variable \verb+rounded+ specifies wether or not to calculate numerically.  This flag reflects
+the value of \verb+user_numeric+ (which is defined elsewhere, and which is set by the user
+in the P4 program), but may change locally.  For example, when the user specifies symbolic
+calculations, Maple will set the variable \verb+rounded+ to true while determining the type
+of singularities which could only be determined numerically.
+
+The variables \verb+currentopenfile+ and \verb+openfilelist+ are used during file i/o (see below).
+
+\begin{lstlisting}[name=tools]
+restart;
+rounded := false:
+Hardware_precision := floor(evalhf(Digits)):
+user_precision := Hardware_precision:
+
+currentopenfile := {-infinity}:
+openfilelist := {}:
+\end{lstlisting}
+
+\section{Compatibility routines}
+
+A number of routines have been introduced to copy the behaviour of reduce.  These routines
+are the following:
+
+\begin{enumerate}
+\item   \verb+reduce_coeff+: returns coefficients w.r.t.~a variable of a multivariate polynomial as a sorted list.
+\item   \verb+reduce_llt+: floating-point version of `certainly less than'
+\item   \verb+reduce_gt+: floating-point version of `certainly greater than'
+\item   \verb+reduce_gteq+: floating-point version of `greater than or equal'
+\item   \verb+reduce_eeq+: floating-point version of `equal'
+\item   \verb+reduce_nneq+: floating-point version of `certainly not equal'
+\item   \verb+reduce_imp+: calculate imaginary part, with some care taken regarding precision
+\item   \verb+reduce_conj+: calculate complex conjugated number
+\item   \verb+reduce_re+: calculate imaginary part
+\item   \verb+reduce_im+: calculate real part
+\end{enumerate}
+
+\begin{lstlisting}[name=tools]
+
+reduce_imp := z -> evalf( reduce_im(z) ):
+reduce_re :=  z -> (z + reduce_conj(z))/2:
+reduce_im :=  z -> (z - reduce_conj(z))/(2*I):
+
+reduce_llt :=   (a,b) -> evalb( evalf( a-b ) <= -10^(-user_precision) ):
+reduce_gt :=    (a,b) -> evalb( evalf( a-b ) >= 10^(-user_precision) ):
+reduce_gteq :=  (a,b) -> evalb( evalf( a-b ) >= -10^(-user_precision) ):
+reduce_eeq :=   (a,b) ->  evalb( evalf( abs(a-b) ) < 10^(-user_precision) ):
+reduce_nneq :=  (a,b) -> evalb( evalf( abs(a-b) ) >= 10^(-user_precision) ):
+
+reduce_evalf := evalf:
+reduce_conj :=  conjugate:
+
+norpoly := (P,x) -> if user_simplify then expand(user_simplifycmd(normal(P))) else expand(normal(P)) end if;
+norpoly2 := (P,x,y) -> if user_simplify then expand(user_simplifycmd(normal(P))) else expand(normal(P)) end if;
+norpoly3 := (P,x,y,z) -> if user_simplify then expand(user_simplifycmd(normal(P))) else expand(normal(P)) end if;
+
+reduce_coeff := proc( f, x )
+    local g, g1, g2, j;
+    g := norpoly(f,x);
+    g1 := numer(g);
+    g2 := denom(g);
+    if g1 = 0 then [0] else [ coeff( g1, x, j )/g2 $ j = 0..degree( g1, x ) ] fi;
+end:
+\end{lstlisting}
+
+\section{File I/O}
+
+\begin{itemize}
+\item   \verb+openfile+: redirects output of writef to given file(s).
+\item   \verb+closefile+: closes a file.
+\item   \verb+closeallfiles+: close all files.
+\item   \verb+writef+: write to screen, or to file.
+\item   \verb+write_number+: write a number (for compatibility).
+\end{itemize}
+
+These routines keep a list of all files that are open in one hand, and of all files
+that are selected for output redirection on the other hand.  For example, at one
+moment, Maple may have opened three files A, B and C, and may choose files B, C and the terminal
+as the files to which the output is redirected.  Any writef statement will result in a write
+to B, C and the terminal.
+
+The variable \verb+openfilelist+ is a set of files that are currently opened (excluding the terminal).
+Each member in this set is a list of two items: the filename and the file handle.  The variable
+\verb+currentopenfile+ is a set of files that are currently selected for redirection: it is a set
+of file handles that will receive the output of all writef instructions.  This set may contain the
+handle $-\infty$, which stands for terminal output.  The set is never empty.
+
+\begin{lstlisting}[name=tools]
+openfile := proc()
+    local kk, k, fh, fname;
+    global currentopenfile, openfilelist;
+    currentopenfile := {};
+
+    for kk from 1 to nargs do
+        fname := eval(args[kk]);
+        if fname = terminal then
+            currentopenfile := currentopenfile union { -infinity }
+        else
+            for k from 1 to nops(openfilelist) do
+               if op(1,openfilelist[k]) = fname then break fi
+            od;
+            if k <= nops(openfilelist) then
+                currentopenfile := currentopenfile union { op(2,openfilelist[k]) }
+            else
+                fh := fopen( fname, WRITE, TEXT );
+                currentopenfile := currentopenfile union { fh };
+                openfilelist := openfilelist union { [ fname, fh ] }
+            fi
+        fi
+    od;
+    if nops(currentopenfile)=0 then
+        currentopenfile := {-infinity}
+    fi;
+end:
+\end{lstlisting}
+
+The next routine closes a file with given filename.  Once you close a file and choose
+to re-open it later, then the previous contents will be deleted! (So, do not close files
+until you know that the last bit of information is written to it.)
+In the implementation, some care is taken in order to make sure that the files that
+are closed are removed from the `redirection' list.
+
+\begin{lstlisting}[name=tools]
+closefile := proc( filename )
+    local k;
+    global currentopenfile, openfilelist;
+
+    if filename <> terminal then
+        for k from 1 to nops(openfilelist) do
+            if op(1,openfilelist[k]) = filename then
+                break
+            fi
+        od;
+
+        if k <= nops(openfilelist) then
+            fclose( op(2,openfilelist[k]) );
+            if member( op(2,openfilelist[k]), currentopenfile ) then
+                currentopenfile := currentopenfile minus {op(2,openfilelist[k])};
+                if nops(currentopenfile) = 0 then
+                    currentopenfile := {-infinity}
+                fi;
+            fi;
+            openfilelist := openfilelist minus { openfilelist[k] }
+        fi
+
+    else
+        # filename=terminal
+        if member( -infinity, currentopenfile ) and nops(currentopenfile)>1 then
+            currentopenfile := currentopenfile minus {-infinity};
+        fi;
+    fi;
+end:
+
+closeallfiles := proc( filename )
+    while nops( openfilelist ) <> 0 do
+        closefile( op(1, openfilelist[1]) )
+    od
+end:
+
+write_number := proc( n )
+    if rounded then
+        writef( "%g\n", evalf(n) )
+    else
+        writef( "%a\n", n) fi;
+end:
+\end{lstlisting}
+
+The writef procedure reflects the behaviour of the C-routine printf:  it uses
+a format string, to determine the format of the variables that need to be
+printed, and a variable list of variables.  In the format string, use \verb+%g+ to write
+a floating-point number, use \verb+%a+ to write a general mathematical expression (symbolically).
+This mathematical expression may be a number, a polynomial, a series, a list, a set or anything else.
+Use \verb+\n+ to write an end-of-line.
+
+\begin{lstlisting}[name=tools]
+writef := proc( formatstring )
+    local j;
+    for j from 1 to nops(currentopenfile) do
+        if currentopenfile[j] = -infinity then
+            printf( formatstring, args[2..nargs] )
+        else
+            fprintf( currentopenfile[j], formatstring, args[2..nargs] )
+        fi
+    od;
+end:
+\end{lstlisting}
+
+\subsection{Polynomial tools}
+
+The next three routines are used quite often in the program.  They are used to
+simplify intermediate (polynomial) results.  It will expand the polynomial
+in powers of the given variable.  During numeric computations, it
+makes sure all coefficients are numeric, and it will remove coefficients that
+are in absolute value smaller than $10^{-k}$, where $k$ is the precision.  During
+symbolic computations, it will perform a simplify command on the coefficients
+of the polynomial, in the hope of obtaining simpler expressions.  Sometimes however,
+the built-in simplify commands do not `see' that coefficients are zero.  Therefore,
+a numeric evaluation will be performed to see if they are zero, and if so, they will
+be removed.  This is important, for example in finding out the degree of the polynomial.
+
+The user may control wether or not any simplification command is executed in symbolic mode.
+The user may set the boolean flag \verb+user_simplify+.  The command itself is also user-definable
+in the command \verb+user_simplifycmd+.  These variables should be defined elsewhere.
+
+The last routine \verb+change_poly+ is implemented for compatibility.
+
+In Maple, special care needs to be taken for `long list assignments': if a list of more then 100
+elements is used (as is easily the case when considering terms of blow up vector fields or separatrices),
+one cannot re-assign individual elements of this list; instead use the map function.
+
+\begin{lstlisting}[name=tools]
+optimizepolynomial1 := proc( f, x )
+    local g, L, j, k, z;
+    global user_precision, rounded;
+    g := norpoly(f,x);
+    if not rounded then
+        g := convert( g, rational )
+    else
+        g := evalf( g )
+    fi;
+    L := eval( [ 'coeff( g, x, j )' $ j = 0..max(0,degree(g,x)) ] );
+    if not(rounded) and user_simplify then
+        L := map(user_simplifycmd,L)
+    fi;
+    L := map( z ->
+        if type(evalf(z),numeric) then
+            if abs(evalf(z)) <= 10^(-user_precision) then
+                0
+            else
+                z
+            end if
+        else
+            z
+        end if, L );
+    eval( add( L[k]*x^(k-1), k=1..nops(L) ) )
+end:
+
+optimizepolynomial2 := proc( f, x, y )
+    local g, j, L, z;
+    g := norpoly2(f,x,y);
+    if not rounded then
+        g := convert( g, rational )
+    else
+        g := evalf( g )
+    fi;
+    L := eval( [ 'coeff( g, x, j )' $ j = 0..max(0,degree(g,x)) ] );
+    L := map( z -> optimizepolynomial1( z, y ), L );
+    norpoly( eval( add( L[k]*x^(k-1), k=1..nops(L) ) ), x );
+end:
+
+optimizevf :=  ( f, x, y ) ->
+    [ optimizepolynomial2( f[1],x,y ), optimizepolynomial2( f[2], x, y ) ]:
+
+change_poly := proc( f, x, y )
+    local g, h, k, a;
+    g := norpoly2( f, x, y );
+    h := 0;
+    while g <> 0 do
+        k := nlterm( g, x, y );
+        g := g - k;
+        a := eval( eval( k, x=1 ), y=1 );
+        if abs( evalf(a) ) > 10^(-user_precision) then h := h + k fi
+    od;
+    h
+end:
+
+\end{lstlisting}
+
+Using the above simplication routines, we are ready to implement some polynomial tools:
+During the implementation, one should realize that the Maple-command \verb+degree+ returns $-\infty$ when
+a polynomial is $0$.  Therefore, the case $0$ is implemented differently in most routines.
+
+\begin{itemize}
+\item   \verb+first_term+:   Calculate term of lowest degree of a univariate polynomial.
+\item   \verb+lleadterm+:    Calculate term of highest degree of a univariate polynomial.
+\item   \verb+nlterm+:       Calculate leading term of a multivariate polynomial.
+\item   \verb+ddeg+:         Calculate homogeneous degree of multivariate polynomial.
+\item   \verb+low_ddeg+:    Calculate minimum homogeneous degree over all monomials of a multivariate polynomial.
+\item   \verb+low_deg1+:     Calculate minimum degree of a univariate polynomial.
+\item   \verb+nterm+:       Extract homogeneous degree $d$ from a multivariate polynomial.
+\item   \verb+quasihom_degree1+: Calculates quasihomogeneous degree of weights $(p,q)$ of a multivariate polynomial.
+\item   \verb+quasihom_degree+: Calculates quasihomogeneous degree of a vector field.
+\end{itemize}
+
+\begin{lstlisting}[name=tools]
+first_term := proc( _f, x )
+    local f;
+    f := optimizepolynomial1( _f, x );
+    if f = 0 then 0 else coeff( f, x, ldegree(f,x) )*x^(ldegree(f,x)) fi;
+end:
+
+lleadterm := proc( _f, x )
+    local f;
+    f := optimizepolynomial1( _f, x);
+    if f = 0 then 0 else coeff( f, x, degree(f,x) )*x^(degree(f,x)) fi;
+end:
+
+nlterm := proc( f, x, y )
+    local g, h;
+    g := norpoly( lleadterm( f, x ), y );
+    if g <> 0 then
+        h := lleadterm( g, y );
+        if h <> 0 then h else g fi
+    else
+        g := norpoly( lleadterm( f, y ), x );
+        if g <> 0 then g else f fi
+    fi
+end:
+
+ddeg := proc( _f, x, y )
+    local f;
+    f := optimizepolynomial2( _f, x, y );
+    if f = 0 then 0 else degree( f, {x,y} ) fi
+end:
+
+low_ddeg := proc( _f, x, y )
+    local f;
+    f := optimizepolynomial2( _f, x, y );
+    if f = 0 then 0 else ldegree( f, {x,y} ) fi
+end:
+
+low_deg1 := proc( _f, x )
+    local f;
+    f := evalf( norpoly( _f ), x );
+    if f = 0. then 0 else ldegree( f, x ) fi
+end:
+
+nterm := proc( _f, x, y, d )
+    local f, j, g;
+    f := optimizepolynomial2( _f, x, y );
+    g := 0;
+    for j from 0 to d do
+       g := g + coeff( coeff( f, x, j ), y, d-j )*x^j*y^(d-j);
+    od;
+    g
+end:
+
+quasihom_degree1 := proc( _f, x, y, p, q )
+    local _x, _y, f;
+    f := optimizepolynomial2( _f, x, y );
+    f := subs( x=_x^p, y=_y^q, f );
+    degree( f, {_x, _y} )
+end:
+
+quasihom_degree :=( vf, x, y, p, q ) ->
+    max( quasihom_degree1( vf[1],x,y,p,q ) - p, quasihom_degree1( vf[2],x,y,p,q ) - q ):
+\end{lstlisting}
+
+\subsection{List tools}
+
+The next routine sorts a list of points in the plane.
+
+\begin{lstlisting}[name=tools]
+sort_list := s -> sort( s, (sle_a,sle_b) ->
+    evalb( (sle_a[1] < sle_b[1]) or (sle_a[1] = sle_b[1] and sle_a[2] < sle_b[2]) ) ):
+\end{lstlisting}
+
+\subsection{Saving the routines in a library}
+
+All global variables and routines are saved in a library "tools.m".
+
+\begin{lstlisting}[name=tools]
+
+save( rounded, Hardware_precision, user_precision, reduce_coeff, write_number,
+      reduce_evalf, reduce_llt, reduce_gt, reduce_gteq, reduce_eeq, reduce_nneq,
+      optimizepolynomial1, optimizepolynomial2, first_term, lleadterm, nlterm,
+      ddeg, low_ddeg, nterm, low_deg1, optimizevf, quasihom_degree1,
+      quasihom_degree, change_poly, sort_list, reduce_imp,
+      reduce_conj, reduce_re, reduce_im, openfile, closefile, writef,
+      currentopenfile, openfilelist, closeallfiles, norpoly, norpoly2, norpoly3,
+      "tools.m" );
+\end{lstlisting}
+
+\end{document}

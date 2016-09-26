@@ -1,0 +1,67 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+\input{mapledef}
+
+\title{P4 Maple routines:\\numcoeff}
+\author{}
+\date{}
+
+\setlength\marginparwidth{0cm}
+\setlength\marginparsep{0cm}
+\setlength\oddsidemargin{2cm}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2\oddsidemargin}
+\addtolength\oddsidemargin{-1in}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+
+Checks if all coefficients of a polynomial are rational or not.
+
+Here, only one routine is implemented: \verb+num_coeff+, which checks whether a bivariate polynomial
+has rational coefficients or not.
+
+\section{Implementation}
+
+\begin{lstlisting}[name=numcoeff]
+
+restart;
+read( "tools.m" );
+
+num_coeff := proc(_f,x,y)
+   local f, j, k, l1, l2, s1, s2, ok;
+   if not(rounded) then f := convert(norpoly2(_f,x,y),rational) else f := norpoly2(_f,x,y); fi;
+   ok := true;
+   l1 := reduce_coeff( f, x );
+   j := 0;
+   while( ok and j < nops(l1) ) do
+      j := j + 1;
+      s1 := l1[j];
+      l2 := reduce_coeff( s1, y );
+      k := 0;
+      while( ok and k < nops(l2) ) do
+         k := k+1;
+         s2 := l2[k];
+         if not type( s2, rational ) then ok := false; fi
+      od;
+   od;
+   ok;
+end:
+
+\end{lstlisting}
+
+
+\subsection{Saving the routines in a library}
+
+The routine is saved in a library "numcoeff.m".
+
+\begin{lstlisting}[name=gcd]
+
+save( num_coeff, "num_coeff.m" );
+
+\end{lstlisting}
+
+\end{document}

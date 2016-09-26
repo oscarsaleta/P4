@@ -1,0 +1,107 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{listings}
+\usepackage{color}
+\input{mapledef}
+
+\title{P4 Maple routines:\\gcd}
+\author{}
+\date{}
+
+\setlength\marginparwidth{0cm}
+\setlength\marginparsep{0cm}
+\setlength\oddsidemargin{2cm}
+\setlength\textwidth{\paperwidth}
+\addtolength\textwidth{-2\oddsidemargin}
+\addtolength\oddsidemargin{-1in}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+
+Here, only one routine is implemented: \verb+my_gcd+, to calculate the greatest common divisor
+of two multivariate polynomials.
+
+\section{Implementation}
+
+The routine \verb+my_gcd+ operates on two polynomials, and returns a list of three items.  The first
+item is the reduced vector field (the list of two reduced polynomials).  If a non-trivial common
+divisor is found, the second item is 1 and the third item is the common divisor.  If no divisor is
+found, the second item is 0, and the third item is a dummy.  The routine is called in the very
+beginning of the program sequence.
+
+\begin{lstlisting}[name=gcd]
+
+restart;
+read( "tools.m" );
+read( "num_coeff.m" );
+
+my_gcd := proc( _f, _g )
+   local f,g, f2, g2, ff, c, gc, l, r; global rounded;
+   f := norpoly2( _f, x, y );
+   g := norpoly2( _g, x, y );
+   if not rounded then
+      f := convert( f, rational );
+      g := convert( g, rational );
+   fi;
+   if f = 0 and ddeg(g,x,y) <> 0 then
+      ff := [0,1];
+      c := 1;
+      gc := g;
+   else if g = 0 and ddeg(f,x,y) <> 0 then
+      ff := [1,0];
+      c := 1;
+      gc := f;
+   else
+      if not(rounded) and num_coeff(f,x,y) and num_coeff(g,x,y) then
+         l := lcm( denom(f), denom(g) );
+         f2 := f*l;
+         g2 := g*l;
+         gc := norpoly2( gcd(f2,g2) / l, x, y );
+         if ddeg(gc,x,y) <> 0 then
+            writef( "The system has a common factor: %a\n", gc );
+            c := 1;
+            ff := [ norpoly2(f/gc,x,y), norpoly2(g/gc,x,y) ];
+            writef( "We shall study the differential system:\n" );
+            writef( "    x'=%a\n", ff[1] );
+            writef( "    y'=%a\n", ff[2] );
+         else
+            writef( "The system has no common factors.\n" );
+            ff := [f,g];
+            c := 0;
+         fi;
+      else
+         r := rounded;
+         rounded := true;
+         gc := gcd( f, g );
+         if ddeg( gc, x, y ) <> 0 then
+            writef( "The system has a comman factor: %a\n", gc );
+            ff := [ f/gc, g/gc ];
+            c := 1;
+            writef( "We shall study the differential system:\n" );
+            writef( "    x'=%a\n", ff[1] );
+            writef( "    y'=%a\n", ff[2] );
+         else
+            writef( "The system has no common factors.\n" );
+            ff := [f,g];
+            c := 0;
+         fi;
+         rounded := r;
+      fi;
+   fi fi;
+   [ ff, c, gc ];
+end:
+\end{lstlisting}
+
+
+\subsection{Saving the routines in a library}
+
+The routine is saved in a library "gcd.m".
+
+\begin{lstlisting}[name=gcd]
+
+save( my_gcd, "gcd.m" );
+
+\end{lstlisting}
+
+\end{document}
