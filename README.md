@@ -1,4 +1,4 @@
-# P4 (Polynomial Planar Phase Portraits) [src-gui]
+# P4 (Polynomial Planar Phase Portraits) [src-mpl]
 
 ## Description
 
