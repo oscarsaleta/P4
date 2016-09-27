@@ -142,7 +142,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // F: integrate orbit forwards in time
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 1;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_ORBIT_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -151,7 +151,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // C: continue integrate orbit
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 0;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_ORBIT_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -160,7 +160,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // B: integrate orbit backwards in time
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = -1;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_ORBIT_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -169,7 +169,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // D: delete orbit
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 2;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_ORBIT_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -179,7 +179,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // A: delete all orbits
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 3;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_ORBIT_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -189,7 +189,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // SHIFT+C:  continue integrating separatrice
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 0;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_SEP_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -199,7 +199,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // SHIFT+N: select next separatrice
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 3;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_SEP_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -209,7 +209,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // SHIFT+I: integrate next separatrice
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 2;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_SEP_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );
@@ -219,7 +219,7 @@ void QWinSphere::keyPressEvent ( QKeyEvent * e )
     {
         // SHIFT+S: start integrate separatrice
 
-        data1 = (int *)malloc(sizeof(int));
+        data1 = new int;//(int *)malloc(sizeof(int));
         *data1 = 1;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_SEP_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );

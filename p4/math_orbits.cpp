@@ -46,12 +46,13 @@ void IntegrateOrbit( QWinSphere * sphere, int dir )
     }
     else
     {
-        VFResults.current_orbit->current_f_orbits->next_point=(struct orbits_points *) malloc(sizeof(struct orbits_points));
-        VFResults.current_orbit->current_f_orbits=VFResults.current_orbit->current_f_orbits->next_point;
+        VFResults.current_orbit->current_f_orbits->next_point = new orbits_points;
+        //(struct orbits_points *) malloc(sizeof(struct orbits_points));
+        VFResults.current_orbit->current_f_orbits = VFResults.current_orbit->current_f_orbits->next_point;
         copy_x_into_y(pcoord,VFResults.current_orbit->current_f_orbits->pcoord);
-        VFResults.current_orbit->current_f_orbits->dashes=0;
-        VFResults.current_orbit->current_f_orbits->color=CORBIT;
-        VFResults.current_orbit->current_f_orbits->dir=dir;
+        VFResults.current_orbit->current_f_orbits->dashes = 0;
+        VFResults.current_orbit->current_f_orbits->color = CORBIT;
+        VFResults.current_orbit->current_f_orbits->dir = dir;
         VFResults.current_orbit->current_f_orbits->next_point = 
                     integrate_orbit(sphere,pcoord,VFResults.config_step,dir,CORBIT,VFResults.config_intpoints,&sep);  
     }
@@ -70,12 +71,12 @@ bool StartOrbit( QWinSphere * sphere, double x, double y, bool R )
 
     if( VFResults.first_orbit == NULL )
     {
-        VFResults.first_orbit = (struct orbits *)malloc( sizeof(struct orbits) );
+        VFResults.first_orbit = new orbits;//(struct orbits *)malloc( sizeof(struct orbits) );
         VFResults.current_orbit = VFResults.first_orbit;
     }
     else
     {
-        VFResults.current_orbit->next_orbit = (struct orbits *)malloc( sizeof(struct orbits) );
+        VFResults.current_orbit->next_orbit = new orbits;//(struct orbits *)malloc( sizeof(struct orbits) );
         VFResults.current_orbit = VFResults.current_orbit->next_orbit;
     }
     if( R )
@@ -279,12 +280,13 @@ struct orbits_points * integrate_orbit(QWinSphere * spherewnd, double pcoord[3],
 
         if(last_orbit==NULL)
         {
-            first_orbit=(struct orbits_points *) malloc(sizeof(struct orbits_points));
-            last_orbit=first_orbit; h=dir;
+            first_orbit = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
+            last_orbit = first_orbit;
+            h=dir;
         }
         else
         {
-            last_orbit->next_point=(struct orbits_points *) malloc(sizeof(struct orbits_points));
+            last_orbit->next_point = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
             h=last_orbit->dir;                          
             last_orbit=last_orbit->next_point; 
         }

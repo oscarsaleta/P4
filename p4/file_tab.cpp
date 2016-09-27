@@ -204,7 +204,8 @@ void QVFStudy::DeleteSaddle( struct saddle * p )
         delete_term2( q->vector_field[1] );
         if( q->notadummy )
             DeleteSeparatrices( q->separatrices );  // separatrices may be NULL
-        free(q);
+        //free(q);
+        delete q;
     }
 }
 
@@ -225,7 +226,8 @@ void QVFStudy::DeleteSemiElementary( struct semi_elementary * p )
         delete_term2( q->vector_field[1] );
         if( q->notadummy )
             DeleteSeparatrices( q->separatrices );  // separatrices may be NULL
-        free(q);
+        //free(q);
+        delete q;
     }
 }
 
@@ -241,7 +243,8 @@ void QVFStudy::DeleteNode( struct node * p )
     {
         q = p;
         p = p->next_node;
-        free(q);
+        delete q;
+        //free(q);
     }
 }
 
@@ -257,7 +260,8 @@ void QVFStudy::DeleteStrongFocus( struct strong_focus * p )
     {
         q = p;
         p = p->next_sf;
-        free(q);
+        //free(q);
+        delete q;
     }
 }
 
@@ -273,7 +277,8 @@ void QVFStudy::DeleteWeakFocus( struct weak_focus * p )
     {
         q = p;
         p = p->next_wf;
-        free(q);
+        //free(q);
+        delete q;
     }
 }
 
@@ -292,7 +297,8 @@ void QVFStudy::DeleteDegenerate( struct degenerate * p )
 
         if( q->notadummy )
             DeleteBlowup( q->blow_up );
-        free(q);
+        //free(q);
+        delete q;
     }
 }
 
@@ -312,7 +318,8 @@ void QVFStudy::DeleteSeparatrices( struct sep * p )
         DeleteOrbitPoint( q->first_sep_point );
         if( q->notadummy )
             delete_term1( q->separatrice );
-        free( q );
+        //free( q );
+        delete q;
     }
 }
    
@@ -328,7 +335,8 @@ void QVFStudy::DeleteTransformations( struct transformations * t )
     {
         u = t;
         t = t->next_trans;
-        free(u);
+        //free(u);
+        delete u;
     }
 }
 
@@ -349,7 +357,8 @@ void QVFStudy::DeleteBlowup( struct blow_up_points * b )
         delete_term2( c->vector_field[1] );
         delete_term1( c->sep );
         DeleteOrbitPoint( c->first_sep_point );
-        free(c);
+        //free(c);
+        delete c;
     }
 }
 
@@ -375,7 +384,8 @@ void QVFStudy::DeleteOrbitPoint( P4ORBIT p )
         q = p;
         p = p->next_point;
 
-        free(q);
+        //free(q);
+        delete q;
     }
 }
 
@@ -393,7 +403,8 @@ void QVFStudy::DeleteOrbit( struct orbits * p )
         p = p->next_orbit;
         
         DeleteOrbitPoint( q->f_orbits );
-        free(q);
+        //free(q);
+        delete q;
    }
 }
 
@@ -609,7 +620,7 @@ bool QVFStudy::ReadGCF( FILE * fp )
         if( fscanf( fp, "%d", &N ) != 1 )
             return false;
 
-        gcf = (P4POLYNOM2)malloc( sizeof(struct term2) );
+        gcf = new term2;//(P4POLYNOM2)malloc( sizeof(struct term2) );
         gcf->next_term2 = NULL;
 
         if( !ReadTerm2( fp, gcf, N ) )
@@ -618,7 +629,7 @@ bool QVFStudy::ReadGCF( FILE * fp )
         if( fscanf( fp, "%d", &N ) != 1 )
             return false;
 
-        gcf_U1= (P4POLYNOM2)malloc( sizeof(struct term2) );
+        gcf_U1= new term2;//(P4POLYNOM2)malloc( sizeof(struct term2) );
         gcf_U1->next_term2 = NULL;
 
         if( !ReadTerm2( fp, gcf_U1, N ) )
@@ -627,7 +638,7 @@ bool QVFStudy::ReadGCF( FILE * fp )
         if( fscanf( fp, "%d", &N ) != 1 )
             return false;
 
-        gcf_U2= (P4POLYNOM2)malloc( sizeof(struct term2) );
+        gcf_U2= new term2;//(P4POLYNOM2)malloc( sizeof(struct term2) );
         gcf_U2->next_term2 = NULL;
 
         if( !ReadTerm2( fp, gcf_U2, N ) )
@@ -636,14 +647,14 @@ bool QVFStudy::ReadGCF( FILE * fp )
         if( fscanf( fp, "%d", &N ) != 1 )
             return false;
 
-        gcf_V1= (P4POLYNOM2)malloc( sizeof(struct term2) );
+        gcf_V1= new term2;//(P4POLYNOM2)malloc( sizeof(struct term2) );
         gcf_V1->next_term2 = NULL;
         if( !ReadTerm2( fp, gcf_V1, N ) )
             return false;
         
         if( fscanf( fp, "%d", &N ) != 1 )
             return false;
-        gcf_V2= (P4POLYNOM2)malloc( sizeof(struct term2) );
+        gcf_V2= new term2;//(P4POLYNOM2)malloc( sizeof(struct term2) );
         gcf_V2->next_term2 = NULL;
         if( !ReadTerm2( fp, gcf_V2, N ) )
             return false;
@@ -653,7 +664,7 @@ bool QVFStudy::ReadGCF( FILE * fp )
             if( fscanf( fp, "%d", &N ) != 1 )
                 return false;
 
-            gcf_C = (P4POLYNOM3)malloc( sizeof(struct term3) );
+            gcf_C = new term3;// (P4POLYNOM3)malloc( sizeof(struct term3) );
             gcf_C->next_term3 = NULL;
             if( !ReadTerm3( fp, gcf_C, N ) )
                 return false;
@@ -680,8 +691,10 @@ bool QVFStudy::ReadVectorField( FILE * fp, P4POLYNOM2 * vf )
 {
     int M,N;
 
-    vf[0] = (P4POLYNOM2)malloc( sizeof( struct term2 ) ); vf[0]->next_term2 = NULL;
-    vf[1] = (P4POLYNOM2)malloc( sizeof( struct term2 ) ); vf[1]->next_term2 = NULL;
+    vf[0] = new term2;//(P4POLYNOM2)malloc( sizeof( struct term2 ) );
+    vf[0]->next_term2 = NULL;
+    vf[1] = new term2;//(P4POLYNOM2)malloc( sizeof( struct term2 ) );
+    vf[1]->next_term2 = NULL;
 
     if( fscanf( fp, "%d", &M ) != 1 )
         return false;
@@ -703,8 +716,10 @@ bool QVFStudy::ReadVectorFieldCylinder( FILE * fp, P4POLYNOM3 * vf )
 {
     int N;
 
-    vf[0] = (P4POLYNOM3)malloc( sizeof( struct term3 ) ); vf[0]->next_term3 = NULL;
-    vf[1] = (P4POLYNOM3)malloc( sizeof( struct term3 ) ); vf[1]->next_term3 = NULL;
+    vf[0] = new term3;// (P4POLYNOM3)malloc( sizeof( struct term3 ) ); 
+    vf[0]->next_term3 = NULL;
+    vf[1] = new term3;//(P4POLYNOM3)malloc( sizeof( struct term3 ) ); 
+    vf[1]->next_term3 = NULL;
 
     if( fscanf( fp, "%d", &N ) != 1 )
         return false;
@@ -809,7 +824,7 @@ bool QVFStudy::ReadTerm1( FILE * fp, P4POLYNOM1 p, int N )
 
     for( i = 2; i <= N; i++ )
     {
-        p->next_term1 = (P4POLYNOM1)malloc( sizeof( struct term1 ) );
+        p->next_term1 = new term1;//(P4POLYNOM1)malloc( sizeof( struct term1 ) );
         p = p->next_term1;
         p->next_term1 = NULL;
         if( fscanf( fp, "%d %lf", &(p->exp), &(p->coeff) ) != 2 )
@@ -838,7 +853,7 @@ bool QVFStudy::ReadTerm2( FILE * fp, P4POLYNOM2 p, int N )
 
     for( i = 2; i <= N; i++ )
     {
-        p->next_term2 = (P4POLYNOM2)malloc( sizeof( struct term2 ) );
+        p->next_term2 = new term2;//(P4POLYNOM2)malloc( sizeof( struct term2 ) );
         p = p->next_term2;
         p->next_term2 = NULL;
         if( fscanf( fp, "%d %d %lf", &(p->exp_x), &(p->exp_y), &(p->coeff) ) != 3 )
@@ -866,7 +881,7 @@ bool QVFStudy::ReadTerm3( FILE * fp, P4POLYNOM3 p, int N )
 
     for( i = 2; i <= N; i++ )
     {
-        p->next_term3 = (P4POLYNOM3)malloc( sizeof( struct term3 ) );
+        p->next_term3 = new term3;// (P4POLYNOM3)malloc( sizeof( struct term3 ) );
         p = p->next_term3;
         p->next_term3 = NULL;
         if( fscanf( fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si), &(p->coeff) ) != 4 )
@@ -902,7 +917,7 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
         point = point->next_saddle;
     }
 
-    point = (struct saddle *)malloc( sizeof(struct saddle) );
+    point = new saddle;//(struct saddle *)malloc( sizeof(struct saddle) );
     if( last == NULL )
         first_saddle_point = point;
     else
@@ -926,7 +941,7 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
     {
         return false;
     }
-    point->separatrices = (struct sep *)malloc( sizeof(struct sep) );
+    point->separatrices = new sep;//(struct sep *)malloc( sizeof(struct sep) );
     sep1 = point->separatrices;
     if( fscanf( fp, "%d ", &(sep1->type) ) != 1 )
     {
@@ -937,7 +952,7 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
         return false;
     }
     sep1->notadummy = true;
-    sep1->separatrice = (P4POLYNOM1)malloc( sizeof(struct term1) );
+    sep1->separatrice = new term1;//(P4POLYNOM1)malloc( sizeof(struct term1) );
     ReadTerm1( fp, sep1->separatrice, N );
     sep1->direction = 1;
     sep1->d = 0;
@@ -950,7 +965,7 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
         // point is finite hence we have 4 separatrices or we have a line of singularities
         // at infinity and hence we have also 4 separatrices after removing the line
 
-        sep2 = (struct sep *)malloc( sizeof(struct sep) );
+        sep2 = new sep;//(struct sep *)malloc( sizeof(struct sep) );
         sep1->next_sep = sep2;
         
         sep2->type = sep1->type;
@@ -961,7 +976,7 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
         sep2->first_sep_point = NULL;
         sep2->last_sep_point = NULL;
 
-        sep1 = sep2->next_sep = (struct sep *)malloc( sizeof(struct sep) );
+        sep1 = sep2->next_sep = new sep;//(struct sep *)malloc( sizeof(struct sep) );
 
         if( fscanf( fp, "%d", &(sep1->type) ) != 1 )
         {
@@ -973,14 +988,14 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
         }
 
         sep1->notadummy = true;
-        sep1->separatrice = (P4POLYNOM1)malloc( sizeof(struct term1) );
+        sep1->separatrice = new term1;//(P4POLYNOM1)malloc( sizeof(struct term1) );
         ReadTerm1( fp, sep1->separatrice, N );
         sep1->direction = 1;
         sep1->d = 1;
         sep1->first_sep_point = NULL;
         sep1->last_sep_point = NULL;
 
-        sep2 = (struct sep *)malloc( sizeof(struct sep) );
+        sep2 = new sep;//(struct sep *)malloc( sizeof(struct sep) );
         sep1->next_sep = sep2;
 
         sep2->type = sep1->type;
@@ -1004,7 +1019,7 @@ bool QVFStudy::ReadSaddlePoint( FILE * fp )
     if( singinf && point->chart != CHART_R2 )
     {
         last = point;
-        point = (struct saddle *)malloc( sizeof(struct saddle) );
+        point = new saddle;//(struct saddle *)malloc( sizeof(struct saddle) );
         last->next_saddle = point;
         point->next_saddle = NULL;
 
@@ -1049,7 +1064,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         point = point->next_se;
     }
 
-    point = (struct semi_elementary *)malloc( sizeof(struct semi_elementary) );
+    point = new semi_elementary;//(struct semi_elementary *)malloc( sizeof(struct semi_elementary) );
     if( last == NULL )
         first_se_point = point;
     else
@@ -1081,7 +1096,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             // at infinity, we  have s=0, so the center sep is the line at infinity, not reported so only sep is
             // then the hyperbolic sep.
 
-            point->separatrices = (struct sep *)malloc( sizeof(struct sep) );
+            point->separatrices = new sep;//(struct sep *)malloc( sizeof(struct sep) );
             sep1 = point->separatrices;
             
             if( s )
@@ -1103,7 +1118,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             if( fscanf( fp, "%d ", &N ) != 1 )
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = (struct term1 *)malloc( sizeof(struct term1) );
+            sep1->separatrice = new term1;// (struct term1 *)malloc( sizeof(struct term1) );
             ReadTerm1( fp, sep1->separatrice, N );
             sep1->first_sep_point = NULL;
             sep1->last_sep_point = NULL;
@@ -1112,7 +1127,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             {
                 // read second (hyperbolic) separatrix
 
-                sep1->next_sep = (struct sep *)malloc( sizeof(struct sep) );
+                sep1->next_sep = new sep;// (struct sep *)malloc( sizeof(struct sep) );
                 sep1 = sep1->next_sep;
                 sep1->type = OT_UNSTABLE;
                 sep1->d = 1;
@@ -1120,14 +1135,14 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
                 if( fscanf( fp, "%d ", &N ) != 1 )
                     return false;
                 sep1->notadummy = true;
-                sep1->separatrice = (struct term1 *)malloc( sizeof(struct term1) );
+                sep1->separatrice = new term1;//(struct term1 *)malloc( sizeof(struct term1) );
                 ReadTerm1( fp, sep1->separatrice, N );
                 sep1->first_sep_point = NULL;
                 sep1->last_sep_point = NULL;
 
                 // it is two-sided, so make a copy in other direction
 
-                sep1->next_sep = (struct sep *)malloc( sizeof(struct sep) );
+                sep1->next_sep = new sep;//(struct sep *)malloc( sizeof(struct sep) );
                 sep1->next_sep->type = OT_UNSTABLE;
                 sep1->next_sep->d = 1;
                 sep1->next_sep->direction = -1;
@@ -1142,7 +1157,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
 
 
     case 2: // saddle-node 
-        point->separatrices = (struct sep *) malloc(sizeof(struct sep));
+        point->separatrices = new sep;// (struct sep *) malloc(sizeof(struct sep));
         sep1 = point->separatrices;
         if( s )
             sep1->type = STYPE_CENUNSTABLE;
@@ -1158,14 +1173,14 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         if( fscanf( fp, "%d ", &N ) != 1 )
             return false;
         sep1->notadummy = true;
-        sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+        sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
         ReadTerm1( fp, sep1->separatrice, N );
         sep1->first_sep_point = NULL;
         sep1->last_sep_point = NULL;
         sep1->next_sep = NULL;
         if( point->chart == CHART_R2 || singinf )
         {
-            sep1->next_sep = (struct sep *) malloc( sizeof(struct sep) );
+            sep1->next_sep = new sep;//(struct sep *) malloc( sizeof(struct sep) );
             sep1 = sep1->next_sep;
             sep1->type = STYPE_STABLE;
             sep1->d = 1;
@@ -1173,11 +1188,11 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             if( fscanf( fp, "%d ", &N ) !=1 )
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = (struct term1 *)malloc( sizeof(struct term1) );
+            sep1->separatrice = new term1;//(struct term1 *)malloc( sizeof(struct term1) );
             ReadTerm1( fp, sep1->separatrice, N );
             sep1->first_sep_point = NULL;
             sep1->last_sep_point = NULL;
-            sep1->next_sep = (struct sep *)malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *)malloc(sizeof(struct sep));
             sep1->next_sep->type = STYPE_STABLE;
             sep1->next_sep->d = 1;
             sep1->next_sep->direction = -1;
@@ -1190,7 +1205,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         break;
 
     case 3: // saddle-node 
-        point->separatrices = (struct sep *) malloc(sizeof(struct sep));
+        point->separatrices = new sep;//(struct sep *) malloc(sizeof(struct sep));
         sep1 = point->separatrices;
         if( s )
             sep1->type = STYPE_CENSTABLE;
@@ -1205,25 +1220,25 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         if( fscanf( fp, "%d ", &N ) != 1 )
             return false;
         sep1->notadummy = true;
-        sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+        sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
         ReadTerm1( fp, sep1->separatrice, N );
         sep1->first_sep_point = NULL;
         sep1->last_sep_point = NULL;
         sep1->next_sep = NULL;
         if( point->chart == CHART_R2 || singinf )
         {
-            sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1 = sep1->next_sep;
             sep1->type = STYPE_UNSTABLE; sep1->d = 1;
             sep1->direction = 1;
             if( fscanf( fp, "%d ", &N ) !=1 )
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+            sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
             ReadTerm1( fp, sep1->separatrice, N );
             sep1->first_sep_point = NULL;
             sep1->last_sep_point = NULL;
-            sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1->next_sep->type = STYPE_UNSTABLE;
             sep1->next_sep->d = 1;
             sep1->next_sep->direction = -1;
@@ -1242,7 +1257,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         }
         else
         {
-            point->separatrices = (struct sep *) malloc(sizeof(struct sep));
+            point->separatrices = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1 = point->separatrices;
             if( s )
                 sep1->type = STYPE_CENUNSTABLE;
@@ -1259,14 +1274,14 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             if( fscanf( fp, "%d ", &N ) != 1 )
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+            sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
             ReadTerm1( fp, sep1->separatrice, N );
             sep1->first_sep_point = NULL;
             sep1->last_sep_point = NULL;
             sep1->next_sep = NULL;
             if( point->chart == CHART_R2 || singinf )
             {
-                sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+                sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
                 sep1 = sep1->next_sep;
                 sep1->type = STYPE_STABLE;
                 sep1->d = 1;
@@ -1274,11 +1289,11 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
                 if( fscanf( fp, "%d ", &N ) !=1 )
                     return false;
                 sep1->notadummy = true;
-                sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+                sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
                 ReadTerm1( fp, sep1->separatrice, N );
                 sep1->first_sep_point = NULL;
                 sep1->last_sep_point = NULL;
-                sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+                sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
                 sep1->next_sep->type = STYPE_STABLE;
                 sep1->next_sep->d = 1;
                 sep1->next_sep->direction = -1;
@@ -1292,7 +1307,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         break;   
 
     case 6: // saddle 
-        point->separatrices = (struct sep *) malloc(sizeof(struct sep));
+        point->separatrices = new sep;//(struct sep *) malloc(sizeof(struct sep));
         sep1 = point->separatrices;
         if( s )
             sep1->type = STYPE_CENUNSTABLE;
@@ -1306,14 +1321,14 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         if( fscanf( fp, "%d ", &N ) !=1 )
             return false;
         sep1->notadummy = true;
-        sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+        sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
         ReadTerm1( fp, sep1->separatrice, N );
         sep1->first_sep_point = NULL;
         sep1->last_sep_point = NULL;
         sep1->next_sep = NULL;
         if( point->chart== CHART_R2 || singinf )
         {
-            sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1->next_sep->type = STYPE_CENUNSTABLE;
             sep1->next_sep->d = 0;
             sep1->next_sep->direction = -1;
@@ -1321,7 +1336,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             sep1->next_sep->separatrice = sep1->separatrice;
             sep1->next_sep->first_sep_point = NULL;
             sep1->next_sep->last_sep_point = NULL;
-            sep1->next_sep->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1 = sep1->next_sep->next_sep;
             sep1->type = STYPE_STABLE;
             sep1->d = 1;
@@ -1329,11 +1344,11 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             if( fscanf( fp, "%d ", &N ) != 1 )
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+            sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
             ReadTerm1( fp, sep1->separatrice, N);
             sep1->first_sep_point = NULL;
             sep1->last_sep_point = NULL;
-            sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1->next_sep->type = STYPE_STABLE;
             sep1->next_sep->d = 1;
             sep1->next_sep->direction = -1;
@@ -1346,7 +1361,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         break;
 
     case 7: // saddle 
-        point->separatrices = (struct sep *) malloc(sizeof(struct sep));
+        point->separatrices = new sep;//(struct sep *) malloc(sizeof(struct sep));
         sep1 = point->separatrices;
         if( s )
             sep1->type = STYPE_CENSTABLE;
@@ -1360,14 +1375,14 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
         if( fscanf( fp, "%d ", &N ) != 1 )
             return false;
         sep1->notadummy = true;
-        sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+        sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
         ReadTerm1( fp, sep1->separatrice, N);
         sep1->first_sep_point = NULL;
         sep1->last_sep_point = NULL;
         sep1->next_sep = NULL;
         if( point->chart== CHART_R2 || singinf )
         {
-            sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1->next_sep->type = STYPE_CENSTABLE;
             sep1->next_sep->d = 0;
             sep1->next_sep->direction = -1;
@@ -1375,7 +1390,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             sep1->next_sep->separatrice = sep1->separatrice;
             sep1->next_sep->first_sep_point = NULL;
             sep1->next_sep->last_sep_point = NULL;
-            sep1->next_sep->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1 = sep1->next_sep->next_sep;
             sep1->type = STYPE_UNSTABLE;
             sep1->d = 1;
@@ -1383,11 +1398,11 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
             if( fscanf( fp, "%d ",&N ) != 1 )
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = (struct term1 *) malloc(sizeof(struct term1));
+            sep1->separatrice = new term1;//(struct term1 *) malloc(sizeof(struct term1));
             ReadTerm1( fp, sep1->separatrice, N );
             sep1->first_sep_point = NULL;
             sep1->last_sep_point = NULL;
-            sep1->next_sep = (struct sep *) malloc(sizeof(struct sep));
+            sep1->next_sep = new sep;//(struct sep *) malloc(sizeof(struct sep));
             sep1->next_sep->type = STYPE_UNSTABLE;
             sep1->next_sep->d = 1;
             sep1->next_sep->direction = -1;
@@ -1450,7 +1465,7 @@ bool QVFStudy::ReadSemiElementaryPoint( FILE * fp )
 
     if( singinf && (point->chart != CHART_R2) )
     {
-        point->next_se = (struct semi_elementary *) malloc(sizeof(struct semi_elementary));
+        point->next_se = new semi_elementary;//(struct semi_elementary *) malloc(sizeof(struct semi_elementary));
         point->next_se->x0 = point->x0;
         point->next_se->y0 = 0.0;
         if( VFResults.dir_vec_field == 1 )
@@ -1503,7 +1518,7 @@ bool QVFStudy::ReadStrongFocusPoint( FILE * fp )
         point = point->next_sf;
     }
 
-    point = (struct strong_focus *)malloc( sizeof(struct strong_focus) );
+    point = new strong_focus;//(struct strong_focus *)malloc( sizeof(struct strong_focus) );
     if( last == NULL )
         first_sf_point = point;
     else
@@ -1562,7 +1577,7 @@ bool QVFStudy::ReadStrongFocusPoint( FILE * fp )
     if( singinf && point->chart != CHART_R2 )
     {
         last = point;
-        point = (struct strong_focus *)malloc( sizeof(struct strong_focus) );
+        point = new strong_focus;//(struct strong_focus *)malloc( sizeof(struct strong_focus) );
         last->next_sf = point;
         point->next_sf = NULL;
 
@@ -1591,7 +1606,7 @@ bool QVFStudy::ReadWeakFocusPoint( FILE * fp )
         point = point->next_wf;
     }
 
-    point = (struct weak_focus *)malloc( sizeof(struct weak_focus) );
+    point = new weak_focus;//(struct weak_focus *)malloc( sizeof(struct weak_focus) );
     if( last == NULL )
         first_wf_point = point;
     else
@@ -1646,7 +1661,7 @@ bool QVFStudy::ReadWeakFocusPoint( FILE * fp )
 
     if( singinf && (point->chart != CHART_R2) )
     {
-        point->next_wf = (struct weak_focus *) malloc(sizeof(struct weak_focus));
+        point->next_wf = new weak_focus;//(struct weak_focus *) malloc(sizeof(struct weak_focus));
         point->next_wf->x0 = point->x0;
         point->next_wf->y0 = 0.0;
 
@@ -1689,7 +1704,7 @@ bool QVFStudy::ReadDegeneratePoint( FILE * fp )
         point = point->next_de;
     }
 
-    point = (struct degenerate *)malloc( sizeof(struct degenerate) );
+    point = new degenerate;//(struct degenerate *)malloc( sizeof(struct degenerate) );
     if( last == NULL )
         first_de_point = point;
     else
@@ -1704,7 +1719,7 @@ bool QVFStudy::ReadDegeneratePoint( FILE * fp )
     point->blow_up=NULL;
     if( n )
     {
-        point->blow_up = (struct blow_up_points *)malloc( sizeof(struct blow_up_points) );
+        point->blow_up = new blow_up_points;//(struct blow_up_points *)malloc( sizeof(struct blow_up_points) );
         ReadBlowupPoints( fp, point->blow_up, n );
         point->blow_up->blow_up_vec_field = true;
     }
@@ -1719,7 +1734,7 @@ bool QVFStudy::ReadDegeneratePoint( FILE * fp )
     if( singinf && point->chart != CHART_R2 )
     {
         last = point;
-        point = (struct degenerate *)malloc( sizeof(struct degenerate) );
+        point = new degenerate;//(struct degenerate *)malloc( sizeof(struct degenerate) );
         last->next_de = point;
         point->next_de = NULL;
 
@@ -1755,7 +1770,7 @@ bool QVFStudy::ReadNodePoint( FILE * fp )
         point = point->next_node;
     }
 
-    point = (struct node *)malloc( sizeof(struct node) );
+    point = new node;//(struct node *)malloc( sizeof(struct node) );
     if( last == NULL )
         first_node_point = point;
     else
@@ -1814,7 +1829,7 @@ bool QVFStudy::ReadNodePoint( FILE * fp )
     if( singinf != 0 && point->chart != CHART_R2 )
     {
         last = point;
-        point = (struct node *)malloc( sizeof(struct node) );
+        point = new node;//(struct node *)malloc( sizeof(struct node) );
         last->next_node = point;
         point->next_node = NULL;
 
@@ -1845,7 +1860,7 @@ bool QVFStudy::ReadTransformations( FILE * fp, struct transformations * trans, i
 
     for( i = 2; i <= n; i++ )
     {
-        trans->next_trans = (struct transformations *)malloc( sizeof(struct transformations) );
+        trans->next_trans = new transformations;//(struct transformations *)malloc( sizeof(struct transformations) );
         trans = trans->next_trans;
     
         if( fscanf( fp, "%lf %lf %d %d %d %d %d %d %d",
@@ -1872,7 +1887,7 @@ bool QVFStudy::ReadBlowupPoints( FILE * fp, struct blow_up_points * b, int n )
         if( fscanf( fp, "%d ", &(b->n) ) != 1 )
             return false;
         
-        b->trans = (struct transformations *)malloc( sizeof(struct transformations) );
+        b->trans = new transformations;//(struct transformations *)malloc( sizeof(struct transformations) );
 
         ReadTransformations( fp, b->trans, b->n );
         if( fscanf( fp, "%lf %lf ", &(b->x0), &(b->y0) ) != 2 )
@@ -1880,7 +1895,7 @@ bool QVFStudy::ReadBlowupPoints( FILE * fp, struct blow_up_points * b, int n )
         if( fscanf( fp, "%lf %lf %lf %lf ",&(b->a11), &(b->a12), &(b->a21),&(b->a22) ) != 4 )
             return false;
         ReadVectorField( fp, b->vector_field );
-        b->sep = (struct term1 *)malloc( sizeof(struct term1) );
+        b->sep = new term1;//(struct term1 *)malloc( sizeof(struct term1) );
         if( fscanf( fp, "%d ", &N ) != 1)
             return false;
         ReadTerm1( fp, b->sep, N );
@@ -1913,7 +1928,7 @@ bool QVFStudy::ReadBlowupPoints( FILE * fp, struct blow_up_points * b, int n )
         
         if( i < n )
         {
-            b->next_blow_up_point = (struct blow_up_points *)malloc( sizeof(struct blow_up_points) );
+            b->next_blow_up_point = new blow_up_points;//(struct blow_up_points *)malloc( sizeof(struct blow_up_points) );
             b = b->next_blow_up_point;
         }
     }

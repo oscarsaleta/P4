@@ -163,12 +163,12 @@ struct P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a,
             {
                 if( first == NULL )
                 {
-                    last = first = (struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
+                    last = first = new P4POLYLINES;//(struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
                     last->next = NULL;
                 }
                 else
                 {
-                    last->next = (struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
+                    last->next = new P4POLYLINES;//(struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
                     last = last->next;
                     last->next = NULL;
                 }

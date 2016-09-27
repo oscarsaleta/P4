@@ -316,12 +316,12 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
 
     if( VFResults.current_lim_cycle == NULL )
     {
-        VFResults.first_lim_cycle=(struct orbits *) malloc(sizeof(struct orbits));
+        VFResults.first_lim_cycle=new orbits;//(struct orbits *) malloc(sizeof(struct orbits));
         VFResults.current_lim_cycle=VFResults.first_lim_cycle;
     }
     else
     {
-        VFResults.current_lim_cycle->next_orbit=(struct orbits *) malloc(sizeof(struct orbits));
+        VFResults.current_lim_cycle->next_orbit=new orbits;//(struct orbits *) malloc(sizeof(struct orbits));
         VFResults.current_lim_cycle=VFResults.current_lim_cycle->next_orbit;
     }
 
@@ -335,7 +335,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
     h_min=VFResults.config_hmi;
     (*plot_p)(spherewnd,p1,CLIMIT);
     MATHFUNC(integrate_sphere_orbit)(p1[0],p1[1],p1[2],p2,&hhi,&dashes,&d,h_min,h_max);
-    VFResults.current_lim_cycle->f_orbits = (struct orbits_points *)malloc(sizeof(struct orbits_points));
+    VFResults.current_lim_cycle->f_orbits = new orbits_points;//(struct orbits_points *)malloc(sizeof(struct orbits_points));
     VFResults.current_lim_cycle->current_f_orbits = VFResults.current_lim_cycle->f_orbits;
     copy_x_into_y(p2,VFResults.current_lim_cycle->current_f_orbits->pcoord);
     VFResults.current_lim_cycle->current_f_orbits->color = CLIMIT;
@@ -349,7 +349,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
     { 
         copy_x_into_y(p2,p1);
         MATHFUNC(integrate_sphere_orbit)(p1[0],p1[1],p1[2],p2,&hhi,&dashes,&d,h_min,h_max);
-        VFResults.current_lim_cycle->current_f_orbits->next_point=(struct orbits_points *)malloc(sizeof(struct orbits_points));
+        VFResults.current_lim_cycle->current_f_orbits->next_point= new orbits_points;//(struct orbits_points *)malloc(sizeof(struct orbits_points));
         VFResults.current_lim_cycle->current_f_orbits=VFResults.current_lim_cycle->current_f_orbits->next_point;
         copy_x_into_y(p2,VFResults.current_lim_cycle->current_f_orbits->pcoord);
         VFResults.current_lim_cycle->current_f_orbits->color=CLIMIT;
@@ -369,7 +369,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
     { 
         copy_x_into_y(p2,p1);
         MATHFUNC(integrate_sphere_orbit)(p1[0],p1[1],p1[2],p2,&hhi,&dashes,&d,h_min,h_max);
-        VFResults.current_lim_cycle->current_f_orbits->next_point=(struct orbits_points *)malloc(sizeof(struct orbits_points));
+        VFResults.current_lim_cycle->current_f_orbits->next_point=new orbits_points;//(struct orbits_points *)malloc(sizeof(struct orbits_points));
         VFResults.current_lim_cycle->current_f_orbits=VFResults.current_lim_cycle->current_f_orbits->next_point;
         copy_x_into_y(p2,VFResults.current_lim_cycle->current_f_orbits->pcoord);
         VFResults.current_lim_cycle->current_f_orbits->color=CLIMIT;

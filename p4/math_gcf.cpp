@@ -176,12 +176,12 @@ static void insert_gcf_point( double x0, double y0, double z0, int dashes )
 {
     if( VFResults.gcf_points != NULL  )
     {
-        last_gcf_point->next_point = (struct orbits_points *) malloc(sizeof(struct orbits_points));
+        last_gcf_point->next_point = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
         last_gcf_point = last_gcf_point->next_point; 
     }
     else
     {
-        last_gcf_point = (struct orbits_points *) malloc(sizeof(struct orbits_points));
+        last_gcf_point = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
         VFResults.gcf_points = last_gcf_point;
     }
 
