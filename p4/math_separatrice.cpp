@@ -401,7 +401,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                         dashes = false;
                         ok = true;
                         if(VFResults.dir_vec_field==1)
-                            dir* = -1;
+                            dir *= -1;
                     }
                     type = sep1->type;
                     color = FindSepColor(VFResults.gcf_U1,type,point);                                            
@@ -411,7 +411,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                         dashes = false;
                         ok = false;
                         if (VFResults.dir_vec_field==1)
-                            dir* = -1;
+                            dir *= -1;
                     }
                     psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
                     if (VFResults.dir_vec_field==1)
@@ -434,7 +434,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                         dashes = false;
                         ok = true;
                         if(VFResults.dir_vec_field==1)
-                            dir* = -1;
+                            dir *= -1;
                     }
                     type = sep1->type;
                     color = FindSepColor(VFResults.gcf_U2,type,point);
@@ -444,7 +444,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                         dashes = false;
                         ok = false;
                         if(VFResults.dir_vec_field==1)
-                            dir* = -1;
+                            dir *= -1;
                     }
                     psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
                     if (VFResults.dir_vec_field==1)
