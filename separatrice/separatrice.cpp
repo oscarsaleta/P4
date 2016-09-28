@@ -487,7 +487,7 @@ double read_sep( const char * file )
     vec_field[1] = new term2;//(struct term2 *) malloc (sizeof(struct term2));
     read_term2(fp,vec_field[1],l);
     fscanf(fp,"%i \n\n",&l);
-    separatrice = new term2;//(struct term1 *) malloc (sizeof(struct term1));
+    separatrice = new term1;//(struct term1 *) malloc (sizeof(struct term1));
     read_term1(fp,separatrice,l);
     fclose(fp);
     return(epsilon);
