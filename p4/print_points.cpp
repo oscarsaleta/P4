@@ -275,7 +275,7 @@ void QWinSphere::printPoincareSphere( void )
     {
         q = p;
         p = p->next;
-        free( q );
+        delete p;//free( q );
     }
 }
 
@@ -303,7 +303,7 @@ void QWinSphere::printPoincareLyapunovSphere( void )
     {
         q = p;
         p = p->next;
-        free( q );
+        delete p;//free( q );
     }
 
     comment = "Printing Poincare Lyapunov-Sphere (circle of finite radius):";
@@ -324,7 +324,7 @@ void QWinSphere::printPoincareLyapunovSphere( void )
     {
         q = p;
         p = p->next;
-        free( q );
+        delete q;//free( q );
     }
 }
 

@@ -116,7 +116,7 @@ void delete_term1( P4POLYNOM1 p )
     {
         q = p;
         p = p->next_term1;
-        free( q );
+        delete q;//free( q );
     }
 }
 
@@ -132,7 +132,7 @@ void delete_term2( P4POLYNOM2 p )
     {
         q = p;
         p = p->next_term2;
-        free( q );
+        delete q;//free( q );
     }
 }
 
@@ -148,7 +148,7 @@ void delete_term3( P4POLYNOM3 p )
     {
         q = p;
         p = p->next_term3;
-        free( q );
+        delete q;//free( q );
     }
 }
 

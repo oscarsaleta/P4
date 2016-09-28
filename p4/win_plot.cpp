@@ -171,7 +171,7 @@ QPlotWnd::~QPlotWnd()
             delete ZoomWindows[i];
             ZoomWindows[i] = NULL;
         }
-        free( ZoomWindows );
+        delete ZoomWindows;//free( ZoomWindows );
         ZoomWindows = NULL;
         numZooms = 0;
     }
@@ -404,7 +404,7 @@ void QPlotWnd::CloseZoomWindow( int id )
     numZooms--;
     if( numZooms == 0 )
     {
-        free( ZoomWindows );
+        delete ZoomWindows;//free( ZoomWindows );
         ZoomWindows = NULL;
     }
 }
@@ -428,7 +428,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         data1 = (double *)(e->data());
         
         OpenZoomWindow( data1[0], data1[1], data1[2], data1[3] );
-        free( data1 );
+        delete data1;//free( data1 );
         return;
     }
 
@@ -437,7 +437,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         int * data2;
         data2 = (int *)(e->data());
         CloseZoomWindow( *data2 );
-        free( data2 );
+        delete data2;//free( data2 );
         return;
     }
 
@@ -445,7 +445,7 @@ void QPlotWnd::customEvent( QEvent * _e )
     {
         oet = (int *)(e->data());
         Orbits_Window->OrbitEvent( *oet );
-        free(oet);
+        delete oet;//free(oet);
         return;
     }
 
@@ -455,7 +455,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         x = p->x;
         y = p->y;
         void * win = *((void **)(p+1));
-        free( p );
+        delete p;//free( p );
 
         // mouse clicked in position (x,y)  (world coordinates)
 
@@ -482,7 +482,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         x1 = p->x;
         y1 = p->y;
         p--;
-        free( p );
+        delete p;//free( p );
 
         MATHFUNC(viewcoord_to_sphere)(x0,y0,pcoord);
         MATHFUNC(sphere_to_R2)(pcoord[0],pcoord[1],pcoord[2],ucoord0);
@@ -509,7 +509,7 @@ void QPlotWnd::customEvent( QEvent * _e )
     {
         oet = (int *)(e->data());
         Sep_Window->SepEvent( *oet );
-        free(oet);
+        delete oet;//free(oet);
         return;
     }
 

@@ -170,7 +170,7 @@ void DeleteLastOrbit( QWinSphere * spherewnd )
         VFResults.current_orbit->next_orbit = NULL;
     }
     VFResults.DeleteOrbitPoint( orbit2->f_orbits ); 
-    free( orbit2 );
+    delete orbit2;//free( orbit2 );
 }
 
 

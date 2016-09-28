@@ -275,13 +275,13 @@ void QWinSphere::SetupPlot( void )
     {
         t = CircleAtInfinity;
         CircleAtInfinity = t->next;
-        free( t );
+        delete t;//free( t );
     }
     while( PLCircle != NULL )
     {
         t = PLCircle;
         PLCircle = t->next;
-        free( t );
+        delete t;//free( t );
     }
 
     if( !iszoom )
@@ -346,13 +346,13 @@ QWinSphere::~QWinSphere()
     {
         t = CircleAtInfinity;
         CircleAtInfinity = t->next;
-        free( t );
+        delete t;//free( t );
     }
     while( PLCircle != NULL )
     {
         t = PLCircle;
         PLCircle = t->next;
-        free( t );
+        delete t;//free( t );
     }
 
     for( i = 0; i < numSpheres; i++ )
@@ -557,13 +557,13 @@ void QWinSphere::adjustToNewSize(void)
     {
         t = CircleAtInfinity;
         CircleAtInfinity = t->next;
-        free( t );
+        delete t;//free( t );
     }
     while( PLCircle != NULL )
     {
         t = PLCircle;
         PLCircle = t->next;
-        free( t );
+        delete t;//free( t );
     }
     if( VFResults.typeofview == TYPEOFVIEW_SPHERE )
     {
@@ -1038,7 +1038,7 @@ void QWinSphere::mouseReleaseEvent( QMouseEvent * e )
             SaveAnchorMap();
             selectingZoom = false;
 
-            double * data1 = (double *)malloc( sizeof(double) * 4 );
+            double * data1 = new double[4];//(double *)malloc( sizeof(double) * 4 );
             data1[0] = coWorldX( zoomAnchor1.x() );
             data1[1] = coWorldY( zoomAnchor1.y() );
             data1[2] = coWorldX( zoomAnchor2.x() );
@@ -1052,7 +1052,7 @@ void QWinSphere::mouseReleaseEvent( QMouseEvent * e )
             SaveAnchorMap();
             selectingLCSection = false;
 
-            double * data1 = (double *)malloc( sizeof(double) * 4 );
+            double * data1 = new double[4];//(double *)malloc( sizeof(double) * 4 );
             data1[0] = coWorldX( lcAnchor1.x() );
             data1[1] = coWorldY( lcAnchor1.y() );
             data1[2] = coWorldX( lcAnchor2.x() );
@@ -1155,7 +1155,7 @@ void QWinSphere::SelectNearestSingularity( QPoint winpos )
         msgBar->showMessage( "Search nearest critical point: Found" );
 
         int * data1;
-        data1 = (int *)malloc( sizeof(int) );
+        data1 = new int;//(int *)malloc( sizeof(int) );
         *data1 = -1;
         QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_SEP_EVENT, data1 );
         p4app->postEvent( parentWnd, e1 );

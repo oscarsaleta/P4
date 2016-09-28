@@ -439,5 +439,5 @@ void DeleteLastLimitCycle( QWinSphere * spherewnd )
         VFResults.current_lim_cycle->next_orbit = NULL;
     }
     VFResults.DeleteOrbitPoint( orbit2->f_orbits ); 
-    free( orbit2 );
+    delete orbit2;//free( orbit2 );
 }
