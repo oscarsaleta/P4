@@ -4,7 +4,7 @@
 #include "table.h"
 #include "math_p4.h"
 
-#define p4_isnan    isnan
+#define p4_isnan    std::isnan
 #define p4_finite   finite
 
 extern QString CurrentSingularityInfo[4];       // see win_separatrices.cpp

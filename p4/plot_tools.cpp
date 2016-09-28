@@ -7,7 +7,7 @@
 #include "math_p4.h"
 #include "win_sphere.h"
 
-#define p4_isnan       isnan
+#define p4_isnan       std::isnan
 #define p4_finite      finite
 
 struct P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a, double b, bool dotted, double resa, double resb )

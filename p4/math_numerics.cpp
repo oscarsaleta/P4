@@ -12,7 +12,7 @@
 #include <math.h>
 #include <float.h>
 
-#define p4_isnan		isnan		// used to be this function
+#define p4_isnan		std::isnan		// used to be this function
 #define p4_finite		finite
 
 static double PRECISION1 = 1e-16;
