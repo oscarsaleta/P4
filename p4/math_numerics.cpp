@@ -9,10 +9,10 @@
 //
 // -----------------------------------------------------------------------
 
-#include <math.h>
+#include <cmath>
 #include <float.h>
 
-#define p4_isnan		std::isnan		// used to be this function
+//#define std::isnan(x)		(std::isnan(x))		// used to be this function
 #define p4_finite		finite
 
 static double PRECISION1 = 1e-16;
@@ -298,12 +298,12 @@ void rk78( void (*deriv)( double *, double * ), double y[2], double * hh,
 		}
 		d=d/2;
 		e3=e1*(1.0+dd*1.E-2); 
-        if( ((fabs(h)<=hmi)||(d<e3)) && !p4_isnan(f[0]) && !p4_isnan(f[1]) && p4_finite(f[0]) && p4_finite(f[1]) )
+        if( ((fabs(h)<=hmi)||(d<e3)) && !(std::isnan(f[0])) && !(std::isnan(f[1])) && p4_finite(f[0]) && p4_finite(f[1]) )
 			break;
 		
 		h = h*0.9*sqrt(sqrt(sqrt(e3/d)));
 
-	    if((fabs(h)<hmi) || p4_isnan(h) || !p4_finite(h) )  /* h=hmi*h/fabs(h); */
+        if((fabs(h)<hmi) || std::isnan(h) || !p4_finite(h) )  /* h=hmi*h/fabs(h); */
 			h=hmi*direction;
 	}
 	if( d < e3 / 512 )
@@ -316,7 +316,7 @@ void rk78( void (*deriv)( double *, double * ), double y[2], double * hh,
 	if( fabs(h) > hma )
 		h = hma*direction;
 
-	if((fabs(h)<hmi) || p4_isnan(h) || !p4_finite(h) )
+    if((fabs(h)<hmi) || std::isnan(h) || !p4_finite(h) )
 		h = hmi*direction;
 	*hh = h;
 }

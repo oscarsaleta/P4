@@ -1,10 +1,10 @@
 #include <qobject.h>
-#include <math.h>
+#include <cmath>
 #include "custom.h"
 #include "table.h"
 #include "math_p4.h"
 
-#define p4_isnan    std::isnan
+//#define std::isnan    std::isnan
 #define p4_finite   finite
 
 extern QString CurrentSingularityInfo[4];       // see win_separatrices.cpp
@@ -63,7 +63,7 @@ static double find_distance_saddle(struct saddle *point, double x, double y,
             MATHFUNC(sphere_to_viewcoord)(pcoord[0],pcoord[1],pcoord[2],ucoord);
 
             d=(x-ucoord[0])*(x-ucoord[0])+(y-ucoord[1])*(y-ucoord[1]);
-            if((d<distance && !p4_isnan(d) && p4_finite(d) ) || (distance==-1))
+            if((d<distance && !std::isnan(d) && p4_finite(d) ) || (distance==-1))
             {
                 distance=d;
                 VFResults.selected_saddle_point=point;
@@ -101,7 +101,7 @@ static double find_distance_se(struct semi_elementary *point, double x,
                 }
                 MATHFUNC(sphere_to_viewcoord)(pcoord[0],pcoord[1],pcoord[2],ucoord);
                 d=(x-ucoord[0])*(x-ucoord[0])+(y-ucoord[1])*(y-ucoord[1]);
-                if((d<distance && !p4_isnan(d) && p4_finite(d) ) || (distance==-1))
+                if((d<distance && !std::isnan(d) && p4_finite(d) ) || (distance==-1))
                 {
                     distance=d;
                     VFResults.selected_se_point=point;
@@ -141,7 +141,7 @@ static double find_distance_de(struct degenerate *point, double x, double y,
             }
             MATHFUNC(sphere_to_viewcoord)(pcoord[0],pcoord[1],pcoord[2],ucoord);          
             d=(x-ucoord[0])*(x-ucoord[0])+(y-ucoord[1])*(y-ucoord[1]);
-            if((d<distance && !p4_isnan(d) && p4_finite(d) ) || (distance==-1))
+            if((d<distance && !std::isnan(d) && p4_finite(d) ) || (distance==-1))
             if((d<distance) || (distance==-1))
             {
                 distance=d;

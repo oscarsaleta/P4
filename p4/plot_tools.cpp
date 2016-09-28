@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 #include <float.h>
 #include <qpainter.h>
 #include "custom.h"
@@ -7,7 +7,7 @@
 #include "math_p4.h"
 #include "win_sphere.h"
 
-#define p4_isnan       std::isnan
+//#define std::isnan       std::isnan
 #define p4_finite      finite
 
 struct P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a, double b, bool dotted, double resa, double resb )
@@ -368,7 +368,7 @@ bool LineRectangleIntersect( double & x1, double & y1, double & x2, double & y2,
 {
     double dx, dy;
 
-    if( p4_isnan(x1) || p4_isnan(x2) || p4_isnan(y1) || p4_isnan(y2) ||
+    if( std::isnan(x1) || std::isnan(x2) || std::isnan(y1) || std::isnan(y2) ||
         !p4_finite(x1) || !p4_finite(x2) || !p4_finite(y1) || !p4_finite(y2) )
     {
         return false;
