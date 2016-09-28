@@ -438,17 +438,15 @@ void find_slopes( double * vec_slope, double * sep_slope, double * diff_slope,
 
 void read_term2( FILE * fp, struct term2 * current_term2, int l )
 {
-  int i;
-  fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,
-             &current_term2->coeff);
-  current_term2->next_term2=NULL;
-  for(i=2;i<=l;i++)  {
-   current_term2->next_term2=(struct term2 *) malloc (sizeof(struct term2));
-   current_term2=current_term2->next_term2;
-   fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,
-             &current_term2->coeff);
-   current_term2->next_term2=NULL; 
-   }
+    int i;
+    fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff);
+    current_term2->next_term2 = NULL;
+    for(i=2;i<=l;i++) {
+        current_term2->next_term2 = new term2;//(struct term2 *) malloc (sizeof(struct term2));
+        current_term2 = current_term2->next_term2;
+        fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff);
+        current_term2->next_term2 = NULL; 
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -457,15 +455,15 @@ void read_term2( FILE * fp, struct term2 * current_term2, int l )
 
 void read_term1( FILE * fp, struct term1 * current_term1, int l )
 {
-  int i;
-  fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
-  current_term1->next_term1=NULL;
-  for(i=2;i<=l;i++)  {
-   current_term1->next_term1=(struct term1 *) malloc (sizeof(struct term1));
-   current_term1=current_term1->next_term1;
-   fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
-   current_term1->next_term1=NULL; 
-   }
+    int i;
+    fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
+    current_term1->next_term1 = NULL;
+    for(i=2;i<=l;i++) {
+        current_term1->next_term1 = new term1;//(struct term1 *) malloc (sizeof(struct term1));
+        current_term1=current_term1->next_term1;
+        fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
+        current_term1->next_term1 = NULL; 
+    }
 }
 
 // --------------------------------------------------------------------------
@@ -474,25 +472,25 @@ void read_term1( FILE * fp, struct term1 * current_term1, int l )
 
 double read_sep( const char * file )
 { 
-  FILE *fp;
-  int l;
-  double epsilon;
+    FILE *fp;
+    int l;
+    double epsilon;
 
-  fp=fopen(file,"r");
-  fscanf(fp,"%lf \n\n",&epsilon);
-  fscanf(fp,"%d \n\n",&direction);
-  fscanf(fp,"%d\n\n",&stable);
-  fscanf(fp,"%i \n\n",&l);
-  vec_field[0]=(struct term2 *) malloc (sizeof(struct term2));
-  read_term2(fp,vec_field[0],l);
-  fscanf(fp,"%i \n\n",&l);
-  vec_field[1]=(struct term2 *) malloc (sizeof(struct term2));
-  read_term2(fp,vec_field[1],l);
-  fscanf(fp,"%i \n\n",&l);
-  separatrice=(struct term1 *) malloc (sizeof(struct term1));
-  read_term1(fp,separatrice,l);
-  fclose(fp);
-  return(epsilon);
+    fp=fopen(file,"r");
+    fscanf(fp,"%lf \n\n",&epsilon);
+    fscanf(fp,"%d \n\n",&direction);
+    fscanf(fp,"%d\n\n",&stable);
+    fscanf(fp,"%i \n\n",&l);
+    vec_field[0] = new term2;//(struct term2 *) malloc (sizeof(struct term2));
+    read_term2(fp,vec_field[0],l);
+    fscanf(fp,"%i \n\n",&l);
+    vec_field[1] = new term2;//(struct term2 *) malloc (sizeof(struct term2));
+    read_term2(fp,vec_field[1],l);
+    fscanf(fp,"%i \n\n",&l);
+    separatrice = new term2;//(struct term1 *) malloc (sizeof(struct term1));
+    read_term1(fp,separatrice,l);
+    fclose(fp);
+    return(epsilon);
 }
 
 #ifdef LOGACTIVITY
