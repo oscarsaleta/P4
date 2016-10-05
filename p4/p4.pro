@@ -3,6 +3,7 @@ QT += widgets
 QT += printsupport
 CONFIG += qt
 CONFIG += static
+CONFIG += c++11
 
 SOURCES += win_view.cpp \
     win_vf.cpp \

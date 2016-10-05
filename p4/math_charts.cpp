@@ -1032,7 +1032,7 @@ void eval_r_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf != NULL )
+    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf != nullptr )
         s = eval_term2( VFResults.gcf, y );
 
     f[0] = s * eval_term2( VFResults.f_vec_field[0], y );
@@ -1043,7 +1043,7 @@ void eval_U1_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U1 != NULL )
+    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U1 != nullptr )
         s = eval_term2( VFResults.gcf_U1, y );
 
     if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
@@ -1057,7 +1057,7 @@ void eval_U2_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U2 != NULL )
+    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U2 != nullptr )
         s = eval_term2( VFResults.gcf_U2, y );
 
     if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
@@ -1071,7 +1071,7 @@ void eval_V1_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V1 != NULL )
+    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V1 != nullptr )
         s = eval_term2( VFResults.gcf_V1, y );
 
     if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
@@ -1085,7 +1085,7 @@ void eval_V2_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V2 != NULL )
+    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V2 != nullptr )
         s = eval_term2( VFResults.gcf_V2, y );
 
     if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
@@ -1099,7 +1099,7 @@ void eval_vec_field_cyl( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_C != NULL )
+    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_C != nullptr )
         s = eval_term3( VFResults.gcf_C, y );
     
     f[0] = s * eval_term3( VFResults.vec_field_C[0], y );

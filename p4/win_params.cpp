@@ -370,14 +370,14 @@ void QParamsDlg::GetDataFromDlg( void )
 void QParamsDlg::UpdateDlgData( void )
 {
     if( ThisVF->numeric )
-        ExclusiveToggle( true, btn_num, btn_alg, NULL );
+        ExclusiveToggle( true, btn_num, btn_alg, nullptr );
     else
-        ExclusiveToggle( true, btn_alg, btn_num, NULL );
+        ExclusiveToggle( true, btn_alg, btn_num, nullptr );
 
     if( ThisVF->testsep )
-        ExclusiveToggle( true, btn_sepyes, btn_sepno, NULL );
+        ExclusiveToggle( true, btn_sepyes, btn_sepno, nullptr );
     else
-        ExclusiveToggle( true, btn_sepno, btn_sepyes, NULL );
+        ExclusiveToggle( true, btn_sepno, btn_sepyes, nullptr );
 
     spin_level->setValue( ThisVF->taylorlevel );
     spin_numlevel->setValue( ThisVF->numericlevel );

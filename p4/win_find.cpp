@@ -26,15 +26,15 @@ QFindDlg::~QFindDlg()
 {
     GetDataFromDlg();
 
-    if( Vf_Window != NULL )
+    if( Vf_Window != nullptr )
     {
         delete Vf_Window;
-        Vf_Window = NULL;
+        Vf_Window = nullptr;
     }
-    if( Params_Window != NULL )
+    if( Params_Window != nullptr )
     {
         delete Params_Window;
-        Params_Window = NULL;
+        Params_Window = nullptr;
     }
 }
 
@@ -254,8 +254,8 @@ QFindDlg::QFindDlg( QStartDlg * startdlg )
 
     // finishing
 
-    Vf_Window = NULL;
-    Params_Window = NULL;
+    Vf_Window = nullptr;
+    Params_Window = nullptr;
 
 #ifdef AUTO_OPEN_VFWINDOW
     OnBtnVf();
@@ -343,7 +343,7 @@ void QFindDlg::btn_all_toggled( bool on )
                 ThisVF->changed = true;
                 p4app->Signal_Changed();
             }
-            if( Params_Window != NULL )
+            if( Params_Window != nullptr )
             {
                 Params_Window->GetDataFromDlg();
                 Params_Window->UpdateDlgData();
@@ -364,7 +364,7 @@ void QFindDlg::btn_fin_toggled( bool on )
                 ThisVF->changed = true;
                 p4app->Signal_Changed();
             }
-            if( Params_Window != NULL )
+            if( Params_Window != nullptr )
             {
                 Params_Window->GetDataFromDlg();
                 Params_Window->UpdateDlgData();
@@ -385,7 +385,7 @@ void QFindDlg::btn_inf_toggled( bool on )
                 ThisVF->changed = true;
                 p4app->Signal_Changed();
             }
-            if( Params_Window != NULL )
+            if( Params_Window != nullptr )
             {
                 Params_Window->GetDataFromDlg();
                 Params_Window->UpdateDlgData();
@@ -406,7 +406,7 @@ void QFindDlg::btn_one_toggled( bool on )
                 ThisVF->changed = true;
                 p4app->Signal_Changed();
             }
-            if( Params_Window != NULL )
+            if( Params_Window != nullptr )
             {
                 Params_Window->GetDataFromDlg();
                 Params_Window->UpdateDlgData();
@@ -422,7 +422,7 @@ void QFindDlg::ExclusiveToggle( bool on, QRadioButton * first, ... )
 
 void QFindDlg::OnBtnParams( void )
 {
-    if( Params_Window == NULL )
+    if( Params_Window == nullptr )
     {
         Params_Window = new QParamsDlg( this );
         Params_Window->show();
@@ -436,7 +436,7 @@ void QFindDlg::OnBtnParams( void )
     {
 #ifdef DOCK_PARAMSWINDOW
         delete Params_Window;
-        Params_Window = NULL;
+        Params_Window = nullptr;
 #else
         Params_Window->show();
         Params_Window->raise();
@@ -448,7 +448,7 @@ void QFindDlg::OnBtnVf( void )
 {
     // show find dialog
 
-    if( Vf_Window == NULL )
+    if( Vf_Window == nullptr )
     {
         Vf_Window = new QVectorFieldDlg( this );
 #ifdef DOCK_VFWINDOW
@@ -462,7 +462,7 @@ void QFindDlg::OnBtnVf( void )
     {
 #ifdef DOCK_VFWINDOW
         delete Vf_Window;
-        Vf_Window = NULL;
+        Vf_Window = nullptr;
 #else
         Vf_Window->show();
         Vf_Window->raise();
@@ -600,11 +600,11 @@ void QFindDlg::OnBtnEval( void )
 
 void QFindDlg::GetDataFromDlg( void )
 {
-    if( Vf_Window != NULL )
+    if( Vf_Window != nullptr )
     {
         Vf_Window->GetDataFromDlg();
     }
-    if( Params_Window != NULL )
+    if( Params_Window != nullptr )
     {
         Params_Window->GetDataFromDlg();
     }
@@ -620,11 +620,11 @@ void QFindDlg::UpdateDlgData( void )
     case TYPEOFSTUDY_ONE:   ExclusiveToggle( true, btn_one ); break;
     }
     
-    if( Vf_Window != NULL )
+    if( Vf_Window != nullptr )
     {
         Vf_Window->UpdateDlgData();
     }
-    if( Params_Window != NULL )
+    if( Params_Window != nullptr )
     {
         Params_Window->UpdateDlgData();
     }

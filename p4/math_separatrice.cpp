@@ -4,11 +4,11 @@
 #include "table.h"
 #include "math_p4.h"
 
-void (* change_epsilon)( QWinSphere *, double ) = NULL;
-void (*start_plot_sep)( QWinSphere * ) = NULL;
-void (*cont_plot_sep)( QWinSphere * ) = NULL;
-void (*plot_next_sep)( QWinSphere * ) = NULL;
-void (*select_next_sep)( QWinSphere * ) = NULL;
+void (* change_epsilon)( QWinSphere *, double ) = nullptr;
+void (*start_plot_sep)( QWinSphere * ) = nullptr;
+void (*cont_plot_sep)( QWinSphere * ) = nullptr;
+void (*plot_next_sep)( QWinSphere * ) = nullptr;
+void (*select_next_sep)( QWinSphere * ) = nullptr;
 
 int FindSepColor(struct term2 *f,int type,double y[2])
 {
@@ -188,7 +188,7 @@ static struct orbits_points *integrate_sep( QWinSphere * spherewnd, double pcoor
     int color,dashes;
     double hhi;
     double pcoord2[3],h_min,h_max;
-    struct orbits_points *first_orbit=NULL,*last_orbit=NULL;
+    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr;
 
     /* if we intergrate a separatrice and use the original vector field
     then it is possible that we have to change the direction of the
@@ -208,7 +208,7 @@ static struct orbits_points *integrate_sep( QWinSphere * spherewnd, double pcoor
      
         if( (i % UPDATEFREQ_STEPSIZE) == 0 )
             set_current_step(fabs(hhi));
-        if(last_orbit==NULL) {
+        if(last_orbit==nullptr) {
             first_orbit= new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
             last_orbit=first_orbit; 
             h=dir;
@@ -223,7 +223,7 @@ static struct orbits_points *integrate_sep( QWinSphere * spherewnd, double pcoor
         last_orbit->dashes=dashes * VFResults.config_dashes;
         last_orbit->dir=d*h;
         last_orbit->type=type;
-        last_orbit->next_point=NULL;
+        last_orbit->next_point=nullptr;
         if(dashes * VFResults.config_dashes)
             (*plot_l)(spherewnd,pcoord,pcoord2,color);
         else
@@ -316,7 +316,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
 {
     double t=0.0,h,y,pcoord[3],pcoord2[3],point[2];
     int i,dashes,ok=true;
-    struct orbits_points *first_orbit=NULL,*last_orbit=NULL,*sep2;
+    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr,*sep2;
     int color,dir,type;
 
     /* if we have a line of singularities at infinity then we have to change the
@@ -493,7 +493,7 @@ void make_transformations(struct transformations * trans, double x0, double y0, 
 
     x=x0;
     y=y0;
-    while (trans!=NULL) {
+    while (trans!=nullptr) {
         point[0] = trans->x0 + (double)trans->c1 * power(x,(double)trans->d1) * power(y,(double)trans->d2);
         point[1] = trans->y0 + (double)trans->c2 * power(x,(double)trans->d3) * power(y,(double)trans->d4);
         x=point[0];
@@ -511,7 +511,7 @@ static struct orbits_points * plot_sep_blow_up(
 {
     double h,t=0,y,pcoord[3],pcoord2[3],point[2];
     int i,color,dir,dashes,type,ok=true;
-    struct orbits_points *first_orbit=NULL,*last_orbit=NULL,*sep;
+    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr,*sep;
 
     /* if we have a line of singularities at infinity then we have to change the
     chart if the chart is V1 or V2 */
@@ -719,7 +719,7 @@ static void plot_all_saddle_sep(QWinSphere * spherewnd, struct saddle *point)
     struct orbits_points *points;
     double p[3];
 
-    while(point != NULL) {
+    while(point != nullptr) {
         if ( point->notadummy ) {
             sep1 = point->separatrices;
             while(sep1) {
@@ -799,12 +799,12 @@ static void plot_all_se_sep(QWinSphere * spherewnd, struct semi_elementary *poin
     struct orbits_points *points;
     double p[3];
 
-    while(point!=NULL)
+    while(point!=nullptr)
     {
         if(point->notadummy)
         {
             sep1=point->separatrices;
-            while( sep1 != NULL )
+            while( sep1 != nullptr )
             {
                 if(sep1->last_sep_point)
                 {
@@ -941,12 +941,12 @@ static void plot_all_de_sep( QWinSphere * spherewnd, struct degenerate *point)
     struct orbits_points *sep;
     double p[3];
 
-    while(point != NULL)
+    while(point != nullptr)
     {
         if(point->notadummy)
         {
             de_sep=point->blow_up;
-            while(de_sep != NULL)
+            while(de_sep != nullptr)
             {
                 if(de_sep->last_sep_point)
                 {
@@ -988,7 +988,7 @@ void draw_sep( QWinSphere * spherewnd, struct orbits_points *sep )
             else
                 (*plot_p)(spherewnd, sep->pcoord,sep->color);
             copy_x_into_y(sep->pcoord,pcoord);
-        } while ( (sep = sep->next_point) != NULL );
+        } while ( (sep = sep->next_point) != nullptr );
 }
 
 void draw_selected_sep( QWinSphere * spherewnd, struct orbits_points *sep,int color)
@@ -1002,7 +1002,7 @@ void draw_selected_sep( QWinSphere * spherewnd, struct orbits_points *sep,int co
         else
             (*plot_p)(spherewnd, sep->pcoord,color);
         copy_x_into_y(sep->pcoord,pcoord);
-        } while ( (sep = sep->next_point) != NULL );
+        } while ( (sep = sep->next_point) != nullptr );
 }
 
 void change_epsilon_saddle( QWinSphere * spherewnd, double epsilon)
@@ -1011,11 +1011,11 @@ void change_epsilon_saddle( QWinSphere * spherewnd, double epsilon)
 
     VFResults.selected_saddle_point->epsilon = epsilon;
     separatrice = VFResults.selected_saddle_point->separatrices;
-    while (separatrice!=NULL) {
+    while (separatrice!=nullptr) {
         draw_selected_sep(spherewnd,separatrice->first_sep_point,CBACKGROUND);
         VFResults.DeleteOrbitPoint(separatrice->first_sep_point);
-        separatrice->last_sep_point = NULL;
-        separatrice->first_sep_point = NULL;
+        separatrice->last_sep_point = nullptr;
+        separatrice->first_sep_point = nullptr;
         separatrice = separatrice->next_sep;
     }
 }
@@ -1026,11 +1026,11 @@ void change_epsilon_se( QWinSphere * spherewnd, double epsilon)
 
     VFResults.selected_se_point->epsilon=epsilon;
     separatrice=VFResults.selected_se_point->separatrices;
-    while( separatrice != NULL) {
+    while( separatrice != nullptr) {
         draw_selected_sep(spherewnd,separatrice->first_sep_point,CBACKGROUND);
         VFResults.DeleteOrbitPoint(separatrice->first_sep_point);
-        separatrice->last_sep_point = NULL;
-        separatrice->first_sep_point = NULL;
+        separatrice->last_sep_point = nullptr;
+        separatrice->first_sep_point = nullptr;
         separatrice=separatrice->next_sep;
     }
 }
@@ -1041,11 +1041,11 @@ void change_epsilon_de( QWinSphere * spherewnd, double epsilon)
 
     VFResults.selected_de_point->epsilon=epsilon;
     separatrice=VFResults.selected_de_point->blow_up;
-    while (separatrice != NULL) {
+    while (separatrice != nullptr) {
         draw_selected_sep(spherewnd, separatrice->first_sep_point,CBACKGROUND);
         VFResults.DeleteOrbitPoint(separatrice->first_sep_point);
-        separatrice->last_sep_point=NULL;
-        separatrice->first_sep_point=NULL;
+        separatrice->last_sep_point=nullptr;
+        separatrice->first_sep_point=nullptr;
         separatrice=separatrice->next_blow_up_point;
     }
 }

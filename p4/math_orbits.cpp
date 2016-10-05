@@ -39,7 +39,7 @@ void IntegrateOrbit( QWinSphere * sphere, int dir )
         if(eval_term2(VFResults.gcf,ucoord) < 0)
             dir = -dir;
 
-    if( VFResults.current_orbit->f_orbits == NULL )
+    if( VFResults.current_orbit->f_orbits == nullptr )
     {
         VFResults.current_orbit->f_orbits =
                     integrate_orbit(sphere,pcoord,VFResults.config_step,dir,CORBIT,VFResults.config_intpoints,&sep);
@@ -69,7 +69,7 @@ bool StartOrbit( QWinSphere * sphere, double x, double y, bool R )
     double pcoord[3];
     double ucoord[2];
 
-    if( VFResults.first_orbit == NULL )
+    if( VFResults.first_orbit == nullptr )
     {
         VFResults.first_orbit = new orbits;//(struct orbits *)malloc( sizeof(struct orbits) );
         VFResults.current_orbit = VFResults.first_orbit;
@@ -86,8 +86,8 @@ bool StartOrbit( QWinSphere * sphere, double x, double y, bool R )
 
     copy_x_into_y( pcoord, VFResults.current_orbit->pcoord );
     VFResults.current_orbit->color = CORBIT;
-    VFResults.current_orbit->f_orbits = NULL;
-    VFResults.current_orbit->next_orbit = NULL;
+    VFResults.current_orbit->f_orbits = nullptr;
+    VFResults.current_orbit->next_orbit = nullptr;
 
     MATHFUNC(sphere_to_viewcoord)( pcoord[0], pcoord[1], pcoord[2], ucoord );
     sphere->drawPoint( ucoord[0], ucoord[1], CORBIT );
@@ -106,7 +106,7 @@ void DrawOrbit( QWinSphere * spherewnd, double * pcoord, struct orbits_points * 
     copy_x_into_y( pcoord, pcoord1 );
     (*plot_p)( spherewnd, pcoord, color );
     
-    while( points!=NULL )
+    while( points!=nullptr )
     {
         if(points->dashes)
         {
@@ -131,7 +131,7 @@ void DrawOrbits( QWinSphere * spherewnd )
 {
     struct orbits * orbit;
 
-    for( orbit = VFResults.first_orbit; orbit != NULL; orbit = orbit->next_orbit )
+    for( orbit = VFResults.first_orbit; orbit != nullptr; orbit = orbit->next_orbit )
     {
         DrawOrbit( spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color );
     }
@@ -145,7 +145,7 @@ void DeleteLastOrbit( QWinSphere * spherewnd )
 {
     struct orbits *orbit1,*orbit2;
 
-    if( VFResults.current_orbit == NULL )
+    if( VFResults.current_orbit == nullptr )
         return;
 
     orbit2 = VFResults.current_orbit;
@@ -153,8 +153,8 @@ void DeleteLastOrbit( QWinSphere * spherewnd )
 
     if( VFResults.first_orbit == VFResults.current_orbit )
     {
-        VFResults.first_orbit = NULL;
-        VFResults.current_orbit = NULL;
+        VFResults.first_orbit = nullptr;
+        VFResults.current_orbit = nullptr;
     }
     else
     {
@@ -167,10 +167,11 @@ void DeleteLastOrbit( QWinSphere * spherewnd )
         }
         while( orbit1 != orbit2 );
         
-        VFResults.current_orbit->next_orbit = NULL;
+        VFResults.current_orbit->next_orbit = nullptr;
     }
     VFResults.DeleteOrbitPoint( orbit2->f_orbits ); 
     delete orbit2;//free( orbit2 );
+    orbit2 = nullptr;
 }
 
 
@@ -264,7 +265,7 @@ struct orbits_points * integrate_orbit(QWinSphere * spherewnd, double pcoord[3],
     int dashes;
     double hhi;
     double pcoord2[3],h_min,h_max;
-    struct orbits_points *first_orbit=NULL,*last_orbit=NULL;
+    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr;
 
     hhi=(double)dir*step;
     h_min=VFResults.config_hmi;
@@ -278,7 +279,7 @@ struct orbits_points * integrate_orbit(QWinSphere * spherewnd, double pcoord[3],
         if( (i % UPDATEFREQ_STEPSIZE) == 0 )
             set_current_step(fabs(hhi));
 
-        if(last_orbit==NULL)
+        if(last_orbit==nullptr)
         {
             first_orbit = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
             last_orbit = first_orbit;
@@ -295,7 +296,7 @@ struct orbits_points * integrate_orbit(QWinSphere * spherewnd, double pcoord[3],
         last_orbit->color=color;
         last_orbit->dashes=dashes * VFResults.config_dashes;
         last_orbit->dir=d*h;
-        last_orbit->next_point=NULL;
+        last_orbit->next_point=nullptr;
         if(dashes * VFResults.config_dashes)
             (*plot_l)(spherewnd,pcoord,pcoord2,color);
         else

@@ -30,7 +30,7 @@
     -----------------------------------------------------------------------------
 */
 
-QInputVF * ThisVF = NULL;
+QInputVF * ThisVF = nullptr;
 QVFStudy VFResults;
 QString P4Version;
 QString P4VersionDate;
@@ -38,11 +38,11 @@ QString P4Platform;
 
 bool action_OnlyPrepareFile = false;    // in the find menu (this is not saved in the .inp file)
 bool action_SaveAll = DEFAULTSAVEALL;   // in the find menu (this is not saved in the .inp file)
-QP4Application * p4app = NULL;
-QStartDlg * p4startdlg = NULL;
-QPixmap * p4smallicon = NULL;
+QP4Application * p4app = nullptr;
+QStartDlg * p4startdlg = nullptr;
+QPixmap * p4smallicon = nullptr;
 
-QPrinter * p4printer = NULL;
+QPrinter * p4printer = nullptr;
 
 extern QString GetP4BinPath();
 
@@ -137,7 +137,7 @@ int main( int argc, char *argv[] )
     if( p4smallicon->load( GetP4BinPath() + "/p4smallicon.png" ) == false )
     {
         delete p4smallicon;
-        p4smallicon = NULL;
+        p4smallicon = nullptr;
     }
 
 //  p4app->setStyle( new QCDEStyle() );
@@ -159,7 +159,9 @@ int main( int argc, char *argv[] )
             if( CmdLine_AutoExit )
             {
                 delete p4printer;
+                p4printer = nullptr;
                 delete p4app;
+                p4app = nullptr;
                 return (-1);
             }
         }
@@ -175,20 +177,21 @@ int main( int argc, char *argv[] )
             "In particular, check if P4 has found the Command-Line Version of MAPLE.\n" );
 
         QSettingsDlg * psettings;
-        psettings = new QSettingsDlg( NULL, 0 );
+        psettings = new QSettingsDlg( nullptr, 0 );
         psettings->exec();
         delete psettings;
+        psettings = nullptr;
     }
 
     returnvalue = p4app->exec();
     
     delete p4printer;
-    p4printer = NULL;
+    p4printer = nullptr;
 
     SaveP4Settings();
 
     delete p4app;
-    p4app = NULL;
+    p4app = nullptr;
     return returnvalue;
 }
 
@@ -244,7 +247,7 @@ void QP4Application::Signal_Changed( void )
     ThisVF->evaluated = false;
     ThisVF->changed = true;
 
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_CHANGED, NULL );
+    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr );
     p4app->postEvent( p4startdlg, e );
 }
 
@@ -255,7 +258,7 @@ void QP4Application::Signal_Evaluated( int exitCode )
 
     ThisVF->finishEvaluation(exitCode);
 
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, NULL );
+    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
     p4app->postEvent( p4startdlg, e );
 
     if( CmdLine_AutoExit )
@@ -285,7 +288,7 @@ void QP4Application::Signal_Evaluating( void )
     ThisVF->evaluating = true;
     ThisVF->evaluated = false;
 
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATING, NULL );
+    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATING, nullptr );
     p4app->postEvent( p4startdlg, e );
 }
 
@@ -296,7 +299,7 @@ void QP4Application::cathProcessError( QProcess::ProcessError qperr )
 
 void QP4Application::Signal_Loaded( void )
 {
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_LOADED, NULL );
+    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_LOADED, nullptr );
     p4app->postEvent( p4startdlg, e );
 
     if( CmdLine_AutoEvaluate )
@@ -315,7 +318,7 @@ void QP4Application::Signal_Loaded( void )
 
 void QP4Application::Signal_Saved( void )
 {
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_SAVED, NULL );
+    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_SAVED, nullptr );
     p4app->postEvent( p4startdlg, e );
 }
 

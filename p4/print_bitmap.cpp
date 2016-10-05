@@ -107,7 +107,7 @@ extern void spherePrintPoint( QWinSphere * sp, double * p, int color );
 
 static bool P4PrintBlackWhite = true;
 
-static QPainter * P4PrintPainter = NULL;
+static QPainter * P4PrintPainter = nullptr;
 
 static int P4PrintLineWidth = 0;
 static int P4PrintSymbolWidth = 0;
@@ -441,7 +441,7 @@ void P4Print_print_elips( double x0, double y0, double a, double b, int color, b
     UNUSED(a);
     UNUSED(b);
     UNUSED(dotted);
-    while( ellipse != NULL )
+    while( ellipse != nullptr )
     {
         P4PrintPainter->drawLine( (int)(ellipse->x1), (int)(ellipse->y1), (int)(ellipse->x2), (int)(ellipse->y2) );
         ellipse = ellipse->next;
@@ -544,5 +544,5 @@ void FinishP4Printing( void )
 {
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
-    P4PrintPainter = NULL;
+    P4PrintPainter = nullptr;
 }

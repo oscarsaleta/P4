@@ -211,7 +211,7 @@ bool ReadP4Settings( void )
     }
 
     delete p4settings;
-    p4settings = NULL;
+    p4settings = nullptr;
 
     if( !_ok )
     {
@@ -249,5 +249,5 @@ void SaveP4Settings( void )
 #endif
 
     delete p4settings;
-    p4settings = NULL;
+    p4settings = nullptr;
 }

@@ -22,7 +22,7 @@ QIntParamsDlg::~QIntParamsDlg()
 }
 
 QIntParamsDlg::QIntParamsDlg()
-    : QWidget(NULL,Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
 {
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -316,14 +316,14 @@ void QIntParamsDlg::UpdateDlgData( void )
     changed = false;
 
     if( VFResults.config_kindvf == INTCONFIG_ORIGINAL )
-        ExclusiveToggle( true, btn_org, btn_red, NULL );
+        ExclusiveToggle( true, btn_org, btn_red, nullptr );
     else
-        ExclusiveToggle( true, btn_red, btn_org, NULL );
+        ExclusiveToggle( true, btn_red, btn_org, nullptr );
 
     if( VFResults.config_dashes )
-        ExclusiveToggle( true, btn_dashes, btn_dots, NULL );
+        ExclusiveToggle( true, btn_dashes, btn_dots, nullptr );
     else
-        ExclusiveToggle( true, btn_dots, btn_dashes, NULL );
+        ExclusiveToggle( true, btn_dots, btn_dashes, nullptr );
 
     buf.sprintf( "%g", (float)(VFResults.config_step) );
     edt_stepsize->setText( buf );
@@ -342,7 +342,7 @@ void QIntParamsDlg::UpdateDlgData( void )
 
     spin_numpoints->setValue( VFResults.config_intpoints );
 
-    if( VFResults.gcf != NULL || (VFResults.singinf && VFResults.typeofstudy != TYPEOFSTUDY_ONE) )
+    if( VFResults.gcf != nullptr || (VFResults.singinf && VFResults.typeofstudy != TYPEOFSTUDY_ONE) )
     {
         btn_org->setEnabled(true);
         btn_red->setEnabled(true);

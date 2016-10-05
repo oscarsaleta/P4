@@ -7,24 +7,24 @@
 
 extern int PrintColorTable[NUMXFIGCOLORS];
 
-void (* print_saddle)( double, double ) = NULL;
-void (* print_stablenode)( double, double ) = NULL;
-void (* print_unstablenode)( double, double ) = NULL;
-void (* print_stableweakfocus)( double, double ) = NULL;
-void (* print_unstableweakfocus)( double, double ) = NULL;
-void (* print_weakfocus)( double, double ) = NULL;
-void (* print_stablestrongfocus)( double, double ) = NULL;
-void (* print_unstablestrongfocus)( double, double ) = NULL;
-void (* print_sesaddle)( double, double ) = NULL;
-void (* print_sesaddlenode)( double, double ) = NULL;
-void (* print_sestablenode)( double, double ) = NULL;
-void (* print_seunstablenode)( double, double ) = NULL;
-void (* print_degen)( double, double ) = NULL;
-void (* print_center)( double, double ) = NULL;
-void (* print_elips)( double, double, double, double, int, bool, struct P4POLYLINES * ) = NULL;
-void (* print_line)( double, double, double, double, int ) = NULL;
-void (* print_point)( double, double, int ) = NULL;
-void (* print_comment)( QString ) = NULL;
+void (* print_saddle)( double, double ) = nullptr;
+void (* print_stablenode)( double, double ) = nullptr;
+void (* print_unstablenode)( double, double ) = nullptr;
+void (* print_stableweakfocus)( double, double ) = nullptr;
+void (* print_unstableweakfocus)( double, double ) = nullptr;
+void (* print_weakfocus)( double, double ) = nullptr;
+void (* print_stablestrongfocus)( double, double ) = nullptr;
+void (* print_unstablestrongfocus)( double, double ) = nullptr;
+void (* print_sesaddle)( double, double ) = nullptr;
+void (* print_sesaddlenode)( double, double ) = nullptr;
+void (* print_sestablenode)( double, double ) = nullptr;
+void (* print_seunstablenode)( double, double ) = nullptr;
+void (* print_degen)( double, double ) = nullptr;
+void (* print_center)( double, double ) = nullptr;
+void (* print_elips)( double, double, double, double, int, bool, struct P4POLYLINES * ) = nullptr;
+void (* print_line)( double, double, double, double, int ) = nullptr;
+void (* print_point)( double, double, int ) = nullptr;
+void (* print_comment)( QString ) = nullptr;
 
 // -----------------------------------------------------------------------
 //                          PLOT SINGULAR POINTS
@@ -33,7 +33,7 @@ void (* print_comment)( QString ) = NULL;
 void QWinSphere::printPoint( struct saddle * p )
 {
     double pos[2];
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
         if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
@@ -46,7 +46,7 @@ void QWinSphere::printPoint( struct node * p )
 {
     double pos[2];
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
         
@@ -64,7 +64,7 @@ void QWinSphere::printPoint( struct weak_focus * p )
 {
     double pos[2];
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -93,7 +93,7 @@ void QWinSphere::printPoint( struct strong_focus * p )
 {
     double pos[2];
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -111,7 +111,7 @@ void QWinSphere::printPoint( struct degenerate * p )
 {
     double pos[2];
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -126,7 +126,7 @@ void QWinSphere::printPoint( struct semi_elementary * p )
 {
     double pos[2];
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -158,17 +158,17 @@ void QWinSphere::printPoints( void )
 
     print_comment( "Printing symbols at all singular points:" );
 
-    for( sp = VFResults.first_saddle_point; sp != NULL; sp = sp->next_saddle )
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
         printPoint( sp );
-    for( np = VFResults.first_node_point; np != NULL; np = np->next_node )
+    for( np = VFResults.first_node_point; np != nullptr; np = np->next_node )
         printPoint( np );
-    for( wfp = VFResults.first_wf_point; wfp != NULL; wfp = wfp->next_wf )
+    for( wfp = VFResults.first_wf_point; wfp != nullptr; wfp = wfp->next_wf )
         printPoint( wfp );
-    for( sfp = VFResults.first_sf_point; sfp != NULL; sfp = sfp->next_sf )
+    for( sfp = VFResults.first_sf_point; sfp != nullptr; sfp = sfp->next_sf )
         printPoint( sfp );
-    for( sep = VFResults.first_se_point; sep != NULL; sep = sep->next_se )
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
         printPoint( sep );
-    for( dp = VFResults.first_de_point; dp != NULL; dp = dp->next_de )
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
         printPoint( dp );
 }
 
@@ -176,10 +176,10 @@ void QWinSphere::printPointSeparatrices( struct semi_elementary * p )
 {
     struct sep * separatrice;
     
-    for( separatrice = p->separatrices; separatrice != NULL; separatrice = separatrice->next_sep )
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
     {
         draw_sep( this, separatrice->first_sep_point );
-        if( separatrice->next_sep != NULL )
+        if( separatrice->next_sep != nullptr )
         {
             print_comment( "Next separatrix of degenerate point:" );
         }
@@ -190,10 +190,10 @@ void QWinSphere::printPointSeparatrices( struct saddle * p )
 {
     struct sep * separatrice;
     
-    for( separatrice = p->separatrices; separatrice != NULL; separatrice = separatrice->next_sep )
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
     {
         draw_sep( this, separatrice->first_sep_point );
-        if( separatrice->next_sep != NULL )
+        if( separatrice->next_sep != nullptr )
         {
             print_comment( "Next separatrix of saddle point:" );
         }
@@ -204,10 +204,10 @@ void QWinSphere::printPointSeparatrices( struct degenerate * p )
 {
     struct blow_up_points *blow_up;
 
-    for( blow_up = p->blow_up; blow_up != NULL; blow_up = blow_up->next_blow_up_point )
+    for( blow_up = p->blow_up; blow_up != nullptr; blow_up = blow_up->next_blow_up_point )
     {
         draw_sep( this, blow_up->first_sep_point );
-        if( blow_up->next_blow_up_point != NULL )
+        if( blow_up->next_blow_up_point != nullptr )
         {
             print_comment( "Next separatrix of degenerate point:" );
         }
@@ -221,19 +221,19 @@ void QWinSphere::printSeparatrices( void )
     struct semi_elementary * sep;
     struct degenerate * dp;
 
-    for( sp = VFResults.first_saddle_point; sp != NULL; sp = sp->next_saddle )
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
     {
         comment = "Printing separatrice for saddle singularity:";
         print_comment( comment );
         printPointSeparatrices( sp );
     }
-    for( sep = VFResults.first_se_point; sep != NULL; sep = sep->next_se )
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
     {
         comment = "Printing separatrices for semi-hyperbolic singularity:";
         print_comment( comment );
         printPointSeparatrices( sep );
     }
-    for( dp = VFResults.first_de_point; dp != NULL; dp = dp->next_de )
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
     {
         comment = "Printing separatrices for degenerate singularity:";
         print_comment( comment );
@@ -245,7 +245,7 @@ void QWinSphere::printGcf( void )
 {
     QString comment;
 
-    if( VFResults.gcf_points != NULL )
+    if( VFResults.gcf_points != nullptr )
     {
         comment = "Printing Greatest common factor:";
         print_comment( comment );
@@ -262,7 +262,7 @@ void QWinSphere::printPoincareSphere( void )
     comment = "Printing Poincare Sphere:";
     print_comment( comment );
     p = produceEllipse( 0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0) );
-    for( q = p; q != NULL; q = q->next )
+    for( q = p; q != nullptr; q = q->next )
     {
         q->x1 = coWinX(q->x1);
         q->y1 = coWinY(q->y1);
@@ -271,11 +271,12 @@ void QWinSphere::printPoincareSphere( void )
     }
     print_elips( coWinX(0), coWinY(0), coWinH(1), coWinV(1), VFResults.singinf ? CSING:CLINEATINFINITY, false, p );
 
-    while( p != NULL )
+    while( p != nullptr )
     {
         q = p;
         p = p->next;
-        delete p;//free( q );
+        delete q;//free( q );
+        q = nullptr;
     }
 }
 
@@ -289,7 +290,7 @@ void QWinSphere::printPoincareLyapunovSphere( void )
     print_comment( comment );
 
     p = produceEllipse( 0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0) );
-    for( q = p; q != NULL; q = q->next )
+    for( q = p; q != nullptr; q = q->next )
     {
         q->x1 = coWinX(q->x1);
         q->y1 = coWinY(q->y1);
@@ -299,18 +300,19 @@ void QWinSphere::printPoincareLyapunovSphere( void )
 
     print_elips( coWinX(0.0), coWinY(0.0), coWinH(1.0), coWinV(1.0), CLINEATINFINITY, false, p );
 
-    while( p != NULL )
+    while( p != nullptr )
     {
         q = p;
         p = p->next;
-        delete p;//free( q );
+        delete q;//free( q );
+        q = nullptr;
     }
 
     comment = "Printing Poincare Lyapunov-Sphere (circle of finite radius):";
     print_comment( comment );
 
     p = produceEllipse( 0.0, 0.0, RADIUS, RADIUS, true, coWinH(RADIUS), coWinV(RADIUS) );
-    for( q = p; q != NULL; q = q->next )
+    for( q = p; q != nullptr; q = q->next )
     {
         q->x1 = coWinX(q->x1);
         q->y1 = coWinY(q->y1);
@@ -320,11 +322,12 @@ void QWinSphere::printPoincareLyapunovSphere( void )
 
     print_elips( coWinX(0.0), coWinY(0.0), coWinH(RADIUS), coWinV(RADIUS), CLINEATINFINITY, true, p );
 
-    while( p != NULL )
+    while( p != nullptr )
     {
         q = p;
         p = p->next;
         delete q;//free( q );
+        q = nullptr;
     }
 }
 
@@ -364,7 +367,7 @@ void QWinSphere::printOrbits( void )
     int i;
     i = 1;
 
-    for( orbit = VFResults.first_orbit; orbit != NULL; orbit = orbit->next_orbit )
+    for( orbit = VFResults.first_orbit; orbit != nullptr; orbit = orbit->next_orbit )
     {
         s.sprintf( "Starting orbit %d", i++ );
         print_comment( s );
@@ -381,7 +384,7 @@ void QWinSphere::printLimitCycles( void )
     int i;
     i = 1;
 
-    for( orbit = VFResults.first_lim_cycle; orbit != NULL; orbit = orbit->next_orbit )
+    for( orbit = VFResults.first_lim_cycle; orbit != nullptr; orbit = orbit->next_orbit )
     {
         s.sprintf( "Starting Limit Cycle %d", i++ );
         print_comment( s );

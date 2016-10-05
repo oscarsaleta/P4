@@ -25,7 +25,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
     double pcoord[3];
     double y[2];
     int color,dashes,ok=true;
-    struct orbits_points *first_orbit=NULL,*last_orbit=NULL;
+    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr;
 
     vec_field[0]=de_sep->vector_field[0];
     vec_field[1]=de_sep->vector_field[1];
@@ -122,7 +122,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
              color = 0;
              break;
         }
-        if(last_orbit==NULL)
+        if(last_orbit==nullptr)
         {
             first_orbit = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
             last_orbit=first_orbit;
@@ -137,7 +137,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
         last_orbit->dashes=dashes * VFResults.config_dashes;
         last_orbit->dir=((VFResults.plweights == false) && (chart==CHART_V1 || chart==CHART_V2)) ? VFResults.dir_vec_field*dir : dir;
         last_orbit->type=type;
-        last_orbit->next_point=NULL;
+        last_orbit->next_point=nullptr;
         if(last_orbit->dashes)
             (*plot_l)( spherewnd, pcoord,pcoord2,color);
         else

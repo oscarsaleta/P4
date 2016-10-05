@@ -29,7 +29,7 @@ QPrintDlg::QPrintDlg( QWidget * parent, Qt::WindowFlags f )
 {
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         setWindowIcon( *p4smallicon );
 
 #ifdef USE_SYSTEM_PRINTER

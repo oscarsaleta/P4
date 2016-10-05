@@ -314,7 +314,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
     double hhi,h_max,h_min;
     int dashes,d;
 
-    if( VFResults.current_lim_cycle == NULL )
+    if( VFResults.current_lim_cycle == nullptr )
     {
         VFResults.first_lim_cycle=new orbits;//(struct orbits *) malloc(sizeof(struct orbits));
         VFResults.current_lim_cycle=VFResults.first_lim_cycle;
@@ -328,8 +328,8 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
     MATHFUNC(R2_to_sphere)(x,y,p1);
     copy_x_into_y(p1,VFResults.current_lim_cycle->pcoord);
     VFResults.current_lim_cycle->color=CLIMIT;
-    VFResults.current_lim_cycle->f_orbits=NULL;
-    VFResults.current_lim_cycle->next_orbit=NULL;
+    VFResults.current_lim_cycle->f_orbits=nullptr;
+    VFResults.current_lim_cycle->next_orbit=nullptr;
     hhi=VFResults.config_step;
     h_max=VFResults.config_hma;
     h_min=VFResults.config_hmi;
@@ -340,7 +340,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
     copy_x_into_y(p2,VFResults.current_lim_cycle->current_f_orbits->pcoord);
     VFResults.current_lim_cycle->current_f_orbits->color = CLIMIT;
     VFResults.current_lim_cycle->current_f_orbits->dashes = VFResults.config_dashes;
-    VFResults.current_lim_cycle->current_f_orbits->next_point = NULL;
+    VFResults.current_lim_cycle->current_f_orbits->next_point = nullptr;
     if( VFResults.config_dashes ) 
         (*plot_l)(spherewnd,p1,p2,CLIMIT);
     else
@@ -354,7 +354,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
         copy_x_into_y(p2,VFResults.current_lim_cycle->current_f_orbits->pcoord);
         VFResults.current_lim_cycle->current_f_orbits->color=CLIMIT;
         VFResults.current_lim_cycle->current_f_orbits->dashes=VFResults.config_dashes;
-        VFResults.current_lim_cycle->current_f_orbits->next_point=NULL;
+        VFResults.current_lim_cycle->current_f_orbits->next_point=nullptr;
         if(VFResults.config_dashes) 
             (*plot_l)(spherewnd,p1,p2,CLIMIT);
         else
@@ -374,7 +374,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
         copy_x_into_y(p2,VFResults.current_lim_cycle->current_f_orbits->pcoord);
         VFResults.current_lim_cycle->current_f_orbits->color=CLIMIT;
         VFResults.current_lim_cycle->current_f_orbits->dashes=VFResults.config_dashes;
-        VFResults.current_lim_cycle->current_f_orbits->next_point=NULL;
+        VFResults.current_lim_cycle->current_f_orbits->next_point=nullptr;
         if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(p2,a,b,c))<=0)
             break; 
         if(VFResults.config_dashes)
@@ -396,13 +396,13 @@ void DrawLimitCycles( QWinSphere * spherewnd )
 
     orbit = VFResults.first_lim_cycle;
 
-    if( orbit!=NULL )
+    if( orbit!=nullptr )
     {
         do
         {
             DrawOrbit( spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color );
         }
-        while((orbit=orbit->next_orbit)!=NULL); 
+        while((orbit=orbit->next_orbit)!=nullptr); 
     }
 }
 
@@ -414,7 +414,7 @@ void DeleteLastLimitCycle( QWinSphere * spherewnd )
 {
     struct orbits *orbit1,*orbit2;
 
-    if( VFResults.current_lim_cycle == NULL )
+    if( VFResults.current_lim_cycle == nullptr )
         return;
 
     orbit2 = VFResults.current_lim_cycle;
@@ -422,8 +422,8 @@ void DeleteLastLimitCycle( QWinSphere * spherewnd )
 
     if( VFResults.first_lim_cycle == VFResults.current_lim_cycle )
     {
-        VFResults.first_lim_cycle = NULL;
-        VFResults.current_lim_cycle = NULL;
+        VFResults.first_lim_cycle = nullptr;
+        VFResults.current_lim_cycle = nullptr;
     }
     else
     {
@@ -436,8 +436,9 @@ void DeleteLastLimitCycle( QWinSphere * spherewnd )
         }
         while( orbit1 != orbit2 );
         
-        VFResults.current_lim_cycle->next_orbit = NULL;
+        VFResults.current_lim_cycle->next_orbit = nullptr;
     }
     VFResults.DeleteOrbitPoint( orbit2->f_orbits ); 
     delete orbit2;//free( orbit2 );
+    orbit2 = nullptr;
 }

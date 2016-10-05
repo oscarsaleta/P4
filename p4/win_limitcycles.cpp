@@ -24,12 +24,12 @@ extern QP4Application * p4app;
 extern void SearchLimitCycle( QWinSphere *, double, double, double, double, double );
 extern void DeleteLastLimitCycle( QWinSphere * spherewnd );
 
-static QProgressDialog * LCprogressDlg = NULL;
+static QProgressDialog * LCprogressDlg = nullptr;
 static int LCprogressCount=1;
 static int LCmaxProgressCount=0;
 
 QLimitCyclesDlg::QLimitCyclesDlg( QPlotWnd * plt, QWinSphere * sp )
-    : QWidget(NULL,Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
 {
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -135,7 +135,7 @@ QLimitCyclesDlg::QLimitCyclesDlg( QPlotWnd * plt, QWinSphere * sp )
     buf.sprintf( "%g", (float)selected_grid );
     edt_grid->setText( buf );
 
-    if( VFResults.first_lim_cycle == NULL )
+    if( VFResults.first_lim_cycle == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);
@@ -236,7 +236,7 @@ void QLimitCyclesDlg::onbtn_start( void )
 
     // update buttons
 
-    if( VFResults.first_lim_cycle == NULL )
+    if( VFResults.first_lim_cycle == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);
@@ -249,7 +249,7 @@ void QLimitCyclesDlg::onbtn_start( void )
 
     p4app->processEvents();
     delete LCprogressDlg;
-    LCprogressDlg = NULL;
+    LCprogressDlg = nullptr;
 }
 
 void QLimitCyclesDlg::onbtn_cancel( void )
@@ -281,7 +281,7 @@ void QLimitCyclesDlg::Reset( void )
     edt_grid->setText( buf );
     spin_numpoints->setValue( selected_numpoints );
 
-    if( VFResults.first_lim_cycle == NULL )
+    if( VFResults.first_lim_cycle == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);
@@ -314,8 +314,8 @@ void QLimitCyclesDlg::onbtn_delall( void )
     btn_dellast->setEnabled(false);
 
     VFResults.DeleteOrbit( VFResults.first_lim_cycle );
-    VFResults.first_lim_cycle = NULL;
-    VFResults.current_lim_cycle = NULL;
+    VFResults.first_lim_cycle = nullptr;
+    VFResults.current_lim_cycle = nullptr;
 
     mainSphere->refresh();
 }
@@ -328,7 +328,7 @@ void QLimitCyclesDlg::onbtn_dellast( void )
     DeleteLastLimitCycle( mainSphere );
     mainSphere->finishDrawing();
 
-    if( VFResults.first_lim_cycle == NULL )
+    if( VFResults.first_lim_cycle == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);

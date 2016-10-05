@@ -22,7 +22,7 @@ QString CurrentSingularityInfo[4] = { "", "", "", "" };
 double CurrentSeparatriceEpsilon = 0;
 
 QSepDlg::QSepDlg( QPlotWnd * plt, QWinSphere * sp )
-    : QWidget(NULL,Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
 {
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 

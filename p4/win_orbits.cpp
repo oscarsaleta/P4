@@ -16,7 +16,7 @@ extern void DeleteLastOrbit( QWinSphere * );
 extern void SetP4WindowTitle( QWidget *, QString );
 
 QOrbitsDlg::QOrbitsDlg( QPlotWnd * plt, QWinSphere * sp )
-    : QWidget(NULL,Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
 {
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -97,7 +97,7 @@ QOrbitsDlg::QOrbitsDlg( QPlotWnd * plt, QWinSphere * sp )
     btn_backwards->setEnabled(false);
     btn_continue->setEnabled(false);
 
-    if( VFResults.first_orbit == NULL )
+    if( VFResults.first_orbit == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);
@@ -235,8 +235,8 @@ void QOrbitsDlg::onbtn_delall( void )
     btn_dellast->setEnabled(false);
 
     VFResults.DeleteOrbit( VFResults.first_orbit );
-    VFResults.first_orbit = NULL;
-    VFResults.current_orbit = NULL;
+    VFResults.first_orbit = nullptr;
+    VFResults.current_orbit = nullptr;
 
     mainSphere->refresh();
 }
@@ -255,7 +255,7 @@ void QOrbitsDlg::onbtn_dellast( void )
     btn_backwards->setEnabled(false);
     btn_continue->setEnabled(false);
 
-    if( VFResults.first_orbit == NULL )
+    if( VFResults.first_orbit == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);
@@ -285,7 +285,7 @@ void QOrbitsDlg::Reset( void )
     btn_backwards->setEnabled(false);
     btn_continue->setEnabled(false);
 
-    if( VFResults.first_orbit == NULL )
+    if( VFResults.first_orbit == nullptr )
     {
         btn_delall->setEnabled(false);
         btn_dellast->setEnabled(false);

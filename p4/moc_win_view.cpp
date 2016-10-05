@@ -112,7 +112,7 @@ void QViewDlg::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
 
 const QMetaObject QViewDlg::staticMetaObject = {
     { &QWidget::staticMetaObject, qt_meta_stringdata_QViewDlg.data,
-      qt_meta_data_QViewDlg,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+      qt_meta_data_QViewDlg,  qt_static_metacall, Q_nullptrPTR, Q_nullptrPTR}
 };
 
 
@@ -123,7 +123,7 @@ const QMetaObject *QViewDlg::metaObject() const
 
 void *QViewDlg::qt_metacast(const char *_clname)
 {
-    if (!_clname) return Q_NULLPTR;
+    if (!_clname) return Q_nullptrPTR;
     if (!strcmp(_clname, qt_meta_stringdata_QViewDlg.stringdata))
         return static_cast<void*>(const_cast< QViewDlg*>(this));
     return QWidget::qt_metacast(_clname);

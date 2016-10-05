@@ -36,7 +36,7 @@ extern void FinishP4Printing( void );
 
 extern int find_critical_point( QWinSphere *, double, double );
 extern QPrinter * p4printer;
-QPixmap * p4pixmap = NULL;
+QPixmap * p4pixmap = nullptr;
 static  double p4pixmap_dpm = 0;
 
 extern void (* print_line)( double, double, double, double, int );
@@ -45,7 +45,7 @@ extern void (* print_point)( double, double, int );
 extern bool LineRectangleIntersect( double &, double &, double &, double &, double, double, double, double );
 
 int QWinSphere::numSpheres = 0;
-QWinSphere * * QWinSphere::SphereList = NULL;
+QWinSphere * * QWinSphere::SphereList = nullptr;
 
 extern void DrawOrbits( QWinSphere * );
 extern void DrawLimitCycles( QWinSphere * );
@@ -67,11 +67,11 @@ QWinSphere::QWinSphere( QWidget * parent, QStatusBar * bar, bool isZoom,
     : QWidget(parent)
 {
     ReverseYaxis = false;
-    PainterCache = NULL;
+    PainterCache = nullptr;
     isPainterCacheDirty = true;
-    AnchorMap = NULL;
-    refreshTimeout = NULL;
-    SelectingTimer = NULL;
+    AnchorMap = nullptr;
+    refreshTimeout = nullptr;
+    SelectingTimer = nullptr;
 
 //    setAttribute( Qt::WA_PaintOnScreen );
 
@@ -98,7 +98,7 @@ QWinSphere::QWinSphere( QWidget * parent, QStatusBar * bar, bool isZoom,
     selectingLCSection = false;
     setFocusPolicy( Qt::ClickFocus );
     setWindowFlags( windowFlags() );
-    next = NULL;
+    next = nullptr;
 
     iszoom = isZoom;
     if( isZoom )
@@ -110,8 +110,8 @@ QWinSphere::QWinSphere( QWidget * parent, QStatusBar * bar, bool isZoom,
         y1 = _y2;
     }
 
-    CircleAtInfinity = NULL;
-    PLCircle = NULL;
+    CircleAtInfinity = nullptr;
+    PLCircle = nullptr;
 }
 
 /*
@@ -271,17 +271,19 @@ void QWinSphere::SetupPlot( void )
     palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor) );
     setPalette(palette);
 
-    while( CircleAtInfinity != NULL )
+    while( CircleAtInfinity != nullptr )
     {
         t = CircleAtInfinity;
         CircleAtInfinity = t->next;
         delete t;//free( t );
+        t = nullptr;
     }
-    while( PLCircle != NULL )
+    while( PLCircle != nullptr )
     {
         t = PLCircle;
         PLCircle = t->next;
         delete t;//free( t );
+        t = nullptr;
     }
 
     if( !iszoom )
@@ -342,17 +344,19 @@ QWinSphere::~QWinSphere()
     int i;
 
     struct P4POLYLINES * t;
-    while( CircleAtInfinity != NULL )
+    while( CircleAtInfinity != nullptr )
     {
         t = CircleAtInfinity;
         CircleAtInfinity = t->next;
         delete t;//free( t );
+        t = nullptr;
     }
-    while( PLCircle != NULL )
+    while( PLCircle != nullptr )
     {
         t = PLCircle;
         PLCircle = t->next;
         delete t;//free( t );
+        t = nullptr;
     }
 
     for( i = 0; i < numSpheres; i++ )
@@ -371,27 +375,27 @@ QWinSphere::~QWinSphere()
 
     numSpheres--;
     
-    if( PainterCache != NULL )
+    if( PainterCache != nullptr )
     {
         delete PainterCache;
-        PainterCache = NULL;
+        PainterCache = nullptr;
     }
     
-    if( AnchorMap != NULL )
+    if( AnchorMap != nullptr )
     {
         delete AnchorMap;
-        AnchorMap = NULL;
+        AnchorMap = nullptr;
     }
     
-    if( refreshTimeout != NULL )
+    if( refreshTimeout != nullptr )
     {
         delete refreshTimeout;
-        refreshTimeout = NULL;
+        refreshTimeout = nullptr;
     }
-    if( SelectingTimer != NULL )
+    if( SelectingTimer != nullptr )
     {
         delete SelectingTimer;
-        SelectingTimer = NULL;
+        SelectingTimer = nullptr;
     }
 }
 
@@ -434,11 +438,12 @@ void QWinSphere::LoadAnchorMap( void )
      as.sprintf( " Load: (%d,%d,%d,%d)", x1,y1,aw,ah );
      msgBar->showMessage(as+ms);
 */     
-     if( AnchorMap != NULL )
+     if( AnchorMap != nullptr )
      {
          if( AnchorMap->width() < aw || AnchorMap->height() < ah )
          {
              delete AnchorMap;
+             AnchorMap = nullptr;
              AnchorMap = new QPixmap( aw,ah );
          }
      }
@@ -447,10 +452,10 @@ void QWinSphere::LoadAnchorMap( void )
          AnchorMap = new QPixmap( aw,ah );
      }
      
-     if( PainterCache == NULL )
+     if( PainterCache == nullptr )
      {
          delete AnchorMap;
-         AnchorMap = NULL;
+         AnchorMap = nullptr;
          return;
      }   
 
@@ -479,7 +484,7 @@ void QWinSphere::SaveAnchorMap( void )
      int aw,ah;         
      int s;
 
-     if( AnchorMap == NULL || PainterCache == NULL || (!selectingZoom && !selectingLCSection) )
+     if( AnchorMap == nullptr || PainterCache == nullptr || (!selectingZoom && !selectingLCSection) )
          return;
 
      if( selectingZoom )
@@ -553,17 +558,19 @@ void QWinSphere::adjustToNewSize(void)
     buf.sprintf( "Aspect Ratio = %f\n", (float)(ratio/reqratio) );
     msgBar->showMessage(buf);
 
-    while( CircleAtInfinity != NULL )
+    while( CircleAtInfinity != nullptr )
     {
         t = CircleAtInfinity;
         CircleAtInfinity = t->next;
         delete t;//free( t );
+        t = nullptr;
     }
-    while( PLCircle != NULL )
+    while( PLCircle != nullptr )
     {
         t = PLCircle;
         PLCircle = t->next;
         delete t;//free( t );
+        t = nullptr;
     }
     if( VFResults.typeofview == TYPEOFVIEW_SPHERE )
     {
@@ -572,9 +579,10 @@ void QWinSphere::adjustToNewSize(void)
             PLCircle = produceEllipse( 0.0, 0.0, RADIUS, RADIUS, true, coWinH(RADIUS), coWinV(RADIUS) );
     }
 
-    if( PainterCache != NULL )
+    if( PainterCache != nullptr )
     {
         delete PainterCache;
+        PainterCache = nullptr;
         PainterCache = new QPixmap( size() );
         isPainterCacheDirty = false;
 
@@ -617,9 +625,9 @@ void QWinSphere::adjustToNewSize(void)
         paint.drawText( 0, 0, width(), height(),
                            Qt::AlignHCenter | Qt::AlignVCenter, "Resizing ...  " );
 
-        staticPainter = NULL;
+        staticPainter = nullptr;
 
-        if( refreshTimeout != NULL )
+        if( refreshTimeout != nullptr )
             refreshTimeout->stop();
         else
         {
@@ -632,10 +640,10 @@ void QWinSphere::adjustToNewSize(void)
 
 void QWinSphere::refreshAfterResize( void )
 {
-     if( refreshTimeout != NULL )
+     if( refreshTimeout != nullptr )
      {
          delete refreshTimeout;
-         refreshTimeout = NULL;
+         refreshTimeout = nullptr;
      }
     refresh();
 }
@@ -654,9 +662,9 @@ void QWinSphere::paintEvent( QPaintEvent * p )
     if( ThisVF->evaluating )
         return;
 
-    if( PainterCache == NULL || isPainterCacheDirty )
+    if( PainterCache == nullptr || isPainterCacheDirty )
     {
-        if( PainterCache == NULL )
+        if( PainterCache == nullptr )
             PainterCache = new QPixmap( size() );
         isPainterCacheDirty = false;
 
@@ -691,7 +699,7 @@ void QWinSphere::paintEvent( QPaintEvent * p )
         DrawOrbits(this);
         DrawLimitCycles(this);
         plotPoints();
-        staticPainter = NULL;
+        staticPainter = nullptr;
     }
     
     QPainter widgetpaint( this );
@@ -712,7 +720,7 @@ void QWinSphere::MarkSelection( int x1, int y1, int x2, int y2, int selectiontyp
 {
     int bx1, by1, bx2, by2;
      
-    if( PainterCache == NULL )
+    if( PainterCache == nullptr )
           return;
     
     bx1 = (x1<x2) ? x1 : x2;
@@ -1137,10 +1145,10 @@ void QWinSphere::SelectNearestSingularity( QPoint winpos )
         px = coWinX(VFResults.selected_ucoord[0]);
         py = coWinY(VFResults.selected_ucoord[1]);
 
-        if( SelectingTimer != NULL )
+        if( SelectingTimer != nullptr )
         {
             delete SelectingTimer;
-            SelectingTimer = NULL;
+            SelectingTimer = nullptr;
             SelectingPointStep=0;
             updatePointSelection();
         }
@@ -1166,7 +1174,7 @@ void QWinSphere::drawLine( double _x1, double _y1, double _x2, double _y2, int c
 {
     int wx1, wy1, wx2, wy2;
 
-    if( staticPainter != NULL )
+    if( staticPainter != nullptr )
     {
         if( _x1 >= x0 && _x1 <= x1 && _y1 >= y0 && _y1 <= y1 )
         {
@@ -1274,7 +1282,7 @@ void QWinSphere::drawLine( double _x1, double _y1, double _x2, double _y2, int c
 void QWinSphere::drawPoint( double x, double y, int color )
 {
     int _x, _y;
-    if( staticPainter != NULL )
+    if( staticPainter != nullptr )
     {
         if( x < x0 || x > x1 || y < y0 || y > y1 )
             return;
@@ -1501,7 +1509,7 @@ void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myreso
         if( !staticPainter->begin( p4printer ) )
         {
             delete staticPainter;
-            staticPainter = NULL;
+            staticPainter = nullptr;
             return;
         }
 
@@ -1525,17 +1533,17 @@ void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myreso
         {
             msgBar->showMessage( "Print failure (try to choose a lower resolution)." );
             delete p4pixmap;
-            p4pixmap = NULL;
+            p4pixmap = nullptr;
             delete staticPainter;
-            staticPainter = NULL;
+            staticPainter = nullptr;
             return;
         }
         if( !staticPainter->begin( p4pixmap ) )
         {
             delete p4pixmap;
-            p4pixmap = NULL;
+            p4pixmap = nullptr;
             delete staticPainter;
-            staticPainter = NULL;
+            staticPainter = nullptr;
             return;
         }
 
@@ -1567,14 +1575,14 @@ void QWinSphere::finishPrinting( void )
         FinishP4Printing();
         staticPainter->end();
         delete staticPainter;
-        staticPainter = NULL;
+        staticPainter = nullptr;
         w = oldw;
         h = oldh;
         ReverseYaxis = false;
     }
     else if( PrintMethod == P4PRINT_JPEGIMAGE )
     {
-        if( p4pixmap == NULL )
+        if( p4pixmap == nullptr )
         {
             FinishP4Printing();
             w = oldw;
@@ -1586,7 +1594,7 @@ void QWinSphere::finishPrinting( void )
         FinishP4Printing();
         staticPainter->end();
         delete staticPainter;
-        staticPainter = NULL;
+        staticPainter = nullptr;
 
         if( p4pixmap->save( ThisVF->getbarefilename() + ".jpg", "JPEG", 100 ) == false )
         {
@@ -1596,7 +1604,7 @@ void QWinSphere::finishPrinting( void )
         }
 
         delete p4pixmap;
-        p4pixmap = NULL;
+        p4pixmap = nullptr;
         ReverseYaxis = false;
         w = oldw;
         h = oldh;
@@ -1606,7 +1614,7 @@ void QWinSphere::finishPrinting( void )
 
 void QWinSphere::print( void )
 {
-    if( PrintMethod == P4PRINT_JPEGIMAGE && p4pixmap == NULL )
+    if( PrintMethod == P4PRINT_JPEGIMAGE && p4pixmap == nullptr )
         return;
 
     if( VFResults.typeofview != TYPEOFVIEW_PLANE )
@@ -1630,7 +1638,7 @@ void QWinSphere::print( void )
 
 void QWinSphere::prepareDrawing()
 {
-    if( PainterCache == NULL )
+    if( PainterCache == nullptr )
     {
         isPainterCacheDirty = true;
         PainterCache = new QPixmap( size() );
@@ -1642,20 +1650,20 @@ void QWinSphere::prepareDrawing()
     paintedXMax = 0;
     paintedYMax = 0;
     
-    if( next != NULL )
+    if( next != nullptr )
         next->prepareDrawing();
 }
 
 void QWinSphere::finishDrawing()
 {
-    if( next != NULL )
+    if( next != nullptr )
         next->finishDrawing();
 
-    if( staticPainter != NULL )
+    if( staticPainter != nullptr )
     {
         staticPainter->end();
         delete staticPainter;
-        staticPainter = NULL;
+        staticPainter = nullptr;
 
         if( paintedXMin < 0 ) paintedXMin = 0;
         if( paintedXMax >= width() ) paintedXMax = width()-1;

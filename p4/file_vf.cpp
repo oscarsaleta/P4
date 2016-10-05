@@ -105,10 +105,10 @@ extern int GetMathPackage(void);
 
 QInputVF::QInputVF()
 {
-    ProcessText = NULL;
-    ProcessButton = NULL;
-    ProcessClearButton = NULL;
-    EvalProcess = NULL;
+    ProcessText = nullptr;
+    ProcessButton = nullptr;
+    ProcessClearButton = nullptr;
+    EvalProcess = nullptr;
     reset();
 }
 
@@ -169,7 +169,7 @@ bool QInputVF::load( void )
         return false;
 
     fp = fopen( QFile::encodeName( fname ), "rt" );
-    if( fp == NULL )
+    if( fp == nullptr )
         return false;
 
     cleared = false;
@@ -256,11 +256,13 @@ bool QInputVF::checkevaluated( void )
     fi = new QFileInfo( getfilename() );
     dt = fi->lastModified();
     delete fi;
+    fi = nullptr;
 
     fivec = new QFileInfo( getbarefilename() + "_vec.tab" );
     if( fivec->isFile() == false )
     {
         delete fivec;
+        fivec = nullptr;
         return false;
     }
     dtvec = fivec->lastModified();
@@ -273,10 +275,12 @@ bool QInputVF::checkevaluated( void )
         if( fifin->isFile() == false )
         {
             delete fifin;
+            fifin = nullptr;
             return false;
         }
         dtfin = fifin->lastModified();
         delete fifin;
+        fifin = nullptr;
         if( dtfin.secsTo( dt ) > 0 || dtfin.daysTo( dt ) > 0 )
             return false;
     }
@@ -287,10 +291,12 @@ bool QInputVF::checkevaluated( void )
         if( fiinf->isFile() == false )
         {
             delete fiinf;
+            fiinf = nullptr;
             return false;
         }
         dtinf = fiinf->lastModified();
         delete fiinf;
+        fiinf = nullptr;
         if( dtinf.secsTo( dt ) > 0 || dtinf.daysTo( dt ) > 0 )
             return false;
     }
@@ -313,7 +319,7 @@ bool QInputVF::save( void )
         return false;
 
     fp = fopen( QFile::encodeName(fname), "wt" );
-    if( fp == NULL )
+    if( fp == nullptr )
         return false;
 
     fprintf( fp, "%d\n", typeofstudy );
@@ -985,10 +991,10 @@ void QInputVF::Evaluate( void )
     QProcess * proc;
     
     evaluatinggcf = false;
-    if( EvalProcess != NULL ) // possible clean up after last GCF evaluation
+    if( EvalProcess != nullptr ) // possible clean up after last GCF evaluation
     {
         delete EvalProcess;
-        EvalProcess = NULL;
+        EvalProcess = nullptr;
     }
 
     Prepare();
@@ -1005,20 +1011,21 @@ void QInputVF::Evaluate( void )
             *fp << "#!/bin/sh\n";
             *fp << GetReduceExe() << " <" << filedotred << "\n";
             fp->flush();
-             delete fp;
+            delete fp;
+            fp = nullptr;
             fptr->close();
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
             }
             else
-        {
+            {
                 delete fptr;
-                fptr = NULL;
+                fptr = nullptr;
     
                 // cannot open???
             }
         
-        if( ProcessText == NULL )
+        if( ProcessText == nullptr )
             CreateProcessWindow();
         else
         {
@@ -1042,8 +1049,8 @@ void QInputVF::Evaluate( void )
             {
             processfailed = true;
             delete proc;
-            proc = NULL;
-            EvalProcess = NULL;
+            proc = nullptr;
+            EvalProcess = nullptr;
             EvalFile = "";
             EvalFile2 = "";
             p4app->Signal_Evaluated(-1);
@@ -1078,7 +1085,7 @@ void QInputVF::Evaluate( void )
             else
                 s = s.append( filedotmpl );
 
-            if( ProcessText == NULL )
+            if( ProcessText == nullptr )
                 CreateProcessWindow();
             else
             {
@@ -1103,8 +1110,8 @@ void QInputVF::Evaluate( void )
             {
                 processfailed = true;
                 delete proc;
-                proc = NULL;
-                EvalProcess = NULL;
+                proc = nullptr;
+                EvalProcess = nullptr;
                 EvalFile = "";
                 EvalFile2 = "";
                 p4app->Signal_Evaluated(-1);
@@ -1166,17 +1173,17 @@ void QInputVF::finishEvaluation( int exitCode )
         EvalFile2="";
     }
 
-    if( ProcessButton != NULL )
+    if( ProcessButton != nullptr )
         ProcessButton->setEnabled(false);
         
-//  if( EvalProcess != NULL )
+//  if( EvalProcess != nullptr )
     {
-        if( ProcessText != NULL )
+        if( ProcessText != nullptr )
         {
             QString buf;
             buf = "\n-------------------------------------------------------------------------------\n";
             ProcessText->append(buf);
-            if( EvalProcess != NULL )
+            if( EvalProcess != nullptr )
             {
                 if( EvalProcess->state() == QProcess::Running )
                 {
@@ -1206,7 +1213,7 @@ void QInputVF::finishEvaluation( int exitCode )
             ProcessText->append(buf);
         }
     }
-    if( ProcessText != NULL )
+    if( ProcessText != nullptr )
     {
 //      ProcessText->hide();
         if( ProcessText->isActiveWindow() )
@@ -1215,7 +1222,7 @@ void QInputVF::finishEvaluation( int exitCode )
                 p4startdlg->activateWindow();
             else
             {
-                if( gcfDlg != NULL )
+                if( gcfDlg != nullptr )
                     gcfDlg->activateWindow();
             }
         }
@@ -1234,11 +1241,11 @@ void QInputVF::finishEvaluation( int exitCode )
 void QInputVF::finishGcfEvaluation( void )
 {
     evaluatinggcf = false;
-    if( gcfDlg != NULL )
+    if( gcfDlg != nullptr )
     {
           gcfDlg->finishGcfEvaluation();
 
-//        QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, NULL );
+//        QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
 //        p4app->postEvent( p4startdlg, e );
     }
 }
@@ -1264,15 +1271,15 @@ void QInputVF::Prepare( void )
             PrepareFile( fp );
             fp->flush();
             delete fp;
-            fp = NULL;
+            fp = nullptr;
             fptr->close();
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
         }
         else
         {
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
 
             // cannot open ???
         }
@@ -1288,15 +1295,15 @@ void QInputVF::Prepare( void )
             PrepareFile( fp );
             fp->flush();
             delete fp;
-            fp = NULL;
+            fp = nullptr;
             fptr->close();
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
         }
         else
         {
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
             
             // cannot open?
         }
@@ -1313,7 +1320,7 @@ void QInputVF::ReadProcessStdout( void )
     QByteArray line;
     int i, j;
 
-    if( EvalProcess == NULL || ProcessText == NULL )
+    if( EvalProcess == nullptr || ProcessText == nullptr )
         return;
 
     while( 1 )
@@ -1354,7 +1361,7 @@ void QInputVF::ReadProcessStdout( void )
 
 void QInputVF::OnClearButton( void )
 {
-    if( ProcessText != NULL )
+    if( ProcessText != nullptr )
         ProcessText->clear();
 }
 
@@ -1365,7 +1372,7 @@ void QInputVF::OnClearButton( void )
 void QInputVF::OnTerminateButton( void )
 {
     QString buf;
-        if( EvalProcess != NULL )
+        if( EvalProcess != nullptr )
     {
         if( EvalProcess->state() == QProcess::Running )
         {
@@ -1387,10 +1394,10 @@ void QInputVF::OnTerminateButton( void )
 
 void QInputVF::CreateProcessWindow( void )
 {
-    if( ProcessText != NULL )
+    if( ProcessText != nullptr )
         return;
 
-    ProcessText = new QTextEdit(NULL);
+    ProcessText = new QTextEdit(nullptr);
     ProcessText->setLineWrapMode( QTextEdit::FixedColumnWidth );
     ProcessText->setWordWrapMode( QTextOption::WrapAnywhere );
     SetP4WindowTitle( ProcessText, "Output Window" );
@@ -1444,13 +1451,14 @@ bool QInputVF::EvaluateGcf( void )
                     filedotred << ">" << 
                     filedotgcfresults << "\n";
             fps->flush();
-             delete fps;
+            delete fps;
+            fps = nullptr;
             fptr->close();
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
             }
 
-        if( ProcessText == NULL )
+        if( ProcessText == nullptr )
             CreateProcessWindow();
         else
         {
@@ -1461,7 +1469,7 @@ bool QInputVF::EvaluateGcf( void )
 
         QProcess * proc;
 
-        if( EvalProcess != NULL ) // re-use process of last GCF
+        if( EvalProcess != nullptr ) // re-use process of last GCF
         {
             proc = EvalProcess;
             disconnect( proc, SIGNAL(finished(int)), p4app, 0 );
@@ -1493,8 +1501,8 @@ bool QInputVF::EvaluateGcf( void )
         {
             processfailed = true;
             delete proc;
-            proc = NULL;
-            EvalProcess = NULL;
+            proc = nullptr;
+            EvalProcess = nullptr;
             EvalFile = "";
             EvalFile2 = "";
             p4app->Signal_GcfEvaluated(-1);
@@ -1526,7 +1534,7 @@ bool QInputVF::EvaluateGcf( void )
         else
             s = s.append( filedotmpl );
 
-        if( ProcessText == NULL )
+        if( ProcessText == nullptr )
             CreateProcessWindow();
         else
         {
@@ -1536,7 +1544,7 @@ bool QInputVF::EvaluateGcf( void )
         }
 
         QProcess * proc;
-        if( EvalProcess != NULL ) // re-use process of last GCF
+        if( EvalProcess != nullptr ) // re-use process of last GCF
         {
             proc = EvalProcess;
             disconnect( proc, SIGNAL(finished(int)), p4app, 0 );
@@ -1559,8 +1567,8 @@ bool QInputVF::EvaluateGcf( void )
         {
             processfailed = true;
             delete proc;
-            proc = NULL;
-            EvalProcess = NULL;
+            proc = nullptr;
+            EvalProcess = nullptr;
             EvalFile = "";
             EvalFile2 = "";
             p4app->Signal_GcfEvaluated(-1);
@@ -1609,7 +1617,7 @@ bool QInputVF::PrepareGcf( struct term2 * f, double y1, double y2, int precision
         fprintf( fp, "lisp setq(plotcommand!*,\"cat\");\n" );
         fprintf( fp, "precision %d$\n", precision );
         fprintf( fp, "f:=");
-        for( i = 0; f != NULL; i++ )
+        for( i = 0; f != nullptr; i++ )
         {    
              fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "x", "y" ) );
              f  = f->next_term2;
@@ -1637,7 +1645,7 @@ bool QInputVF::PrepareGcf( struct term2 * f, double y1, double y2, int precision
         filedotmpl = getmaplefilename();
     
         fp = fopen( QFile::encodeName( filedotmpl ), "w" );
-        if( fp == NULL )
+        if( fp == nullptr )
             return false;
     
         mainmaple = GetP4MaplePath();
@@ -1663,7 +1671,7 @@ bool QInputVF::PrepareGcf( struct term2 * f, double y1, double y2, int precision
         fprintf( fp, "u := %s:\n",          "x" );
         fprintf( fp, "v := %s:\n",          "y" );
         fprintf( fp, "user_f := " );
-        for( i = 0; f != NULL; i++ )
+        for( i = 0; f != nullptr; i++ )
         {
             fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "x", "y" ) );
             f = f->next_term2;
@@ -1717,7 +1725,7 @@ bool QInputVF::PrepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
         fprintf( fp, "Si:=sin(y)$\n" ); 
         fprintf( fp, "f:=" );
 
-        for( i = 0; f != NULL; i++ )
+        for( i = 0; f != nullptr; i++ )
         {
             fprintf( fp, "%s", printterm3( buf, f, (i==0) ? true : false, "x", "Co", "Si" ) );
             f = f->next_term3;
@@ -1748,7 +1756,7 @@ bool QInputVF::PrepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
         filedotmpl = getmaplefilename();
     
         fp = fopen( QFile::encodeName( filedotmpl ), "w" );
-        if( fp == NULL )
+        if( fp == nullptr )
             return false;
     
         mainmaple = GetP4MaplePath();
@@ -1775,7 +1783,7 @@ bool QInputVF::PrepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
         fprintf( fp, "v := %s:\n",          "sin(y)" );
         fprintf( fp, "user_f := " );
         
-        for( i = 0; f != NULL; i++ )
+        for( i = 0; f != nullptr; i++ )
         {
             fprintf( fp, "%s", printterm3( buf, f, (i==0) ? true : false, "x", "U", "V" ) );
             f = f->next_term3;
@@ -1832,7 +1840,7 @@ bool QInputVF::PrepareGcf_LyapunovR2( int precision, int numpoints )
         fprintf( fp, "u:=x*cos(y)$\n" );
         fprintf( fp, "v:=x*sin(y)$\n" ); 
         fprintf( fp, "f:=");
-        for( i = 0; f != NULL; i++ )
+        for( i = 0; f != nullptr; i++ )
         {    
              fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "u", "v" ) );
              f  = f->next_term2;
@@ -1860,7 +1868,7 @@ bool QInputVF::PrepareGcf_LyapunovR2( int precision, int numpoints )
         filedotmpl = getmaplefilename();
     
         fp = fopen( QFile::encodeName(filedotmpl), "w" );
-        if( fp == NULL )
+        if( fp == nullptr )
             return false;
     
         mainmaple = GetP4MaplePath();
@@ -1887,7 +1895,7 @@ bool QInputVF::PrepareGcf_LyapunovR2( int precision, int numpoints )
         fprintf( fp, "v := %s:\n",          "x*sin(y)" );
         fprintf( fp, "user_f := " );
     
-        for( i = 0; f != NULL; i++ )
+        for( i = 0; f != nullptr; i++ )
         {
             fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "U", "V" ) );
             f = f->next_term2;

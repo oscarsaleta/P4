@@ -34,7 +34,7 @@ extern void spherePlotPoint( QWinSphere * sp, double * p, int color );
 extern void spherePrintLine( QWinSphere * sp, double * p1, double * p2, int color );
 extern void spherePrintPoint( QWinSphere * sp, double * p, int color );
 
-static QFile * XFigFile = NULL;
+static QFile * XFigFile = nullptr;
 static QTextStream XFigStream;
 
 static bool XFigBlackWhitePrint = true;
@@ -59,7 +59,7 @@ static int xfig_line_lastx = 0;
 static int xfig_line_lasty = 0;
 static int xfig_line_color = 0;
 static int xfig_line_numpoints = 0;
-static int * xfig_line_points = NULL;
+static int * xfig_line_points = nullptr;
 #define XFIG_LINE_MAXPOINTS     2000        // group line pieces together in polylines
                                             //  of at most this number of points.
 
@@ -74,7 +74,7 @@ void xfig_print_comment( QString s )
     if( xfig_line_busy )
         xfig_line_finish();
 
-    if( XFigFile != NULL )
+    if( XFigFile != nullptr )
     {
         XFigStream << "# " << s << "\n";
     }
@@ -82,7 +82,7 @@ void xfig_print_comment( QString s )
 
 void xfig_print_box( int x, int y, int color )
 {
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     if( xfig_line_busy )
@@ -127,7 +127,7 @@ void xfig_print_box( int x, int y, int color )
 
 void xfig_print_diamond( int x, int y, int color )
 {
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     if( xfig_line_busy )
@@ -156,7 +156,7 @@ void xfig_print_diamond( int x, int y, int color )
 
 void xfig_print_triangle( int x, int y, int color )
 {
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     if( xfig_line_busy )
@@ -188,7 +188,7 @@ void xfig_print_cross( int x, int y, int color )
 {
     int lw;
 
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     if( xfig_line_busy )
@@ -232,7 +232,7 @@ void xfig_print_line( double _x0, double _y0, double _x1, double _y1, int color 
     _y1 *= 1200;
     _y1 /= XFigResolution;
 
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     color = PrintColorTable[color];
@@ -262,7 +262,7 @@ void xfig_print_line( double _x0, double _y0, double _x1, double _y1, int color 
 
 void xfig_print_elips( double x0, double y0, double a, double b, int color, bool dotted, struct P4POLYLINES * ellipse )
 {
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     if( xfig_line_busy )
@@ -334,7 +334,7 @@ void xfig_print_elips( double x0, double y0, double a, double b, int color, bool
     {
         // ellipse is only partially visible, so emulate with polygon.
 
-        while( ellipse != NULL )
+        while( ellipse != nullptr )
         {
             xfig_print_line( ellipse->x1, ellipse->y1, ellipse->x2, ellipse->y2, color );
             ellipse = ellipse->next;
@@ -407,7 +407,7 @@ void xfig_line_finish( void )
         npoints         2   (=2 points)
     */
 
-    if( XFigFile != NULL )
+    if( XFigFile != nullptr )
     {
         QString s;
         s.sprintf( "2 1 0 %d %d  7 0 0 -1 0.0 0 1 -1 0 0 %d\n   ", XFigLineWidth/2, xfig_line_color, xfig_line_numpoints );
@@ -445,7 +445,7 @@ void xfig_print_point( double _x0, double _y0, int color )
     _y0 *= 1200;
     _y0 /= XFigResolution;
 
-    if( XFigFile == NULL )
+    if( XFigFile == nullptr )
         return;
 
     color = PrintColorTable[color];
@@ -563,7 +563,7 @@ void PrepareXFigPrinting( int w, int h, bool iszoom, bool isblackwhite, int reso
     else
     {
         delete XFigFile;
-        XFigFile = NULL;
+        XFigFile = nullptr;
     }
 
     plot_l = spherePrintLine;
@@ -598,7 +598,7 @@ void PrepareXFigPrinting( int w, int h, bool iszoom, bool isblackwhite, int reso
     XFigH = h * 1200;
     XFigH /= resolution;
 
-    if( XFigFile != NULL )
+    if( XFigFile != nullptr )
     {
         XFigStream <<
                 "#FIG 3.1\n"    // XFIG version 3.1 file format
@@ -638,21 +638,21 @@ void PrepareXFigPrinting( int w, int h, bool iszoom, bool isblackwhite, int reso
 
 void FinishXFigPrinting( void )
 {
-    if( XFigFile != NULL )
+    if( XFigFile != nullptr )
     {
         XFigStream.flush();
-        XFigStream.setDevice(NULL);
+        XFigStream.setDevice(nullptr);
         XFigFile->close();
         delete XFigFile;
-        XFigFile = NULL;
+        XFigFile = nullptr;
     }
 
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
 
-    if( xfig_line_points != NULL )
+    if( xfig_line_points != nullptr )
     {
         delete[] xfig_line_points;//free( xfig_line_points );
-        xfig_line_points = NULL;
+        xfig_line_points = nullptr;
     }
 }

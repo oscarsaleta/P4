@@ -34,8 +34,8 @@ extern bool plsphere_to_viewcoordpair_discontinuousy( double * p, double * q, do
 extern void default_finite_to_viewcoord( double x, double y, double * ucoord);
 extern bool default_sphere_to_viewcoordpair( double * p, double * q, double * u1, double * u2, double * u3, double * u4 );
 
-void (*plot_l)( QWinSphere *, double *, double *, int ) = NULL;
-void (*plot_p)( QWinSphere *, double *, int ) = NULL;
+void (*plot_l)( QWinSphere *, double *, double *, int ) = nullptr;
+void (*plot_p)( QWinSphere *, double *, int ) = nullptr;
 
 bool less_poincare( double * p1, double * p2 )
 {
@@ -219,9 +219,9 @@ void set_current_step( double curstep )
 {
     VFResults.config_currentstep = curstep;
     
-    if( p4startdlg != NULL )
-        if( p4startdlg->Plot_Window != NULL )
-            if( p4startdlg->Plot_Window->IntParams_Window != NULL )
+    if( p4startdlg != nullptr )
+        if( p4startdlg->Plot_Window != nullptr )
+            if( p4startdlg->Plot_Window->IntParams_Window != nullptr )
                 p4startdlg->Plot_Window->IntParams_Window->SetCurrentStep( curstep );
 
 }

@@ -159,7 +159,7 @@ void QWinSphere::plotPoint( struct saddle * p )
     double pos[2];
     int x, y;
     
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
         if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
@@ -182,7 +182,7 @@ void QWinSphere::plotPoint( struct node * p )
     double pos[2];
     int x, y;
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
         
@@ -209,7 +209,7 @@ void QWinSphere::plotPoint( struct weak_focus * p )
     double pos[2];
     int x, y;
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -247,7 +247,7 @@ void QWinSphere::plotPoint( struct strong_focus * p )
     double pos[2];
     int x, y;
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -274,7 +274,7 @@ void QWinSphere::plotPoint( struct degenerate * p )
     double pos[2];
     int x, y;
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -298,7 +298,7 @@ void QWinSphere::plotPoint( struct semi_elementary * p )
     double pos[2];
     int x, y;
 
-    if( p != NULL )
+    if( p != nullptr )
     {
         getChartPos( p->chart, p->x0, p->y0, pos );
 
@@ -336,17 +336,17 @@ void QWinSphere::plotPoints( void )
     struct semi_elementary * sep;
     struct degenerate * dp;
 
-    for( sp = VFResults.first_saddle_point; sp != NULL; sp = sp->next_saddle )
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
         plotPoint( sp );
-    for( np = VFResults.first_node_point; np != NULL; np = np->next_node )
+    for( np = VFResults.first_node_point; np != nullptr; np = np->next_node )
         plotPoint( np );
-    for( wfp = VFResults.first_wf_point; wfp != NULL; wfp = wfp->next_wf )
+    for( wfp = VFResults.first_wf_point; wfp != nullptr; wfp = wfp->next_wf )
         plotPoint( wfp );
-    for( sfp = VFResults.first_sf_point; sfp != NULL; sfp = sfp->next_sf )
+    for( sfp = VFResults.first_sf_point; sfp != nullptr; sfp = sfp->next_sf )
         plotPoint( sfp );
-    for( sep = VFResults.first_se_point; sep != NULL; sep = sep->next_se )
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
         plotPoint( sep );
-    for( dp = VFResults.first_de_point; dp != NULL; dp = dp->next_de )
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
         plotPoint( dp );
 }
 
@@ -354,7 +354,7 @@ void QWinSphere::plotPointSeparatrices( struct semi_elementary * p )
 {
     struct sep * separatrice;
     
-    for( separatrice = p->separatrices; separatrice != NULL; separatrice = separatrice->next_sep )
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
         draw_sep( this, separatrice->first_sep_point );
 }
 
@@ -362,7 +362,7 @@ void QWinSphere::plotPointSeparatrices( struct saddle * p )
 {
     struct sep * separatrice;
     
-    for( separatrice = p->separatrices; separatrice != NULL; separatrice = separatrice->next_sep )
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
         draw_sep( this, separatrice->first_sep_point );
 }
 
@@ -370,7 +370,7 @@ void QWinSphere::plotPointSeparatrices( struct degenerate * p )
 {
     struct blow_up_points *blow_up;
 
-    for( blow_up = p->blow_up; blow_up != NULL; blow_up = blow_up->next_blow_up_point )
+    for( blow_up = p->blow_up; blow_up != nullptr; blow_up = blow_up->next_blow_up_point )
     {
         draw_sep( this, blow_up->first_sep_point );
     }
@@ -382,11 +382,11 @@ void QWinSphere::plotSeparatrices( void )
     struct semi_elementary * sep;
     struct degenerate * dp;
 
-    for( sp = VFResults.first_saddle_point; sp != NULL; sp = sp->next_saddle )
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
         plotPointSeparatrices( sp );
-    for( sep = VFResults.first_se_point; sep != NULL; sep = sep->next_se )
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
         plotPointSeparatrices( sep );
-    for( dp = VFResults.first_de_point; dp != NULL; dp = dp->next_de )
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
         plotPointSeparatrices( dp );
 }
 

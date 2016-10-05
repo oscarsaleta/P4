@@ -28,8 +28,8 @@ extern void SetP4WindowTitle( QWidget *, QString );
 
 void MakeButtonPixmaps( const QPalette & );
 
-QPixmap * Pixmap_TriangleUp = NULL;
-QPixmap * Pixmap_TriangleDown = NULL;
+QPixmap * Pixmap_TriangleUp = nullptr;
+QPixmap * Pixmap_TriangleDown = nullptr;
 
 QStartDlg::QStartDlg( const QString & autofilename )
     : QWidget()
@@ -42,7 +42,7 @@ QStartDlg::QStartDlg( const QString & autofilename )
 
     // define controls
 
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         setWindowIcon( *p4smallicon );
 
     btn_quit = new QPushButton( "&Quit", this );
@@ -158,11 +158,11 @@ QStartDlg::QStartDlg( const QString & autofilename )
 //  viewmenu->setItemEnabled( 1, false );
 //  viewmenu->setItemEnabled( 2, false );
 
-    Help_Window = NULL;
-    Find_Window = NULL;
-    View_Infinite_Window = NULL;
-    View_Finite_Window = NULL;
-    Plot_Window = NULL;
+    Help_Window = nullptr;
+    Find_Window = nullptr;
+    View_Infinite_Window = nullptr;
+    View_Finite_Window = nullptr;
+    Plot_Window = nullptr;
 #ifdef AUTO_OPEN_FINDWINDOW
     OnFind();
 #else
@@ -177,7 +177,7 @@ void QStartDlg::OnFind( void )
 {
     // show find dialog
 
-    if( Find_Window == NULL )
+    if( Find_Window == nullptr )
     {
         Find_Window = new QFindDlg( this );
         Find_Window->show();
@@ -191,7 +191,7 @@ void QStartDlg::OnFind( void )
     {
 #ifdef DOCK_FINDWINDOW
         delete Find_Window;
-        Find_Window = NULL;
+        Find_Window = nullptr;
         btn_find->setIcon( QIcon(*Pixmap_TriangleDown) );
 #else
         Find_Window->show();
@@ -227,14 +227,14 @@ void QStartDlg::OnHelp( void )
 
     hlp = (QTextBrowser *)Help_Window;
 
-    if( hlp == NULL )
+    if( hlp == nullptr )
     {
         hlp = new QTextBrowser();
     }
 
     hlp->setSource( QUrl::fromLocalFile( helpname ) );
     hlp->resize( 640, 480 );
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         hlp->setWindowIcon( *p4smallicon );
 
     SetP4WindowTitle( hlp, "P4 Help" );
@@ -248,14 +248,14 @@ void QStartDlg::OnPlot( void )
 {
     // show plot window
 
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
         Find_Window->GetDataFromDlg();
 
     VFResults.DeleteVF();                               // delete any previous result object
     if( !VFResults.ReadTables( ThisVF->getbarefilename() ) )    // read maple/reduce results
     {
         delete Plot_Window;
-        Plot_Window = NULL;
+        Plot_Window = nullptr;
 
         QMessageBox::critical( this, "P4",
                            "Cannot read computation results.\n"
@@ -267,7 +267,7 @@ void QStartDlg::OnPlot( void )
 
     VFResults.SetupCoordinateTransformations();
 
-    if( Plot_Window == NULL )
+    if( Plot_Window == nullptr )
     {
         Plot_Window = new QPlotWnd( this );
     }
@@ -280,43 +280,43 @@ void QStartDlg::OnPlot( void )
 
 void QStartDlg::OnQuit( void )
 {
-    if( Plot_Window != NULL )
+    if( Plot_Window != nullptr )
     {
         delete Plot_Window;
-        Plot_Window = NULL;
+        Plot_Window = nullptr;
     }
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
     {
         delete Find_Window;
-        Find_Window = NULL;
+        Find_Window = nullptr;
     }
-    if( Help_Window != NULL )
+    if( Help_Window != nullptr )
     {
         delete Help_Window;
-        Help_Window = NULL;
+        Help_Window = nullptr;
     }
-    if( View_Finite_Window != NULL )
+    if( View_Finite_Window != nullptr )
     {
         delete View_Finite_Window;
-        View_Finite_Window = NULL;
+        View_Finite_Window = nullptr;
     }
-    if( View_Infinite_Window != NULL )
+    if( View_Infinite_Window != nullptr )
     {
         delete View_Infinite_Window;
-        View_Infinite_Window = NULL;
+        View_Infinite_Window = nullptr;
     }
     
-    if( ThisVF != NULL )
+    if( ThisVF != nullptr )
     {
-        if( ThisVF->ProcessText != NULL )
+        if( ThisVF->ProcessText != nullptr )
         {
-            if( ThisVF->ProcessButton != NULL )
+            if( ThisVF->ProcessButton != nullptr )
             {
                 delete ThisVF->ProcessButton;
-                ThisVF->ProcessButton = NULL;
+                ThisVF->ProcessButton = nullptr;
             }
             delete ThisVF->ProcessText;
-            ThisVF->ProcessText = NULL;
+            ThisVF->ProcessText = nullptr;
         }
     }
 
@@ -337,14 +337,14 @@ void QStartDlg::Signal_Evaluating( void )
 
     // Transfer signal to Find_Window:
 
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
     {
         Find_Window->Signal_Evaluating();
     }
 
     // Transfer signal to Plot_Window:
 
-    if( Plot_Window != NULL )
+    if( Plot_Window != nullptr )
         Plot_Window->Signal_Evaluating();
 }
 
@@ -357,11 +357,11 @@ void QStartDlg::Signal_Evaluated( void )
 
     // freshen view finite/infinite windows if they are open:
 
-    if( View_Finite_Window != NULL )
+    if( View_Finite_Window != nullptr )
     {
         QString fname;
 
-        if( Find_Window != NULL )
+        if( Find_Window != nullptr )
             Find_Window->GetDataFromDlg();
 
         fname = ThisVF->getfilename_finresults();
@@ -372,7 +372,7 @@ void QStartDlg::Signal_Evaluated( void )
         }
         else
         {
-            if( View_Finite_Window != NULL )
+            if( View_Finite_Window != nullptr )
             {
                 ((QTextEdit *)View_Finite_Window)->clear();
                 ((QTextEdit *)View_Finite_Window)->setCurrentFont( *(p4app->BoldCourierFont) );
@@ -382,11 +382,11 @@ void QStartDlg::Signal_Evaluated( void )
         }
     }
 
-    if( View_Infinite_Window != NULL )
+    if( View_Infinite_Window != nullptr )
     {
         QString fname;
 
-        if( Find_Window != NULL )
+        if( Find_Window != nullptr )
             Find_Window->GetDataFromDlg();
 
         fname = ThisVF->getfilename_infresults();
@@ -402,7 +402,7 @@ void QStartDlg::Signal_Evaluated( void )
         }
         else
         {
-            if( View_Infinite_Window != NULL )
+            if( View_Infinite_Window != nullptr )
             {
                 ((QTextEdit *)View_Infinite_Window)->clear();
                 ((QTextEdit *)View_Infinite_Window)->setCurrentFont( *(p4app->BoldCourierFont) );
@@ -414,14 +414,14 @@ void QStartDlg::Signal_Evaluated( void )
 
     // Transfer signal to Find_Window:
 
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
     {
         Find_Window->Signal_Evaluated();
     }
 
     // Transfer signal to Plot_Window:
 
-    if( Plot_Window != NULL )
+    if( Plot_Window != nullptr )
     {
         VFResults.DeleteVF();                               // delete any previous result object
         if( !VFResults.ReadTables( ThisVF->getbarefilename() ) ) // read maple/reduce results
@@ -455,16 +455,16 @@ void QStartDlg::Signal_Loaded( void )
 
 void QStartDlg::Signal_Changed( void )
 {
-    if( View_Finite_Window != NULL )
+    if( View_Finite_Window != nullptr )
     {
         View_Finite_Window->setFont( *(p4app->CourierFont) );
     }
 
-    if( View_Infinite_Window != NULL )
+    if( View_Infinite_Window != nullptr )
     {
         View_Infinite_Window->setFont( *(p4app->CourierFont) );
     }
-    if( Plot_Window != NULL )
+    if( Plot_Window != nullptr )
     {
         Plot_Window->Signal_Changed();
     }
@@ -493,6 +493,7 @@ void QStartDlg::OnAbout( void )
     pdlg = new QP4AboutDlg( this, 0 );
     pdlg->exec();
     delete pdlg;
+    pdlg = nullptr;
 }
 
 void QStartDlg::OnViewFinite()
@@ -501,7 +502,7 @@ void QStartDlg::OnViewFinite()
 
     QString fname;
 
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
         Find_Window->GetDataFromDlg();
 
     fname = ThisVF->getfilename_finresults();
@@ -538,7 +539,7 @@ void QStartDlg::OnViewInfinite()
 {
     QString fname;
 
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
         Find_Window->GetDataFromDlg();
 
     fname = ThisVF->getfilename_infresults();
@@ -576,19 +577,19 @@ QWidget * QStartDlg::Showtext( QWidget * win, QString caption, QString fname )
     QTextEdit * result;
 
     result = (QTextEdit *)win;
-    if( result == NULL )
+    if( result == nullptr )
         result = new QTextEdit();
     else
         result->clear();
 
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         result->setWindowIcon( *p4smallicon );
 
     QFile f( fname );
     if ( !f.open( QIODevice::ReadOnly ) )
     {
         delete result;
-        return NULL;
+        return nullptr;
     }
 
     shown = false;
@@ -635,13 +636,13 @@ void QStartDlg::closeEvent( QCloseEvent* ce )
     // A close event is subtly different from a hide event:
     // hide may often mean "iconify" but close means that the window is going away for good. 
 
-    if( ThisVF == NULL )
+    if( ThisVF == nullptr )
     {
         ce->accept();
         return;
     }
 
-    if( Find_Window != NULL )
+    if( Find_Window != nullptr )
         Find_Window->GetDataFromDlg();
 
     if( ThisVF->changed == false )
@@ -686,10 +687,10 @@ void QStartDlg::customEvent( QEvent * e )
     case TYPE_SIGNAL_LOADED:        Signal_Loaded();        break;
     case TYPE_SIGNAL_SAVED:         Signal_Saved();         break;
     case TYPE_CLOSE_PLOTWINDOW:
-        if( Plot_Window != NULL )
+        if( Plot_Window != nullptr )
         {
             delete Plot_Window;
-            Plot_Window = NULL;
+            Plot_Window = nullptr;
         }
         break;
     default:
@@ -727,4 +728,5 @@ void MakeButtonPixmaps( const QPalette & qcg )
     p->end();
 
     delete p;
+    p = nullptr;
 }

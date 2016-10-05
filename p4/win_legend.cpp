@@ -71,7 +71,7 @@ struct P4RGBITEM XFigToRGB[NUMXFIGCOLORS] =
 // -----------------------------------------------------------------------
 
 QLegendWnd::QLegendWnd()
-    : QWidget(NULL,Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     int w, h;
 

@@ -24,8 +24,8 @@ struct P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a,
 
     prevx = prevy = 0;
     dotcount=0;
-    first = NULL;
-    last = NULL;
+    first = nullptr;
+    last = nullptr;
     
     R = (resa < resb) ? resa : resb;
     if( R < 1.0 ) R = 1.0; // protection
@@ -161,16 +161,16 @@ struct P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a,
         {
             if( doton )
             {
-                if( first == NULL )
+                if( first == nullptr )
                 {
                     last = first = new P4POLYLINES;//(struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
-                    last->next = NULL;
+                    last->next = nullptr;
                 }
                 else
                 {
                     last->next = new P4POLYLINES;//(struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
                     last = last->next;
-                    last->next = NULL;
+                    last->next = nullptr;
                 }
 
                 last->x1 = prevx;
@@ -226,7 +226,7 @@ void QWinSphere::plotPoincareSphere( void )
     color = VFResults.singinf ? CSING : CLINEATINFINITY;
 
     staticPainter->setPen( QXFIGCOLOR(color) );
-    while( p != NULL )
+    while( p != nullptr )
     {
         staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
         p = p->next;
@@ -242,7 +242,7 @@ void QWinSphere::plotPoincareLyapunovSphere( void )
     color = VFResults.singinf ? CSING : CLINEATINFINITY;
 
     staticPainter->setPen( QXFIGCOLOR(color) );
-    while( p != NULL )
+    while( p != nullptr )
     {
         staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
         p = p->next;
@@ -252,7 +252,7 @@ void QWinSphere::plotPoincareLyapunovSphere( void )
     color = CLINEATINFINITY;
 
     staticPainter->setPen( QXFIGCOLOR(color) );
-    while( p != NULL )
+    while( p != nullptr )
     {
         staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
         p = p->next;
@@ -297,7 +297,7 @@ void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color )
 
     if( MATHFUNC(sphere_to_viewcoordpair)(p1,p2,ucoord1,ucoord2,ucoord3,ucoord4) )
     {
-        while( sp != NULL )
+        while( sp != nullptr )
         {
             sp->drawLine( ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color );
             sp = sp->next;
@@ -305,7 +305,7 @@ void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color )
     }
     else
     {
-        while( sp != NULL )
+        while( sp != nullptr )
         {
             sp->drawLine( ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color );
             sp->drawLine( ucoord3[0], ucoord3[1], ucoord4[0], ucoord4[1], color );
@@ -320,7 +320,7 @@ void spherePlotPoint( QWinSphere * sp, double * p, int color )
 
     MATHFUNC(sphere_to_viewcoord)(p[0],p[1],p[2],ucoord);
 
-    while( sp != NULL )
+    while( sp != nullptr )
     {
         sp->drawPoint( ucoord[0], ucoord[1], color );
         sp = sp->next;

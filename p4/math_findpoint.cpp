@@ -72,7 +72,7 @@ static double find_distance_saddle(struct saddle *point, double x, double y,
                 *type=SADDLE;
             }
         }
-        while((point=point->next_saddle)!=NULL);
+        while((point=point->next_saddle)!=nullptr);
     }
 
     return(distance);
@@ -111,7 +111,7 @@ static double find_distance_se(struct semi_elementary *point, double x,
                 }
             }
         }
-        while( (point=point->next_se) != NULL );
+        while( (point=point->next_se) != nullptr );
     }
     return(distance);
 }
@@ -152,7 +152,7 @@ static double find_distance_de(struct degenerate *point, double x, double y,
             }
         }
     }
-    while( (point=point->next_de) != NULL );
+    while( (point=point->next_de) != nullptr );
 
     return(distance);
 }
@@ -193,7 +193,7 @@ int find_critical_point( QWinSphere * spherewnd, double x, double y )
         sepc = VFResults.selected_sep = VFResults.selected_saddle_point->separatrices;
         draw_selected_sep( spherewnd, VFResults.selected_sep->first_sep_point, CW_SEP );
 
-        while( sepc != NULL )
+        while( sepc != nullptr )
         {
             sepcount++;
             sepc = sepc->next_sep;
@@ -242,7 +242,7 @@ int find_critical_point( QWinSphere * spherewnd, double x, double y )
         sepc = VFResults.selected_sep = VFResults.selected_se_point->separatrices;
         draw_selected_sep( spherewnd, VFResults.selected_sep->first_sep_point, CW_SEP );
         
-        while( sepc != NULL )
+        while( sepc != nullptr )
         {
             sepcount++;
             sepc = sepc->next_sep;
@@ -289,7 +289,7 @@ int find_critical_point( QWinSphere * spherewnd, double x, double y )
         VFResults.selected_de_sep = VFResults.selected_de_point->blow_up;
         draw_selected_sep(spherewnd, VFResults.selected_de_sep->first_sep_point,CW_SEP);
 
-        for( bc = VFResults.selected_de_sep; bc != NULL; bc = bc->next_blow_up_point )
+        for( bc = VFResults.selected_de_sep; bc != nullptr; bc = bc->next_blow_up_point )
             sepcount++;
 
         start_plot_sep=start_plot_de_sep;

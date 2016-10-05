@@ -51,8 +51,8 @@ char * printterm2( char *, struct term2 *, bool, char *, char * );
 
 int stable = 0;
 int direction = 0;
-struct term1 * separatrice = NULL;
-struct term2 * vec_field[2] = { NULL, NULL };     // vec_field={P(x,y),Q(x,y)}
+struct term1 * separatrice = nullptr;
+struct term2 * vec_field[2] = { nullptr, nullptr };     // vec_field={P(x,y),Q(x,y)}
 
 // --------------------------------------------------------------------------
 //                      MAIN
@@ -112,7 +112,7 @@ int main( int argc, char *argv[] )
 	printf( "\tx'= " );
 	isfirst=true;
 	t2 = vec_field[0];
-	while( t2 != NULL )
+	while( t2 != nullptr )
 	{
 		printterm2( buf, t2, isfirst, "x", "y" );
 		printf( "%s", buf );
@@ -123,7 +123,7 @@ int main( int argc, char *argv[] )
 	printf( "\ty'= " );
 	isfirst=true;
 	t2 = vec_field[1];
-	while( t2 != NULL )
+	while( t2 != nullptr )
 	{
 		printterm2( buf, t2, isfirst, "x", "y" );
 		printf( "%s", buf );
@@ -135,7 +135,7 @@ int main( int argc, char *argv[] )
 	printf( "\ty = " );
 	isfirst=true;
 	t1=separatrice;
-	while( t1 != NULL )
+	while( t1 != nullptr )
 	{
 		printterm1( buf, t1, isfirst, "x" );
 		printf( "%s", buf );
@@ -151,7 +151,7 @@ int main( int argc, char *argv[] )
 	fprintf( logfile, "  Vector field:\n" );
 	fprintf( logfile, "\tx'= " );
 	t2 = vec_field[0];
-	while( t2 != NULL )
+	while( t2 != nullptr )
 	{
 		printterm2( buf, t2, isfirst, "x", "y" );
 		fprintf( logfile, "%s", buf );
@@ -162,7 +162,7 @@ int main( int argc, char *argv[] )
 	fprintf( logfile, "\ty'= " );
 	isfirst=true;
 	t2 = vec_field[1];
-	while( t2 != NULL )
+	while( t2 != nullptr )
 	{
 		printterm2( buf, t2, isfirst, "x", "y" );
 		fprintf( logfile, "%s", buf );
@@ -174,7 +174,7 @@ int main( int argc, char *argv[] )
 	fprintf( logfile, "\ty = " );
 	isfirst=true;
 	t1=separatrice;
-	while( t1 != NULL )
+	while( t1 != nullptr )
 	{
 		printterm1( buf, t1, isfirst, "x" );
 		fprintf( logfile, "%s", buf );
@@ -227,7 +227,7 @@ double eval_term1( struct term1 * current_term1, double t )
 {
 	double s=0;
 
-	if(current_term1 != NULL)
+	if(current_term1 != nullptr)
 	{
 		do
 		{
@@ -236,7 +236,7 @@ double eval_term1( struct term1 * current_term1, double t )
 			else
 				s+=current_term1->coeff;
 		}
-		while( (current_term1=current_term1->next_term1) != NULL );
+		while( (current_term1=current_term1->next_term1) != nullptr );
 	}
 	return s;
 }
@@ -250,7 +250,7 @@ double diff_eval_term1( struct term1 * current_term1, double t )
 	double s=0;
 	int exp;
 	
-	if( current_term1 != NULL )
+	if( current_term1 != nullptr )
 	{
 		do
 		{
@@ -261,7 +261,7 @@ double diff_eval_term1( struct term1 * current_term1, double t )
 				if( exp )
 					s += current_term1->coeff*exp*pow(t,(double)exp-1);
 		}
-		while( (current_term1=current_term1->next_term1) != NULL );
+		while( (current_term1=current_term1->next_term1) != nullptr );
 	}
 	return s;
 }
@@ -278,7 +278,7 @@ double eval_vec_field( int i, double a, double b )
 	s = 0;
 	current_term2 = vec_field[i];
 
-	if( current_term2 != NULL )
+	if( current_term2 != nullptr )
 	{
 		do
 		{
@@ -294,7 +294,7 @@ double eval_vec_field( int i, double a, double b )
 					else
 						s += current_term2->coeff;
 		}
-		while( (current_term2=current_term2->next_term2) != NULL );
+		while( (current_term2=current_term2->next_term2) != nullptr );
 	}
 
 	return s;
@@ -440,12 +440,12 @@ void read_term2( FILE * fp, struct term2 * current_term2, int l )
 {
     int i;
     fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff);
-    current_term2->next_term2 = NULL;
+    current_term2->next_term2 = nullptr;
     for(i=2;i<=l;i++) {
         current_term2->next_term2 = new term2;//(struct term2 *) malloc (sizeof(struct term2));
         current_term2 = current_term2->next_term2;
         fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff);
-        current_term2->next_term2 = NULL; 
+        current_term2->next_term2 = nullptr; 
     }
 }
 
@@ -457,12 +457,12 @@ void read_term1( FILE * fp, struct term1 * current_term1, int l )
 {
     int i;
     fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
-    current_term1->next_term1 = NULL;
+    current_term1->next_term1 = nullptr;
     for(i=2;i<=l;i++) {
         current_term1->next_term1 = new term1;//(struct term1 *) malloc (sizeof(struct term1));
         current_term1=current_term1->next_term1;
         fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
-        current_term1->next_term1 = NULL; 
+        current_term1->next_term1 = nullptr; 
     }
 }
 

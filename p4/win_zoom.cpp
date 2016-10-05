@@ -34,7 +34,7 @@ QZoomWnd::QZoomWnd( QPlotWnd * main, int id, double x1, double y1, double x2, do
 //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
 //    setPalette(palette);
 
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         setWindowIcon( *p4smallicon );
 
     toolBar1 = new QToolBar( "ZoomBar1", this );
@@ -79,7 +79,7 @@ QZoomWnd::QZoomWnd( QPlotWnd * main, int id, double x1, double y1, double x2, do
 QZoomWnd::~QZoomWnd()
 {
     delete sphere;
-    sphere = NULL;
+    sphere = nullptr;
 }
 
 void QZoomWnd::Signal_Changed( void )
@@ -141,6 +141,7 @@ void QZoomWnd::OnBtnPrint( void )
     ss = pdlg->GetChosenSymbolSize();
 
     delete pdlg;
+    pdlg = nullptr;
 
     if( result != P4PRINT_NONE )
     {

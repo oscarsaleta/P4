@@ -22,7 +22,7 @@ QP4AboutDlg::QP4AboutDlg( QWidget * parent, Qt::WindowFlags f )
 
     // define controls
 
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         setWindowIcon( *p4smallicon );
 
     btn_ok = new QPushButton( "&Ok" );
@@ -92,6 +92,7 @@ void QP4AboutDlg::OnSettings( void )
     psettings = new QSettingsDlg( this, 0 );
     value = psettings->exec();
     delete psettings;
+    psettings = nullptr;
     if( value )
         done(0);
 }

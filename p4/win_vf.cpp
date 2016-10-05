@@ -102,8 +102,8 @@ QVectorFieldDlg::QVectorFieldDlg( QFindDlg * finddlg )
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout);
 
-    sb_params = NULL;
-    params = NULL;
+    sb_params = nullptr;
+    params = nullptr;
 
     if( ThisVF->numparams != 0 )
     {
@@ -115,7 +115,7 @@ QVectorFieldDlg::QVectorFieldDlg( QFindDlg * finddlg )
             sb_params->setPageStep( MAXNUMPARAMSSHOWN );
         }
         else
-            sb_params = NULL;
+            sb_params = nullptr;
 
         params = new QVFParams(this, sb_params);
         paramLayout->addWidget( params );
@@ -146,12 +146,12 @@ void QVectorFieldDlg::numParamsChanged( int val )
     if( val >= 0 && val <= MAXNUMPARAMS && val != ThisVF->numparams )
     {
         delete params;
-        params = NULL;
+        params = nullptr;
 
-        if( sb_params != NULL )
+        if( sb_params != nullptr )
         {
             delete sb_params;
-            sb_params = NULL;
+            sb_params = nullptr;
         }
 
         if( val != 0 )
@@ -170,7 +170,7 @@ void QVectorFieldDlg::numParamsChanged( int val )
                 sb_params->setPageStep( MAXNUMPARAMSSHOWN );
             }
             else
-                sb_params = NULL;
+                sb_params = nullptr;
 
             params = new QVFParams(this, sb_params );
             paramLayout->addWidget( params );
@@ -199,10 +199,10 @@ void QVectorFieldDlg::numParamsChanged( int val )
 
 QVectorFieldDlg::~QVectorFieldDlg()
 {
-    if( params != NULL )
+    if( params != nullptr )
     {
         delete params;
-        params = NULL;
+        params = nullptr;
     }
     GetDataFromDlg();
 }
@@ -234,7 +234,7 @@ void QVectorFieldDlg::GetDataFromDlg( void )
             p4app->Signal_Changed();
         }
     }
-    if( params != NULL )
+    if( params != nullptr )
     {
         params->GetDataFromDlg();
     }
@@ -247,16 +247,16 @@ void QVectorFieldDlg::UpdateDlgData( void )
     edt_gcf->setText( ThisVF->gcf );
     spin_numparams->setValue( ThisVF->numparams );
 
-    if( params != NULL )
+    if( params != nullptr )
     {
         if( !params->UpdateDlgData() )
         {
             delete params;
-            params = NULL;
+            params = nullptr;
         }
     }
     
-    if( ThisVF->numparams != 0 && params == NULL )
+    if( ThisVF->numparams != 0 && params == nullptr )
     {
         if( ThisVF->numparams > MAXNUMPARAMSSHOWN )
         {
@@ -266,7 +266,7 @@ void QVectorFieldDlg::UpdateDlgData( void )
             sb_params->setPageStep( MAXNUMPARAMSSHOWN );
         }
         else
-            sb_params = NULL;
+            sb_params = nullptr;
 
         params = new QVFParams( this, sb_params );
         paramLayout->addWidget( params );
@@ -355,7 +355,7 @@ bool QVFParams::GetDataFromDlg( void )
     bool changed;
     QString temp;
 
-    if( ThisVF == NULL )
+    if( ThisVF == nullptr )
         return false;
 
     if( ThisVF->numparams != currentnumparams )

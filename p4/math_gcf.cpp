@@ -22,11 +22,11 @@
 #define EVAL_GCF_FINISHLYAPUNOV     12
 
 static int GcfTask = EVAL_GCF_NONE;
-static QWinSphere * GcfSphere = NULL;
+static QWinSphere * GcfSphere = nullptr;
 static int GcfDashes = 0;
 static bool GcfError = false;
 
-struct orbits_points * last_gcf_point = NULL;
+struct orbits_points * last_gcf_point = nullptr;
 
 static void insert_gcf_point( double x0, double y0, double z0, int dashes );
 static bool RunTask( int, int, int );
@@ -36,13 +36,13 @@ static bool read_gcf( void (*chart)(double,double,double *) );
 
 bool EvalGcfStart( QWinSphere * sp, int dashes, int points, int precis )
 {
-    if( VFResults.gcf_points != NULL )
+    if( VFResults.gcf_points != nullptr )
     {
         sp->prepareDrawing();
         draw_gcf( sp, VFResults.gcf_points, CBACKGROUND, GcfDashes );
         sp->finishDrawing();
         VFResults.DeleteOrbitPoint( VFResults.gcf_points );
-        VFResults.gcf_points = NULL;
+        VFResults.gcf_points = nullptr;
     }
 
     if( VFResults.plweights )
@@ -160,7 +160,7 @@ void draw_gcf( QWinSphere * spherewnd, struct orbits_points * sep, int color, in
 {
     double pcoord[3];
 
-    while( sep != NULL )
+    while( sep != nullptr )
     {
         if(sep->dashes && dashes)
             (*plot_l)(spherewnd,pcoord,sep->pcoord,color);
@@ -174,7 +174,7 @@ void draw_gcf( QWinSphere * spherewnd, struct orbits_points * sep, int color, in
 
 static void insert_gcf_point( double x0, double y0, double z0, int dashes )
 {
-    if( VFResults.gcf_points != NULL  )
+    if( VFResults.gcf_points != nullptr  )
     {
         last_gcf_point->next_point = new orbits_points;//(struct orbits_points *) malloc(sizeof(struct orbits_points));
         last_gcf_point = last_gcf_point->next_point; 
@@ -191,7 +191,7 @@ static void insert_gcf_point( double x0, double y0, double z0, int dashes )
     
     last_gcf_point->dashes = dashes;
     last_gcf_point->color = CSING;
-    last_gcf_point->next_point = NULL;
+    last_gcf_point->next_point = nullptr;
 }
 
 static bool read_gcf( void (*chart)(double,double,double *) )
@@ -204,7 +204,7 @@ static bool read_gcf( void (*chart)(double,double,double *) )
     int d,c;
 
     fp = fopen( QFile::encodeName( ThisVF->getfilename_gcf() ), "r" );
-    if( fp == NULL )
+    if( fp == nullptr )
         return false;
 
     if( ThisVF->symbolicpackage == PACKAGE_REDUCE )
@@ -213,7 +213,7 @@ static bool read_gcf( void (*chart)(double,double,double *) )
         
     FILE * fp2;
     fp2 = fopen( QFile::encodeName( ThisVF->getfilename_gcfresults() ), "r" );
-    if( fp ==NULL )
+    if( fp ==nullptr )
     {
         fclose(fp);
         return false;

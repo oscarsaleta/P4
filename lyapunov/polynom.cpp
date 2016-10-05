@@ -148,7 +148,8 @@ void delete_coeff( struct poly *f )
 	struct poly *w;
 
 	w = f->next_poly->next_poly;
-	free( f->next_poly );
+    //free( f->next_poly );
+    delete f->next_poly;
 	f->next_poly = w;
 }
 
@@ -175,6 +176,7 @@ void add_poly( struct poly *f, struct poly *g )
 			{
 				w1->next_poly = w2->next_poly;
                 delete w2;
+                w2 = nullptr;
 			}
 		}
 	}
@@ -203,6 +205,7 @@ void sub_poly( struct poly *f, struct poly *g )
 			{
 				w1->next_poly = w2->next_poly;
                 delete w2;
+                w2 = nullptr;
 			}
 		}
 	}
@@ -293,6 +296,7 @@ void delete_poly( struct poly **f )
         tmp = w;
         w = w->next_poly;
         delete tmp;
+        tmp = nullptr;
     }
     *f = nullptr;
     /*if ( f != nullptr )

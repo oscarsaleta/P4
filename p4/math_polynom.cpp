@@ -21,7 +21,7 @@ double eval_term1( P4POLYNOM1 p, double t )
     double s;
 
     s = 0;
-    while( p != NULL )
+    while( p != nullptr )
     {
         if( p->exp != 0 )
             s += (p->coeff) * pow(t, (double)(p->exp) );
@@ -47,7 +47,7 @@ double eval_term2( P4POLYNOM2 f, double * value )
     double s;
 
     s = 0;
-    while( f != NULL )
+    while( f != nullptr )
     {
         if( f->exp_x != 0 && f->exp_y != 0 )
             s += f->coeff * pow( value[0], (double)(f->exp_x) )
@@ -84,7 +84,7 @@ double eval_term3( P4POLYNOM3 F, double * value )
     Co = cos( value[1] );
     Si = sin( value[1] );
 
-    while( F != NULL )
+    while( F != nullptr )
     {
         if( F->exp_r != 0 )
             t = pow( value[0], (double)(F->exp_r) );
@@ -112,11 +112,12 @@ void delete_term1( P4POLYNOM1 p )
 {
     P4POLYNOM1 q;
 
-    while( p != NULL )
+    while( p != nullptr )
     {
         q = p;
         p = p->next_term1;
         delete q;//free( q );
+        q = nullptr;
     }
 }
 
@@ -128,11 +129,12 @@ void delete_term2( P4POLYNOM2 p )
 {
     P4POLYNOM2 q;
 
-    while( p != NULL )
+    while( p != nullptr )
     {
         q = p;
         p = p->next_term2;
         delete q;//free( q );
+        q = nullptr;
     }
 }
 
@@ -144,11 +146,12 @@ void delete_term3( P4POLYNOM3 p )
 {
     P4POLYNOM3 q;
 
-    while( p != NULL )
+    while( p != nullptr )
     {
         q = p;
         p = p->next_term3;
         delete q;//free( q );
+        q = nullptr;
     }
 }
 
@@ -169,10 +172,10 @@ const char * DumpPoly1( P4POLYNOM1 f, const char * x )
     QString t;
     s = "";
 
-    if( f == NULL )
+    if( f == nullptr )
         return "0 (null)";
 
-    while( f != NULL )
+    while( f != nullptr )
     {
         c = f->coeff;
         cx = f->exp;
@@ -241,10 +244,10 @@ const char * DumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
     QString t;
     s = "";
 
-    if( f == NULL )
+    if( f == nullptr )
         return "0 (null)";
 
-    while( f != NULL )
+    while( f != nullptr )
     {
         c = f->coeff;
         cx = f->exp_x;
@@ -321,10 +324,10 @@ const char * DumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char
     QString t;
     s = "";
 
-    if( f == NULL )
+    if( f == nullptr )
         return "0 (null)";
 
-    while( f != NULL )
+    while( f != nullptr )
     {
         c = f->coeff;
         cx = f->exp_r;

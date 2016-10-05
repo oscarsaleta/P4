@@ -35,7 +35,7 @@ QString GetDefaultP4Path( void )
 {
     QString f;
 #ifndef Q_OS_WIN
-    if( getenv( "P4_DIR" ) != NULL )
+    if( getenv( "P4_DIR" ) != nullptr )
         f = (QString)getenv( "P4_DIR" );
 #endif
 
@@ -244,7 +244,7 @@ QString GetDefaultP4BinPath( void )
 // Returns the full path name that leads to the reduce binary.  This
 // may be a batch file name as well.
 //
-// Under Windows, return NULL
+// Under Windows, return nullptr
 //
 // Under Linux, return the batch file name "reduce".
 
@@ -252,7 +252,7 @@ QString GetDefaultReduceInstallation( void )
 {
 #ifdef Q_OS_WIN
     QString r;
-    return r;       // return NULL (Windows Reduce version not supported)
+    return r;       // return nullptr (Windows Reduce version not supported)
 #else
     return "reduce";
 #endif
@@ -279,6 +279,7 @@ QString GetDefaultMapleInstallation( void )
                            QSettings::NativeFormat);
     mapleversion = maplesettings->value( "/CURRENT_MAPLE" ).toString();
     delete maplesettings;
+    maplesettings = nullptr;
     
     if( mapleversion.length() != 0 )
     {
@@ -286,6 +287,7 @@ QString GetDefaultMapleInstallation( void )
                         QSettings::NativeFormat );
         maplepath = maplesettings->value( "/EXEPATH" ).toString();
         delete maplesettings;
+        maplesettings = nullptr;
         if( maplepath.length() != 0 )
         {
             QFileInfo maplepat( maplepath );

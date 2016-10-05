@@ -44,12 +44,12 @@ QPlotWnd::QPlotWnd( QStartDlg * main )
     //setAttribute( Qt::WA_PaintOnScreen, true );
     //setAttribute( Qt::WA_PaintOutsidePaintEvent, true );
 
-    if( p4smallicon != NULL )
+    if( p4smallicon != nullptr )
         setWindowIcon( *p4smallicon );
 
     numZooms = 0;
     lastZoomIdentifier = 0;
-    ZoomWindows = NULL;
+    ZoomWindows = nullptr;
 
 //    QPalette palette;
 //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
@@ -169,28 +169,28 @@ QPlotWnd::~QPlotWnd()
         for( int i = 0; i < numZooms; i++ )
         {
             delete ZoomWindows[i];
-            ZoomWindows[i] = NULL;
+            ZoomWindows[i] = nullptr;
         }
         delete ZoomWindows;//free( ZoomWindows );
-        ZoomWindows = NULL;
+        ZoomWindows = nullptr;
         numZooms = 0;
     }
 
     delete Legend_Window;
-    Legend_Window = NULL;
+    Legend_Window = nullptr;
     delete Orbits_Window;
-    Orbits_Window = NULL;
+    Orbits_Window = nullptr;
     delete IntParams_Window;
-    IntParams_Window = NULL;
+    IntParams_Window = nullptr;
     delete ViewParams_Window;
-    ViewParams_Window = NULL;
+    ViewParams_Window = nullptr;
     delete Sep_Window;
-    Sep_Window = NULL;
+    Sep_Window = nullptr;
     delete LC_Window;
-    LC_Window = NULL;
+    LC_Window = nullptr;
     delete GCF_Window;
-    GCF_Window = NULL;
-    ThisVF->gcfDlg = NULL;
+    GCF_Window = nullptr;
+    ThisVF->gcfDlg = nullptr;
 }
 
 void QPlotWnd::AdjustHeight( void )
@@ -230,13 +230,13 @@ void QPlotWnd::Signal_Evaluated( void )
 
 void QPlotWnd::OnBtnClose( void )
 {
-    QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_CLOSE_PLOTWINDOW, NULL );
+    QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr );
     p4app->postEvent( parent, e1 );
 }
 
 bool QPlotWnd::close( void )
 {
-    QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_CLOSE_PLOTWINDOW, NULL );
+    QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr );
     p4app->postEvent( parent, e1 );
 
     return QMainWindow::close();
@@ -250,7 +250,7 @@ void QPlotWnd::OnBtnRefresh( void )
 
 void QPlotWnd::OnBtnLegend( void )
 {
-    if( Legend_Window == NULL )
+    if( Legend_Window == nullptr )
         Legend_Window = new QLegendWnd();
 
     Legend_Window->show();
@@ -317,6 +317,7 @@ void QPlotWnd::OnBtnPrint( void )
     ss = pdlg->GetChosenSymbolSize();
 
     delete pdlg;
+    pdlg = nullptr;
 
     if( result != P4PRINT_NONE )
     {
@@ -354,7 +355,7 @@ void QPlotWnd::configure( void )
     GCF_Window->Reset();
 
     sphere->update();
-    if( VFResults.gcf == NULL )             // reconfigure GCF button
+    if( VFResults.gcf == nullptr )             // reconfigure GCF button
         ActGCF->setEnabled(false);
     else
         ActGCF->setEnabled(true);
@@ -398,6 +399,7 @@ void QPlotWnd::CloseZoomWindow( int id )
         return;     // error: zoom window not found???
 
     delete ZoomWindows[i];
+    ZoomWindows[i] = nullptr;
     if( i != numZooms-1 )
         memmove( ZoomWindows + i, ZoomWindows + i+ 1, sizeof(QZoomWnd*) * (numZooms-1-i) );
 
@@ -405,7 +407,7 @@ void QPlotWnd::CloseZoomWindow( int id )
     if( numZooms == 0 )
     {
         delete ZoomWindows;//free( ZoomWindows );
-        ZoomWindows = NULL;
+        ZoomWindows = nullptr;
     }
 }
 
@@ -429,6 +431,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         
         OpenZoomWindow( data1[0], data1[1], data1[2], data1[3] );
         delete data1;//free( data1 );
+        data1 = nullptr;
         return;
     }
 
@@ -438,6 +441,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         data2 = (int *)(e->data());
         CloseZoomWindow( *data2 );
         delete data2;//free( data2 );
+        data2 = nullptr;
         return;
     }
 
@@ -446,6 +450,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         oet = (int *)(e->data());
         Orbits_Window->OrbitEvent( *oet );
         delete oet;//free(oet);
+        oet = nullptr;
         return;
     }
 
@@ -456,6 +461,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         y = p->y;
         void * win = *((void **)(p+1));
         delete p;//free( p );
+        p = nullptr;
 
         // mouse clicked in position (x,y)  (world coordinates)
 
@@ -465,7 +471,7 @@ void QPlotWnd::customEvent( QEvent * _e )
 
             Orbits_Window->show();
             Orbits_Window->setInitialPoint(ucoord[0],ucoord[1]);
-            if( win != NULL )
+            if( win != nullptr )
             {
                 ((QWidget *)win)->activateWindow();
             }
@@ -483,6 +489,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         y1 = p->y;
         p--;
         delete p;//free( p );
+        p = nullptr;
 
         MATHFUNC(viewcoord_to_sphere)(x0,y0,pcoord);
         MATHFUNC(sphere_to_R2)(pcoord[0],pcoord[1],pcoord[2],ucoord0);
@@ -510,6 +517,7 @@ void QPlotWnd::customEvent( QEvent * _e )
         oet = (int *)(e->data());
         Sep_Window->SepEvent( *oet );
         delete oet;//free(oet);
+        oet = nullptr;
         return;
     }
 
@@ -521,7 +529,7 @@ void QPlotWnd::hideEvent ( QHideEvent * h )
     UNUSED(h);
     if( !isMinimized() )
     {
-        QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_CLOSE_PLOTWINDOW, NULL );
+        QP4Event * e1 = new QP4Event( (QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr );
         p4app->postEvent( parent, e1 );
     }
 }
