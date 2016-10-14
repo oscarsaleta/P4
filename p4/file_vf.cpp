@@ -1042,11 +1042,11 @@ void QInputVF::Evaluate( void )
         connect( proc, SIGNAL(error(QProcess::ProcessError)), p4app, SLOT(cathProcessError(QProcess::ProcessError)) );
         connect( proc, SIGNAL(readyReadStandardOutput()), this, SLOT(ReadProcessStdout()) );
             
-            processfailed = false;
-            QString pa = "External Command: "; pa += "sh "; pa += filedotrun; ProcessText->append(pa);
-            proc->start( "sh", QStringList( filedotrun ), QIODevice::ReadWrite );
-            if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
-            {
+        processfailed = false;
+        QString pa = "External Command: "; pa += "sh "; pa += filedotrun; ProcessText->append(pa);
+        proc->start( "sh", QStringList( filedotrun ), QIODevice::ReadWrite );
+        if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
+        {
             processfailed = true;
             delete proc;
             proc = nullptr;
