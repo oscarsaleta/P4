@@ -13,7 +13,7 @@ void read_table( const char * file )
 	double re, im;
     int dummy;
 	
-	vec_field = (struct hom_poly *)malloc( sizeof( struct hom_poly ) );
+	vec_field = (hom_poly *)malloc( sizeof( hom_poly ) );
     vec_field->next_hom_poly = nullptr;
 
 	fp = fopen( file, "r" );

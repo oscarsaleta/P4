@@ -32,13 +32,14 @@
 				if not present, using current working directory.
 */
 
+// initialise lyapunov.h global variables
 bool env_maple = false;
 bool env_reduce = false;
 bool env_windows = false;
-char * win_sumtablepath = nullptr;
 int weakness_level = 0;
 double precision = 0.0;
-struct hom_poly * vec_field = nullptr;
+char * win_sumtablepath = nullptr;
+struct hom_poly volatile * vec_field = nullptr;
 
 // --------------------------------------------------------------------------
 //                      REMOVEQUOTES

@@ -4,7 +4,7 @@
 #include <math.h>
 #include "lyapunov.h"
 
-void DEBUG_MONOME( struct poly * f )
+void DEBUG_MONOME( poly volatile * f )
 {
     if( f->degz + f->degzb != 0 )
         if( fabs( f->re) > 1e-10 && fabs(f->im ) > 1e-10 )
@@ -44,7 +44,7 @@ void DEBUG_MONOME( struct poly * f )
     }
 }
 
-void DEBUG_POLY( struct poly * f )
+void DEBUG_POLY( poly volatile * f )
 {
     if( f->next_poly == nullptr )
         fprintf(stderr, "0" );
@@ -63,9 +63,9 @@ void DEBUG_POLY( struct poly * f )
 //                      FIND_POLY
 // --------------------------------------------------------------------------
 
-struct poly * find_poly( struct hom_poly * f, int i )
+poly volatile * find_poly( hom_poly volatile * f, int i )
 {
-    struct poly *g = nullptr;
+    poly *g = nullptr;
 
     while ( ( f = f->next_hom_poly ) != nullptr )
 		if ( i > f->total_degree )
@@ -82,9 +82,9 @@ struct poly * find_poly( struct hom_poly * f, int i )
 //                      DIFF
 // --------------------------------------------------------------------------
 
-void diff( struct poly * f )
+void diff( poly volatile * f )
 {
-	struct poly *w = f->next_poly;
+    poly *w = f->next_poly;
 
     while ( w != nullptr )
 	{
@@ -108,11 +108,11 @@ void diff( struct poly * f )
 //                      G
 // --------------------------------------------------------------------------
 
-void G( struct poly * f )
+void G( poly volatile * f )
 {
 	int deg;
 	double a;
-	struct poly *w = f->next_poly;
+	poly *w = f->next_poly;
 
 	if ( w )
 		deg = w->degz + w->degzb;
@@ -138,9 +138,9 @@ void G( struct poly * f )
 //                      IMGZ
 // --------------------------------------------------------------------------
 
-void Imgz( struct poly * f, struct poly * g )
+void Imgz( poly volatile * f, poly volatile * g )
 {
-	struct poly * h;
+    poly volatile * h;
 
     prod_poly( f, g );
     diff( f );
@@ -155,9 +155,9 @@ void Imgz( struct poly * f, struct poly * g )
 //                      REGZ
 // --------------------------------------------------------------------------
 
-void Regz( struct poly * f, struct poly * g )
+void Regz( poly volatile * f, poly volatile * g )
 {
-	struct poly * h;
+    poly volatile * h;
 
 	prod_poly( f, g );
 	multc_poly( f, 0.0, -1.0 );
@@ -173,7 +173,7 @@ void Regz( struct poly * f, struct poly * g )
 //                      LL
 // --------------------------------------------------------------------------
 
-void LL( struct poly * f, struct poly * g, int i, double * v )
+void LL( poly volatile * f, poly volatile * g, int i, double * v )
 {
 	v[ 0 ] = 0.0;
 	v[ 1 ] = 0.0;
@@ -200,7 +200,8 @@ void LL( struct poly * f, struct poly * g, int i, double * v )
 
 double part_lyapunov_coeff( char * s, int k )
 {
-    struct poly * R[ DIM1 ], *f = nullptr;
+    poly volatile * R[ DIM1 ];
+    poly volatile *f = nullptr;
 	int i, t = 0, ok = 1, j = 0;
 	char a[ DIM1 ];
 	double v[ 2 ], w;
@@ -243,7 +244,7 @@ double part_lyapunov_coeff( char * s, int k )
             fprintf(stderr, "\n");
         }
 
-        f = ( struct poly * ) malloc( sizeof( struct poly ) );
+        f = ( poly * ) malloc( sizeof( poly ) );
         f->next_poly = nullptr;
         //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
 		ins_poly( f, 0, 0, -1.0, 0.0 ); /* f=-1 */

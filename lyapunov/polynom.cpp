@@ -6,10 +6,10 @@
 //                      INS_HOM_POLY
 // --------------------------------------------------------------------------
 
-void ins_hom_poly( struct hom_poly *f, int degz, int degzb, double re, double im )
+void ins_hom_poly( hom_poly volatile *f, int degz, int degzb, double re, double im )
 {
 	int total_degree = degz + degzb, ok = 1;
-	struct hom_poly *w = f->next_hom_poly;
+	hom_poly *w = f->next_hom_poly;
 
     while ( w != nullptr && ok )
 	{
@@ -40,9 +40,9 @@ void ins_hom_poly( struct hom_poly *f, int degz, int degzb, double re, double im
 //                      INS_POLY
 // --------------------------------------------------------------------------
 
-void ins_poly( struct poly *f, int degz, int degzb, double re, double im )
+void ins_poly( poly volatile *f, int degz, int degzb, double re, double im )
 {
-	struct poly *w = f->next_poly;
+	poly *w = f->next_poly;
 
     while ( w != nullptr )
 	{
@@ -66,11 +66,11 @@ void ins_poly( struct poly *f, int degz, int degzb, double re, double im )
 //                      COPY_POLY
 // --------------------------------------------------------------------------
 
-struct poly *copy_poly( struct poly *f )
+poly volatile *copy_poly( poly volatile *f )
 {
     if (f == nullptr)
         return f;
-    poly *current = f;
+    poly volatile *current = f;
 
     poly *copy = new poly;
     copy->degz = current->degz;
@@ -99,9 +99,9 @@ struct poly *copy_poly( struct poly *f )
 //                      SEARCH_POLY
 // --------------------------------------------------------------------------
 
-struct poly *search_poly( struct poly *f, int degz, int degzb, int *present )
+poly volatile *search_poly( poly volatile *f, int degz, int degzb, int *present )
 {
-	struct poly *w;
+    poly volatile *w;
 
 	w = f;
 	*present = 0;
@@ -125,10 +125,10 @@ struct poly *search_poly( struct poly *f, int degz, int degzb, int *present )
 //                      INS_COEFF
 // --------------------------------------------------------------------------
 
-void ins_coeff( struct poly *f, int degz, int degzb, double re, double im )
+void ins_coeff( poly volatile *f, int degz, int degzb, double re, double im )
 {
 
-	struct poly *w;
+	poly *w;
 
     w = new poly;
 	w->degz = degz;
@@ -143,9 +143,9 @@ void ins_coeff( struct poly *f, int degz, int degzb, double re, double im )
 //                      DELETE_COEFF
 // --------------------------------------------------------------------------
 
-void delete_coeff( struct poly *f )
+void delete_coeff( poly volatile *f )
 {
-	struct poly *w;
+	poly *w;
 
 	w = f->next_poly->next_poly;
     //free( f->next_poly );
@@ -157,10 +157,10 @@ void delete_coeff( struct poly *f )
 //                      ADD_POLY
 // --------------------------------------------------------------------------
 
-void add_poly( struct poly *f, struct poly *g )
+void add_poly( poly volatile *f, poly volatile *g )
 {
 	int present;
-	struct poly *w1, *w2;
+    poly volatile *w1, *w2;
 
     while ( ( g = g->next_poly ) != nullptr )
 	{
@@ -186,10 +186,10 @@ void add_poly( struct poly *f, struct poly *g )
 //                      SUB_POLY
 // --------------------------------------------------------------------------
 
-void sub_poly( struct poly *f, struct poly *g )
+void sub_poly( poly volatile *f, poly volatile *g )
 {
 	int present;
-	struct poly *w1, *w2;
+    poly volatile *w1, *w2;
 
     while ( ( g = g->next_poly ) != nullptr )
 	{
@@ -215,7 +215,7 @@ void sub_poly( struct poly *f, struct poly *g )
 //                      TERM_PROD
 // --------------------------------------------------------------------------
 
-void term_prod( struct poly *f, int degz, int degzb, double re, double im )
+void term_prod( poly volatile *f, int degz, int degzb, double re, double im )
 {
 	double r, i;
 
@@ -235,9 +235,9 @@ void term_prod( struct poly *f, int degz, int degzb, double re, double im )
 //                      PROD_POLY
 // --------------------------------------------------------------------------
 
-void prod_poly( struct poly *f, struct poly *g )
+void prod_poly( poly volatile *f, poly volatile *g )
 {
-	struct poly *w1, *w2;
+    poly volatile *w1, *w2;
 
     if ( ( f->next_poly != nullptr ) && ( g->next_poly != nullptr ) )
 	{
@@ -270,10 +270,10 @@ void prod_poly( struct poly *f, struct poly *g )
 //                      MULTC_POLY
 // --------------------------------------------------------------------------
 
-void multc_poly( struct poly *f, double re, double im )
+void multc_poly( poly volatile *f, double re, double im )
 {
 	double r, i;
-    struct poly *w = f;
+    poly volatile *w = f;
 
     while ( ( w = w->next_poly ) != nullptr )
 	{
@@ -288,9 +288,9 @@ void multc_poly( struct poly *f, double re, double im )
 //                      DELETE_POLY
 // --------------------------------------------------------------------------
 
-void delete_poly( struct poly **f )
+void delete_poly( poly volatile **f )
 {
-    struct poly *w, *tmp;
+    poly volatile *w, *tmp;
     w = *f;
     while (w != nullptr) {
         tmp = w;
@@ -313,11 +313,11 @@ void delete_poly( struct poly **f )
 //                      CONJ_POLY
 // --------------------------------------------------------------------------
 
-struct poly *conj_poly( struct poly * f )
+poly volatile *conj_poly( poly volatile * f )
 {
-	struct poly *g;
+    poly volatile *g;
 
-    g = new poly;//( struct poly * ) malloc( sizeof( struct poly ) );
+    g = new poly;//( poly * ) malloc( sizeof( poly ) );
     g->next_poly = nullptr;
     while ( ( f = f->next_poly ) != nullptr )
 		ins_poly( g, f->degzb, f->degz, f->re, -f->im );
@@ -328,7 +328,7 @@ struct poly *conj_poly( struct poly * f )
 //                      PRINT_POLY
 // --------------------------------------------------------------------------
 
-void print_poly( struct poly * f )
+void print_poly( poly volatile * f )
 {
 	if( f )
 	while( ( f = f->next_poly ) )
@@ -340,7 +340,7 @@ void print_poly( struct poly * f )
 //                      READ_POLY
 // --------------------------------------------------------------------------
 
-void read_poly( struct poly *f )
+void read_poly( poly volatile *f )
 {
 	int degz, degzb;
 	double re, im;
@@ -361,9 +361,9 @@ void read_poly( struct poly *f )
 void main()
 {
  
-  struct poly *f,*g,*h;
+  poly *f,*g,*h;
   
-  f=(struct poly *) malloc(sizeof(struct poly));
+  f=(poly *) malloc(sizeof(poly));
   f->next_poly=nullptr;
   printf("read f\n");
   read_poly(f);
@@ -371,7 +371,7 @@ void main()
   g=conj_poly(f);
   print_poly(g); 
   delete_poly(g);
-  g=(struct poly *) malloc(sizeof(struct poly));
+  g=(poly *) malloc(sizeof(poly));
   printf("read g\n");
   read_poly(g);
   print_poly(g);
