@@ -1,12 +1,18 @@
-#include <qwidget.h>
+#ifndef WIN_VIEW_H
+#define WIN_VIEW_H
 
-class QFindDlg;
-class QBoxLayout;
-class QRadioButton;
-class QLineEdit;
-class QPushButton;
-class QLabel;
-class QSpinBox;
+
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QString>
+#include <QWidget>
+
+#include "win_find.h"
+
 
 class QViewDlg : public QWidget
 {
@@ -57,3 +63,6 @@ public slots:
     void btn_V1_toggled( bool );
     void btn_V2_toggled( bool );
 };
+
+
+#endif /* WIN_VIEW_H */

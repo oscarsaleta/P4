@@ -1,17 +1,21 @@
-#include <qwidget.h>
+#ifndef WIN_VF_H
+#define WIN_VF_H
 
-class QVFParams;
-class QFindDlg;
-class QBoxLayout;
-class QLineEdit;
-class QSpinBox;
-class QScrollBar;
-class QHBoxLayout;
-class QLabel;
 
-#ifndef MAXNUMPARAMSSHOWN
+#include <QBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QScrollBar>
+#include <QSpinBox>
+#include <QWidget>
+
+#include "win_find.h"
 #include "custom.h"
-#endif
+
+
+class QVFParams; // declare them first because both classes defined in
+                 // this file need each other*/
 
 class QVectorFieldDlg : public QWidget
 {
@@ -72,3 +76,5 @@ public slots:
     void paramsSliderChanged( int );
 };
 
+
+#endif /* WIN_VF_H */

@@ -1,18 +1,26 @@
-#include <qmainwindow.h>
+#ifndef WIN_PLOT_H
+#define WIN_PLOT_H
 
-class QIntParamsDlg;
-class QAction;
-class QWinSphere;
-class QStartDlg;
-class QLegendWnd;
-class QOrbitsDlg;
-class QSepDlg;
-class QZoomWnd;
-class QLimitCyclesDlg;
-class QGcfDlg;
-class QViewDlg;
-class QPushButton;
-class QBoxLayout;
+
+#include <QAction>
+#include <QBoxLayout>
+#include <QEvent>
+#include <QHideEvent>
+#include <QMainWindow>
+
+#include "win_main.h"
+#include "win_legend.h"
+#include "win_sphere.h"
+#include "win_view.h"
+
+
+/* Forward-declarations to solve cross-include problems */
+class QGcfDlg;          // in win_gcf.h
+class QIntParamsDlg;    // in win_params.h
+class QSepDlg;          // in win_separatrices.h
+class QOrbitsDlg;       // in win_orbits.h
+class QLimitCyclesDlg;  // in win_limitcycles.h
+class QZoomWnd;         // in win_zoom.h
 
 class QPlotWnd : public QMainWindow
 {
@@ -79,3 +87,6 @@ public slots:
     void getDlgData( void );
     void AdjustHeight( void );
 };
+
+
+#endif /* WIN_PLOT_H */

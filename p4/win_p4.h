@@ -1,3 +1,11 @@
+#ifndef WIN_P4_H
+#define WIN_P4_H
+
+
+#include <QPixmap>
+#include <QString>
+
+
 #define UNUSED(x) (void)(x)   //  to avoid warnings of unused variables in case we cannot avoid it
 
 struct P4POLYLINES
@@ -6,7 +14,7 @@ struct P4POLYLINES
 	double y1;
 	double x2;
 	double y2;
-	struct P4POLYLINES * next;
+    P4POLYLINES * next;
 };
 
 extern bool lcWindowIsUp;	// true when Limitcycles window is shown.
@@ -17,18 +25,7 @@ extern QString P4Version;
 extern QString P4VersionDate;
 extern QString P4Platform;
 
-class QFindDlg;
-class QStartDlg;
-class QVectorFieldDlg;
-class QParamsDlg;
-class QPlotWnd;
-class QLegendWnd;
-class QIntParamsDlg;
-class QOrbitsDlg;
-class QSepDlg;
-class QPrintDlg;
-class QViewDlg;
-class QSettingsDlg;
-class QPixmap;
-
 extern QPixmap * p4smallicon;
+
+
+#endif /* WIN_P4_H */

@@ -1,3 +1,9 @@
+#ifndef WIN_EVENT_H
+#define WIN_EVENT_H
+
+
+#include <QEvent>
+
 
 class QP4Event : public QEvent
 {
@@ -9,3 +15,6 @@ public:
 protected:
     void * customData;
 };
+
+
+#endif /* WIN_EVENT_H */

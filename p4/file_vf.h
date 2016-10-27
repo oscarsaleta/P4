@@ -1,13 +1,17 @@
-#include <qprocess.h>
+#ifndef FILE_VF_H
+#define FILE_VF_H
 
-#ifndef MAXNUMPARAMS
+
+#include <QObject>
+#include <QProcess>
+#include <QPushButton>
+#include <QString>
+#include <QTextEdit>
+#include <QTextStream>
+
 #include "custom.h"
-#endif
+#include "win_gcf.h"
 
-class QTextEdit;
-class QGcfDlg;
-class QPushButton;
-class QTextStream;
 
 #define TYPEOFSTUDY_ALL     0
 #define TYPEOFSTUDY_FIN     1
@@ -16,6 +20,7 @@ class QTextStream;
 
 #define PACKAGE_MAPLE       1
 #define PACKAGE_REDUCE      0
+
 
 class QInputVF : public QObject
 {
@@ -116,3 +121,6 @@ public slots:
 };
 
 extern QInputVF * ThisVF;
+
+
+#endif /* FILE_VF_H */

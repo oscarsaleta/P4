@@ -1,3 +1,10 @@
+#ifndef TABLE_H
+#define TABLE_H
+
+
+#include <QObject>
+#include <QString>
+
 
 // -----------------------------------------------------------------------
 //						General polynomial expressions
@@ -257,7 +264,7 @@ public:
 	// general information
 
 	int typeofstudy;
-    enum TYPEOFVIEWS typeofview;	// TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    TYPEOFVIEWS typeofview;	// TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
 	int p;
 	int q;
 	bool plweights;						// true if p<>1 or q<>1; false if p=q=1
@@ -287,12 +294,12 @@ public:
 
 	// singular points and their properties:
 
-	struct saddle *				first_saddle_point;
-	struct semi_elementary *	first_se_point;
-	struct node *				first_node_point;
-	struct strong_focus *		first_sf_point;
-	struct weak_focus *			first_wf_point;
-	struct degenerate *			first_de_point;
+    saddle *				first_saddle_point;
+    semi_elementary *       first_se_point;
+    node *                  first_node_point;
+    strong_focus *          first_sf_point;
+    weak_focus *			first_wf_point;
+    degenerate *			first_de_point;
 
 	// Greatest common factor if present:
 
@@ -303,12 +310,12 @@ public:
 	P4POLYNOM2					gcf_V2;
 	P4POLYNOM3					gcf_C;
 
-	struct orbits_points *		gcf_points;
+    orbits_points * gcf_points;
 
 	// limit cycles
 
-	struct orbits *				first_lim_cycle;
-	struct orbits *				first_orbit;
+    orbits *				first_lim_cycle;
+    orbits *				first_orbit;
 
 	// ------ Configuration
 
@@ -326,15 +333,15 @@ public:
 
 	// run-time when plotting
 
-	struct orbits *				current_orbit;
-	struct orbits *				current_lim_cycle;
+    orbits *				current_orbit;
+    orbits *				current_lim_cycle;
 
-	double						selected_ucoord[2];
-	struct saddle *				selected_saddle_point;
-	struct semi_elementary *	selected_se_point;
-	struct degenerate *			selected_de_point;
-	struct sep *				selected_sep;
-	struct blow_up_points *		selected_de_sep;
+    double					selected_ucoord[2];
+    saddle *				selected_saddle_point;
+    semi_elementary *   	selected_se_point;
+    degenerate *			selected_de_point;
+    sep *                   selected_sep;
+    blow_up_points *		selected_de_sep;
 
 	// coordinate transformation routines, set up when starting the plot
 
@@ -374,19 +381,19 @@ public:
 
 	void DeleteVF( void );
 
-	void DeleteSaddle( struct saddle * );
-	void DeleteSemiElementary( struct semi_elementary * );
-	void DeleteNode( struct node * );
-	void DeleteStrongFocus( struct strong_focus * );
-	void DeleteWeakFocus( struct weak_focus * );
-	void DeleteDegenerate( struct degenerate * );
-	void DeleteSeparatrices( struct sep * );
-	void DeleteTransformations( struct transformations * );
-	void DeleteBlowup( struct blow_up_points * b );
+    void DeleteSaddle( saddle * );
+    void DeleteSemiElementary( semi_elementary * );
+    void DeleteNode( node * );
+    void DeleteStrongFocus( strong_focus * );
+    void DeleteWeakFocus( weak_focus * );
+    void DeleteDegenerate( degenerate * );
+    void DeleteSeparatrices( sep * );
+    void DeleteTransformations( transformations * );
+    void DeleteBlowup( blow_up_points * b );
 
-	void DeleteLimitCycle( struct orbits * );
+    void DeleteLimitCycle( orbits * );
 	void DeleteOrbitPoint( P4ORBIT p );
-	void DeleteOrbit( struct orbits * );
+    void DeleteOrbit( orbits * );
 
 	// reading of the Maple/Reduce results
 
@@ -405,8 +412,8 @@ public:
 	bool ReadWeakFocusPoint( FILE * fp );
 	bool ReadDegeneratePoint( FILE * fp );
 	bool ReadNodePoint( FILE * fp );
-	bool ReadBlowupPoints( FILE * fp, struct blow_up_points * b, int n );
-	bool ReadTransformations( FILE * fp, struct transformations * trans, int n );
+    bool ReadBlowupPoints( FILE * fp, blow_up_points * b, int n );
+    bool ReadTransformations( FILE * fp, transformations * trans, int n );
 
 	void SetupCoordinateTransformations( void );	// see math_p4.cpp
 
@@ -415,3 +422,6 @@ public:
 
 #define LINESTYLE_DASHES	1
 #define LINESTYLE_POINTS	0
+
+
+#endif /*TABLE_H*/

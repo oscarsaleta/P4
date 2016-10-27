@@ -1,11 +1,16 @@
-#include <qwidget.h>
+#ifndef WIN_LIMITCYCLES_H
+#define WIN_LIMITCYCLES_H
 
-class QWinSphere;
-class QPlotWnd;
-class QPushButton;
-class QLineEdit;
-class QBoxLayout;
-class QSpinBox;
+
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QSpinBox>
+#include <QWidget>
+
+#include "win_plot.h"
+#include "win_sphere.h"
+
 
 class QLimitCyclesDlg : public QWidget
 {
@@ -50,3 +55,6 @@ public slots:
     void onbtn_delall( void );
     void onbtn_dellast( void );
 };
+
+
+#endif

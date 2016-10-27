@@ -4,9 +4,10 @@
 //
 // -----------------------------------------------------------------------
 
-#include <qobject.h>
-#include <math.h>
-#include <stdio.h>
+//#include <qobject.h>
+#include <QString>
+#include <cmath>
+#include <cstdio>
 #include "table.h"          // defines polynomials as linked lists of terms
 
 

@@ -1,6 +1,11 @@
-#include <qwidget.h>
+#ifndef WIN_LEGEND_H
+#define WIN_LEGEND_H
 
-class QBoxLayout;
+
+#include <QBoxLayout>
+#include <QPaintEvent>
+#include <QWidget>
+
 
 class QLegendWnd : public QWidget
 {
@@ -35,3 +40,6 @@ private:
     int vmargin7;
     int vmargin8;
 };
+
+
+#endif /* WIN_LEGEND_H */

@@ -1,12 +1,16 @@
-#include <qwidget.h>
+#ifndef WIN_GCF_H
+#define WIN_GCF_H
 
-class QRadioButton;
-class QWinSphere;
-class QSpinBox;
-class QPlotWnd;
-class QPushButton;
-class QLineEdit;
-class QBoxLayout;
+
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QWidget>
+
+#include "win_plot.h"
+#include "win_sphere.h"
+
 
 class QGcfDlg : public QWidget
 {
@@ -42,3 +46,6 @@ public slots:
     void btn_dots_toggled( bool );
     void btn_dashes_toggled( bool );
 };
+
+
+#endif /* WIN_GCF_H */

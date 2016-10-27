@@ -1,9 +1,14 @@
-#include <qdialog.h>
+#ifndef WIN_PRINT_H
+#define WIN_PRINT_H
 
-class QPushButton;
-class QBoxLayout;
-class QCheckBox;
-class QLineEdit;
+
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QDialog>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
+
 
 class QPrintDlg : public QDialog
 {
@@ -51,3 +56,6 @@ public slots:
 #define P4PRINT_EPSIMAGE    2
 #define P4PRINT_XFIGIMAGE   3
 #define P4PRINT_JPEGIMAGE   4
+
+
+#endif /* WIN_PRINT_H */

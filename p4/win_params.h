@@ -1,11 +1,15 @@
-#include <qwidget.h>
+#ifndef WIN_PARAMS_H
+#define WIN_PARAMS_H
 
-class QFindDlg;
-class QRadioButton;
-class QBoxLayout;
-class QSpinBox;
-class QLabel;
-class QLineEdit;
+
+#include <QLabel>
+#include <QLineEdit>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QWidget>
+
+#include "win_find.h"
+
 
 class QParamsDlg : public QWidget
 {
@@ -50,3 +54,6 @@ public slots:
     void btn_sepno_toggled( bool );
     void OnLevelChange( int );
 };
+
+
+#endif /* WIN_PARAMS_H */

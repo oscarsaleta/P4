@@ -1,10 +1,15 @@
-#include <qwidget.h>
+#ifndef WIN_ORBITS_H
+#define WIN_ORBITS_H
 
-class QWinSphere;
-class QPlotWnd;
-class QPushButton;
-class QBoxLayout;
-class QLineEdit;
+
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
+
+#include "win_plot.h"
+#include "win_sphere.h"
+
 
 class QOrbitsDlg : public QWidget
 {
@@ -47,3 +52,6 @@ public slots:
 
     void setInitialPoint( double, double );
 };
+
+
+#endif /* WIN_ORBITS_H */

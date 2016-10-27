@@ -1,11 +1,16 @@
-#include <qwidget.h>
+#ifndef WIN_SEPARATRICES_H
+#define WIN_SEPARATRICES_H
 
-class QWinSphere;
-class QPlotWnd;
-class QPushButton;
-class QBoxLayout;
-class QLabel;
-class QLineEdit;
+
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QWidget>
+
+#include "win_sphere.h"
+#include "win_plot.h"
+
 
 class QSepDlg : public QWidget
 {
@@ -42,3 +47,6 @@ public slots:
     void onepsilon_enter( void );
     void MarkBad( QLineEdit * );
 };
+
+
+#endif /* WIN_SEPARATRICES_H */

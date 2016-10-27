@@ -1,4 +1,15 @@
-#include <qwidget.h>
+#ifndef WIN_MAIN_H
+#define WIN_MAIN_H
+
+
+#include <QBoxLayout>
+#include <QCloseEvent>
+#include <QLineEdit>
+#include <QMenu>
+#include <QPushButton>
+#include <QString>
+#include <QWidget>
+
 
 #define TYPE_SIGNAL_EVALUATING      (QEvent::User + 1)
 #define TYPE_SIGNAL_EVALUATED       (QEvent::User + 2)
@@ -14,20 +25,16 @@
 #define TYPE_OPENZOOMWINDOW         (QEvent::User + 11)
 #define TYPE_SELECT_LCSECTION       (QEvent::User + 12) 
 
+
+/* Forward-declarations to solve cross-include problems */
+class QPlotWnd; // in win_plot.h
+class QFindDlg; // in win_find.h
+
 struct DOUBLEPOINT
 {
     double x;
     double y;
 };
-
-class QFindDlg;
-class QAction;
-class QPlotWnd;
-class QBoxLayout;
-class QPushButton;
-class QLineEdit;
-class QMenu;
-class QP4Event;
 
 class QStartDlg : public QWidget
 {
@@ -80,3 +87,6 @@ public:
     QFindDlg * Find_Window;
     QPlotWnd * Plot_Window;
 };
+
+
+#endif /* WIN_MAIN_H */

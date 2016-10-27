@@ -1,9 +1,15 @@
-#include <qdialog.h>
+#ifndef WIN_SETTINGS_H
+#define WIN_SETTINGS_H
 
-class QPushButton;
-class QLineEdit;
-class QLabel;
-class QBoxLayout;
+
+#include <QBoxLayout>
+#include <QDialog>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QString>
+#include <QWidget>
+
 
 class QSettingsDlg : public QDialog
 {
@@ -44,3 +50,6 @@ public slots:
     void OnBrowseMaple( void );
     void OnBrowseReduce( void );
 };
+
+
+#endif /* WIN_SETTINGS_H */

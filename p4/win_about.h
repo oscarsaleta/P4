@@ -1,8 +1,12 @@
-#include <qdialog.h>
-#include <qpixmap.h>
+#ifndef WIN_ABOUT_H
+#define WIN_ABOUT_H
 
-class QBoxLayout;
-class QPushButton;
+
+#include <QBoxLayout>
+#include <QDialog>
+#include <QPixmap>
+#include <QPushButton>
+
 
 class QP4AboutDlg : public QDialog
 {
@@ -22,3 +26,6 @@ public slots:
     void OnOk( void );
     void OnSettings( void );
 };
+
+
+#endif /* WIN_ABOUT_H */

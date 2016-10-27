@@ -1,12 +1,18 @@
-#include <qwidget.h>
+#ifndef WIN_INTPARAMS_H
+#define WIN_INTPARAMS_H
 
-class QFindDlg;
-class QLabel;
-class QRadioButton;
-class QLineEdit;
-class QBoxLayout;
-class QSpinBox;
-class QPushButton;
+
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QString>
+#include <QWidget>
+
+#include "win_find.h"
+
 
 class QIntParamsDlg : public QWidget
 {
@@ -55,3 +61,6 @@ public slots:
     void btn_dots_toggled( bool );
     void btn_dashes_toggled( bool );
 };
+
+
+#endif /* WIN_INTPARAMS_H */

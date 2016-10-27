@@ -1,3 +1,7 @@
+#ifndef COLOR_H
+#define COLOR_H
+
+
 //
 // XFIG 3.1 DEFAULT COLOR TABLE
 //
@@ -49,3 +53,6 @@ struct P4RGBITEM
 };
 
 extern struct P4RGBITEM XFigToRGB[NUMXFIGCOLORS];	// defined in LEGEND.C
+
+
+#endif /* COLOR_H */

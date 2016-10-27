@@ -1,5 +1,11 @@
-#include <qapplication.h>
-#include <qprocess.h>
+#ifndef P4APPLICATION_H
+#define P4APPLICATION_H
+
+
+#include <QApplication>
+#include <QFont>
+#include <QProcess>
+
 
 class QP4Application : public QApplication
 {
@@ -32,3 +38,6 @@ extern QP4Application * p4app;
 #else
 #define USERPLATFORM        "LINUX"
 #endif
+
+
+#endif /* P4APPLICATION_H */

@@ -1,14 +1,16 @@
-#include <qmainwindow.h>
+#ifndef WIN_ZOOM_H
+#define WIN_ZOOM_H
 
-class QIntParamsDlg;
-class QWinSphere;
-class QStartDlg;
-class QLegendWnd;
-class QOrbitsDlg;
-class QSepDlg;
-class QPlotWnd;
-class QAction;
-class QBoxLayout;
+
+#include <QAction>
+#include <QBoxLayout>
+#include <QEvent>
+#include <QHideEvent>
+#include <QMainWindow>
+
+#include "win_plot.h"
+#include "win_sphere.h"
+
 
 class QZoomWnd : public QMainWindow
 {
@@ -44,3 +46,6 @@ public slots:
     void hideEvent( QHideEvent * h );
     void AdjustHeight( void );
 };
+
+
+#endif /* WIN_ZOOM_H */

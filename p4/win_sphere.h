@@ -1,15 +1,29 @@
-#include <qwidget.h>
+#ifndef WIN_SPHERE_H
+#define WIN_SPHERE_H
 
-class QStatusBar;
-class QPoint;
-class QTimer;
+
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QPixmap>
+#include <QPoint>
+#include <QResizeEvent>
+#include <QStatusBar>
+#include <QString>
+#include <QTimer>
+#include <QWidget>
+
+#include "table.h"
+#include "win_p4.h"
+
 
 class QWinSphere : public QWidget
 {
     Q_OBJECT
 
     static int numSpheres;
-    static QWinSphere * * SphereList;
+    static QWinSphere * * SphereList; //this could be implemented as a c++ vector
 
 public:
     QWinSphere( QWidget *, QStatusBar *, bool, double, double, double, double );
@@ -47,8 +61,8 @@ private:
     bool ReverseYaxis;          // when calculating coordinates: this determines orientation
                                 // of horizontal axis.  Normally false, only true when printing.
     
-    struct P4POLYLINES * CircleAtInfinity;
-    struct P4POLYLINES * PLCircle;
+    P4POLYLINES * CircleAtInfinity;
+    P4POLYLINES * PLCircle;
     QTimer * refreshTimeout;
 
 public:
@@ -146,3 +160,6 @@ public:
     int h;                          // height of window
     int idealh;                     // ideal height of window to get good aspect ratio
 };
+
+
+#endif /* WIN_SPHERE_H */

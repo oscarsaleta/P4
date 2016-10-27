@@ -1,21 +1,21 @@
+#include "win_sphere.h"
+
 #include <math.h>
 #include <qpaintengine.h>
-#include <qtimer.h>
-#include <qpixmap.h>
-#include <qimage.h>
+
 #include <qmessagebox.h>
 #include <qprinter.h>
-#include <qpainter.h>
+
 #include <qdatetime.h>
 #include <qapplication.h>
 #include <qstatusbar.h>
 #include <qevent.h>
 #include "custom.h"
-#include "table.h"
+
 #include "file_vf.h"
 #include "win_p4.h"
 #include "math_p4.h"
-#include "win_sphere.h"
+
 #include "win_main.h"
 #include "p4application.h"
 #include "win_print.h"

@@ -1,4 +1,9 @@
+#ifndef CUSTOM_H
+#define CUSTOM_H
+
+
 #include "color.h"
+
 
 // Defaults regarding Vector Field and Filename
 
@@ -259,3 +264,6 @@
 // if you define TOOLTIPS then tool tips (black on yellow information screens) will appear
 
 #define TOOLTIPS
+
+
+#endif /* CUSTOM_H */

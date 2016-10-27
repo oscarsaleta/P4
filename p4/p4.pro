@@ -4,6 +4,7 @@ QT += printsupport
 CONFIG += qt
 CONFIG += static
 CONFIG += c++11
+CONFIG += fwhopr
 
 SOURCES += win_view.cpp \
     win_vf.cpp \
