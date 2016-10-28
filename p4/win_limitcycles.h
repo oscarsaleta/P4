@@ -11,6 +11,8 @@
 #include "win_plot.h"
 #include "win_sphere.h"
 
+bool stop_search_limit( void );
+void write_to_limit_window( double x, double y );
 
 class QLimitCyclesDlg : public QWidget
 {

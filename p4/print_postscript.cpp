@@ -7,6 +7,7 @@
 #include "file_vf.h"
 #include "win_p4.h"
 #include "math_p4.h"
+#include "plot_tools.h"
 
 extern int PrintColorTable[NUMXFIGCOLORS];
 

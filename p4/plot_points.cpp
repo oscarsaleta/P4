@@ -5,6 +5,7 @@
 #include "math_p4.h"
 #include "win_sphere.h"
 #include "math_gcf.h"
+#include "math_separatrice.h"
 
 // -----------------------------------------------------------------------
 //                          PLOT SINGULAR POINTS

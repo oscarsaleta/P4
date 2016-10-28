@@ -24,6 +24,8 @@
 #include "win_zoom.h"
 #include "win_print.h"
 #include "win_event.h"
+#include "math_separatrice.h"
+#include "plot_tools.h"
 
 extern QP4Application * p4app;
 extern QPrinter * p4printer;

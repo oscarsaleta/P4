@@ -1,3 +1,5 @@
+#include "math_orbits.h"
+
 #include <qobject.h>
 #include <math.h>
 #include "custom.h"
@@ -6,8 +8,10 @@
 #include "math_p4.h"
 #include "win_sphere.h"
 #include "math_charts.h"
+#include "plot_tools.h"
+#include "math_polynom.h"
 
-struct orbits_points * integrate_orbit( QWinSphere *, double *, double,int, int, int, struct orbits_points ** );
+
 
 // -----------------------------------------------------------------------
 //                      INTEGRATEORBIT

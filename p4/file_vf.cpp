@@ -4,8 +4,9 @@
 #include <QDir>
 #include <QFileInfo>
 
-#include "math_p4.h"
 #include "main.h"
+#include "math_p4.h"
+#include "math_polynom.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>

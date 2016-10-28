@@ -6,6 +6,9 @@
 #include "file_tab.h"
 #include "math_p4.h"
 #include "math_charts.h"
+#include "plot_tools.h"
+#include "math_intblowup.h"
+#include "math_polynom.h"
 
 void (* change_epsilon)( QWinSphere *, double ) = nullptr;
 void (*start_plot_sep)( QWinSphere * ) = nullptr;

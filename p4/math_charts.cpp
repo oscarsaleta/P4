@@ -5,6 +5,7 @@
 #include "main.h"
 #include "file_tab.h"
 #include "math_p4.h"
+#include "math_polynom.h"
 
 
 // -----------------------------------------------------------------------

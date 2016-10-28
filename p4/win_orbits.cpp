@@ -10,6 +10,7 @@
 #include "win_plot.h"
 #include "win_sphere.h"
 #include "p4application.h"
+#include "math_orbits.h"
 
 extern bool StartOrbit( QWinSphere *, double, double, bool );
 extern void DeleteLastOrbit( QWinSphere * );

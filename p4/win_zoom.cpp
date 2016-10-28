@@ -16,6 +16,7 @@
 #include "win_plot.h"
 #include "win_print.h"
 #include "win_event.h"
+#include "plot_tools.h"
 
 extern QPrinter * p4printer;
 

@@ -1,8 +1,10 @@
 #include "file_tab.h"
 
 #include "file_vf.h"
-#include "math_p4.h"
 #include "main.h"
+#include "math_p4.h"
+#include "math_polynom.h"
+
 
 
 /*

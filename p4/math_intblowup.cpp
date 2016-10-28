@@ -1,15 +1,16 @@
-#include <qobject.h>
-#include <math.h>
-#include "custom.h"
-#include "file_tab.h"
+#include "math_intblowup.h"
+
 #include "math_p4.h"
 #include "math_charts.h"
+#include "math_polynom.h"
+#include "math_separatrice.h"
+#include "plot_tools.h"
 
+
+// static global variables
 static struct term2 *vec_field[2];
 
-extern void make_transformations( struct transformations *, double, double, double * );
-extern int change_type( int );
-
+// function definitions
 void eval_blow_vec_field( double * y, double * f)
 {
     f[0]=eval_term2(vec_field[0],y);

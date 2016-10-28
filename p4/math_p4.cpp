@@ -10,6 +10,8 @@
 #include "win_intparams.h"
 #include "math_changedir.h"
 #include "math_charts.h"
+#include "math_separatrice.h"
+#include "math_orbits.h"
 
 extern bool isvalid_psphereviewcoord( double u, double v, double * pcoord );
 extern bool isvalid_U1viewcoord( double u, double v, double * pcoord );

@@ -1,22 +1,16 @@
-#include <qobject.h>
-#include <math.h>
+#include "math_limitcycles.h"
+
+#include <cmath>
+
 #include "custom.h"
-#include "file_tab.h"
-#include "win_p4.h"
 #include "math_p4.h"
-#include "win_sphere.h"
 #include "math_charts.h"
+#include "math_orbits.h"
+#include "plot_tools.h"
+#include "win_limitcycles.h"
 
-#define __p                 VFResults.double_p              // p
-#define __q                 VFResults.double_q              // q
 
-static bool eval_orbit(double qp[3],double a,double b,double c,double pp[3],int dir );
-
-extern void DrawOrbit( QWinSphere *, double *, struct orbits_points *, int );
-void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,double c);
-
-extern bool stop_search_limit( void );                  // see WIN_LIMITCYCLES
-extern void write_to_limit_window( double x, double y );
+// static functions
 
 static bool less( double x0, double y0, double x1, double y1 )
 {
@@ -28,6 +22,85 @@ static bool less( double x0, double y0, double x1, double y1 )
     return(0);
 }
 
+static bool eval_orbit( double qp[3], double a, double b, double c, double pp[3], int dir )
+{
+    double p1[3], p2[3];
+    double hhi, h_max, h_min, hhi2, i;
+    int dashes, d;
+    bool ok;
+
+    ok = false;
+
+    hhi = (double)dir * VFResults.config_step;
+    h_max = VFResults.config_hma;
+    h_min = VFResults.config_hmi;
+    copy_x_into_y( qp, p1 );
+    MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+    for( i = 0; i <= VFResults.config_lc_numpoints; i++ )
+    {
+        copy_x_into_y(p2,p1);
+        MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+        if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(p2,a,b,c)) <= 0 )
+        {
+            // we have crossed the line on which the transverse section is located
+            // (a*X+b*Y+c*Z has changed sign)
+
+            ok = true;
+            break;
+        }
+    }
+
+    if( ok )
+    {
+        ok = 0;
+        copy_x_into_y(p2,p1);
+        MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max );
+        for( i = 0; i <= VFResults.config_lc_numpoints; i++ )
+        {
+            copy_x_into_y(p2,p1);
+            hhi2=hhi;
+            MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+            if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(p2,a,b,c)) <= 0 )
+            {
+                ok=1;
+                break;
+            }
+        }
+        if( ok )
+        {
+            if( fabs(hhi2) < fabs(hhi) )
+                hhi = hhi2;
+
+                /* find the intersection point p3 with the poincare section
+                    with a precision of 1e-8         */
+
+            if((fabs(MATHFUNC(eval_lc)(p2,a,b,c))<=1e-8) || fabs(hhi2)<=h_min)
+            {
+                copy_x_into_y(p2,pp);
+            }
+            else
+            {
+                for(;;)
+                {
+                    hhi2=hhi/2.0;
+                    MATHFUNC(integrate_sphere_orbit)(p1[0],p1[1],p1[2],pp,&hhi2,&dashes,&d,h_min,fabs(hhi2));
+                    if((fabs(MATHFUNC(eval_lc)(pp,a,b,c))<=1e-8) || (fabs(hhi2)<=h_min))
+                        break;
+                    if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(pp,a,b,c))>0)
+                    {
+                        copy_x_into_y(pp,p1);
+                        hhi=(double)dir*(fabs(hhi)-fabs(hhi2));
+                    }
+                    else hhi=hhi2;
+                }
+            }
+        }
+    }
+    return ok;
+}
+
+
+// function definitions
 
 void SearchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, double y1, double grid )
 {
@@ -230,83 +303,6 @@ void SearchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, 
             }
         }
     }
-}
-
-static bool eval_orbit( double qp[3], double a, double b, double c, double pp[3], int dir )
-{
-    double p1[3], p2[3];
-    double hhi, h_max, h_min, hhi2, i;
-    int dashes, d;
-    bool ok;
-
-    ok = false;
-
-    hhi = (double)dir * VFResults.config_step;
-    h_max = VFResults.config_hma;
-    h_min = VFResults.config_hmi;
-    copy_x_into_y( qp, p1 ); 
-    MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    for( i = 0; i <= VFResults.config_lc_numpoints; i++ )
-    {
-        copy_x_into_y(p2,p1);
-        MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max); 
-        if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(p2,a,b,c)) <= 0 ) 
-        {
-            // we have crossed the line on which the transverse section is located
-            // (a*X+b*Y+c*Z has changed sign)
-
-            ok = true;
-            break;
-        }
-    }   
-
-    if( ok )
-    {
-        ok = 0;
-        copy_x_into_y(p2,p1);
-        MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max );
-        for( i = 0; i <= VFResults.config_lc_numpoints; i++ )
-        {
-            copy_x_into_y(p2,p1); 
-            hhi2=hhi;
-            MATHFUNC(integrate_sphere_orbit)( p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);                
-            if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(p2,a,b,c)) <= 0 )
-            {
-                ok=1;
-                break;
-            } 
-        }    
-        if( ok )
-        {
-            if( fabs(hhi2) < fabs(hhi) )
-                hhi = hhi2;
-
-                /* find the intersection point p3 with the poincare section   
-                    with a precision of 1e-8         */     
-
-            if((fabs(MATHFUNC(eval_lc)(p2,a,b,c))<=1e-8) || fabs(hhi2)<=h_min)
-            {
-                copy_x_into_y(p2,pp); 
-            }
-            else 
-            {
-                for(;;)
-                {
-                    hhi2=hhi/2.0;
-                    MATHFUNC(integrate_sphere_orbit)(p1[0],p1[1],p1[2],pp,&hhi2,&dashes,&d,h_min,fabs(hhi2)); 
-                    if((fabs(MATHFUNC(eval_lc)(pp,a,b,c))<=1e-8) || (fabs(hhi2)<=h_min))
-                        break;
-                    if((MATHFUNC(eval_lc)(p1,a,b,c)*MATHFUNC(eval_lc)(pp,a,b,c))>0)
-                    {
-                        copy_x_into_y(pp,p1);
-                        hhi=(double)dir*(fabs(hhi)-fabs(hhi2));
-                    }
-                    else hhi=hhi2;
-                }                
-            }
-        }
-    }
-    return ok;
 }
 
 void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,double c)

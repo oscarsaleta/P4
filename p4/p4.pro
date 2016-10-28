@@ -78,5 +78,10 @@ HEADERS += win_view.h \
     math_separatrice.h \
     win_separatrice.h \
     math_findpoint.h \
-    math_gcf.h
+    math_gcf.h \
+    math_intblowup.h \
+    plot_tools.h \
+    math_polynom.h \
+    math_orbits.h \
+    math_limitcycles.h
 RC_FILE = p4.rc
