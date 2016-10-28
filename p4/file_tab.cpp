@@ -1940,7 +1940,7 @@ bool QVFStudy::ReadBlowupPoints( FILE * fp, struct blow_up_points * b, int n )
 #define DUMP(x) m->append( s.sprintf x );
 #define DUMPSTR(x) m->append( x );
 
-void DumpSeparatrices( QTextEdit * m, struct sep * separ, int margin )
+void QVFStudy::DumpSeparatrices( QTextEdit * m, struct sep * separ, int margin )
 {
     QString s;
     char smargin[80];
@@ -1980,7 +1980,7 @@ void DumpSeparatrices( QTextEdit * m, struct sep * separ, int margin )
 
 }
 
-void DumpSingularities( QTextEdit * m, struct genericsingularity * p, const char * type, bool longversion )
+void QVFStudy::DumpSingularities( QTextEdit * m, struct genericsingularity * p, const char * type, bool longversion )
 {
     const char * chart;
     QString s;

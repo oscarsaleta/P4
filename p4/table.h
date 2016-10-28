@@ -4,6 +4,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTextEdit>
 
 
 // -----------------------------------------------------------------------
@@ -418,6 +419,11 @@ public:
 	void SetupCoordinateTransformations( void );	// see math_p4.cpp
 
     void Dump( QString basename, QString info="" );
+
+private:
+    void DumpSeparatrices( QTextEdit * m, sep * separ, int margin );
+    void DumpSingularities( QTextEdit * m, genericsingularity * p, const char * type, bool longversion );
+
 };
 
 #define LINESTYLE_DASHES	1
