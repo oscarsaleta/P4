@@ -1,11 +1,12 @@
 #include "table.h"
 
+#include <cstdio>
+
 #include <QObject>
 #include <QString>
 #include <QTextEdit>
 #include <QFile>
 #include <QTextStream>
-#include <cstdio>
 
 #include "custom.h"
 #include "file_vf.h"
