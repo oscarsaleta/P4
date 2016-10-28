@@ -31,8 +31,8 @@ extern QP4Application * p4app;
 extern bool action_SaveAll; // defined in MAIN.CPP
 extern QStartDlg * p4startdlg;
 
-extern char * printterm2( char *, struct term2 *, bool, const char *, const char * );
-extern char * printterm3( char *, struct term3 *, bool, const char *, const char *, const char * );
+/*extern char * printterm2( char *, struct term2 *, bool, const char *, const char * );
+extern char * printterm3( char *, struct term3 *, bool, const char *, const char *, const char * );*/
 
 /*
     THIS FILE IMPLEMENTS READING AND LOADING THE VECTOR FIELD, THE PARAMETERS FOR REDUCE/MAPLE

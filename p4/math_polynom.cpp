@@ -4,11 +4,13 @@
 //
 // -----------------------------------------------------------------------
 
+#include "math_p4.h"
+
 //#include <qobject.h>
 #include <QString>
 #include <cmath>
 #include <cstdio>
-#include "table.h"          // defines polynomials as linked lists of terms
+//#include "table.h"          // defines polynomials as linked lists of terms
 
 
 // -----------------------------------------------------------------------

@@ -2,8 +2,14 @@
 #define MATH_P4_H
 
 
-#include "win_sphere.h"
 #include "table.h"
+#include "win_sphere.h"
+
+
+#define PI 3.1415926535897932384626433832
+#define PI_DIV2 (PI/2.)
+#define PI_DIV4 (PI/4.)
+#define TWOPI (2.0*PI)
 
 
 // math_orbits.cpp:
@@ -39,6 +45,20 @@ bool less_lyapunov( double *, double * );
 
 int change_dir_poincare( double * p );
 int change_dir_lyapunov( double * p );
+
+// math_polynom.cpp
+
+double eval_term1( P4POLYNOM1, double );
+double eval_term2( P4POLYNOM2, double * );
+double eval_term3( P4POLYNOM3, double * );
+void delete_term1( P4POLYNOM1 p );
+void delete_term2( P4POLYNOM2 p );
+void delete_term3( P4POLYNOM3 p );
+const char * DumpPoly1( P4POLYNOM1 f, const char * x );
+const char * DumpPoly2( P4POLYNOM2 f, const char * x, const char * y );
+const char * DumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char * z );
+char * printterm2( char * buf, term2 * f, bool isfirst, const char * x, const char * y );
+char * printterm3( char * buf, term3 * f, bool isfirst, const char * r, const char * Co, const char * Si );
 
 // math_charts.cpp:
 
@@ -80,17 +100,7 @@ void plsphere_to_U2( double X, double Y, double Z, double * rcoord);
 void plsphere_to_V1( double X, double Y, double Z, double * rcoord);
 void plsphere_to_V2( double X, double Y, double Z, double * rcoord);
 
-double eval_term1( P4POLYNOM1, double );
-double eval_term2( P4POLYNOM2, double * );
-double eval_term3( P4POLYNOM3, double * );
-
-
 extern QVFStudy VFResults;	// (VFResults.p,VFResults.q) are lyapunov weights
-
-#define PI 3.1415926535897932384626433832
-#define PI_DIV2 (PI/2.)
-#define PI_DIV4 (PI/4.)
-#define TWOPI (2.0*PI)
 
 void eval_r_vec_field( double * y, double * f );
 void eval_U1_vec_field( double * y, double * f );

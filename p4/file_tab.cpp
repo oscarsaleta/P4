@@ -1,32 +1,23 @@
-#include <qobject.h>
-#include <qstring.h>
-#include <qtextedit.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <stdio.h>
 #include "table.h"
+
+#include <QObject>
+#include <QString>
+#include <QTextEdit>
+#include <QFile>
+#include <QTextStream>
+#include <cstdio>
+
 #include "custom.h"
 #include "file_vf.h"
 #include "math_p4.h"
 #include "p4application.h"
+#include "win_main.h"
+
 
 /*
     This file contains the code to read the information from reduce/maple.
     The relevant structures for saddles etc are set up here.
 */
-
-extern void delete_term1( P4POLYNOM1 );
-extern void delete_term2( P4POLYNOM2 );
-extern void delete_term3( P4POLYNOM3 );
-
-extern void SetP4WindowTitle( QWidget *, QString );
-
-extern double eval_term2( P4POLYNOM2, double * );
-
-extern const char * DumpPoly1( P4POLYNOM1 f, const char * x );
-extern const char * DumpPoly2( P4POLYNOM2 f, const char * x, const char * y );
-extern const char * DumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char * z );
-
 
 // -----------------------------------------------------------------------
 //                              QVFStudy CONSTRUCTOR
