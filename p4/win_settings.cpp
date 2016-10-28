@@ -10,12 +10,13 @@
 #include "math_p4.h"
 #include "win_settings.h"
 #include "p4application.h"
+#include "file_paths.h"
 
 /*
     The Settings Window is a modal dialog box!
 */
 
-extern QString GetDefaultP4Path( void );
+/*extern QString GetDefaultP4Path( void );
 extern QString GetDefaultP4MaplePath( void );
 extern QString GetDefaultP4BinPath( void );
 extern QString GetDefaultP4Path( void );
@@ -24,7 +25,7 @@ extern QString GetDefaultP4TempPath( void );
 extern QString GetDefaultP4HelpPath( void );
 extern QString GetDefaultP4SumTablePath( void );
 extern QString GetDefaultMapleInstallation( void );
-extern QString GetDefaultReduceInstallation( void );
+extern QString GetDefaultReduceInstallation( void );*/
 
 extern QString GetP4Path( void );
 extern QString GetP4TempPath( void );

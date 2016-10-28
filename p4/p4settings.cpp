@@ -2,8 +2,9 @@
 #include <qsettings.h>
 #include "win_p4.h"
 #include "file_vf.h"
+#include "file_paths.h"
 
-extern QString GetDefaultP4Path( void );
+/*extern QString GetDefaultP4Path( void );
 extern QString GetDefaultP4MaplePath( void );
 extern QString GetDefaultP4BinPath( void );
 extern QString GetDefaultP4Path( void );
@@ -13,7 +14,7 @@ extern QString GetDefaultP4HelpPath( void );
 extern QString GetDefaultP4SumTablePath( void );
 extern QString GetDefaultMapleInstallation( void );
 extern QString GetDefaultReduceInstallation( void );
-extern QString GetDefaultMathManipulator( void );
+extern QString GetDefaultMathManipulator( void );*/
 
 /*
     P4 Base Path

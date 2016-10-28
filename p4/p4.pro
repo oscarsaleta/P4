@@ -3,7 +3,7 @@ QT += widgets
 QT += printsupport
 CONFIG += qt
 CONFIG += static
-CONFIG += c++11
+CONFIG += c++14
 CONFIG += fwhopr
 
 SOURCES += win_view.cpp \
@@ -70,5 +70,6 @@ HEADERS += win_view.h \
     custom.h \
     color.h \
     win_zoom.h \
-    ../version.h
+    ../version.h \
+    file_paths.h
 RC_FILE = p4.rc
