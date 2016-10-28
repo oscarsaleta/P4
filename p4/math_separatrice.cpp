@@ -1,8 +1,11 @@
+#include "math_separatrice.h"
+
 #include <qobject.h>
 #include <math.h>
 #include "custom.h"
-#include "table.h"
+#include "file_tab.h"
 #include "math_p4.h"
+#include "math_charts.h"
 
 void (* change_epsilon)( QWinSphere *, double ) = nullptr;
 void (*start_plot_sep)( QWinSphere * ) = nullptr;

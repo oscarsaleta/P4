@@ -14,7 +14,7 @@
 #include <QTimer>
 #include <QWidget>
 
-#include "table.h"
+#include "file_tab.h"
 #include "win_p4.h"
 
 

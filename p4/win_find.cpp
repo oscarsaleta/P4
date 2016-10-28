@@ -6,7 +6,7 @@
 #include <qpushbutton.h>
 #include <qlayout.h>
 #include "custom.h"
-#include "table.h"
+#include "file_tab.h"
 #include "file_vf.h"
 #include "win_p4.h"
 #include "p4application.h"

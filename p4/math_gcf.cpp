@@ -1,39 +1,28 @@
-#include <qfile.h>
-#include <math.h>
-#include "table.h"
+#include "math_gcf.h"
+
+#include <cmath>
+
 #include "custom.h"
-#include "file_vf.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
-#include "win_sphere.h"
+#include "math_charts.h"
 
-#define EVAL_GCF_NONE               0
-#define EVAL_GCF_R2                 1
-#define EVAL_GCF_U1                 2
-#define EVAL_GCF_U2                 3
-#define EVAL_GCF_V1                 4
-#define EVAL_GCF_V2                 5
-#define EVAL_GCF_FINISHPOINCARE     6
-#define EVAL_GCF_LYP_R2             7
-#define EVAL_GCF_CYL1               8
-#define EVAL_GCF_CYL2               9
-#define EVAL_GCF_CYL3               10
-#define EVAL_GCF_CYL4               11
-#define EVAL_GCF_FINISHLYAPUNOV     12
 
+// static global variables
 static int GcfTask = EVAL_GCF_NONE;
 static QWinSphere * GcfSphere = nullptr;
 static int GcfDashes = 0;
 static bool GcfError = false;
 
-struct orbits_points * last_gcf_point = nullptr;
+// non-static global variables
+orbits_points * last_gcf_point = nullptr;
 
+// static functions
 static void insert_gcf_point( double x0, double y0, double z0, int dashes );
-static bool RunTask( int, int, int );
 static bool ReadTaskResults( int ); // , int, int, int );
-
 static bool read_gcf( void (*chart)(double,double,double *) );
 
+// function definitions
 bool EvalGcfStart( QWinSphere * sp, int dashes, int points, int precis )
 {
     if( VFResults.gcf_points != nullptr )
@@ -131,7 +120,7 @@ void rplane_plsphere0( double x, double y, double * pcoord )
     R2_to_plsphere(x*cos(y),x*sin(y),pcoord);
 }
 
-bool ReadTaskResults( int task ) // , int points, int prec, int memory )
+static bool ReadTaskResults( int task ) // , int points, int prec, int memory )
 {
     bool value;
 

@@ -1,18 +1,8 @@
-#include "table.h"
+#include "file_tab.h"
 
-#include <cstdio>
-
-#include <QObject>
-#include <QString>
-#include <QTextEdit>
-#include <QFile>
-#include <QTextStream>
-
-#include "custom.h"
 #include "file_vf.h"
 #include "math_p4.h"
-#include "p4application.h"
-#include "win_main.h"
+#include "main.h"
 
 
 /*

@@ -1,12 +1,8 @@
-#include <QFile>
+#include "file_paths.h"
+
+#include <QApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <QApplication>
-#include <QSettings>
-#include <QString>
-#include <QMessageBox>
-
-#include "file_paths.h"
 
 QByteArray Win_GetLongPathName( QByteArray );
 QByteArray Win_GetShortPathName( QByteArray );

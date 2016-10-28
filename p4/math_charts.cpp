@@ -1,19 +1,11 @@
-#include <qobject.h>
-#include <math.h>
-#include "table.h"
-#include "custom.h"
-#include "math_p4.h"
-#include "win_p4.h"
+#include "math_charts.h"
 
-#define __p                 VFResults.double_p              // p
-#define __q                 VFResults.double_q              // q
-#define __q_minus_p         VFResults.double_q_minus_p      // q-p
-#define __p_minus_1         VFResults.double_p_minus_1      // p-1 
-#define __q_minus_1         VFResults.double_q_minus_1      // q-1
-#define __minus_one_to_q    pow(-1.0,__q)                   // (-1)^q
-#define __minus_one_to_p    pow(-1.0,__p)                   // (-1)^p
-#define __one_over_p        (1.0/__p)                       // 1/p
-#define __one_over_q        (1.0/__q)                       // 1/q
+#include <cmath>
+
+#include "main.h"
+#include "file_tab.h"
+#include "math_p4.h"
+
 
 // -----------------------------------------------------------------------
 //                      FUNCTION PROTOTYPES
@@ -37,76 +29,6 @@
     at infinity is a circle with radius 1.
 
 */
-
-// Poincare charts:
-
-void copy_x_into_y( double * x, double * y );
-
-void psphere_to_R2( double X, double Y, double Z, double * rcoord );
-void psphere_to_U1( double X, double Y, double Z, double * rcoord);
-void psphere_to_U2( double X, double Y, double Z, double * rcoord);
-void psphere_to_V1( double X, double Y, double Z, double * rcoord);
-void psphere_to_V2( double X, double Y, double Z, double * rcoord);
-void psphere_to_VV1( double X, double Y, double Z, double * rcoord );
-void psphere_to_VV2( double X, double Y, double Z, double * rcoord );
-void R2_to_psphere( double x, double y, double * pcoord );
-void U1_to_psphere( double z1, double z2, double * pcoord);
-void V1_to_psphere( double z1, double z2, double * pcoord);
-void U2_to_psphere( double z1, double z2, double * pcoord);
-void V2_to_psphere( double z1, double z2, double * pcoord);
-void VV1_to_psphere( double z1, double z2, double * pcoord);
-void VV2_to_psphere( double z1, double z2, double * pcoord);
-void UU1_to_psphere( double z1, double z2, double * pcoord);
-void UU2_to_psphere( double z1, double z2, double * pcoord);
-
-void psphere_to_xyrevU1( double X, double Y, double Z, double * rcoord);
-void psphere_to_xyrevV1( double X, double Y, double Z, double * rcoord);
-void xyrevU1_to_psphere( double z1, double z2, double * pcoord);
-void xyrevV1_to_psphere( double z1, double z2, double * pcoord);
-
-bool isvalid_psphereviewcoord( double u, double v, double * pcoord );
-bool isvalid_U1viewcoord( double u, double v, double * pcoord );
-bool isvalid_U2viewcoord( double u, double v, double * pcoord );
-bool isvalid_V1viewcoord( double u, double v, double * pcoord );
-bool isvalid_V2viewcoord( double u, double v, double * pcoord );
-bool isvalid_R2viewcoord( double u, double v, double * pcoord );
-
-// projecting the P-sphere to a disc of radius one (u,v) coordinates:
-void identitytrf_R2(double x,double y, double * ucoord );
-void psphere_ucircle( double X, double Y, double Z, double * ucoord);
-void ucircle_psphere( double u, double v, double * pcoord );
-void finite_ucircle( double x, double y, double * ucoord);
-
-// Poincare-Lyapunov charts:
-
-void cylinder_to_plsphere( double r, double theta, double * pcoord);
-
-void plsphere_to_R2( double x, double y, double z, double * c);
-void R2_to_plsphere( double x, double y, double * pcoord);
-void U1_to_plsphere( double x0, double y0, double * pcoord);
-void V1_to_plsphere( double x0, double y0, double * pcoord);
-void U2_to_plsphere( double x0, double y0, double * pcoord);
-void V2_to_plsphere( double x0, double y0, double * pcoord);
-void xyrevU1_to_plsphere( double z1, double z2, double * pcoord);
-void xyrevV1_to_plsphere( double z1, double z2, double * pcoord);
-void plsphere_to_xyrevU1( double X, double Y, double Z, double * rcoord);
-void plsphere_to_xyrevV1( double X, double Y, double Z, double * rcoord);
-
-bool isvalid_plsphereviewcoord( double u, double v, double * pcoord );
-
-// projecting the PL-sphere to a disc of radius one (u,v) coordinates:
-void annulus_to_plsphere( double u, double v, double * p);
-void plsphere_to_annulus( double x, double y, double z, double * u);
-void finite_annulus( double x, double y, double * u );
-
-// vector field evaluation
-
-void eval_r_vec_field( double * y, double * f );
-void eval_U1_vec_field( double * y, double * f );
-void eval_U2_vec_field( double * y, double * f );
-void eval_V1_vec_field( double * y, double * f );
-void eval_V2_vec_field( double * y, double * f );
-void eval_vec_field_cyl( double * y, double * f );
 
 // -----------------------------------------------------------------------
 //                  IMPLEMENTATION OF THE POINCARE CHARTS

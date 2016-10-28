@@ -1,3 +1,5 @@
+#include "p4settings.h"
+
 #include <qdir.h>
 #include <qsettings.h>
 #include "win_p4.h"
@@ -149,7 +151,7 @@ extern QString GetP4BinPath( void )
     return g;
 }
 
-extern QString GetP4ReducePath( void )
+QString GetP4ReducePath( void )
 {
     QString f, g;
 

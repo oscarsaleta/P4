@@ -11,6 +11,8 @@
 #include "win_sphere.h"
 #include "win_plot.h"
 
+extern QString CurrentSingularityInfo[];
+extern double CurrentSeparatriceEpsilon;
 
 class QSepDlg : public QWidget
 {

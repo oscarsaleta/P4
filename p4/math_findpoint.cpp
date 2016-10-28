@@ -1,14 +1,15 @@
-#include <qobject.h>
-#include <cmath>
-#include "custom.h"
-#include "table.h"
-#include "math_p4.h"
+#include "math_findpoint.h"
 
-//#define std::isnan    std::isnan
+#include <cmath>
+
+#include "custom.h"
+#include "math_p4.h"
+#include "math_separatrice.h"
+#include "win_separatrice.h"
+
+
 #define p4_finite   finite
 
-extern QString CurrentSingularityInfo[4];       // see win_separatrices.cpp
-extern double CurrentSeparatriceEpsilon;
 
 // -----------------------------------------------------------------------
 //
@@ -19,29 +20,7 @@ extern double CurrentSeparatriceEpsilon;
 //
 // -----------------------------------------------------------------------
 
-extern void (* change_epsilon)( QWinSphere *, double );
-extern void (*start_plot_sep)( QWinSphere * );
-extern void (*cont_plot_sep)( QWinSphere * );
-extern void (*plot_next_sep)( QWinSphere * );
-extern void (*select_next_sep)( QWinSphere * );
 
-extern void start_plot_saddle_sep( QWinSphere * );
-extern void cont_plot_saddle_sep( QWinSphere * );
-extern void plot_next_saddle_sep( QWinSphere * );
-extern void select_next_saddle_sep( QWinSphere * );
-extern void change_epsilon_saddle( QWinSphere *, double );
-
-extern void start_plot_se_sep( QWinSphere * );
-extern void cont_plot_se_sep( QWinSphere * );
-extern void plot_next_se_sep( QWinSphere * );
-extern void select_next_se_sep( QWinSphere * );
-extern void change_epsilon_se( QWinSphere *, double );
-
-extern void start_plot_de_sep( QWinSphere * );
-extern void cont_plot_de_sep( QWinSphere * );
-extern void plot_next_de_sep( QWinSphere * );
-extern void select_next_de_sep( QWinSphere * );
-extern void change_epsilon_de( QWinSphere *, double );
 
 static double find_distance_saddle(struct saddle *point, double x, double y,
                                    double distance,int *type)

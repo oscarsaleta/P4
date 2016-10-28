@@ -49,7 +49,6 @@ HEADERS += win_view.h \
     win_vf.h \
     win_sphere.h \
     win_settings.h \
-    win_separatrices.h \
     win_print.h \
     win_plot.h \
     win_params.h \
@@ -63,7 +62,6 @@ HEADERS += win_view.h \
     win_find.h \
     win_event.h \
     win_about.h \
-    table.h \
     p4application.h \
     math_p4.h \
     file_vf.h \
@@ -71,5 +69,14 @@ HEADERS += win_view.h \
     color.h \
     win_zoom.h \
     ../version.h \
-    file_paths.h
+    file_paths.h \
+    p4settings.h \
+    main.h \
+    file_tab.h \
+    math_changedir.h \
+    math_charts.h \
+    math_separatrice.h \
+    win_separatrice.h \
+    math_findpoint.h \
+    math_gcf.h
 RC_FILE = p4.rc

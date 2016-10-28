@@ -5,7 +5,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include "custom.h"
-#include "table.h"
+#include "file_tab.h"
 #include "win_p4.h"
 #include "math_p4.h"
 #include "win_settings.h"

@@ -1,19 +1,10 @@
-//#include <qcdestyle.h>
-#include <qpixmap.h>
-#include <qbitmap.h>
-#include <qprinter.h>
-#include <qmessagebox.h>
-#include <qapplication.h>
-#include <qevent.h>
-#include "custom.h"
-#include "table.h"
-#include "file_vf.h"
-#include "win_p4.h"
-#include "p4application.h"
-#include "win_main.h"
-#include "win_find.h"
+#include "main.h"
 #include "win_event.h"
+
+#include <QMessageBox>
+
 #include "win_settings.h"
+#include "p4settings.h"
 
 #include "../version.h"
 
@@ -43,11 +34,6 @@ QStartDlg * p4startdlg = nullptr;
 QPixmap * p4smallicon = nullptr;
 
 QPrinter * p4printer = nullptr;
-
-extern QString GetP4BinPath();
-
-extern bool ReadP4Settings( void );
-extern void SaveP4Settings( void );
 
 QString CmdLine_Filename;
 bool CmdLine_AutoEvaluate;

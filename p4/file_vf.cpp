@@ -1,38 +1,16 @@
-#include <qtooltip.h>
-#include <qmessagebox.h>
-#include <qboxlayout.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qpushbutton.h>
-#include <qtimer.h>
-#include <qtextedit.h>
-#include <qiodevice.h>
-#include <qprocess.h>
-#include <qfileinfo.h>
-#include <qdatetime.h>
-#include <qapplication.h>
-#include <qdir.h>
-#include <stdio.h>
-#include "custom.h"
-#include "table.h"
 #include "file_vf.h"
-#include "p4application.h"
-#include "win_p4.h"
+
+#include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
+
 #include "math_p4.h"
-#include "win_main.h"
-#include "win_gcf.h"
+#include "main.h"
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
 
-extern QString GetP4ReducePath( void );
-extern void SetP4WindowTitle( QWidget *, QString );
-extern QP4Application * p4app;
-extern bool action_SaveAll; // defined in MAIN.CPP
-extern QStartDlg * p4startdlg;
-
-/*extern char * printterm2( char *, struct term2 *, bool, const char *, const char * );
-extern char * printterm3( char *, struct term3 *, bool, const char *, const char *, const char * );*/
 
 /*
     THIS FILE IMPLEMENTS READING AND LOADING THE VECTOR FIELD, THE PARAMETERS FOR REDUCE/MAPLE

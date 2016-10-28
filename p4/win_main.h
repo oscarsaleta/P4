@@ -36,8 +36,6 @@ struct DOUBLEPOINT
     double y;
 };
 
-// method defined in main.cpp
-void SetP4WindowTitle( QWidget * win, QString title );
 
 // class defined in win_main.cpp
 class QStartDlg : public QWidget

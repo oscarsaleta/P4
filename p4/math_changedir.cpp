@@ -1,11 +1,15 @@
 /* if we use the original vector field and we plot a separatrice then it
    is possible that we have to change the direction */
 
-#include <qobject.h>
-#include <math.h>
-#include "table.h"
+
+#include "math_changedir.h"
+
+#include <cmath>
+
 #include "custom.h"
 #include "math_p4.h"
+#include "math_charts.h"
+
 
 // -----------------------------------------------------------------------
 //                          CHANGE_DIR_POINCARE

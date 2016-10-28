@@ -1,6 +1,6 @@
 #include <qobject.h>
 #include <math.h>
-#include "table.h"
+#include "file_tab.h"
 #include "custom.h"
 #include "file_vf.h"
 #include "win_p4.h"
@@ -8,6 +8,8 @@
 #include "win_main.h"
 #include "win_plot.h"
 #include "win_intparams.h"
+#include "math_changedir.h"
+#include "math_charts.h"
 
 extern bool isvalid_psphereviewcoord( double u, double v, double * pcoord );
 extern bool isvalid_U1viewcoord( double u, double v, double * pcoord );
