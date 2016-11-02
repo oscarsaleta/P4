@@ -6,6 +6,7 @@
 #include <QCloseEvent>
 #include <QLineEdit>
 #include <QMenu>
+#include <QPalette>
 #include <QPushButton>
 #include <QString>
 #include <QWidget>

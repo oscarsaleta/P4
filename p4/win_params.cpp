@@ -1,22 +1,12 @@
-#include <qapplication.h>
-#include <qbuttongroup.h>
-#include <qlabel.h>
-#include <qradiobutton.h>
-#include <qspinbox.h>
-#include <qlineedit.h>
-#include <qlayout.h>
+#include "win_params.h"
+
+#include <QButtonGroup>
+
 #include "custom.h"
-#include "file_tab.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
-#include "win_params.h"
-#include "win_find.h"
-
-extern QP4Application * p4app;
-extern bool action_OnlyPrepareFile;
-
-extern void setP4WindowTitle( QWidget *, QString );
+#include "p4settings.h"
 
 QParamsDlg::~QParamsDlg()
 {

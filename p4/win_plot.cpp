@@ -1,40 +1,23 @@
-#include <qlabel.h>
-#include <qaction.h>
-#include <qtoolbar.h>
-#include <qstatusbar.h>
-#include <qprinter.h>
-#include <qapplication.h>
-#include <qprintdialog.h>
+#include "win_plot.h"
+
+#include <QToolBar>
+#include <QPrintDialog>
+
 #include "custom.h"
-#include "file_tab.h"
 #include "file_vf.h"
 #include "main.h"
-#include "math_p4.h"
-#include "p4application.h"
-#include "win_main.h"
-#include "win_plot.h"
-#include "win_sphere.h"
-#include "win_legend.h"
-#include "win_orbits.h"
-#include "win_separatrice.h"
-#include "win_intparams.h"
-#include "win_view.h"
-#include "win_limitcycles.h"
-#include "win_gcf.h"
-#include "win_zoom.h"
-#include "win_print.h"
-#include "win_event.h"
 #include "math_separatrice.h"
+#include "p4application.h"
 #include "plot_tools.h"
+#include "win_event.h"
+#include "win_gcf.h"
+#include "win_intparams.h"
+#include "win_limitcycles.h"
+#include "win_orbits.h"
+#include "win_print.h"
+#include "win_separatrice.h"
+#include "win_zoom.h"
 
-extern QP4Application * p4app;
-extern QPrinter * p4printer;
-
-extern void setP4WindowTitle( QWidget *, QString );
-extern void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color );
-extern void spherePlotPoint( QWinSphere * sp, double * p, int color );
-extern void spherePrintLine( QWinSphere * sp, double * p1, double * p2, int color );
-extern void spherePrintPoint( QWinSphere * sp, double * p, int color );
 
 QPlotWnd::QPlotWnd( QStartDlg * main )
     : QMainWindow()
@@ -173,7 +156,7 @@ QPlotWnd::~QPlotWnd()
             delete ZoomWindows[i];
             ZoomWindows[i] = nullptr;
         }
-        delete ZoomWindows;//free( ZoomWindows );
+        delete ZoomWindows;
         ZoomWindows = nullptr;
         numZooms = 0;
     }

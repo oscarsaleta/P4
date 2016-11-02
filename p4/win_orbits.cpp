@@ -1,19 +1,8 @@
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
-#include "math_p4.h"
 #include "win_orbits.h"
-#include "win_plot.h"
-#include "win_sphere.h"
-#include "p4application.h"
+
+#include "custom.h"
 #include "math_orbits.h"
 
-
-extern void setP4WindowTitle( QWidget *, QString );
 
 QOrbitsDlg::QOrbitsDlg( QPlotWnd * plt, QWinSphere * sp )
     : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)

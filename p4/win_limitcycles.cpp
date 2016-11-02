@@ -1,28 +1,17 @@
-#include <qprogressdialog.h>
-#include <qnamespace.h>
-#include <qlabel.h>
-#include <qmessagebox.h>
-#include <qapplication.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <math.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
-#include "math_p4.h"
-#include "p4application.h"
 #include "win_limitcycles.h"
-#include "win_plot.h"
-#include "win_sphere.h"
+
+#include <QMessageBox>
+#include <QProgressDialog>
+
+#include <cmath>
+
+#include "custom.h"
+#include "main.h"
+#include "math_limitcycles.h"
+#include "p4application.h"
+
 
 bool lcWindowIsUp = false;      // see definition in main.h
-
-extern void setP4WindowTitle( QWidget *, QString );
-extern QP4Application * p4app;
-extern void searchLimitCycle( QWinSphere *, double, double, double, double, double );
-extern void deleteLastLimitCycle( QWinSphere * spherewnd );
 
 static QProgressDialog * LCprogressDlg = nullptr;
 static int LCprogressCount=1;

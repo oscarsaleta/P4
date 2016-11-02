@@ -1,33 +1,18 @@
 #include "win_main.h"
 
-#include <qpixmap.h>
-#include <qevent.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-#include <qtextbrowser.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qfiledialog.h>
-#include <qtextstream.h>
-#include <qlineedit.h>
-#include <qtextedit.h>
-#include <qpainter.h>
-#include <qlayout.h>
-#include <qmenu.h>
+#include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QTextBrowser>
+
 #include "custom.h"
-#include "file_tab.h"
 #include "file_vf.h"
 #include "main.h"
-#include "math_p4.h"
-#include "win_find.h"
-#include "win_plot.h"
-#include "win_about.h"
 #include "p4application.h"
+#include "p4settings.h"
+#include "win_about.h"
 
-extern QString getP4HelpPath( void );       // defined in main.cpp
-extern void setP4WindowTitle( QWidget *, QString );
-
-void MakeButtonPixmaps( const QPalette & );
+static void makeButtonPixmaps( const QPalette & );
 
 QStartDlg * p4startdlg = nullptr;
 
@@ -50,7 +35,7 @@ QStartDlg::QStartDlg( const QString & autofilename )
 
     btn_quit = new QPushButton( "&Quit", this );
 #ifdef DOCK_FINDWINDOW
-    MakeButtonPixmaps( btn_quit->palette() );
+    makeButtonPixmaps( btn_quit->palette() );
     btn_find = new QPushButton( "", this );
 
 #ifdef AUTO_OPEN_FINDWINDOW
@@ -701,7 +686,7 @@ void QStartDlg::customEvent( QEvent * e )
     }
 }
 
-void MakeButtonPixmaps( const QPalette & qcg )
+void makeButtonPixmaps( const QPalette & qcg )
 {
     QPainter * p;
     QPolygon up(3);
