@@ -7,15 +7,18 @@
 #include "custom.h"
 #include "file_tab.h"
 #include "file_vf.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "win_view.h"
 #include "p4application.h"
+#include "main.h"
 
 #define MIN_FLOAT   -1.0E32
 #define MAX_FLOAT   1.0E32
 
-extern void SetP4WindowTitle( QWidget *, QString );
+//extern void setP4WindowTitle( QWidget *, QString );
+
+extern QVFStudy VFResults;
 
 QViewDlg::~QViewDlg()
 {
@@ -149,7 +152,7 @@ QViewDlg::QViewDlg( QWidget * parent )
 
     UpdateDlgData();
 
-    SetP4WindowTitle( this, "View Parameters" );
+    setP4WindowTitle( this, "View Parameters" );
 }
 
 void QViewDlg::OnFieldChange( const QString & dummy )

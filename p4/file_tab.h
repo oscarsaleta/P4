@@ -258,7 +258,6 @@ enum TYPEOFVIEWS {
 // -----------------------------------------------------------------------
 //							Results class
 // -----------------------------------------------------------------------
-
 class QVFStudy : public QObject
 {
 public:
@@ -380,51 +379,60 @@ public:
 
 	// initialization and destruction of structures
 
-	void DeleteVF( void );
+    void deleteVF( void );
 
-    void DeleteSaddle( saddle * );
-    void DeleteSemiElementary( semi_elementary * );
-    void DeleteNode( node * );
-    void DeleteStrongFocus( strong_focus * );
-    void DeleteWeakFocus( weak_focus * );
-    void DeleteDegenerate( degenerate * );
-    void DeleteSeparatrices( sep * );
-    void DeleteTransformations( transformations * );
-    void DeleteBlowup( blow_up_points * b );
+    void deleteSaddle( saddle * );
+    void deleteSemiElementary( semi_elementary * );
+    void deleteNode( node * );
+    void deleteStrongFocus( strong_focus * );
+    void deleteWeakFocus( weak_focus * );
+    void deleteDegenerate( degenerate * );
+    void deleteSeparatrices( sep * );
+    void deleteTransformations( transformations * );
+    void deleteBlowup( blow_up_points * b );
 
-    void DeleteLimitCycle( orbits * );
-	void DeleteOrbitPoint( P4ORBIT p );
-    void DeleteOrbit( orbits * );
+    void deleteLimitCycle( orbits * );
+    void deleteOrbitPoint( P4ORBIT p );
+    void deleteOrbit( orbits * );
 
 	// reading of the Maple/Reduce results
 
-	bool ReadTables( QString basename );
-	bool ReadGCF( FILE * fp );
-	bool ReadVectorField( FILE * fp, P4POLYNOM2 * vf );
-	bool ReadVectorFieldCylinder( FILE * fp, P4POLYNOM3 * vf );
-	bool ReadPoints( FILE * fp );
-	bool ReadTerm1( FILE * fp, P4POLYNOM1 p, int N );
-	bool ReadTerm2( FILE * fp, P4POLYNOM2 p, int N );
-	bool ReadTerm3( FILE * fp, P4POLYNOM3 p, int N );
+    bool readTables( QString basename );
+    bool readGCF( FILE * fp );
+    bool readVectorField( FILE * fp, P4POLYNOM2 * vf );
+    bool readVectorFieldCylinder( FILE * fp, P4POLYNOM3 * vf );
+    bool readPoints( FILE * fp );
+    bool readTerm1( FILE * fp, P4POLYNOM1 p, int N );
+    bool readTerm2( FILE * fp, P4POLYNOM2 p, int N );
+    bool readTerm3( FILE * fp, P4POLYNOM3 p, int N );
 
-	bool ReadSaddlePoint( FILE * fp );
-	bool ReadSemiElementaryPoint( FILE * fp );
-	bool ReadStrongFocusPoint( FILE * fp );
-	bool ReadWeakFocusPoint( FILE * fp );
-	bool ReadDegeneratePoint( FILE * fp );
-	bool ReadNodePoint( FILE * fp );
-    bool ReadBlowupPoints( FILE * fp, blow_up_points * b, int n );
-    bool ReadTransformations( FILE * fp, transformations * trans, int n );
+    bool readSaddlePoint( FILE * fp );
+    bool readSemiElementaryPoint( FILE * fp );
+    bool readStrongFocusPoint( FILE * fp );
+    bool readWeakFocusPoint( FILE * fp );
+    bool readDegeneratePoint( FILE * fp );
+    bool readNodePoint( FILE * fp );
+    bool readBlowupPoints( FILE * fp, blow_up_points * b, int n );
+    bool readTransformations( FILE * fp, transformations * trans, int n );
 
-	void SetupCoordinateTransformations( void );	// see math_p4.cpp
+    void setupCoordinateTransformations( void );	// see math_p4.cpp
 
-    void Dump( QString basename, QString info="" );
+    void dump( QString basename, QString info="" );
 
 private:
-    void DumpSeparatrices( QTextEdit * m, sep * separ, int margin );
-    void DumpSingularities( QTextEdit * m, genericsingularity * p, const char * type, bool longversion );
+    void dumpSeparatrices( QTextEdit * m, sep * separ, int margin );
+    void dumpSingularities( QTextEdit * m, genericsingularity * p, const char * type, bool longversion );
 
 };
+
+#define __p                 VFResults.double_p              // p
+#define __q                 VFResults.double_q              // q
+#define __q_minus_p         VFResults.double_q_minus_p      // q-p
+#define __p_minus_1         VFResults.double_p_minus_1      // p-1
+#define __q_minus_1         VFResults.double_q_minus_1      // q-1
+#define MATHFUNC(function) (*(VFResults.function))
+
+extern QVFStudy VFResults;	// (VFResults.p,VFResults.q) are lyapunov weights
 
 #define LINESTYLE_DASHES	1
 #define LINESTYLE_POINTS	0

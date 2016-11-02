@@ -7,6 +7,13 @@
 #include <QProcess>
 
 
+#ifdef Q_OS_WIN
+#define USERPLATFORM        "WINDOWS"
+#else
+#define USERPLATFORM        "LINUX"
+#endif
+
+
 class QP4Application : public QApplication
 {
 Q_OBJECT
@@ -32,12 +39,6 @@ public slots:
 };
 
 extern QP4Application * p4app;
-
-#ifdef Q_OS_WIN
-#define USERPLATFORM        "WINDOWS"
-#else
-#define USERPLATFORM        "LINUX"
-#endif
 
 
 #endif /* P4APPLICATION_H */

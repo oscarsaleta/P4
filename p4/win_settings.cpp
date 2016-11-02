@@ -6,7 +6,7 @@
 #include <qpushbutton.h>
 #include "custom.h"
 #include "file_tab.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "win_settings.h"
 #include "p4application.h"
@@ -27,19 +27,19 @@ extern QString GetDefaultP4SumTablePath( void );
 extern QString GetDefaultMapleInstallation( void );
 extern QString GetDefaultReduceInstallation( void );*/
 
-extern QString GetP4Path( void );
-extern QString GetP4TempPath( void );
-extern QString GetP4SumTablePath( void );
-extern QString GetMapleExe( void );
-extern QString GetReduceExe( void );
+extern QString getP4Path( void );
+extern QString getP4TempPath( void );
+extern QString getP4SumTablePath( void );
+extern QString getMapleExe( void );
+extern QString getReduceExe( void );
 
-extern void SetP4Path( QString );
-extern void SetP4TempPath( QString );
-extern void SetP4SumTablePath( QString );
-extern void SetMapleExe( QString );
-extern void SetReduceExe( QString );
+extern void setP4Path( QString );
+extern void setP4TempPath( QString );
+extern void setP4SumTablePath( QString );
+extern void setMapleExe( QString );
+extern void setReduceExe( QString );
 
-extern void SetP4WindowTitle( QWidget *, QString );
+extern void setP4WindowTitle( QWidget *, QString );
 
 static QString StripSlash( QString p )
 {
@@ -93,27 +93,27 @@ QSettingsDlg::QSettingsDlg( QWidget * parent, Qt::WindowFlags f )
 {
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    edt_base = new QLineEdit( StripQuotes(GetP4Path()), this );
+    edt_base = new QLineEdit( StripQuotes(getP4Path()), this );
     lbl_base = new QLabel( "&Base Installation Path", this );
     btn_base = new QPushButton( "Browse...", this );
     lbl_base->setBuddy( edt_base );
 
-    edt_sum = new QLineEdit( StripQuotes(GetP4SumTablePath()), this );
+    edt_sum = new QLineEdit( StripQuotes(getP4SumTablePath()), this );
     lbl_sum = new QLabel( "&Sumtable Path", this );
     btn_sum = new QPushButton( "Browse...", this );
     lbl_sum->setBuddy( edt_sum );
 
-    edt_temp = new QLineEdit( StripQuotes(GetP4TempPath()), this );
+    edt_temp = new QLineEdit( StripQuotes(getP4TempPath()), this );
     lbl_temp = new QLabel( "&Temporary Files Path", this );
     btn_temp = new QPushButton( "Browse...", this );
     lbl_temp->setBuddy( edt_temp );
 
-    edt_maple = new QLineEdit( StripQuotes(GetMapleExe()), this );
+    edt_maple = new QLineEdit( StripQuotes(getMapleExe()), this );
     lbl_maple = new QLabel( "&Maple Executable", this );
     btn_maple = new QPushButton( "Browse...", this );
     lbl_maple->setBuddy( edt_maple );
 
-    edt_red = new QLineEdit( StripQuotes(GetReduceExe()), this );
+    edt_red = new QLineEdit( StripQuotes(getReduceExe()), this );
     lbl_red = new QLabel(  "R&educe Executable", this );
     btn_red = new QPushButton( "Browse...", this );
     lbl_red->setBuddy( edt_red );
@@ -200,7 +200,7 @@ QSettingsDlg::QSettingsDlg( QWidget * parent, Qt::WindowFlags f )
     btn_red->setEnabled(false);
 #endif
 
-    SetP4WindowTitle( this, "Main Program Settings" );
+    setP4WindowTitle( this, "Main Program Settings" );
 }
 
 void QSettingsDlg::OnCancel( void )
@@ -215,11 +215,11 @@ void QSettingsDlg::OnOk( void )
     // Strip outer Quotes and white space, in any order, and possible also trailing slash
     
     s = StripSlash( StripQuotes( StripQuotes( edt_base->text() ).trimmed() ) );
-    SetP4Path( s );
+    setP4Path( s );
     s = StripSlash( StripQuotes( StripQuotes( edt_sum->text() ).trimmed() ) );
-    SetP4SumTablePath( s );
+    setP4SumTablePath( s );
     s = StripSlash( StripQuotes( StripQuotes( edt_temp->text() ).trimmed() ) );
-    SetP4TempPath( s );
+    setP4TempPath( s );
 
     // for exe's, trailing slash is irrelevant
 
@@ -262,20 +262,20 @@ void QSettingsDlg::OnOk( void )
     
 #endif
     
-    SetMapleExe( AddQuotes(s) );
+    setMapleExe( AddQuotes(s) );
     s = StripQuotes( StripQuotes( edt_red->text() ).trimmed() );
-    SetReduceExe( AddQuotes(s) );
+    setReduceExe( AddQuotes(s) );
 
     done( 1 );
 }
 
 void QSettingsDlg::OnReset( void )
 {
-    edt_base->setText( StripQuotes(GetDefaultP4Path()) );
-    edt_sum->setText( StripQuotes(GetDefaultP4SumTablePath()) );
-    edt_temp->setText( StripQuotes(GetDefaultP4TempPath()) );
-    edt_maple->setText( StripQuotes(GetDefaultMapleInstallation()) );
-    edt_red->setText( StripQuotes(GetDefaultReduceInstallation()) );
+    edt_base->setText( StripQuotes(getDefaultP4Path()) );
+    edt_sum->setText( StripQuotes(getDefaultP4SumTablePath()) );
+    edt_temp->setText( StripQuotes(getDefaultP4TempPath()) );
+    edt_maple->setText( StripQuotes(getDefaultMapleInstallation()) );
+    edt_red->setText( StripQuotes(getDefaultReduceInstallation()) );
 }
 
 void QSettingsDlg::OnBrowseReduce( void )

@@ -4,7 +4,7 @@
 #include <qlayout.h>
 #include "custom.h"
 #include "file_tab.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "win_orbits.h"
 #include "win_plot.h"
@@ -12,9 +12,8 @@
 #include "p4application.h"
 #include "math_orbits.h"
 
-extern bool StartOrbit( QWinSphere *, double, double, bool );
-extern void DeleteLastOrbit( QWinSphere * );
-extern void SetP4WindowTitle( QWidget *, QString );
+
+extern void setP4WindowTitle( QWidget *, QString );
 
 QOrbitsDlg::QOrbitsDlg( QPlotWnd * plt, QWinSphere * sp )
     : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -106,7 +105,7 @@ QOrbitsDlg::QOrbitsDlg( QPlotWnd * plt, QWinSphere * sp )
     orbit_started = false;
     orbit_selected = false;
 
-    SetP4WindowTitle( this, "Plot Orbits" );
+    setP4WindowTitle( this, "Plot Orbits" );
 }
 
 void QOrbitsDlg::setInitialPoint( double x, double y )
@@ -161,7 +160,7 @@ void QOrbitsDlg::onbtn_backwards( void )
             return;
 
         mainSphere->prepareDrawing();
-        orbit_started = StartOrbit( mainSphere, selected_x0, selected_y0, true );
+        orbit_started = startOrbit( mainSphere, selected_x0, selected_y0, true );
         mainSphere->finishDrawing();
 
         if( orbit_started )
@@ -174,7 +173,7 @@ void QOrbitsDlg::onbtn_backwards( void )
     if( orbit_started )
     {
         mainSphere->prepareDrawing();
-        IntegrateOrbit( mainSphere, -1 );
+        integrateOrbit( mainSphere, -1 );
         mainSphere->finishDrawing();
 
         btn_backwards->setEnabled(false);
@@ -189,7 +188,7 @@ void QOrbitsDlg::onbtn_continue( void )
     if( orbit_started )
     {
         mainSphere->prepareDrawing();
-        IntegrateOrbit( mainSphere, 0 );
+        integrateOrbit( mainSphere, 0 );
         mainSphere->finishDrawing();
     }
 }
@@ -204,7 +203,7 @@ void QOrbitsDlg::onbtn_forwards( void )
             return;
 
         mainSphere->prepareDrawing();
-        orbit_started = StartOrbit( mainSphere, selected_x0, selected_y0, true );
+        orbit_started = startOrbit( mainSphere, selected_x0, selected_y0, true );
         mainSphere->finishDrawing();
 
         if( orbit_started )
@@ -217,7 +216,7 @@ void QOrbitsDlg::onbtn_forwards( void )
     if( orbit_started )
     {
         mainSphere->prepareDrawing();
-        IntegrateOrbit( mainSphere, 1 );
+        integrateOrbit( mainSphere, 1 );
         mainSphere->finishDrawing();
 
         btn_forwards->setEnabled(false);
@@ -235,7 +234,7 @@ void QOrbitsDlg::onbtn_delall( void )
     btn_delall->setEnabled(false);
     btn_dellast->setEnabled(false);
 
-    VFResults.DeleteOrbit( VFResults.first_orbit );
+    VFResults.deleteOrbit( VFResults.first_orbit );
     VFResults.first_orbit = nullptr;
     VFResults.current_orbit = nullptr;
 
@@ -247,7 +246,7 @@ void QOrbitsDlg::onbtn_dellast( void )
     plotwnd->getDlgData();
 
     mainSphere->prepareDrawing();
-    DeleteLastOrbit( mainSphere );
+    deleteLastOrbit( mainSphere );
     mainSphere->finishDrawing();
 
     orbit_started=false;

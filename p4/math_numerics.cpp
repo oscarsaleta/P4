@@ -9,8 +9,10 @@
 //
 // -----------------------------------------------------------------------
 
+#include "math_numerics.h"
+
 #include <cmath>
-#include <float.h>
+#include <cfloat>
 
 //#define std::isnan(x)		(std::isnan(x))		// used to be this function
 #define p4_finite		finite
@@ -24,7 +26,7 @@ static double PRECISION2 = 1e-8;
 //
 // dx is a pointer to an array of two elements
 
-void bisection( double (* f)(double), double * x, double e )
+static void bisection( double (* f)(double), double * x, double e )
 {
 	double fx0, fmid, xmid;
 
@@ -58,7 +60,7 @@ void bisection( double (* f)(double), double * x, double e )
 //
 // x is an array of two elements
 
-double regula_falsi( double (*f)(double), double * x, double e )
+static double regula_falsi( double (*f)(double), double * x, double e )
 {
 	double x2;
 	double y;

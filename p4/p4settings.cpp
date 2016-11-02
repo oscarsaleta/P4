@@ -1,8 +1,8 @@
 #include "p4settings.h"
 
-#include <qdir.h>
-#include <qsettings.h>
-#include "win_p4.h"
+#include <QDir>
+#include <QSettings>
+
 #include "file_vf.h"
 #include "file_paths.h"
 
@@ -17,8 +17,6 @@
     Temporary path
     Maple Exe
     Reduce Exe
-
-
 */
 
 static QString Settings_mathmanipulator;
@@ -29,13 +27,13 @@ static QString Settings_mapleexe;
 static QString Settings_reduceexe;
 static bool Settings_changed;
 
-QString GetP4Path( void ) { return Settings_p4path; }
-QString GetP4TempPath( void ) { return Settings_temppath; }
-QString GetP4SumTablePath( void ) { return Settings_sumtablepath; }
-QString GetMapleExe( void ) { return Settings_mapleexe; }
-QString GetReduceExe( void ) { return Settings_reduceexe; }
+QString getP4Path( void ) { return Settings_p4path; }
+QString getP4TempPath( void ) { return Settings_temppath; }
+QString getP4SumTablePath( void ) { return Settings_sumtablepath; }
+QString getMapleExe( void ) { return Settings_mapleexe; }
+QString getReduceExe( void ) { return Settings_reduceexe; }
 
-void SetMathManipulator( QString s )
+void setMathManipulator( QString s )
 {
      if( Settings_mathmanipulator != s )
      {
@@ -44,7 +42,7 @@ void SetMathManipulator( QString s )
      }
 }
 
-void SetP4Path( QString s )
+void setP4Path( QString s )
 {
     if( Settings_p4path != s )
     {
@@ -53,7 +51,7 @@ void SetP4Path( QString s )
     }
 }
 
-void SetP4TempPath( QString s )
+void setP4TempPath( QString s )
 {
     if( Settings_temppath != s )
     {
@@ -62,7 +60,7 @@ void SetP4TempPath( QString s )
     }
 }
 
-void SetP4SumTablePath( QString s )
+void setP4SumTablePath( QString s )
 {
     if( Settings_sumtablepath != s )
     {
@@ -71,7 +69,7 @@ void SetP4SumTablePath( QString s )
     }
 }
 
-void SetMapleExe( QString s )
+void setMapleExe( QString s )
 {
     if( Settings_mapleexe != s )
     {
@@ -80,7 +78,7 @@ void SetMapleExe( QString s )
     }
 }
 
-void SetReduceExe( QString s )
+void setReduceExe( QString s )
 {
     if( Settings_reduceexe != s )
     {
@@ -89,10 +87,10 @@ void SetReduceExe( QString s )
     }
 }
 
-extern QString GetP4MaplePath( void )
+extern QString getP4MaplePath( void )
 {
     QString f, g;
-    f = GetP4Path();
+    f = getP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -102,33 +100,33 @@ extern QString GetP4MaplePath( void )
     return g;
 }
 
-QString GetMathManipulator( void ) { return Settings_mathmanipulator; }
+QString getMathManipulator( void ) { return Settings_mathmanipulator; }
 
-int GetMathPackage(void)
+int getMathPackage(void)
 {
      QString s;
-     s = GetMathManipulator().simplified().toLower();
+     s = getMathManipulator().simplified().toLower();
      if( s == "maple" )
          return PACKAGE_MAPLE;
      else
          return PACKAGE_REDUCE;
 }
 
-void SetMathPackage( int pck )
+void setMathPackage( int pck )
 {
-    if( GetMathPackage() != pck )
+    if( getMathPackage() != pck )
     {
         if( pck == PACKAGE_MAPLE )
-            SetMathManipulator("Maple");
+            setMathManipulator("Maple");
         else
-            SetMathManipulator("Reduce");
+            setMathManipulator("Reduce");
     }
 }
 
-extern QString GetP4HelpPath( void )
+extern QString getP4HelpPath( void )
 {
     QString f, g;
-    f = GetP4Path();
+    f = getP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -138,10 +136,10 @@ extern QString GetP4HelpPath( void )
     return g;
 }
 
-extern QString GetP4BinPath( void )
+extern QString getP4BinPath( void )
 {
     QString f, g;
-    f = GetP4Path();
+    f = getP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -151,11 +149,11 @@ extern QString GetP4BinPath( void )
     return g;
 }
 
-QString GetP4ReducePath( void )
+QString getP4ReducePath( void )
 {
     QString f, g;
 
-    f = GetP4Path();
+    f = getP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -168,7 +166,7 @@ QString GetP4ReducePath( void )
 
 // ------------------------------------------------------------------------------------------
 
-bool ReadP4Settings( void )
+bool readP4Settings( void )
 {
     QSettings * p4settings;
     bool _ok;
@@ -179,7 +177,7 @@ bool ReadP4Settings( void )
 
     _ok = false;
 
-    if( p4settings->value( "/Version" ).toString() == P4Version )
+    if( p4settings->value( "/Version" ).toString() == p4Version )
     {
         _ok = true;
         Settings_p4path       = p4settings->value( "/InstallPath" ).toString();
@@ -207,12 +205,12 @@ bool ReadP4Settings( void )
 
     if( !_ok )
     {
-        Settings_p4path = GetDefaultP4Path();
-        Settings_sumtablepath = GetDefaultP4SumTablePath();
-        Settings_temppath = GetDefaultP4TempPath();
-        Settings_mapleexe = GetDefaultMapleInstallation();
-        Settings_reduceexe = GetDefaultReduceInstallation();
-        Settings_mathmanipulator = GetDefaultMathManipulator();
+        Settings_p4path = getDefaultP4Path();
+        Settings_sumtablepath = getDefaultP4SumTablePath();
+        Settings_temppath = getDefaultP4TempPath();
+        Settings_mapleexe = getDefaultMapleInstallation();
+        Settings_reduceexe = getDefaultReduceInstallation();
+        Settings_mathmanipulator = getDefaultMathManipulator();
         Settings_changed = true;
         return false;
     }
@@ -220,7 +218,7 @@ bool ReadP4Settings( void )
     return true;
 }
 
-void SaveP4Settings( void )
+void saveP4Settings( void )
 {
     QSettings * p4settings;
 
@@ -229,15 +227,15 @@ void SaveP4Settings( void )
 
     p4settings = new QSettings( QSettings::NativeFormat, QSettings::UserScope, "P4", "P4" );
 
-    p4settings->setValue( "/Version", P4Version );
-    p4settings->setValue( "/BuildDate", P4VersionDate );
-    p4settings->setValue( "/InstallPath", GetP4Path() );
-    p4settings->setValue( "/SumtablePath", GetP4SumTablePath() );
-    p4settings->setValue( "/TempPath", GetP4TempPath() );
-    p4settings->setValue( "/MapleExe", GetMapleExe() );
+    p4settings->setValue( "/Version", p4Version );
+    p4settings->setValue( "/BuildDate", p4VersionDate );
+    p4settings->setValue( "/InstallPath", getP4Path() );
+    p4settings->setValue( "/SumtablePath", getP4SumTablePath() );
+    p4settings->setValue( "/TempPath", getP4TempPath() );
+    p4settings->setValue( "/MapleExe", getMapleExe() );
 #ifndef Q_OS_WIN
-    p4settings->setValue( "/Math", GetMathManipulator() );
-    p4settings->setValue( "/ReduceExe", GetReduceExe() );
+    p4settings->setValue( "/Math", getMathManipulator() );
+    p4settings->setValue( "/ReduceExe", getReduceExe() );
 #endif
 
     delete p4settings;

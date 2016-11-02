@@ -4,13 +4,12 @@
 //
 // -----------------------------------------------------------------------
 
-#include "math_p4.h"
 
-//#include <qobject.h>
-#include <QString>
+#include "math_polynom.h"
+
 #include <cmath>
-#include <cstdio>
-//#include "table.h"          // defines polynomials as linked lists of terms
+
+#include "file_tab.h"
 
 
 // -----------------------------------------------------------------------
@@ -165,7 +164,7 @@ void delete_term3( P4POLYNOM3 p )
 // Make a string representation of a polynomial in one variable.
 // The variable name to be used is given as a parameter
 
-const char * DumpPoly1( P4POLYNOM1 f, const char * x )
+const char * dumpPoly1( P4POLYNOM1 f, const char * x )
 {
     static QByteArray _s;
 
@@ -237,7 +236,7 @@ const char * DumpPoly1( P4POLYNOM1 f, const char * x )
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
 
-const char * DumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
+const char * dumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
 {
     static QByteArray _s;
 
@@ -317,7 +316,7 @@ const char * DumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
 
-const char * DumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char * z )
+const char * dumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char * z )
 {
     static QByteArray _s;
 

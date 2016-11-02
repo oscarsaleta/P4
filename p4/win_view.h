@@ -12,6 +12,7 @@
 #include <QWidget>
 
 #include "win_find.h"
+#include "file_tab.h" // TODO this goes in the cpp
 
 
 class QViewDlg : public QWidget

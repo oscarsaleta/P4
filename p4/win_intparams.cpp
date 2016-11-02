@@ -1,20 +1,12 @@
-#include <qobject.h>
-#include <qpushbutton.h>
-#include <qbuttongroup.h>
-#include <qlabel.h>
-#include <qspinbox.h>
-#include <qlineedit.h>
-#include <qradiobutton.h>
-#include <qlayout.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "file_vf.h"
-#include "win_p4.h"
-#include "math_p4.h"
 #include "win_intparams.h"
+
+#include <QButtonGroup>
+
+#include "custom.h"
+#include "file_vf.h"
+#include "main.h"
 #include "p4application.h"
 
-extern void SetP4WindowTitle( QWidget *, QString );
 
 QIntParamsDlg::~QIntParamsDlg()
 {
@@ -171,7 +163,7 @@ QIntParamsDlg::QIntParamsDlg()
 
     UpdateDlgData();
 
-    SetP4WindowTitle( this, "Integration Parameters" );
+    setP4WindowTitle( this, "Integration Parameters" );
 }
 
 void QIntParamsDlg::OnFieldChange( const QString & dummy )
@@ -215,7 +207,7 @@ void QIntParamsDlg::ExclusiveToggle( bool on, QRadioButton * first, ... )
      first->setChecked(on);
 }
 
-bool QIntParamsDlg::ReadFloatField( QLineEdit * edt, double * presult,
+bool QIntParamsDlg::readFloatField( QLineEdit * edt, double * presult,
                                    double defvalue, double minvalue, double maxvalue )
 {
     // returns true in case of error
@@ -261,13 +253,13 @@ void QIntParamsDlg::GetDataFromDlg( void )
     }
 
     changed = false;
-    changed |= ReadFloatField( edt_tolerance,  &(VFResults.config_tolerance),
+    changed |= readFloatField( edt_tolerance,  &(VFResults.config_tolerance),
                         DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE );
-    changed |= ReadFloatField( edt_minstep, &(VFResults.config_hmi),
+    changed |= readFloatField( edt_minstep, &(VFResults.config_hmi),
                         DEFAULT_HMI, MIN_HMI, MAX_HMI );
-    changed |= ReadFloatField( edt_maxstep, &(VFResults.config_hma),
+    changed |= readFloatField( edt_maxstep, &(VFResults.config_hma),
                         DEFAULT_HMA, MIN_HMA, MAX_HMA );
-    changed |= ReadFloatField( edt_stepsize,  &(VFResults.config_step),
+    changed |= readFloatField( edt_stepsize,  &(VFResults.config_step),
                         DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA );
 //  changed |= ReadFloatField( edt_curstep,  &(VFResults.config_currentstep),
 //                      DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA );

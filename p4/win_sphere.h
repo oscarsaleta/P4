@@ -15,7 +15,7 @@
 #include <QWidget>
 
 #include "file_tab.h"
-#include "win_p4.h"
+#include "main.h"
 
 
 class QWinSphere : public QWidget

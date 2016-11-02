@@ -6,7 +6,7 @@
 #include <qlayout.h>
 #include "custom.h"
 #include "file_tab.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "win_print.h"
 #include "p4application.h"
@@ -22,7 +22,7 @@ bool QPrintDlg::LastBlackWhite = false;
 double QPrintDlg::LastLineWidth = DEFAULT_LINEWIDTH;
 double QPrintDlg::LastSymbolSize = DEFAULT_SYMBOLSIZE;
 int QPrintDlg::LastResolution = DEFAULT_RESOLUTION;
-extern void SetP4WindowTitle( QWidget *, QString );
+extern void setP4WindowTitle( QWidget *, QString );
 
 QPrintDlg::QPrintDlg( QWidget * parent, Qt::WindowFlags f )
     : QDialog(  parent, f )
@@ -121,7 +121,7 @@ QPrintDlg::QPrintDlg( QWidget * parent, Qt::WindowFlags f )
     s.sprintf("%d", LastResolution);
     edt_resolution->setText( s );
 
-    SetP4WindowTitle( this, "Print Phase Portrait" );
+    setP4WindowTitle( this, "Print Phase Portrait" );
 
     return;
 }

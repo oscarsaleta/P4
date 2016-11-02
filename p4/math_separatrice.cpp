@@ -1,14 +1,15 @@
 #include "math_separatrice.h"
 
-#include <qobject.h>
-#include <math.h>
+#include <cmath>
+
 #include "custom.h"
-#include "file_tab.h"
-#include "math_p4.h"
 #include "math_charts.h"
-#include "plot_tools.h"
 #include "math_intblowup.h"
+#include "math_numerics.h"
+#include "math_p4.h"
 #include "math_polynom.h"
+#include "plot_tools.h"
+
 
 void (* change_epsilon)( QWinSphere *, double ) = nullptr;
 void (*start_plot_sep)( QWinSphere * ) = nullptr;
@@ -16,7 +17,7 @@ void (*cont_plot_sep)( QWinSphere * ) = nullptr;
 void (*plot_next_sep)( QWinSphere * ) = nullptr;
 void (*select_next_sep)( QWinSphere * ) = nullptr;
 
-int FindSepColor(struct term2 *f,int type,double y[2])
+int findSepColor2(term2 *f,int type,double y[2])
 {
     int color;
 
@@ -45,7 +46,7 @@ int FindSepColor(struct term2 *f,int type,double y[2])
     return(color);
 }
 
-int FindSepColor3(struct term3 *f,int type,double y[2])
+int findSepColor3(term3 *f,int type,double y[2])
 {
     int color;
 
@@ -86,7 +87,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
         psphere_to_R2(p0,p1,p2,y);
         rk78(eval_r_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
         R2_to_psphere(y[0],y[1],pcoord);
-        *color = FindSepColor(VFResults.gcf,*type,y); 
+        *color = findSepColor2(VFResults.gcf,*type,y);
     } else {
         theta = atan2(fabs(p1),fabs(p0)); 
         if((theta<PI_DIV4) && (theta>-PI_DIV4)) {
@@ -95,7 +96,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                 rk78(eval_U1_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
                 if(y[1]>=0 || !VFResults.singinf) {
                     U1_to_psphere(y[0],y[1],pcoord);
-                    *color=FindSepColor(VFResults.gcf_U1,*type,y);
+                    *color=findSepColor2(VFResults.gcf_U1,*type,y);
                 } else {
                     VV1_to_psphere(y[0],y[1],pcoord);
                     if(VFResults.dir_vec_field==1) {
@@ -104,7 +105,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                         *type=change_type(*type);
                     }
                     psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],y);
-                    *color=FindSepColor(VFResults.gcf_V1,*type,y);                     
+                    *color=findSepColor2(VFResults.gcf_V1,*type,y);
                     *dashes=false;
                 }  
             } else {
@@ -112,7 +113,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                 rk78(eval_V1_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
                 if(y[1]>=0 || !VFResults.singinf) {
                     V1_to_psphere(y[0],y[1],pcoord); 
-                    *color=FindSepColor(VFResults.gcf_V1,*type,y);
+                    *color=findSepColor2(VFResults.gcf_V1,*type,y);
                 } else {
                     UU1_to_psphere(y[0],y[1],pcoord); 
                     if(VFResults.dir_vec_field==1) {
@@ -121,7 +122,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                         *type=change_type(*type);
                     }
                     psphere_to_U1(pcoord[0],pcoord[1],pcoord[2],y);
-                    *color=FindSepColor(VFResults.gcf_U1,*type,y); 
+                    *color=findSepColor2(VFResults.gcf_U1,*type,y);
                     *dashes=false;
                 }        
             }
@@ -131,7 +132,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                 rk78(eval_U2_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
                 if(y[1]>=0 || !VFResults.singinf) {
                     U2_to_psphere(y[0],y[1],pcoord); 
-                    *color=FindSepColor(VFResults.gcf_U2,*type,y);
+                    *color=findSepColor2(VFResults.gcf_U2,*type,y);
                 } else {
                     VV2_to_psphere(y[0],y[1],pcoord);
                     if(VFResults.dir_vec_field==1) {
@@ -140,7 +141,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                         *type=change_type(*type);
                     }
                     psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],y);
-                    *color=FindSepColor(VFResults.gcf_V2,*type,y);                     
+                    *color=findSepColor2(VFResults.gcf_V2,*type,y);
                     *dashes=false;
                 } 
             } else {
@@ -148,7 +149,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                 rk78(eval_V2_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
                 if(y[1]>=0 || !VFResults.singinf) {
                     V2_to_psphere(y[0],y[1],pcoord);         
-                    *color=FindSepColor(VFResults.gcf_V2,*type,y);
+                    *color=findSepColor2(VFResults.gcf_V2,*type,y);
                 } else {
                     UU2_to_psphere(y[0],y[1],pcoord); 
                     if(VFResults.dir_vec_field==1) {
@@ -157,7 +158,7 @@ void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                         *type=change_type(*type);
                     }
                     psphere_to_U2(pcoord[0],pcoord[1],pcoord[2],y);
-                    *color=FindSepColor(VFResults.gcf_U2,*type,y);
+                    *color=findSepColor2(VFResults.gcf_U2,*type,y);
                     *dashes=false; 
                 }      
             }
@@ -177,24 +178,24 @@ void integrate_lyapunov_sep( double p0, double p1, double p2, double * pcoord,
         y[0]=p1;y[1]=p2;
         rk78(eval_r_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
         R2_to_plsphere(y[0],y[1],pcoord);
-        *color=FindSepColor(VFResults.gcf,*type,y);
+        *color=findSepColor2(VFResults.gcf,*type,y);
     } else {
         y[0]=p1; y[1]=p2;
         rk78(eval_vec_field_cyl,y,hhi,h_min,h_max,VFResults.config_tolerance); 
         if(y[1]>=TWOPI)y[1]-=TWOPI;
         cylinder_to_plsphere(y[0],y[1],pcoord);
-        *color=FindSepColor3(VFResults.gcf_C,*type,y);
+        *color=findSepColor3(VFResults.gcf_C,*type,y);
     } 
 }
 
-static struct orbits_points *integrate_sep( QWinSphere * spherewnd, double pcoord[3], double step,
-                                           int dir, int type, int points_to_int, struct orbits_points **orbit )
+static orbits_points *integrate_sep( QWinSphere * spherewnd, double pcoord[3], double step,
+                                           int dir, int type, int points_to_int, orbits_points **orbit )
 {
     int i,d,h;
     int color,dashes;
     double hhi;
     double pcoord2[3],h_min,h_max;
-    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr;
+    orbits_points *first_orbit=nullptr,*last_orbit=nullptr;
 
     /* if we intergrate a separatrice and use the original vector field
     then it is possible that we have to change the direction of the
@@ -261,7 +262,7 @@ int change_type(int type)
 /* find a t with a<=t^2+sep(t)^2<=b, a=(epsilon-epsilon/100)^2
    and b=(epsilon+epsilon/100)^2 */
 
-static double find_step( struct term1 * sep, double epsilon, int dir)
+static double find_step( term1 * sep, double epsilon, int dir)
 {
     double t,t1,t2,r0,a,b;
 
@@ -316,13 +317,13 @@ static double find_step( struct term1 * sep, double epsilon, int dir)
     return(t2);
 }
               
-struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, double y0,double a11, double a12,
-                                        double a21, double a22, double epsilon, struct sep * sep1,
-                                        struct orbits_points ** orbit, short int chart)
+orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, double y0,double a11, double a12,
+                                        double a21, double a22, double epsilon, sep * sep1,
+                                        orbits_points ** orbit, short int chart)
 {
     double t=0.0,h,y,pcoord[3],pcoord2[3],point[2];
     int i,dashes,ok=true;
-    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr,*sep2;
+    orbits_points *first_orbit=nullptr,*last_orbit=nullptr,*sep2;
     int color,dir,type;
 
     /* if we have a line of singularities at infinity then we have to change the
@@ -339,21 +340,21 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
     point[0]=x0;point[1]=y0;
     switch(chart){
         case CHART_R2: MATHFUNC(R2_to_sphere)(x0,y0,pcoord);
-            color=FindSepColor(VFResults.gcf,sep1->type,point);
+            color=findSepColor2(VFResults.gcf,sep1->type,point);
             break;
         case CHART_U1: MATHFUNC(U1_to_sphere)(x0,y0,pcoord);
-            color=FindSepColor(VFResults.gcf_U1,sep1->type,point);
+            color=findSepColor2(VFResults.gcf_U1,sep1->type,point);
             break;
         case CHART_V1: MATHFUNC(V1_to_sphere)(x0,y0,pcoord);
             if((VFResults.p==1) && (VFResults.q==1))psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
-                color=FindSepColor(VFResults.gcf_V1,sep1->type,point);
+                color=findSepColor2(VFResults.gcf_V1,sep1->type,point);
             break;
         case CHART_U2: MATHFUNC(U2_to_sphere)(x0,y0,pcoord);
-            color=FindSepColor(VFResults.gcf_U2,sep1->type,point);
+            color=findSepColor2(VFResults.gcf_U2,sep1->type,point);
             break;
         case CHART_V2: MATHFUNC(V2_to_sphere)(x0,y0,pcoord);
             if((VFResults.p==1) && (VFResults.q==1))psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
-                color=FindSepColor(VFResults.gcf_U2,sep1->type,point);
+                color=findSepColor2(VFResults.gcf_U2,sep1->type,point);
             break;
         default:
             color=0;
@@ -398,7 +399,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
         switch(chart) {
             case CHART_R2:
                 MATHFUNC(R2_to_sphere)(point[0],point[1],pcoord);
-                color = FindSepColor(VFResults.gcf,sep1->type,point); 
+                color = findSepColor2(VFResults.gcf,sep1->type,point);
                 break;
             case CHART_U1:
                 if(point[1]>=0 || !VFResults.singinf) {
@@ -410,7 +411,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                             dir *= -1;
                     }
                     type = sep1->type;
-                    color = FindSepColor(VFResults.gcf_U1,type,point);                                            
+                    color = findSepColor2(VFResults.gcf_U1,type,point);
                 } else {
                     VV1_to_psphere(point[0],point[1],pcoord);
                     if(ok) {
@@ -424,14 +425,14 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                         type = change_type(sep1->type); 
                     else
                         type = sep1->type;
-                    color = FindSepColor(VFResults.gcf_V1,type,point);
+                    color = findSepColor2(VFResults.gcf_V1,type,point);
                 } 
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)(point[0],point[1],pcoord);
                 if((VFResults.p==1) && (VFResults.q==1))
                     psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
-                color = FindSepColor(VFResults.gcf_V1,sep1->type,point); 
+                color = findSepColor2(VFResults.gcf_V1,sep1->type,point);
                 break;
             case CHART_U2:
                 if (point[1]>=0 || !VFResults.singinf) {
@@ -443,7 +444,7 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                             dir *= -1;
                     }
                     type = sep1->type;
-                    color = FindSepColor(VFResults.gcf_U2,type,point);
+                    color = findSepColor2(VFResults.gcf_U2,type,point);
                 } else {
                     VV2_to_psphere(point[0],point[1],pcoord);
                     if(ok) {
@@ -457,14 +458,14 @@ struct orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, doubl
                         type = change_type(sep1->type); 
                     else
                         type = sep1->type;
-                    color = FindSepColor(VFResults.gcf_V2,type,point);
+                    color = findSepColor2(VFResults.gcf_V2,type,point);
                 }                     
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)(point[0],point[1],pcoord);
                 if ((VFResults.p==1) && (VFResults.q==1))
                     psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
-                color=FindSepColor(VFResults.gcf_V2,sep1->type,point); 
+                color=findSepColor2(VFResults.gcf_V2,sep1->type,point);
                 break;
         }  
 
@@ -493,7 +494,7 @@ static double power(double a,double b)
         return(pow(a,b));
 }
 
-void make_transformations(struct transformations * trans, double x0, double y0, double * point)
+void make_transformations(transformations * trans, double x0, double y0, double * point)
 {
     double x,y;
 
@@ -508,16 +509,12 @@ void make_transformations(struct transformations * trans, double x0, double y0, 
     }
 }
 
-static struct orbits_points * plot_sep_blow_up(
-                            QWinSphere * spherewnd,
-                            double x0, double y0,
-                            int chart, double epsilon,
-                            struct blow_up_points *de_sep,
-                            struct orbits_points ** orbit )
+static orbits_points * plot_sep_blow_up( QWinSphere * spherewnd, double x0, double y0,
+                            int chart, double epsilon, blow_up_points *de_sep, orbits_points ** orbit )
 {
     double h,t=0,y,pcoord[3],pcoord2[3],point[2];
     int i,color,dir,dashes,type,ok=true;
-    struct orbits_points *first_orbit=nullptr,*last_orbit=nullptr,*sep;
+    orbits_points *first_orbit=nullptr,*last_orbit=nullptr,*sep;
 
     /* if we have a line of singularities at infinity then we have to change the
     chart if the chart is V1 or V2 */
@@ -546,25 +543,25 @@ static struct orbits_points * plot_sep_blow_up(
     switch (chart) {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(x0,y0,pcoord);
-            color = FindSepColor(VFResults.gcf,de_sep->type,point);
+            color = findSepColor2(VFResults.gcf,de_sep->type,point);
             break;
         case CHART_U1:
             MATHFUNC(U1_to_sphere)(x0,y0,pcoord);
-            color=FindSepColor(VFResults.gcf_U1,de_sep->type,point);
+            color=findSepColor2(VFResults.gcf_U1,de_sep->type,point);
             break;
         case CHART_V1:
             MATHFUNC(V1_to_sphere)(x0,y0,pcoord);
             if((VFResults.p==1) && (VFResults.q==1))psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
-            color=FindSepColor(VFResults.gcf_V1,de_sep->type,point);
+            color=findSepColor2(VFResults.gcf_V1,de_sep->type,point);
             break;
         case CHART_U2:
             MATHFUNC(U2_to_sphere)(x0,y0,pcoord);
-            color=FindSepColor(VFResults.gcf_U2,de_sep->type,point);
+            color=findSepColor2(VFResults.gcf_U2,de_sep->type,point);
             break;
         case CHART_V2:
             MATHFUNC(V2_to_sphere)(x0,y0,pcoord);
             if((VFResults.p==1) && (VFResults.q==1))psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
-            color=FindSepColor(VFResults.gcf_V2,de_sep->type,point);
+            color=findSepColor2(VFResults.gcf_V2,de_sep->type,point);
             break;
         default:
             color= 0;
@@ -584,7 +581,7 @@ static struct orbits_points * plot_sep_blow_up(
         switch(chart){
             case CHART_R2:
                 MATHFUNC(R2_to_sphere)(point[0],point[1],pcoord);
-                color = FindSepColor(VFResults.gcf,de_sep->type,point); 
+                color = findSepColor2(VFResults.gcf,de_sep->type,point);
                 break;
             case CHART_U1:
                 if (point[1]>=0 || !VFResults.singinf) {
@@ -594,7 +591,7 @@ static struct orbits_points * plot_sep_blow_up(
                         ok = true;
                     }
                     type = de_sep->type;
-                    color = FindSepColor(VFResults.gcf_U1,type,point);        
+                    color = findSepColor2(VFResults.gcf_U1,type,point);
                 } else {
                     VV1_to_psphere(point[0],point[1],pcoord);
                     if (ok) {
@@ -606,14 +603,14 @@ static struct orbits_points * plot_sep_blow_up(
                         type = change_type(de_sep->type); 
                     else
                         type = de_sep->type;
-                    color = FindSepColor(VFResults.gcf_V1,type,point);     
+                    color = findSepColor2(VFResults.gcf_V1,type,point);
                 } 
                 break;
             case CHART_V1: 
                 MATHFUNC(V1_to_sphere)(point[0],point[1],pcoord);
                 if ((VFResults.p==1) && (VFResults.q==1))
                     psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
-                color = FindSepColor(VFResults.gcf_V1,de_sep->type,point);
+                color = findSepColor2(VFResults.gcf_V1,de_sep->type,point);
                 break;
             case CHART_U2:
                 if (point[1]>=0 || !VFResults.singinf) {
@@ -623,7 +620,7 @@ static struct orbits_points * plot_sep_blow_up(
                         ok = true;
                     }
                     type = de_sep->type;
-                    color = FindSepColor(VFResults.gcf_U2,type,point);
+                    color = findSepColor2(VFResults.gcf_U2,type,point);
                 } else {
                     VV2_to_psphere(point[0],point[1],pcoord);
                     if (ok) {
@@ -635,14 +632,14 @@ static struct orbits_points * plot_sep_blow_up(
                         type = change_type(de_sep->type); 
                     else
                         type = de_sep->type;
-                    color = FindSepColor(VFResults.gcf_V2,type,point);
+                    color = findSepColor2(VFResults.gcf_V2,type,point);
                 }
                 break;
             case CHART_V2: 
                 MATHFUNC(V2_to_sphere)(point[0],point[1],pcoord);
                 if((VFResults.p==1) && (VFResults.q==1))
                     psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
-                color = FindSepColor(VFResults.gcf_V2,de_sep->type,point);
+                color = findSepColor2(VFResults.gcf_V2,de_sep->type,point);
                 break;
         }
         copy_x_into_y(pcoord,last_orbit->pcoord);
@@ -671,7 +668,7 @@ static struct orbits_points * plot_sep_blow_up(
 void start_plot_saddle_sep( QWinSphere * spherewnd )
 {
     double p[3];
-    struct orbits_points *points;
+    orbits_points *points;
 
     draw_sep(spherewnd,VFResults.selected_sep->first_sep_point);
     if(VFResults.selected_sep->last_sep_point) {
@@ -694,7 +691,7 @@ void start_plot_saddle_sep( QWinSphere * spherewnd )
 void cont_plot_saddle_sep( QWinSphere * spherewnd )
 {
     double p[3];
-    struct orbits_points *points;
+    orbits_points *points;
 
     copy_x_into_y(VFResults.selected_sep->last_sep_point->pcoord,p);
     VFResults.selected_sep->last_sep_point->next_point =
@@ -719,10 +716,10 @@ void select_next_saddle_sep( QWinSphere * spherewnd )
     draw_selected_sep(spherewnd,VFResults.selected_sep->first_sep_point,CW_SEP);
 } 
             
-static void plot_all_saddle_sep(QWinSphere * spherewnd, struct saddle *point)
+static void plot_all_saddle_sep(QWinSphere * spherewnd, saddle *point)
 {
-    struct sep *sep1;
-    struct orbits_points *points;
+    sep *sep1;
+    orbits_points *points;
     double p[3];
 
     while(point != nullptr) {
@@ -749,7 +746,7 @@ static void plot_all_saddle_sep(QWinSphere * spherewnd, struct saddle *point)
 
 void start_plot_se_sep( QWinSphere * spherewnd )
 {
-    struct orbits_points *points;
+    orbits_points *points;
     double p[3];
 
     draw_sep(spherewnd,VFResults.selected_sep->first_sep_point); 
@@ -773,7 +770,7 @@ void start_plot_se_sep( QWinSphere * spherewnd )
 void cont_plot_se_sep( QWinSphere * spherewnd )
 {
     double p[3];
-    struct orbits_points *points;
+    orbits_points *points;
 
     copy_x_into_y(VFResults.selected_sep->last_sep_point->pcoord,p);
     VFResults.selected_sep->last_sep_point->next_point =
@@ -799,10 +796,10 @@ void select_next_se_sep( QWinSphere * spherewnd )
     draw_selected_sep(spherewnd,VFResults.selected_sep->first_sep_point,CW_SEP);
 }  
 
-static void plot_all_se_sep(QWinSphere * spherewnd, struct semi_elementary *point)
+static void plot_all_se_sep(QWinSphere * spherewnd, semi_elementary *point)
 {
-    struct sep *sep1;
-    struct orbits_points *points;
+    sep *sep1;
+    orbits_points *points;
     double p[3];
 
     while(point!=nullptr)
@@ -836,7 +833,7 @@ static void plot_all_se_sep(QWinSphere * spherewnd, struct semi_elementary *poin
 
 void start_plot_de_sep( QWinSphere * spherewnd )
 {
-  struct orbits_points *points;
+  orbits_points *points;
   double p[3];
   
     draw_sep(spherewnd,VFResults.selected_de_sep->first_sep_point); 
@@ -892,7 +889,7 @@ void start_plot_de_sep( QWinSphere * spherewnd )
 void cont_plot_de_sep( QWinSphere * spherewnd )
 {
     double p[3];
-    struct orbits_points * points;
+    orbits_points * points;
 
     copy_x_into_y( VFResults.selected_de_sep->last_sep_point->pcoord, p );
     if( VFResults.selected_de_sep->blow_up_vec_field )
@@ -943,8 +940,8 @@ void select_next_de_sep( QWinSphere * spherewnd )
 
 static void plot_all_de_sep( QWinSphere * spherewnd, struct degenerate *point)
 {
-    struct blow_up_points *de_sep;
-    struct orbits_points *sep;
+    blow_up_points *de_sep;
+    orbits_points *sep;
     double p[3];
 
     while(point != nullptr)
@@ -983,7 +980,7 @@ void plot_all_sep( QWinSphere * spherewnd )
     plot_all_de_sep( spherewnd, VFResults.first_de_point );
 }  
 
-void draw_sep( QWinSphere * spherewnd, struct orbits_points *sep )
+void draw_sep( QWinSphere * spherewnd, orbits_points *sep )
 {
     double pcoord[3];
 
@@ -997,7 +994,7 @@ void draw_sep( QWinSphere * spherewnd, struct orbits_points *sep )
         } while ( (sep = sep->next_point) != nullptr );
 }
 
-void draw_selected_sep( QWinSphere * spherewnd, struct orbits_points *sep,int color)
+void draw_selected_sep( QWinSphere * spherewnd, orbits_points *sep,int color)
 {
     double pcoord[3];
 
@@ -1013,13 +1010,13 @@ void draw_selected_sep( QWinSphere * spherewnd, struct orbits_points *sep,int co
 
 void change_epsilon_saddle( QWinSphere * spherewnd, double epsilon)
 {
-    struct sep *separatrice;
+    sep *separatrice;
 
     VFResults.selected_saddle_point->epsilon = epsilon;
     separatrice = VFResults.selected_saddle_point->separatrices;
     while (separatrice!=nullptr) {
         draw_selected_sep(spherewnd,separatrice->first_sep_point,CBACKGROUND);
-        VFResults.DeleteOrbitPoint(separatrice->first_sep_point);
+        VFResults.deleteOrbitPoint(separatrice->first_sep_point);
         separatrice->last_sep_point = nullptr;
         separatrice->first_sep_point = nullptr;
         separatrice = separatrice->next_sep;
@@ -1028,13 +1025,13 @@ void change_epsilon_saddle( QWinSphere * spherewnd, double epsilon)
 
 void change_epsilon_se( QWinSphere * spherewnd, double epsilon)
 {
-    struct sep *separatrice;
+    sep *separatrice;
 
     VFResults.selected_se_point->epsilon=epsilon;
     separatrice=VFResults.selected_se_point->separatrices;
     while( separatrice != nullptr) {
         draw_selected_sep(spherewnd,separatrice->first_sep_point,CBACKGROUND);
-        VFResults.DeleteOrbitPoint(separatrice->first_sep_point);
+        VFResults.deleteOrbitPoint(separatrice->first_sep_point);
         separatrice->last_sep_point = nullptr;
         separatrice->first_sep_point = nullptr;
         separatrice=separatrice->next_sep;
@@ -1043,13 +1040,13 @@ void change_epsilon_se( QWinSphere * spherewnd, double epsilon)
 
 void change_epsilon_de( QWinSphere * spherewnd, double epsilon)
 {
-    struct blow_up_points *separatrice;
+    blow_up_points *separatrice;
 
     VFResults.selected_de_point->epsilon=epsilon;
     separatrice=VFResults.selected_de_point->blow_up;
     while (separatrice != nullptr) {
         draw_selected_sep(spherewnd, separatrice->first_sep_point,CBACKGROUND);
-        VFResults.DeleteOrbitPoint(separatrice->first_sep_point);
+        VFResults.deleteOrbitPoint(separatrice->first_sep_point);
         separatrice->last_sep_point=nullptr;
         separatrice->first_sep_point=nullptr;
         separatrice=separatrice->next_blow_up_point;

@@ -5,6 +5,7 @@
 #include "math_polynom.h"
 #include "math_separatrice.h"
 #include "plot_tools.h"
+#include "math_numerics.h"
 
 
 // static global variables
@@ -47,7 +48,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
         {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(point[0],point[1],pcoord);
-            color=FindSepColor(VFResults.gcf,type,point);
+            color=findSepColor2(VFResults.gcf,type,point);
             break;
 
         case CHART_U1:
@@ -60,7 +61,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
                     if(VFResults.dir_vec_field==1)dir*=-1;
                 }
                 type=de_sep->type;
-                color=FindSepColor(VFResults.gcf_U1,type,point);   
+                color=findSepColor2(VFResults.gcf_U1,type,point);   
             }
             else
             {
@@ -76,7 +77,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
                     type=de_sep->type;
 
                 psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
-                color=FindSepColor(VFResults.gcf_V1,type,point);
+                color=findSepColor2(VFResults.gcf_V1,type,point);
             }
             break;
 
@@ -84,7 +85,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
             MATHFUNC(V1_to_sphere)(point[0],point[1],pcoord);
             if(VFResults.plweights == false)
                 psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],point);
-            color=FindSepColor(VFResults.gcf_V1,type,point);
+            color=findSepColor2(VFResults.gcf_V1,type,point);
             break;
 
         case CHART_U2:
@@ -97,7 +98,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
                     if(VFResults.dir_vec_field==1)dir*=-1;
                 }
                 type=de_sep->type;
-                color=FindSepColor(VFResults.gcf_U2,type,point);
+                color=findSepColor2(VFResults.gcf_U2,type,point);
             }
             else
             {
@@ -109,7 +110,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
                 else
                     type=de_sep->type;
                 psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
-                color=FindSepColor(VFResults.gcf_V2,type,point);
+                color=findSepColor2(VFResults.gcf_V2,type,point);
             }
             break;
 
@@ -117,7 +118,7 @@ struct orbits_points * integrate_blow_up( QWinSphere * spherewnd, //double x0, d
             MATHFUNC(V2_to_sphere)(point[0],point[1],pcoord);
             if(VFResults.plweights == false)
                 psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],point);
-            color=FindSepColor(VFResults.gcf_V2,type,point);
+            color=findSepColor2(VFResults.gcf_V2,type,point);
             break;
         
         default:

@@ -7,7 +7,7 @@
 #include <qprintdialog.h>
 #include "file_tab.h"
 #include "file_vf.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "win_zoom.h"
 #include "win_sphere.h"
@@ -22,7 +22,7 @@ extern QPrinter * p4printer;
 
 extern void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color );
 extern void spherePlotPoint( QWinSphere * sp, double * p, int color );
-extern void SetP4WindowTitle( QWidget *, QString );
+extern void setP4WindowTitle( QWidget *, QString );
 
 QZoomWnd::QZoomWnd( QPlotWnd * main, int id, double x1, double y1, double x2, double y2 )
     : QMainWindow()
@@ -72,7 +72,7 @@ QZoomWnd::QZoomWnd( QPlotWnd * main, int id, double x1, double y1, double x2, do
     sphere->SetupPlot();
 
 //  if( ThisVF->evaluated )
-        SetP4WindowTitle( this, "Phase Portrait - Zoom" );
+        setP4WindowTitle( this, "Phase Portrait - Zoom" );
 //  else
 //      SetP4WindowTitle( this, "Phase Portrait - Zoom (*)" );
 }

@@ -5,26 +5,34 @@
 #include <QString>
 
 
-QString GetP4Path( void );
-QString GetP4TempPath( void );
-QString GetP4SumTablePath( void );
-QString GetMapleExe( void );
-QString GetReduceExe( void );
-void SetMathManipulator( QString s );
-void SetP4Path( QString s );
-void SetP4TempPath( QString s );
-void SetP4SumTablePath( QString s );
-void SetMapleExe( QString s );
-void SetReduceExe( QString s );
-extern QString GetP4MaplePath( void );
-QString GetMathManipulator( void );
-int GetMathPackage(void);
-void SetMathPackage( int pck );
-QString GetP4HelpPath( void );
-QString GetP4BinPath( void );
-QString GetP4ReducePath( void );
-bool ReadP4Settings( void );
-void SaveP4Settings( void );
+void setP4Path( QString s );
+QString getP4Path( void );
+
+void setP4TempPath( QString s );
+QString getP4TempPath( void );
+
+void setP4SumTablePath( QString s );
+QString getP4SumTablePath( void );
+
+void setMapleExe( QString s );
+QString getMapleExe( void );
+
+void setReduceExe( QString s );
+QString getReduceExe( void );
+
+QString getP4HelpPath( void );
+QString getP4BinPath( void );
+QString getP4ReducePath( void );
+QString getP4MaplePath( void );
+
+void setMathManipulator( QString s );
+QString getMathManipulator( void );
+
+void setMathPackage( int pck );
+int getMathPackage(void);
+
+bool readP4Settings( void );
+void saveP4Settings( void );
 
 
 

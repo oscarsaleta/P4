@@ -1,25 +1,11 @@
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qradiobutton.h>
-#include <qprogressdialog.h>
-#include <qnamespace.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <math.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "file_vf.h"
-#include "win_p4.h"
-#include "math_p4.h"
 #include "win_gcf.h"
-#include "win_plot.h"
-#include "p4application.h"
 
-extern void SetP4WindowTitle( QWidget *, QString );
-extern bool EvalGcfStart( QWinSphere * sp, int dashes, int points, int precis );
-extern bool EvalGcfContinue( int, int );
-extern bool EvalGcfFinish( void );
+#include <QMessageBox>
+
+#include "custom.h"
+#include "file_vf.h"
+#include "math_gcf.h"
+
 
 QGcfDlg::QGcfDlg( QPlotWnd * plt, QWinSphere * sp )
     : QWidget(nullptr,Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -91,7 +77,7 @@ QGcfDlg::QGcfDlg( QPlotWnd * plt, QWinSphere * sp )
 
     // finishing
 
-    SetP4WindowTitle( this, "GCF Plot" );
+    setP4WindowTitle( this, "GCF Plot" );
 }
 
 void QGcfDlg::Reset( void )
@@ -198,7 +184,7 @@ void QGcfDlg::onbtn_evaluate( void )
     btn_evaluate->setEnabled(false);
 
     ThisVF->gcfDlg = this;
-    result = EvalGcfStart( mainSphere, dashes, points, precis );
+    result = evalGcfStart( mainSphere, dashes, points, precis );
     if( !result )
     {
         btn_evaluate->setEnabled(true);
@@ -215,12 +201,12 @@ void QGcfDlg::finishGcfEvaluation( void )
     if( btn_evaluate->isEnabled() == true )
         return; // not busy??
 
-    result = EvalGcfContinue( evaluating_points, evaluating_precision );
+    result = evalGcfContinue( evaluating_points, evaluating_precision );
  
     if( result )
     {
         btn_evaluate->setEnabled(true);
-        result = EvalGcfFinish();       // return false in case an error occured
+        result = evalGcfFinish();       // return false in case an error occured
         if( !result )
         {
             QMessageBox::critical( this, "P4",

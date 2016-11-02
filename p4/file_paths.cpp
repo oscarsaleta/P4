@@ -29,7 +29,7 @@ QByteArray Win_GetShortPathName( QByteArray );
 //
 // Note: Under UNIX, forward slashes are used, Under Windows, backward slashes are used.
 
-QString GetDefaultP4Path( void )
+QString getDefaultP4Path( void )
 {
     QString f;
 #ifndef Q_OS_WIN
@@ -93,7 +93,7 @@ QString GetDefaultP4Path( void )
 //                          GETDEFAULTP4TEMPPATH
 // -----------------------------------------------------------------------
 
-QString GetDefaultP4TempPath( void )
+QString getDefaultP4TempPath( void )
 {
 #ifdef Q_OS_WIN
     QString f;
@@ -112,12 +112,12 @@ QString GetDefaultP4TempPath( void )
 //                          GETP4SUMTABLEPATH
 // -----------------------------------------------------------------------
 
-QString GetDefaultP4SumTablePath( void )
+QString getDefaultP4SumTablePath( void )
 {
     QString f;
     QString g;
 
-    f = GetDefaultP4Path();
+    f = getDefaultP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -136,7 +136,7 @@ QString GetDefaultP4SumTablePath( void )
 //                          GETDEFAULTMATHMANIPULATOR
 // -----------------------------------------------------------------------
 
-QString GetDefaultMathManipulator( void )
+QString getDefaultMathManipulator( void )
 {
 #ifdef Q_OS_WIN
      return "Maple";
@@ -153,12 +153,12 @@ QString GetDefaultMathManipulator( void )
 //
 // The main P4 file is stored in main_p4.htm.
 
-QString GetDefaultP4HelpPath( void )
+QString getDefaultP4HelpPath( void )
 {
     QString f;
     QString g;
 
-    f = GetDefaultP4Path();
+    f = getDefaultP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -173,12 +173,12 @@ QString GetDefaultP4HelpPath( void )
 //                          GETDEFAULTP4REDUCEPATH
 // -----------------------------------------------------------------------
 
-QString GetDefaultP4ReducePath( void )
+QString getDefaultP4ReducePath( void )
 {
     QString f;
     QString g;
 
-    f = GetDefaultP4Path();
+    f = getDefaultP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -196,12 +196,12 @@ QString GetDefaultP4ReducePath( void )
 // The main maple file is stored together with the binary files in the /bin
 // subdirectory
 
-QString GetDefaultP4MaplePath( void )
+QString getDefaultP4MaplePath( void )
 {
     QString f;
     QString g;
 
-    f = GetDefaultP4Path();
+    f = getDefaultP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -219,12 +219,12 @@ QString GetDefaultP4MaplePath( void )
 // The bin path is the path where the P4 executable is stored, together
 // with the binary files of separatrice and lyapunov.
 
-QString GetDefaultP4BinPath( void )
+QString getDefaultP4BinPath( void )
 {
     QString f;
     QString g;
 
-    f = GetDefaultP4Path();
+    f = getDefaultP4Path();
     if( f.isNull() == false )
     {
         g = f;
@@ -246,7 +246,7 @@ QString GetDefaultP4BinPath( void )
 //
 // Under Linux, return the batch file name "reduce".
 
-QString GetDefaultReduceInstallation( void )
+QString getDefaultReduceInstallation( void )
 {
 #ifdef Q_OS_WIN
     QString r;
@@ -267,7 +267,7 @@ QString GetDefaultReduceInstallation( void )
 //
 // Under Linux, return the batch file name "cmaple".
 
-QString GetDefaultMapleInstallation( void )
+QString getDefaultMapleInstallation( void )
 {
 #ifdef Q_OS_WIN
     QSettings * maplesettings;
@@ -331,7 +331,7 @@ QString GetDefaultMapleInstallation( void )
 //                          REMOVEFILE
 // -----------------------------------------------------------------------
 
-void RemoveFile( QString fname )
+void removeFile( QString fname )
 {
     QFile::remove( fname );
 }

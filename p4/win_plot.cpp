@@ -8,7 +8,7 @@
 #include "custom.h"
 #include "file_tab.h"
 #include "file_vf.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "p4application.h"
 #include "win_main.h"
@@ -30,7 +30,7 @@
 extern QP4Application * p4app;
 extern QPrinter * p4printer;
 
-extern void SetP4WindowTitle( QWidget *, QString );
+extern void setP4WindowTitle( QWidget *, QString );
 extern void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color );
 extern void spherePlotPoint( QWinSphere * sp, double * p, int color );
 extern void spherePrintLine( QWinSphere * sp, double * p1, double * p2, int color );
@@ -158,7 +158,7 @@ QPlotWnd::QPlotWnd( QStartDlg * main )
     ViewParams_Window->UpdateDlgData();
 
 //  if( ThisVF->evaluated )
-        SetP4WindowTitle( this, "Phase Portrait" );
+        setP4WindowTitle( this, "Phase Portrait" );
 //  else
 //      SetP4WindowTitle( this, "Phase Portrait (*)" );
 
@@ -543,7 +543,7 @@ void QPlotWnd::getDlgData( void )
     {
         // true when a big change occured in the view
 
-        VFResults.SetupCoordinateTransformations();
+        VFResults.setupCoordinateTransformations();
         configure();
     }
 }

@@ -4,7 +4,7 @@
 #include <qlabel.h>
 #include "custom.h"
 #include "file_tab.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "win_separatrice.h"
 #include "win_plot.h"
@@ -16,7 +16,7 @@ extern void (*start_plot_sep)( QWinSphere * );
 extern void (*cont_plot_sep)( QWinSphere * );
 extern void (*plot_next_sep)( QWinSphere * );
 extern void (*select_next_sep)( QWinSphere * );
-extern void SetP4WindowTitle( QWidget *, QString );
+extern void setP4WindowTitle( QWidget *, QString );
 
 QString CurrentSingularityInfo[4] = { "", "", "", "" };
 double CurrentSeparatriceEpsilon = 0;
@@ -91,7 +91,7 @@ QSepDlg::QSepDlg( QPlotWnd * plt, QWinSphere * sp )
 
     Reset();
 
-    SetP4WindowTitle( this, "Separatrices" );
+    setP4WindowTitle( this, "Separatrices" );
 }
 
 void QSepDlg::setInitialPoint( void )

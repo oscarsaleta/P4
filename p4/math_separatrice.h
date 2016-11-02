@@ -1,7 +1,7 @@
 #ifndef MATH_SEPARATRICE_H
 #define MATH_SEPARATRICE_H
 
-
+#include "file_tab.h"
 #include "win_sphere.h"
 
 
@@ -30,11 +30,11 @@ void select_next_de_sep( QWinSphere * );
 void change_epsilon_de( QWinSphere *, double );
 
 void plot_all_sep( QWinSphere * spherewnd );
-void draw_sep( QWinSphere * spherewnd, struct orbits_points *sep );
-void draw_selected_sep( QWinSphere * spherewnd, struct orbits_points *sep,int color);
+void draw_sep( QWinSphere * spherewnd, orbits_points *sep );
+void draw_selected_sep( QWinSphere * spherewnd, orbits_points *sep,int color);
 
-int FindSepColor(struct term2 *f,int type,double y[2]);
-int FindSepColor3(struct term3 *f,int type,double y[2]);
+int findSepColor2(term2 *f,int type,double y[2]);
+int findSepColor3(term3 *f,int type,double y[2]);
 
 void integrate_poincare_sep( double p0, double p1, double p2, double * pcoord,
                             double * hhi, int * type, int * color, int * dashes, int * dir,
@@ -46,10 +46,10 @@ void integrate_lyapunov_sep( double p0, double p1, double p2, double * pcoord,
 int change_type(int type);
 
 orbits_points * plot_separatrice(QWinSphere * spherewnd, double x0, double y0,double a11, double a12,
-                                        double a21, double a22, double epsilon, struct sep * sep1,
-                                        struct orbits_points ** orbit, short int chart);
+                                        double a21, double a22, double epsilon, sep * sep1,
+                                        orbits_points ** orbit, short int chart);
 
-void make_transformations(struct transformations * trans, double x0, double y0, double * point);
+void make_transformations(transformations * trans, double x0, double y0, double * point);
 
 
 #endif // MATH_SEPARATRICE_H

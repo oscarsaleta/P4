@@ -1,31 +1,17 @@
-#include <qpainter.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "win_p4.h"
 #include "win_legend.h"
-#include "p4application.h"
 
-extern void win_plot_saddle( QPainter * p, int x, int y );
-extern void win_plot_stablenode( QPainter * p, int x, int y );
-extern void win_plot_unstablenode( QPainter * p, int x, int y );
-extern void win_plot_weakfocus( QPainter * p, int x, int y );
-extern void win_plot_stableweakfocus( QPainter * p, int x, int y );
-extern void win_plot_unstableweakfocus( QPainter * p, int x, int y );
-extern void win_plot_center( QPainter * p, int x, int y );
-extern void win_plot_stablestrongfocus( QPainter * p, int x, int y );
-extern void win_plot_unstablestrongfocus( QPainter * p, int x, int y );
-extern void win_plot_sesaddlenode( QPainter * p, int x, int y );
-extern void win_plot_sestablenode( QPainter * p, int x, int y );
-extern void win_plot_seunstablenode( QPainter * p, int x, int y );
-extern void win_plot_sesaddle( QPainter * p, int x, int y );
-extern void win_plot_degen( QPainter * p, int x, int y );
-extern void SetP4WindowTitle( QWidget *, QString );
+#include <QPainter>
+
+#include "custom.h"
+#include "main.h"
+#include "p4application.h"
+#include "plot_points.h"
 
 // -----------------------------------------------------------------------
 //                          Define Colors in RGB
 // -----------------------------------------------------------------------
 
-struct P4RGBITEM XFigToRGB[NUMXFIGCOLORS] =
+P4RGBITEM XFigToRGB[NUMXFIGCOLORS] =
 {
     // 8 pure colours:
 
@@ -81,7 +67,7 @@ QLegendWnd::QLegendWnd()
     resize( w = hmargin6+1, h = vmargin7+1 );
     setMinimumSize( w, h );
     setMaximumSize( w, h );
-    SetP4WindowTitle( this, "P4 Legend" );
+    setP4WindowTitle( this, "P4 Legend" );
 }
 
 void QLegendWnd::paintEvent( QPaintEvent * p )
@@ -165,7 +151,7 @@ void QLegendWnd::paintEvent( QPaintEvent * p )
     paint.setPen( QPen( QXFIGCOLOR(CLIMIT) ) );
     paint.drawLine( hmargin4, vmargin6+interline-xheight, hmargin4+orbitwidth-1, vmargin6+interline-xheight );
 
-    SetP4WindowTitle( this, "P4 Legend" );
+    setP4WindowTitle( this, "P4 Legend" );
 }
 
 

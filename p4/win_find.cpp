@@ -1,26 +1,17 @@
-#include <qmessagebox.h>
-#include <qbuttongroup.h>
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "file_vf.h"
-#include "win_p4.h"
-#include "p4application.h"
 #include "win_find.h"
+
+#include <QLabel>
+#include <QButtonGroup>
+#include <QMessageBox>
+
+#include "file_vf.h"
+
+#include "main.h"
+#include "p4application.h"
+#include "p4settings.h"
 #include "win_vf.h"
 #include "win_params.h"
-#include "win_main.h"
 
-extern QP4Application * p4app;
-
-extern bool action_OnlyPrepareFile;     // defined in MAIN.CPP
-extern bool action_SaveAll;             // defined in MAIN.CPP
-extern void SetP4WindowTitle( QWidget *, QString );
-extern void SetMathPackage( int );
 
 QFindDlg::~QFindDlg()
 {
@@ -296,7 +287,7 @@ void QFindDlg::btn_maple_toggled( bool on )
         if( ThisVF->symbolicpackage != PACKAGE_MAPLE )
         {
             ThisVF->symbolicpackage = PACKAGE_MAPLE;
-            SetMathPackage( PACKAGE_MAPLE );
+            setMathPackage( PACKAGE_MAPLE );
         }
     }
 }
@@ -308,7 +299,7 @@ void QFindDlg::btn_reduce_toggled( bool on )
         if( ThisVF->symbolicpackage != PACKAGE_REDUCE )
         {
             ThisVF->symbolicpackage = PACKAGE_REDUCE;
-            SetMathPackage( PACKAGE_REDUCE );
+            setMathPackage( PACKAGE_REDUCE );
         }
     }
 }
@@ -522,12 +513,6 @@ void QFindDlg::OnBtnSave( void )
     }
 }
 
-void EvalVF( void )
-{
-    ThisVF->Evaluate();         // ---------------- CALL REDUCE OR MAPLE ------------------
-}
-extern void RunTask( void (*tsk)( void ) );
-
 void QFindDlg::OnBtnEval( void )
 {
 //  int result;
@@ -585,7 +570,7 @@ void QFindDlg::OnBtnEval( void )
         ThisVF->evaluated = false;
         ThisVF->evaluating = false;
 
-        ThisVF->Prepare();
+        ThisVF->prepare();
     }
     else
     {
@@ -593,7 +578,7 @@ void QFindDlg::OnBtnEval( void )
         ThisVF->evaluating = true;
 
         Signal_Evaluating();
-        ThisVF->Evaluate();
+        ThisVF->evaluate();
 //      RunTask( &EvalVF );
     }
 }

@@ -102,7 +102,7 @@ static bool eval_orbit( double qp[3], double a, double b, double c, double pp[3]
 
 // function definitions
 
-void SearchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, double y1, double grid )
+void searchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, double y1, double grid )
 {
     double z,p1[3],pf1[3],pb1[3],rf1[2],rb1[2];
     double p2[3],pf2[3],pb2[3],rf2[2],rb2[2],p3[3];
@@ -239,7 +239,7 @@ void SearchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, 
                         {
                             MATHFUNC(sphere_to_R2)(pf2[0],pf2[1],pf2[2],rf2);
                             spherewnd->prepareDrawing();
-                            DrawLimitCycle(spherewnd,(rf1[0]+rf2[0])/2,(rf1[1]+rf2[1])/2,a,b,c);
+                            drawLimitCycle(spherewnd,(rf1[0]+rf2[0])/2,(rf1[1]+rf2[1])/2,a,b,c);
                             spherewnd->finishDrawing();
                             found=1; 
                             p1[0]=p3[0]; p1[1]=p3[1]; p1[2]=p3[2];
@@ -280,7 +280,7 @@ void SearchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, 
                         {
                             MATHFUNC(sphere_to_R2)(pb2[0],pb2[1],pb2[2],rb2);
                             spherewnd->prepareDrawing();
-                            DrawLimitCycle(spherewnd,(rb1[0]+rb2[0])/2,(rb1[1]+rb2[1])/2,a,b,c);
+                            drawLimitCycle(spherewnd,(rb1[0]+rb2[0])/2,(rb1[1]+rb2[1])/2,a,b,c);
                             spherewnd->finishDrawing();
                             found=1; 
                             p1[0]=p3[0]; p1[1]=p3[1]; p1[2]=p3[2];
@@ -305,7 +305,7 @@ void SearchLimitCycle( QWinSphere * spherewnd, double x0, double y0, double x1, 
     }
 }
 
-void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,double c)
+void drawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,double c)
 {
     double p1[3],p2[3];
     double hhi,h_max,h_min;
@@ -387,7 +387,7 @@ void DrawLimitCycle(QWinSphere * spherewnd, double x,double y,double a,double b,
         (*plot_p)(spherewnd,p2,CLIMIT);
 }
 
-void DrawLimitCycles( QWinSphere * spherewnd )
+void drawLimitCycles( QWinSphere * spherewnd )
 {
     struct orbits * orbit;
 
@@ -397,7 +397,7 @@ void DrawLimitCycles( QWinSphere * spherewnd )
     {
         do
         {
-            DrawOrbit( spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color );
+            drawOrbit( spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color );
         }
         while((orbit=orbit->next_orbit)!=nullptr); 
     }
@@ -407,7 +407,7 @@ void DrawLimitCycles( QWinSphere * spherewnd )
 //                      DELETELASTLIMITCYCLE
 // -----------------------------------------------------------------------
 
-void DeleteLastLimitCycle( QWinSphere * spherewnd )
+void deleteLastLimitCycle( QWinSphere * spherewnd )
 {
     struct orbits *orbit1,*orbit2;
 
@@ -415,7 +415,7 @@ void DeleteLastLimitCycle( QWinSphere * spherewnd )
         return;
 
     orbit2 = VFResults.current_lim_cycle;
-    DrawOrbit( spherewnd, orbit2->pcoord, orbit2->f_orbits, spherewnd->spherebgcolor );
+    drawOrbit( spherewnd, orbit2->pcoord, orbit2->f_orbits, spherewnd->spherebgcolor );
 
     if( VFResults.first_lim_cycle == VFResults.current_lim_cycle )
     {
@@ -435,7 +435,7 @@ void DeleteLastLimitCycle( QWinSphere * spherewnd )
         
         VFResults.current_lim_cycle->next_orbit = nullptr;
     }
-    VFResults.DeleteOrbitPoint( orbit2->f_orbits ); 
+    VFResults.deleteOrbitPoint( orbit2->f_orbits ); 
     delete orbit2;//free( orbit2 );
     orbit2 = nullptr;
 }

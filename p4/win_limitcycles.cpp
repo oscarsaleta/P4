@@ -10,19 +10,19 @@
 #include <math.h>
 #include "custom.h"
 #include "file_tab.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
 #include "p4application.h"
 #include "win_limitcycles.h"
 #include "win_plot.h"
 #include "win_sphere.h"
 
-bool lcWindowIsUp = false;      // see definition in WIN_P4.H
+bool lcWindowIsUp = false;      // see definition in main.h
 
-extern void SetP4WindowTitle( QWidget *, QString );
+extern void setP4WindowTitle( QWidget *, QString );
 extern QP4Application * p4app;
-extern void SearchLimitCycle( QWinSphere *, double, double, double, double, double );
-extern void DeleteLastLimitCycle( QWinSphere * spherewnd );
+extern void searchLimitCycle( QWinSphere *, double, double, double, double, double );
+extern void deleteLastLimitCycle( QWinSphere * spherewnd );
 
 static QProgressDialog * LCprogressDlg = nullptr;
 static int LCprogressCount=1;
@@ -141,7 +141,7 @@ QLimitCyclesDlg::QLimitCyclesDlg( QPlotWnd * plt, QWinSphere * sp )
         btn_dellast->setEnabled(false);
     }
 
-    SetP4WindowTitle( this, "Limit Cycles" );
+    setP4WindowTitle( this, "Limit Cycles" );
 }
 
 void QLimitCyclesDlg::setSection( double x0, double y0, double x1, double y1 )
@@ -230,9 +230,9 @@ void QLimitCyclesDlg::onbtn_start( void )
     LCprogressDlg->setAutoClose(false);
     LCprogressDlg->setMinimumDuration(0);
     LCprogressDlg->setValue(LCprogressCount=0);
-    SetP4WindowTitle( LCprogressDlg, "Searching for limit cycles..." );
+    setP4WindowTitle( LCprogressDlg, "Searching for limit cycles..." );
 
-    SearchLimitCycle( mainSphere, selected_x0, selected_y0, selected_x1, selected_y1, selected_grid );
+    searchLimitCycle( mainSphere, selected_x0, selected_y0, selected_x1, selected_y1, selected_grid );
 
     // update buttons
 
@@ -313,7 +313,7 @@ void QLimitCyclesDlg::onbtn_delall( void )
     btn_delall->setEnabled(false);
     btn_dellast->setEnabled(false);
 
-    VFResults.DeleteOrbit( VFResults.first_lim_cycle );
+    VFResults.deleteOrbit( VFResults.first_lim_cycle );
     VFResults.first_lim_cycle = nullptr;
     VFResults.current_lim_cycle = nullptr;
 
@@ -325,7 +325,7 @@ void QLimitCyclesDlg::onbtn_dellast( void )
     plotwnd->getDlgData();
 
     mainSphere->prepareDrawing();
-    DeleteLastLimitCycle( mainSphere );
+    deleteLastLimitCycle( mainSphere );
     mainSphere->finishDrawing();
 
     if( VFResults.first_lim_cycle == nullptr )

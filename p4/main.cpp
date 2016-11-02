@@ -1,12 +1,14 @@
 #include "main.h"
-#include "win_event.h"
 
 #include <QMessageBox>
 
-#include "win_settings.h"
+#include "file_vf.h"
+#include "p4application.h"
 #include "p4settings.h"
+#include "win_settings.h"
 
 #include "../version.h"
+
 
 /*
     ----------------------------------------------------------------------------
@@ -21,47 +23,44 @@
     -----------------------------------------------------------------------------
 */
 
-QInputVF * ThisVF = nullptr;
-QVFStudy VFResults;
-QString P4Version;
-QString P4VersionDate;
-QString P4Platform;
+QString p4Version;
+QString p4VersionDate;
+QString p4Platform;
 
 bool action_OnlyPrepareFile = false;    // in the find menu (this is not saved in the .inp file)
 bool action_SaveAll = DEFAULTSAVEALL;   // in the find menu (this is not saved in the .inp file)
-QP4Application * p4app = nullptr;
-QStartDlg * p4startdlg = nullptr;
-QPixmap * p4smallicon = nullptr;
 
+
+QPixmap * p4smallicon = nullptr;
 QPrinter * p4printer = nullptr;
 
-QString CmdLine_Filename;
-bool CmdLine_AutoEvaluate;
-bool CmdLine_AutoPlot;
-bool CmdLine_AutoExit;
+QString cmdLine_Filename;
+bool cmdLine_AutoEvaluate;
+bool cmdLine_AutoPlot;
+bool cmdLine_AutoExit;
 
-void HandleCommandLineOption( char * arg )
+void handleCommandLineOption( char * arg )
 {
     while( *arg != 0 )
     {
         if( *arg == 'e' || *arg == 'E' )    // auto-evaluate
         {
-            CmdLine_AutoEvaluate = true;
+            cmdLine_AutoEvaluate = true;
             arg++;
             continue;
         }
         
         if( *arg == 'p' || *arg == 'P' )    // auto-plot
         {
-            CmdLine_AutoPlot = true;
+            cmdLine_AutoPlot = true;
             arg++;
             continue;
         }
 
         if( *arg == 'x' || *arg == 'X' )    // auto-evaluate + exit
         {
-            CmdLine_AutoEvaluate = true;
-            CmdLine_AutoExit = true;
+            cmdLine_AutoEvaluate = true;
+            cmdLine_AutoExit = true;
             arg++;
             continue;
         }
@@ -72,17 +71,17 @@ void HandleCommandLineOption( char * arg )
     }
 }
 
-void HandleCommandLineArgument( char * arg )
+void handleCommandLineArgument( char * arg )
 {
     if( *arg == '-' )
     {
-        HandleCommandLineOption( arg+1 );
+        handleCommandLineOption( arg+1 );
         return;
     }
         
-    if( CmdLine_Filename.length() == 0 )
+    if( cmdLine_Filename.length() == 0 )
     {
-        CmdLine_Filename = arg;
+        cmdLine_Filename = arg;
         return;
     }
     
@@ -97,30 +96,30 @@ int main( int argc, char *argv[] )
     int returnvalue;
     int v, i;
 
-    P4Platform = "";
-    P4Version = VERSION;        // initialize version string
-    P4VersionDate = VERSIONDATE;
+    p4Platform = "";
+    p4Version = VERSION;        // initialize version string
+    p4VersionDate = VERSIONDATE;
 
-    CmdLine_Filename = "";
-    CmdLine_AutoEvaluate = false;
-    CmdLine_AutoPlot = false;
-    CmdLine_AutoExit = false;
+    cmdLine_Filename = "";
+    cmdLine_AutoEvaluate = false;
+    cmdLine_AutoPlot = false;
+    cmdLine_AutoExit = false;
     
     for( i = 1; i < argc; i++ )
-         HandleCommandLineArgument( argv[i] );
-    if( CmdLine_AutoEvaluate && CmdLine_Filename.length() == 0 )
-        CmdLine_Filename = DEFAULTFILENAME;
+         handleCommandLineArgument( argv[i] );
+    if( cmdLine_AutoEvaluate && cmdLine_Filename.length() == 0 )
+        cmdLine_Filename = DEFAULTFILENAME;
 
     p4app = new QP4Application( argc, argv );
 
     p4app->addLibraryPath( p4app->applicationDirPath() );
 
     p4app->setQuitOnLastWindowClosed(false);
-    v=ReadP4Settings();
+    v=readP4Settings();
 
     p4printer = new QPrinter( QPrinter::PrinterResolution );
     p4smallicon = new QPixmap();
-    if( p4smallicon->load( GetP4BinPath() + "/p4smallicon.png" ) == false )
+    if( p4smallicon->load( getP4BinPath() + "/p4smallicon.png" ) == false )
     {
         delete p4smallicon;
         p4smallicon = nullptr;
@@ -130,19 +129,19 @@ int main( int argc, char *argv[] )
 
     ThisVF = new QInputVF();
 
-    p4startdlg = new QStartDlg( CmdLine_Filename );
-    if( !CmdLine_AutoExit )
+    p4startdlg = new QStartDlg( cmdLine_Filename );
+    if( !cmdLine_AutoExit )
         p4startdlg->show();
 
     p4app->setQuitOnLastWindowClosed(true);
 
-    if( CmdLine_Filename.length() != 0 )
+    if( cmdLine_Filename.length() != 0 )
     {
         if( !(ThisVF->load()) )
         {
-            CmdLine_AutoEvaluate = false;
-            CmdLine_AutoPlot = false;
-            if( CmdLine_AutoExit )
+            cmdLine_AutoEvaluate = false;
+            cmdLine_AutoPlot = false;
+            if( cmdLine_AutoExit )
             {
                 delete p4printer;
                 p4printer = nullptr;
@@ -174,7 +173,7 @@ int main( int argc, char *argv[] )
     delete p4printer;
     p4printer = nullptr;
 
-    SaveP4Settings();
+    saveP4Settings();
 
     delete p4app;
     p4app = nullptr;
@@ -185,139 +184,7 @@ int main( int argc, char *argv[] )
 //                          SETP4WINDOWTITLE
 // -----------------------------------------------------------------------
 
-void SetP4WindowTitle( QWidget * win, QString title )
+void setP4WindowTitle( QWidget * win, QString title )
 {
     win->setWindowTitle(title);
 }
-
-// -----------------------------------------------------------------------
-//                          SIGNALS
-// -----------------------------------------------------------------------
-//
-// Following signals may be called from another thread (see task.cpp)
-
-
-QP4Application::QP4Application( int & argc, char ** argv )
-        : QApplication(argc,argv)
-{
-    StandardFont = new QFont();
-    StandardFont->setPointSize( StandardFont->pointSize() + FONTSIZE );
-    setFont( *StandardFont );
-    
-    BoldFont = new QFont();
-    BoldFont->setWeight( QFont::Bold );
-
-    TitleFont = new QFont();
-    TitleFont->setPointSize( TitleFont->pointSize() + TITLEFONTSIZE );
-    TitleFont->setWeight( QFont::Bold );
-
-    CourierFont = new QFont;
-    CourierFont->setFamily("Courier");
-    CourierFont->setFixedPitch(true);
-    CourierFont->setPointSize( CourierFont->pointSize() + FONTSIZE );
-
-    BoldCourierFont = new QFont;
-    BoldCourierFont->setFamily("Courier");
-    BoldCourierFont->setFixedPitch(true);
-    BoldCourierFont->setWeight(QFont::Bold);
-    BoldCourierFont->setPointSize( BoldCourierFont->pointSize() + FONTSIZE );
-
-    LegendFont = new QFont;
-    LegendFont->setFamily("Courier");
-    LegendFont->setFixedPitch(true);
-    LegendFont->setPointSize( LegendFont->pointSize() + LEGENDFONTSIZE );
-}
-
-void QP4Application::Signal_Changed( void )
-{
-    ThisVF->evaluated = false;
-    ThisVF->changed = true;
-
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr );
-    p4app->postEvent( p4startdlg, e );
-}
-
-void QP4Application::Signal_Evaluated( int exitCode )
-{
-    ThisVF->evaluated = true;
-    ThisVF->evaluating = false;
-
-    ThisVF->finishEvaluation(exitCode);
-
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
-    p4app->postEvent( p4startdlg, e );
-
-    if( CmdLine_AutoExit )
-    {
-        CmdLine_AutoPlot = false;
-        p4startdlg->OnQuit();
-        return;
-    }
-    
-    if( CmdLine_AutoPlot )
-    {
-        CmdLine_AutoPlot = false;
-        p4startdlg->OnPlot();
-    }
-}
-
-void QP4Application::Signal_GcfEvaluated( int exitCode )
-{
-    ThisVF->evaluated = true;
-    ThisVF->evaluating = false;
-
-    ThisVF->finishEvaluation(exitCode);
-}
-
-void QP4Application::Signal_Evaluating( void )
-{
-    ThisVF->evaluating = true;
-    ThisVF->evaluated = false;
-
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATING, nullptr );
-    p4app->postEvent( p4startdlg, e );
-}
-
-void QP4Application::cathProcessError( QProcess::ProcessError qperr )
-{
-     ThisVF->catchProcessError( qperr );
-}
-
-void QP4Application::Signal_Loaded( void )
-{
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_LOADED, nullptr );
-    p4app->postEvent( p4startdlg, e );
-
-    if( CmdLine_AutoEvaluate )
-    {
-        CmdLine_AutoEvaluate = false;
-        p4startdlg->Find_Window->OnBtnEval();
-        return;
-    }
-    if( CmdLine_AutoPlot )
-    {
-        CmdLine_AutoPlot = false;
-        p4startdlg->OnPlot();
-        return;
-    }
-}
-
-void QP4Application::Signal_Saved( void )
-{
-    QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_SAVED, nullptr );
-    p4app->postEvent( p4startdlg, e );
-}
-
-QP4Event::QP4Event( QEvent::Type t, void * data )
-                    : QEvent(t)
-{
-    customData = data;
-}
-
-void * QP4Event::data() const { return customData; }
-
-QP4Event::~QP4Event()
-{
-    // data is freeed by caller                     
-}
-                     

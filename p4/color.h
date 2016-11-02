@@ -52,7 +52,7 @@ struct P4RGBITEM
 	int b;
 };
 
-extern struct P4RGBITEM XFigToRGB[NUMXFIGCOLORS];	// defined in LEGEND.C
+extern struct P4RGBITEM XFigToRGB[NUMXFIGCOLORS];	// defined in win_legend.cpp
 
 
 #endif /* COLOR_H */

@@ -1,53 +1,24 @@
-#include <qobject.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <math.h>
+#include "print_postscript.h"
+
+#include <QFile>
+#include <QTextStream>
+#include <cmath>
+
 #include "custom.h"
-#include "file_tab.h"
-#include "file_vf.h"
-#include "win_p4.h"
 #include "math_p4.h"
+#include "file_vf.h"
 #include "plot_tools.h"
-
-extern int PrintColorTable[NUMXFIGCOLORS];
-
-extern void (* print_saddle)( double, double );
-extern void (* print_stablenode)( double, double );
-extern void (* print_unstablenode)( double, double );
-extern void (* print_stableweakfocus)( double, double );
-extern void (* print_unstableweakfocus)( double, double );
-extern void (* print_weakfocus)( double, double );
-extern void (* print_stablestrongfocus)( double, double );
-extern void (* print_unstablestrongfocus)( double, double );
-extern void (* print_sesaddle)( double, double );
-extern void (* print_sesaddlenode)( double, double );
-extern void (* print_sestablenode)( double, double );
-extern void (* print_seunstablenode)( double, double );
-extern void (* print_degen)( double, double );
-extern void (* print_center)( double, double );
-extern void (* print_elips)( double, double, double, double, int, bool, struct P4POLYLINES * );
-extern void (* print_line)( double, double, double, double, int );
-extern void (* print_point)( double, double, int );
-extern void (* print_comment)( QString );
-
-extern void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color );
-extern void spherePlotPoint( QWinSphere * sp, double * p, int color );
-extern void spherePrintLine( QWinSphere * sp, double * p1, double * p2, int color );
-extern void spherePrintPoint( QWinSphere * sp, double * p, int color );
+#include "print_bitmap.h"
+#include "print_points.h"
 
 static bool PSBlackWhitePrint = true;
 
 static QFile * PSFile = nullptr;
 static QTextStream PSFileStream;
 
-//static void PrintPSEllips( double x0, double y0, double a, double b );
-
-void FinishPostscriptPrinting( void );
-void PrintPostscript( void );
-
 // ---------------------------------------------------------------------------------------
 
-void ps_print_comment( QString s )
+static void ps_print_comment( QString s )
 {
     if( PSFile != nullptr )
     {
@@ -55,128 +26,150 @@ void ps_print_comment( QString s )
     }
 }
 
-void ps_print_saddle( double x, double y )
+static void ps_print_saddle( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f box\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CSADDLE], (float)x, (float)y );
+        s.sprintf( "col%d %f %f box\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                            printColorTable[CSADDLE], (float)x, (float)y );
         PSFileStream << s;
     }
 }
 
-void ps_print_stablenode( double x, double y )
+static void ps_print_stablenode( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f box\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CNODE_S], (float)x, (float)y );
+        s.sprintf( "col%d %f %f box\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                            printColorTable[CNODE_S], (float)x, (float)y );
         PSFileStream << s;
     }
 }
 
-void ps_print_unstablenode( double x, double y )
+static void ps_print_unstablenode( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f box\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CNODE_U], (float)x, (float)y );
+        s.sprintf( "col%d %f %f box\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                            printColorTable[CNODE_U], (float)x, (float)y );
         PSFileStream << s;
     }
 }
 
-void ps_print_stableweakfocus( double x, double y )
+static void ps_print_stableweakfocus( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CWEAK_FOCUS_S], (float)x, (float)y );
-        PSFileStream << s;
-    }
-}
-void ps_print_unstableweakfocus( double x, double y )
-{
-    if( PSFile != nullptr )
-    {
-        QString s;
-        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CWEAK_FOCUS_U], (float)x, (float)y );
-        PSFileStream << s;
-    }
-}
-void ps_print_weakfocus( double x, double y )
-{
-    if( PSFile != nullptr )
-    {
-        QString s;
-        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CWEAK_FOCUS], (float)x, (float)y );
-        PSFileStream << s;
-    }
-}
-void ps_print_center( double x, double y )
-{
-    if( PSFile != nullptr )
-    {
-        QString s;
-        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CCENTER], (float)x, (float)y );
+        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                printColorTable[CWEAK_FOCUS_S], (float)x, (float)y );
         PSFileStream << s;
     }
 }
 
-void ps_print_stablestrongfocus( double x, double y )
+static void ps_print_unstableweakfocus( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CSTRONG_FOCUS_S], (float)x, (float)y );
+        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                printColorTable[CWEAK_FOCUS_U], (float)x, (float)y );
         PSFileStream << s;
     }
 }
-void ps_print_unstablestrongfocus( double x, double y )
+
+static void ps_print_weakfocus( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CSTRONG_FOCUS_U], (float)x, (float)y );
+        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                printColorTable[CWEAK_FOCUS], (float)x, (float)y );
         PSFileStream << s;
     }
 }
-void ps_print_sesaddle( double x, double y )
+
+static void ps_print_center( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CSADDLE], (float)x, (float)y );
+        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                printColorTable[CCENTER], (float)x, (float)y );
         PSFileStream << s;
     }
 }
-void ps_print_sesaddlenode( double x, double y )
+
+static void ps_print_stablestrongfocus( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CSADDLE_NODE], (float)x, (float)y );
+        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                printColorTable[CSTRONG_FOCUS_S], (float)x, (float)y );
         PSFileStream << s;
     }
 }
-void ps_print_sestablenode( double x, double y )
+
+static void ps_print_unstablestrongfocus( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CNODE_S], (float)x, (float)y );
+        s.sprintf( "col%d %f %f diamond\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                printColorTable[CSTRONG_FOCUS_U], (float)x, (float)y );
         PSFileStream << s;
     }
 }
-void ps_print_seunstablenode( double x, double y )
+
+static void ps_print_sesaddle( double x, double y )
 {
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CNODE_U], (float)x, (float)y );
+        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                 printColorTable[CSADDLE], (float)x, (float)y );
         PSFileStream << s;
     }
 }
-void ps_print_degen( double x, double y )
+
+static void ps_print_sesaddlenode( double x, double y )
+{
+    if( PSFile != nullptr )
+    {
+        QString s;
+        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                 printColorTable[CSADDLE_NODE], (float)x, (float)y );
+        PSFileStream << s;
+    }
+}
+
+static void ps_print_sestablenode( double x, double y )
+{
+    if( PSFile != nullptr )
+    {
+        QString s;
+        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                 printColorTable[CNODE_S], (float)x, (float)y );
+        PSFileStream << s;
+    }
+}
+
+static void ps_print_seunstablenode( double x, double y )
+{
+    if( PSFile != nullptr )
+    {
+        QString s;
+        s.sprintf( "col%d %f %f triangle\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                                 printColorTable[CNODE_U], (float)x, (float)y );
+        PSFileStream << s;
+    }
+}
+
+static void ps_print_degen( double x, double y )
 {
     if( PSFile != nullptr )
     {
@@ -184,12 +177,13 @@ void ps_print_degen( double x, double y )
         s.sprintf( 
                 "LW 2.6 mul setlinewidth\n"
                 "col%d %f %f cross\n"
-                "LW setlinewidth\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[CDEGEN], (float)x, (float)y );
+                "LW setlinewidth\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                         printColorTable[CDEGEN], (float)x, (float)y );
         PSFileStream << s;
     }
 }
 
-void ps_print_elips( double x0, double y0, double a, double b, int color, bool dotted, struct P4POLYLINES * )
+static void ps_print_elips( double x0, double y0, double a, double b, int color, bool dotted, struct P4POLYLINES * )
 {
     double t,h;
     QString s;
@@ -197,14 +191,14 @@ void ps_print_elips( double x0, double y0, double a, double b, int color, bool d
     // we do not use the precompiled form of the ellipse printing.  Here, it is not necessary,
     // since the PS command for drawing ellipses works just fine.
 
-    color = PrintColorTable[color];
+    color = printColorTable[color];
 
     if( PSFile != nullptr )
     {
         if( dotted )
              PSFileStream << "gsave\n";
  
-        s.sprintf( "col%d\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : color );
+        s.sprintf( "col%d\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] : color );
         PSFileStream << s;
         PSFileStream << "newpath\n";
         
@@ -231,7 +225,7 @@ void ps_print_elips( double x0, double y0, double a, double b, int color, bool d
     }
 }
 
-void ps_print_line( double x0, double y0, double x1, double y1, int color )
+static void ps_print_line( double x0, double y0, double x1, double y1, int color )
 {
     if( x0==x1 && y0==y1 ) 
         return;
@@ -240,7 +234,7 @@ void ps_print_line( double x0, double y0, double x1, double y1, int color )
     {
         QString s;
         s.sprintf( "%f %f moveto\n%f %f lineto col%d stroke\n", (float)x0, (float)y0, (float)x1, (float)y1, 
-                PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[color] );
+                PSBlackWhitePrint ? printColorTable[CFOREGROUND] : printColorTable[color] );
         PSFileStream << s;
     }
 }
@@ -249,7 +243,7 @@ static double lastpsx0 = 0;
 static double lastpsy0 = 0;
 static int lastpscolor = 0;
 
-void ps_print_point( double x0, double y0, int color )
+static void ps_print_point( double x0, double y0, int color )
 {
     if( lastpsx0==x0 && lastpsy0==y0 && lastpscolor==color )
         return; // just a small protection against big PS files: do not print series of the same points.
@@ -261,14 +255,15 @@ void ps_print_point( double x0, double y0, int color )
     if( PSFile != nullptr )
     {
         QString s;
-        s.sprintf( "col%d %f %f dot\n", PSBlackWhitePrint ? PrintColorTable[CFOREGROUND] : PrintColorTable[color], (float)x0, (float)y0 );
+        s.sprintf( "col%d %f %f dot\n", PSBlackWhitePrint ? printColorTable[CFOREGROUND] :
+                                                            printColorTable[color], (float)x0, (float)y0 );
         PSFileStream << s;
     }
 }
 
 // ---------------------------------------------------------------------------------------
 
-void PreparePostscriptPrinting( int x0, int y0, int w, int h, bool iszoom, bool isblackwhite,
+void preparePostscriptPrinting( int x0, int y0, int w, int h, bool iszoom, bool isblackwhite,
                                 int resolution, int linewidth, int symbolwidth )
 {
     QString s;
@@ -467,7 +462,7 @@ void PreparePostscriptPrinting( int x0, int y0, int w, int h, bool iszoom, bool 
     }
 }
 
-void FinishPostscriptPrinting( void )
+void finishPostscriptPrinting( void )
 {
     if( PSFile != nullptr )
     {

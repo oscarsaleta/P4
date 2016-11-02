@@ -1,197 +1,10 @@
-#include <cmath>
-#include <float.h>
-#include <qpainter.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "win_p4.h"
-#include "math_p4.h"
-#include "win_sphere.h"
+#include "plot_tools.h"
 
-//#define std::isnan       std::isnan
+#include <cmath>
+
+
 #define p4_finite      finite
 
-struct P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a, double b, bool dotted, double resa, double resb )
-{
-    // this is an exact copy of the plotEllipse routine, except that output is stored
-    // in a list of points that is dynamically allocated.
-
-    double theta, t1, t2, e, R, x, y, c, prevx, prevy;
-    bool d;
-    bool doton;
-    int dotcount;
-    struct P4POLYLINES * first;
-    struct P4POLYLINES * last;
-
-    prevx = prevy = 0;
-    dotcount=0;
-    first = nullptr;
-    last = nullptr;
-    
-    R = (resa < resb) ? resa : resb;
-    if( R < 1.0 ) R = 1.0; // protection
-    e = 2*acos(1.0-0.5/R);
-    if( R*sin(e) > 1.0 )
-        e = asin(1.0/R);
-
-    theta = 0;
-    
-    d = false;
-    doton = true;
-
-//  FILE * fp;
-//  fp = fopen( "C:\\test.txt", "wt" );
-
-    while( theta < TWOPI )
-    {
-//        fprintf( fp, "%f\n", (float)theta );
-//        fflush(fp);
-        c = (x0-cx)/a;
-        if( c > -1.0 && c < 1.0 )
-        {
-            t1 = acos(c);
-            t2 = TWOPI - t1;
-            if( theta >= t1 && theta < t2 )
-            {
-//                fprintf( fp, "A EXCL [%f %f]\n", (float)t1, (float)t2 );
-                theta = t2+e/4; d = false; continue;
-            }
-        }
-        c = (x1-cx)/a;
-        if( c > -1.0 && c < 1.0 )
-        {
-            t1 = acos(c);
-            t2 = TWOPI - t1;
-            if( theta < t1 )
-            {
-//                fprintf( fp, "B EXCL [-infinity %f]\n", (float)t1 );
-                theta = t1+e/4; d = false; continue;
-            }
-            if( theta >= t2 )
-            {
-//                fprintf( fp, "C EXCL [%f, infinity]\n",  (float)t2 );
-                theta = TWOPI+e/4; d = false; break;
-            }
-        }
-        c = (y0-cy)/b;
-        if( c > -1.0 && c < 1.0 )
-        {
-            t1 = asin(c);
-            t2 = PI-t1;
-            if( t1 < 0 )
-            {
-                t2 = t1+TWOPI;
-                t1 = PI-t1;
-                if( theta >= t1 && theta < t2 )
-                {
-//                    fprintf( fp, "D EXCL [%f %f]\n", (float)t1, (float)t2 );
-                    theta = t2+e/4; d = false; continue;
-                }
-            }
-            else
-            {
-                if( theta < t1 )
-                {
-//                    fprintf( fp, "E EXCL [-infinity %f]\n", (float)t1 );
-                    theta = t1+e/4; d = false; continue;
-                }
-                if( theta >= t2 )
-                {
-//                    fprintf( fp, "F EXCL [%f, infinity]\n",  (float)t2 );
-                    theta = TWOPI+e/4; d = false; break;
-                }
-            }
-        }
-        c = (y1-cy)/b;
-        if( c > -1.0 && c < 1.0 )
-        {
-            t1 = asin(c);
-            t2 = PI-t1;
-            if( t1 < 0 )
-            {
-                t2 = t1+TWOPI;
-                t1 = PI-t1;
-                if( theta < t1 )
-                {
-//                    fprintf( fp, "G EXCL [-infinity %f]\n", (float)t1 );
-                    theta = t1+e/4; d = false; continue;
-                }
-                if( theta >= t2 )
-                {
-//                    fprintf( fp, "H EXCL [%f, infinity]\n",  (float)t2 );
-                    theta = TWOPI; d = false; break;
-                }
-            }
-            else
-            {
-                if( theta >= t1 && theta < t2 )
-                {
-//                    fprintf( fp, "I EXCL [%f %f]\n", (float)t1, (float)t2 );
-                    theta = t2+e/4; d = false; continue;
-                }
-            }
-        }
-
-        x = cx + a*cos(theta);
-        y = cy + b*sin(theta);
-        theta += e;
-        
-        // (x,y) is inside view
-
-        if( !d )
-        {
-            if( doton )
-            {
-                d = true;
-                prevx = x;
-                prevy = y;
-                dotcount = 0;
-                doton = true;
-            }
-            else
-            {
-                if( ++dotcount > 7 && dotted )
-                {
-                    d = false;
-                    doton = (doton) ? false:true;
-                    dotcount = 0;
-                }
-            }
-        }
-        else
-        {
-            if( doton )
-            {
-                if( first == nullptr )
-                {
-                    last = first = new P4POLYLINES;//(struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
-                    last->next = nullptr;
-                }
-                else
-                {
-                    last->next = new P4POLYLINES;//(struct P4POLYLINES *)malloc( sizeof(struct P4POLYLINES) );
-                    last = last->next;
-                    last->next = nullptr;
-                }
-
-                last->x1 = prevx;
-                last->y1 = prevy;
-                last->x2 = x;
-                last->y2 = y;
-
-                prevx = x;
-                prevy = y;
-            }
-            if( ++dotcount > 7 && dotted )
-            {
-                d = false;
-                doton = (doton) ? false:true;
-                dotcount = 0;
-            }
-        }
-    }
-//  fclose(fp);
-    return first;
-}
 
 /*
 void plotEllipse( QPainter * p, int cx, int cy, int a, int b, int color, bool dotted,
@@ -216,77 +29,6 @@ void plotEllipse( QPainter * p, int cx, int cy, int a, int b, int color, bool do
     }
 }
 */
-
-void QWinSphere::plotPoincareSphere( void )
-{
-    int color;
-    struct P4POLYLINES * p;
-
-    p = CircleAtInfinity;
-    color = VFResults.singinf ? CSING : CLINEATINFINITY;
-
-    staticPainter->setPen( QXFIGCOLOR(color) );
-    while( p != nullptr )
-    {
-        staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
-        p = p->next;
-    }
-}
-
-void QWinSphere::plotPoincareLyapunovSphere( void )
-{
-    int color;
-    struct P4POLYLINES * p;
-
-    p = CircleAtInfinity;
-    color = VFResults.singinf ? CSING : CLINEATINFINITY;
-
-    staticPainter->setPen( QXFIGCOLOR(color) );
-    while( p != nullptr )
-    {
-        staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
-        p = p->next;
-    }
-
-    p = PLCircle;
-    color = CLINEATINFINITY;
-
-    staticPainter->setPen( QXFIGCOLOR(color) );
-    while( p != nullptr )
-    {
-        staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
-        p = p->next;
-    }
-    return;
-}
-
-void QWinSphere::plotLineAtInfinity( void )
-{
-    switch( VFResults.typeofview )
-    {
-    case TYPEOFVIEW_U1:
-    case TYPEOFVIEW_V1:
-        if( x0 < 0.0 && x1 > 0.0 )
-        {
-            staticPainter->setPen( QXFIGCOLOR(CLINEATINFINITY) );
-            staticPainter->drawLine( coWinX(0.0), 0, coWinX(0.0), h-1 );
-        }
-        break;
-    case TYPEOFVIEW_U2:
-    case TYPEOFVIEW_V2:
-        if( y0 < 0.0 && y1 > 0.0 )
-        {
-            staticPainter->setPen( QXFIGCOLOR(CLINEATINFINITY) );
-            staticPainter->drawLine( 0, coWinY(0.0), w-1, coWinY(0.0) );
-        }
-
-        break;
-    case TYPEOFVIEW_PLANE:
-    case TYPEOFVIEW_SPHERE:
-        // should not appear
-        break;
-    }
-}
 
 void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color )
 {
@@ -355,7 +97,6 @@ void spherePrintPoint( QWinSphere * sp, double * p, int color )
 }
 
 
-
 // Intersects a line with a rectangle.  Changes the coordinates so that both endpoints
 // are the endpoints of the visible part of the line.  Returns false if there is no visible
 // part.
@@ -363,7 +104,7 @@ void spherePrintPoint( QWinSphere * sp, double * p, int color )
 // The rectangle is given by [xmin,xmax] and [ymin,ymax], whereas the line is given by
 // the two end points (x1,y1), (x2,y2).
 
-bool LineRectangleIntersect( double & x1, double & y1, double & x2, double & y2,
+bool lineRectangleIntersect( double & x1, double & y1, double & x2, double & y2,
                                         double xmin, double xmax, double ymin, double ymax )
 {
     double dx, dy;
@@ -390,12 +131,12 @@ bool LineRectangleIntersect( double & x1, double & y1, double & x2, double & y2,
         if( fabs(dy)==0 )
             return false;
 
-        return LineRectangleIntersect( y1, x1, y2, x2, ymin, ymax, xmin, xmax );
+        return lineRectangleIntersect( y1, x1, y2, x2, ymin, ymax, xmin, xmax );
     }
 
     if( dx < 0 )
     {
-        return LineRectangleIntersect( x2, y2, x1, y1, xmin, xmax, ymin, ymax );
+        return lineRectangleIntersect( x2, y2, x1, y1, xmin, xmax, ymin, ymax );
     }
 
     // here, we are sure that dx >= |dy| > 0.

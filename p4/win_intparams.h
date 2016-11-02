@@ -49,7 +49,7 @@ private:
     QLabel * lbl_tolerance;
 
     QSpinBox * spin_numpoints;
-    bool ReadFloatField( QLineEdit *, double *, double, double, double );
+    bool readFloatField( QLineEdit *, double *, double, double, double );
 
 public slots:
     void MarkBad( QLineEdit * edt );

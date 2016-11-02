@@ -44,7 +44,9 @@ SOURCES += win_view.cpp \
     file_vf.cpp \
     file_tab.cpp \
     file_paths.cpp \
-    win_zoom.cpp
+    win_zoom.cpp \
+    p4application.cpp \
+    win_event.cpp
 HEADERS += win_view.h \
     win_vf.h \
     win_sphere.h \
@@ -52,7 +54,6 @@ HEADERS += win_view.h \
     win_print.h \
     win_plot.h \
     win_params.h \
-    win_p4.h \
     win_orbits.h \
     win_main.h \
     win_limitcycles.h \
@@ -83,5 +84,11 @@ HEADERS += win_view.h \
     plot_tools.h \
     math_polynom.h \
     math_orbits.h \
-    math_limitcycles.h
+    math_limitcycles.h \
+    math_numerics.h \
+    plot_points.h \
+    print_points.h \
+    print_bitmap.h \
+    print_postscript.h \
+    print_xfig.h
 RC_FILE = p4.rc

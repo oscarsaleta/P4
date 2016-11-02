@@ -92,31 +92,31 @@ public:
 
     static bool FileExists( QString );
 
-    void PrepareReduceParameters( QTextStream * );
-    void PrepareReduceVectorField( QTextStream * );
-    void PrepareMapleParameters( QTextStream * );
-    void PrepareMapleVectorField( QTextStream * );
+    void prepareReduceParameters( QTextStream * );
+    void prepareReduceVectorField( QTextStream * );
+    void prepareMapleParameters( QTextStream * );
+    void prepareMapleVectorField( QTextStream * );
     QString booleanString( int value ) const;
-    QString ConvertMapleUserParameterLabels( QString );
-    QString ConvertReduceUserParameterLabels( QString );
+    QString convertMapleUserParameterLabels( QString );
+    QString convertReduceUserParameterLabels( QString );
 
-    void PrepareFile( QTextStream * ); // used by Prepare()
+    void prepareFile( QTextStream * ); // used by Prepare()
 
-    void Prepare( void );
-    void Evaluate( void );
+    void prepare( void );
+    void evaluate( void );
 
-    bool PrepareGcf( struct term2 * f, double, double, int, int );
-    bool PrepareGcf_LyapunovCyl( double, double, int, int );
-    bool PrepareGcf_LyapunovR2( int, int );
-    bool EvaluateGcf( void );
-    void CreateProcessWindow( void );
+    bool prepareGcf( struct term2 * f, double, double, int, int );
+    bool prepareGcf_LyapunovCyl( double, double, int, int );
+    bool prepareGcf_LyapunovR2( int, int );
+    bool evaluateGcf( void );
+    void createProcessWindow( void );
 
 public slots:
     void finishEvaluation( int );
     void catchProcessError( QProcess::ProcessError );
     void ReadProcessStdout( void );
-    void OnTerminateButton( void );
-    void OnClearButton( void );
+    void onTerminateButton( void );
+    void onClearButton( void );
     void finishGcfEvaluation( void );
 };
 

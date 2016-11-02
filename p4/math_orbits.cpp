@@ -1,16 +1,13 @@
 #include "math_orbits.h"
 
-#include <qobject.h>
-#include <math.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "win_p4.h"
-#include "math_p4.h"
-#include "win_sphere.h"
-#include "math_charts.h"
-#include "plot_tools.h"
-#include "math_polynom.h"
+#include <cmath>
 
+#include "custom.h"
+#include "math_p4.h"
+#include "math_charts.h"
+#include "math_numerics.h"
+#include "math_polynom.h"
+#include "plot_tools.h"
 
 
 // -----------------------------------------------------------------------
@@ -19,7 +16,7 @@
 //
 // dir = -1: backwards, dir=0: continue, dir=+1: forwards
 
-void IntegrateOrbit( QWinSphere * sphere, int dir )
+void integrateOrbit( QWinSphere * sphere, int dir )
 {
     struct orbits_points *sep;
     double pcoord[3],ucoord[2];
@@ -69,7 +66,7 @@ void IntegrateOrbit( QWinSphere * sphere, int dir )
 // -----------------------------------------------------------------------
 /* R=0 then point selected in the drawing canvas else in the orbit window */
 
-bool StartOrbit( QWinSphere * sphere, double x, double y, bool R )
+bool startOrbit( QWinSphere * sphere, double x, double y, bool R )
 {
     double pcoord[3];
     double ucoord[2];
@@ -104,7 +101,7 @@ bool StartOrbit( QWinSphere * sphere, double x, double y, bool R )
 //                      DRAWORBIT
 // -----------------------------------------------------------------------
 
-void DrawOrbit( QWinSphere * spherewnd, double * pcoord, struct orbits_points * points, int color )
+void drawOrbit( QWinSphere * spherewnd, double * pcoord, struct orbits_points * points, int color )
 {
     double pcoord1[3];
 
@@ -132,13 +129,13 @@ void DrawOrbit( QWinSphere * spherewnd, double * pcoord, struct orbits_points * 
 //                      DRAWORBITS
 // -----------------------------------------------------------------------
 
-void DrawOrbits( QWinSphere * spherewnd )
+void drawOrbits( QWinSphere * spherewnd )
 {
     struct orbits * orbit;
 
     for( orbit = VFResults.first_orbit; orbit != nullptr; orbit = orbit->next_orbit )
     {
-        DrawOrbit( spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color );
+        drawOrbit( spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color );
     }
 }
 
@@ -146,7 +143,7 @@ void DrawOrbits( QWinSphere * spherewnd )
 //                      DELETELASTORBIT
 // -----------------------------------------------------------------------
 
-void DeleteLastOrbit( QWinSphere * spherewnd )
+void deleteLastOrbit( QWinSphere * spherewnd )
 {
     struct orbits *orbit1,*orbit2;
 
@@ -154,7 +151,7 @@ void DeleteLastOrbit( QWinSphere * spherewnd )
         return;
 
     orbit2 = VFResults.current_orbit;
-    DrawOrbit( spherewnd, orbit2->pcoord, orbit2->f_orbits, spherewnd->spherebgcolor );
+    drawOrbit( spherewnd, orbit2->pcoord, orbit2->f_orbits, spherewnd->spherebgcolor );
 
     if( VFResults.first_orbit == VFResults.current_orbit )
     {
@@ -174,7 +171,7 @@ void DeleteLastOrbit( QWinSphere * spherewnd )
         
         VFResults.current_orbit->next_orbit = nullptr;
     }
-    VFResults.DeleteOrbitPoint( orbit2->f_orbits ); 
+    VFResults.deleteOrbitPoint( orbit2->f_orbits );
     delete orbit2;//free( orbit2 );
     orbit2 = nullptr;
 }

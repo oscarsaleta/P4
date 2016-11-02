@@ -90,5 +90,6 @@ public:
     QPlotWnd * Plot_Window;
 };
 
+extern QStartDlg * p4startdlg;
 
 #endif /* WIN_MAIN_H */

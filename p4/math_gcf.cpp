@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "custom.h"
-#include "main.h"
+#include "file_vf.h"
 #include "math_p4.h"
 #include "math_charts.h"
 #include "plot_tools.h"
@@ -24,14 +24,14 @@ static bool ReadTaskResults( int ); // , int, int, int );
 static bool read_gcf( void (*chart)(double,double,double *) );
 
 // function definitions
-bool EvalGcfStart( QWinSphere * sp, int dashes, int points, int precis )
+bool evalGcfStart( QWinSphere * sp, int dashes, int points, int precis )
 {
     if( VFResults.gcf_points != nullptr )
     {
         sp->prepareDrawing();
         draw_gcf( sp, VFResults.gcf_points, CBACKGROUND, GcfDashes );
         sp->finishDrawing();
-        VFResults.DeleteOrbitPoint( VFResults.gcf_points );
+        VFResults.deleteOrbitPoint( VFResults.gcf_points );
         VFResults.gcf_points = nullptr;
     }
 
@@ -43,10 +43,10 @@ bool EvalGcfStart( QWinSphere * sp, int dashes, int points, int precis )
     GcfError = false;
     GcfSphere = sp;
     GcfDashes = dashes;
-    return RunTask( GcfTask, points, precis );
+    return runTask( GcfTask, points, precis );
 }
 
-bool EvalGcfContinue( int points, int prec ) // returns true when finished.  Then run EvalGCfFinish to see if error occurred or not
+bool evalGcfContinue( int points, int prec ) // returns true when finished.  Then run EvalGCfFinish to see if error occurred or not
 {
     if( GcfTask == EVAL_GCF_NONE )
         return true;
@@ -62,7 +62,7 @@ bool EvalGcfContinue( int points, int prec ) // returns true when finished.  The
         return true;
     }
     
-    if( !RunTask( GcfTask, points, prec ) )
+    if( !runTask( GcfTask, points, prec ) )
     {
         GcfError = true;
         return true;
@@ -71,7 +71,7 @@ bool EvalGcfContinue( int points, int prec ) // returns true when finished.  The
     return false; // still busy
 }
 
-bool EvalGcfFinish( void )      // return false in case an error occured
+bool evalGcfFinish( void )      // return false in case an error occured
 {
     if( GcfTask != EVAL_GCF_NONE )
     {
@@ -90,28 +90,28 @@ bool EvalGcfFinish( void )      // return false in case an error occured
     return true;
 }
 
-bool RunTask( int task, int points, int prec )
+bool runTask( int task, int points, int prec )
 {
     bool value;
 
     switch( task )
     {
-    case EVAL_GCF_R2:       value = ThisVF->PrepareGcf( VFResults.gcf, -1, 1, prec, points  ); break;
-    case EVAL_GCF_U1:       value = ThisVF->PrepareGcf( VFResults.gcf_U1, 0, 1, prec, points  ); break;
-    case EVAL_GCF_V1:       value = ThisVF->PrepareGcf( VFResults.gcf_U1, -1, 0, prec, points  ); break;
-    case EVAL_GCF_U2:       value = ThisVF->PrepareGcf( VFResults.gcf_U2, 0, 1, prec, points  ); break;
-    case EVAL_GCF_V2:       value = ThisVF->PrepareGcf( VFResults.gcf_U2, -1, 0, prec, points ); break;
-    case EVAL_GCF_LYP_R2:   value = ThisVF->PrepareGcf_LyapunovR2(prec, points); break;
-    case EVAL_GCF_CYL1:     value = ThisVF->PrepareGcf_LyapunovCyl(-PI_DIV4,PI_DIV4, prec, points); break;
-    case EVAL_GCF_CYL2:     value = ThisVF->PrepareGcf_LyapunovCyl( PI_DIV4, PI-PI_DIV4, prec, points); break;
-    case EVAL_GCF_CYL3:     value = ThisVF->PrepareGcf_LyapunovCyl( PI-PI_DIV4, PI+PI_DIV4, prec, points); break;
-    case EVAL_GCF_CYL4:     value = ThisVF->PrepareGcf_LyapunovCyl(-PI+PI_DIV4,-PI_DIV4, prec, points); break;
+    case EVAL_GCF_R2:       value = ThisVF->prepareGcf( VFResults.gcf, -1, 1, prec, points  ); break;
+    case EVAL_GCF_U1:       value = ThisVF->prepareGcf( VFResults.gcf_U1, 0, 1, prec, points  ); break;
+    case EVAL_GCF_V1:       value = ThisVF->prepareGcf( VFResults.gcf_U1, -1, 0, prec, points  ); break;
+    case EVAL_GCF_U2:       value = ThisVF->prepareGcf( VFResults.gcf_U2, 0, 1, prec, points  ); break;
+    case EVAL_GCF_V2:       value = ThisVF->prepareGcf( VFResults.gcf_U2, -1, 0, prec, points ); break;
+    case EVAL_GCF_LYP_R2:   value = ThisVF->prepareGcf_LyapunovR2(prec, points); break;
+    case EVAL_GCF_CYL1:     value = ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4,PI_DIV4, prec, points); break;
+    case EVAL_GCF_CYL2:     value = ThisVF->prepareGcf_LyapunovCyl( PI_DIV4, PI-PI_DIV4, prec, points); break;
+    case EVAL_GCF_CYL3:     value = ThisVF->prepareGcf_LyapunovCyl( PI-PI_DIV4, PI+PI_DIV4, prec, points); break;
+    case EVAL_GCF_CYL4:     value = ThisVF->prepareGcf_LyapunovCyl(-PI+PI_DIV4,-PI_DIV4, prec, points); break;
     default:        value = false;
         break;
     }
 
     if( value )
-        return ThisVF->EvaluateGcf();
+        return ThisVF->evaluateGcf();
     else
         return false;
 }

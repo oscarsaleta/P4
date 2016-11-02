@@ -1,3 +1,5 @@
+#include "win_main.h"
+
 #include <qpixmap.h>
 #include <qevent.h>
 #include <qlabel.h>
@@ -15,18 +17,19 @@
 #include "custom.h"
 #include "file_tab.h"
 #include "file_vf.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
-#include "win_main.h"
 #include "win_find.h"
 #include "win_plot.h"
 #include "win_about.h"
 #include "p4application.h"
 
-extern QString GetP4HelpPath( void );       // defined in main.cpp
-extern void SetP4WindowTitle( QWidget *, QString );
+extern QString getP4HelpPath( void );       // defined in main.cpp
+extern void setP4WindowTitle( QWidget *, QString );
 
 void MakeButtonPixmaps( const QPalette & );
+
+QStartDlg * p4startdlg = nullptr;
 
 QPixmap * Pixmap_TriangleUp = nullptr;
 QPixmap * Pixmap_TriangleDown = nullptr;
@@ -170,7 +173,7 @@ QStartDlg::QStartDlg( const QString & autofilename )
         OnFind();
 #endif
 
-    SetP4WindowTitle( this, cap );
+    setP4WindowTitle( this, cap );
 }
 
 void QStartDlg::OnFind( void )
@@ -207,7 +210,7 @@ void QStartDlg::OnHelp( void )
     QTextBrowser * hlp;
     QString helpname;
 
-    helpname = GetP4HelpPath();
+    helpname = getP4HelpPath();
     if( helpname.isNull() )
     {
         QMessageBox::critical( this, "P4",
@@ -237,7 +240,7 @@ void QStartDlg::OnHelp( void )
     if( p4smallicon != nullptr )
         hlp->setWindowIcon( *p4smallicon );
 
-    SetP4WindowTitle( hlp, "P4 Help" );
+    setP4WindowTitle( hlp, "P4 Help" );
     hlp->show();
     hlp->raise();
 
@@ -251,8 +254,8 @@ void QStartDlg::OnPlot( void )
     if( Find_Window != nullptr )
         Find_Window->GetDataFromDlg();
 
-    VFResults.DeleteVF();                               // delete any previous result object
-    if( !VFResults.ReadTables( ThisVF->getbarefilename() ) )    // read maple/reduce results
+    VFResults.deleteVF();                               // delete any previous result object
+    if( !VFResults.readTables( ThisVF->getbarefilename() ) )    // read maple/reduce results
     {
         delete Plot_Window;
         Plot_Window = nullptr;
@@ -265,7 +268,7 @@ void QStartDlg::OnPlot( void )
         return;
     }
 
-    VFResults.SetupCoordinateTransformations();
+    VFResults.setupCoordinateTransformations();
 
     if( Plot_Window == nullptr )
     {
@@ -423,15 +426,15 @@ void QStartDlg::Signal_Evaluated( void )
 
     if( Plot_Window != nullptr )
     {
-        VFResults.DeleteVF();                               // delete any previous result object
-        if( !VFResults.ReadTables( ThisVF->getbarefilename() ) ) // read maple/reduce results
+        VFResults.deleteVF();                               // delete any previous result object
+        if( !VFResults.readTables( ThisVF->getbarefilename() ) ) // read maple/reduce results
         {
             QMessageBox::critical( this, "P4",
                        "Cannot read computation results.\n"
                        "Please check the input-vector field and parameters!\n"
                         );
         }
-        VFResults.SetupCoordinateTransformations();
+        VFResults.setupCoordinateTransformations();
         Plot_Window->Signal_Evaluated();
     }
 
@@ -614,7 +617,7 @@ QWidget * QStartDlg::Showtext( QWidget * win, QString caption, QString fname )
     result->resize(640,480);
 
 //  result->setCaption( caption );
-    SetP4WindowTitle( result, caption );
+    setP4WindowTitle( result, caption );
 
     if( ThisVF->evaluated == false )
         result->setFont( *(p4app->CourierFont) );

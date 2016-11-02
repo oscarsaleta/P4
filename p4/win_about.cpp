@@ -1,17 +1,11 @@
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qboxlayout.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "win_p4.h"
-#include "math_p4.h"
 #include "win_about.h"
-#include "win_settings.h"
-#include "p4application.h"
 
-extern void SetP4WindowTitle( QWidget *, QString );
-extern QString GetP4BinPath();
+#include <QLabel>
+
+#include "main.h"
+#include "p4settings.h"
+#include "win_settings.h"
+
 
 QP4AboutDlg::QP4AboutDlg( QWidget * parent, Qt::WindowFlags f )
     : QDialog( parent, f )
@@ -50,13 +44,13 @@ QP4AboutDlg::QP4AboutDlg( QWidget * parent, Qt::WindowFlags f )
 
 
     QString versionstr;
-    versionstr = " Version " + P4Version + "   " + P4VersionDate + " " + P4Platform;
+    versionstr = " Version " + p4Version + "   " + p4VersionDate + " " + p4Platform;
 
     lay00->addWidget( new QLabel( versionstr ), 9, 1 );
 
     QLabel * l;
     l = new QLabel( "(missing image)" );
-    if( p4image.load( GetP4BinPath() + "/portrait.png" ) )
+    if( p4image.load( getP4BinPath() + "/portrait.png" ) )
         l->setPixmap( p4image );
 
     lay00->addWidget( l, 0, 0, 9, 1 );
@@ -77,7 +71,7 @@ QP4AboutDlg::QP4AboutDlg( QWidget * parent, Qt::WindowFlags f )
 
     btn_ok->setFocus();
 
-    SetP4WindowTitle( this, "About P4" );
+    setP4WindowTitle( this, "About P4" );
 }
 
 void QP4AboutDlg::OnOk( void )

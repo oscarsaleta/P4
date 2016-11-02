@@ -13,26 +13,32 @@
 #include "custom.h"
 
 #include "file_vf.h"
-#include "win_p4.h"
+#include "main.h"
 #include "math_p4.h"
+#include "math_separatrice.h"
+#include "math_gcf.h"
+#include "math_orbits.h"
 
 #include "win_main.h"
 #include "p4application.h"
 #include "win_print.h"
 #include "win_event.h"
+#include "plot_points.h"
+#include "print_points.h"
+#include "print_bitmap.h"
 
 #define SELECTINGPOINTSTEPS         5
 #define SELECTINGPOINTSPEED         150
 
-extern int PrintColorTable[NUMXFIGCOLORS];
+extern int printColorTable[NUMXFIGCOLORS];
 
-extern void SetP4WindowTitle( QWidget *, QString );
-extern void PreparePostscriptPrinting( int, int, int, int, bool, bool, int, int, int );
-extern void FinishPostscriptPrinting( void );
-extern void PrepareXFigPrinting( int, int, bool, bool, int, int, int );
-extern void FinishXFigPrinting( void );
-extern void PrepareP4Printing( int, int, bool, QPainter *, int, int );
-extern void FinishP4Printing( void );
+extern void setP4WindowTitle( QWidget *, QString );
+extern void preparePostscriptPrinting( int, int, int, int, bool, bool, int, int, int );
+extern void finishPostscriptPrinting( void );
+extern void prepareXFigPrinting( int, int, bool, bool, int, int, int );
+extern void finishXFigPrinting( void );
+extern void prepareP4Printing( int, int, bool, QPainter *, int, int );
+extern void finishP4Printing( void );
 
 extern int find_critical_point( QWinSphere *, double, double );
 extern QPrinter * p4printer;
@@ -42,13 +48,13 @@ static  double p4pixmap_dpm = 0;
 extern void (* print_line)( double, double, double, double, int );
 extern void (* print_point)( double, double, int );
 
-extern bool LineRectangleIntersect( double &, double &, double &, double &, double, double, double, double );
+extern bool lineRectangleIntersect( double &, double &, double &, double &, double, double, double, double );
 
 int QWinSphere::numSpheres = 0;
 QWinSphere * * QWinSphere::SphereList = nullptr;
 
-extern void DrawOrbits( QWinSphere * );
-extern void DrawLimitCycles( QWinSphere * );
+extern void drawOrbits( QWinSphere * );
+extern void drawLimitCycles( QWinSphere * );
 
 /*
     Coordinates on the sphere:
@@ -696,8 +702,8 @@ void QWinSphere::paintEvent( QPaintEvent * p )
         }
         plotSeparatrices();
         plotGcf();
-        DrawOrbits(this);
-        DrawLimitCycles(this);
+        drawOrbits(this);
+        drawLimitCycles(this);
         plotPoints();
         staticPainter = nullptr;
     }
@@ -1170,6 +1176,514 @@ void QWinSphere::SelectNearestSingularity( QPoint winpos )
     }
 }
 
+// -----------------------------------------------------------------------
+//                          PLOT SINGULAR POINTS
+// -----------------------------------------------------------------------
+
+void QWinSphere::plotPoint( struct saddle * p )
+{
+    double pos[2];
+    int x, y;
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        x = coWinX(pos[0]);
+        y = coWinY(pos[1]);
+
+        if( paintedXMin > x - SYMBOLWIDTH/2 ) paintedXMin = x - SYMBOLWIDTH/2;
+        if( paintedXMax < x + SYMBOLWIDTH/2 ) paintedXMax = x - SYMBOLWIDTH/2;
+        if( paintedYMin > y - SYMBOLHEIGHT/2 ) paintedYMin = y - SYMBOLHEIGHT/2;
+        if( paintedYMax < y + SYMBOLHEIGHT/2 ) paintedYMax = y - SYMBOLHEIGHT/2;
+
+        win_plot_saddle( staticPainter, x, y );
+    }
+}
+
+void QWinSphere::plotPoint( struct node * p )
+{
+    double pos[2];
+    int x, y;
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        x = coWinX(pos[0]);
+        y = coWinY(pos[1]);
+
+        if( paintedXMin > x - SYMBOLWIDTH/2 ) paintedXMin = x - SYMBOLWIDTH/2;
+        if( paintedXMax < x + SYMBOLWIDTH/2 ) paintedXMax = x - SYMBOLWIDTH/2;
+        if( paintedYMin > y - SYMBOLHEIGHT/2 ) paintedYMin = y - SYMBOLHEIGHT/2;
+        if( paintedYMax < y + SYMBOLHEIGHT/2 ) paintedYMax = y - SYMBOLHEIGHT/2;
+
+        if( p->stable == -1 )
+            win_plot_stablenode( staticPainter, x, y );
+        else
+            win_plot_unstablenode( staticPainter, x, y );
+    }
+}
+
+void QWinSphere::plotPoint( struct weak_focus * p )
+{
+    double pos[2];
+    int x, y;
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        x = coWinX(pos[0]);
+        y = coWinY(pos[1]);
+
+        if( paintedXMin > x - SYMBOLWIDTH/2 ) paintedXMin = x - SYMBOLWIDTH/2;
+        if( paintedXMax < x + SYMBOLWIDTH/2 ) paintedXMax = x - SYMBOLWIDTH/2;
+        if( paintedYMin > y - SYMBOLHEIGHT/2 ) paintedYMin = y - SYMBOLHEIGHT/2;
+        if( paintedYMax < y + SYMBOLHEIGHT/2 ) paintedYMax = y - SYMBOLHEIGHT/2;
+
+        switch( p->type )
+        {
+        case FOCUSTYPE_STABLE:
+            win_plot_stableweakfocus( staticPainter, x, y );
+            break;
+        case FOCUSTYPE_UNSTABLE:
+            win_plot_unstableweakfocus( staticPainter, x, y );
+            break;
+        case FOCUSTYPE_CENTER:
+            win_plot_center( staticPainter, x, y );
+            break;
+        default:
+            win_plot_weakfocus( staticPainter, x, y );
+            break;
+        }
+    }
+}
+
+void QWinSphere::plotPoint( struct strong_focus * p )
+{
+    double pos[2];
+    int x, y;
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        x = coWinX(pos[0]);
+        y = coWinY(pos[1]);
+
+        if( paintedXMin > x - SYMBOLWIDTH/2 ) paintedXMin = x - SYMBOLWIDTH/2;
+        if( paintedXMax < x + SYMBOLWIDTH/2 ) paintedXMax = x - SYMBOLWIDTH/2;
+        if( paintedYMin > y - SYMBOLHEIGHT/2 ) paintedYMin = y - SYMBOLHEIGHT/2;
+        if( paintedYMax < y + SYMBOLHEIGHT/2 ) paintedYMax = y - SYMBOLHEIGHT/2;
+
+        if( p->stable == -1 )
+            win_plot_stablestrongfocus( staticPainter, x, y );
+        else
+            win_plot_unstablestrongfocus( staticPainter, x, y );
+    }
+}
+
+void QWinSphere::plotPoint( struct degenerate * p )
+{
+    double pos[2];
+    int x, y;
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        x = coWinX(pos[0]);
+        y = coWinY(pos[1]);
+
+        if( paintedXMin > x - SYMBOLWIDTH/2 ) paintedXMin = x - SYMBOLWIDTH/2;
+        if( paintedXMax < x + SYMBOLWIDTH/2 ) paintedXMax = x - SYMBOLWIDTH/2;
+        if( paintedYMin > y - SYMBOLHEIGHT/2 ) paintedYMin = y - SYMBOLHEIGHT/2;
+        if( paintedYMax < y + SYMBOLHEIGHT/2 ) paintedYMax = y - SYMBOLHEIGHT/2;
+
+        win_plot_degen( staticPainter, x, y );
+    }
+}
+
+void QWinSphere::plotPoint( struct semi_elementary * p )
+{
+    double pos[2];
+    int x, y;
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        x = coWinX(pos[0]);
+        y = coWinY(pos[1]);
+
+        if( paintedXMin > x - SYMBOLWIDTH/2 ) paintedXMin = x - SYMBOLWIDTH/2;
+        if( paintedXMax < x + SYMBOLWIDTH/2 ) paintedXMax = x - SYMBOLWIDTH/2;
+        if( paintedYMin > y - SYMBOLHEIGHT/2 ) paintedYMin = y - SYMBOLHEIGHT/2;
+        if( paintedYMax < y + SYMBOLHEIGHT/2 ) paintedYMax = y - SYMBOLHEIGHT/2;
+
+        switch(p->type)
+        {
+        case 1: win_plot_sesaddlenode( staticPainter, x, y ); break;
+        case 2: win_plot_sesaddlenode( staticPainter, x, y ); break;
+        case 3: win_plot_sesaddlenode( staticPainter, x, y ); break;
+        case 4: win_plot_sesaddlenode( staticPainter, x, y ); break;
+        case 5: win_plot_seunstablenode( staticPainter, x, y ); break;
+        case 6: win_plot_sesaddle( staticPainter, x, y ); break;
+        case 7: win_plot_sesaddle( staticPainter, x, y ); break;
+        case 8: win_plot_sestablenode( staticPainter, x, y ); break;
+        }
+    }
+}
+
+void QWinSphere::plotPoints( void )
+{
+    struct saddle * sp;
+    struct node * np;
+    struct weak_focus * wfp;
+    struct strong_focus * sfp;
+    struct semi_elementary * sep;
+    struct degenerate * dp;
+
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
+        plotPoint( sp );
+    for( np = VFResults.first_node_point; np != nullptr; np = np->next_node )
+        plotPoint( np );
+    for( wfp = VFResults.first_wf_point; wfp != nullptr; wfp = wfp->next_wf )
+        plotPoint( wfp );
+    for( sfp = VFResults.first_sf_point; sfp != nullptr; sfp = sfp->next_sf )
+        plotPoint( sfp );
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
+        plotPoint( sep );
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
+        plotPoint( dp );
+}
+
+void QWinSphere::plotPointSeparatrices( struct semi_elementary * p )
+{
+    struct sep * separatrice;
+
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
+        draw_sep( this, separatrice->first_sep_point );
+}
+
+void QWinSphere::plotPointSeparatrices( struct saddle * p )
+{
+    struct sep * separatrice;
+
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
+        draw_sep( this, separatrice->first_sep_point );
+}
+
+void QWinSphere::plotPointSeparatrices( struct degenerate * p )
+{
+    struct blow_up_points *blow_up;
+
+    for( blow_up = p->blow_up; blow_up != nullptr; blow_up = blow_up->next_blow_up_point )
+    {
+        draw_sep( this, blow_up->first_sep_point );
+    }
+}
+
+void QWinSphere::plotSeparatrices( void )
+{
+    struct saddle * sp;
+    struct semi_elementary * sep;
+    struct degenerate * dp;
+
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
+        plotPointSeparatrices( sp );
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
+        plotPointSeparatrices( sep );
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
+        plotPointSeparatrices( dp );
+}
+
+void QWinSphere::plotGcf(void )
+{
+    draw_gcf( this, VFResults.gcf_points, CSING, 1 );
+}
+
+
+// -----------------------------------------------------------------------
+//                          PLOT TOOLS
+// -----------------------------------------------------------------------
+
+P4POLYLINES * QWinSphere::produceEllipse( double cx, double cy, double a, double b,
+                                          bool dotted, double resa, double resb )
+{
+    // this is an exact copy of the plotEllipse routine, except that output is stored
+    // in a list of points that is dynamically allocated.
+
+    double theta, t1, t2, e, R, x, y, c, prevx, prevy;
+    bool d;
+    bool doton;
+    int dotcount;
+    P4POLYLINES * first;
+    P4POLYLINES * last;
+
+    prevx = prevy = 0;
+    dotcount=0;
+    first = nullptr;
+    last = nullptr;
+
+    R = (resa < resb) ? resa : resb;
+    if( R < 1.0 ) R = 1.0; // protection
+    e = 2*acos(1.0-0.5/R);
+    if( R*sin(e) > 1.0 )
+        e = asin(1.0/R);
+
+    theta = 0;
+
+    d = false;
+    doton = true;
+
+//  FILE * fp;
+//  fp = fopen( "C:\\test.txt", "wt" );
+
+    while( theta < TWOPI )
+    {
+//        fprintf( fp, "%f\n", (float)theta );
+//        fflush(fp);
+        c = (x0-cx)/a;
+        if( c > -1.0 && c < 1.0 )
+        {
+            t1 = acos(c);
+            t2 = TWOPI - t1;
+            if( theta >= t1 && theta < t2 )
+            {
+//                fprintf( fp, "A EXCL [%f %f]\n", (float)t1, (float)t2 );
+                theta = t2+e/4; d = false; continue;
+            }
+        }
+        c = (x1-cx)/a;
+        if( c > -1.0 && c < 1.0 )
+        {
+            t1 = acos(c);
+            t2 = TWOPI - t1;
+            if( theta < t1 )
+            {
+//                fprintf( fp, "B EXCL [-infinity %f]\n", (float)t1 );
+                theta = t1+e/4; d = false; continue;
+            }
+            if( theta >= t2 )
+            {
+//                fprintf( fp, "C EXCL [%f, infinity]\n",  (float)t2 );
+                theta = TWOPI+e/4; d = false; break;
+            }
+        }
+        c = (y0-cy)/b;
+        if( c > -1.0 && c < 1.0 )
+        {
+            t1 = asin(c);
+            t2 = PI-t1;
+            if( t1 < 0 )
+            {
+                t2 = t1+TWOPI;
+                t1 = PI-t1;
+                if( theta >= t1 && theta < t2 )
+                {
+//                    fprintf( fp, "D EXCL [%f %f]\n", (float)t1, (float)t2 );
+                    theta = t2+e/4; d = false; continue;
+                }
+            }
+            else
+            {
+                if( theta < t1 )
+                {
+//                    fprintf( fp, "E EXCL [-infinity %f]\n", (float)t1 );
+                    theta = t1+e/4; d = false; continue;
+                }
+                if( theta >= t2 )
+                {
+//                    fprintf( fp, "F EXCL [%f, infinity]\n",  (float)t2 );
+                    theta = TWOPI+e/4; d = false; break;
+                }
+            }
+        }
+        c = (y1-cy)/b;
+        if( c > -1.0 && c < 1.0 )
+        {
+            t1 = asin(c);
+            t2 = PI-t1;
+            if( t1 < 0 )
+            {
+                t2 = t1+TWOPI;
+                t1 = PI-t1;
+                if( theta < t1 )
+                {
+//                    fprintf( fp, "G EXCL [-infinity %f]\n", (float)t1 );
+                    theta = t1+e/4; d = false; continue;
+                }
+                if( theta >= t2 )
+                {
+//                    fprintf( fp, "H EXCL [%f, infinity]\n",  (float)t2 );
+                    theta = TWOPI; d = false; break;
+                }
+            }
+            else
+            {
+                if( theta >= t1 && theta < t2 )
+                {
+//                    fprintf( fp, "I EXCL [%f %f]\n", (float)t1, (float)t2 );
+                    theta = t2+e/4; d = false; continue;
+                }
+            }
+        }
+
+        x = cx + a*cos(theta);
+        y = cy + b*sin(theta);
+        theta += e;
+
+        // (x,y) is inside view
+
+        if( !d )
+        {
+            if( doton )
+            {
+                d = true;
+                prevx = x;
+                prevy = y;
+                dotcount = 0;
+                doton = true;
+            }
+            else
+            {
+                if( ++dotcount > 7 && dotted )
+                {
+                    d = false;
+                    doton = (doton) ? false:true;
+                    dotcount = 0;
+                }
+            }
+        }
+        else
+        {
+            if( doton )
+            {
+                if( first == nullptr )
+                {
+                    last = first = new P4POLYLINES;
+                    last->next = nullptr;
+                }
+                else
+                {
+                    last->next = new P4POLYLINES;
+                    last = last->next;
+                    last->next = nullptr;
+                }
+
+                last->x1 = prevx;
+                last->y1 = prevy;
+                last->x2 = x;
+                last->y2 = y;
+
+                prevx = x;
+                prevy = y;
+            }
+            if( ++dotcount > 7 && dotted )
+            {
+                d = false;
+                doton = (doton) ? false:true;
+                dotcount = 0;
+            }
+        }
+    }
+//  fclose(fp);
+    return first;
+}
+
+
+void QWinSphere::plotPoincareSphere( void )
+{
+    int color;
+    P4POLYLINES * p;
+
+    p = CircleAtInfinity;
+    color = VFResults.singinf ? CSING : CLINEATINFINITY;
+
+    staticPainter->setPen( QXFIGCOLOR(color) );
+    while( p != nullptr )
+    {
+        staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
+        p = p->next;
+    }
+}
+
+void QWinSphere::plotPoincareLyapunovSphere( void )
+{
+    int color;
+    P4POLYLINES * p;
+
+    p = CircleAtInfinity;
+    color = VFResults.singinf ? CSING : CLINEATINFINITY;
+
+    staticPainter->setPen( QXFIGCOLOR(color) );
+    while( p != nullptr )
+    {
+        staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
+        p = p->next;
+    }
+
+    p = PLCircle;
+    color = CLINEATINFINITY;
+
+    staticPainter->setPen( QXFIGCOLOR(color) );
+    while( p != nullptr )
+    {
+        staticPainter->drawLine( coWinX(p->x1), coWinY(p->y1), coWinX(p->x2), coWinY(p->y2) );
+        p = p->next;
+    }
+    return;
+}
+
+void QWinSphere::plotLineAtInfinity( void )
+{
+    switch( VFResults.typeofview )
+    {
+    case TYPEOFVIEW_U1:
+    case TYPEOFVIEW_V1:
+        if( x0 < 0.0 && x1 > 0.0 )
+        {
+            staticPainter->setPen( QXFIGCOLOR(CLINEATINFINITY) );
+            staticPainter->drawLine( coWinX(0.0), 0, coWinX(0.0), h-1 );
+        }
+        break;
+    case TYPEOFVIEW_U2:
+    case TYPEOFVIEW_V2:
+        if( y0 < 0.0 && y1 > 0.0 )
+        {
+            staticPainter->setPen( QXFIGCOLOR(CLINEATINFINITY) );
+            staticPainter->drawLine( 0, coWinY(0.0), w-1, coWinY(0.0) );
+        }
+
+        break;
+    case TYPEOFVIEW_PLANE:
+    case TYPEOFVIEW_SPHERE:
+        // should not appear
+        break;
+    }
+}
+
+
+
 void QWinSphere::drawLine( double _x1, double _y1, double _x2, double _y2, int color )
 {
     int wx1, wy1, wx2, wy2;
@@ -1204,7 +1718,7 @@ void QWinSphere::drawLine( double _x1, double _y1, double _x2, double _y2, int c
             {
                 // only (_x2,_y2) is not visible
 
-                if( LineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
+                if( lineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
                 {
                     wx1 = coWinX(_x1);
                     wy1 = coWinY(_y1);
@@ -1231,7 +1745,7 @@ void QWinSphere::drawLine( double _x1, double _y1, double _x2, double _y2, int c
             {
                 // only (_x2,_y2) is visible
 
-                if( LineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
+                if( lineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
                 {
                     wx1 = coWinX(_x1);
                     wy1 = coWinY(_y1);
@@ -1255,7 +1769,7 @@ void QWinSphere::drawLine( double _x1, double _y1, double _x2, double _y2, int c
             {
                 // both end points are invisible
 
-                if( LineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
+                if( lineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
                 {
                     wx1 = coWinX(_x1);
                     wy1 = coWinY(_y1);
@@ -1299,6 +1813,369 @@ void QWinSphere::drawPoint( double x, double y, int color )
     }
 }
 
+
+//---------------------------------------------------------------------
+//                  PRINTING METHODS
+//---------------------------------------------------------------------
+
+void QWinSphere::printPoint( struct saddle * p )
+{
+    double pos[2];
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+        print_saddle( coWinX(pos[0]), coWinY(pos[1]) );
+    }
+}
+
+void QWinSphere::printPoint( struct node * p )
+{
+    double pos[2];
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        if( p->stable == -1 )
+            print_stablenode( coWinX( pos[0] ), coWinY( pos[1] ) );
+        else
+            print_unstablenode( coWinX( pos[0] ), coWinY( pos[1] ) );
+    }
+}
+
+void QWinSphere::printPoint( struct weak_focus * p )
+{
+    double pos[2];
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        switch( p->type )
+        {
+        case FOCUSTYPE_STABLE:
+            print_stableweakfocus( coWinX( pos[0] ), coWinY( pos[1] ) );
+            break;
+        case FOCUSTYPE_UNSTABLE:
+            print_unstableweakfocus( coWinX( pos[0] ), coWinY( pos[1] ) );
+            break;
+        case FOCUSTYPE_CENTER:
+            print_center( coWinX( pos[0] ), coWinY( pos[1] ) );
+            break;
+        default:
+            print_weakfocus( coWinX( pos[0] ), coWinY( pos[1] ) );
+            break;
+        }
+    }
+}
+
+void QWinSphere::printPoint( struct strong_focus * p )
+{
+    double pos[2];
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        if( p->stable == -1 )
+            print_stablestrongfocus( coWinX( pos[0] ), coWinY( pos[1] ) );
+        else
+            print_unstablestrongfocus( coWinX( pos[0] ), coWinY( pos[1] ) );
+    }
+}
+
+void QWinSphere::printPoint( struct degenerate * p )
+{
+    double pos[2];
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        print_degen( coWinX( pos[0] ), coWinY( pos[1] ) );
+    }
+}
+
+void QWinSphere::printPoint( struct semi_elementary * p )
+{
+    double pos[2];
+
+    if( p != nullptr )
+    {
+        getChartPos( p->chart, p->x0, p->y0, pos );
+
+        if( pos[0] < x0 || pos[0] > x1 || pos[1] < y0 || pos[1] > y1 )
+            return;
+
+        switch(p->type)
+        {
+        case 1: print_sesaddlenode( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 2: print_sesaddlenode( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 3: print_sesaddlenode( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 4: print_sesaddlenode( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 5: print_seunstablenode( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 6: print_sesaddle( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 7: print_sesaddle( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        case 8: print_sestablenode( coWinX( pos[0] ), coWinY( pos[1] ) ); break;
+        }
+    }
+}
+
+void QWinSphere::printPoints( void )
+{
+    struct saddle * sp;
+    struct node * np;
+    struct weak_focus * wfp;
+    struct strong_focus * sfp;
+    struct semi_elementary * sep;
+    struct degenerate * dp;
+
+    print_comment( "Printing symbols at all singular points:" );
+
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
+        printPoint( sp );
+    for( np = VFResults.first_node_point; np != nullptr; np = np->next_node )
+        printPoint( np );
+    for( wfp = VFResults.first_wf_point; wfp != nullptr; wfp = wfp->next_wf )
+        printPoint( wfp );
+    for( sfp = VFResults.first_sf_point; sfp != nullptr; sfp = sfp->next_sf )
+        printPoint( sfp );
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
+        printPoint( sep );
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
+        printPoint( dp );
+}
+
+void QWinSphere::printPointSeparatrices( struct semi_elementary * p )
+{
+    struct sep * separatrice;
+
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
+    {
+        draw_sep( this, separatrice->first_sep_point );
+        if( separatrice->next_sep != nullptr )
+        {
+            print_comment( "Next separatrix of degenerate point:" );
+        }
+    }
+}
+
+void QWinSphere::printPointSeparatrices( struct saddle * p )
+{
+    struct sep * separatrice;
+
+    for( separatrice = p->separatrices; separatrice != nullptr; separatrice = separatrice->next_sep )
+    {
+        draw_sep( this, separatrice->first_sep_point );
+        if( separatrice->next_sep != nullptr )
+        {
+            print_comment( "Next separatrix of saddle point:" );
+        }
+    }
+}
+
+void QWinSphere::printPointSeparatrices( struct degenerate * p )
+{
+    struct blow_up_points *blow_up;
+
+    for( blow_up = p->blow_up; blow_up != nullptr; blow_up = blow_up->next_blow_up_point )
+    {
+        draw_sep( this, blow_up->first_sep_point );
+        if( blow_up->next_blow_up_point != nullptr )
+        {
+            print_comment( "Next separatrix of degenerate point:" );
+        }
+    }
+}
+
+void QWinSphere::printSeparatrices( void )
+{
+    QString comment;
+    struct saddle * sp;
+    struct semi_elementary * sep;
+    struct degenerate * dp;
+
+    for( sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle )
+    {
+        comment = "Printing separatrice for saddle singularity:";
+        print_comment( comment );
+        printPointSeparatrices( sp );
+    }
+    for( sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se )
+    {
+        comment = "Printing separatrices for semi-hyperbolic singularity:";
+        print_comment( comment );
+        printPointSeparatrices( sep );
+    }
+    for( dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de )
+    {
+        comment = "Printing separatrices for degenerate singularity:";
+        print_comment( comment );
+        printPointSeparatrices( dp );
+    }
+}
+
+void QWinSphere::printGcf( void )
+{
+    QString comment;
+
+    if( VFResults.gcf_points != nullptr )
+    {
+        comment = "Printing Greatest common factor:";
+        print_comment( comment );
+        draw_gcf( this, VFResults.gcf_points, CSING, 1 );
+    }
+}
+
+void QWinSphere::printPoincareSphere( void )
+{
+    QString comment;
+    struct P4POLYLINES * p;
+    struct P4POLYLINES * q;
+
+    comment = "Printing Poincare Sphere:";
+    print_comment( comment );
+    p = produceEllipse( 0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0) );
+    for( q = p; q != nullptr; q = q->next )
+    {
+        q->x1 = coWinX(q->x1);
+        q->y1 = coWinY(q->y1);
+        q->x2 = coWinX(q->x2);
+        q->y2 = coWinY(q->y2);
+    }
+    print_elips( coWinX(0), coWinY(0), coWinH(1), coWinV(1), VFResults.singinf ? CSING:CLINEATINFINITY, false, p );
+
+    while( p != nullptr )
+    {
+        q = p;
+        p = p->next;
+        delete q;//free( q );
+        q = nullptr;
+    }
+}
+
+void QWinSphere::printPoincareLyapunovSphere( void )
+{
+    QString comment;
+    struct P4POLYLINES * p;
+    struct P4POLYLINES * q;
+
+    comment = "Printing Poincare Lyapunov-Sphere (circle at infinity):";
+    print_comment( comment );
+
+    p = produceEllipse( 0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0) );
+    for( q = p; q != nullptr; q = q->next )
+    {
+        q->x1 = coWinX(q->x1);
+        q->y1 = coWinY(q->y1);
+        q->x2 = coWinX(q->x2);
+        q->y2 = coWinY(q->y2);
+    }
+
+    print_elips( coWinX(0.0), coWinY(0.0), coWinH(1.0), coWinV(1.0), CLINEATINFINITY, false, p );
+
+    while( p != nullptr )
+    {
+        q = p;
+        p = p->next;
+        delete q;//free( q );
+        q = nullptr;
+    }
+
+    comment = "Printing Poincare Lyapunov-Sphere (circle of finite radius):";
+    print_comment( comment );
+
+    p = produceEllipse( 0.0, 0.0, RADIUS, RADIUS, true, coWinH(RADIUS), coWinV(RADIUS) );
+    for( q = p; q != nullptr; q = q->next )
+    {
+        q->x1 = coWinX(q->x1);
+        q->y1 = coWinY(q->y1);
+        q->x2 = coWinX(q->x2);
+        q->y2 = coWinY(q->y2);
+    }
+
+    print_elips( coWinX(0.0), coWinY(0.0), coWinH(RADIUS), coWinV(RADIUS), CLINEATINFINITY, true, p );
+
+    while( p != nullptr )
+    {
+        q = p;
+        p = p->next;
+        delete q;//free( q );
+        q = nullptr;
+    }
+}
+
+void QWinSphere::printLineAtInfinity( void )
+{
+    switch( VFResults.typeofview )
+    {
+    case TYPEOFVIEW_U1:
+    case TYPEOFVIEW_V1:
+        if( x0 < 0.0 && x1 > 0.0 )
+            print_line( coWinX(0.0), coWinY(y0), coWinX(0.0), coWinY(y1), CLINEATINFINITY );
+        break;
+    case TYPEOFVIEW_U2:
+    case TYPEOFVIEW_V2:
+        if( y0 < 0.0 && y1 > 0.0 )
+            print_line( coWinX(x0), coWinY(0.0), coWinX(x1), coWinY(0.0), CLINEATINFINITY );
+        break;
+    case TYPEOFVIEW_PLANE:
+    case TYPEOFVIEW_SPHERE:
+        // should not appear
+        break;
+    }
+}
+
+void QWinSphere::printOrbits( void )
+{
+    // inspired by DrawOrbits, except that we put comments between
+
+    struct orbits * orbit;
+    QString s;
+    int i;
+    i = 1;
+
+    for( orbit = VFResults.first_orbit; orbit != nullptr; orbit = orbit->next_orbit )
+    {
+        s.sprintf( "Starting orbit %d", i++ );
+        print_comment( s );
+        drawOrbit( this, orbit->pcoord, orbit->f_orbits, orbit->color );
+    }
+}
+
+void QWinSphere::printLimitCycles( void )
+{
+    // inspired by DrawOrbits, except that we put comments between
+
+    struct orbits * orbit;
+    QString s;
+    int i;
+    i = 1;
+
+    for( orbit = VFResults.first_lim_cycle; orbit != nullptr; orbit = orbit->next_orbit )
+    {
+        s.sprintf( "Starting Limit Cycle %d", i++ );
+        print_comment( s );
+        drawOrbit( this, orbit->pcoord, orbit->f_orbits, orbit->color );
+    }
+}
+
+
+
 void QWinSphere::printLine( double _x1, double _y1, double _x2, double _y2, int color )
 {
     int wx1, wy1, wx2, wy2;
@@ -1321,7 +2198,7 @@ void QWinSphere::printLine( double _x1, double _y1, double _x2, double _y2, int 
         {
             // only (_x2,_y2) is not visible
 
-            if( LineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
+            if( lineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
             {
                 wx1 = coWinX(_x1);
                 wy1 = coWinY(_y1);
@@ -1337,7 +2214,7 @@ void QWinSphere::printLine( double _x1, double _y1, double _x2, double _y2, int 
         {
             // only (_x2,_y2) is visible
 
-            if( LineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
+            if( lineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
             {
                 wx1 = coWinX(_x1);
                 wy1 = coWinY(_y1);
@@ -1350,7 +2227,7 @@ void QWinSphere::printLine( double _x1, double _y1, double _x2, double _y2, int 
         {
             // both end points are invisible
 
-            if( LineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
+            if( lineRectangleIntersect( _x1, _y1, _x2, _y2, x0, x1, y0, y1 ) )
             {
                 wx1 = coWinX(_x1);
                 wy1 = coWinY(_y1);
@@ -1407,7 +2284,8 @@ void QWinSphere::CalculateHeightFromWidth( int * width, int * height, int maxhei
     }
 }
 
-void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myresolution, double mylinewidth, double mysymbolsize )
+void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myresolution,
+                                  double mylinewidth, double mysymbolsize )
 {
     double aspectratio, lw, ss, hpixels, maxvpixels, pagewidth, pageheight, tx, ty;
 
@@ -1496,12 +2374,12 @@ void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myreso
     {
     case P4PRINT_EPSIMAGE:
         ReverseYaxis = true;
-        PreparePostscriptPrinting( (int)(tx+0.5), (int)(ty+0.5), w, h, iszoom, isblackwhite,
+        preparePostscriptPrinting( (int)(tx+0.5), (int)(ty+0.5), w, h, iszoom, isblackwhite,
                                         myresolution, (int)lw, 2*(int)ss );
         break;
     case P4PRINT_XFIGIMAGE:
         ReverseYaxis = false;
-        PrepareXFigPrinting( w, h, iszoom, isblackwhite, myresolution, (int)lw, 2*(int)ss );
+        prepareXFigPrinting( w, h, iszoom, isblackwhite, myresolution, (int)lw, 2*(int)ss );
         break;
     case P4PRINT_DEFAULT:
         staticPainter = new QPainter();
@@ -1516,13 +2394,13 @@ void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myreso
         staticPainter->translate( tx, ty );
         if( iszoom || VFResults.typeofview == TYPEOFVIEW_PLANE )
         {
-            QPen p = QPen( QXFIGCOLOR(PrintColorTable[CFOREGROUND]), (int)lw );
+            QPen p = QPen( QXFIGCOLOR(printColorTable[CFOREGROUND]), (int)lw );
             staticPainter->setPen( p );
             staticPainter->drawRect( 0, 0, w, h );
         }
 //      staticPainter->setClipRect( (int)tx, (int)ty, w, h );
         ReverseYaxis = false;  // no need for reversing axes in this case
-        PrepareP4Printing( w, h, isblackwhite, staticPainter, (int)lw, 2*(int)ss );
+        prepareP4Printing( w, h, isblackwhite, staticPainter, (int)lw, 2*(int)ss );
         break;
 
     case P4PRINT_JPEGIMAGE:
@@ -1547,7 +2425,7 @@ void QWinSphere::preparePrinting( int printmethod, bool isblackwhite, int myreso
             return;
         }
 
-        PrepareP4Printing( w, h, isblackwhite, staticPainter, (int)lw, 2*(int)ss );
+        prepareP4Printing( w, h, isblackwhite, staticPainter, (int)lw, 2*(int)ss );
         break;
     }
 
@@ -1558,21 +2436,21 @@ void QWinSphere::finishPrinting( void )
 {
     if( PrintMethod == P4PRINT_EPSIMAGE )
     {
-        FinishPostscriptPrinting();
+        finishPostscriptPrinting();
         ReverseYaxis = false;
         w = oldw;
         h = oldh;
     }
     else if( PrintMethod == P4PRINT_XFIGIMAGE )
     {
-        FinishXFigPrinting();
+        finishXFigPrinting();
         ReverseYaxis = false;
         w = oldw;
         h = oldh;
     }
     else if( PrintMethod == P4PRINT_DEFAULT )
     {
-        FinishP4Printing();
+        finishP4Printing();
         staticPainter->end();
         delete staticPainter;
         staticPainter = nullptr;
@@ -1584,14 +2462,14 @@ void QWinSphere::finishPrinting( void )
     {
         if( p4pixmap == nullptr )
         {
-            FinishP4Printing();
+            finishP4Printing();
             w = oldw;
             h = oldh;
             ReverseYaxis = false;
             return;
         }
 
-        FinishP4Printing();
+        finishP4Printing();
         staticPainter->end();
         delete staticPainter;
         staticPainter = nullptr;
