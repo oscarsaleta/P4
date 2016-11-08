@@ -1,5 +1,14 @@
 # P4 (Polynomial Planar Phase Portraits) [src-gui]
 
+## Contributors
+
+- O. Saleta (Universitat Autònoma de Barcelona)
+- J.C. Artés (Universitat Autònoma de Barcelona)
+- C. Herssens (Hasselt University)
+- P. De Maesschalck (Hasselt University)
+- F. Dumortier (Hasselt University)
+- J. Llibre (Universitat Autònoma de Barcelona)
+
 ## Description
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
