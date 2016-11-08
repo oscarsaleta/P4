@@ -1,28 +1,16 @@
-#include <qtoolbar.h>
-#include <qdesktopwidget.h>
-#include <qaction.h>
-#include <qlabel.h>
-#include <qstatusbar.h>
-#include <qprinter.h>
-#include <qprintdialog.h>
-#include "file_tab.h"
-#include "file_vf.h"
-#include "main.h"
-#include "math_p4.h"
 #include "win_zoom.h"
-#include "win_sphere.h"
-#include "win_main.h"
+
+#include "custom.h"
+#include "main.h"
 #include "p4application.h"
-#include "win_plot.h"
-#include "win_print.h"
-#include "win_event.h"
 #include "plot_tools.h"
+#include "win_event.h"
+#include "win_print.h"
 
-extern QPrinter * p4printer;
+#include <QDesktopWidget>
+#include <QPrintDialog>
+#include <QToolBar>
 
-extern void spherePlotLine( QWinSphere * sp, double * p1, double * p2, int color );
-extern void spherePlotPoint( QWinSphere * sp, double * p, int color );
-extern void setP4WindowTitle( QWidget *, QString );
 
 QZoomWnd::QZoomWnd( QPlotWnd * main, int id, double x1, double y1, double x2, double y2 )
     : QMainWindow()

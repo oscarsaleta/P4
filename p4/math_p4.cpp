@@ -1,12 +1,12 @@
 #include "math_p4.h"
 
-#include <cmath>
-
 #include "math_charts.h"
 #include "win_intparams.h"
 #include "win_main.h"
 #include "win_plot.h"
 #include "win_sphere.h"
+
+#include <cmath>
 
 
 void (*plot_l)( QWinSphere *, double *, double *, int ) = nullptr;

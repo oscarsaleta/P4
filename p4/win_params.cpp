@@ -1,12 +1,13 @@
 #include "win_params.h"
 
-#include <QButtonGroup>
-
 #include "custom.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"
+
+#include <QButtonGroup>
+
 
 QParamsDlg::~QParamsDlg()
 {

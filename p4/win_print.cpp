@@ -1,15 +1,10 @@
-#include <qprinter.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qlayout.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
-#include "math_p4.h"
 #include "win_print.h"
-#include "p4application.h"
+
+#include "custom.h"
+#include "main.h"
+
+#include <QLabel>
+
 
 /*
     The Print Window is a modal dialog box!
@@ -22,7 +17,6 @@ bool QPrintDlg::LastBlackWhite = false;
 double QPrintDlg::LastLineWidth = DEFAULT_LINEWIDTH;
 double QPrintDlg::LastSymbolSize = DEFAULT_SYMBOLSIZE;
 int QPrintDlg::LastResolution = DEFAULT_RESOLUTION;
-extern void setP4WindowTitle( QWidget *, QString );
 
 QPrintDlg::QPrintDlg( QWidget * parent, Qt::WindowFlags f )
     : QDialog(  parent, f )

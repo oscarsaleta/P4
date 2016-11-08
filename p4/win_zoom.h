@@ -2,14 +2,14 @@
 #define WIN_ZOOM_H
 
 
+#include "win_plot.h"
+#include "win_sphere.h"
+
 #include <QAction>
 #include <QBoxLayout>
 #include <QEvent>
 #include <QHideEvent>
 #include <QMainWindow>
-
-#include "win_plot.h"
-#include "win_sphere.h"
 
 
 class QZoomWnd : public QMainWindow

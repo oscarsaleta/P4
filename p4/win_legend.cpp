@@ -1,11 +1,12 @@
 #include "win_legend.h"
 
-#include <QPainter>
-
 #include "custom.h"
 #include "main.h"
 #include "p4application.h"
 #include "plot_points.h"
+
+#include <QPainter>
+
 
 // -----------------------------------------------------------------------
 //                          Define Colors in RGB

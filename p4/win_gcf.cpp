@@ -1,10 +1,10 @@
 #include "win_gcf.h"
 
-#include <QMessageBox>
-
 #include "custom.h"
 #include "file_vf.h"
 #include "math_gcf.h"
+
+#include <QMessageBox>
 
 
 QGcfDlg::QGcfDlg( QPlotWnd * plt, QWinSphere * sp )

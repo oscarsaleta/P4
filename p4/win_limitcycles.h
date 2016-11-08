@@ -2,14 +2,15 @@
 #define WIN_LIMITCYCLES_H
 
 
+#include "win_plot.h"
+#include "win_sphere.h"
+
 #include <QBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
 #include <QWidget>
 
-#include "win_plot.h"
-#include "win_sphere.h"
 
 bool stop_search_limit( void );
 void write_to_limit_window( double x, double y );

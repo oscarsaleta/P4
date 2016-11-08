@@ -2,6 +2,8 @@
 #define WIN_VIEW_H
 
 
+#include "win_find.h"
+
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -10,9 +12,6 @@
 #include <QSpinBox>
 #include <QString>
 #include <QWidget>
-
-#include "win_find.h"
-#include "file_tab.h" // TODO this goes in the cpp
 
 
 class QViewDlg : public QWidget

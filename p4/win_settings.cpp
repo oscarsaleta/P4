@@ -1,45 +1,16 @@
-#include <qlayout.h>
-#include <qmessagebox.h>
-#include <qfiledialog.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
-#include "math_p4.h"
 #include "win_settings.h"
-#include "p4application.h"
+
+#include "custom.h"
 #include "file_paths.h"
+#include "main.h"
+#include "p4settings.h"
+
+#include <QFileDialog>
+
 
 /*
     The Settings Window is a modal dialog box!
 */
-
-/*extern QString GetDefaultP4Path( void );
-extern QString GetDefaultP4MaplePath( void );
-extern QString GetDefaultP4BinPath( void );
-extern QString GetDefaultP4Path( void );
-extern QString GetDefaultP4ReducePath( void );
-extern QString GetDefaultP4TempPath( void );
-extern QString GetDefaultP4HelpPath( void );
-extern QString GetDefaultP4SumTablePath( void );
-extern QString GetDefaultMapleInstallation( void );
-extern QString GetDefaultReduceInstallation( void );*/
-
-extern QString getP4Path( void );
-extern QString getP4TempPath( void );
-extern QString getP4SumTablePath( void );
-extern QString getMapleExe( void );
-extern QString getReduceExe( void );
-
-extern void setP4Path( QString );
-extern void setP4TempPath( QString );
-extern void setP4SumTablePath( QString );
-extern void setMapleExe( QString );
-extern void setReduceExe( QString );
-
-extern void setP4WindowTitle( QWidget *, QString );
 
 static QString StripSlash( QString p )
 {

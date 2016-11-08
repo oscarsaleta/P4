@@ -1,15 +1,16 @@
 #include "file_vf.h"
 
-#include <QDateTime>
-#include <QDir>
-#include <QFileInfo>
-
 #include "file_paths.h"
 #include "main.h"
 #include "math_p4.h"
 #include "math_polynom.h"
 #include "p4application.h"
 #include "p4settings.h"
+
+#include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
+
 
 #ifdef Q_OS_WIN
 #include <windows.h>

@@ -1,13 +1,13 @@
 #include "print_xfig.h"
 
-#include <QFile>
-#include <QTextStream>
-
 #include "custom.h"
 #include "file_vf.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"
 #include "print_points.h"
+
+#include <QFile>
+#include <QTextStream>
 
 
 static QFile * XFigFile = nullptr;

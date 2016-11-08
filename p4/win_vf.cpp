@@ -1,22 +1,11 @@
-#include <qtooltip.h>
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
-#include <qscrollbar.h>
+#include "win_vf.h"
 
 #include "custom.h"
-#include "file_tab.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
-#include "win_vf.h"
 #include "win_find.h"
 
-extern QP4Application * p4app;
-
-extern void setP4WindowTitle( QWidget *, QString );
 
 QVectorFieldDlg::QVectorFieldDlg( QFindDlg * finddlg )
 #ifdef DOCK_VFWINDOW

@@ -1,11 +1,11 @@
 #include "math_findpoint.h"
 
-#include <cmath>
-
 #include "custom.h"
 #include "math_p4.h"
 #include "math_separatrice.h"
 #include "win_separatrice.h"
+
+#include <cmath>
 
 
 #define p4_finite   finite

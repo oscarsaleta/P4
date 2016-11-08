@@ -1,9 +1,5 @@
 #include "win_find.h"
 
-#include <QLabel>
-#include <QButtonGroup>
-#include <QMessageBox>
-
 #include "file_vf.h"
 
 #include "main.h"
@@ -11,6 +7,10 @@
 #include "p4settings.h"
 #include "win_vf.h"
 #include "win_params.h"
+
+#include <QLabel>
+#include <QButtonGroup>
+#include <QMessageBox>
 
 
 QFindDlg::~QFindDlg()

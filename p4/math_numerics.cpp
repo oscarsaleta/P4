@@ -14,7 +14,7 @@
 #include <cmath>
 #include <cfloat>
 
-//#define std::isnan(x)		(std::isnan(x))		// used to be this function
+
 #define p4_finite		finite
 
 static double PRECISION1 = 1e-16;

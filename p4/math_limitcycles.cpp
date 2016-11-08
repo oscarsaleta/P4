@@ -1,13 +1,13 @@
 #include "math_limitcycles.h"
 
-#include <cmath>
-
 #include "custom.h"
 #include "math_p4.h"
 #include "math_charts.h"
 #include "math_orbits.h"
 #include "plot_tools.h"
 #include "win_limitcycles.h"
+
+#include <cmath>
 
 
 // static functions

@@ -2,14 +2,15 @@
 #define WIN_SEPARATRICES_H
 
 
+#include "win_sphere.h"
+#include "win_plot.h"
+
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QWidget>
 
-#include "win_sphere.h"
-#include "win_plot.h"
 
 extern QString CurrentSingularityInfo[];
 extern double CurrentSeparatriceEpsilon;

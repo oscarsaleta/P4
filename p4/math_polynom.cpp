@@ -7,9 +7,9 @@
 
 #include "math_polynom.h"
 
-#include <cmath>
-
 #include "file_tab.h"
+
+#include <cmath>
 
 
 // -----------------------------------------------------------------------

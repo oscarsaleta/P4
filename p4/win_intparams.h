@@ -2,6 +2,8 @@
 #define WIN_INTPARAMS_H
 
 
+#include "win_find.h"
+
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -10,8 +12,6 @@
 #include <QSpinBox>
 #include <QString>
 #include <QWidget>
-
-#include "win_find.h"
 
 
 class QIntParamsDlg : public QWidget

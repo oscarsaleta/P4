@@ -2,12 +2,12 @@
 #define WIN_FIND_H
 
 
+#include "win_main.h"
+
 #include <QBoxLayout>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QWidget>
-
-#include "win_main.h"
 
 
 /* Forward-declaration to solve cross-include problems */

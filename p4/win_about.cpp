@@ -1,10 +1,10 @@
 #include "win_about.h"
 
-#include <QLabel>
-
 #include "main.h"
 #include "p4settings.h"
 #include "win_settings.h"
+
+#include <QLabel>
 
 
 QP4AboutDlg::QP4AboutDlg( QWidget * parent, Qt::WindowFlags f )

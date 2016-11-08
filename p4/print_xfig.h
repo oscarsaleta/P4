@@ -1,6 +1,7 @@
 #ifndef PRINT_XFIG_H
 #define PRINT_XFIG_H
 
+
 #define XFIG_LINE_MAXPOINTS     2000        // group line pieces together in polylines
                                             //  of at most this number of points.
 

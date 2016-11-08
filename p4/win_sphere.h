@@ -2,6 +2,9 @@
 #define WIN_SPHERE_H
 
 
+#include "file_tab.h"
+#include "main.h"
+
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -14,8 +17,9 @@
 #include <QTimer>
 #include <QWidget>
 
-#include "file_tab.h"
-#include "main.h"
+
+#define SELECTINGPOINTSTEPS         5
+#define SELECTINGPOINTSPEED         150
 
 
 class QWinSphere : public QWidget

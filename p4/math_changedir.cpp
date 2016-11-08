@@ -4,12 +4,12 @@
 
 #include "math_changedir.h"
 
-#include <cmath>
-
 #include "custom.h"
 #include "math_p4.h"
 #include "math_charts.h"
 #include "math_polynom.h"
+
+#include <cmath>
 
 
 // -----------------------------------------------------------------------

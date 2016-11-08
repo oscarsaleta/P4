@@ -6,11 +6,6 @@
 #include <QPrinter>
 #include <QString>
 
-//#include "file_vf.h"
-//#include "file_tab.h"
-//#include "p4application.h"
-//#include "win_main.h"
-
 
 #define UNUSED(x) (void)(x)   //  to avoid warnings of unused variables in case we cannot avoid it
 

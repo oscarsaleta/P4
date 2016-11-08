@@ -2,13 +2,13 @@
 #define WIN_PARAMS_H
 
 
+#include "win_find.h"
+
 #include <QLabel>
 #include <QLineEdit>
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QWidget>
-
-#include "win_find.h"
 
 
 class QParamsDlg : public QWidget

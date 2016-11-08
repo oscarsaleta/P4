@@ -2,6 +2,9 @@
 #define WIN_VF_H
 
 
+#include "win_find.h"
+#include "custom.h"
+
 #include <QBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -9,9 +12,6 @@
 #include <QScrollBar>
 #include <QSpinBox>
 #include <QWidget>
-
-#include "win_find.h"
-#include "custom.h"
 
 
 class QVFParams; // declare them first because both classes defined in

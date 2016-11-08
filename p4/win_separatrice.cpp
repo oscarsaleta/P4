@@ -1,22 +1,8 @@
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
-#include "math_p4.h"
 #include "win_separatrice.h"
-#include "win_plot.h"
-#include "win_sphere.h"
-#include "p4application.h"
 
-extern void (* change_epsilon)( QWinSphere *, double );
-extern void (*start_plot_sep)( QWinSphere * );
-extern void (*cont_plot_sep)( QWinSphere * );
-extern void (*plot_next_sep)( QWinSphere * );
-extern void (*select_next_sep)( QWinSphere * );
-extern void setP4WindowTitle( QWidget *, QString );
+#include "custom.h"
+#include "math_separatrice.h"
+
 
 QString CurrentSingularityInfo[4] = { "", "", "", "" };
 double CurrentSeparatriceEpsilon = 0;

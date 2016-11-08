@@ -2,16 +2,16 @@
 #define WIN_PLOT_H
 
 
+#include "win_main.h"
+#include "win_legend.h"
+#include "win_sphere.h"
+#include "win_view.h"
+
 #include <QAction>
 #include <QBoxLayout>
 #include <QEvent>
 #include <QHideEvent>
 #include <QMainWindow>
-
-#include "win_main.h"
-#include "win_legend.h"
-#include "win_sphere.h"
-#include "win_view.h"
 
 
 /* Forward-declarations to solve cross-include problems */

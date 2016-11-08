@@ -1,6 +1,7 @@
 #ifndef MATH_SEPARATRICE_H
 #define MATH_SEPARATRICE_H
 
+
 #include "file_tab.h"
 #include "win_sphere.h"
 

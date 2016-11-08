@@ -1,11 +1,11 @@
 #include "win_intparams.h"
 
-#include <QButtonGroup>
-
 #include "custom.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
+
+#include <QButtonGroup>
 
 
 QIntParamsDlg::~QIntParamsDlg()

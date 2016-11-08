@@ -1,13 +1,13 @@
 #include "main.h"
 
-#include <QMessageBox>
-
 #include "file_vf.h"
 #include "p4application.h"
 #include "p4settings.h"
 #include "win_settings.h"
 
 #include "../version.h"
+
+#include <QMessageBox>
 
 
 /*

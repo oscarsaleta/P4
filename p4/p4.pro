@@ -10,7 +10,6 @@ SOURCES += win_view.cpp \
     win_vf.cpp \
     win_sphere.cpp \
     win_settings.cpp \
-    win_separatrices.cpp \
     win_print.cpp \
     win_plot.cpp \
     win_params.cpp \
@@ -46,7 +45,8 @@ SOURCES += win_view.cpp \
     file_paths.cpp \
     win_zoom.cpp \
     p4application.cpp \
-    win_event.cpp
+    win_event.cpp \
+    win_separatrice.cpp
 HEADERS += win_view.h \
     win_vf.h \
     win_sphere.h \

@@ -1,15 +1,16 @@
 #include "print_postscript.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <cmath>
-
 #include "custom.h"
 #include "math_p4.h"
 #include "file_vf.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"
 #include "print_points.h"
+
+#include <QFile>
+#include <QTextStream>
+#include <cmath>
+
 
 static bool PSBlackWhitePrint = true;
 

@@ -1,60 +1,34 @@
 #include "win_sphere.h"
 
-#include <math.h>
-#include <qpaintengine.h>
-
-#include <qmessagebox.h>
-#include <qprinter.h>
-
-#include <qdatetime.h>
-#include <qapplication.h>
-#include <qstatusbar.h>
-#include <qevent.h>
-#include "custom.h"
-
 #include "file_vf.h"
-#include "main.h"
 #include "math_p4.h"
+#include "math_findpoint.h"
+#include "math_limitcycles.h"
+#include "math_orbits.h"
 #include "math_separatrice.h"
 #include "math_gcf.h"
-#include "math_orbits.h"
-
-#include "win_main.h"
 #include "p4application.h"
-#include "win_print.h"
-#include "win_event.h"
 #include "plot_points.h"
-#include "print_points.h"
+#include "plot_tools.h"
 #include "print_bitmap.h"
+#include "print_points.h"
+#include "print_postscript.h"
+#include "print_xfig.h"
+#include "win_event.h"
+#include "win_main.h"
+#include "win_print.h"
 
-#define SELECTINGPOINTSTEPS         5
-#define SELECTINGPOINTSPEED         150
+#include <QMessageBox>
 
-extern int printColorTable[NUMXFIGCOLORS];
+#include <cmath>
 
-extern void setP4WindowTitle( QWidget *, QString );
-extern void preparePostscriptPrinting( int, int, int, int, bool, bool, int, int, int );
-extern void finishPostscriptPrinting( void );
-extern void prepareXFigPrinting( int, int, bool, bool, int, int, int );
-extern void finishXFigPrinting( void );
-extern void prepareP4Printing( int, int, bool, QPainter *, int, int );
-extern void finishP4Printing( void );
 
-extern int find_critical_point( QWinSphere *, double, double );
-extern QPrinter * p4printer;
-QPixmap * p4pixmap = nullptr;
+static QPixmap * p4pixmap = nullptr;
 static  double p4pixmap_dpm = 0;
-
-extern void (* print_line)( double, double, double, double, int );
-extern void (* print_point)( double, double, int );
-
-extern bool lineRectangleIntersect( double &, double &, double &, double &, double, double, double, double );
 
 int QWinSphere::numSpheres = 0;
 QWinSphere * * QWinSphere::SphereList = nullptr;
 
-extern void drawOrbits( QWinSphere * );
-extern void drawLimitCycles( QWinSphere * );
 
 /*
     Coordinates on the sphere:

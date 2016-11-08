@@ -1,7 +1,5 @@
 #include "math_separatrice.h"
 
-#include <cmath>
-
 #include "custom.h"
 #include "math_charts.h"
 #include "math_intblowup.h"
@@ -9,6 +7,8 @@
 #include "math_p4.h"
 #include "math_polynom.h"
 #include "plot_tools.h"
+
+#include <cmath>
 
 
 void (* change_epsilon)( QWinSphere *, double ) = nullptr;

@@ -2,15 +2,15 @@
 #define FILE_VF_H
 
 
+#include "custom.h"
+#include "win_gcf.h"
+
 #include <QObject>
 #include <QProcess>
 #include <QPushButton>
 #include <QString>
 #include <QTextEdit>
 #include <QTextStream>
-
-#include "custom.h"
-#include "win_gcf.h"
 
 
 #define TYPEOFSTUDY_ALL     0

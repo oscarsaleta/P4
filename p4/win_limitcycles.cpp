@@ -1,14 +1,14 @@
 #include "win_limitcycles.h"
 
-#include <QMessageBox>
-#include <QProgressDialog>
-
-#include <cmath>
-
 #include "custom.h"
 #include "main.h"
 #include "math_limitcycles.h"
 #include "p4application.h"
+
+#include <QMessageBox>
+#include <QProgressDialog>
+
+#include <cmath>
 
 
 bool lcWindowIsUp = false;      // see definition in main.h

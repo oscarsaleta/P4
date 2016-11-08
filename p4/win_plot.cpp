@@ -1,8 +1,5 @@
 #include "win_plot.h"
 
-#include <QToolBar>
-#include <QPrintDialog>
-
 #include "custom.h"
 #include "file_vf.h"
 #include "main.h"
@@ -17,6 +14,9 @@
 #include "win_print.h"
 #include "win_separatrice.h"
 #include "win_zoom.h"
+
+#include <QToolBar>
+#include <QPrintDialog>
 
 
 QPlotWnd::QPlotWnd( QStartDlg * main )

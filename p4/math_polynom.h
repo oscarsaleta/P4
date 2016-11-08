@@ -1,6 +1,7 @@
 #ifndef MATH_POLYNOM_H
 #define MATH_POLYNOM_H
 
+
 #include "file_tab.h"
 
 

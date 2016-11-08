@@ -2,9 +2,9 @@
 #define PRINT_BITMAP_H
 
 
-#include <QPainter>
-
 #include "color.h"
+
+#include <QPainter>
 
 
 extern int printColorTable[NUMXFIGCOLORS];

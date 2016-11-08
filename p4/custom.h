@@ -155,7 +155,7 @@
 // uncomment resp. comment if you want to open automatically resp. do not do this:
 
 #define AUTO_OPEN_PARAMSWINDOW
-//#define AUTO_OPEN_FINDWINDOW
+#define AUTO_OPEN_FINDWINDOW
 #define AUTO_OPEN_VFWINDOW
 
 // main P4 help file name (under the /help subdirectory of the P4 installation)

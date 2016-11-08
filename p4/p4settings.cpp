@@ -1,10 +1,10 @@
 #include "p4settings.h"
 
-#include <QDir>
-#include <QSettings>
-
 #include "file_vf.h"
 #include "file_paths.h"
+
+#include <QDir>
+#include <QSettings>
 
 
 /*

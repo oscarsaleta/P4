@@ -2,9 +2,10 @@
 #define PRINT_POINTS_H
 
 
+#include "main.h"
+
 #include <QString>
 
-#include "main.h"
 
 
 extern void (* print_saddle)( double, double );

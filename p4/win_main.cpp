@@ -1,16 +1,17 @@
 #include "win_main.h"
 
-#include <QDir>
-#include <QFileDialog>
-#include <QMessageBox>
-#include <QTextBrowser>
-
 #include "custom.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"
 #include "win_about.h"
+
+#include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QTextBrowser>
+
 
 static void makeButtonPixmaps( const QPalette & );
 
