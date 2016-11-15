@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>P4 Print Help Page</TITLE></HEAD>
+<BODY>
+
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE PRINT WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_print.png" ></CENTER></P>
+
+<FONT SIZE=+1>This window allows to print the <B>Polynomial Planar Phase Portrait</B> you
+have just drawn into your printer or into a file.  Of course, the black background on the images
+is changed into the usual white printing background, and because the standard color for orbits (yellow)
+doesn't look nice on a white background, standard orbits will be printed in black instead:
+
+<p><center><img src="window_plotprinted.png" width="50%"></center></p>
+
+P4 produces an image that is 15cm wide.  Normally the image height will then also be 15cm, however
+it may be different: P4 will calculate the height so that the image is produced in an euclidean way.
+    The output is stored in a file that has the same name as the vector field that was
+    introduced in the <img src="field_name.png">&nbsp;field in the <a HREF="p4_window.html">P4</a> window,
+    and will receive the extension <b>.EPS</b>, <b>.FIG</b> or <b>.JPG</b>, depending on the
+    printing method that you choose:
+
+<br><ul>
+<li>
+    Use the <img src="button_epsimage.png">&nbsp;button to produce an Encapsulated Postscript image.
+
+<br></li>
+<li>
+    Use the <IMG SRC="button_xfigimage.png">&nbsp;button to produce an XFIG image.
+
+<br></li>
+<li>
+    Use the <IMG SRC="button_jpegimage.png">&nbsp;button to produce a JPEG image.
+
+<br></li>
+</ul>
+
+The option <img src="field_blackwhite.png">&nbsp;allows you to remove color from the output and produce everything in black and white.
+<br><br>
+The output image is produced with a resolution that is specified in <img src="field_outputresolution.png">,
+expressed in DPI (Dots Per Inch).  For JPEG images in particular this means that the number of horizontal pixels in the image is the given resolution multiplied by 15cm/2.54.
+<br><br>
+In the fields <img src="field_linewidth.png">&nbsp;and <img src="field_symbolsize.png">&nbsp;you can adapt the default values in order to make the lines that are used to draw orbits, the poincare sphere etc thinner or thicker, and to
+make the symbols that are used to identify the singularities smaller or bigger.
+
+<br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>

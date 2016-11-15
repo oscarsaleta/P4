@@ -1,0 +1,52 @@
+<HTML>
+<HEAD><TITLE>P4 Output Window Help Page</TITLE></HEAD>
+<body>
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE OUTPUT WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_output.png"></CENTER></P>
+<br>
+<font size=+1>
+This window is automatically opened when the P4 program calls the Maple/Reduce part of P4, i.e. each time one tries to evaluate a vector field (or when one tries to plot a greatest common factor in the plot window).<br><br>
+
+<b>One should not use this window to extract mathematical information on the vector field; use this window rather to find out if something has gone wrong, to see how long the computation has been going on, to terminate a computation that is too lengthy, etc.</b>  (To see extensive math information, use the <img src="button_view.png">&nbsp; in the main <a href="p4_window.html">P4</a> window after the computation has finished.)
+<br><br>
+For example, to see if a computation is finished, the window could look like
+<P><CENTER><IMG SRC="window_outputfinished.png"></CENTER></P>
+The sentence "<i>We have finished the study of the vector field</i>" indicates a successful study.
+<br><br>
+Sometimes, the program fails for a reason that is not immediately clear.  One could get a window like:
+<P><CENTER><IMG SRC="window_outputerror1.png"></CENTER></P>
+In this particular case, something went wrong with the program settings: P4 failed to start maple.  Use the <a href="settings_window.html">Settings</a> Window to enter the settings.
+<br><br>
+Also the following error is an indication that something is wrong with the P4 settings:
+<P><CENTER><IMG SRC="window_outputerror2.png"></CENTER></P>
+In this particular case, the P4 base path is chosen wrong.
+<br><br>
+Sometimes, you have mis-entered the vector field:
+<P><CENTER><IMG SRC="window_outputerror3.png"></CENTER></P>
+You get this error when the vector field you have specified is not polynomial, when the coefficients remain unknown (most likely you have a typo-error in the names of the parameters or you have x2 somewhere instead of x^2...).
+<br><br>
+In the last example, you can see how Maple reacts when it has a quite lengthy computation:
+<P><CENTER><IMG SRC="window_outputlengthy.png"></CENTER></P>
+In this particular example, Maple is busy trying to solve for all singular points for a system of degree 20.
+<br>
+<p><b>Buttons:</b></p>
+<ul><li>
+    The <img src="button_terminate.png">&nbsp;button allows one to terminate the maple session.  First P4 sends a
+    "kill" signal to maple.  Maple can then shut down nicely, or be shut down after two or three seconds.  In any
+    case, the computation should then stop.  Of course, when no computation is busy, this button will be disabled.
+    <br>
+<br></li><li>
+    The <img src="button_clear.png">&nbsp;button will erase the contents of the output window.
+    <br>
+<br></li></ul>
+
+<p><b>Note: closing the output window using the <img src="button_winxpclose.png">&nbsp;button will not terminate any
+ongoing maple session.</b></p>
+<br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>
