@@ -1,0 +1,6 @@
+boiler.txt
+addboiler.sh
+binaries/*.sh
+binaries/*.tar.gz
+src-gui/build-*
+*.pro.user
