@@ -447,11 +447,11 @@ private:
 
 };
 
-#define __p                 VFResults.double_p              // p
+/*#define __p                 VFResults.double_p              // p
 #define __q                 VFResults.double_q              // q
 #define __q_minus_p         VFResults.double_q_minus_p      // q-p
 #define __p_minus_1         VFResults.double_p_minus_1      // p-1
-#define __q_minus_1         VFResults.double_q_minus_1      // q-1
+#define __q_minus_1         VFResults.double_q_minus_1      // q-1*/
 #define MATHFUNC(function) (*(VFResults.function))
 
 extern QVFStudy VFResults;	// (VFResults.p,VFResults.q) are lyapunov weights

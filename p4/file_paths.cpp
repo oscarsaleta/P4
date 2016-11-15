@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QSettings>
 
 QByteArray Win_GetLongPathName( QByteArray );
 QByteArray Win_GetShortPathName( QByteArray );

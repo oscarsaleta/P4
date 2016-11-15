@@ -28,6 +28,7 @@
 #include "p4settings.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 
 /*
