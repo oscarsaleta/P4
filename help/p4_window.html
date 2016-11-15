@@ -1,0 +1,81 @@
+<HTML>
+<HEAD><TITLE>P4 Find Singular Points Help Page</TITLE></HEAD>
+<body>
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE (MAIN) P4 WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_find.png"></CENTER></P>
+
+<FONT SIZE=+1>This window is usually the first one to visit. By pressing <IMG SRC="button_find.png">&nbsp;
+the main window unfolds in a larger window:
+
+<P><CENTER><IMG SRC="window_find2.png"></CENTER></P>
+
+Here you load or introduce the Polynomial Differential System you will study, adjust the parameters for
+the study, and execute the main part of the computations.
+
+<b>The first thing to do is to enter a name of the vector field file you want to open (or a name for a new file that you want to create).</b>  You type in the name in the <img src="field_name.png">&nbsp;field.  Spaces in the filename are allowed.  Default extension is <i>.inp</i>, but it is not necessary to manually add this extension.  You can also use the <img src="button_browse.png">&nbsp;button to browse all directories for input files.  Note that the file contents is not automatically loaded after you enter the name; you have to press the <img src="button_load.png">&nbsp; yourself.
+
+<br><ul><li>
+    The Option Set <IMG SRC="field_maplereduce.png">&nbsp;will allow you to choose between two different computer
+    algebra systems.  On Windows, only Maple is supported.  On Linux, you can choose between Maple and Reduce.
+<br></li><li>
+    The Option Set <IMG SRC="field_runprepare.png">&nbsp;will toggle you between two options.
+    The default option is <i>Run File</i>.  It will make the program to be executed
+    completely making the study of the Polynomial Differential System and preparing
+    everything to integrate every separatrix of it. Sometimes you may wish to select
+    option <i>Prepare File</i>.  This option generates a <B>REDUCE</B> file (<B>.red</B>)
+    or a <b>MAPLE</b> file (<b>.txt</b>).
+    Now you can run the file directely with <B>REDUCE/MAPLE</B>. You may be interested in this option
+    if the amount of computations is very large and you prefer to run a <B>REDUCE/MAPLE</B>
+    program in batch mode instead of running it in graphics-user-interface-mode.
+<br></li><li>
+    The Option Set
+    <p><center><IMG SRC="field_singpoints.png"></center></p> will allow you to choose among a complete study of
+    all singular points, restrict yourself to the finite or infinite ones, or make the study of only one
+    finite singular point. In the later case you should introduce the point
+    by entering its coordinates in <IMG SRC="field_x0.png">&nbsp;and <IMG SRC="field_y0.png">.
+<br></li><li>
+    The Option Set <IMG SRC="field_saveallyesno.png">&nbsp;will toggle you between two options. The default option
+    is <i>No</i> and reduces the amount of information that you get when you press the button
+    <IMG SRC="button_view.png">&nbsp;in the <A HREF="p4_window.html">P4</A> window to the most interesting
+    features of the Polynomial Differential System you are going to study. The option <i>yes</i>
+    will fill that file with an exhaustive description of every step followed by the program.
+<br></li><li>
+    The button <img SRC="button_parameters.png">&nbsp;will show/hide the
+    <a href="parameters_window.html">parameter-subwindow</a>:
+    <p><center><a href="parameters_window.html"><img src="window_parameters.png" border=0></a></center></p>
+    Once you have entered all the data one could choose to make the P4-window smaller (just in order to
+    save some space on the screen).
+<br></li><li>
+    The button <img SRC="button_vf.png">&nbsp;will show/hide the
+    <a href="vf_window.html">vector field-subwindow</a>:
+    <p><center><a href="vf_window.html"><img src="window_vf.png" border=0></a></center></p>
+    Once you have entered all the data one could choose to make the P4-window smaller (just in order to
+    save some space on the screen).
+<br></li><li>
+    The button <IMG SRC="button_load.png">&nbsp;will load the already existing file which name has been
+    provided in the <A HREF="p4_window.html">P4</A> window.  You will get an error message if the file
+    does not exist.
+<br></li><li>
+    The button <IMG SRC="button_save.png">&nbsp;will save all the changes you have done to the Polynomial
+    Differential System and the running parameters into the file which name has been provided in
+    the <A HREF="p4_window.html">P4</A> window.
+<br></li><li>
+    The button <IMG SRC="button_evaluate.png">&nbsp;will start the execution of the study of the Polynomial
+    Differential System.  You must wait until the terminal window from which you are executing the
+    program shows a message saying that the study is ended:</FONT>
+
+        <P><CENTER><IMG SRC="window_outputfinished.png"></CENTER></P>
+
+<br></li><li>
+    The button <IMG SRC="button_quit.png">&nbsp;will close all P4 windows and stop stop the
+    program.
+<br></li></ul>
+
+<br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>
