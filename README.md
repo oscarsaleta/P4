@@ -1,5 +1,7 @@
 # P4 (Polynomial Planar Phase Portraits)
 
+> Check <a href="https://github.com/oscarsaleta/P4-binaries/releases">the release page</a> to download the latest version of the compiled binaries for your system.
+
 ## Description
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
