@@ -1,0 +1,84 @@
+<HTML>
+<HEAD><TITLE>P4 Plot Separatrices Help Page</TITLE></HEAD>
+<BODY>
+
+<P><CENTER><IMG SRC="p4_logo.png"></center></p>
+<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+
+<P><CENTER><FONT SIZE=+2>THE PLOT SEPARATRICES WINDOW</FONT></CENTER></P>
+
+<P><CENTER><IMG SRC="window_separatrices.png"></CENTER></P>
+
+<FONT SIZE=+1>
+This window will allow you to draw the separatrices one by one instead of getting
+all them drawn at the same time by the button <IMG SRC="button_plotallseps.png">.
+You can also use this window if you feel that the separatrices drawn by
+<IMG SRC="button_plotallseps.png">&nbsp;are too short or even missed.
+
+The
+first thing you must do is select a singular point owning at least one
+separatrix. You simply need to click the left button of your mouse while
+pressing the <B>Shift</B> key of your keyboard close to the singular point.
+You do not need to be much close; the program will select the closest singular
+point owning separatrices. Once this is done you will see the coordinates
+(in the Poincare or Poincare-Lyapunov Disc if suitable) of the point written
+in your window.  You will see also how the <img SRC="field_epsilon.png">&nbsp;
+default value apppears. If you had already some separatrices of this singular point
+drawn, you may notice that one of them has changed its colour to gold.
+This is the first separatrix you will study.
+
+<br><ul>
+<li>
+    You can modify the input <IMG SRC="field_epsilon.png">&nbsp; by entering a new value.
+    It gives the distance we will move from the critical point in order to chose the first point
+    of the integration of each separatrix.
+    This value is defined in the <A HREF="parameters_integration_window.html">Parameters
+    of Integration</A> window. If you modify it here, this will not affect
+    the global value, but thw program will use it to integrate the separatrices
+    of the singular point you have chosen. It may be very useful when study
+    slow separatrices of degenerated singular points. <br>
+    <b>Remember always to press ENTER after entering the new value of epsilon!</b>
+
+<br></li>
+<li>
+    The button <IMG SRC="button_integratesep.png">&nbsp;will start computing the selected separatrix from the
+    beginning and using the epsilon value defined in this window. Once drawn you have the option
+    to continue integrating it with the button <IMG SRC="button_continuesep.png">.
+
+<br></li>
+<li>
+    The button <IMG SRC="button_selectnextsep.png">&nbsp;will select another separatrix of the same
+    singular point but will not integrate it yet. This gives you a chance to modify the
+    epsilon input per separatrix.
+
+<br></li>
+<li>
+    The button <IMG SRC="button_integratenextsep.png">&nbsp;will select another separatrix of the same
+    singular point and it will integrate it from the beginning and using the default
+    epsilon value.  Once drawn you have the option to continue integrating it with the
+    button <IMG SRC="button_continuesep.png">.
+
+<br></li>
+</ul>
+If you want to select another singular point, you do not need to leave this
+window; you may simply click a new point in the <A HREF="plot_window.html">Plot</A>
+window in the way described above.
+
+<p><b>Note:</b>It is not possible to delete separatrices once they have been drawn.</p>
+
+In order to conveniently draw separatrices, you may also use the following keyboard shortcuts that work when the plot window is activated:
+<br><ul>
+<li>
+    Shift+S: Start Integration of Separatrix (shortcut of <img src="button_integratesep.png">)
+<li>
+    Shift+C: Continue Integration of Separatrix (shortcut of <img src="button_continuesep.png">)
+<li>
+    Shift+N: Select Next Separatrix (shortcut of <img src="button_selectnextsep.png">)
+<li>
+    Shift+I: Integrate Next Separatrix (shortcut of <img src="button_integratenextsep.png">)
+</ul>
+
+<br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
+<BR><BR><BR><BR></BODY>
+</HTML>
