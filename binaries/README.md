@@ -1,4 +1,4 @@
-# PRECOMPILED BINARIES FOR P4 (POLYNOMIAL PLANAR PHASE PORTRAITS)
+# PRECOMPILED 64-bit BINARIES FOR P4 (POLYNOMIAL PLANAR PHASE PORTRAITS)
 
 ## Latest release
 Check <a href="https://github.com/oscarsaleta/P4-binaries/releases">the release page</a> to download the latest version of the compiled binaries for your system.
@@ -7,7 +7,7 @@ Check <a href="https://github.com/oscarsaleta/P4-binaries/releases">the release 
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
-This folder contains the pre-compiled binaries and the correct file tree needed to run the software. There is a Linux version and a Windows version. The source code of P4 can be found in <a href="https://github.com/oscarsaleta/P4-src-gui">P4/src-gui</a>, <a href="https://github.com/oscarsaleta/P4-src-mpl">P4/src-mpl</a> and <a href="https://github.com/oscarsaleta/P4-help">P4/help</a>.
+This folder contains the pre-compiled binaries and the correct file tree needed to run the software. There is a Linux version and a Windows version (both for 64-bit architectures). The source code of P4 can be found in <a href="https://github.com/oscarsaleta/P4-src-gui">P4/src-gui</a>, <a href="https://github.com/oscarsaleta/P4-src-mpl">P4/src-mpl</a> and <a href="https://github.com/oscarsaleta/P4-help">P4/help</a>.
 
 ## Files
 

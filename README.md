@@ -14,7 +14,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
     * **separatrice**: C++ code for numerical computation of separatrices
 * **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
 * **help**: Help files in *.html* format and supporting images.
-* **binaries**: latest compiled version of P4 for both Linux and Windows operative systems.
+* **binaries**: latest compiled version of P4 for both Linux and Windows operative systems (64-bit only).
 
 ## Build from source
 
