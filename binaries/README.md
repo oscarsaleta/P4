@@ -1,7 +1,7 @@
 # PRECOMPILED 64-bit BINARIES FOR P4 (POLYNOMIAL PLANAR PHASE PORTRAITS)
 
 ## Latest release
-Check <a href="https://github.com/oscarsaleta/P4-binaries/releases">the release page</a> to download the latest version of the compiled binaries for your system.
+Check <a href="https://github.com/oscarsaleta/P4/releases">the release page</a> to download the latest version of the compiled binaries for your system.
 
 ## Description
 
