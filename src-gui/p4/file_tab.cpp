@@ -2235,7 +2235,7 @@ void QVFStudy::dump( QString basename, QString info )
     }
     DUMP(( " " ))
     ss = info.toLatin1();
-    DUMP(( ss ))
+    DUMP(( "%s",(const char*)ss ))
 
     m->setFont( *(p4app->CourierFont) );
     m->setReadOnly(true);

@@ -234,7 +234,10 @@ static bool read_gcf( void (*chart)(double,double,double *) )
         t = 3;
         while( !feof( fp2 ) )
         {
-            fscanf( fp2, "%s", str );
+            if (fscanf( fp2, "%s", str )!=1) {
+                fclose(fp2);
+                return false;
+            }
             if( !strcmp( str, "Heap" ) )
             {
                 // Reduce ran out of memory
@@ -243,7 +246,10 @@ static bool read_gcf( void (*chart)(double,double,double *) )
             }
             if( !strcmp( str, "xlabel" ) )
             {
-                fscanf( fp2, "%s", str );
+                if (fscanf( fp2, "%s", str )!=1) {
+                    fclose(fp2);
+                    return false;
+                }
                 if( !strcmp( str, "\"x\"") )
                     t = 1;      // order is ok: it is a x versus y plot
                 else
@@ -255,12 +261,16 @@ static bool read_gcf( void (*chart)(double,double,double *) )
         if( t == 3 )
             return false;
 
-        fscanf(fp,"%lf %lf",&x,&y);      // seems we have to skip 8 values
-        fscanf(fp,"%lf %lf",&x,&y);
-        fscanf(fp,"%lf %lf",&x,&y);
-        fscanf(fp,"%lf %lf",&x,&y);
-        fscanf(fp,"%lf %lf",&x,&y); 
-        if( t != 0 ) chart( x, y, pcoord ); else chart( y, x, pcoord );
+        for (uint_fast8_t cnt=0;cnt<8;cnt++) {
+            if (fscanf(fp,"%lf %lf",&x,&y)!=1) {       // seems we have to skip 8 values
+                fclose(fp);
+                return false;
+            }
+        }
+        if( t != 0 )
+            chart( x, y, pcoord );
+        else
+            chart( y, x, pcoord );
         insert_gcf_point(pcoord[0],pcoord[1],pcoord[2],0);
         getc(fp);
         getc(fp);
@@ -273,8 +283,14 @@ static bool read_gcf( void (*chart)(double,double,double *) )
                 d = 1;
                 ungetc(c, fp);
             }
-            fscanf(fp,"%lf %lf",&x,&y); 
-            if( t != 0 ) chart( x, y, pcoord ); else chart( y, x, pcoord );
+            if (fscanf(fp,"%lf %lf",&x,&y)!=1) {
+                fclose(fp);
+                return false;
+            }
+            if( t != 0 )
+                chart( x, y, pcoord );
+            else
+                chart( y, x, pcoord );
             insert_gcf_point(pcoord[0],pcoord[1],pcoord[2],d);
             getc(fp);
             getc(fp);

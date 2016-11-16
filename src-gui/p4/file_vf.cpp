@@ -157,7 +157,7 @@ bool QInputVF::load( void )
     QString fname;
     char scanbuf[2560];
     int i;
-    int flag;
+    int flag_numeric, flag_testsep;
 
     fname = getfilename();
     if( fname.length() == 0 )
@@ -169,20 +169,34 @@ bool QInputVF::load( void )
 
     cleared = false;
 
-    fscanf( fp, "%d\n", &typeofstudy );
-    fscanf( fp, "%d\n", &flag ); numeric = ((flag==0) ? false : true);
-    fscanf( fp, "%d\n", &precision );
-    fscanf( fp, "%[^\n]\n", scanbuf );  epsilon = scanbuf;
-    fscanf( fp, "%d\n", &flag ); testsep = ((flag==0) ? false : true);
-    fscanf( fp, "%d\n", &taylorlevel );
-    fscanf( fp, "%d\n", &numericlevel );
-    fscanf( fp, "%d\n", &maxlevel );
-    fscanf( fp, "%d\n", &weakness );
-
+    if ( fscanf( fp, "%d\n", &typeofstudy )!=1
+            || fscanf( fp, "%d\n", &flag_numeric )!=1
+            || fscanf( fp, "%d\n", &precision )!=1
+            || fscanf( fp, "%[^\n]\n", scanbuf )!=1
+            || fscanf( fp, "%d\n", &flag_testsep )!=1
+            || fscanf( fp, "%d\n", &taylorlevel )!=1
+            || fscanf( fp, "%d\n", &numericlevel )!=1
+            || fscanf( fp, "%d\n", &maxlevel )!=1
+            || fscanf( fp, "%d\n", &weakness )!=1 ) {
+        fclose(fp);
+        return false;
+    } else {
+        numeric = ((flag_numeric==0) ? false : true);
+        epsilon = scanbuf;
+        testsep = ((flag_testsep==0) ? false : true);
+    }
     if( typeofstudy == TYPEOFSTUDY_ONE )
     {
-        fscanf( fp, "%[^\n]\n", scanbuf ); x0 = scanbuf;
-        fscanf( fp, "%[^\n]\n", scanbuf ); y0 = scanbuf;
+        if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
+            fclose(fp);
+            return false;
+        }
+        x0 = scanbuf;
+        if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
+            fclose(fp);
+            return false;
+        }
+        y0 = scanbuf;
         p = 1;
         q = 1;
     }
@@ -190,13 +204,28 @@ bool QInputVF::load( void )
     {
         x0 = DEFAULTX0;
         y0 = DEFAULTY0;
-        fscanf( fp, "%d\n", &p );
-        fscanf( fp, "%d\n", &q );
+        if (fscanf( fp, "%d\n", &p )!=1
+                || fscanf( fp, "%d\n", &q )!=1) {
+            fclose(fp);
+            return false;
+        }
     }
 
-    fscanf( fp, "%[^\n]\n", scanbuf ); xdot = scanbuf;
-    fscanf( fp, "%[^\n]\n", scanbuf ); ydot = scanbuf;
-    fscanf( fp, "%[^\n]\n", scanbuf ); gcf = scanbuf;
+    if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
+        fclose(fp);
+        return false;
+    }
+    xdot = scanbuf;
+    if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
+        fclose(fp);
+        return false;
+    }
+    ydot = scanbuf;
+    if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
+        fclose(fp);
+        return false;
+    }
+    gcf = scanbuf;
 
     if( xdot == "(null)" ) xdot = "";
     if( ydot == "(null)" ) ydot = "";
@@ -205,14 +234,25 @@ bool QInputVF::load( void )
     if( y0 == "(null)" ) y0 = "";
     if( epsilon == "(null)" ) epsilon = "";
 
-    fscanf( fp, "%d\n", &numparams );
+    if (fscanf( fp, "%d\n", &numparams )!=1) {
+        fclose(fp);
+        return false;
+    }
     for( i = 0; i < numparams; i++ )
     {
         int c;
-        fscanf( fp, "%s", scanbuf ); parlabel[i] = scanbuf;
+        if (fscanf( fp, "%s", scanbuf )!=1) {
+            fclose(fp);
+            return false;
+        }
+        parlabel[i] = scanbuf;
         while( (c = fgetc(fp)) == '\n' );
         ungetc( c, fp );
-        fscanf( fp, "%[^\n]\n", scanbuf ); parvalue[i] = scanbuf;
+        if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
+            fclose(fp);
+            return false;
+        }
+        parvalue[i] = scanbuf;
     }
     for( ; i < MAXNUMPARAMS; i++ )
     {

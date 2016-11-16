@@ -24,6 +24,9 @@
 #define COLOR_H
 
 
+#include <QColor>
+
+
 //
 // XFIG 3.1 DEFAULT COLOR TABLE
 //
