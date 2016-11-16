@@ -22,10 +22,9 @@
 
 #include "plot_tools.h"
 
+#include "math_p4.h"
+
 #include <cmath>
-
-
-#define p4_finite      finite
 
 
 /*
