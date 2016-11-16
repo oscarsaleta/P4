@@ -33,11 +33,11 @@
 
 #include "math_numerics.h"
 
+#include "math_p4.h"
+
 #include <cmath>
 #include <cfloat>
 
-
-#define p4_finite		finite
 
 static double PRECISION1 = 1e-16;
 static double PRECISION2 = 1e-8;

@@ -30,9 +30,6 @@
 #include <cmath>
 
 
-#define p4_finite   finite
-
-
 // -----------------------------------------------------------------------
 //
 // This file implements the selection of a critical point, when the
