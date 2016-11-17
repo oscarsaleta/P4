@@ -452,6 +452,8 @@ private:
 #define __q_minus_p         VFResults.double_q_minus_p      // q-p
 #define __p_minus_1         VFResults.double_p_minus_1      // p-1
 #define __q_minus_1         VFResults.double_q_minus_1      // q-1*/
+#define DUMP(x) m->append( s.sprintf x );
+#define DUMPSTR(x) m->append( x );
 #define MATHFUNC(function) (*(VFResults.function))
 
 extern QVFStudy VFResults;	// (VFResults.p,VFResults.q) are lyapunov weights
