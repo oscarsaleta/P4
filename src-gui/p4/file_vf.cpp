@@ -1078,7 +1078,10 @@ void QInputVF::evaluate( void )
         connect( proc, SIGNAL(readyReadStandardOutput()), this, SLOT(ReadProcessStdout()) );
             
         processfailed = false;
-        QString pa = "External Command: "; pa += "sh "; pa += filedotrun; ProcessText->append(pa);
+        QString pa = "External Command: ";
+        pa += "sh ";
+        pa += filedotrun;
+        ProcessText->append(pa);
         proc->start( "sh", QStringList( filedotrun ), QIODevice::ReadWrite );
         if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
         {
