@@ -87,13 +87,10 @@ void psphere_ucircle( double X, double Y, double Z, double * ucoord)
 {
     double k;
 
-    if(VFResults.config_projection==0)
-    {
+    if (VFResults.config_projection==0) {
         ucoord[0]=X;
         ucoord[1]=Y;
-    }
-    else
-    {
+    } else {
         k=-Z/(Z-VFResults.config_projection);
         ucoord[0]=(1.0+k)*X;
         ucoord[1]=(1.0+k)*Y;
@@ -106,14 +103,11 @@ void ucircle_psphere( double u, double v, double * pcoord )
 
     projection = VFResults.config_projection;
 
-    if( projection == 0 )
-    {
+    if ( projection == 0 ) {
         pcoord[0]=u;
         pcoord[1]=v;
         pcoord[2]=sqrt(1.0-u*u-v*v);
-    }
-    else
-    {
+    } else {
         k=(sqrt(-projection*projection*(u*u+v*v)+
             projection*projection+u*u+v*v)-u*u-v*v)/
             (projection*projection+u*u+v*v);
@@ -246,7 +240,7 @@ void psphere_to_UU2( double X, double Y, double Z, double * rcoord )
 
 bool isvalid_psphereviewcoord( double u, double v, double * pcoord )
 {
-    if( u*u + v*v > 1.0 )
+    if ( u*u + v*v > 1.0 )
         return false;
 
     MATHFUNC(viewcoord_to_sphere)(u,v,pcoord);
@@ -257,9 +251,8 @@ bool isvalid_U1viewcoord( double u, double v, double * pcoord )
 {
     // the u coordinate must be positive, except when p is odd.
 
-    if( VFResults.plweights )
-    {
-        if( (VFResults.p % 2) == 0 && u < 0 )
+    if ( VFResults.plweights ) {
+        if ( (VFResults.p % 2) == 0 && u < 0 )
             return false;
     }
 
@@ -269,9 +262,8 @@ bool isvalid_U1viewcoord( double u, double v, double * pcoord )
 
 bool isvalid_U2viewcoord( double u, double v, double * pcoord )
 {
-    if( VFResults.plweights )
-    {
-        if( (VFResults.q % 2) == 0 && v < 0 )
+    if ( VFResults.plweights ) {
+        if ( (VFResults.q % 2) == 0 && v < 0 )
             return false;
     }
 
@@ -281,9 +273,8 @@ bool isvalid_U2viewcoord( double u, double v, double * pcoord )
 
 bool isvalid_V1viewcoord( double u, double v, double * pcoord )
 {
-    if( VFResults.plweights )
-    {
-        if( (VFResults.p % 2) == 0 && u < 0 )
+    if ( VFResults.plweights ) {
+        if ( (VFResults.p % 2) == 0 && u < 0 )
             return false;
     }
 
@@ -293,9 +284,8 @@ bool isvalid_V1viewcoord( double u, double v, double * pcoord )
 
 bool isvalid_V2viewcoord( double u, double v, double * pcoord )
 {
-    if( VFResults.plweights )
-    {
-        if( (VFResults.q % 2) == 0 && v < 0 )
+    if ( VFResults.plweights ) {
+        if ( (VFResults.q % 2) == 0 && v < 0 )
             return false;
     }
 
@@ -352,7 +342,7 @@ void xyrevV1_to_psphere( double z1, double z2, double * pcoord)
 
 bool isvalid_plsphereviewcoord( double u, double v, double * pcoord )
 {
-    if( u*u + v*v > 1.0 )
+    if ( u*u + v*v > 1.0 )
         return false;
     MATHFUNC(viewcoord_to_sphere)(u,v,pcoord);
     return true;
@@ -394,22 +384,32 @@ static double dfunc_U1_s0(double theta)
 
 static void U1_to_cylinder( double u, double s, double * c)
 {
-    /* input (u,s) output c=(r,theta) 
+    /* input (u,s) output c=(r,theta)
         x=1/s^p, y=u/s^q
     */
-   double x[2],y;
-   if(u==0){c[0]=s; c[1]=0;}
-   else if(s==0){c[0]=0; U=pow(u,VFResults.double_p);
-                 if(u>0){x[0]=0; x[1]=PI/2.0;}
-                 else{x[0]=-PI/2.0; x[1]=0;}
-                 c[1]=find_root(func_U1_s0,dfunc_U1_s0,x);
-                }
-   else {x[0]=0; x[1]=1;
-         U=u;
-         y=find_root(func_U1,dfunc_U1,x);
-         c[0]=sqrt(y)*s;
-         c[1]=atan(u*pow(sqrt(y), VFResults.double_q_minus_p ));
+    double x[2],y;
+    if (u==0) {
+        c[0]=s;
+        c[1]=0;
+    } else if (s==0) {
+        c[0]=0;
+        U=pow(u,VFResults.double_p);
+        if (u>0) {
+            x[0]=0;
+            x[1]=PI/2.0;
+        } else {
+            x[0]=-PI/2.0;
+            x[1]=0;
         }
+        c[1]=find_root(func_U1_s0,dfunc_U1_s0,x);
+    } else {
+        x[0]=0;
+        x[1]=1;
+        U=u;
+        y=find_root(func_U1,dfunc_U1,x);
+        c[0]=sqrt(y)*s;
+        c[1]=atan(u*pow(sqrt(y), VFResults.double_q_minus_p ));
+    }
 }
 
 
@@ -423,23 +423,36 @@ static void cylinder_to_U1( double r, double theta, double * c)
 
 static void V1_to_cylinder( double u, double s, double * c)
 {
-    /* input (u,s) output c=(r,theta) 
+    /* input (u,s) output c=(r,theta)
         x=-1/s^p, y=u/s^q
     */
-   double x[2],y;
-   if(u==0){c[0]=s; c[1]=PI;}
-   else if(s==0){c[0]=0; U=pow(u,VFResults.double_p)*__minus_one_to_q;
-                 if(u>0){x[0]=PI/2; x[1]=PI;}
-                 else{x[0]=-PI; x[1]=-PI/2;}
-                 c[1]=find_root(func_U1_s0,dfunc_U1_s0,x);
-                }
-   else {x[0]=0; x[1]=1;
-         U=u;
-         y=find_root(func_U1,dfunc_U1,x);
-         c[0]=sqrt(y)*s;
-         c[1]=atan(-u*pow(sqrt(y), VFResults.double_q_minus_p ));
-         if(c[1]>0)c[1]-=PI; else c[1]+=PI;
+    double x[2],y;
+    if (u==0) {
+        c[0]=s;
+        c[1]=PI;
+    } else if (s==0) {
+        c[0]=0;
+        U=pow(u,VFResults.double_p)*__minus_one_to_q;
+        if (u>0) {
+            x[0]=PI/2;
+            x[1]=PI;
+        } else {
+            x[0]=-PI;
+            x[1]=-PI/2;
         }
+        c[1]=find_root(func_U1_s0,dfunc_U1_s0,x);
+    } else {
+        x[0]=0;
+        x[1]=1;
+        U=u;
+        y=find_root(func_U1,dfunc_U1,x);
+        c[0]=sqrt(y)*s;
+        c[1]=atan(-u*pow(sqrt(y), VFResults.double_q_minus_p ));
+        if (c[1]>0)
+            c[1]-=PI;
+        else
+            c[1]+=PI;
+    }
 }
 
 /*
@@ -461,22 +474,22 @@ static void cylinder_to_V1( double r, double theta, double * c)
 
 static double func_U2(double x)
 {
- return(U*U*pow(x,VFResults.double_p)+pow(x,VFResults.double_q)-1.0); 
+    return(U*U*pow(x,VFResults.double_p)+pow(x,VFResults.double_q)-1.0);
 }
 
 static double dfunc_U2(double x)
 {
- return(VFResults.double_p*U*U*pow(x,VFResults.double_p_minus_1)+VFResults.double_q*pow(x,VFResults.double_q_minus_1));
+    return(VFResults.double_p*U*U*pow(x,VFResults.double_p_minus_1)+VFResults.double_q*pow(x,VFResults.double_q_minus_1));
 }
 
 static double func_U2_s0(double theta)
 {
- return(U*pow(sin(theta),VFResults.double_p)-pow(cos(theta),VFResults.double_q));
+    return(U*pow(sin(theta),VFResults.double_p)-pow(cos(theta),VFResults.double_q));
 }
 
 static double dfunc_U2_s0(double theta)
 {
- return(VFResults.double_p*U*cos(theta)*pow(sin(theta),VFResults.double_p_minus_1)
+    return(VFResults.double_p*U*cos(theta)*pow(sin(theta),VFResults.double_p_minus_1)
         +VFResults.double_q*sin(theta)*pow(cos(theta),VFResults.double_q_minus_1));
 }
 
@@ -485,20 +498,31 @@ static void U2_to_cylinder( double u, double s, double * c)
     x=u/s^p, y=1/s^q
 */
 {
-   double x[2],y;
-   if(u==0){c[0]=s; c[1]=PI/2;}
-   else if(s==0){c[0]=0; U=pow(u,VFResults.double_q);
-                 if(u>0){x[0]=0; x[1]=PI/2.0;}
-                 else{x[0]=PI/2.0; x[1]=PI;}
-                 c[1]=find_root(func_U2_s0,dfunc_U2_s0,x);
-                }
-   else {x[0]=0; x[1]=1;
-         U=u;
-         y=find_root(func_U2,dfunc_U2,x);
-         c[0]=sqrt(y)*s;
-         c[1]=atan(pow(sqrt(y),VFResults.double_q_minus_p)/u);
-         if(c[1]<0)c[1]+=PI;
+    double x[2],y;
+    if (u==0) {
+        c[0]=s;
+        c[1]=PI/2;
+    } else if (s==0) {
+        c[0]=0;
+        U=pow(u,VFResults.double_q);
+        if (u>0) {
+            x[0]=0;
+            x[1]=PI/2.0;
+        } else {
+            x[0]=PI/2.0;
+            x[1]=PI;
         }
+        c[1]=find_root(func_U2_s0,dfunc_U2_s0,x);
+    } else {
+        x[0]=0;
+        x[1]=1;
+        U=u;
+        y=find_root(func_U2,dfunc_U2,x);
+        c[0]=sqrt(y)*s;
+        c[1]=atan(pow(sqrt(y),VFResults.double_q_minus_p)/u);
+        if (c[1]<0)
+            c[1]+=PI;
+    }
 }
 
 /*
@@ -516,38 +540,29 @@ static void V2_to_cylinder( double u, double s, double * c)
 {
     double x[2], y;
 
-    if( u == 0 )
-    {
+    if ( u == 0 ) {
         c[0] = s;
         c[1] = -PI/2;
-    }
-    else
-    {
-        if( s == 0 )
-        {
+    } else {
+        if ( s == 0 ) {
             c[0] = 0;
             U = pow(u,VFResults.double_q)*__minus_one_to_p;
-            if( u > 0 )
-            {
+            if ( u > 0 ) {
                 x[0] = -PI/2;
                 x[1] = 0;
-            }
-            else
-            {
+            } else {
                 x[0] = -PI;
                 x[1] = -PI/2;
             }
             c[1] = find_root(func_U2_s0,dfunc_U2_s0,x);
-        }
-        else
-        {
+        } else {
             x[0] = 0;
             x[1] = 1;
             U = u;
             y = find_root(func_U2,dfunc_U2,x);
             c[0] = sqrt(y)*s;
             c[1] = atan(-pow(sqrt(y),VFResults.double_q_minus_p)/u);
-            if( c[1] > 0 )
+            if ( c[1] > 0 )
                 c[1] -= PI;
         }
     }
@@ -574,14 +589,11 @@ static void cylinder_to_V2( double r, double theta, double * c)
  
 void annulus_plsphere( double x, double y, double * p)
 {
-    if( x*x + y*y < RADIUS2 )
-    {
+    if ( x*x + y*y < RADIUS2 ) {
         p[0] = 0;               // mark it as a finite point
         p[1] = x / RADIUS;
         p[2] = y / RADIUS;
-    }
-    else
-    {
+    } else {
         p[0] = 1;               // mark it as a point near infinity
         p[1] = (1.0 - x*x - y*y) / (1.0 - RADIUS2);
         p[2] = atan2(y,x);
@@ -601,13 +613,10 @@ void plsphere_annulus( double x, double y, double z, double * u )
 {
     double zz;
 
-    if( x == 0 )
-    {
+    if ( x == 0 ) {
         u[0] = y * RADIUS;
         u[1] = z * RADIUS;
-    }
-    else
-    {
+    } else {
         zz = sqrt( 1.0 - (1.0-RADIUS2)*y );
         u[0] = zz*cos(z);
         u[1] = zz*sin(z);
@@ -644,24 +653,25 @@ static double A = 0.0;
 static double B = 0.0;
 
 static double func(double z)
-    {   return pow(z,VFResults.double_p)*A + pow(z,VFResults.double_q)*B - 1.0; }
+{
+    return pow(z,VFResults.double_p)*A + pow(z,VFResults.double_q)*B - 1.0;
+}
 
 static double dfunc(double z)
-    {   return VFResults.double_p*pow(z,VFResults.double_p_minus_1)*A + VFResults.double_q*pow(z,VFResults.double_q_minus_1)*B; }
+{
+    return VFResults.double_p*pow(z,VFResults.double_p_minus_1)*A + VFResults.double_q*pow(z,VFResults.double_q_minus_1)*B;
+}
 
 
 void R2_to_plsphere( double x, double y, double * pcoord)
 {
     double z[2];
 
-    if((x*x+y*y)<=1.0)
-    {
+    if ((x*x+y*y)<=1.0) {
         pcoord[0]=0.0;
         pcoord[1]=x;
         pcoord[2]=y;
-    }
-    else 
-    {
+    } else {
         pcoord[0]=1.0;
         A=x*x; B=y*y;
         z[0]=0.0;
@@ -693,13 +703,10 @@ void R2_to_plsphere( double x, double y, double * pcoord)
 
 void plsphere_to_R2( double ch, double u, double v, double * c)
 {
-    if(ch)
-    {
+    if (ch) {
         c[0]=cos(v)/pow(u,VFResults.double_p);
         c[1]=sin(v)/pow(u,VFResults.double_q);
-    }
-    else
-    {
+    } else {
         c[0]=u;
         c[1]=v;
     }
@@ -723,14 +730,11 @@ void finite_annulus( double x, double y, double * u )
 
 void cylinder_to_plsphere( double r, double theta, double * pcoord)
 {
-    if( r < 1.0 )
-    {
+    if ( r < 1.0 ) {
         pcoord[0] = 1;
         pcoord[1] = r;
         pcoord[2] = theta;
-    }
-    else
-    {
+    } else {
         pcoord[0] = 0;
         pcoord[1] = cos(theta)/pow(r,VFResults.double_p);
         pcoord[2] = sin(theta)/pow(r,VFResults.double_q);
@@ -790,38 +794,31 @@ void plsphere_to_U1( double ch, double x, double y, double * rcoord )
 {
     double a;
 
-    if( ch==1 )
-    {
+    if ( ch==1 ) {
         a = cos(y);
 
-        if( a < 0 )
-            if( (VFResults.p % 2) == 0 )
-            {
+        if ( a < 0 ) {
+            if ( (VFResults.p % 2) == 0 ) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( -a, - __one_over_p );// - (-cos(y))^(-1/p)
-        else
+        } else
             a = pow( a,  - __one_over_p );      // cos(y)^(-1/p)
 
         rcoord[0] = sin(y)*pow(a,VFResults.double_q);          // sin(y) * cos(y)^(-q/p)
         rcoord[1] = x*a;                        // x * cos(y)^(-1/p)
-    }
-    else
-    {
-        if( x < 0 )
-            if( (VFResults.p % 2) == 0 )
-            {
+    } else {
+        if ( x < 0 ) {
+            if ( (VFResults.p % 2) == 0 ) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( -x, - __one_over_p );
-        else
+        } else
             a = pow( x, - __one_over_p );           // x^(-1/p)
         
         rcoord[0] = y*pow(a,VFResults.double_q);
@@ -841,38 +838,31 @@ void plsphere_to_U2( double ch, double x, double y, double * rcoord )
 {
     double a;
 
-    if( ch==1 )
-    {
+    if ( ch==1 ) {
         a = sin(y);
 
-        if( a < 0 )
-            if( (VFResults.q % 2) == 0 )
-            {
+        if ( a < 0 ) {
+            if ( (VFResults.q % 2) == 0 ) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( -a, - __one_over_q );// - (-sin(y))^(-1/q)
-        else
+        } else
             a = pow( a,  - __one_over_q );      // sin(y)^(-1/q)
 
         rcoord[0] = cos(y)*pow(a,VFResults.double_p);          // cos(y) * sin(y)^(-p/q)
         rcoord[1] = x*a;                        // x * sin(y)^(-1/q)
-    }
-    else
-    {
-        if( y < 0 )
-            if( (VFResults.q % 2) == 0 )
-            {
+    } else {
+        if ( y < 0 ) {
+            if ( (VFResults.q % 2) == 0 ) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( -y, - __one_over_q );
-        else
+        } else
             a = pow( y, - __one_over_q );           // x^(-1/p)
         
         rcoord[0] = x*pow(a,VFResults.double_p);
@@ -883,38 +873,31 @@ void plsphere_to_V1( double ch, double x, double y, double * rcoord )
 {
     double a;
 
-    if( ch==1 )
-    {
+    if ( ch==1 ) {
         a = -cos(y);
 
-        if( a < 0 )
-            if( (VFResults.p % 2) == 0 )
-            {
+        if ( a < 0 ) {
+            if ( (VFResults.p % 2) == 0 ) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( -a, - __one_over_p );// - (-cos(y))^(-1/p)
-        else
+        } else
             a = pow( a,  - __one_over_p );      // cos(y)^(-1/p)
 
         rcoord[0] = sin(y)*pow(a,VFResults.double_q);          // sin(y) * cos(y)^(-q/p)
         rcoord[1] = x*a;                        // x * cos(y)^(-1/p)
-    }
-    else
-    {
-        if( x > 0 )
-            if( (VFResults.p % 2) == 0 )
-            {
+    } else {
+        if ( x > 0 ) {
+            if ( (VFResults.p % 2) == 0 ) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( x, - __one_over_p );
-        else
+        } else
             a = pow( -x, - __one_over_p );          // x^(-1/p)
         
         rcoord[0] = y*pow(a,VFResults.double_q);
@@ -932,38 +915,31 @@ void plsphere_to_V2( double ch, double x, double y, double * rcoord )
 {
     double a;
 
-    if( ch==1 )
-    {
+    if ( ch==1 ) {
         a = -sin(y);
 
-        if( a < 0 )
-            if( (VFResults.q % 2) == 0 )
-            {
+        if ( a < 0 ) {
+            if ( (VFResults.q % 2) == 0 ) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( -a, - __one_over_q );// - (-sin(y))^(-1/q)
-        else
+        } else
             a = pow( a,  - __one_over_q );      // sin(y)^(-1/q)
 
         rcoord[0] = cos(y)*pow(a,VFResults.double_p);          // cos(y) * sin(y)^(-p/q)
         rcoord[1] = x*a;                        // x * sin(y)^(-1/q)
-    }
-    else
-    {
-        if( y > 0 )
-            if( (VFResults.q % 2) == 0 )
-            {
+    } else {
+        if ( y > 0 ) {
+            if ( (VFResults.q % 2) == 0 ) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
-            }
-            else
+            } else
                 a = - pow( y, - __one_over_q );
-        else
+        } else
             a = pow( -y, - __one_over_q );          // x^(-1/p)
         
         rcoord[0] = x*pow(a,VFResults.double_p);
@@ -979,7 +955,7 @@ void eval_r_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf != nullptr )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf != nullptr )
         s = eval_term2( VFResults.gcf, y );
 
     f[0] = s * eval_term2( VFResults.f_vec_field[0], y );
@@ -990,10 +966,10 @@ void eval_U1_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U1 != nullptr )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U1 != nullptr )
         s = eval_term2( VFResults.gcf_U1, y );
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
         s *= y[1];
 
     f[0] = s * eval_term2( VFResults.vec_field_U1[0], y );
@@ -1004,10 +980,10 @@ void eval_U2_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U2 != nullptr )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_U2 != nullptr )
         s = eval_term2( VFResults.gcf_U2, y );
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
         s *= y[1];
 
     f[0] = s * eval_term2( VFResults.vec_field_U2[0], y );
@@ -1018,10 +994,10 @@ void eval_V1_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V1 != nullptr )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V1 != nullptr )
         s = eval_term2( VFResults.gcf_V1, y );
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
         s *= y[1];
 
     f[0] = s * eval_term2( VFResults.vec_field_V1[0], y );
@@ -1032,10 +1008,10 @@ void eval_V2_vec_field( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V2 != nullptr )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_V2 != nullptr )
         s = eval_term2( VFResults.gcf_V2, y );
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.singinf )
         s *= y[1];
 
     f[0] = s * eval_term2( VFResults.vec_field_V2[0], y );
@@ -1046,7 +1022,7 @@ void eval_vec_field_cyl( double * y, double * f )
 {
     double s=1.0;
 
-    if( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_C != nullptr )
+    if ( VFResults.config_kindvf == INTCONFIG_ORIGINAL && VFResults.gcf_C != nullptr )
         s = eval_term3( VFResults.gcf_C, y );
     
     f[0] = s * eval_term3( VFResults.vec_field_C[0], y );
@@ -1096,21 +1072,17 @@ bool psphere_to_viewcoordpair_discontinuousx( double * p, double * q, double * u
         so that intermediate points ensure that the line plotting is done correctly.
     */
 
-    if( p[0]*q[0] < 0 )
-    {
+    if ( p[0]*q[0] < 0 ) {
         double t,y,z;
         t = q[0]/(q[0]-p[0]);
         y = t*p[1] + (1-t)*q[1];
         z = t*p[2] + (1-t)*q[2];
 
         MATHFUNC(sphere_to_viewcoord)( p[0], p[1], p[2], u1 );
-        if( p[0] < 0 )
-        {
+        if ( p[0] < 0 ) {
             MATHFUNC(sphere_to_viewcoord)( -1e-8, y, z, u2 );
             MATHFUNC(sphere_to_viewcoord)( 1e-8, y, z, u3 );
-        }
-        else
-        {
+        } else {
             MATHFUNC(sphere_to_viewcoord)( 1e-8, y, z, u2 );
             MATHFUNC(sphere_to_viewcoord)( -1e-8, y, z, u3 );
         }
@@ -1135,21 +1107,17 @@ bool psphere_to_viewcoordpair_discontinuousy( double * p, double * q, double * u
         so that intermediate points ensure that the line plotting is done correctly.
     */
 
-    if( p[1]*q[1] < 0 )
-    {
+    if ( p[1]*q[1] < 0 ) {
         double t,x,z;
         t = q[1]/(q[1]-p[1]);
         x = t*p[0] + (1-t)*q[0];
         z = t*p[2] + (1-t)*q[2];
 
         MATHFUNC(sphere_to_viewcoord)( p[0], p[1], p[2], u1 );
-        if( p[1] < 0 )
-        {
+        if ( p[1] < 0 ) {
             MATHFUNC(sphere_to_viewcoord)( x, -1e-8, z, u2 );
             MATHFUNC(sphere_to_viewcoord)( x, 1e-8, z, u3 );
-        }
-        else
-        {
+        } else {
             MATHFUNC(sphere_to_viewcoord)( x, 1e-8, z, u2 );
             MATHFUNC(sphere_to_viewcoord)( x, -1e-8, z, u3 );
         }
@@ -1171,8 +1139,7 @@ bool plsphere_to_viewcoordpair_discontinuousx( double * p, double * q, double * 
     double ap[2], aq[2];
     double t, y;
 
-    if( p[0] == 0 || q[0] == 0 )
-    {
+    if ( p[0] == 0 || q[0] == 0 ) {
         plsphere_to_R2( p[0],p[1],p[2], c);
         px = c[0];
         py = c[1];
@@ -1180,20 +1147,16 @@ bool plsphere_to_viewcoordpair_discontinuousx( double * p, double * q, double * 
         qx = c[0];
         qy = c[1];
 
-        if( qx*px < 0 )
-        {
+        if ( qx*px < 0 ) {
             // the line y=0 has been crossed 
             t = px/(px-qx);
             y = t*qy + (1-t)*py;        // (x,0) is an intermediate point.
 
             MATHFUNC(sphere_to_viewcoord)( 0, px, py, u1 );
-            if( px < 0 )
-            {
+            if ( px < 0 ) {
                 MATHFUNC(sphere_to_viewcoord)( 0, -1e-8, y, u2 );
                 MATHFUNC(sphere_to_viewcoord)( 0,  1e-8, y, u3 );
-            }
-            else
-            {
+            } else {
                 MATHFUNC(sphere_to_viewcoord)( 0,  1e-8, y, u2 );
                 MATHFUNC(sphere_to_viewcoord)( 0, -1e-8, y, u3 );
             }
@@ -1207,21 +1170,17 @@ bool plsphere_to_viewcoordpair_discontinuousx( double * p, double * q, double * 
 
     // both p and q lie in the annulus.
 
-    if( cos(p[2])*cos(q[2]) < 0 )
-    {
+    if ( cos(p[2])*cos(q[2]) < 0 ) {
         plsphere_annulus( p[0],p[1],p[2], ap );
         plsphere_annulus( p[0],p[1],p[2], aq );
 
         t = ap[0]/(ap[0]-aq[0]);
         y = t*aq[1] + (1-t)*ap[1];
 
-        if( cos(p[2])< 0 )
-        {
+        if ( cos(p[2])< 0 ) {
             annulus_plsphere( -1e-8, y, pp );
             annulus_plsphere( 1e-8, y, qq );
-        }
-        else
-        {
+        } else {
             annulus_plsphere( 1e-8, y, pp );
             annulus_plsphere( -1e-8, y, qq );
         }
@@ -1244,8 +1203,7 @@ bool plsphere_to_viewcoordpair_discontinuousy( double * p, double * q, double * 
     double ap[2], aq[2];
     double t, x;
 
-    if( p[0] == 0 || q[0] == 0 )
-    {
+    if ( p[0] == 0 || q[0] == 0 ) {
         plsphere_to_R2( p[0],p[1],p[2], c);
         px = c[0];
         py = c[1];
@@ -1253,20 +1211,16 @@ bool plsphere_to_viewcoordpair_discontinuousy( double * p, double * q, double * 
         qx = c[0];
         qy = c[1];
 
-        if( qy*py < 0 )
-        {
+        if ( qy*py < 0 ) {
             // the line y=0 has been crossed 
             t = py/(py-qy);
             x = t*qx + (1-t)*px;        // (x,0) is an intermediate point.
 
             MATHFUNC(sphere_to_viewcoord)( 0, px, py, u1 );
-            if( py < 0 )
-            {
+            if ( py < 0 ) {
                 MATHFUNC(sphere_to_viewcoord)( 0, x,  -1e-8, u2 );
                 MATHFUNC(sphere_to_viewcoord)( 0, x,   1e-8, u3 );
-            }
-            else
-            {
+            } else {
                 MATHFUNC(sphere_to_viewcoord)( 0, x,   1e-8, u2 );
                 MATHFUNC(sphere_to_viewcoord)( 0, x,  -1e-8, u3 );
             }
@@ -1280,21 +1234,17 @@ bool plsphere_to_viewcoordpair_discontinuousy( double * p, double * q, double * 
 
     // both p and q lie in the annulus.
 
-    if( sin(p[2])*sin(q[2]) < 0 )
-    {
+    if ( sin(p[2])*sin(q[2]) < 0 ) {
         plsphere_annulus( p[0],p[1],p[2], ap );
         plsphere_annulus( p[0],p[1],p[2], aq );
 
         t = ap[1]/(ap[1]-aq[1]);
         x = t*aq[0] + (1-t)*ap[0];
 
-        if( sin(p[2])< 0 )
-        {
+        if ( sin(p[2])< 0 ) {
             annulus_plsphere( x, -1e-8, pp );
             annulus_plsphere( x, 1e-8, qq );
-        }
-        else
-        {
+        } else {
             annulus_plsphere( x, 1e-8, pp );
             annulus_plsphere( x, -1e-8, qq );
         }
