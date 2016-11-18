@@ -25,7 +25,7 @@
 #include "file_vf.h"
 #include "math_p4.h"
 #include "math_charts.h"
-//#include "math_separatrice.h"
+#include "math_separatrice.h"
 #include "math_changedir.h"
 #include "math_orbits.h"
 #include "math_polynom.h"

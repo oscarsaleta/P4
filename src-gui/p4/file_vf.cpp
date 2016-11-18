@@ -1123,6 +1123,7 @@ void QInputVF::evaluate( void )
             else
                 s = s.append( filedotmpl );
 
+            /* Here a window for displaying the output text of the Maple process is created */
             if( ProcessText == nullptr )
                 createProcessWindow();
             else
@@ -1141,7 +1142,11 @@ void QInputVF::evaluate( void )
             connect( proc, SIGNAL(readyReadStandardOutput()), this, SLOT(ReadProcessStdout()) );
             
             processfailed = false;
-            QString pa = "External Command: "; pa += getMapleExe(); pa += " "; pa += filedotmpl; ProcessText->append(pa);
+            QString pa = "External Command: ";
+            pa += getMapleExe();
+            pa += " ";
+            pa += filedotmpl;
+            ProcessText->append(pa);
             proc->start( getMapleExe(), QStringList( filedotmpl ), QIODevice::ReadWrite );
   
             if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )

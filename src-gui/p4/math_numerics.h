@@ -20,8 +20,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_NUMERIC_H
-#define MATH_NUMERIC_H
+#ifndef MATH_NUMERICS_H
+#define MATH_NUMERICS_H
 
 
 void rk78( void (*deriv)( double *, double * ), double y[2], double * hh,
@@ -30,4 +30,4 @@ double find_root( double (*f)(double), double (*df)(double), double * value );
 
 
 
-#endif // MATH_NUMERIC_H
+#endif // MATH_NUMERICS_H

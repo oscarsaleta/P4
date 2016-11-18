@@ -26,6 +26,8 @@
 
 #include <cmath>
 
+void (*plot_l)( QWinSphere *, double *, double *, int ) = nullptr;
+void (*plot_p)( QWinSphere *, double *, int ) = nullptr;
 
 /*
 void plotEllipse( QPainter * p, int cx, int cy, int a, int b, int color, bool dotted,
