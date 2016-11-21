@@ -7,7 +7,7 @@ Check <a href="https://github.com/oscarsaleta/P4/releases">the release page</a> 
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
-This folder contains the pre-compiled binaries and the correct file tree needed to run the software. There is a Linux version and a Windows version (both for 64-bit architectures). The source code of P4 can be found in <a href="https://github.com/oscarsaleta/P4-src-gui">P4/src-gui</a>, <a href="https://github.com/oscarsaleta/P4-src-mpl">P4/src-mpl</a> and <a href="https://github.com/oscarsaleta/P4-help">P4/help</a>.
+This folder contains the pre-compiled binaries and the correct file tree needed to run the software. There is a Linux version and a Windows version (both for 64-bit architectures).
 
 ## Files
 
@@ -25,6 +25,8 @@ The executable files have to be put in the following tree somewhere in the file 
     * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
     * p4\help: contents of **P4\help** folder,
     * p4\sum_tables: empty folder used by P4 to store some files.
+
+**Note (v3.3)**: the *sum_tables* directory is needed for P4 to work properly (it expects the directory to be there). However, git does not allow to commit an empty folder, and although this can be easily hacked, the 3.3 version of the file tree did not include this hack, so the folder is not present in the repository (**it is present** in the compressed files found in <a href="https://github.com/oscarsaleta/P4/releases">the release page</a>). Therefore, if you cloned the repository and plan to use the *binaries* directory to run P4, please create the *sum_tables* beforehand.
 
 ## Contributors
 
