@@ -4,13 +4,40 @@
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
-This repository contains the help directory, which is used by the GUI to show help pages within the P4 program.
+## Files
+
+* **help**: Help files in *.html* format and supporting images.
+
+## Build from source
+
+Generally, only source from *src-gui* needs to be compiled.
+
+### src-gui
+
+In order to build the project it is advisable to use the *Qt Creator* IDE and build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files. The source in *src-gui* has been compiled with with Qt 5.6.1 (Linux binaries) and 5.7.0 (Windows binaries).
+
+### src-mpl
+
+The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled. Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the *Makefile* to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
 
 ## Binary tree
 
-The contents of this repository must be copied into the *help* directory within the P4 root directory.
+The executable files have to be put in the following tree somewhere in the file system following this structure:
 
-* p4
-    * bin: p4, lyapunov, separatrice, p4.m, p4gcf.m, p4smallicon.png, portrait.png
-    * help: contents of this repository
-    * sum_tables: empty folder
+* **Linux**: in a folder named p4:
+    * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
+    * p4/help: contents of **P4/help** folder,
+    * p4/sum_tables: empty folder used by P4 to store some files.
+* **Windows**: in a folder named p4:
+    * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
+    * p4\help: contents of **P4\help** folder,
+    * p4\sum_tables: empty folder used by P4 to store some files.
+
+## Contributors
+
+- J.C. Artés (Universitat Autònoma de Barcelona)
+- C. Herssens (Hasselt University)
+- P. De Maesschalck (Hasselt University)
+- F. Dumortier (Hasselt University)
+- J. Llibre (Universitat Autònoma de Barcelona)
+- O. Saleta (Universitat Autònoma de Barcelona)

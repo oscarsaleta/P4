@@ -2,5 +2,6 @@ boiler.txt
 addboiler.sh
 binaries/*.sh
 binaries/*.tar.gz
+binaries/*.zip
 src-gui/build-*
 *.pro.user
