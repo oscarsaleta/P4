@@ -26,11 +26,11 @@ Generally, only source from *src-gui* needs to be compiled.
 
 ### src-gui
 
-In order to build the project it is advisable to use the *Qt Creator* IDE and build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files. The source in *src-gui* has been compiled with with Qt 5.6.1 (Linux binaries) and 5.7.0 (Windows binaries).
+In order to build the project it is advisable to use the *Qt Creator* IDE and build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files. The source in *src-gui* has been compiled with with Qt 5.7.0 for both Linux and Windows.
 
 ### src-mpl
 
-The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled. Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the *Makefile* to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
+The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled (since the files are already compiled in the source tree). Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the *Makefile* to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
 
 ## Binary tree
 
