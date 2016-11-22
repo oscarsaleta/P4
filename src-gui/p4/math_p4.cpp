@@ -31,9 +31,6 @@
 #include <cmath>
 
 
-void (*plot_l)( QWinSphere *, double *, double *, int ) = nullptr;
-void (*plot_p)( QWinSphere *, double *, int ) = nullptr;
-
 bool less_poincare( double * p1, double * p2 )
 {
     if((p1[0]*p2[2])<(p2[0]*p1[2]))return(1);
