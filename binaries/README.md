@@ -1,4 +1,4 @@
-# PRECOMPILED 64-bit BINARIES FOR P4 (POLYNOMIAL PLANAR PHASE PORTRAITS)
+# SCRIPTS FOR DEPLOYING 64-bit BINARIES FOR P4
 
 ## Latest release
 Check <a href="https://github.com/oscarsaleta/P4/releases">the release page</a> to download the latest version of the compiled binaries for your system.
@@ -7,22 +7,23 @@ Check <a href="https://github.com/oscarsaleta/P4/releases">the release page</a> 
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
-This folder contains the pre-compiled binaries and the correct file tree needed to run the software. There is a Linux version and a Windows version (both for 64-bit architectures).
+This folder contains some scripts that help create a Windows installer and a tarball for Linux. The compiled binaries are not here, they can be found in <a href="https://github.com/oscarsaleta/P4/releases">the release page</a>.
 
 ## Files
 
-* **binaries**: latest compiled version of P4 for both Linux and Windows operative systems.
+* **Linux**: scripts for generating tarball for deploying P4.
+* **Windows**: scripts for generating an installer.
 
 ## Binary tree
 
-The executable files have to be put in the following tree somewhere in the file system following this structure:
+The executable files have to be put in the following tree somewhere in the file system following this structure (the scripts already take this into account, but this information is useful if you plan to create your own P4 installation from scratch):
 
 * **Linux**: in a folder named p4:
-    * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
+    * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*, *newP4icon.png*,
     * p4/help: contents of **P4/help** folder,
     * p4/sum_tables: empty folder used by P4 to store some files.
 * **Windows**: in a folder named p4:
-    * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
+    * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*, *newP4icon.png*,
     * p4\help: contents of **P4\help** folder,
     * p4\sum_tables: empty folder used by P4 to store some files.
 
