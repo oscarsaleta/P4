@@ -1,7 +1,7 @@
 boiler.txt
 addboiler.sh
-binaries/mk_p4_dbg.sh
-binaries/*.tar.gz
-binaries/*.zip
+binaries/Windows/p4_windows_*
+binaries/Linux/deb/p4_*
+binaries/Linux/tarballs/p4_linux_*
 src-gui/build-*
 *.pro.user
