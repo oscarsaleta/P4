@@ -1,6 +1,6 @@
 boiler.txt
 addboiler.sh
-binaries/*.sh
+binaries/mk_p4_dbg.sh
 binaries/*.tar.gz
 binaries/*.zip
 src-gui/build-*
