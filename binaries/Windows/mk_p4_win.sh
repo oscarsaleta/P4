@@ -16,6 +16,6 @@ $(cp ~/git/P4/help/*.* $DIR/help/)
 $(cp -r ~/git/P4/help/screenshots/ $DIR/help/)
 $(cp ~/git/P4/help/p4_flag.png $DIR/bin/portrait.png)
 $(cp ~/git/P4/help/p4smallicon.png $DIR/bin/)
-$(cp ~/git/P4/help/newp4icon.png $P4_DIR/bin/)
+$(cp ~/git/P4/help/newp4icon.png $DIR/bin/)
 
 $(iscc installer_script.iss)
