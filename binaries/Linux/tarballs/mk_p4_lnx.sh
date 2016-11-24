@@ -6,7 +6,7 @@ $(rm -r $DIR)
 
 $(mkdir -p $DIR/bin $DIR/help $DIR/sum_tables)
 $(chmod 777 $DIR/sum_tables)
-$(ln -s $DIR/sum_tables $DIR/sumtables)
+#$(ln -s $DIR/sum_tables $DIR/sumtables)
 
 $(cp ~/git/P4/src-mpl/p4*m $DIR/bin/)
 $(cp ~/git/P4/src-gui/build-p4-Desktop-Release/p4 $DIR/bin/)

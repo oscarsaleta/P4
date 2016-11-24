@@ -19,28 +19,28 @@ FNAME=$TMPDIR/p4.tar.gz
 # download archive
 wget -O $FNAME $_PROGRESS_OPT $DL_LINK
 
-echo "Installing p4 in /opt/..."
+echo "Installing p4 in $HOME/p4..."
 # extract downloaded archive
 tar -xzf $FNAME -C $TMPDIR --strip-components=1
 # move p4 to /opt
-mv $TMPDIR/p4 $HOME/p4
+mv $TMPDIR/p4 $HOME
 # create sum_tables and set permissions to write
 mkdir -p $HOME/p4/sum_tables
 chmod 777 $HOME/p4/sum_tables
 # create symlink to sum_tables for compatibility reasons
-ln -s $HOME/p4/sum_tables $HOME/p4/sumtables
+ln -sf $HOME/p4/sum_tables $HOME/p4/sumtables
 
 echo "Creating application entry..."
-APPNAME=/.local/share/applications/p4.desktop
+APPNAME=$HOME/.local/share/applications/p4.desktop
 TMPAPPNAME=$TMPDIR/p4.desktop
-VERSION=$(curl -s https://api.github.com/repos/oscarsaleta/P4/releases/latest | grep tag_name | awk '{gsub("\"tag_name\": \"v","\"");gsub(",","");print}' | awk -F'"' '$0=$2')
+VERSION=$(curl -s https://api.github.com/repos/oscarsaleta/P4/releases/latest | grep tag_name | awk '{gsub("\"tag_name\": \"v","\"");gsub("-.*,","");print}' | awk -F'"' '$0=$2')
 echo "[Desktop Entry]" > $TMPAPPNAME
 echo "Name=P4" >> $TMPAPPNAME
 echo "Version="$VERSION >> $TMPAPPNAME
 echo "Comment=Polynomial Planar Phase Portraits" >> $TMPAPPNAME
-echo "Icon=/opt/p4/bin/p4smallicon.png" >> $TMPAPPNAME
+echo "Icon=$HOME/p4/bin/p4smallicon.png" >> $TMPAPPNAME
 echo "Keywords=Math" >> $TMPAPPNAME
-echo "Exec=p4" >> $TMPAPPNAME
+echo "Exec=$HOME/p4/bin/p4" >> $TMPAPPNAME
 echo "Terminal=false" >> $TMPAPPNAME
 echo "Type=Application" >> $TMPAPPNAME
 echo "Categories=Education;Science;Math" >> $TMPAPPNAME
