@@ -2,6 +2,8 @@
 
 echo "== P4 installer for root =="
 
+# check if curl is installed
+command -v curl >/dev/null 2>&1 || { echo >&2 "This install script requires curl but it could not be found in your system. Please install curl and try again"; exit 1;}
 
 echo "Downloading newest version from GitHub..."
 # set progress bar ?
