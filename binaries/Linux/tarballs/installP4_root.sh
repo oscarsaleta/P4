@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "== P4 installer =="
+echo "== P4 installer for root =="
 
 
 echo "Downloading newest version from GitHub..."
@@ -21,15 +21,20 @@ echo "Installing p4 in /opt/..."
 # extract downloaded archive
 tar -xzf $FNAME -C $TMPDIR --strip-components=1
 # move p4 to /opt
-mv $TMPDIR/p4 $HOME/p4
+sudo mv $TMPDIR/p4 /opt/p4
 # create sum_tables and set permissions to write
-mkdir -p $HOME/p4/sum_tables
-chmod 777 $HOME/p4/sum_tables
+sudo mkdir -p /opt/p4/sum_tables
+sudo chmod 777 /opt/p4/sum_tables
 # create symlink to sum_tables for compatibility reasons
-ln -s $HOME/p4/sum_tables $HOME/p4/sumtables
+sudo ln -sf /opt/p4/sum_tables /opt/p4/sumtables
+
+
+echo "Installing symlink to p4 in /usr/bin/..."
+# create symlink from p4/bin/p4 to /usr/bin/p4 to have p4 in PATH
+sudo ln -sf /opt/p4/bin/p4 /usr/bin/p4
 
 echo "Creating application entry..."
-APPNAME=/.local/share/applications/p4.desktop
+APPNAME=/usr/share/applications/p4.desktop
 TMPAPPNAME=$TMPDIR/p4.desktop
 VERSION=$(curl -s https://api.github.com/repos/oscarsaleta/P4/releases/latest | grep tag_name | awk '{gsub("\"tag_name\": \"v","\"");gsub(",","");print}' | awk -F'"' '$0=$2')
 echo "[Desktop Entry]" > $TMPAPPNAME
@@ -44,8 +49,12 @@ echo "Type=Application" >> $TMPAPPNAME
 echo "Categories=Education;Science;Math" >> $TMPAPPNAME
 echo "StartupNotify=true" >> $TMPAPPNAME
 
-mv $TMPAPPNAME $APPNAME
-chmod 664 $APPNAME
+sudo mv $TMPAPPNAME $APPNAME
+sudo chown root:root $APPNAME
+sudo chmod 644 $APPNAME
+
+
+
 
 # remove temporary files
 rm -r $TMPDIR
