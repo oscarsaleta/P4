@@ -10,7 +10,7 @@ echo "Downloading newest version from GitHub..."
 wget --help | grep -q '\--show-progress' && \
   _PROGRESS_OPT="-q --show-progress" || _PROGRESS_OPT=""
 # set latest download link
-DL_LINK=$(curl -s https://api.github.com/repos/oscarsaleta/P4/releases/latest | grep linux | awk -e '/"browser_download_url"/{print $NF}' | awk -F'"' '$0=$2')
+DL_LINK=$(curl -s https://api.github.com/repos/oscarsaleta/P4/releases/latest | grep linux | awk '/"browser_download_url"/{print $NF}' | awk -F'"' '$0=$2')
 # create folder in /tmp for downloading and extracting
 TMPDIR=/tmp/p4install
 mkdir -p $TMPDIR
