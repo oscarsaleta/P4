@@ -24,7 +24,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../version.h"
+//#include "../version.h"
+#include <config.h>
 
 // #define LOGACTIVITY		// define when you want to create a log file of all tests (sep.log)
 

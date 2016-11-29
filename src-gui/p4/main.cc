@@ -27,7 +27,8 @@
 #include "p4settings.h"
 #include "win_settings.h"
 
-#include "../version.h"
+//#include "../version.h"
+#include <config.h>
 
 #include <QMessageBox>
 

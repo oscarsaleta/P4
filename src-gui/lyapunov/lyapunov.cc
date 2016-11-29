@@ -20,12 +20,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "lyapunov.h"
+//#include "../version.h"
+#include <config.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "lyapunov.h"
-#include "../version.h"
 
 /*
 	LYAPUNOV	inputfile outputfile

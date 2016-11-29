@@ -1,0 +1,5 @@
+ACLOCAL_AMFLAGS = -I build-aux
+
+SUBDIRS = src-gui
+dist_doc_DATA = README.md
+EXTRA_DIST = LICENSE COPYING.LESSER 
