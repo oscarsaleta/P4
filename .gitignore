@@ -5,3 +5,7 @@ binaries/Linux/deb/p4_*
 binaries/Linux/tarballs/p4_linux_*
 src-gui/build-*
 *.pro.user
+*.o
+separatrice
+p4
+lyapunov
