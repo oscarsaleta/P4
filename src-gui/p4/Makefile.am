@@ -1,6 +1,8 @@
 include $(top_srcdir)/build-aux/autotroll.mk
 
-bin_PROGRAMS = p4
+p4bindir=$(prefix)/@PACKAGE@/bin
+
+p4bin_PROGRAMS = p4
 p4_SOURCES = \
 	$(BUILT_SOURCES) \
 	file_paths.cc \

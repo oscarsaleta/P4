@@ -10,18 +10,33 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror -Wno-portability])
 AC_LANG([C++])
 AC_PROG_CXX
 
+AC_PROG_MKDIR_P
 PKG_PROG_PKG_CONFIG
+
+# Check if pkg-config exists
+if test -z "$PKG_CONFIG"; then
+    AC_MSG_ERROR([pkg-config is required.])
+fi
 
 # Autotroll with Qt
 AT_WITH_QT([gui widgets printsupport])
 
 # Retrieve Qt compilation and linker flags
-CPPFLAGS="`$PKG_CONFIG --cflags-only-I QtCore QtGui QtWidgets QtPrintSupport` $CPPFLAGS"
-LDFLAGS="`$PKG_CONFIG --libs-only-L QtCore QtGui QtWidgets QtPrintSupport` $LDFLAGS"
-LIBS="`$PKG_CONFIG --libs-only-l QtCore QtGui QtWidgets QtPrintSupport` $LIBS"
-
-if ! `$PKG_CONFIG --atleast-version=4.6.0 QtCore`; then
-   AC_MSG_ERROR([Qt >= 4.6.0 is required.])
+if test `$PKG_CONFIG --exists QtCore && $PKG_CONFIG --exists QtGui \
+        && $PKG_CONFIG --exists QtWidgets && $PKG_CONFIG --exists QtPrintSupport`; then
+    if ! `$PKG_CONFIG --atleast-version=4.6.0 QtCore`; then
+        AC_MSG_ERROR([Qt >= 5.6.0 is required.])
+    fi
+    CPPFLAGS="`$PKG_CONFIG --cflags-only-I QtCore QtGui QtWidgets QtPrintSupport` $CPPFLAGS"
+    LDFLAGS="`$PKG_CONFIG --libs-only-L QtCore QtGui QtWidgets QtPrintSupport` $LDFLAGS"
+    LIBS="`$PKG_CONFIG --libs-only-l QtCore QtGui QtWidgets QtPrintSupport` $LIBS"
+else 
+    if ! `$PKG_CONFIG --atleast-version=5.6.0 Qt5Core`; then
+        AC_MSG_ERROR([Qt >= 5.6.0 is required.])
+    fi
+    CPPFLAGS="`$PKG_CONFIG --cflags-only-I Qt5Core Qt5Gui Qt5Widgets Qt5PrintSupport` $CPPFLAGS"
+    LDFLAGS="`$PKG_CONFIG --libs-only-L Qt5Core Qt5Gui Qt5Widgets Qt5PrintSupport` $LDFLAGS"
+    LIBS="`$PKG_CONFIG --libs-only-l Qt5Core Qt5Gui Qt5Widgets Qt5PrintSupport` $LIBS"
 fi
 
 AC_CHECK_PROGS(MOC, [moc-qt5 moc-qt4 moc])
@@ -44,6 +59,7 @@ AC_HEADER_STDC
 
 # Output files
 AC_CONFIG_HEADERS([config.h])
+AC_CHECK_HEADERS([config.h])
 AC_CONFIG_FILES([
                  Makefile
                  src-gui/Makefile

@@ -353,8 +353,12 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I build-aux
 SUBDIRS = src-gui
+p4dir = $(prefix)/@PACKAGE@
+p4bindir = $(p4dir)/bin
+p4helpdir = $(p4dir)/help
+p4sumtbdir = $(p4dir)/sum_tables
 dist_doc_DATA = README.md
-EXTRA_DIST = LICENSE COPYING.LESSER 
+EXTRA_DIST = LICENSE COPYING.LESSER src-mpl help
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -782,14 +786,16 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-dist_docDATA
-
+install-data-am: install-data-local install-dist_docDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
 install-exec-am:
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-recursive
 
 install-html-am:
@@ -829,8 +835,10 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-dist_docDATA
-
-.MAKE: $(am__recursive_targets) all install-am install-strip
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+.MAKE: $(am__recursive_targets) all install-am install-data-am \
+	install-exec-am install-strip uninstall-am
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-cscope clean-generic \
@@ -839,17 +847,43 @@ uninstall-am: uninstall-dist_docDATA
 	distcheck distclean distclean-generic distclean-hdr \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dist_docDATA install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-am uninstall uninstall-am uninstall-dist_docDATA
+	install-data install-data-am install-data-hook \
+	install-data-local install-dist_docDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-exec-hook \
+	install-html install-html-am install-info install-info-am \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-dist_docDATA uninstall-hook
 
 .PRECIOUS: Makefile
 
+
+install-data-local:
+	$(MKDIR_P) $(p4sumtbdir)
+	cp -r $(srcdir)/help $(p4dir)
+	cp $(srcdir)/src-mpl/p4.m $(p4bindir)
+	cp $(srcdir)/src-mpl/p4gcf.m $(p4bindir)
+
+install-exec-hook:
+	$(MKDIR_P) $(bindir)
+	ln -s $(p4bindir)/p4 $(bindir)/p4
+
+install-data-hook:
+	chmod 777 $(p4sumtbdir)
+	ln $(p4helpdir)/p4_flag.png $(p4bindir)/portrait.png
+	ln $(p4helpdir)/newp4icon.png $(p4bindir)/p4smallicon.png
+	ln -s $(p4sumtbdir) $(p4dir)/sumtables
+
+uninstall-hook:
+	rm -f $(p4dir)/sumtables
+	if test -d $(p4bindir); then rm -rf $(p4bindir); fi
+	if test -d $(p4helpdir); then rm -rf $(p4helpdir); fi
+	if test -d $(p4sumtbdir); then rm -rf $(p4sumtbdir); fi
+	if test -d $(p4dir); then rmdir $(p4dir); fi
+	if test -e $(bindir)/p4; then rm $(bindir)/p4; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

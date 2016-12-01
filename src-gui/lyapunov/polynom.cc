@@ -369,10 +369,13 @@ void read_poly( poly volatile *f )
 
 	for ( ;; )
 	{
-		scanf( "%lf", &re );
-		scanf( "%lf", &im );
-		scanf( "%d", &degz );
-		scanf( "%d", &degzb );
+        if (scanf( "%lf", &re )!=1
+                || scanf( "%lf", &im )!=1
+                || scanf( "%d", &degz )!=1
+                || scanf( "%d", &degzb )!=1) {
+            fprintf(stderr,"Input error\n");
+            exit(-5);
+        }
 		if ( degz < 0 )
 			break;
 		ins_poly( f, degz, degzb, re, im );

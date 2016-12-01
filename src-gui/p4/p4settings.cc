@@ -109,7 +109,7 @@ void setReduceExe( QString s )
     }
 }
 
-extern QString getP4MaplePath( void )
+QString getP4MaplePath( void )
 {
     QString f, g;
     f = getP4Path();
@@ -145,7 +145,7 @@ void setMathPackage( int pck )
     }
 }
 
-extern QString getP4HelpPath( void )
+QString getP4HelpPath( void )
 {
     QString f, g;
     f = getP4Path();
@@ -158,7 +158,7 @@ extern QString getP4HelpPath( void )
     return g;
 }
 
-extern QString getP4BinPath( void )
+QString getP4BinPath( void )
 {
     QString f, g;
     f = getP4Path();

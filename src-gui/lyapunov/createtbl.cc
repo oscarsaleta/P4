@@ -76,7 +76,10 @@ void create_sum( int k )
 		}
 		do
 		{
-            fscanf( fp2, "%s", s );
+            if (fscanf( fp2, "%s", s )!=1) {
+                fprintf(stderr,"Error reading file %s\n",file_name);
+                exit(-6);
+            }
 			if( !feof( fp2 ) )
 				fprintf( fp1, "%d,%s\n", i, s );
 		}
@@ -92,9 +95,9 @@ void create_sum( int k )
 		{
             //sprintf( s1, "mv %s %s", s2, file_name2 );
             sprintf( s1, "cp %s %s", s2, file_name2 );
-			system( s1 );
+            system( s1 );
 			sprintf( s1, "chmod a+rw %s", file_name2 );
-			system( s1 );
+            system( s1 );
 		}
 	}
 }

@@ -24,8 +24,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-//#include "../version.h"
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#else
+#include "../version.h"
+#endif
 
 // #define LOGACTIVITY		// define when you want to create a log file of all tests (sep.log)
 
@@ -462,12 +466,14 @@ void find_slopes( double * vec_slope, double * sep_slope, double * diff_slope,
 void read_term2( FILE * fp, struct term2 * current_term2, int l )
 {
     int i;
-    fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff);
+    if (fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff)!=3)
+        exit(1);
     current_term2->next_term2 = nullptr;
     for(i=2;i<=l;i++) {
         current_term2->next_term2 = new term2;//(struct term2 *) malloc (sizeof(struct term2));
         current_term2 = current_term2->next_term2;
-        fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff);
+        if (fscanf(fp,"%i %i %lf \n\n",&current_term2->exp_x,&current_term2->exp_y,&current_term2->coeff)!=3)
+            exit(1);
         current_term2->next_term2 = nullptr; 
     }
 }
@@ -479,12 +485,14 @@ void read_term2( FILE * fp, struct term2 * current_term2, int l )
 void read_term1( FILE * fp, struct term1 * current_term1, int l )
 {
     int i;
-    fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
+    if (fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff)!=2)
+        exit(1);
     current_term1->next_term1 = nullptr;
     for(i=2;i<=l;i++) {
         current_term1->next_term1 = new term1;//(struct term1 *) malloc (sizeof(struct term1));
         current_term1=current_term1->next_term1;
-        fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff);
+        if (fscanf(fp,"%i %lf \n\n",&current_term1->exp,&current_term1->coeff)!=2)
+            exit(1);
         current_term1->next_term1 = nullptr; 
     }
 }
@@ -500,16 +508,19 @@ double read_sep( const char * file )
     double epsilon;
 
     fp=fopen(file,"r");
-    fscanf(fp,"%lf \n\n",&epsilon);
-    fscanf(fp,"%d \n\n",&direction);
-    fscanf(fp,"%d\n\n",&stable);
-    fscanf(fp,"%i \n\n",&l);
+    if (fscanf(fp,"%lf \n\n",&epsilon)!=1
+            || fscanf(fp,"%d \n\n",&direction)!=1
+            || fscanf(fp,"%d\n\n",&stable)!=1
+            || fscanf(fp,"%i \n\n",&l)!=1)
+        exit(1);
     vec_field[0] = new term2;//(struct term2 *) malloc (sizeof(struct term2));
     read_term2(fp,vec_field[0],l);
-    fscanf(fp,"%i \n\n",&l);
+    if (fscanf(fp,"%i \n\n",&l)!=1)
+        exit(1);
     vec_field[1] = new term2;//(struct term2 *) malloc (sizeof(struct term2));
     read_term2(fp,vec_field[1],l);
-    fscanf(fp,"%i \n\n",&l);
+    if (fscanf(fp,"%i \n\n",&l)!=1)
+        exit(1);
     separatrice = new term1;//(struct term1 *) malloc (sizeof(struct term1));
     read_term1(fp,separatrice,l);
     fclose(fp);

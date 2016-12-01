@@ -44,14 +44,20 @@ void read_table( const char * file )
 		perror(file);
 		exit(-5);
 	}
+    // dummy should be 0, it is only nonzero when the mpf version of this program is called.
+    if (fscanf(fp, "%d", &dummy )!=1
+            || fscanf( fp, "%d %lf", &weakness_level, &precision )!=2
+            || fscanf( fp, "%i\n\n", &l )!=1) {
+        fprintf(stderr,"Error reading %s\n",file);
+        exit(-5);
+    }
 
-    fscanf(fp, "%d", &dummy ); // dummy should be 0, it is only nonzero when the mpf version of this program is called.
-
-	fscanf( fp, "%d %lf", &weakness_level, &precision );
-	fscanf( fp, "%i\n\n", &l );
 	for( t = 1; t <= l; t++ )
 	{
-		fscanf( fp, "%i\n\n%i\n\n%lf\n\n%lf\n\n", &degx, &degy, &re, &im );
+        if (fscanf( fp, "%i\n\n%i\n\n%lf\n\n%lf\n\n", &degx, &degy, &re, &im )!=4) {
+            fprintf(stderr,"Error reading %s\n",file);
+            exit(-5);
+        }
 		ins_hom_poly( vec_field, degx, degy, re, im );
 	}
 	fclose( fp );

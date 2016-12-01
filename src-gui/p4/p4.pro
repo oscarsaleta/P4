@@ -6,47 +6,48 @@ CONFIG += static
 CONFIG += c++14
 CONFIG += fwhopr
 
-SOURCES += win_view.cpp \
-    win_vf.cpp \
-    win_sphere.cpp \
-    win_settings.cpp \
-    win_print.cpp \
-    win_plot.cpp \
-    win_params.cpp \
-    win_orbits.cpp \
-    win_main.cpp \
-    win_limitcycles.cpp \
-    win_legend.cpp \
-    win_intparams.cpp \
-    win_gcf.cpp \
-    win_find.cpp \
-    win_about.cpp \
-    print_xfig.cpp \
-    print_postscript.cpp \
-    print_points.cpp \
-    print_bitmap.cpp \
-    plot_tools.cpp \
-    plot_points.cpp \
-    p4settings.cpp \
-    math_separatrice.cpp \
-    math_polynom.cpp \
-    math_p4.cpp \
-    math_orbits.cpp \
-    math_numerics.cpp \
-    math_limitcycles.cpp \
-    math_intblowup.cpp \
-    math_gcf.cpp \
-    math_findpoint.cpp \
-    math_charts.cpp \
-    math_changedir.cpp \
-    main.cpp \
-    file_vf.cpp \
-    file_tab.cpp \
-    file_paths.cpp \
-    win_zoom.cpp \
-    p4application.cpp \
-    win_event.cpp \
-    win_separatrice.cpp
+SOURCES += win_view.cc \
+    win_vf.cc \
+    win_sphere.cc \
+    win_settings.cc \
+    win_print.cc \
+    win_plot.cc \
+    win_params.cc \
+    win_orbits.cc \
+    win_main.cc \
+    win_limitcycles.cc \
+    win_legend.cc \
+    win_intparams.cc \
+    win_gcf.cc \
+    win_find.cc \
+    win_about.cc \
+    print_xfig.cc \
+    print_postscript.cc \
+    print_points.cc \
+    print_bitmap.cc \
+    plot_tools.cc \
+    plot_points.cc \
+    p4settings.cc \
+    math_separatrice.cc \
+    math_polynom.cc \
+    math_p4.cc \
+    math_orbits.cc \
+    math_numerics.cc \
+    math_limitcycles.cc \
+    math_intblowup.cc \
+    math_gcf.cc \
+    math_findpoint.cc \
+    math_charts.cc \
+    math_changedir.cc \
+    main.cc \
+    file_vf.cc \
+    file_tab.cc \
+    file_paths.cc \
+    win_zoom.cc \
+    p4application.cc \
+    win_event.cc \
+    win_separatrice.cc \
+
 HEADERS += win_view.h \
     win_vf.h \
     win_sphere.h \

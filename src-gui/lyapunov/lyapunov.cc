@@ -20,9 +20,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #include "lyapunov.h"
-//#include "../version.h"
+
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#else
+#include "../version.h"
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -204,7 +210,10 @@ int main( int argc, char *argv[] )
 		V = 0.0;  // V is the lyapunov coeff that we want to calculate
 		while ( !feof( fp ) )
 		{
-			fscanf( fp, "%s", s );
+            if (fscanf( fp, "%s", s )!=1) {
+                fprintf(stderr,"Error reading Lyapunov coeff.\n");
+                exit(1);
+            }
 			if ( !feof( fp ) )
             {
                 V -= part_lyapunov_coeff( s, 2 * k + 1 );
