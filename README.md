@@ -26,15 +26,19 @@ Generally, only source from *src-gui* needs to be compiled.
 
 ### src-gui
 
-In order to build the project it is advisable to use the *Qt Creator* IDE and build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files. The source in *src-gui* has been compiled with with Qt 5.7.0 for both Linux and Windows.
+**Using Autotools:** follow the usual `./configure`, `make`, `make install` procedure (Linux).
+
+**Using Qt Creator:** build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files (use a *Release* profile to get optimized executables).
 
 ### src-mpl
 
-The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled (since the files are already compiled in the source tree). Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the *Makefile* to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
+The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled (since the files are already compiled in the source tree).
+
+Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the *Makefile* to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
 
 ## Binary tree
 
-The executable files have to be put in the following tree somewhere in the file system following this structure:
+The executable files have to be put in the following tree somewhere in the file system following this structure (`make install` does this):
 
 * **Linux**: in a folder named p4:
     * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
