@@ -6,7 +6,9 @@ binaries/Linux/tarballs/p4_linux_*
 src-gui/build-*
 *.pro.user
 *.o
-*.moc.cc
+*.moc.cpp
+moc_*.cpp
 separatrice
-p4
-lyapunov
+src-gui/p4/p4
+src-gui/lyapunov/lyapunov
+src-gui/separatrice/separatrice

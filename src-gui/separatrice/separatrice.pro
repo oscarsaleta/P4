@@ -4,4 +4,4 @@
 
 CONFIG  = console c++11
 HEADERS = ../version.h
-SOURCES = separatrice.cc
+SOURCES = separatrice.cpp

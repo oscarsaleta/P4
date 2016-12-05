@@ -1,4 +1,4 @@
 p4bindir=$(prefix)/@PACKAGE@/bin
 
 p4bin_PROGRAMS = lyapunov
-lyapunov_SOURCES = lyapunov.cc lyapunov.h checktbl.cc createtbl.cc lypcoeff.cc polynom.cc readvf.cc
+lyapunov_SOURCES = lyapunov.cpp lyapunov.h checktbl.cpp createtbl.cpp lypcoeff.cpp polynom.cpp readvf.cpp
