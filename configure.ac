@@ -2,7 +2,7 @@
 AC_INIT([P4], [3.3.2], [osr@mat.uab.cat], [], [https://github.com/oscarsaleta/P4])
 AC_DEFINE([VERSIONDATE], ["December, 2016"], [Month and year when this version was released])
 AC_REVISION([$Revision: 1.0$])
-AC_CONFIG_SRCDIR([src-gui/p4/main.cc])
+AC_CONFIG_SRCDIR([src-gui/p4/main.cpp])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror -Wno-portability])
 

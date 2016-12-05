@@ -586,7 +586,7 @@ PACKAGE_STRING='P4 3.3.2'
 PACKAGE_BUGREPORT='osr@mat.uab.cat'
 PACKAGE_URL='https://github.com/oscarsaleta/P4'
 
-ac_unique_file="src-gui/p4/main.cc"
+ac_unique_file="src-gui/p4/main.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
