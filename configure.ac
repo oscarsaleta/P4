@@ -1,6 +1,6 @@
 # Prelude
 AC_INIT([P4], [3.3.2], [osr@mat.uab.cat], [], [https://github.com/oscarsaleta/P4])
-AC_DEFINE([VERSIONDATE], ["November, 2016"], [Month and year when this version was released])
+AC_DEFINE([VERSIONDATE], ["December, 2016"], [Month and year when this version was released])
 AC_REVISION([$Revision: 1.0$])
 AC_CONFIG_SRCDIR([src-gui/p4/main.cc])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -9,6 +9,9 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror -Wno-portability])
 # Check for C++ compiler
 AC_LANG([C++])
 AC_PROG_CXX
+#AX_CXX_COMPILE_STDCXX_11([noext],[mandatory])
+AX_CXX_COMPILE_STDCXX([11],[ext],[mandatory])
+CXXFLAGS="$CXXFLAGS -std=gnu++11"
 
 AC_PROG_MKDIR_P
 PKG_PROG_PKG_CONFIG
@@ -25,14 +28,14 @@ AT_WITH_QT([gui widgets printsupport])
 if test `$PKG_CONFIG --exists QtCore && $PKG_CONFIG --exists QtGui \
         && $PKG_CONFIG --exists QtWidgets && $PKG_CONFIG --exists QtPrintSupport`; then
     if ! `$PKG_CONFIG --atleast-version=4.6.0 QtCore`; then
-        AC_MSG_ERROR([Qt >= 5.6.0 is required.])
+        AC_MSG_ERROR([Qt >= 5.2.1 is required.])
     fi
     CPPFLAGS="`$PKG_CONFIG --cflags-only-I QtCore QtGui QtWidgets QtPrintSupport` $CPPFLAGS"
     LDFLAGS="`$PKG_CONFIG --libs-only-L QtCore QtGui QtWidgets QtPrintSupport` $LDFLAGS"
     LIBS="`$PKG_CONFIG --libs-only-l QtCore QtGui QtWidgets QtPrintSupport` $LIBS"
 else 
-    if ! `$PKG_CONFIG --atleast-version=5.6.0 Qt5Core`; then
-        AC_MSG_ERROR([Qt >= 5.6.0 is required.])
+    if ! `$PKG_CONFIG --atleast-version=5.2.1 Qt5Core`; then
+        AC_MSG_ERROR([Qt >= 5.2.1 is required.])
     fi
     CPPFLAGS="`$PKG_CONFIG --cflags-only-I Qt5Core Qt5Gui Qt5Widgets Qt5PrintSupport` $CPPFLAGS"
     LDFLAGS="`$PKG_CONFIG --libs-only-L Qt5Core Qt5Gui Qt5Widgets Qt5PrintSupport` $LDFLAGS"

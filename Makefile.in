@@ -91,6 +91,7 @@ host_triplet = @host@
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/build-aux/autotroll.m4 \
+	$(top_srcdir)/build-aux/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -259,6 +260,7 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GREP = @GREP@
+HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -883,7 +885,7 @@ uninstall-hook:
 	if test -d $(p4helpdir); then rm -rf $(p4helpdir); fi
 	if test -d $(p4sumtbdir); then rm -rf $(p4sumtbdir); fi
 	if test -d $(p4dir); then rmdir $(p4dir); fi
-	if test -e $(bindir)/p4; then rm $(bindir)/p4; fi
+	if ! test -e $(bindir)/p4; then rm -f $(bindir)/p4; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

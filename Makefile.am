@@ -32,4 +32,4 @@ uninstall-hook:
 	if test -d $(p4helpdir); then rm -rf $(p4helpdir); fi
 	if test -d $(p4sumtbdir); then rm -rf $(p4sumtbdir); fi
 	if test -d $(p4dir); then rmdir $(p4dir); fi
-	if test -e $(bindir)/p4; then rm $(bindir)/p4; fi
+	if ! test -e $(bindir)/p4; then rm -f $(bindir)/p4; fi
