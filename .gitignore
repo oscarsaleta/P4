@@ -8,7 +8,6 @@ src-gui/build-*
 *.o
 *.moc.cpp
 moc_*.cpp
-separatrice
 src-gui/p4/p4
 src-gui/lyapunov/lyapunov
 src-gui/separatrice/separatrice
