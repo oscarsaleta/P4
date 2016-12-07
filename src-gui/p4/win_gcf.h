@@ -1,7 +1,7 @@
 /*  P4 (Polynomial Planar Phase Portraits) GUI SOURCE CODE
  *  Software to study polynomial planar differential systems and represent
  *  their phase portrait in several spaces, such as Poincaré sphere. 
- *  URL: http://github.com/oscarsaleta/P4-src-gui
+ *  URL: http://github.com/oscarsaleta/P4
  *
  *  Copyright (C) 1996-2016  J.C. Artés, C. Herssens, P. De Maesschalck,
  *                           F. Dumortier, J. Llibre, O. Saleta
