@@ -203,61 +203,73 @@ void deleteLastOrbit( QWinSphere * spherewnd )
 void integrate_poincare_orbit( double p0, double p1, double p2, double * pcoord,
                               double * hhi, int * dashes, int * dir, double h_min, double h_max)
 {
- double y[2],theta;
+    double y[2],theta;
 
- *dashes=true; *dir=1;
- if(pcoord[2]>ZCOORD)
- {psphere_to_R2(p0,p1,p2,y);
-  rk78(eval_r_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
-  R2_to_psphere(y[0],y[1],pcoord);
- }
- else 
- {theta=atan2(fabs(p1),fabs(p0)); 
-  if((theta<PI_DIV4) && (theta>-PI_DIV4))
-  {if(p0>0)
-   {psphere_to_U1(p0,p1,p2,y);
-    rk78(eval_U1_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
-    if(y[1]>=0 || !VFResults.singinf)U1_to_psphere(y[0],y[1],pcoord);
-    else{VV1_to_psphere(y[0],y[1],pcoord);
-         if(VFResults.dir_vec_field==1){*dir=-1; *hhi=-(*hhi);}
-         psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],y);
-         *dashes=false;
-        }  
-   }
-   else
-   {psphere_to_V1(p0,p1,p2,y);
-    rk78(eval_V1_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
-    if(y[1]>=0 || !VFResults.singinf)V1_to_psphere(y[0],y[1],pcoord); 
-    else{UU1_to_psphere(y[0],y[1],pcoord); 
-         if(VFResults.dir_vec_field==1){*dir=-1; *hhi=-(*hhi);}
-         psphere_to_U1(pcoord[0],pcoord[1],pcoord[2],y);
-         *dashes=false;
-        }        
-   }
-  }
-  else
-  {if(p1>0)
-   {psphere_to_U2(p0,p1,p2,y);
-    rk78(eval_U2_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
-    if(y[1]>=0 || !VFResults.singinf)U2_to_psphere(y[0],y[1],pcoord); 
-    else{VV2_to_psphere(y[0],y[1],pcoord); 
-         if(VFResults.dir_vec_field==1){*dir=-1;*hhi=-(*hhi);}
-         psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],y);
-         *dashes=false;
-        } 
-   }
-   else
-   {psphere_to_V2(p0,p1,p2,y);
-    rk78(eval_V2_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
-    if(y[1]>=0 || !VFResults.singinf)V2_to_psphere(y[0],y[1],pcoord);         
-    else{UU2_to_psphere(y[0],y[1],pcoord); 
-         if(VFResults.dir_vec_field==1){*dir=-1;*hhi=-(*hhi);}
-         psphere_to_U2(pcoord[0],pcoord[1],pcoord[2],y);
-         *dashes=false; 
-        }      
-   }
-  }
- }
+    *dashes=true; *dir=1;
+    if(pcoord[2]>ZCOORD) {
+        psphere_to_R2(p0,p1,p2,y);
+        rk78(eval_r_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
+        R2_to_psphere(y[0],y[1],pcoord);
+    } else {
+        theta=atan2(fabs(p1),fabs(p0));
+        if((theta<PI_DIV4) && (theta>-PI_DIV4)) {
+            if(p0>0) {
+                psphere_to_U1(p0,p1,p2,y);
+                rk78(eval_U1_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
+                    if(y[1]>=0 || !VFResults.singinf)
+                        U1_to_psphere(y[0],y[1],pcoord);
+                    else {
+                        VV1_to_psphere(y[0],y[1],pcoord);
+                        if(VFResults.dir_vec_field==1) {
+                            *dir=-1; *hhi=-(*hhi);
+                        }
+                        psphere_to_V1(pcoord[0],pcoord[1],pcoord[2],y);
+                        *dashes=false;
+                    }
+            } else {
+                psphere_to_V1(p0,p1,p2,y);
+                rk78(eval_V1_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
+                if(y[1]>=0 || !VFResults.singinf)
+                    V1_to_psphere(y[0],y[1],pcoord);
+                else {
+                    UU1_to_psphere(y[0],y[1],pcoord);
+                    if(VFResults.dir_vec_field==1) {
+                        *dir=-1; *hhi=-(*hhi);
+                    }
+                    psphere_to_U1(pcoord[0],pcoord[1],pcoord[2],y);
+                    *dashes=false;
+                }
+            }
+        } else {
+            if(p1>0) {
+                psphere_to_U2(p0,p1,p2,y);
+                rk78(eval_U2_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
+                if(y[1]>=0 || !VFResults.singinf)
+                    U2_to_psphere(y[0],y[1],pcoord);
+                else {
+                    VV2_to_psphere(y[0],y[1],pcoord);
+                    if(VFResults.dir_vec_field==1) {
+                        *dir=-1;*hhi=-(*hhi);
+                    }
+                    psphere_to_V2(pcoord[0],pcoord[1],pcoord[2],y);
+                    *dashes=false;
+                }
+            } else {
+                psphere_to_V2(p0,p1,p2,y);
+                rk78(eval_V2_vec_field,y,hhi,h_min,h_max,VFResults.config_tolerance);
+                if(y[1]>=0 || !VFResults.singinf)
+                    V2_to_psphere(y[0],y[1],pcoord);
+                else {
+                    UU2_to_psphere(y[0],y[1],pcoord);
+                    if(VFResults.dir_vec_field==1) {
+                        *dir=-1;*hhi=-(*hhi);
+                    }
+                    psphere_to_U2(pcoord[0],pcoord[1],pcoord[2],y);
+                    *dashes=false;
+                }
+            }
+        }
+    }
 }
 
 /* integrate on the Poincare-Lyapunov sphere */
