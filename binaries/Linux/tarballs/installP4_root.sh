@@ -9,31 +9,36 @@ echo "Downloading newest version from GitHub..."
 # set progress bar ?
 wget --help | grep -q '\--show-progress' && \
   _PROGRESS_OPT="-q --show-progress" || _PROGRESS_OPT=""
+
 # set latest download link
 DL_LINK=$(curl -s https://api.github.com/repos/oscarsaleta/P4/releases/latest | grep linux | awk '/"browser_download_url"/{print $NF}' | awk -F'"' '$0=$2')
+
 # create folder in /tmp for downloading and extracting
 TMPDIR=/tmp/p4install
 mkdir -p $TMPDIR
+
 # set file name for download
 FNAME=$TMPDIR/p4.tar.gz
+
 # download archive
 wget -O $FNAME $_PROGRESS_OPT $DL_LINK
 
-echo "Installing p4 in /opt/..."
+INSTALLDIR=/usr/local/p4
+echo "Installing p4 in $INSTALLDIR/..."
 # extract downloaded archive
 tar -xzf $FNAME -C $TMPDIR --strip-components=1
-# move p4 to /opt
-sudo mv $TMPDIR/p4 /opt/p4
+# move p4 to /usr/local/
+sudo mv $TMPDIR/p4 $INSTALLDIR
 # create sum_tables and set permissions to write
-sudo mkdir -p /opt/p4/sum_tables
-sudo chmod 777 /opt/p4/sum_tables
+sudo mkdir -p $INSTALLDIR/sum_tables
+sudo chmod 777 $INSTALLDIR/sum_tables
 # create symlink to sum_tables for compatibility reasons
-sudo ln -sf /opt/p4/sum_tables /opt/p4/sumtables
+sudo ln -sf $INSTALLDIR/sum_tables $INSTALLDIR/sumtables
 
 
-echo "Installing symlink to p4 in /usr/bin/..."
+echo "Installing symlink to p4 in /usr/local/bin/..."
 # create symlink from p4/bin/p4 to /usr/bin/p4 to have p4 in PATH
-sudo ln -sf /opt/p4/bin/p4 /usr/bin/p4
+sudo ln -sf $INSTALLDIR/bin/p4 /usr/local/bin/p4
 
 echo "Creating application entry..."
 APPNAME=/usr/share/applications/p4.desktop
@@ -43,7 +48,7 @@ echo "[Desktop Entry]" > $TMPAPPNAME
 echo "Name=P4" >> $TMPAPPNAME
 echo "Version="$VERSION >> $TMPAPPNAME
 echo "Comment=Polynomial Planar Phase Portraits" >> $TMPAPPNAME
-echo "Icon=/opt/p4/bin/p4smallicon.png" >> $TMPAPPNAME
+echo "Icon=$INSTALLDIR/bin/p4smallicon.png" >> $TMPAPPNAME
 echo "Keywords=Math" >> $TMPAPPNAME
 echo "Exec=p4" >> $TMPAPPNAME
 echo "Terminal=false" >> $TMPAPPNAME
