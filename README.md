@@ -23,12 +23,16 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 	- Automake tools (optional): `autoconf`, `automake`,
 * **Compilation from source using Qt Creator:**
 	- Qt Creator IDE,
+	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.2.1 (could work for 4.6.0 but this has not been tested),
+	- C++ compiler: `g++`.
 	
 ### Windows
 
 * **Installation using setup**:
 	- Dependencies are taken care of.
-* **Compilation
+* **Compilation from source using Qt Creator:**
+	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.2.1 (could work for 4.6.0 but this has not been tested),
+	- C++ compiler: Microsoft Visual C++ (tested with version 14.0).
 
 ## Files
 
@@ -42,19 +46,16 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 ## Build from source
 
-Generally, only source from *src-gui* needs to be compiled. See <a href="##dependencies">dependencies</a>.
+Generally, only source from *src-gui* needs to be compiled. 
 
-### src-gui
-
-**Using Autotools:** follow the usual `./configure`, `make`, `make install` procedure (Linux).
-
-**Using Qt Creator:** build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files (use a *Release* profile to get optimized executables).
-
-### src-mpl
-
-The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled (since the files are already compiled in the source tree).
-
-Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the *Makefile* to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
+* **src-gui**: See <a href="#dependencies">dependencies</a>.
+	- **Linux**: 
+		+ **Using Autotools:** follow the usual `./configure`, `make`, `make install` procedure.
+	- **Linux** and **Windows**:
+		+ **Using Qt Creator:** build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files (use a *Release* profile to get optimized executables).
+* **src-mpl**: The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled (since the files are already compiled in the source tree).
+	- **Linux** and **Windows**:
+		+ **Using Qt Creator**: compile the *mplscript* program using the *mplscript.pro* file and then use the *Makefile* (`make`) to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
 
 ## Binary tree
 
