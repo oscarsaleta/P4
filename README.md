@@ -9,6 +9,26 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 <img src="help/screenshots/p4_main_window.png" alt="file not found" height="430px"/>
 <img src="help/screenshots/p4_plot_poincare.png" alt="file not found" height="430px" align="right" />
 
+## Dependencies
+
+**Maple must be installed in the computer in order to use P4.**
+
+### Linux
+
+* **Installation using `installP4.sh` and `installP4_root.sh` scripts:**
+	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.5.1.
+* **Compilation from source using `configure` and `make`:**
+	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.2.1 (could work for 4.6.0 but this has not been tested),
+	- C++ compiler: `g++`,
+	- Automake tools (optional): `autoconf`, `automake`,
+* **Compilation from source using Qt Creator:**
+	- Qt Creator IDE,
+	
+### Windows
+
+* **Installation using setup**:
+	- Dependencies are taken care of.
+* **Compilation
 
 ## Files
 
@@ -22,7 +42,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 ## Build from source
 
-Generally, only source from *src-gui* needs to be compiled.
+Generally, only source from *src-gui* needs to be compiled. See <a href="##dependencies">dependencies</a>.
 
 ### src-gui
 
@@ -38,7 +58,7 @@ Otherwise, use *Qt Creator* to compile the *mplscript* program and then use the 
 
 ## Binary tree
 
-The executable files have to be put in the following tree somewhere in the file system following this structure (`make install` does this):
+The executable files have to be put in the following tree somewhere in the file system following this structure (in Linux, `make install` and the scripts `installP4.sh` and `installP4_root.sh` do this automatically; in Windows, the installer also does this automatically):
 
 * **Linux**: in a folder named p4:
     * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
