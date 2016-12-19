@@ -1,26 +1,26 @@
 TEMPLATE = subdirs
 SUBDIRS = src-gui
 
-bins.path = p4/bin
+INSTALL_DIR = $$PROJECT_ROOT/p4
+
+bins.path = $$INSTALL_DIR/bin
 bins.files = \
-            src-gui/p4/p4 \
-            src-gui/lyapunov/lyapunov \
-            src-gui/separatrice/separatrice \
-            src-mpl/p4.m \
-            src-mpl/p4gcf.m \
-            help/p4smallicon.png \
-            help/portrait.png
-bins.extra =
+            $$BUILD_DIR/p4/p4 \
+            $$BUILD_DIR/lyapunov/lyapunov \
+            $$BUILD_DIR/separatrice/separatrice \
+            $$PROJECT_ROOT/src-mpl/p4.m \
+            $$PROJECT_ROOT/src-mpl/p4gcf.m \
+            $$PROJECT_ROOT/help/p4smallicon.png \
+            $$PROJECT_ROOT/help/portrait.png
 
-helps.path = p4/help
+helps.path = $$INSTALL_DIR/help
 helps.files = \
-            help
-helps.extra =
+            $$PROJECT_ROOT/help/*
 
-sumtables.path = p4/sumtables
-sumtables.files =
+sumtables.path = $$INSTALL_DIR
 sumtables.extra = \
-            (chmod -R 777 p4/sumtables); \
-            (ln -s p4/sum_tables p4/sumtables)
+            (mkdir $$INSTALL_DIR/sumtables); \
+            (chmod -R 777 $$INSTALL_DIR/sumtables); \
+            (ln -s $$INSTALL_DIR/sumtables $$INSTALL_DIR/sum_tables)
 
 INSTALLS += bins helps sumtables

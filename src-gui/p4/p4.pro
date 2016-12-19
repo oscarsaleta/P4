@@ -6,6 +6,8 @@ CONFIG += static
 CONFIG += c++14
 CONFIG += fwhopr
 
+DESTDIR = $$BUILD_DIR/p4/
+
 SOURCES += win_view.cpp \
     win_vf.cpp \
     win_sphere.cpp \

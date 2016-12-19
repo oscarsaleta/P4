@@ -1,6 +1,7 @@
 #
 # LYAPUNOV PROJECT FILE.  Use qmake to build makefile
 #
+DESTDIR = $$BUILD_DIR/lyapunov/
 
 CONFIG  +=  console c++14
 QMAKE_CXXFLAGS += -g -O2
