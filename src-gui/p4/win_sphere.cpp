@@ -37,7 +37,6 @@
 #include "print_postscript.h"
 #include "print_xfig.h"
 #include "win_event.h"
-#include "win_main.h"
 #include "win_print.h"
 
 #include <QMessageBox>

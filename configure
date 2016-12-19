@@ -5710,6 +5710,7 @@ fi
 # Output files
 ac_config_headers="$ac_config_headers config.h"
 
+#AC_CONFIG_LINKS([help:help src-mpl:src-mpl])
 # On IRIX 5.3, sys/types and inttypes.h are conflicting.
 for ac_header in sys/types.h sys/stat.h stdlib.h string.h memory.h strings.h \
 		  inttypes.h stdint.h unistd.h

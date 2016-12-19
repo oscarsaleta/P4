@@ -359,6 +359,7 @@ p4dir = $(prefix)/@PACKAGE@
 p4bindir = $(p4dir)/bin
 p4helpdir = $(p4dir)/help
 p4sumtbdir = $(p4dir)/sum_tables
+p4confdir = $(HOME)/.config/P4
 dist_doc_DATA = README.md
 EXTRA_DIST = LICENSE COPYING.LESSER src-mpl help
 all: config.h

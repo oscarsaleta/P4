@@ -211,7 +211,7 @@ int main( int argc, char *argv[] )
 		while ( !feof( fp ) )
 		{
             if (fscanf( fp, "%s", s )!=1) {
-                fprintf(stderr,"Error reading Lyapunov coeff.\n");
+                fprintf(stderr,"Error reading Lyapunov coeff from file %s.\n",file_name);
                 exit(1);
             }
 			if ( !feof( fp ) )

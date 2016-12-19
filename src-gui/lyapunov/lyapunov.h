@@ -19,7 +19,8 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#ifndef LYAPUNOV_H
+#define LYAPUNOV_H
 
 // definitions
 
@@ -81,3 +82,5 @@ void Imgz( poly volatile *, poly volatile * );
 void Regz( poly volatile *, poly volatile * );
 void LL( poly volatile *, poly volatile *, int, double * );
 double part_lyapunov_coeff( char *, int );
+
+#endif // LYAPUNOV_H

@@ -62,6 +62,7 @@ AC_HEADER_STDC
 
 # Output files
 AC_CONFIG_HEADERS([config.h])
+#AC_CONFIG_LINKS([help:help src-mpl:src-mpl])
 AC_CHECK_HEADERS([config.h])
 AC_CONFIG_FILES([
                  Makefile

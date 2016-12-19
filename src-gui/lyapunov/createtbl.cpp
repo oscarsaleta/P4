@@ -19,11 +19,11 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "lyapunov.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "lyapunov.h"
 
 // --------------------------------------------------------------------------
 //                      CREATE_SUM
@@ -54,9 +54,11 @@ void create_sum( int k )
 			*file_name2 = 0;
 		else
 			sprintf( file_name2, "%s/sum_tables/sum%d.tab", getenv( "P4_DIR" ), k );
+        printf("------->%s\n",file_name2);
 	}
 
-	fp1 = fopen( s2, "w" );
+    //fp1 = fopen( s2, "w" );
+    fp1 = fopen(file_name2,"w");
     if( fp1 == nullptr )
 	{
         	printf( "Cannot create sumtables.  Please check installation.\n" );
