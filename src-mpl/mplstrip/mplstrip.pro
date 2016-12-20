@@ -1,7 +1,9 @@
 #
 # MPLSTRIP PROJECT FILE.  Use qmake to build makefile
 #
+DESTDIR = .
 
 CONFIG  = console
 SOURCES = mplstrip.cpp
-HEADERS = ../version.h
+HEADERS = $$PROJECT_ROOT/src-gui/version.h
+

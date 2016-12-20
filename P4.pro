@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-SUBDIRS = src-gui
+SUBDIRS = src-gui src-mpl
 
 INSTALL_DIR = $$PROJECT_ROOT/p4
 
