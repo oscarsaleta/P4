@@ -45,7 +45,7 @@ echo "=== Checking for older P4 versions... Done."
 echo "=== Compiling P4..."
 #rm -rf build p4
 #make distclean
-qmake -r P4.pro
+qmake -r P4.pro || qmake-qt5 -r P4.pro
 make -j2
 make install
 echo "=== Compiling P4... Done."
