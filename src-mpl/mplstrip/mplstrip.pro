@@ -1,3 +1,4 @@
+include(../../P4.pri)
 #
 # MPLSTRIP PROJECT FILE.  Use qmake to build makefile
 #

@@ -1,3 +1,5 @@
+include(P4.pri)
+
 TEMPLATE = subdirs
 SUBDIRS = src-gui src-mpl
 
@@ -5,13 +7,15 @@ INSTALL_DIR = $$PROJECT_ROOT/p4
 
 bins.path = $$INSTALL_DIR/bin
 bins.files = \
-            $$BUILD_DIR/p4/p4 \
-            $$BUILD_DIR/lyapunov/lyapunov \
-            $$BUILD_DIR/separatrice/separatrice \
+            $$PROJECT_ROOT/build/p4/p4 \
+            $$PROJECT_ROOT/build/lyapunov/lyapunov \
+            $$PROJECT_ROOT/build/separatrice/separatrice \
             $$PROJECT_ROOT/src-mpl/p4.m \
             $$PROJECT_ROOT/src-mpl/p4gcf.m \
             $$PROJECT_ROOT/help/p4smallicon.png \
             $$PROJECT_ROOT/help/portrait.png
+bins.commands = \
+            (cp $$BUILD_DIR/p4/p4 $$BUILD_DIR/lyapunov/lyapunov $$BUILD_DIR/separatrice/separatrice $$INSTALL_DIR/bin)
 
 helps.path = $$INSTALL_DIR/help
 helps.files = \

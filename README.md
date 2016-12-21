@@ -17,14 +17,14 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 * **Installation using `installP4.sh` and `installP4_root.sh` scripts:**
 	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.5.1.
-* **Compilation from source using `configure` and `make`:**
+* **Compilation from source using `qmake`:**
 	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.2.1 (could work for 4.6.0 but this has not been tested),
-	- C++ compiler: `g++`,
-	- Automake tools (optional): `autoconf`, `automake`,
+	- `qmake` (version 3.0 recommended), should be included with your Qt installation,
+	- C++ compiler: `g++` (version >=6.0 recommended).
 * **Compilation from source using Qt Creator:**
-	- Qt Creator IDE,
+	- Qt Creator IDE, should be included with your Qt installation,
 	- Qt (modules: *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport*), minimum required version 5.2.1 (could work for 4.6.0 but this has not been tested),
-	- C++ compiler: `g++`.
+	- C++ compiler: `g++` (version >=6.0 recommended).
 	
 ### Windows
 
@@ -45,6 +45,17 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 * **binaries**: latest compiled version of P4 for both Linux and Windows operative systems (64-bit only).
 
 ## Build from source
+
+### Build using `qmake`
+
+Qt's `qmake` makes it easy to compile the whole project with two commands.
+
+* From the root of the project, run `qmake -r P4.pro` in order to generate the Makefiles.
+* From this same directory, run `make` to compile **p4**, **lyapunov** and **separatrice**.
+    - The output of the compilation will be found in a new directory named *build*.
+    - The `make` command also compiles **mplstrip**, which is a C++ program used to generate Maple scripts inside *src-mpl*.
+* **If your Maple version is NOT 2015**: go into *src-mpl* and execute `make clean` and `make p4.m`. This will generate **p4gcf.m** and **p4.m**, two Maple scripts needed by P4.
+* From the root directory of the project, run `make install` to generate a *p4* folder with the layout explained <a href="#BinaryTree">below</a>. This directory can be placed wherever in the system to **TODO**
 
 Generally, only source from *src-gui* needs to be compiled. 
 

@@ -1,3 +1,5 @@
+include(../../P4.pri)
+
 QT += gui
 QT += widgets
 QT += printsupport

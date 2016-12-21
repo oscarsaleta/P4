@@ -1,3 +1,4 @@
+include(../../P4.pri)
 #
 # LYAPUNOV PROJECT FILE.  Use qmake to build makefile
 #
