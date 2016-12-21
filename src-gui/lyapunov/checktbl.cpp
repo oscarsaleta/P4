@@ -43,10 +43,11 @@ void check_sum( char * s, int k )
 	}
 	else
 	{
-        if( getenv( "P4_DIR" )== nullptr )
+        if( getenv( "P4_DIR" )== nullptr ){
 			sprintf( s, "sum%d.tab", k );
+        }
 		else
-			sprintf( s, "%s/sum_tables/sum%d.tab", getenv( "P4_DIR" ), k );
+            sprintf( s, "%s/sumtables/sum%d.tab", getenv( "P4_DIR" ), k );
 	}
 	
 	fp = fopen( s, "r" );

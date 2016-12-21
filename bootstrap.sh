@@ -41,8 +41,8 @@ else
 fi
 
 echo "=== Compiling P4..."
-rm -rf build p4
-make distclean
+#rm -rf build p4
+#make distclean
 qmake -r P4.pro
 make -j2
 make install
@@ -75,6 +75,7 @@ then
     echo "Icon=$INSTALLDIR/bin/p4smallicon.png" >> $TMPAPPNAME
     echo "Keywords=Math" >> $TMPAPPNAME
     echo "Exec=$INSTALLDIR/bin/p4" >> $TMPAPPNAME
+    echo "Path=$HOME" >> $TMPAPPNAME
     echo "Terminal=false" >> $TMPAPPNAME
     echo "Type=Application" >> $TMPAPPNAME
     echo "Categories=Education;Science;Math" >> $TMPAPPNAME

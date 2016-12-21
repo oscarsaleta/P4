@@ -43,7 +43,7 @@
 			to locate the sumtable files.  New sum tables
 			are created in the current working directory temporarily,
 			and are then copied with the correct permissions to the
-			P4_DIR/sum_tables directory.
+            P4_DIR/sumtables directory.
 
 			The output file is in a syntax that can be understood by reduce.
 
@@ -138,7 +138,7 @@ int main( int argc, char *argv[] )
                 "\tIn linux mode, we use the env. variable P4_DIR to locate\n"
                 "\tthe sumtable files.  New sum tables are created in the current\n"
                 "\tworking directory temporarily, and are then copied with the \n"
-                "\tcorrect permissions to the P4_DIR/sum_tables directory.\n"
+                "\tcorrect permissions to the P4_DIR/sumtables directory.\n"
                 "\tThe output file is in a syntax that can be understood by reduce.\n"
                 "\n"
                 "SYNTAX: lyapunov inputfile outputfile MAPLE\n"
@@ -210,10 +210,7 @@ int main( int argc, char *argv[] )
 		V = 0.0;  // V is the lyapunov coeff that we want to calculate
 		while ( !feof( fp ) )
 		{
-            if (fscanf( fp, "%s", s )!=1) {
-                fprintf(stderr,"Error reading Lyapunov coeff from file %s.\n",file_name);
-                exit(1);
-            }
+            fscanf( fp, "%s", s );
 			if ( !feof( fp ) )
             {
                 V -= part_lyapunov_coeff( s, 2 * k + 1 );

@@ -21,8 +21,8 @@
  */
 #include "lyapunov.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // --------------------------------------------------------------------------
@@ -53,22 +53,19 @@ void create_sum( int k )
         if( getenv( "P4_DIR" ) == nullptr )
 			*file_name2 = 0;
 		else
-			sprintf( file_name2, "%s/sum_tables/sum%d.tab", getenv( "P4_DIR" ), k );
-        printf("------->%s\n",file_name2);
+            sprintf( file_name2, "%s/sumtables/sum%d.tab", getenv( "P4_DIR" ), k );
 	}
 
-    //fp1 = fopen( s2, "w" );
-    fp1 = fopen(file_name2,"w");
+    fp1 = fopen( s2, "w" );
     if( fp1 == nullptr )
 	{
-        	printf( "Cannot create sumtables.  Please check installation.\n" );
+        printf( "Cannot create sumtables.  Please check installation.\n" );
 		perror(s2);
 		exit(-6);
 	}
 	for( i = 1; i < k; i++ )
 	{
 		// check if table (k-i) exist.  If not create the table
-		
 		check_sum( file_name, k - i );
 		fp2 = fopen( file_name, "r" );
         if( fp2 == nullptr )
@@ -78,10 +75,7 @@ void create_sum( int k )
 		}
 		do
 		{
-            if (fscanf( fp2, "%s", s )!=1) {
-                fprintf(stderr,"Error reading file %s\n",file_name);
-                exit(-6);
-            }
+            fscanf(fp2,"%s",s);
 			if( !feof( fp2 ) )
 				fprintf( fp1, "%d,%s\n", i, s );
 		}
@@ -95,8 +89,8 @@ void create_sum( int k )
 	{
 		if( *file_name2 != 0 )
 		{
-            //sprintf( s1, "mv %s %s", s2, file_name2 );
-            sprintf( s1, "cp %s %s", s2, file_name2 );
+            sprintf( s1, "mv %s %s", s2, file_name2 );
+            //sprintf( s1, "cp %s %s", s2, file_name2 );
             system( s1 );
 			sprintf( s1, "chmod a+rw %s", file_name2 );
             system( s1 );

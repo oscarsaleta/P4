@@ -42,7 +42,7 @@ QByteArray Win_GetShortPathName( QByteArray );
 //
 //
 //      /bin                contains binary of P4, sep and lyapunov, together with the maple file(s)
-//      /sum_tables         contains intermediary results for sep and lyapunov.
+//      /sumtables          contains intermediary results for sep and lyapunov.
 //      /reduce             contains P4 reduce files (only under Unix)
 //                          In particular, this folder contains the file p4.b
 //      /help               contains P4 help files (.HTM)
@@ -146,7 +146,7 @@ QString getDefaultP4SumTablePath( void )
         g = f;
         g += QDir::separator();
 #ifdef Q_OS_X11
-        g += "sum_tables";
+        g += "sumtables";
 #else
         g += "sumtables";
 #endif

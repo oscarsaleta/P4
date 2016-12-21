@@ -25,6 +25,5 @@ sumtables.path = $$INSTALL_DIR
 sumtables.extra = \
             (mkdir $$INSTALL_DIR/sumtables); \
             (chmod -R 777 $$INSTALL_DIR/sumtables); \
-            (ln -s $$INSTALL_DIR/sumtables $$INSTALL_DIR/sum_tables)
 
 INSTALLS += bins helps sumtables

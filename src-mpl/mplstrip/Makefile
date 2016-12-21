@@ -50,7 +50,8 @@ OBJECTS_DIR   = ./
 
 SOURCES       = mplstrip.cpp 
 OBJECTS       = mplstrip.o
-DIST          = mplstrip.pro /home/osr/git/P4/src-gui/version.h mplstrip.cpp
+DIST          = ../../P4.pri \
+		mplstrip.pro /home/osr/git/P4/src-gui/version.h mplstrip.cpp
 QMAKE_TARGET  = mplstrip
 DESTDIR       = 
 TARGET        = mplstrip
@@ -106,6 +107,7 @@ Makefile: mplstrip.pro ../../.qmake.cache /usr/lib/x86_64-linux-gnu/qt5/mkspecs/
 		../../.qmake.cache \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
+		../../P4.pri \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf \
 		mplstrip.pro
@@ -154,6 +156,7 @@ Makefile: mplstrip.pro ../../.qmake.cache /usr/lib/x86_64-linux-gnu/qt5/mkspecs/
 ../../.qmake.cache:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
+../../P4.pri:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resolve_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_post.prf:
 mplstrip.pro:
