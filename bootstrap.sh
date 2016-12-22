@@ -40,8 +40,8 @@ fi
 echo "Done."
 
 echo "=== Checking for dependencies..."
-if (pkg-config --exists QtCore && pkg-config --exists QtGui && pkg-config --exists QtWidgets && pkg-config --exists QtPrintSupport); then
-    echo "QtCore, QtGui, QtWidgets and QtPrintSupport found in the system."
+if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
+    echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
 else
     whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60
     echo "Missing Qt modules which are needed for compiling the source code."
