@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 echo "======== COMPILATION AND INSTALLATION OF P4 ========"
 
 echo "=== Checking for older P4 versions..."
