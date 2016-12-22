@@ -43,8 +43,20 @@ fi
 echo "Done."
 
 echo "=== Checking for dependencies..."
-(ldconfig -p | grep libQt5PrintSupport >/dev/null && ldconfig -p | grep libQt5Widgets >/dev/null && ldconfig -p | grep libQt5Gui >/dev/null && ldconfig -p | grep libQt5Core >/dev/null ) && echo "libQt5Core, libQt5Gui, libQt5Widgets and libQt5PrintSupport found in the system." || (whiptail --title "Missing Qt5 libraries" --msgbox "Some Qt5 libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60 && exit 1)
-(ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null) && echo "GCC libraries found in the system." || (whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 60 && exit 1)
+if ldconfig -p | grep libQt5PrintSupport >/dev/null && ldconfig -p | grep libQt5Widgets >/dev/null && ldconfig -p | grep libQt5Gui >/dev/null && ldconfig -p | grep libQt5Core >/dev/null
+then
+    echo "libQt5Core, libQt5Gui, libQt5Widgets and libQt5PrintSupport found in the system."
+else
+    whiptail --title "Missing Qt5 libraries" --msgbox "Some Qt5 libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60
+    exit 1
+fi
+if ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null
+then
+    echo "GCC libraries found in the system."
+else
+    whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 60
+    exit 1
+fi
 echo "Done."
 
 echo "=== Compiling P4..."
@@ -53,7 +65,11 @@ echo "Removing old builds..."
 rm -rf build p4 >/dev/null 2>&1
 make distclean >/dev/null 2>&1
 echo "Running qmake..."
-qmake -r P4.pro >/dev/null 2>&1 || (echo "Error, check that qmake is a valid command." && exit 1)
+if ! qmake -r P4.pro >/dev/null 2>&1
+then
+    echo "Error, check that qmake is a valid command."
+    exit 1
+fi
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make"
 make -s -j$CPUCNT >/dev/null 2>&1
@@ -69,7 +85,7 @@ then
     ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
     if whiptail --title "Create shortcut?" --yesno "Do you want to create an alias for executing P4 from the terminal?\nIf not, you will be able to execute it by typing\n\n ~/p4/bin/p4\n\nin the command line." 20 60
     then
-        grep $HOME/.profile -e "P4_DIR" || (echo "P4_DIR=$HOME/p4/" >> $HOME/.profile && echo "export P4_DIR" >> $HOME/.profile && echo "alias p4=$P4_DIR/bin/p4" >> $HOME/.profile)
+        grep $HOME/.profile -e "P4_DIR" || (echo "P4_DIR=$HOME/p4/" >> $HOME/.profile && echo "export P4_DIR" >> $HOME/.profile && echo "PATH=$P4_DIR/bin:$PATH" >> $HOME/.profile)
         source $HOME/.profile
     fi
 else
@@ -80,6 +96,8 @@ else
     sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
 fi
 echo "Done."
+
+echo "=== Relogging might be necessary for the PATH variable to refresh."
 
 #if ($INSTALLED)
 #then
