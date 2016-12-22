@@ -84,8 +84,8 @@ else
 fi
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make"
-make -s -j$CPUCNT >$OUT 2>$ERR
-make -s install >$OUT 2>$ERR
+make -j$CPUCNT >$OUT 2>$ERR
+make install >$OUT 2>$ERR
 echo "Done."
 
 echo "=== Installing P4..."
