@@ -2,8 +2,7 @@
 echo "======== COMPILATION AND INSTALLATION OF P4 ========"
 
 echo "=== Checking for older P4 versions..."
-if test -d $HOME/p4
-then
+if [ -d $HOME/p4 ]; then
     if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4. Do you want to remove it?" 20 60
     then
         rm -rf $HOME/p4
@@ -13,8 +12,7 @@ then
         fi
     fi
 fi
-if test -d /usr/local/p4
-then
+if [ -d /usr/local/p4 ]; then
     if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/local/p4. Do you want to remove it?" 20 60
     then
         sudo rm -rf /usr/local/p4
@@ -30,12 +28,9 @@ then
 else
     echo "No older P4 version found."
 fi
-if test -d $HOME/.config/P4
-then
-    if whiptail --title "Uninstalling older versions" --yesno --defaultno "Do you want to remove P4 configuration?" 20 60
-    then
-        if test -d $HOME/.config/P4
-        then
+if [ -d $HOME/.config/P4 ]; then
+    if whiptail --title "Uninstalling older versions" --yesno --defaultno "Do you want to remove P4 configuration?" 20 60; then
+        if test -d $HOME/.config/P4; then
             rm -rf $HOME/.config/P4
         fi
     fi
@@ -43,15 +38,13 @@ fi
 echo "Done."
 
 echo "=== Checking for dependencies..."
-if ldconfig -p | grep libQt5PrintSupport >/dev/null && ldconfig -p | grep libQt5Widgets >/dev/null && ldconfig -p | grep libQt5Gui >/dev/null && ldconfig -p | grep libQt5Core >/dev/null
-then
+if ldconfig -p | grep libQt5PrintSupport >/dev/null && ldconfig -p | grep libQt5Widgets >/dev/null && ldconfig -p | grep libQt5Gui >/dev/null && ldconfig -p | grep libQt5Core >/dev/null; then
     echo "libQt5Core, libQt5Gui, libQt5Widgets and libQt5PrintSupport found in the system."
 else
     whiptail --title "Missing Qt5 libraries" --msgbox "Some Qt5 libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60
     exit 1
 fi
-if ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null
-then
+if ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null; then
     echo "GCC libraries found in the system."
 else
     whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 60
@@ -61,52 +54,57 @@ echo "Done."
 
 echo "=== Compiling P4..."
 whiptail --infobox --title "Compiling P4..." "Compiling P4, be patient!" 20 60
-echo "Removing old builds..."
-rm -rf build p4 >/dev/null 2>&1
-make distclean >/dev/null 2>&1
+echo "Cleaning old builds..."
+if [ -z ${VERBOSE+x} ]; then
+    OUT=/dev/null
+    ERR=/dev/null
+else
+    OUT=/dev/stdout
+    ERR=/dev/stderr
+fi
+rm -rf build p4 $DEST
+make distclean >$OUT 2>$ERR
 echo "Running qmake..."
-if [ -z ${QMAKE+x} ]
-then
-    if ! qmake -r P4.pro >/dev/null 2>&1
-    then
+if [ -z ${QMAKE+x} ]; then
+    if ! qmake -r P4.pro >$OUT 2>$ERR; then
         echo "Error, check that qmake is a valid command."
         exit 1
     fi
 else
-    if ! $QMAKE -r P4.pro >/dev/null 2>&1
-    then
+    if ! $QMAKE -r P4.pro >$OUT 2>$ERR; then
         echo "Error, check that $QMAKE is a valid command."
         exit 1
     fi
 fi
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make"
-make -s -j$CPUCNT >/dev/null 2>&1
-make -s install >/dev/null 2>&1
+make -s -j$CPUCNT >$OUT 2>$ERR
+make -s install >$OUT 2>$ERR
 echo "Done."
 
 echo "=== Installing P4..."
-if whiptail --title "Install P4" --yesno --yes-button "User" --no-button "Root" "Where do you want to install P4?\n\nUser: $HOME/p4\nRoot: /usr/local/p4" 20 60
-then
+if whiptail --title "Install P4" --yesno --yes-button "User" --no-button "Root" "Where do you want to install P4?\n\nUser: $HOME/p4\nRoot: /usr/local/p4" 20 60; then
     mv p4 $HOME/
-    INSTALLED=true
     INSTALLDIR=$HOME/p4
     ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
-    if whiptail --title "Create shortcut?" --yesno "Do you want to create an alias for executing P4 from the terminal?\nIf not, you will be able to execute it by typing\n\n ~/p4/bin/p4\n\nin the command line." 20 60
-    then
-        grep $HOME/.profile -e "P4_DIR" || (echo "P4_DIR=$HOME/p4/" >> $HOME/.profile && echo "export P4_DIR" >> $HOME/.profile && echo "export PATH=$P4_DIR/bin:$PATH" >> $HOME/.profile)
-        source $HOME/.profile
+    if whiptail --title "Create shortcut?" --yesno "Do you want to create an alias for executing P4 from the terminal?\nIf not, you will be able to execute it by typing\n\n ~/p4/bin/p4\n\nin the command line." 20 60; then
+        if ! grep $HOME/.profile -e "P4_DIR" >/dev/null; then
+            echo "P4_DIR=$HOME/p4/" >> $HOME/.profile
+            echo "export P4_DIR" >> $HOME/.profile
+            echo "export PATH=$HOME/p4/bin:$PATH" >> $HOME/.profile
+            source $HOME/.profile
+        fi
     fi
 else
     sudo mv p4 /usr/local
-    INSTALLED=true
     INSTALLDIR=/usr/local/p4
     sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
     sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
 fi
 echo "Done."
 
-echo "=== Relogging might be necessary for the PATH variable to refresh."
+echo "=== Finished."
+echo "Relogging might be necessary for the PATH variable to refresh."
 
 #if ($INSTALLED)
 #then
