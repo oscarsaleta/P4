@@ -65,7 +65,8 @@ else
     ERR=/dev/stderr
 fi
 rm -rf build p4 $DEST
-make distclean >$OUT 2>$ERR
+if ! make distclean >$OUT 2>$ERR; then
+fi
 echo "Running qmake..."
 if [ -z ${QMAKE+x} ]; then
     if ! qmake -r P4.pro >$OUT 2>$ERR; then
