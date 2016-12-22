@@ -65,10 +65,19 @@ echo "Removing old builds..."
 rm -rf build p4 >/dev/null 2>&1
 make distclean >/dev/null 2>&1
 echo "Running qmake..."
-if ! qmake -r P4.pro >/dev/null 2>&1
+if [ -z ${QMAKE+x} ]
 then
-    echo "Error, check that qmake is a valid command."
-    exit 1
+    if ! qmake -r P4.pro >/dev/null 2>&1
+    then
+        echo "Error, check that qmake is a valid command."
+        exit 1
+    fi
+else
+    if ! $QMAKE -r P4.pro >/dev/null 2>&1
+    then
+        echo "Error, check that $QMAKE is a valid command."
+        exit 1
+    fi
 fi
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make"
