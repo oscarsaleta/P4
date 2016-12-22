@@ -75,7 +75,7 @@ if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
 fi
 if ! $QMAKE -r P4.pro >$OUT 2>$ERR; then
-    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\nor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5. In this case, run\n\nenv QMAKE=/path/to/qmake ./bootstrap.sh\n\n(where /path/to/qmake should be replaced by the actual path or command of qmake in your system."
+    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\nor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5. In this case, run\n\nenv QMAKE=/path/to/qmake ./bootstrap.sh\n\n(where /path/to/qmake should be replaced by the actual path or command of qmake in your system." 20 60
     echo "Error, check that $QMAKE is a valid command."
     exit 1
 fi
