@@ -94,7 +94,7 @@ then
     ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
     if whiptail --title "Create shortcut?" --yesno "Do you want to create an alias for executing P4 from the terminal?\nIf not, you will be able to execute it by typing\n\n ~/p4/bin/p4\n\nin the command line." 20 60
     then
-        grep $HOME/.profile -e "P4_DIR" || (echo "P4_DIR=$HOME/p4/" >> $HOME/.profile && echo "export P4_DIR" >> $HOME/.profile && echo "PATH=$P4_DIR/bin:$PATH" >> $HOME/.profile)
+        grep $HOME/.profile -e "P4_DIR" || (echo "P4_DIR=$HOME/p4/" >> $HOME/.profile && echo "export P4_DIR" >> $HOME/.profile && echo "export PATH=$P4_DIR/bin:$PATH" >> $HOME/.profile)
         source $HOME/.profile
     fi
 else
