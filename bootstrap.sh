@@ -40,13 +40,13 @@ fi
 echo "Done."
 
 echo "=== Checking for dependencies..."
-if ldconfig -p | grep libQt5PrintSupport >/dev/null && ldconfig -p | grep libQt5Widgets >/dev/null && ldconfig -p | grep libQt5Gui >/dev/null && ldconfig -p | grep libQt5Core >/dev/null; then
-    echo "libQt5Core, libQt5Gui, libQt5Widgets and libQt5PrintSupport found in the system."
+if (pkg-config --exists QtCore && pkg-config --exists QtGui && pkg-config --exists QtWidgets && pkg-config --exists QtPrintSupport); then
+    echo "QtCore, QtGui, QtWidgets and QtPrintSupport found in the system."
 else
-    whiptail --title "Missing Qt5 libraries" --msgbox "Some Qt5 libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60
+    whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60
     exit 1
 fi
-if ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null; then
+if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
     echo "GCC libraries found in the system."
 else
     whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 60
