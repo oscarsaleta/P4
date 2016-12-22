@@ -43,14 +43,14 @@ echo "=== Checking for dependencies..."
 if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
     echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
 else
-    whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 60
+    whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
     echo "Missing Qt modules which are needed for compiling the source code."
     exit 1
 fi
 if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
     echo "GCC libraries found in the system."
 else
-    whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 60
+    whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
     echo "Missing gcc libraries which are needed for compiling the source code."
     exit 1
 fi
@@ -75,7 +75,7 @@ if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
 fi
 if ! $QMAKE -r P4.pro >$OUT 2>$ERR; then
-    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\nor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5. In this case, run\n\nenv QMAKE=/path/to/qmake ./bootstrap.sh\n\n(where /path/to/qmake should be replaced by the actual path or command of qmake in your system." 20 60
+    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\nor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5. In this case, run\n\nenv QMAKE=/path/to/qmake ./bootstrap.sh\n\n(where /path/to/qmake should be replaced by the actual path or command of qmake in your system." 20 80
     echo "Error, check that $QMAKE is a valid command."
     exit 1
 fi
