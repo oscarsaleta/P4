@@ -152,7 +152,6 @@ void delete_term1( P4POLYNOM1 p )
 void delete_term2( P4POLYNOM2 p )
 {
     P4POLYNOM2 q;
-
     while( p != nullptr )
     {
         q = p;

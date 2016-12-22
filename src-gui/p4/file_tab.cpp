@@ -138,7 +138,6 @@ void QVFStudy::deleteVF()
     vec_field_C[0] = nullptr;      vec_field_C[1] = nullptr;
 
     // Delete singular points
-
     deleteSaddle( first_saddle_point );
     deleteSemiElementary( first_se_point );
     deleteNode( first_node_point );
@@ -204,12 +203,10 @@ void QVFStudy::deleteVF()
 void QVFStudy::deleteSaddle( saddle * p )
 {
     saddle * q;
-
     while( p != nullptr )
     {
         q = p;
         p = p->next_saddle;
-    
         delete_term2( q->vector_field[0] );
         delete_term2( q->vector_field[1] );
         if( q->notadummy )
@@ -444,7 +441,6 @@ bool QVFStudy::readTables( QString basename )
     int flag;
 
     deleteVF();     // initialize structures, delete previous vector field if any
-
     fp = fopen( QFile::encodeName( basename + "_vec.tab" ), "rt" );
     if( fp == nullptr )
     {
@@ -460,6 +456,7 @@ bool QVFStudy::readTables( QString basename )
         fclose(fp);
         return false;
     }
+
 
     if( typeofstudy == TYPEOFSTUDY_ONE )
     {
@@ -560,6 +557,7 @@ bool QVFStudy::readTables( QString basename )
 
     if( typeofstudy != TYPEOFSTUDY_INF )
     {
+
         fp = fopen( QFile::encodeName( basename + "_fin.tab" ), "rt" );
         if( fp != nullptr )
         {

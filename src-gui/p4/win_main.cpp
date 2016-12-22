@@ -278,6 +278,7 @@ void QStartDlg::OnPlot( void )
 
     VFResults.setupCoordinateTransformations();
 
+
     if( Plot_Window == nullptr )
     {
         Plot_Window = new QPlotWnd( this );

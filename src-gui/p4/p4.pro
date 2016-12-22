@@ -7,6 +7,7 @@ CONFIG += qt
 CONFIG += static
 CONFIG += c++14
 CONFIG += fwhopr
+CONFIG += console
 
 DESTDIR = $$BUILD_DIR/p4/
 
