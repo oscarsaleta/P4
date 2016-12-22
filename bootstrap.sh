@@ -66,6 +66,7 @@ else
 fi
 rm -rf build p4 $DEST
 if ! make distclean >$OUT 2>$ERR; then
+    echo "Nothing to clean."
 fi
 echo "Running qmake..."
 if [ -z ${QMAKE+x} ]; then
