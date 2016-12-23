@@ -3,6 +3,7 @@ set -e
 
 echo "======== COMPILATION AND INSTALLATION OF P4 ========"
 if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
+
 If you want a more verbose output (in order to see possible errors during compilation), execute this script using the following command:
 
 env VERBOSE=1 ./bootstrap.sh
@@ -14,7 +15,8 @@ fi
 
 echo "=== Checking for older P4 versions..."
 if [ -d $HOME/p4 ]; then
-    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4. Do you want to remove it?" 20 60; then
+    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4.
+Do you want to remove it?" 20 60; then
         UNINSTALLED=true
         rm -rf $HOME/p4
         if [ -f $HOME/.local/share/applications/p4.desktop ]; then
@@ -23,7 +25,8 @@ if [ -d $HOME/p4 ]; then
     fi
 fi
 if [ -d /usr/local/p4 ]; then
-    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/local/p4. Do you want to remove it?" 20 60; then
+    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/local/p4.
+Do you want to remove it?" 20 60; then
         UNINSTALLED=true
         sudo rm -rf /usr/local/p4
         sudo rm -f /usr/local/bin/p4
@@ -33,7 +36,8 @@ if [ -d /usr/local/p4 ]; then
     fi
 fi
 if [ -d /usr/opt/p4 ]; then
-    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/opt/p4. Do you want to remove it?" 20 60; then
+    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/opt/p4.
+Do you want to remove it?" 20 60; then
         UNINSTALLED=true
         sudo rm -rf /usr/opt/p4
         sudo rm -f /usr/bin/p4
@@ -139,9 +143,9 @@ echo .\$(echo \$0)rc
 And edit that file." 20 80
 echo "Done."
 echo "[Optional] add to the end of .${SHELL:5}rc (or preferred shell configuration script):"
-echo "P4_DIR=$INSTALLDIR"
-echo "PATH=$INSTALLDIR/bin:\$PATH"
-echo "export P4_DIR PATH"
+echo "  P4_DIR=$INSTALLDIR"
+echo "  PATH=$INSTALLDIR/bin:\$PATH"
+echo "  export P4_DIR PATH"
 else
     sudo mv p4 /usr/local
     INSTALLDIR=/usr/local/p4
@@ -159,8 +163,8 @@ echo .\$(echo \$0)rc
 And edit that file." 20 80
 echo "Done."
 echo "[Optional] add to the end of .${SHELL:5}rc (or preferred shell configuration script):"
-echo "P4_DIR=$INSTALLDIR"
-echo "export P4_DIR"
+echo "  P4_DIR=$INSTALLDIR"
+echo "  export P4_DIR"
 fi
 
 
