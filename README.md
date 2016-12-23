@@ -31,6 +31,11 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 ### Linux
 
 * **Installation with `compile_install_linux` or compilation from source using `qmake`:**
+    - Git: must have to work with *git projects*:
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install git`
+        + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install git`
+        + Arch-based (Archlinux/Antergos): `sudo pacman -S git`
+        + (See the <a href="https://wiki.archlinux.org/index.php/git">git ArchWiki page</a> for more information and configuration instructions).
 	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt install qt5-default`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install qt5*-devel --allowerasing`
