@@ -7,13 +7,6 @@ addboiler.sh
 *.moc.cc
 moc_*.cpp
 *.tar.gz
-autom4te.cache
-config.h
-config.h.in~
-config.log
-config.status
-*.deps
-stamp-h1
 
 binaries/Windows/p4_windows_*
 binaries/Linux/deb
@@ -26,3 +19,7 @@ src-gui/p4/p4
 src-gui/lyapunov/lyapunov
 src-gui/separatrice/separatrice
 
+src-mpl/mplstrip/mplstrip
+src-mpl/mplstrip/texput.log
+
+build
