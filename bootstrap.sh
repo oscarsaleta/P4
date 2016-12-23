@@ -2,34 +2,40 @@
 set -e
 
 echo "======== COMPILATION AND INSTALLATION OF P4 ========"
+if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
+If you want a more verbose output (in order to see possible errors during compilation), execute this script using the following command:
+
+env VERBOSE=1 ./bootstrap.sh
+
+Select <Continue> to go on with the installation or <Exit> to quit." 20 60; then
+    echo "Program exited."
+    exit 1
+fi
 
 echo "=== Checking for older P4 versions..."
 if [ -d $HOME/p4 ]; then
-    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4. Do you want to remove it?" 20 60
-    then
+    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4. Do you want to remove it?" 20 60; then
+        UNINSTALLED=true
         rm -rf $HOME/p4
-        if test -f $HOME/.local/share/applications/p4.desktop
-        then
+        if [ -f $HOME/.local/share/applications/p4.desktop ]; then
             rm -f $HOME/.local/share/applications/p4.desktop
         fi
     fi
 fi
 if [ -d /usr/local/p4 ]; then
-    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/local/p4. Do you want to remove it?" 20 60
-    then
+    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/local/p4. Do you want to remove it?" 20 60; then
+        UNINSTALLED=true
         sudo rm -rf /usr/local/p4
-        if test -f /usr/share/applications/p4.desktop
-        then
+        sudo rm -f /usr/local/bin/p4
+        if [ -f /usr/share/applications/p4.desktop ]; then
             sudo rm -f /usr/share/applications/p4.desktop
         fi
-        if test -f /usr/local/bin/p4
-        then
-            sudo rm -f /usr/local/bin/p4
-        fi
     fi
-else
+fi
+if [ !$UNINSTALLED ]; then
     echo "No older P4 version found."
 fi
+
 if [ -d $HOME/.config/P4 ]; then
     if whiptail --title "Uninstalling older versions" --yesno --defaultno "Do you want to remove P4 configuration?" 20 60; then
         if test -d $HOME/.config/P4; then
@@ -43,14 +49,21 @@ echo "=== Checking for dependencies..."
 if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
     echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
 else
-    whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
+    whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. nstall #them using the proper method for your distribution, e.g.:
+
+- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
     echo "Missing Qt modules which are needed for compiling the source code."
     exit 1
 fi
 if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
     echo "GCC libraries found in the system."
 else
-    whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
+    whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
+- Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
     echo "Missing gcc libraries which are needed for compiling the source code."
     exit 1
 fi
@@ -75,40 +88,65 @@ if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
 fi
 if ! $QMAKE -r P4.pro >$OUT 2>$ERR; then
-    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:\n\n - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\nor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5. In this case, run\n\nenv QMAKE=/path/to/qmake ./bootstrap.sh\n\n(where /path/to/qmake should be replaced by the actual path or command of qmake in your system." 20 80
+    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base
+
+or that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run
+
+env QMAKE=/path/to/qmake ./bootstrap.sh
+
+(where /path/to/qmake should be replaced by the actual path or command of qmake in your system)." 20 80
     echo "Error, check that $QMAKE is a valid command."
     exit 1
 fi
 
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
-echo "Compiling... Will use $CPUCNT jobs for make"
+echo "Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
 make -j$CPUCNT >$OUT 2>$ERR
 make install >$OUT 2>$ERR
 echo "Done."
 
 echo "=== Installing P4..."
-if whiptail --title "Install P4" --yesno --yes-button "User" --no-button "Root" "Where do you want to install P4?\n\nUser: $HOME/p4\nRoot: /usr/local/p4" 20 60; then
+if whiptail --title "Install P4" --yesno --yes-button "User" --no-button "Root" "Where do you want to install P4?
+
+    User: $HOME/p4
+    Root: /usr/local/p4" 20 60; then
     mv p4 $HOME/
     INSTALLDIR=$HOME/p4
     ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
-    if whiptail --title "Create shortcut?" --yesno "Do you want to create an alias for executing P4 from the terminal?\nIf not, you will be able to execute it by typing\n\n ~/p4/bin/p4\n\nin the command line." 20 60; then
-        if ! grep $HOME/.profile -e "P4_DIR" >/dev/null; then
-            echo "P4_DIR=$HOME/p4/" >> $HOME/.profile
-            echo "export P4_DIR" >> $HOME/.profile
-            echo "export PATH=$HOME/p4/bin:$PATH" >> $HOME/.profile
-            source $HOME/.profile
-        fi
-    fi
+    whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably .${SHELL:5}rc):
+
+P4_DIR=$INSTALLDIR
+PATH=$INSTALLDIR/bin:\$PATH
+export P4_DIR PATH
+
+In case you don't know which shell you're using, open a terminal and execute this command:
+
+echo .\$(echo \$0)rc
+
+And edit that file." 20 80
 else
     sudo mv p4 /usr/local
     INSTALLDIR=/usr/local/p4
     sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
     sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
+    whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably .${SHELL:5}rc):
+
+P4_DIR=$INSTALLDIR
+export P4_DIR
+
+In case you don't know which shell you're using, open a terminal and execute this command:
+
+echo .\$(echo \$0)rc
+
+And edit that file." 20 80
 fi
 echo "Done."
+#
+#echo "=== Finished."
 
-echo "=== Finished."
-echo "Relogging might be necessary for the PATH variable to refresh."
 
 #if ($INSTALLED)
 #then
