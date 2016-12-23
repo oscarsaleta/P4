@@ -49,7 +49,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 	
 ### Windows
 
-* **Installation using setup**:
+* **Installation using `P4setup.exe`**:
 	- Dependencies are taken care of.
 * **Compilation from source using Qt Creator:**
 	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested).
