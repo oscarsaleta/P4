@@ -119,6 +119,19 @@ fi
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
 make -j$CPUCNT >$OUT 2>$ERR
+if [ -f src-mpl/p4.m ]; then
+    if whiptail --title "Recompile Maple scripts" --yesno --defaultno "Do you want to recompile Maple scripts from src-mpl?
+If your Maple version is Maple 2015, this is not necessary." 20 60; then
+        echo "Recompiling Maple scripts..."
+        cd src-mpl
+        make -f MakeTexMaple clean >$OUT 2>$ERR
+        cd ..
+        make -C src-mpl p4.m >$OUT 2>$ERR
+    fi
+else
+    echo "Compiling Maple scripts..."
+    make -C src-mpl p4.m >$OUT 2>$ERR
+fi
 make install >$OUT 2>$ERR
 echo "Done."
 
