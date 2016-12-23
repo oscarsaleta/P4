@@ -1,31 +1,33 @@
 #!/bin/bash
 
-VERSION="$(awk '/VERSION.*".*"/{print $NF}' ~/git/P4/src-gui/version.h | awk -F'"' '$0=$2')"
+VERSION="$(awk '/VERSION.*".*"/{print $NF}' ~/git/P4/QtCreator/version.h | awk -F'"' '$0=$2')"
 DIR=p4_windows_$VERSION/p4
 DIRWIN="p4_windows_$VERSION\p4"
-$(rm -r $DIR)
+rm -r $DIR
 
-$(mkdir -p $DIR/bin $DIR/help $DIR/sum_tables $DIR/sumtables)
-$(chmod 777 $DIR/sum_tables)
+mkdir -p $DIR/bin $DIR/help $DIR/sum_tables $DIR/sumtables
+chmod 777 $DIR/sumtables
 
-$(cp ~/git/P4/src-mpl/p4*m $DIR/bin/)
-$(cp ~/git/P4/src-gui/build-p4-Windows-Release/release/p4.exe $DIR/bin/)
-$(cp ~/git/P4/src-gui/build-lyapunov-Windows-Release/release/lyapunov.exe $DIR/bin/)
-$(cp ~/git/P4/src-gui/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/)
-$(cp ~/git/P4/help/*.* $DIR/help/)
-$(cp -r ~/git/P4/help/screenshots/ $DIR/help/)
-$(cp ~/git/P4/help/p4_flag.png $DIR/bin/portrait.png)
-#$(cp ~/git/P4/help/p4smallicon.png $DIR/bin/)
-#$(cp ~/git/P4/help/p4smallicon.ico $DIR/bin/)
-$(cp ~/git/P4/help/newp4icon.png $DIR/bin/p4smallicon.png)
-$(cp ~/git/P4/help/newp4icon.ico $DIR/bin/p4smallicon.ico)
+cp ../../src-mpl/p4*m $DIR/bin/
+cp ../../QtCreator/build-p4-Windows-Release/release/p4.exe $DIR/bin/
+cp ../../QtCreator/build-lyapunov-Windows-Release/release/lyapunov.exe $DIR/bin/
+cp ../../QtCreator/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/
+cp ../../help/*.* $DIR/help/
+cp -r ../../help/screenshots/ $DIR/help/
+cp ../../help/p4_flag.png $DIR/bin/portrait.png
+#cp ../../help/p4smallicon.png $DIR/bin/
+#cp ../../help/p4smallicon.ico $DIR/bin/
+cp ../../help/newp4icon.png $DIR/bin/p4smallicon.png
+cp ../../help/newp4icon.ico $DIR/bin/p4smallicon.ico
 
 # solve dlls
 "C:\Qt\5.7\msvc2015_64\bin\windeployqt.exe" $DIR/bin/p4.exe
 
 # create setup script
 SCRIPTNAME=inno_script.iss
-[[ -f $SCRIPTNAME ]] && rm $SCRIPTNAME
+if [ -f $SCRIPTNAME ]; then
+    rm $SCRIPTNAME
+fi
 echo '#define MyAppName "P4"' >> $SCRIPTNAME
 echo '#define MyAppVersion "'$VERSION'"' >> $SCRIPTNAME
 echo '#define MyAppPublisher "UAB-UHasselt"' >> $SCRIPTNAME
