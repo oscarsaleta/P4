@@ -38,7 +38,7 @@ echo '[Setup]' >> $SCRIPTNAME
 echo '; NOTE: The value of AppId uniquely identifies this application.' >> $SCRIPTNAME
 echo '; Do not use the same AppId value in installers for other applications.' >> $SCRIPTNAME
 echo '; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)' >> $SCRIPTNAME
-echo 'AppId={1567A622-CF41-4DB9-A4EF-998D3DE1E50A}' >> $SCRIPTNAME
+echo 'AppId={{1567A622-CF41-4DB9-A4EF-998D3DE1E50A}' >> $SCRIPTNAME
 echo 'AppName={#MyAppName}' >> $SCRIPTNAME
 echo 'AppVersion={#MyAppVersion}' >> $SCRIPTNAME
 echo ';AppVerName={#MyAppName} {#MyAppVersion}' >> $SCRIPTNAME
