@@ -1,0 +1,77 @@
+/*  P4 (Polynomial Planar Phase Portraits) GUI SOURCE CODE
+ *  Software to study polynomial planar differential systems and represent
+ *  their phase portrait in several spaces, such as Poincaré sphere. 
+ *  URL: http://github.com/oscarsaleta/P4
+ *
+ *  Copyright (C) 1996-2016  J.C. Artés, C. Herssens, P. De Maesschalck,
+ *                           F. Dumortier, J. Llibre, O. Saleta
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef WIN_SETTINGS_H
+#define WIN_SETTINGS_H
+
+
+#include <QBoxLayout>
+#include <QDialog>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QString>
+#include <QWidget>
+
+
+class QSettingsDlg : public QDialog
+{
+Q_OBJECT
+
+private:
+    QPushButton * btn_base;
+    QPushButton * btn_sum;
+    QPushButton * btn_temp;
+    QPushButton * btn_maple;
+    QPushButton * btn_red;
+    QPushButton * btn_ok;
+    QPushButton * btn_reset;
+    QPushButton * btn_cancel;
+    QLineEdit * edt_base;
+    QLineEdit * edt_sum;
+    QLineEdit * edt_temp;
+    QLineEdit * edt_maple;
+    QLineEdit * edt_red;
+    QLabel * lbl_base;
+    QLabel * lbl_sum;
+    QLabel * lbl_temp;
+    QLabel * lbl_maple;
+    QLabel * lbl_red;
+    QBoxLayout * mainLayout;
+
+public:
+    QSettingsDlg( QWidget *, Qt::WindowFlags );
+    void BrowseForExistingPathOrFile( QLineEdit *, QString, bool );
+
+public slots:
+    void OnOk( void );
+    void OnCancel( void );
+    void OnReset( void );
+    void OnBrowseBase( void );
+    void OnBrowseSum( void );
+    void OnBrowseTemp( void );
+    void OnBrowseMaple( void );
+    void OnBrowseReduce( void );
+};
+
+
+#endif /* WIN_SETTINGS_H */
