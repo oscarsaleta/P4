@@ -1,19 +1,49 @@
 #!/bin/bash
 set -e
 
-echo "======== COMPILATION AND INSTALLATION OF P4 ========"
-if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
-
-If you want a more verbose output (in order to see possible errors during compilation), execute this script using the following command:
-
-env VERBOSE=1 ./bootstrap.sh
-
-Select <Continue> to go on with the installation or <Exit> to quit." 20 60; then
-    echo "Program exited."
-    exit 1
+# check input variables
+if [ "$1" = "verbose" ] || [ "$2" = "verbose" ]; then
+    VERBOSE=true
+else
+    VERBOSE=false
+fi
+if [ "$1" = "uninstall" ] || [ "$2" = "uninstall" ]; then
+    ONLYUNINSTALL=true
+else
+    ONLYUNINSTALL=false
 fi
 
+# Title
+if [ $ONLYUNINSTALL = false ]; then
+    echo "========================================"
+    echo "|| COMPILATION AND INSTALLATION OF P4 ||"
+    echo "========================================"
+    # Welcome screen
+    if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
+
+    If you want a more VERBOSE OUTPUT (in order to see possible errors during compilation), execute this script using the following command:
+
+    ./bootstrap.sh verbose
+
+    If you want to only UNINSTALL P4, execute this script using the following command:
+
+    ./bootstrap.sh uninstall
+
+    These options can be used together in any given order.
+
+    Select <Continue> to go on with the installation or <Exit> to quit." 25 60; then
+        echo "Program exited."
+        exit 1
+    fi
+else
+    echo "========================"
+    echo "|| UNINSTALLER FOR P4 ||"
+    echo "========================"
+fi
+
+# Uninstalling
 echo "=== Checking for older P4 versions..."
+UNINSTALLED=false
 if [ -d $HOME/p4 ]; then
     if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4.
 Do you want to remove it?" 20 60; then
@@ -46,7 +76,7 @@ Do you want to remove it?" 20 60; then
         fi
     fi
 fi
-if [ !$UNINSTALLED ]; then
+if [ $UNINSTALLED = false ]; then
     echo "No older P4 version found."
 fi
 
@@ -59,6 +89,12 @@ if [ -d $HOME/.config/P4 ]; then
 fi
 echo "Done."
 
+# After uninstalling, check if we want to continue
+if [ $ONLYUNINSTALL = true ]; then
+    exit 0;
+fi
+
+# Check for dependencies
 echo "=== Checking for dependencies..."
 if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
     echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
@@ -83,10 +119,11 @@ else
 fi
 echo "Done."
 
+# Compile
 echo "=== Compiling P4..."
 whiptail --infobox --title "Compiling P4..." "Compiling P4, be patient!" 20 60
 echo "Cleaning old builds..."
-if [ -z ${VERBOSE+x} ]; then
+if [ $VERBOSE = false ]; then
     OUT=/dev/null
     ERR=/dev/null
 else
@@ -115,7 +152,7 @@ env QMAKE=/path/to/qmake ./bootstrap.sh
     echo "Error, check that $QMAKE is a valid command."
     exit 1
 fi
-
+# Use multicore make for faster compilation
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
 make -j$CPUCNT >$OUT 2>$ERR
@@ -135,6 +172,7 @@ fi
 make install >$OUT 2>$ERR
 echo "Done."
 
+# Install
 echo "=== Installing P4..."
 if whiptail --title "Install P4" --yesno --yes-button "User" --no-button "Root" "Where do you want to install P4?
 
