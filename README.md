@@ -9,6 +9,8 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 ## Installation
 
+Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page</a> to see more detailed instructions and download links.
+
 ### Linux
 
 0. Check <a href="#dependencies">dependencies</a>,
@@ -114,8 +116,8 @@ The executable files have to be put in the following tree somewhere in the file 
 * **Windows**: in a folder named p4:
     * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
     * p4\help: contents of **P4\help** folder,
-    * p4\sumtables: empty folder used by P4 to store some files (.
-    * p4\sum_tables: 
+    * p4\sumtables: empty folder used by P4 to store some files (**user must have read/write permissions on this folder**).
+    * p4\sum_tables: shortcut to p4\sumtables.
 
 ## Contributors
 
