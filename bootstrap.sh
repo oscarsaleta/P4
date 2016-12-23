@@ -32,6 +32,16 @@ if [ -d /usr/local/p4 ]; then
         fi
     fi
 fi
+if [ -d /usr/opt/p4 ]; then
+    if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/opt/p4. Do you want to remove it?" 20 60; then
+        UNINSTALLED=true
+        sudo rm -rf /usr/opt/p4
+        sudo rm -f /usr/bin/p4
+        if [ -f /usr/share/applications/p4.desktop ]; then
+            sudo rm -f /usr/share/applications/p4.desktop
+        fi
+    fi
+fi
 if [ !$UNINSTALLED ]; then
     echo "No older P4 version found."
 fi
@@ -80,9 +90,9 @@ else
     ERR=/dev/stderr
 fi
 rm -rf build p4 $DEST
-if ! make distclean >$OUT 2>$ERR; then
-    echo "Nothing to clean."
-fi
+#if ! make distclean >$OUT 2>$ERR; then
+#    echo "Nothing to clean."
+#fi
 echo "Running qmake..."
 if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
@@ -127,6 +137,11 @@ In case you don't know which shell you're using, open a terminal and execute thi
 echo .\$(echo \$0)rc
 
 And edit that file." 20 80
+echo "Done."
+echo "[Optional] add to the end of .${SHELL:5}rc (or preferred shell configuration script):"
+echo "P4_DIR=$INSTALLDIR"
+echo "PATH=$INSTALLDIR/bin:\$PATH"
+echo "export P4_DIR PATH"
 else
     sudo mv p4 /usr/local
     INSTALLDIR=/usr/local/p4
@@ -142,10 +157,14 @@ In case you don't know which shell you're using, open a terminal and execute thi
 echo .\$(echo \$0)rc
 
 And edit that file." 20 80
-fi
 echo "Done."
-#
-#echo "=== Finished."
+echo "[Optional] add to the end of .${SHELL:5}rc (or preferred shell configuration script):"
+echo "P4_DIR=$INSTALLDIR"
+echo "export P4_DIR"
+fi
+
+
+echo "=== Finished."
 
 
 #if ($INSTALLED)
