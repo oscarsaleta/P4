@@ -33,7 +33,7 @@
 // -----------------------------------------------------------------------
 //
 // This file implements the selection of a critical point, when the
-// user clicks with the mouse inside the plot window.  The nearesst singularity
+// user clicks with the mouse inside the plot window.  The nearest singularity
 // having separatrices is searched, the corresponding separatrice is selected
 // and the separatrice window is set up so that it handes this separatrice.
 //

@@ -228,7 +228,7 @@ double part_lyapunov_coeff( char * s, int k )
 	char a[ DIM1 ];
 	double v[ 2 ], w;
 
-    fprintf(stderr,"k=%d\n",k);
+    //fprintf(stderr,"k=%d\n",k);
     for ( i = 0;s[ i ];i++ )
 	{
         if ( s[ i ] == ',' )
