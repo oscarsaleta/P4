@@ -4,7 +4,7 @@ include(../../P4.pri)
 #
 DESTDIR = $$BUILD_DIR/lyapunov/
 
-CONFIG  +=  console c++14
+CONFIG  +=  console c++11
 QMAKE_CXXFLAGS += -g -O2
 QMAKE_CFLAGS += -g -O2
 QMAKE_LFLAGS += -g -O1

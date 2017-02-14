@@ -5,7 +5,7 @@ QT += widgets
 QT += printsupport
 CONFIG += qt
 CONFIG += static
-CONFIG += c++14
+CONFIG += c++11
 CONFIG += fwhopr
 CONFIG += console
 

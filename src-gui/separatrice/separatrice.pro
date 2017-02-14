@@ -4,6 +4,6 @@ include(../../P4.pri)
 #
 DESTDIR = $$BUILD_DIR/separatrice/
 
-CONFIG  = console c++14
+CONFIG  = console c++11
 HEADERS = ../version.h
 SOURCES = separatrice.cpp
