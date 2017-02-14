@@ -257,25 +257,25 @@ double part_lyapunov_coeff( char * s, int k )
 	}
 	if ( ok )
 	{
-        fprintf(stderr, "k=%d\n", k);
+        //fprintf(stderr, "k=%d\n", k);
 
-        for( i = 0; i <= t; i++ )
-        {
-            fprintf(stderr, "R[%d] = ",i);
-            DEBUG_POLY(R[i]);
-            fprintf(stderr, "\n");
-        }
+        //for( i = 0; i <= t; i++ )
+        //{
+            //fprintf(stderr, "R[%d] = ",i);
+            //DEBUG_POLY(R[i]);
+            //fprintf(stderr, "\n");
+        //}
 
         f = ( poly * ) malloc( sizeof( poly ) );
         f->next_poly = nullptr;
         //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
 		ins_poly( f, 0, 0, -1.0, 0.0 ); /* f=-1 */
         //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
-        fprintf(stderr, "f = ");        DEBUG_POLY(f);        fprintf(stderr, "\n");
+        //fprintf(stderr, "f = ");        DEBUG_POLY(f);        fprintf(stderr, "\n");
         for ( i = 0;i < t;i++ )
         {
-            fprintf(stderr, "t=%d\n",t);
-            fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
+            //fprintf(stderr, "t=%d\n",t);
+            //fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
             if ( i % 2 ){
 				Regz( f, R[ i ] );
                 //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
@@ -284,7 +284,7 @@ double part_lyapunov_coeff( char * s, int k )
 				Imgz( f, R[ i ] );
                 //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
             }
-            fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
+            //fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
         }
 		if ( t % 2 )
 		{
@@ -292,22 +292,22 @@ double part_lyapunov_coeff( char * s, int k )
             //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
 			LL( f, R[ t ], ( k - 1 ) / 2, v );
             //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
-            fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
+            //fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
 			w = v[ 1 ];
 		}
 		else
 		{
 			LL( f, R[ t ], ( k - 1 ) / 2, v );
             //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
-            fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
+            //fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
             w = v[ 0 ];
 		}
-        fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
+        //fprintf(stderr, "f%d = ",i);        DEBUG_POLY(f);        fprintf(stderr, "\n");
         //fprintf(stderr,"degz:%d,degzb:%d, re:%g, im:%g, next:%d\n",f->degz,f->degzb,f->re,f->im,f->next_poly);
         delete_poly( &f );
 	}
 	else
 		w = 0.0;
-    printf( "w = %f\n", w);
+    //printf( "w = %f\n", w);
 	return w;
 }
