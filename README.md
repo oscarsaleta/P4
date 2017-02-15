@@ -43,7 +43,7 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 	- `qmake` (version 3.0 recommended):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt install qt5-qmake`
         + Other distros: already installed if you followed the install instructions for Qt 5.
-	- C++ compiler: `g++` (version >= 4.9 recommended):
+	- C++ compiler: `g++` (version >= 4.9 recommended, must support the **C++11** standard):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt install gcc g++`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf group install 'Development Tools'`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S gcc`
