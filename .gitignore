@@ -21,5 +21,9 @@ src-gui/separatrice/separatrice
 
 src-mpl/mplstrip/mplstrip
 src-mpl/mplstrip/texput.log
+src-mpl/*.log
+src-mpl/*.aux
+src-mpl/*.pdf
+src-mpl/*.gz
 
 build
