@@ -1,12 +1,9 @@
-/*  P4 (Polynomial Planar Phase Portraits) GUI SOURCE CODE
- *  Software to study polynomial planar differential systems and represent
- *  their phase portrait in several spaces, such as Poincaré sphere. 
- *  URL: http://github.com/oscarsaleta/P4
+/*  This file is part of P4
  *
  *  Copyright (C) 1996-2016  J.C. Artés, C. Herssens, P. De Maesschalck,
  *                           F. Dumortier, J. Llibre, O. Saleta
  *
- *  This program is free software: you can redistribute it and/or modify
+ *  P4 is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
@@ -33,7 +30,7 @@
 // -----------------------------------------------------------------------
 //
 // This file implements the selection of a critical point, when the
-// user clicks with the mouse inside the plot window.  The nearesst singularity
+// user clicks with the mouse inside the plot window.  The nearest singularity
 // having separatrices is searched, the corresponding separatrice is selected
 // and the separatrice window is set up so that it handes this separatrice.
 //

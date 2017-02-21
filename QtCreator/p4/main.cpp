@@ -6,7 +6,7 @@
  *  Copyright (C) 1996-2016  J.C. Artés, C. Herssens, P. De Maesschalck,
  *                           F. Dumortier, J. Llibre, O. Saleta
  *
- *  This program is free software: you can redistribute it and/or modify
+ *  P4 is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published
  *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
