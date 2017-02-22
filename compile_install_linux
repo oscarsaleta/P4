@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #  This file is part of P4
 # 
 #  Copyright (C) 1996-2016  J.C. Artés, C. Herssens, P. De Maesschalck,
@@ -16,7 +18,6 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/bin/bash
 set -e
 
 # check input variables
@@ -125,21 +126,26 @@ else
     echo "Missing Qt modules which are needed for compiling the source code."
     exit 1
 fi
-if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
-    echo "GCC libraries found in the system."
+if (ldconfig --version >/dev/null)
+    if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
+        echo "GCC libraries found in the system."
+    else
+        whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
+    - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
+        echo "Missing gcc libraries which are needed for compiling the source code."
+        exit 1
+    fi
 else
-    whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
-- Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++
-- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
-- Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
-    echo "Missing gcc libraries which are needed for compiling the source code."
+    echo "Cannot execute command ldconfig, make sure it is available and you have permission to use this command."
     exit 1
 fi
 echo "Done."
 
 # Compile
 echo "=== Compiling P4..."
-whiptail --infobox --title "Compiling P4..." "Compiling P4, be patient!" 20 60
+whiptail --infobox --title "Compiling P4..." "Compiling P4, this could take several minutes!" 20 60
 echo "Cleaning old builds..."
 if [ $VERBOSE = false ]; then
     OUT=/dev/null
@@ -164,10 +170,19 @@ if ! $QMAKE -r P4.pro >$OUT 2>$ERR; then
 
 or that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run
 
-env QMAKE=/path/to/qmake ./bootstrap.sh
+env QMAKE=/path/to/qmake ./compile_install_linux --verbose
 
 (where /path/to/qmake should be replaced by the actual path or command of qmake in your system)." 20 80
-    echo "Error, check that $QMAKE is a valid command."
+    echo "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base
+
+or that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run
+
+env QMAKE=/path/to/qmake ./compile_install_linux --verbose
+
+(where /path/to/qmake should be replaced by the actual path or command of qmake in your system)."
     exit 1
 fi
 # Use multicore make for faster compilation
