@@ -115,7 +115,7 @@ fi
 
 # Check for dependencies
 echo "=== Checking for dependencies..."
-if (pkg-config --version); then
+if (pkg-config --version >/dev/null); then
     if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
         echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
     else
