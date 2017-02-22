@@ -136,7 +136,7 @@ else
 
     - Debian-based (Debian/Ubuntu/Mint): sudo apt install pkg-config
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
-    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
+    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config" 20 80
     echo "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
 
     - Debian-based (Debian/Ubuntu/Mint): sudo apt install pkg-config
