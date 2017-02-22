@@ -124,7 +124,7 @@ if (pkg-config --version)
     - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
     - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
-        echo "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
+        echo "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
 
     - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
