@@ -115,15 +115,33 @@ fi
 
 # Check for dependencies
 echo "=== Checking for dependencies..."
-if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
-    echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
-else
-    whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
+if (pkg-config --version)
+    if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
+        echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
+    else
+        whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
 
-- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
-- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
-- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
-    echo "Missing Qt modules which are needed for compiling the source code."
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+    - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
+        echo "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
+
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+    - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base"
+        exit 1
+    fi
+else
+    whiptail --title "Missing pkg-config" --msgbox "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
+
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt install pkg-config
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
+    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
+    echo "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
+
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt install pkg-config
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
+    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
     exit 1
 fi
 if (ldconfig --version >/dev/null)
