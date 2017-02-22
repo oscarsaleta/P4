@@ -29,5 +29,5 @@
 
 *************************************************************************/
 
-#define VERSION         "3.3.3"
-#define VERSIONDATE     "December, 2016"
+#define VERSION         "3.3.4"
+#define VERSIONDATE     "February, 2017"
