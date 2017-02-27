@@ -57,9 +57,9 @@ weak_focus := proc(f, x0, y0, chart)
     global hamiltonian;
     local stype, ff, aa10, aa01, bb10, s, g, _x, gg, lyp;
 
-    writef( "(%a,%a) is a weak focus.\n", x0, y0 );
+    writef( "(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0) );
     openfile( result_file );
-    writef( "(%a,%a) is a weak focus.\n", x0, y0 );
+    writef( "(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0) );
     openfile( terminal );
     if hamiltonian then
         writef( "Since the system is hamiltonian, we have a center.\n" );

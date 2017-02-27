@@ -194,7 +194,8 @@ find_real_roots := proc( f, x, y )
             s := [op(s),g[k]]
         fi;
     od;
-    s:=subs(I=0,evalf(s)):
+    #s:=subs(I=0,evalf(s)):
+    s:=coeff(expand(s),I,0):
 
     if nops(s) = 0 then writef( "No symbolic real singularities are found.\n" )
         else writef( "Symbolic real singularities:\n" );

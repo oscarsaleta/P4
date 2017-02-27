@@ -144,9 +144,9 @@ end:
 \begin{lstlisting}[name=type]
 saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
     local lambda1, lambda2, ff, g, g1, v1, v2, stable, sep1, sep2;
-    writef( "(%a,%a) is a saddle point.\n", x0, y0 );
+    writef( "(%a,%a) is a saddle point.\n", evalf(x0), evalf(y0) );
     openfile( result_file );
-    writef( "(%a,%a) is a saddle point.\n", x0, y0 );
+    writef( "(%a,%a) is a saddle point.\n", evalf(x0), evalf(y0) );
     openfile( terminal );
     lambda1 := (rho - sqrt(sigma))/2;
     lambda2 := (rho + sqrt(sigma))/2;
@@ -212,15 +212,15 @@ strong_focus := proc( sigma, rho, x0, y0, chart )
     lambda1 := (rho-sqrt(sigma))/2;
     lambda2 := (rho+sqrt(sigma))/2;
     if reduce_gt(rho,0) then
-        writef( "(%a,%a) is a strong unstable focus.\n", x0, y0 );
+        writef( "(%a,%a) is a strong unstable focus.\n", evalf(x0), evalf(y0) );
         openfile( result_file );
-        writef( "(%a,%a) is a strong unstable focus.\n", x0, y0 );
+        writef( "(%a,%a) is a strong unstable focus.\n", evalf(x0), evalf(y0) );
         openfile( terminal );
         L := 1;
     else
-        writef( "(%a,%a) is a strong stable focus.\n", x0, y0 );
+        writef( "(%a,%a) is a strong stable focus.\n", evalf(x0), evalf(y0) );
         openfile( result_file );
-        writef( "(%a,%a) is a strong stable focus.\n", x0, y0 );
+        writef( "(%a,%a) is a strong stable focus.\n", evalf(x0), evalf(y0) );
         openfile( terminal );
         L := -1;
     fi;
@@ -236,15 +236,15 @@ end:
 node := proc( f, sigma, rho, x0, y0, chart )
     local L;
     if reduce_llt( rho, 0 ) then
-        writef( "(%a,%a) is a stable node.\n", x0, y0 );
+        writef( "(%a,%a) is a stable node.\n", evalf(x0), evalf(y0) );
         openfile( result_file );
-        writef( "(%a,%a) is a stable node.\n", x0, y0 );
+        writef( "(%a,%a) is a stable node.\n", evalf(x0), evalf(y0) );
         openfile( terminal );
         L := -1;
     else
-        writef( "(%a,%a) is an unstable node.\n", x0, y0 );
+        writef( "(%a,%a) is an unstable node.\n", evalf(x0), evalf(y0) );
         openfile( result_file );
-        writef( "(%a,%a) is an unstable node.\n", x0, y0 );
+        writef( "(%a,%a) is an unstable node.\n", evalf(x0), evalf(y0) );
         openfile( terminal );
         L := 1;
     fi;
@@ -259,10 +259,10 @@ end:
 \begin{lstlisting}[name=type]
 degenerate := proc( f, x0, y0, chart )
     local trajectors;
-    writef( "(%a,%a) is a non-elementary point.\n", x0, y0 );
+    writef( "(%a,%a) is a non-elementary point.\n", evalf(x0), evalf(y0) );
     writef( "Blowing up the vector field...\n" );
     openfile( result_file );
-    writef( "(%a,%a) is a non-elementary point.\n", x0, y0 );
+    writef( "(%a,%a) is a non-elementary point.\n", evalf(x0), evalf(y0) );
     openfile( terminal );
     trajectors := blowing_up( f, x0, y0, true ); # 1 finite point
     writef( "########################################################\n" );
@@ -281,7 +281,7 @@ semi_elementary := proc( f, x0, y0, a, b, c, d, lambda2, chart )
     ff := translation( f, x, y, x0, y0 );
     g1 := transformation( ff, v1[1], v2[1], v1[2], v2[2] );
     g := normalization( g1 );
-    writef( "(%a,%a) is semi-hyperbolic.\nMoving this point to the origin.\n", x0, y0 );
+    writef( "(%a,%a) is semi-hyperbolic.\nMoving this point to the origin.\n", evalf(x0), evalf(y0) );
     writef( "The new vector field is %a\n", ff );
     writef( "Transform this vector field so that the linear part is diagonal.\n" );
     writef( "The new vector field is %a\n", g1 );
@@ -289,7 +289,7 @@ semi_elementary := proc( f, x0, y0, a, b, c, d, lambda2, chart )
     writef( "so that the new vector field is %a\n", g );
     writef( "We calculate the invariant separatrices\n" );
     openfile( result_file );
-    writef( "(%a,%a) is semi-hyperbolic.\n", x0, y0 );
+    writef( "(%a,%a) is semi-hyperbolic.\n", evalf(x0), evalf(y0) );
     if save_all then
         writef( "Moving this point to the origin.\n" );
         writef( "The new vector field is %a\n", ff );
