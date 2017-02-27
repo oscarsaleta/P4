@@ -8,6 +8,7 @@ addboiler.sh
 moc_*.cpp
 *.tar.gz
 
+binaries/Windows/P4setup.exe
 binaries/Windows/p4_windows_*
 binaries/Linux/deb
 binaries/Linux/tarballs/p4_linux_*
@@ -27,3 +28,5 @@ src-mpl/*.pdf
 src-mpl/*.gz
 
 build
+
+QtCreator/build*/
