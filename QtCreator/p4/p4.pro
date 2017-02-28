@@ -5,7 +5,7 @@ CONFIG += qt
 CONFIG += static
 CONFIG += c++11
 CONFIG += fwhopr
-CONFIG += console
+CONFIG -= console
 
 SOURCES += win_view.cpp \
     win_vf.cpp \
