@@ -33,9 +33,6 @@ cp ../../QtCreator/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/
 cp ../../help/*.* $DIR/help/
 cp -r ../../help/screenshots/ $DIR/help/
 cp ../../help/p4_flag.png $DIR/bin/portrait.png
-#cp ../../help/p4smallicon.png $DIR/bin/p4smallicon.png
-#cp ../../help/p4smallicon.ico $DIR/bin/p4smallicon.ico
-#cp ../../help/newp4icon.png $DIR/bin/p4smallicon.png
 cp ../../help/newp4icon.ico $DIR/bin/p4smallicon.ico
 
 # solve dlls
@@ -100,7 +97,6 @@ echo 'Source: "'$DIRWIN'\help\*"; DestDir: "{app}\help"; Flags: ignoreversion' >
 echo '; Icons' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\*.png"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\p4smallicon.ico"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
-#echo 'Source: "'$DIRWIN'\bin\p4bigicon.ico"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo '; VC Redist' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\vcredist_x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall' >> $SCRIPTNAME
 echo '; .dlls' >> $SCRIPTNAME
