@@ -33,8 +33,8 @@ cp ../../QtCreator/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/
 cp ../../help/*.* $DIR/help/
 cp -r ../../help/screenshots/ $DIR/help/
 cp ../../help/p4_flag.png $DIR/bin/portrait.png
-cp ../../help/p4smallicon.png $DIR/bin/
-cp ../../help/p4smallicon.ico $DIR/bin/
+cp ../../help/p4smallicon.png $DIR/bin/p4smallicon.png
+cp ../../help/p4smallicon.ico $DIR/bin/p4smallicon.ico
 #cp ../../help/newp4icon.png $DIR/bin/p4smallicon.png
 #cp ../../help/newp4icon.ico $DIR/bin/p4smallicon.ico
 
