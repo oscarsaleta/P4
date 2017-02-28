@@ -42,6 +42,15 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 2. Execute installer and follow the instructions,
 3. Done!
 
+## Files
+
+* **src-gui**:
+    * **p4**: C++/Qt source code for the GUI of P4,
+    * **lyapunov**: C++ code for numerical computation of Lyapunov constants
+    * **separatrice**: C++ code for numerical computation of separatrices
+* **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
+* **help**: Help files in *.html* format and supporting images.
+
 ## Dependencies
 
 **Maple must be installed in the computer in order to use P4.**
@@ -86,16 +95,6 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 	- C++ compiler: Microsoft Visual C++ (tested with version 14.0).
         + Download from <a href="https://www.visualstudio.com/vs/cplusplus/#downloadvs">Visual Studio Community</a>.
 
-## Files
-
-* **src-gui**:
-    * **p4**: C++/Qt source code for the GUI of P4,
-    * **lyapunov**: C++ code for numerical computation of Lyapunov constants
-    * **separatrice**: C++ code for numerical computation of separatrices
-* **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
-* **help**: Help files in *.html* format and supporting images.
-* **binaries**: latest compiled version of P4 for both Linux and Windows operative systems (64-bit only).
-
 ## Manually build P4 from source
 
 ### Build using `qmake`
@@ -106,9 +105,12 @@ Qt's `qmake` makes it easy to compile the whole project with two commands.
 * From this same directory, run `make` to compile **p4**, **lyapunov** and **separatrice**.
     - The output of the compilation will be found in a new directory named *build*.
     - The `make` command also compiles **mplstrip**, which is a C++ program used to generate Maple scripts inside *src-mpl*.
-* **If your Maple version is NOT 2015**: go into *src-mpl* and execute `make -f MakeTexMaple clean` and `make p4.m`. This will generate **p4gcf.m** and **p4.m**, two Maple scripts needed by P4.
+* **If your Maple version is NOT 2015**: go into *src-mpl* and execute:
+    - `make -f MakeTexMaple clean`
+    - `make p4.m`. 
+    This will generate **p4gcf.m** and **p4.m**, two Maple scripts needed by P4.
 * From the root directory of the project, run `make install` to generate a *p4* folder with the layout explained <a href="#binary-tree">below</a>. This directory can be placed anywhere in the system and P4 can be executed using `/path/to/p4/bin/p4`.
-* It is advisable that you set the environment variable `P4_DIR=/path/to/p4` to the actual path of the P4 directory.
+* It is advisable that you set the environment variable `P4_DIR=/path/to/p4` to the correct path of the P4 directory.
 
 ### Build using Qt Creator
 
@@ -121,15 +123,6 @@ There is a special directory in the repository called *QtCreator*, which contain
     - If you need to update the Maple scripts, copy the `mplstrip` executable to *src-mpl/mplstrip* and run `make -f MakeTexMaple` from *src-mpl*.
 
 Once all the projects have been compiled, create a directory following the instructions of <a href="#binary-tree">the next section</a> and place it anywhere in your system.
-
-* **src-gui**: See <a href="#dependencies">dependencies</a>.
-	- **Linux**: 
-		+ **Using Autotools:** follow the usual `./configure`, `make`, `make install` procedure.
-	- **Linux** and **Windows**:
-		+ **Using Qt Creator:** build the three separate programs (*p4*, *separatrice* and *lyapunov*) using their respective *.pro* Qt configuration files (use a *Release* profile to get optimized executables).
-* **src-mpl**: The Maple scripts in this repository are compatible with Maple 2015. Older versions of Maple might still work but have not been tested. If you have Maple 2015, nothing needs to be compiled (since the files are already compiled in the source tree).
-	- **Linux** and **Windows**:
-		+ **Using Qt Creator**: compile the *mplscript* program using the *mplscript.pro* file and then use the *Makefile* (`make`) to extract the Maple code from the *.tex* files in order to generate *p4.m* and *p4gcf.m*.
 
 ## Binary tree
 
