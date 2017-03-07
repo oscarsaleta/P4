@@ -25,7 +25,7 @@ F$-FR6$&FU6#""#%"yGF$FWFgn@%%(roundedG@%/-%&evalfG6#FL$F(F(%%trueGF8@%/FLF(F`oF
 I'p4mainf*F&6*%#gcG%$gcfG%*gcdresultG%'orig_fG%"gG%#geG%#gnG%"jGF&F&C=>%+normal
 exitGF(>Fin%-user_numericG@%0%0user_precision0GF(>%'DigitsGFep>Fgp-%&floorG6#-%
 'evalhfG6#Fgp@$1Fgp%/user_precisionGC$-%'writefG6%Q^pPlease~increase~precision~
-or~decrease~accurracy.~Precision~=~%d~<=~Accurracy~=~%d.|+F&FgpFaq-%%quitGFV@$5
+or~decrease~accuracy.~Precision~=~%d~<=~Accuracy~=~%d.|+F&FgpFaq-%%quitGFV@$5
 5/-%6CheckIfGoodPolynomialG6#&%'user_fGFVF8/-F^r6#&FarFenF8/-F^r6#%)user_gcfGF8
 C$-Fdq6#QipThe~system~is~not~well-defined~(not~polynomial,~or~coefficients~do~n
 ot~evaluate~numerically.)|+F&Fgq-Fdq6#QGLET~US~STUDY~THE~DIFFERENTIAL~SYSTEM:|+

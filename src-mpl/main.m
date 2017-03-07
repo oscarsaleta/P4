@@ -31,7 +31,7 @@ F+-Fen6$&Fhn6#""#%"yGF+FjnF`o@%%(roundedG@%/-%&evalfG6#FU$F(F(%%trueGF#@%/FUF(F
 ioF#F$F$F$F$,
 I'p4mainf*F$6*%#gcG%$gcfG%*gcdresultG%'orig_fG%"gG%#geG%#gnG%"jGF$F$C=>%+normal
 exitGF(>FboF"@%0F'F(>%'DigitsGF'>F^q-%&floorG6#-%'evalhfG6#F^q@$1F^qF%C$-%'writ
-efG6%Q^pPlease~increase~precision~or~decrease~accurracy.~Precision~=~%d~<=~Accu
+efG6%Q^pPlease~increase~precision~or~decrease~accuracy.~Precision~=~%d~<=~Accu
 rracy~=~%d.|+F$F^qF%-%%quitGFin@$55/-%6CheckIfGoodPolynomialG6#&F=FinF#/-Fdr6#&
 F=F^oF#/-Fdr6#F?F#C$-Fjq6#QipThe~system~is~not~well-defined~(not~polynomial,~or
 ~coefficients~do~not~evaluate~numerically.)|+F$F]r-Fjq6#QGLET~US~STUDY~THE~DIFF

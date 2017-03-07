@@ -56,7 +56,7 @@ QParamsDlg::QParamsDlg( QFindDlg * finddlg )
     btn_sepyes = new QRadioButton( "Yes", this );
     btn_sepno = new QRadioButton( "No", this );
 
-    QLabel * lbl_precis = new QLabel( "Accurracy:", this );
+    QLabel * lbl_precis = new QLabel( "Accuracy:", this );
     lbl_precis->setFont( *(p4app->BoldFont) );
     spin_precis = new QSpinBox(this);
     spin_precis->setMinimum(MINPRECISION);
@@ -123,7 +123,7 @@ QParamsDlg::QParamsDlg( QFindDlg * finddlg )
     btn_num->setToolTip( "Let the symbolic manipulator work in numeric mode" );
     btn_sepyes->setToolTip( "Enable numeric testing of the Taylor developments for the separatrices" );
     btn_sepno->setToolTip( "Disable separatrice testing" );
-    spin_precis->setToolTip( "Number of digits required accurracy when checking for zero" );
+    spin_precis->setToolTip( "Number of digits required accuracy when checking for zero" );
     spin_precis0->setToolTip( "Number of digits of numeric precision of all calculations.  Put 0 for default double precision" );
     edt_epsilon->setToolTip( "Default epsilon for the separatrices.\n"
                     "This may be changed later when plotting individual separatrices" );

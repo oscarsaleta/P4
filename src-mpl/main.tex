@@ -119,7 +119,7 @@ p4main := proc()
         Digits := floor(evalhf(Digits));
     fi;
     if user_precision >= Digits then
-        writef( "Please increase precision or decrease accurracy. Precision = %d <= Accurracy = %d.\n", Digits, user_precision );
+        writef( "Please increase precision or decrease accuracy. Precision = %d <= Accuracy = %d.\n", Digits, user_precision );
         `quit`(1);
     end if;
 

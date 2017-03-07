@@ -44,7 +44,7 @@ double eval_term1( P4POLYNOM1 p, double t )
     s = 0;
     while( p != nullptr )
     {
-        if( p->exp != 0 )
+        if ( p->exp != 0 )
             s += (p->coeff) * pow(t, (double)(p->exp) );
         else
             s += p->coeff;
@@ -70,12 +70,12 @@ double eval_term2( P4POLYNOM2 f, double * value )
     s = 0;
     while( f != nullptr )
     {
-        if( f->exp_x != 0 && f->exp_y != 0 )
+        if ( f->exp_x != 0 && f->exp_y != 0 )
             s += f->coeff * pow( value[0], (double)(f->exp_x) )
                           * pow( value[1], (double)(f->exp_y) );
-        else if( f->exp_x != 0 )
+        else if ( f->exp_x != 0 )
             s += f->coeff * pow( value[0], (double)(f->exp_x) );
-        else if( f->exp_y != 0 )
+        else if ( f->exp_y != 0 )
             s += f->coeff * pow( value[1], (double)(f->exp_y) );
         else
             s += f->coeff;
@@ -107,15 +107,15 @@ double eval_term3( P4POLYNOM3 F, double * value )
 
     while( F != nullptr )
     {
-        if( F->exp_r != 0 )
+        if ( F->exp_r != 0 )
             t = pow( value[0], (double)(F->exp_r) );
         else
             t = 1.0;
 
-        if( F->exp_Co )
+        if ( F->exp_Co )
             t *= pow( Co, (double)(F->exp_Co) );
 
-        if( F->exp_Si )
+        if ( F->exp_Si )
             t *= pow( Si, (double)(F->exp_Si) );
 
         s += t * F->coeff;
@@ -192,7 +192,7 @@ const char * dumpPoly1( P4POLYNOM1 f, const char * x )
     QString t;
     s = "";
 
-    if( f == nullptr )
+    if ( f == nullptr )
         return "0 (null)";
 
     while( f != nullptr )
@@ -200,15 +200,15 @@ const char * dumpPoly1( P4POLYNOM1 f, const char * x )
         c = f->coeff;
         cx = f->exp;
 
-        if( (c != 1 && c != -1) || cx == 0 )
+        if ( (c != 1 && c != -1) || cx == 0 )
         {
-            if( s.length() == 0 )
+            if ( s.length() == 0 )
             {
                 t.sprintf( "%g", (float)c );
             }
             else
             {
-                if( c >= 0 )
+                if ( c >= 0 )
                     t.sprintf( " + %g", (float)c );
                 else
                     t.sprintf( " - %g", -(float)c );
@@ -217,22 +217,22 @@ const char * dumpPoly1( P4POLYNOM1 f, const char * x )
         }
         else
         {
-            if( c == -1 )
+            if ( c == -1 )
             {
-                if( s.length() == 0 )
+                if ( s.length() == 0 )
                     s = "-";
                 else
                     s += " - ";
             }
-            else if( c == 1 )
+            else if ( c == 1 )
             {
-                if( s.length() != 0 )
+                if ( s.length() != 0 )
                     s += " + ";
             }
         }
-        if( cx != 0 )
+        if ( cx != 0 )
         {
-            if( cx == 1 )
+            if ( cx == 1 )
                 t = x;
             else
                 t.sprintf( "%s^%d", x, cx );
@@ -264,7 +264,7 @@ const char * dumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
     QString t;
     s = "";
 
-    if( f == nullptr )
+    if ( f == nullptr )
         return "0 (null)";
 
     while( f != nullptr )
@@ -273,15 +273,15 @@ const char * dumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
         cx = f->exp_x;
         cy = f->exp_y;
 
-        if( (c != 1 && c != -1) || (cx == 0 && cy == 0) )
+        if ( (c != 1 && c != -1) || (cx == 0 && cy == 0) )
         {
-            if( s.length() == 0 )
+            if ( s.length() == 0 )
             {
                 t.sprintf( "%g", (float)c );
             }
             else
             {
-                if( c >= 0 )
+                if ( c >= 0 )
                     t.sprintf( " + %g", (float)c );
                 else
                     t.sprintf( " - %g", -(float)c );
@@ -290,30 +290,30 @@ const char * dumpPoly2( P4POLYNOM2 f, const char * x, const char * y )
         }
         else
         {
-            if( c == -1 )
+            if ( c == -1 )
             {
-                if( s.length() == 0 )
+                if ( s.length() == 0 )
                     s = "-";
                 else
                     s += " - ";
             }
-            else if( c == 1 )
+            else if ( c == 1 )
             {
-                if( s.length() != 0 )
+                if ( s.length() != 0 )
                     s += " + ";
             }
         }
-        if( cx != 0 )
+        if ( cx != 0 )
         {
-            if( cx == 1 )
+            if ( cx == 1 )
                 t = x;
             else
                 t.sprintf( "%s^%d", x, cx );
             s+=t;
         }
-        if( cy != 0 )
+        if ( cy != 0 )
         {
-            if( cy == 1 )
+            if ( cy == 1 )
                 t = y;
             else
                 t.sprintf( "%s^%d", y, cy );
@@ -344,7 +344,7 @@ const char * dumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char
     QString t;
     s = "";
 
-    if( f == nullptr )
+    if ( f == nullptr )
         return "0 (null)";
 
     while( f != nullptr )
@@ -354,15 +354,15 @@ const char * dumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char
         cy = f->exp_Co;
         cz = f->exp_Si;
 
-        if( (c != 1 && c != -1) || (cx == 0 && cy == 0 && cz == 0 ) )
+        if ( (c != 1 && c != -1) || (cx == 0 && cy == 0 && cz == 0 ) )
         {
-            if( s.length() == 0 )
+            if ( s.length() == 0 )
             {
                 t.sprintf( "%g", (float)c );
             }
             else
             {
-                if( c >= 0 )
+                if ( c >= 0 )
                     t.sprintf( " + %g", (float)c );
                 else
                     t.sprintf( " - %g", -(float)c );
@@ -371,38 +371,38 @@ const char * dumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char
         }
         else
         {
-            if( c == -1 )
+            if ( c == -1 )
             {
-                if( s.length() == 0 )
+                if ( s.length() == 0 )
                     s = "-";
                 else
                     s += " - ";
             }
-            else if( c == 1 )
+            else if ( c == 1 )
             {
-                if( s.length() != 0 )
+                if ( s.length() != 0 )
                     s += " + ";
             }
         }
-        if( cx != 0 )
+        if ( cx != 0 )
         {
-            if( cx == 1 )
+            if ( cx == 1 )
                 t = x;
             else
                 t.sprintf( "%s^%d", x, cx );
             s+=t;
         }
-        if( cy != 0 )
+        if ( cy != 0 )
         {
-            if( cy == 1 )
+            if ( cy == 1 )
                 t = y;
             else
                 t.sprintf( "%s^%d", y, cy );
             s += t;
         }
-        if( cz != 0 )
+        if ( cz != 0 )
         {
-            if( cz == 1 )
+            if ( cz == 1 )
                 t = z;
             else
                 t.sprintf( "%s^%d", z, cz );
@@ -423,43 +423,37 @@ const char * dumpPoly3( P4POLYNOM3 f, const char * x, const char * y, const char
 
 char * printterm2( char * buf, struct term2 * f, bool isfirst, const char * x, const char * y )
 {
-    if( f->coeff == 0 )
-    {
-        if( isfirst )
+    if ( f->coeff == 0 ) {
+        if ( isfirst )
             strcpy( buf, "0" );
         else
             *buf = 0;
         return buf;
     }
 
-    if( (f->coeff == 1 || f->coeff == -1) && (f->exp_x != 0 || f->exp_y != 0) )
-    {
-        if( f->coeff < 0 )
+    if ( (f->coeff == 1 || f->coeff == -1) && (f->exp_x != 0 || f->exp_y != 0) ) {
+        if ( f->coeff < 0 )
             sprintf( buf, "-" );
         else
-            if( isfirst )
+            if ( isfirst )
                 *buf = 0;
             else
                 sprintf( buf, "+" );
 
-        if( f->exp_x != 0 )
-        {
-            if( f->exp_x != 1 )
+        if ( f->exp_x != 0 ) {
+            if ( f->exp_x != 1 )
                 sprintf( buf+strlen(buf), "%s^%d", x, f->exp_x );
             else
                 sprintf( buf+strlen(buf), "%s", x );
 
-            if( f->exp_y != 0 )
-            {
-                if( f->exp_y != 1 )
+            if ( f->exp_y != 0 ) {
+                if ( f->exp_y != 1 )
                     sprintf( buf+strlen(buf), "*%s^%d", y, f->exp_y );
                 else
                     sprintf( buf+strlen(buf), "*%s", y );
             }
-        }
-        else if( f->exp_y != 0 )
-        {
-            if( f->exp_y != 1 )
+        } else if ( f->exp_y != 0 ) {
+            if ( f->exp_y != 1 )
                 sprintf( buf+strlen(buf), "%s^%d", y, f->exp_y );
             else
                 sprintf( buf+strlen(buf), "%s", y );
@@ -468,21 +462,19 @@ char * printterm2( char * buf, struct term2 * f, bool isfirst, const char * x, c
         return buf;
     }
 
-    if( isfirst )
+    if ( isfirst )
         sprintf( buf, "%g", (float)(f->coeff) );
     else
         sprintf( buf, "%+g", (float)(f->coeff) );
 
-    if( f->exp_x != 0 )
-    {
-        if( f->exp_x != 1 )
+    if ( f->exp_x != 0 ) {
+        if ( f->exp_x != 1 )
             sprintf( buf+strlen(buf), "*%s^%d", x, f->exp_x );
         else
             sprintf( buf+strlen(buf), "*%s", x );
     }
-    if( f->exp_y != 0 )
-    {
-        if( f->exp_y != 1 )
+    if ( f->exp_y != 0 ) {
+        if ( f->exp_y != 1 )
             sprintf( buf+strlen(buf), "*%s^%d", y, f->exp_y );
         else
             sprintf( buf+strlen(buf), "*%s", y );
@@ -493,66 +485,66 @@ char * printterm2( char * buf, struct term2 * f, bool isfirst, const char * x, c
 
 char * printterm3( char * buf, struct term3 * f, bool isfirst, const char * r, const char * Co, const char * Si )
 {
-    if( f->coeff == 0 )
+    if ( f->coeff == 0 )
     {
-        if( isfirst )
+        if ( isfirst )
             strcpy( buf, "0" );
         else
             *buf = 0;
         return buf;
     }
 
-    if( (f->coeff == 1 || f->coeff == -1) && (f->exp_r != 0 || f->exp_Co != 0 || f->exp_Si != 0 ) )
+    if ( (f->coeff == 1 || f->coeff == -1) && (f->exp_r != 0 || f->exp_Co != 0 || f->exp_Si != 0 ) )
     {
-        if( f->coeff < 0 )
+        if ( f->coeff < 0 )
             sprintf( buf, "-" );
         else
-            if( isfirst )
+            if ( isfirst )
                 *buf = 0;
             else
                 sprintf( buf, "+" );
 
-        if( f->exp_r != 0 )
+        if ( f->exp_r != 0 )
         {
-            if( f->exp_r != 1 )
+            if ( f->exp_r != 1 )
                 sprintf( buf+strlen(buf), "%s^%d", r, f->exp_r );
             else
                 sprintf( buf+strlen(buf), "%s", r );
 
-            if( f->exp_Co != 0 )
+            if ( f->exp_Co != 0 )
             {
-                if( f->exp_Co != 1 )
+                if ( f->exp_Co != 1 )
                     sprintf( buf+strlen(buf), "*%s^%d", Co, f->exp_Co );
                 else
                     sprintf( buf+strlen(buf), "*%s", Co );
             }
-            if( f->exp_Si != 0 )
+            if ( f->exp_Si != 0 )
             {
-                if( f->exp_Si != 1 )
+                if ( f->exp_Si != 1 )
                     sprintf( buf+strlen(buf), "*%s^%d", Si, f->exp_Si );
                 else
                     sprintf( buf+strlen(buf), "*%s", Si );
             }
         }
         else
-            if( f->exp_Co != 0 )
+            if ( f->exp_Co != 0 )
             {
-                if( f->exp_Co != 1 )
+                if ( f->exp_Co != 1 )
                     sprintf( buf+strlen(buf), "%s^%d", Co, f->exp_Co );
                 else
                     sprintf( buf+strlen(buf), "%s", Co );
 
-                if( f->exp_Si != 0 )
+                if ( f->exp_Si != 0 )
                 {
-                    if( f->exp_Si != 1 )
+                    if ( f->exp_Si != 1 )
                         sprintf( buf+strlen(buf), "*%s^%d", Si, f->exp_Si );
                     else
                         sprintf( buf+strlen(buf), "*%s", Si );
                 }
             }
-            else if( f->exp_Si != 0 )
+            else if ( f->exp_Si != 0 )
             {
-                if( f->exp_Si != 1 )
+                if ( f->exp_Si != 1 )
                     sprintf( buf+strlen(buf), "%s^%d", Si, f->exp_Si );
                 else
                     sprintf( buf+strlen(buf), "%s", Si );
@@ -561,28 +553,28 @@ char * printterm3( char * buf, struct term3 * f, bool isfirst, const char * r, c
         return buf;
     }
 
-    if( isfirst )
+    if ( isfirst )
         sprintf( buf, "%g", f->coeff );
     else
         sprintf( buf, "%+g", f->coeff );
 
-    if( f->exp_r != 0 )
+    if ( f->exp_r != 0 )
     {
-        if( f->exp_r != 1 )
+        if ( f->exp_r != 1 )
             sprintf( buf+strlen(buf), "*%s^%d", r, f->exp_r );
         else
             sprintf( buf+strlen(buf), "*%s", r );
     }
-    if( f->exp_Co != 0 )
+    if ( f->exp_Co != 0 )
     {
-        if( f->exp_Co != 1 )
+        if ( f->exp_Co != 1 )
             sprintf( buf+strlen(buf), "*%s^%d", Co, f->exp_Co );
         else
             sprintf( buf+strlen(buf), "*%s", Co );
     }
-    if( f->exp_Si != 0 )
+    if ( f->exp_Si != 0 )
     {
-        if( f->exp_Si != 1 )
+        if ( f->exp_Si != 1 )
             sprintf( buf+strlen(buf), "*%s^%d", Si, f->exp_Si );
         else
             sprintf( buf+strlen(buf), "*%s", Si );

@@ -132,8 +132,7 @@ void QInputVF::reset( void )
     gcf = DEFAULTGCF;
 
     numparams = 0;
-    for( int i = 0; i < MAXNUMPARAMS; i++ )
-    {
+    for ( int i = 0; i < MAXNUMPARAMS; i++ ) {
         parlabel[i] = "";
         parvalue[i] = "";
     }
@@ -157,11 +156,11 @@ bool QInputVF::load( void )
     int flag_numeric, flag_testsep;
 
     fname = getfilename();
-    if( fname.length() == 0 )
+    if ( fname.length() == 0 )
         return false;
 
     fp = fopen( QFile::encodeName( fname ), "rt" );
-    if( fp == nullptr )
+    if ( fp == nullptr )
         return false;
 
     cleared = false;
@@ -182,8 +181,7 @@ bool QInputVF::load( void )
         epsilon = scanbuf;
         testsep = ((flag_testsep==0) ? false : true);
     }
-    if( typeofstudy == TYPEOFSTUDY_ONE )
-    {
+    if ( typeofstudy == TYPEOFSTUDY_ONE ) {
         if (fscanf( fp, "%[^\n]\n", scanbuf )!=1) {
             fclose(fp);
             return false;
@@ -196,9 +194,7 @@ bool QInputVF::load( void )
         y0 = scanbuf;
         p = 1;
         q = 1;
-    }
-    else
-    {
+    } else {
         x0 = DEFAULTX0;
         y0 = DEFAULTY0;
         if (fscanf( fp, "%d\n", &p )!=1
@@ -224,19 +220,18 @@ bool QInputVF::load( void )
     }
     gcf = scanbuf;
 
-    if( xdot == "(null)" ) xdot = "";
-    if( ydot == "(null)" ) ydot = "";
-    if( gcf == "(null)" ) gcf = "";
-    if( x0 == "(null)" ) x0 = "";
-    if( y0 == "(null)" ) y0 = "";
-    if( epsilon == "(null)" ) epsilon = "";
+    if ( xdot == "(null)" ) xdot = "";
+    if ( ydot == "(null)" ) ydot = "";
+    if ( gcf == "(null)" ) gcf = "";
+    if ( x0 == "(null)" ) x0 = "";
+    if ( y0 == "(null)" ) y0 = "";
+    if ( epsilon == "(null)" ) epsilon = "";
 
     if (fscanf( fp, "%d\n", &numparams )!=1) {
         fclose(fp);
         return false;
     }
-    for( i = 0; i < numparams; i++ )
-    {
+    for ( i = 0; i < numparams; i++ ) {
         int c;
         if (fscanf( fp, "%s", scanbuf )!=1) {
             fclose(fp);
@@ -251,12 +246,11 @@ bool QInputVF::load( void )
         }
         parvalue[i] = scanbuf;
     }
-    for( ; i < MAXNUMPARAMS; i++ )
-    {
+    for ( ; i < MAXNUMPARAMS; i++ ) {
         parlabel[i] = "";
         parvalue[i] = "";
     }
-    if( fscanf( fp, "%d\n", &precision0 ) == 0 )
+    if ( fscanf( fp, "%d\n", &precision0 ) == 0 )
         precision0 = DEFAULTPRECISION0;
 
     fclose(fp);
@@ -291,21 +285,18 @@ bool QInputVF::checkevaluated( void )
     fi = nullptr;
 
     fivec = new QFileInfo( getbarefilename() + "_vec.tab" );
-    if( fivec->isFile() == false )
-    {
+    if ( fivec->isFile() == false ) {
         delete fivec;
         fivec = nullptr;
         return false;
     }
     dtvec = fivec->lastModified();
-    if( dtvec.secsTo( dt ) > 0 || dtvec.daysTo( dt ) > 0 )
+    if ( dtvec.secsTo( dt ) > 0 || dtvec.daysTo( dt ) > 0 )
         return false;
     
-    if( typeofstudy != TYPEOFSTUDY_INF )
-    {
+    if ( typeofstudy != TYPEOFSTUDY_INF ) {
         fifin = new QFileInfo( getbarefilename() + "_fin.tab" );
-        if( fifin->isFile() == false )
-        {
+        if ( fifin->isFile() == false ) {
             delete fifin;
             fifin = nullptr;
             return false;
@@ -313,15 +304,13 @@ bool QInputVF::checkevaluated( void )
         dtfin = fifin->lastModified();
         delete fifin;
         fifin = nullptr;
-        if( dtfin.secsTo( dt ) > 0 || dtfin.daysTo( dt ) > 0 )
+        if ( dtfin.secsTo( dt ) > 0 || dtfin.daysTo( dt ) > 0 )
             return false;
     }
 
-    if( typeofstudy == TYPEOFSTUDY_INF || typeofstudy == TYPEOFSTUDY_ALL )
-    {
+    if ( typeofstudy == TYPEOFSTUDY_INF || typeofstudy == TYPEOFSTUDY_ALL ) {
         fiinf = new QFileInfo( getbarefilename() + "_inf.tab" );
-        if( fiinf->isFile() == false )
-        {
+        if ( fiinf->isFile() == false ) {
             delete fiinf;
             fiinf = nullptr;
             return false;
@@ -329,7 +318,7 @@ bool QInputVF::checkevaluated( void )
         dtinf = fiinf->lastModified();
         delete fiinf;
         fiinf = nullptr;
-        if( dtinf.secsTo( dt ) > 0 || dtinf.daysTo( dt ) > 0 )
+        if ( dtinf.secsTo( dt ) > 0 || dtinf.daysTo( dt ) > 0 )
             return false;
     }
 
@@ -347,18 +336,18 @@ bool QInputVF::save( void )
     QString fname;
     QByteArray s;
     fname = getfilename();
-    if( fname.length() == 0 )
+    if ( fname.length() == 0 )
         return false;
 
     fp = fopen( QFile::encodeName(fname), "wt" );
-    if( fp == nullptr )
+    if ( fp == nullptr )
         return false;
 
     fprintf( fp, "%d\n", typeofstudy );
     fprintf( fp, "%d\n", numeric );
     fprintf( fp, "%d\n", precision );
 
-    if( epsilon.length() == 0 )
+    if ( epsilon.length() == 0 )
         fprintf( fp, "%s\n", "(null)" );
     else
     {
@@ -372,24 +361,21 @@ bool QInputVF::save( void )
     fprintf( fp, "%d\n", maxlevel );
     fprintf( fp, "%d\n", weakness );
 
-    if( typeofstudy == TYPEOFSTUDY_ONE )
-    {
-        if( x0.length() == 0 )
+    if ( typeofstudy == TYPEOFSTUDY_ONE ) {
+        if ( x0.length() == 0 )
             fprintf( fp, "%s\n", "(null)" );
         s = x0.toLatin1();
         fprintf( fp, "%s\n", (const char *)s );
-        if( y0.length() == 0 )
+        if ( y0.length() == 0 )
             fprintf( fp, "%s\n", "(null)" );
         s = y0.toLatin1();
         fprintf( fp, "%s\n", (const char *)s );
-    }
-    else
-    {
+    } else {
         fprintf( fp, "%d\n", p );
         fprintf( fp, "%d\n", q );
     }
 
-    if( xdot.length() == 0 )
+    if ( xdot.length() == 0 )
         fprintf( fp, "%s\n", "(null)" );
     else
     {
@@ -397,7 +383,7 @@ bool QInputVF::save( void )
         fprintf( fp, "%s\n", (const char *)s );
     }
 
-    if( ydot.length() == 0 )
+    if ( ydot.length() == 0 )
         fprintf( fp, "%s\n", "(null)" );
     else
     {
@@ -405,7 +391,7 @@ bool QInputVF::save( void )
         fprintf( fp, "%s\n", (const char *)s );
     }
     
-    if( gcf.length() == 0 )
+    if ( gcf.length() == 0 )
         fprintf( fp, "%s\n", "(null)" );
     else
     {
@@ -414,9 +400,8 @@ bool QInputVF::save( void )
     }
 
     fprintf( fp, "%d\n", numparams );
-    for( i = 0; i < numparams; i++ )
-    {
-        if( parlabel[i].length() == 0 )
+    for ( i = 0; i < numparams; i++ ) {
+        if ( parlabel[i].length() == 0 )
             fprintf( fp, "%s\n", "(null)" );
         else
         {
@@ -424,7 +409,7 @@ bool QInputVF::save( void )
             fprintf( fp, "%s\n", (const char *)s );
         }
 
-        if( parvalue[i].length() == 0 )
+        if ( parvalue[i].length() == 0 )
             fprintf( fp, "%s\n", "(null)" );
         else
         {
@@ -432,7 +417,7 @@ bool QInputVF::save( void )
             fprintf( fp, "%s\n", (const char *)s );
         }
     }
-    if( precision0 != DEFAULTPRECISION0 )
+    if ( precision0 != DEFAULTPRECISION0 )
         fprintf( fp, "%d\n", precision0 );
 
     fclose(fp);
@@ -450,8 +435,7 @@ QString QInputVF::getbarefilename( void ) const
 
     fname = filename.trimmed();
 
-    if( fname.length() == 0 )
-    {
+    if ( fname.length() == 0 ) {
         return "";
     }
 
@@ -460,8 +444,7 @@ QString QInputVF::getbarefilename( void ) const
     slash3 = fname.lastIndexOf( ':' );
     dot = fname.lastIndexOf( '.' );
 
-    if( dot <= slash1 && dot <= slash2 && dot <= slash3 )
-    {
+    if ( dot <= slash1 && dot <= slash2 && dot <= slash3 ) {
         // there is no dot present, or at least not in the
         // last part of the file name.
 
@@ -481,15 +464,13 @@ QString QInputVF::getfilename( void ) const
 
     fname = filename.trimmed();
 
-    if( fname.length() != 0 )
-    {
+    if ( fname.length() != 0 ) {
         slash1 = fname.lastIndexOf( '/' );
         slash2 = fname.lastIndexOf( '\\' );
         slash3 = fname.lastIndexOf( ':' );
         dot = fname.lastIndexOf( '.' );
 
-        if( dot <= slash1 && dot <= slash2 && dot <= slash3 )
-        {
+        if ( dot <= slash1 && dot <= slash2 && dot <= slash3 ) {
             // there is no dot present, or at least not in the
             // last part of the file name.
 
@@ -521,7 +502,7 @@ QString QInputVF::getrunfilename( void ) const { return getbarefilename().append
 bool QInputVF::FileExists( QString fname )
 {
     QFile fp(fname);
-    if( fp.exists() )
+    if ( fp.exists() )
         return true;
     else
         return false;
@@ -545,8 +526,7 @@ void QInputVF::prepareReduceParameters( QTextStream * fp )
     s.sprintf( "max_level:=%d$\n",          maxlevel ); *fp << s;
     s.sprintf( "weakness_level:=%d$\n",     weakness ); *fp << s;
 
-    if( typeofstudy == TYPEOFSTUDY_ONE )
-    {
+    if ( typeofstudy == TYPEOFSTUDY_ONE ) {
         s.sprintf( "p:=1$\nq:=1$\n" ); *fp << s;
         *fp << "x0:=" << x0 << "$\n";
         *fp << "y0:=" << y0 << "$\n";
@@ -554,9 +534,7 @@ void QInputVF::prepareReduceParameters( QTextStream * fp )
         s.sprintf("x_max:=x0+(%f)$\n",      (float)(X_MAX) ); *fp << s;
         s.sprintf("y_min:=y0+(%f)$\n",      (float)(Y_MIN) ); *fp << s;
         s.sprintf("y_max:=y0+(%f)$\n",      (float)(Y_MAX) ); *fp << s;
-    }
-    else
-    {
+    } else {
         s.sprintf("p:=%d$\n",                   p ); *fp << s;
         s.sprintf("q:=%d$\n",                   q ); *fp << s;
     }
@@ -580,8 +558,7 @@ void QInputVF::prepareMapleParameters( QTextStream * fp )
     s.sprintf( "max_level:=%d:\n",          maxlevel ); *fp << s;
     s.sprintf( "weakness_level:=%d:\n",     weakness ); *fp << s;
 
-    if( typeofstudy == TYPEOFSTUDY_ONE )
-    {
+    if ( typeofstudy == TYPEOFSTUDY_ONE ) {
         *fp << "user_p:=1:\n";
         *fp << "user_q:=1:\n";
 
@@ -592,9 +569,7 @@ void QInputVF::prepareMapleParameters( QTextStream * fp )
         s.sprintf( "x_max := x0+(%f):\n",       (float)(X_MAX) ); *fp << s;
         s.sprintf( "y_min := y0+(%f):\n",       (float)(Y_MIN) ); *fp << s;
         s.sprintf( "y_max := y0+(%f):\n",       (float)(Y_MAX) ); *fp << s;
-    }
-    else
-    {
+    } else {
         s.sprintf("user_p:=%d:\n",                  p ); *fp << s;
         s.sprintf("user_q:=%d:\n",                  q ); *fp << s;
     }
@@ -620,12 +595,11 @@ void QInputVF::prepareReduceVectorField( QTextStream * fp )
     *fp << "f:={" << myxdot << "," << myydot << "}$\n";
     *fp << "gcf:=" << mygcf << "$\n";
 
-    for( k = 0; k < numparams; k++ )
-    {
+    for ( k = 0; k < numparams; k++ ) {
         lbl = convertReduceUserParameterLabels( parlabel[k] );
         val = convertReduceUserParameterLabels( parvalue[k] );
 
-        if( lbl.length() == 0 )
+        if ( lbl.length() == 0 )
             continue;
 
         *fp << lbl << ":=" << val << "$\n";
@@ -652,16 +626,14 @@ void QInputVF::prepareMapleVectorField( QTextStream * fp )
     *fp << "user_f := [ " << myxdot << ", " << myydot << " ]:\n";
     *fp << "user_gcf := " << mygcf << ":\n";
 
-    for( k = 0; k < numparams; k++ )
-    {
+    for ( k = 0; k < numparams; k++ ) {
         lbl = convertMapleUserParameterLabels( parlabel[k] );
         val = convertMapleUserParameterLabels( parvalue[k] );
 
-        if( lbl.length() == 0 )
+        if ( lbl.length() == 0 )
             continue;
 
-        if( !numeric )
-        {
+        if ( !numeric ) {
             *fp << lbl << " := " << val << ":\n";
         }
         else
@@ -683,8 +655,7 @@ int indexOfWordInString( const QString * src, const QString * word, int start=0 
 {
     int i, j;
 
-    while( (i = src->indexOf( *word, start )) != -1 )
-    {
+    while( (i = src->indexOf( *word, start )) != -1 ) {
         // we have found word as a substring.  The index i is an index from the very beginning of string
         // (not depending of start)
         
@@ -692,14 +663,14 @@ int indexOfWordInString( const QString * src, const QString * word, int start=0 
         
         // check if the substring is the beginning of a word:
         j = i;
-        if( j > 0 )
-            if( (*src)[j-1].isLetter() || (*src)[j-1] == '_' || (*src)[j-1].isDigit() )
+        if ( j > 0 )
+            if ( (*src)[j-1].isLetter() || (*src)[j-1] == '_' || (*src)[j-1].isDigit() )
                 continue;         // no: it is part of a bigger word, so continue...
         
         // check if the substring is the end of a word;
         j=i + word->length();
-        if( j < src->length() )
-            if( (*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit() )
+        if ( j < src->length() )
+            if ( (*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit() )
                 continue;       // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
@@ -716,19 +687,18 @@ QString QInputVF::convertMapleUserParameterLabels( QString src )
     int i,k;
 
     s = src;
-    for( k = 0; k < numparams; k++ )
-    {
+    for ( k = 0; k < numparams; k++ ) {
          p = parlabel[k];
          newlabel =  p + "_";
          
-         if( p.length() == 0 )
+         if ( p.length() == 0 )
              continue;
          
          t = "";
          while( 1 )
          {
             i = indexOfWordInString( &s, &p );
-            if( i == -1 )
+            if ( i == -1 )
                 break;
                 
             t += s.left(i);
@@ -749,19 +719,18 @@ QString QInputVF::convertReduceUserParameterLabels( QString src )
     int i,k;
 
     s = src;
-    for( k = 0; k < numparams; k++ )
-    {
+    for ( k = 0; k < numparams; k++ ) {
          p = parlabel[k];
          newlabel = p + "_";
          
-         if( p.length() == 0 )
+         if ( p.length() == 0 )
              continue;
          
          t = "";
          while( 1 )
          {
             i = indexOfWordInString( &s, &p );
-            if( i == -1 )
+            if ( i == -1 )
                 break;
                 
             t += s.left(i);
@@ -782,16 +751,13 @@ QString QInputVF::convertReduceUserParameterLabels( QString src )
 
 QString QInputVF::booleanString( int value ) const
 {
-    if( value == 0 )
-    {
-        if( symbolicpackage == PACKAGE_REDUCE )
+    if ( value == 0 ) {
+        if ( symbolicpackage == PACKAGE_REDUCE )
             return "NIL";
         else
             return "false";
-    }
-    else
-    {
-        if( symbolicpackage == PACKAGE_REDUCE )
+    } else {
+        if ( symbolicpackage == PACKAGE_REDUCE )
             return "'t";
         else
             return "true";
@@ -816,12 +782,10 @@ QByteArray maplepathformat( const QString fname )
     
     ba_fname = QFile::encodeName( fname );
 #ifdef Q_OS_WIN
-    if( ba_fname.length() == 0 )
-    {
+    if ( ba_fname.length() == 0 ) {
         return ba_fname;
     }
-    if( ba_fname[ba_fname.length()-1] != '\\' && ba_fname[ba_fname.length()-1] != '/' )
-    {
+    if ( ba_fname[ba_fname.length()-1] != '\\' && ba_fname[ba_fname.length()-1] != '/' ) {
         // last character is not a path separator
         
         // no need to convert to short form
@@ -878,8 +842,7 @@ void QInputVF::prepareFile( QTextStream * fp )
 
     user_exeprefix = "";
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         bsaveall = booleanString( action_SaveAll );
         mainreduce = getP4ReducePath();
         mainreduce += "/";
@@ -912,18 +875,16 @@ void QInputVF::prepareFile( QTextStream * fp )
 
         s = "in \"" + mainreduce + "\"$\n";
         *fp << s;
-    }
-    else
-    {
+    } else {
         mainmaple = getP4MaplePath();
         user_bindir = getP4BinPath();
         user_tmpdir = getP4TempPath();
         user_sumtablepath = getP4SumTablePath();
 
         mainmaple += QDir::separator();
-        if( user_bindir != "" ) user_bindir += QDir::separator();
-        if( user_tmpdir != "" ) user_tmpdir += QDir::separator();
-        if( user_sumtablepath != "" ) user_sumtablepath += QDir::separator();
+        if ( user_bindir != "" ) user_bindir += QDir::separator();
+        if ( user_tmpdir != "" ) user_tmpdir += QDir::separator();
+        if ( user_sumtablepath != "" ) user_sumtablepath += QDir::separator();
         user_platform = USERPLATFORM;
 #ifdef Q_OS_WIN
         user_removecmd = "cmd /c del";
@@ -948,7 +909,7 @@ void QInputVF::prepareFile( QTextStream * fp )
         ba_user_tmpdir = maplepathformat( user_tmpdir );
         ba_user_sumtablepath = maplepathformat( user_sumtablepath );
 
-        if( numeric )
+        if ( numeric )
             user_simplify = "false";
         else
             user_simplify = "true";
@@ -1023,7 +984,7 @@ void QInputVF::evaluate( void )
     QProcess * proc;
     
     evaluatinggcf = false;
-    if( EvalProcess != nullptr ) // possible clean up after last GCF evaluation
+    if ( EvalProcess != nullptr ) // possible clean up after last GCF evaluation
     {
         delete EvalProcess;
         EvalProcess = nullptr;
@@ -1031,14 +992,12 @@ void QInputVF::evaluate( void )
 
     prepare();
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         filedotred = getreducefilename();
         filedotrun = getrunfilename();
 
         fptr = new QFile( filedotrun );
-        if( fptr->open( QIODevice::WriteOnly ) )
-        {
+        if ( fptr->open( QIODevice::WriteOnly ) ) {
             fp = new QTextStream( fptr );
             *fp << "#!/bin/sh\n";
             *fp << getReduceExe() << " <" << filedotred << "\n";
@@ -1057,7 +1016,7 @@ void QInputVF::evaluate( void )
                 // cannot open???
             }
         
-        if( ProcessText == nullptr )
+        if ( ProcessText == nullptr )
             createProcessWindow();
         else
         {
@@ -1080,8 +1039,7 @@ void QInputVF::evaluate( void )
         pa += filedotrun;
         ProcessText->append(pa);
         proc->start( "sh", QStringList( filedotrun ), QIODevice::ReadWrite );
-        if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
-        {
+        if ( proc->state() != QProcess::Running && proc->state() != QProcess::Starting ) {
             processfailed = true;
             delete proc;
             proc = nullptr;
@@ -1097,21 +1055,18 @@ void QInputVF::evaluate( void )
             EvalFile = filedotred;
             EvalFile2 = filedotrun;
         }
-    }
-    else
-    {
+    } else {
         QString filedotmpl;
         filedotmpl = getmaplefilename();
 
         s = getMapleExe();
-        if( s == "" || s.isNull() )
-        {
+        if ( s == "" || s.isNull() ) {
             s="";
         }
         else
         {
             s = s.append( " " );
-            if( filedotmpl.contains( ' ' ) )
+            if ( filedotmpl.contains( ' ' ) )
             {
                 s = s.append( "\"" );
                 s = s.append( filedotmpl );
@@ -1121,7 +1076,7 @@ void QInputVF::evaluate( void )
                 s = s.append( filedotmpl );
 
             /* Here a window for displaying the output text of the Maple process is created */
-            if( ProcessText == nullptr )
+            if ( ProcessText == nullptr )
                 createProcessWindow();
             else
             {
@@ -1146,7 +1101,7 @@ void QInputVF::evaluate( void )
             ProcessText->append(pa);
             proc->start( getMapleExe(), QStringList( filedotmpl ), QIODevice::ReadWrite );
   
-            if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
+            if ( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
             {
                 processfailed = true;
                 delete proc;
@@ -1201,31 +1156,27 @@ void QInputVF::catchProcessError( QProcess::ProcessError prerr )
 void QInputVF::finishEvaluation( int exitCode )
 {
     UNUSED(exitCode);
-    if( !EvalFile.isNull() && EvalFile != "" )
-    {
+    if ( !EvalFile.isNull() && EvalFile != "" ) {
         removeFile( EvalFile );
         EvalFile="";
     }
 
-    if( !EvalFile2.isNull() && EvalFile2 != "" )
-    {
+    if ( !EvalFile2.isNull() && EvalFile2 != "" ) {
         removeFile( EvalFile2 );
         EvalFile2="";
     }
 
-    if( ProcessButton != nullptr )
+    if ( ProcessButton != nullptr )
         ProcessButton->setEnabled(false);
         
-//  if( EvalProcess != nullptr )
-    {
-        if( ProcessText != nullptr )
-        {
+//  if ( EvalProcess != nullptr ) {
+        if ( ProcessText != nullptr ) {
             QString buf;
             buf = "\n-------------------------------------------------------------------------------\n";
             ProcessText->append(buf);
-            if( EvalProcess != nullptr )
+            if ( EvalProcess != nullptr )
             {
-                if( EvalProcess->state() == QProcess::Running )
+                if ( EvalProcess->state() == QProcess::Running )
                 {
                     EvalProcess->terminate();
                     QTimer::singleShot( 5000, EvalProcess, SLOT( kill() ) );
@@ -1233,7 +1184,7 @@ void QInputVF::finishEvaluation( int exitCode )
                 }
                 else
                 {
-                    if( !processfailed )
+                    if ( !processfailed )
                         buf.sprintf( "The process finished normally (%d)\n", EvalProcess->exitCode() );
                     else
                     {
@@ -1245,7 +1196,7 @@ void QInputVF::finishEvaluation( int exitCode )
             }
             else
             {
-                if( processfailed )
+                if ( processfailed )
                     buf  = "The following error occured: "  + processError + "\n";
                 else
                     buf = "";
@@ -1253,23 +1204,20 @@ void QInputVF::finishEvaluation( int exitCode )
             ProcessText->append(buf);
         }
     }
-    if( ProcessText != nullptr )
-    {
+    if ( ProcessText != nullptr ) {
 //      ProcessText->hide();
-        if( ProcessText->isActiveWindow() )
-        {
-            if( !evaluatinggcf )
+        if ( ProcessText->isActiveWindow() ) {
+            if ( !evaluatinggcf )
                 p4startdlg->activateWindow();
             else
             {
-                if( gcfDlg != nullptr )
+                if ( gcfDlg != nullptr )
                     gcfDlg->activateWindow();
             }
         }
     }
 
-    if( evaluatinggcf )
-    {
+    if ( evaluatinggcf ) {
         finishGcfEvaluation();
     }
 }
@@ -1281,8 +1229,7 @@ void QInputVF::finishEvaluation( int exitCode )
 void QInputVF::finishGcfEvaluation( void )
 {
     evaluatinggcf = false;
-    if( gcfDlg != nullptr )
-    {
+    if ( gcfDlg != nullptr ) {
           gcfDlg->finishGcfEvaluation();
 
 //        QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
@@ -1301,12 +1248,10 @@ void QInputVF::prepare( void )
     QFile * fptr;
     QTextStream * fp;
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         filedotred = getreducefilename();
         fptr = new QFile( filedotred );
-        if( fptr->open( QIODevice::WriteOnly ) )
-        {
+        if ( fptr->open( QIODevice::WriteOnly ) ) {
             fp = new QTextStream( fptr );
             prepareFile( fp );
             fp->flush();
@@ -1323,14 +1268,11 @@ void QInputVF::prepare( void )
 
             // cannot open ???
         }
-    }
-    else
-    {
+    } else {
         filedotmpl = getmaplefilename();
 
         fptr = new QFile( filedotmpl );
-        if( fptr->open( QIODevice::WriteOnly ) )
-        {
+        if ( fptr->open( QIODevice::WriteOnly ) ) {
             fp = new QTextStream( fptr );
             prepareFile( fp );
             fp->flush();
@@ -1360,23 +1302,21 @@ void QInputVF::ReadProcessStdout( void )
     QByteArray line;
     int i, j;
 
-    if( EvalProcess == nullptr || ProcessText == nullptr )
+    if ( EvalProcess == nullptr || ProcessText == nullptr )
         return;
 
-    while( 1 )
-    {
+    while( 1 ) {
         t = EvalProcess->readAllStandardOutput();
-        if( t.length() == 0 )
+        if ( t.length() == 0 )
            break;
 
         i = t.indexOf('\n');
         j = t.indexOf('\r');
-        while( i >= 0 || j >= 0 )
-        {
-            if( (j < i && j != -1) || i == -1 )
+        while( i >= 0 || j >= 0 ) {
+            if ( (j < i && j != -1) || i == -1 )
             {
                 line = t.left(j);
-                if( i==j+1 )
+                if ( i==j+1 )
                     t = t.mid(j+2);
                 else
                     t = t.mid(j+1);     // treat CR+LF as one lineend
@@ -1390,7 +1330,7 @@ void QInputVF::ReadProcessStdout( void )
             i = t.indexOf('\n');
             j = t.indexOf('\r');
         }
-        if( t.length() != 0 )
+        if ( t.length() != 0 )
             ProcessText->append(t);
     }
 }
@@ -1401,7 +1341,7 @@ void QInputVF::ReadProcessStdout( void )
 
 void QInputVF::onClearButton( void )
 {
-    if( ProcessText != nullptr )
+    if ( ProcessText != nullptr )
         ProcessText->clear();
 }
 
@@ -1412,10 +1352,8 @@ void QInputVF::onClearButton( void )
 void QInputVF::onTerminateButton( void )
 {
     QString buf;
-        if( EvalProcess != nullptr )
-    {
-        if( EvalProcess->state() == QProcess::Running )
-        {
+        if ( EvalProcess != nullptr ) {
+        if ( EvalProcess->state() == QProcess::Running ) {
             buf = "\n-------------------------------------------------------------------------------\n";
             ProcessText->append(buf);
             EvalProcess->terminate();
@@ -1434,7 +1372,7 @@ void QInputVF::onTerminateButton( void )
 
 void QInputVF::createProcessWindow( void )
 {
-    if( ProcessText != nullptr )
+    if ( ProcessText != nullptr )
         return;
 
     ProcessText = new QTextEdit(nullptr);
@@ -1476,14 +1414,12 @@ bool QInputVF::evaluateGcf( void )
     QString filedotgcf;
     QString s;
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         filedotred = getreducefilename();
         filedotrun = getrunfilename();
         QString filedotgcfresults = getfilename_gcfresults();
         QFile * fptr = new QFile( filedotrun );
-        if( fptr->open( QIODevice::WriteOnly ) )
-        {
+        if ( fptr->open( QIODevice::WriteOnly ) ) {
             QTextStream * fps;
             fps = new QTextStream( fptr );
             *fps << "#!/bin/sh\n";
@@ -1498,7 +1434,7 @@ bool QInputVF::evaluateGcf( void )
             fptr = nullptr;
             }
 
-        if( ProcessText == nullptr )
+        if ( ProcessText == nullptr )
             createProcessWindow();
         else
         {
@@ -1509,7 +1445,7 @@ bool QInputVF::evaluateGcf( void )
 
         QProcess * proc;
 
-        if( EvalProcess != nullptr ) // re-use process of last GCF
+        if ( EvalProcess != nullptr ) // re-use process of last GCF
         {
             proc = EvalProcess;
             disconnect( proc, SIGNAL(finished(int)), p4app, 0 );
@@ -1537,8 +1473,7 @@ bool QInputVF::evaluateGcf( void )
         QString pa = "External Command: sh "; pa += filedotrun; ProcessText->append(pa);
         proc->start( "sh", QStringList(filedotrun), QIODevice::ReadWrite );
 
-        if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
-        {
+        if ( proc->state() != QProcess::Running && proc->state() != QProcess::Starting ) {
             processfailed = true;
             delete proc;
             proc = nullptr;
@@ -1565,8 +1500,7 @@ bool QInputVF::evaluateGcf( void )
 
         s = getMapleExe();
         s = s.append( " " );
-        if( filedotmpl.contains( ' ' ) )
-        {
+        if ( filedotmpl.contains( ' ' ) ) {
             s = s.append( "\"" );
             s = s.append( filedotmpl );
             s = s.append( "\"" );
@@ -1574,7 +1508,7 @@ bool QInputVF::evaluateGcf( void )
         else
             s = s.append( filedotmpl );
 
-        if( ProcessText == nullptr )
+        if ( ProcessText == nullptr )
             createProcessWindow();
         else
         {
@@ -1584,7 +1518,7 @@ bool QInputVF::evaluateGcf( void )
         }
 
         QProcess * proc;
-        if( EvalProcess != nullptr ) // re-use process of last GCF
+        if ( EvalProcess != nullptr ) // re-use process of last GCF
         {
             proc = EvalProcess;
             disconnect( proc, SIGNAL(finished(int)), p4app, 0 );
@@ -1603,8 +1537,7 @@ bool QInputVF::evaluateGcf( void )
         processfailed = false;
         QString pa = "External Command: "; pa += getMapleExe(); pa += " "; pa += filedotmpl; ProcessText->append(pa);
         proc->start( getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite );
-        if( proc->state() != QProcess::Running && proc->state() != QProcess::Starting )
-        {
+        if ( proc->state() != QProcess::Running && proc->state() != QProcess::Starting ) {
             processfailed = true;
             delete proc;
             proc = nullptr;
@@ -1640,8 +1573,7 @@ bool QInputVF::prepareGcf( struct term2 * f, double y1, double y2, int precision
     int i;
     char buf[100];
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         QString filedotred;
         QString userfilered;
 
@@ -1657,12 +1589,11 @@ bool QInputVF::prepareGcf( struct term2 * f, double y1, double y2, int precision
         fprintf( fp, "lisp setq(plotcommand!*,\"cat\");\n" );
         fprintf( fp, "precision %d$\n", precision );
         fprintf( fp, "f:=");
-        for( i = 0; f != nullptr; i++ )
-        {    
+        for ( i = 0; f != nullptr; i++ ) {    
              fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "x", "y" ) );
              f  = f->next_term2;
         }
-        if( i == 0 )
+        if ( i == 0 )
             fprintf( fp, "0$\n" );
         else
             fprintf( fp, "$\n" );
@@ -1672,9 +1603,7 @@ bool QInputVF::prepareGcf( struct term2 * f, double y1, double y2, int precision
         fprintf( fp, "plot(f=0,x=(-1 .. 1),y=(%f .. %f),", (float)y1, (float)y2 );
         fprintf( fp, "points=%d)$\n", numpoints ); 
         fclose( fp );
-    }
-    else
-    {
+    } else {
         QString mainmaple;
         QString user_platform;
         QString user_file;
@@ -1685,7 +1614,7 @@ bool QInputVF::prepareGcf( struct term2 * f, double y1, double y2, int precision
         filedotmpl = getmaplefilename();
     
         fp = fopen( QFile::encodeName( filedotmpl ), "w" );
-        if( fp == nullptr )
+        if ( fp == nullptr )
             return false;
     
         mainmaple = getP4MaplePath();
@@ -1711,12 +1640,11 @@ bool QInputVF::prepareGcf( struct term2 * f, double y1, double y2, int precision
         fprintf( fp, "u := %s:\n",          "x" );
         fprintf( fp, "v := %s:\n",          "y" );
         fprintf( fp, "user_f := " );
-        for( i = 0; f != nullptr; i++ )
-        {
+        for ( i = 0; f != nullptr; i++ ) {
             fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "x", "y" ) );
             f = f->next_term2;
         }
-        if( i == 0 )
+        if ( i == 0 )
             fprintf( fp, "0:\n" );
         else
             fprintf( fp, ":\n" );
@@ -1744,8 +1672,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
 
     f = VFResults.gcf_C;
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         QString filedotred;
         QString userfilered;
 
@@ -1765,12 +1692,11 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
         fprintf( fp, "Si:=sin(y)$\n" ); 
         fprintf( fp, "f:=" );
 
-        for( i = 0; f != nullptr; i++ )
-        {
+        for ( i = 0; f != nullptr; i++ ) {
             fprintf( fp, "%s", printterm3( buf, f, (i==0) ? true : false, "x", "Co", "Si" ) );
             f = f->next_term3;
         }
-        if( i == 0 )
+        if ( i == 0 )
             fprintf( fp, "0$\n" );
         else
             fprintf( fp, "$\n" );
@@ -1783,9 +1709,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
 
 
         fclose( fp );
-    }
-    else
-    {   
+    } else {   
         QString mainmaple;
         QString user_platform;
         QString user_file;
@@ -1796,7 +1720,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
         filedotmpl = getmaplefilename();
     
         fp = fopen( QFile::encodeName( filedotmpl ), "w" );
-        if( fp == nullptr )
+        if ( fp == nullptr )
             return false;
     
         mainmaple = getP4MaplePath();
@@ -1823,12 +1747,11 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2, int precisio
         fprintf( fp, "v := %s:\n",          "sin(y)" );
         fprintf( fp, "user_f := " );
         
-        for( i = 0; f != nullptr; i++ )
-        {
+        for ( i = 0; f != nullptr; i++ ) {
             fprintf( fp, "%s", printterm3( buf, f, (i==0) ? true : false, "x", "U", "V" ) );
             f = f->next_term3;
         }
-        if( i == 0 )
+        if ( i == 0 )
             fprintf( fp, "0:\n" );
         else
             fprintf( fp, ":\n" );
@@ -1860,8 +1783,7 @@ bool QInputVF::prepareGcf_LyapunovR2( int precision, int numpoints )
 
     f = VFResults.gcf;
 
-    if( symbolicpackage == PACKAGE_REDUCE )
-    {
+    if ( symbolicpackage == PACKAGE_REDUCE ) {
         QString filedotred;
         QString userfilered;
 
@@ -1880,12 +1802,11 @@ bool QInputVF::prepareGcf_LyapunovR2( int precision, int numpoints )
         fprintf( fp, "u:=x*cos(y)$\n" );
         fprintf( fp, "v:=x*sin(y)$\n" ); 
         fprintf( fp, "f:=");
-        for( i = 0; f != nullptr; i++ )
-        {    
+        for ( i = 0; f != nullptr; i++ ) {    
              fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "u", "v" ) );
              f  = f->next_term2;
         }
-        if( i == 0 )
+        if ( i == 0 )
             fprintf( fp, "0$\n" );
         else
             fprintf( fp, "$\n" );
@@ -1895,9 +1816,7 @@ bool QInputVF::prepareGcf_LyapunovR2( int precision, int numpoints )
         fprintf( fp, "plot(f=0,x=(0 .. 1),y=(0 .. 2*pi)," );
         fprintf( fp, "points=%d)$\n", numpoints ); 
         fclose( fp );
-    }
-    else
-    {
+    } else {
         QString mainmaple;
         QString user_platform;
         QString user_file;
@@ -1908,7 +1827,7 @@ bool QInputVF::prepareGcf_LyapunovR2( int precision, int numpoints )
         filedotmpl = getmaplefilename();
     
         fp = fopen( QFile::encodeName(filedotmpl), "w" );
-        if( fp == nullptr )
+        if ( fp == nullptr )
             return false;
     
         mainmaple = getP4MaplePath();
@@ -1935,12 +1854,11 @@ bool QInputVF::prepareGcf_LyapunovR2( int precision, int numpoints )
         fprintf( fp, "v := %s:\n",          "x*sin(y)" );
         fprintf( fp, "user_f := " );
     
-        for( i = 0; f != nullptr; i++ )
-        {
+        for ( i = 0; f != nullptr; i++ ) {
             fprintf( fp, "%s", printterm2( buf, f, (i==0) ? true : false, "U", "V" ) );
             f = f->next_term2;
         }
-        if( i == 0 )
+        if ( i == 0 )
             fprintf( fp, "0:\n" );
         else
             fprintf( fp, ":\n" );
