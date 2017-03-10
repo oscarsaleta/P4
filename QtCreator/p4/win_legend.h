@@ -20,23 +20,21 @@
 #ifndef WIN_LEGEND_H
 #define WIN_LEGEND_H
 
-
 #include <QBoxLayout>
 #include <QPaintEvent>
 #include <QWidget>
 
-
 class QLegendWnd : public QWidget
 {
     Q_OBJECT
-        
-public:
-    QLegendWnd();
-    void paintEvent( QPaintEvent * );
-    void calculateGeometry( void );
 
-private:
-    QBoxLayout * mainLayout;
+  public:
+    QLegendWnd();
+    void paintEvent(QPaintEvent *);
+    void calculateGeometry(void);
+
+  private:
+    QBoxLayout *mainLayout;
 
     int orbitwidth;
     int sepwidth;
@@ -59,6 +57,5 @@ private:
     int vmargin7;
     int vmargin8;
 };
-
 
 #endif /* WIN_LEGEND_H */

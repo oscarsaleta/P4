@@ -24,8 +24,8 @@
 #include <QFileInfo>
 #include <QSettings>
 
-QByteArray Win_GetLongPathName( QByteArray );
-QByteArray Win_GetShortPathName( QByteArray );
+QByteArray Win_GetLongPathName(QByteArray);
+QByteArray Win_GetShortPathName(QByteArray);
 
 // -----------------------------------------------------------------------
 //                          GETDEFAULTP4PATH
@@ -33,12 +33,14 @@ QByteArray Win_GetShortPathName( QByteArray );
 //
 // Retrieves the path in which the P4 program is installed.
 //
-// The path is returned without trailing separator (/usr/local/P4 instead of /usr/local/P4/)
+// The path is returned without trailing separator (/usr/local/P4 instead of
+// /usr/local/P4/)
 //
 // Structure of the intallation:
 //
 //
-//      /bin                contains binary of P4, sep and lyapunov, together with the maple file(s)
+//      /bin                contains binary of P4, sep and lyapunov, together
+//      with the maple file(s)
 //      /sumtables          contains intermediary results for sep and lyapunov.
 //      /reduce             contains P4 reduce files (only under Unix)
 //                          In particular, this folder contains the file p4.b
@@ -47,84 +49,76 @@ QByteArray Win_GetShortPathName( QByteArray );
 //
 // Under UNIX, the path is retrieved from the environment variable P4_DIR
 //
-// Note: Under UNIX, forward slashes are used, Under Windows, backward slashes are used.
+// Note: Under UNIX, forward slashes are used, Under Windows, backward slashes
+// are used.
 
-QString getDefaultP4Path( void )
+QString getDefaultP4Path(void)
 {
     QString f;
 #ifndef Q_OS_WIN
-    if( getenv( "P4_DIR" ) != nullptr )
-        f = (QString)getenv( "P4_DIR" );
+    if (getenv("P4_DIR") != nullptr)
+        f = (QString)getenv("P4_DIR");
 #endif
 
-    if( f.isNull() )
-    {
+    if (f.isNull()) {
         // try to find by another means
-        
+
         f = QApplication::applicationFilePath();
-        if( !f.isNull() )
-        {
-            if( f.length() > 0 )
-            {
-                if( f[f.length()-1] == QDir::separator() )
-                {
+        if (!f.isNull()) {
+            if (f.length() > 0) {
+                if (f[f.length() - 1] == QDir::separator()) {
                     // remove trailing slash if it is present
-                    f = f.left(f.length()-1);
+                    f = f.left(f.length() - 1);
                 }
             }
-         }
-         QFileInfo fi0(f);
-         f = fi0.path();  // drop the executable's name (p4.exe)
-         QFileInfo fi(f);
-         QString fp, fn;
-         fp = fi.path();
-         fn = fi.fileName().toLower();
-         
-         if( fn != "bin" )
-         {
-             // error: the P4 exectuble is not stored in basepath/bin.
-             // what to do???
+        }
+        QFileInfo fi0(f);
+        f = fi0.path(); // drop the executable's name (p4.exe)
+        QFileInfo fi(f);
+        QString fp, fn;
+        fp = fi.path();
+        fn = fi.fileName().toLower();
+
+        if (fn != "bin") {
+// error: the P4 exectuble is not stored in basepath/bin.
+// what to do???
 #ifdef Q_OS_WIN
-             f = "C:\\Program Files\\P4";    // return Windows default path
+            f = "C:\\Program Files\\P4"; // return Windows default path
 #else
-             f = "/usr/local/p4";            // return Linux default path
+            f = "/usr/local/p4"; // return Linux default path
 #endif
-         }
-         else
-             f = QDir::toNativeSeparators(fp);
+        } else
+            f = QDir::toNativeSeparators(fp);
     }
 
-    if( !f.isNull() )
-    {
-        if( f.length() > 0 )
-        {
-            if( f[f.length()-1] == QDir::separator() )
-            {
+    if (!f.isNull()) {
+        if (f.length() > 0) {
+            if (f[f.length() - 1] == QDir::separator()) {
                 // remove trailing slash if it is present
-                f = f.left(f.length()-1);
+                f = f.left(f.length() - 1);
             }
         }
-     }
-     
-    return f;       // otherwhise f remains unassigned and is Null.
+    }
+
+    return f; // otherwhise f remains unassigned and is Null.
 }
 
 // -----------------------------------------------------------------------
 //                          GETDEFAULTP4TEMPPATH
 // -----------------------------------------------------------------------
 
-QString getDefaultP4TempPath( void )
+QString getDefaultP4TempPath(void)
 {
 #ifdef Q_OS_WIN
     QString f;
     QByteArray ba_f;
 
-    f = QDir::toNativeSeparators( QDir::tempPath() );
-    ba_f = Win_GetLongPathName( QFile::encodeName(f) );
-    return QFile::decodeName( ba_f );
+    f = QDir::toNativeSeparators(QDir::tempPath());
+    ba_f = Win_GetLongPathName(QFile::encodeName(f));
+    return QFile::decodeName(ba_f);
 
 #else
-    return QDir::toNativeSeparators( QDir::tempPath() );
+    return QDir::toNativeSeparators(QDir::tempPath());
 #endif
 }
 
@@ -132,14 +126,13 @@ QString getDefaultP4TempPath( void )
 //                          GETP4SUMTABLEPATH
 // -----------------------------------------------------------------------
 
-QString getDefaultP4SumTablePath( void )
+QString getDefaultP4SumTablePath(void)
 {
     QString f;
     QString g;
 
     f = getDefaultP4Path();
-    if( f.isNull() == false )
-    {
+    if (f.isNull() == false) {
         g = f;
         g += QDir::separator();
 #ifdef Q_OS_X11
@@ -156,12 +149,12 @@ QString getDefaultP4SumTablePath( void )
 //                          GETDEFAULTMATHMANIPULATOR
 // -----------------------------------------------------------------------
 
-QString getDefaultMathManipulator( void )
+QString getDefaultMathManipulator(void)
 {
 #ifdef Q_OS_WIN
-     return "Maple";
+    return "Maple";
 #else
-     return "Reduce";
+    return "Reduce";
 #endif
 }
 
@@ -173,14 +166,13 @@ QString getDefaultMathManipulator( void )
 //
 // The main P4 file is stored in main_p4.htm.
 
-QString getDefaultP4HelpPath( void )
+QString getDefaultP4HelpPath(void)
 {
     QString f;
     QString g;
 
     f = getDefaultP4Path();
-    if( f.isNull() == false )
-    {
+    if (f.isNull() == false) {
         g = f;
         g += QDir::separator();
         g += "help";
@@ -193,14 +185,13 @@ QString getDefaultP4HelpPath( void )
 //                          GETDEFAULTP4REDUCEPATH
 // -----------------------------------------------------------------------
 
-QString getDefaultP4ReducePath( void )
+QString getDefaultP4ReducePath(void)
 {
     QString f;
     QString g;
 
     f = getDefaultP4Path();
-    if( f.isNull() == false )
-    {
+    if (f.isNull() == false) {
         g = f;
         g += QDir::separator();
         g += "reduce";
@@ -216,14 +207,13 @@ QString getDefaultP4ReducePath( void )
 // The main maple file is stored together with the binary files in the /bin
 // subdirectory
 
-QString getDefaultP4MaplePath( void )
+QString getDefaultP4MaplePath(void)
 {
     QString f;
     QString g;
 
     f = getDefaultP4Path();
-    if( f.isNull() == false )
-    {
+    if (f.isNull() == false) {
         g = f;
         g += QDir::separator();
         g += "bin";
@@ -239,14 +229,13 @@ QString getDefaultP4MaplePath( void )
 // The bin path is the path where the P4 executable is stored, together
 // with the binary files of separatrice and lyapunov.
 
-QString getDefaultP4BinPath( void )
+QString getDefaultP4BinPath(void)
 {
     QString f;
     QString g;
 
     f = getDefaultP4Path();
-    if( f.isNull() == false )
-    {
+    if (f.isNull() == false) {
         g = f;
         g += QDir::separator();
         g += "bin";
@@ -266,11 +255,11 @@ QString getDefaultP4BinPath( void )
 //
 // Under Linux, return the batch file name "reduce".
 
-QString getDefaultReduceInstallation( void )
+QString getDefaultReduceInstallation(void)
 {
 #ifdef Q_OS_WIN
     QString r;
-    return r;       // return nullptr (Windows Reduce version not supported)
+    return r; // return nullptr (Windows Reduce version not supported)
 #else
     return "reduce";
 #endif
@@ -287,54 +276,52 @@ QString getDefaultReduceInstallation( void )
 //
 // Under Linux, return the batch file name "cmaple".
 
-QString getDefaultMapleInstallation( void )
+QString getDefaultMapleInstallation(void)
 {
 #ifdef Q_OS_WIN
-    QSettings * maplesettings;
+    QSettings *maplesettings;
     QString mapleversion, maplepath, exepath, version;
 
-    maplesettings = new QSettings("HKEY_LOCAL_MACHINE\\Software\\Waterloo Maple",
-                           QSettings::NativeFormat);
-    mapleversion = maplesettings->value( "/CURRENT_MAPLE" ).toString();
+    maplesettings =
+        new QSettings("HKEY_LOCAL_MACHINE\\Software\\Waterloo Maple",
+                      QSettings::NativeFormat);
+    mapleversion = maplesettings->value("/CURRENT_MAPLE").toString();
     delete maplesettings;
     maplesettings = nullptr;
-    
-    if( mapleversion.length() != 0 )
-    {
-        maplesettings = new QSettings("HKEY_LOCAL_MACHINE\\Software\\Waterloo Maple\\" + mapleversion,
-                        QSettings::NativeFormat );
-        maplepath = maplesettings->value( "/EXEPATH" ).toString();
+
+    if (mapleversion.length() != 0) {
+        maplesettings = new QSettings(
+            "HKEY_LOCAL_MACHINE\\Software\\Waterloo Maple\\" + mapleversion,
+            QSettings::NativeFormat);
+        maplepath = maplesettings->value("/EXEPATH").toString();
         delete maplesettings;
         maplesettings = nullptr;
-        if( maplepath.length() != 0 )
-        {
-            QFileInfo maplepat( maplepath );
-            if( maplepat.isDir() )
-            {
-                // mapleversion is of the form "Maple 9.5".  We search for the first occurence of digits
+        if (maplepath.length() != 0) {
+            QFileInfo maplepat(maplepath);
+            if (maplepat.isDir()) {
+                // mapleversion is of the form "Maple 9.5".  We search for the
+                // first occurence of digits
                 version = mapleversion;
-                while( version.length() > 0 )
-                    if( version[0].isDigit() )
+                while (version.length() > 0)
+                    if (version[0].isDigit())
                         break;
                     else
                         version = version.mid(1);
-            
+
                 exepath = maplepath + "\\cmaple" + version + ".exe";
 
-                maplepat.setFile( exepath );
-                if( maplepat.exists() )
-                {
-                    if( exepath.contains( ' ' ) )
+                maplepat.setFile(exepath);
+                if (maplepat.exists()) {
+                    if (exepath.contains(' '))
                         exepath = "\"" + exepath + "\"";
                     return exepath;
                 }
 
                 exepath = maplepath + "\\cmaple.exe";
-            
-                maplepat.setFile( exepath );
-                if( maplepat.exists() )
-                {
-                    if( exepath.contains( ' ' ) )
+
+                maplepat.setFile(exepath);
+                if (maplepat.exists()) {
+                    if (exepath.contains(' '))
                         exepath = "\"" + exepath + "\"";
                     return exepath;
                 }
@@ -351,11 +338,7 @@ QString getDefaultMapleInstallation( void )
 //                          REMOVEFILE
 // -----------------------------------------------------------------------
 
-void removeFile( QString fname )
-{
-    QFile::remove( fname );
-}
-
+void removeFile(QString fname) { QFile::remove(fname); }
 
 // --------------------------------------------------------------------
 //               Some Windows Path Functions
@@ -363,14 +346,14 @@ void removeFile( QString fname )
 
 #ifdef Q_OS_WIN
 
-#include <windows.h>
 #include <memory.h>
 #include <string.h>
+#include <windows.h>
 
 /*
 DWORD ShortToLongPathName(
     LPCTSTR lpszShortPath,
-    LPTSTR lpszLongPath, 
+    LPTSTR lpszLongPath,
     DWORD cchBuffer)
 {
     // Catch null pointers.
@@ -394,7 +377,7 @@ DWORD ShortToLongPathName(
     typedef tstring::size_type size;
     size const npos = tstring::npos;
 
-    // Copy the short path into the work buffer and convert forward 
+    // Copy the short path into the work buffer and convert forward
     // slashes to backslashes.
     tstring path = lpszShortPath;
     std::replace(path.begin(), path.end(), ('/'), sep);
@@ -404,7 +387,8 @@ DWORD ShortToLongPathName(
     size right = 0;
 
     // Parse the first bit of the path.
-    if (path.length() >= 2 && isalpha(path[0]) && colon == path[1]) // Drive letter?
+    if (path.length() >= 2 && isalpha(path[0]) && colon == path[1]) // Drive
+letter?
     {
         if (2 == path.length()) // 'bare' drive letter
         {
@@ -430,7 +414,7 @@ DWORD ShortToLongPathName(
         {
             right = npos;  // skip main block
         }
-        else 
+        else
         {
             if (sep == path[1]) // is it UNC?
             {
@@ -506,30 +490,28 @@ DWORD ShortToLongPathName(
 //                          WIN_GETSHORTPATHNAME
 // -----------------------------------------------------------------------
 
-QByteArray Win_GetShortPathName( QByteArray f )
+QByteArray Win_GetShortPathName(QByteArray f)
 {
-    char * shortfname;
-    const char * longfname;
+    char *shortfname;
+    const char *longfname;
     QByteArray ba_fname;
     DWORD siz, reqsiz;
 
     longfname = (const char *)f;
-    shortfname = (char *)malloc( siz = ba_fname.length()+1 );
+    shortfname = (char *)malloc(siz = ba_fname.length() + 1);
 
     // call to Windows API
 
-    reqsiz = GetShortPathNameA( longfname, shortfname, siz );
-    if( reqsiz > siz )
-    {
-        shortfname = (char *)realloc( shortfname, reqsiz );
-        reqsiz = GetShortPathNameA( longfname, shortfname, reqsiz );
+    reqsiz = GetShortPathNameA(longfname, shortfname, siz);
+    if (reqsiz > siz) {
+        shortfname = (char *)realloc(shortfname, reqsiz);
+        reqsiz = GetShortPathNameA(longfname, shortfname, reqsiz);
     }
-    if( reqsiz == 0 )
-        free( shortfname );
-    else
-    {
+    if (reqsiz == 0)
+        free(shortfname);
+    else {
         f = QByteArray(shortfname);
-        free( shortfname );
+        free(shortfname);
     }
     return f;
 }
@@ -538,35 +520,35 @@ QByteArray Win_GetShortPathName( QByteArray f )
 //                          WIN_GETLONGPATHNAME
 // -----------------------------------------------------------------------
 
-QByteArray Win_GetLongPathName( QByteArray f )
+QByteArray Win_GetLongPathName(QByteArray f)
 {
-/*
-    char * longfname;
-    const char * shortfname;
-    QByteArray ba_fname;
-    DWORD siz, reqsiz;
+    /*
+        char * longfname;
+        const char * shortfname;
+        QByteArray ba_fname;
+        DWORD siz, reqsiz;
 
-    shortfname = (const char *)f;
-    longfname = (char *)malloc( siz = ba_fname.length() );
+        shortfname = (const char *)f;
+        longfname = (char *)malloc( siz = ba_fname.length() );
 
-    // call to Windows API
+        // call to Windows API
 
-    reqsiz = ShortToLongPathName( shortfname, longfname, siz );
+        reqsiz = ShortToLongPathName( shortfname, longfname, siz );
 
-    if( reqsiz > siz )
-    {
-        longfname = (char *)realloc( longfname, reqsiz );
-        reqsiz = ShortToLongPathName( shortfname, longfname, reqsiz );
-    }
+        if( reqsiz > siz )
+        {
+            longfname = (char *)realloc( longfname, reqsiz );
+            reqsiz = ShortToLongPathName( shortfname, longfname, reqsiz );
+        }
 
-    if( reqsiz == 0 )
-        free( longfname );
-    else
-    {
-        f = QByteArray(longfname);
-        free( longfname );
-    }
-*/
+        if( reqsiz == 0 )
+            free( longfname );
+        else
+        {
+            f = QByteArray(longfname);
+            free( longfname );
+        }
+    */
     return f;
 }
 

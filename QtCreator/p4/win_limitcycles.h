@@ -20,7 +20,6 @@
 #ifndef WIN_LIMITCYCLES_H
 #define WIN_LIMITCYCLES_H
 
-
 #include "win_plot.h"
 #include "win_sphere.h"
 
@@ -30,39 +29,38 @@
 #include <QSpinBox>
 #include <QWidget>
 
-
-bool stop_search_limit( void );
-void write_to_limit_window( double x, double y );
+bool stop_search_limit(void);
+void write_to_limit_window(double x, double y);
 
 class QLimitCyclesDlg : public QWidget
 {
     Q_OBJECT
 
-public:
-    QLimitCyclesDlg( QPlotWnd *, QWinSphere * );
-    void Reset( void );
-    void setSection( double, double, double, double );
-    void showEvent( QShowEvent * );
-    void hideEvent( QHideEvent * );
+  public:
+    QLimitCyclesDlg(QPlotWnd *, QWinSphere *);
+    void Reset(void);
+    void setSection(double, double, double, double);
+    void showEvent(QShowEvent *);
+    void hideEvent(QHideEvent *);
 
-private:
-    QWinSphere * mainSphere;
-    QPlotWnd * plotwnd;
+  private:
+    QWinSphere *mainSphere;
+    QPlotWnd *plotwnd;
 
-    QPushButton * btn_start;
-    QPushButton * btn_cancel;
-    QPushButton * btn_delall;
-    QPushButton * btn_dellast;
+    QPushButton *btn_start;
+    QPushButton *btn_cancel;
+    QPushButton *btn_delall;
+    QPushButton *btn_dellast;
 
-    QLineEdit * edt_x0;
-    QLineEdit * edt_y0;
-    QLineEdit * edt_x1;
-    QLineEdit * edt_y1;
-    QLineEdit * edt_grid;
+    QLineEdit *edt_x0;
+    QLineEdit *edt_y0;
+    QLineEdit *edt_x1;
+    QLineEdit *edt_y1;
+    QLineEdit *edt_grid;
 
-    QSpinBox * spin_numpoints;
+    QSpinBox *spin_numpoints;
 
-    QBoxLayout * mainLayout;
+    QBoxLayout *mainLayout;
 
     double selected_x0;
     double selected_y0;
@@ -71,12 +69,11 @@ private:
     double selected_grid;
     int selected_numpoints;
 
-public slots:
-    void onbtn_start( void );
-    void onbtn_cancel( void );
-    void onbtn_delall( void );
-    void onbtn_dellast( void );
+  public slots:
+    void onbtn_start(void);
+    void onbtn_cancel(void);
+    void onbtn_delall(void);
+    void onbtn_dellast(void);
 };
-
 
 #endif

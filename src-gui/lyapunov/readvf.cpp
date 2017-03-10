@@ -16,47 +16,47 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "lyapunov.h"
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // --------------------------------------------------------------------------
 //                      READ_TABLE
 // --------------------------------------------------------------------------
 
-void read_table( const char * file )
+void read_table(const char *file)
 {
-	FILE * fp;
-	int l, t, degx, degy;
-	double re, im;
+    FILE *fp;
+    int l, t, degx, degy;
+    double re, im;
     int dummy;
-	
-	vec_field = (hom_poly *)malloc( sizeof( hom_poly ) );
+
+    vec_field = (hom_poly *)malloc(sizeof(hom_poly));
     vec_field->next_hom_poly = nullptr;
 
-	fp = fopen( file, "r" );
-    if( fp == nullptr )
-	{
-		perror(file);
-		exit(-5);
-	}
-    // dummy should be 0, it is only nonzero when the mpf version of this program is called.
-    if (fscanf(fp, "%d", &dummy )!=1
-            || fscanf( fp, "%d %lf", &weakness_level, &precision )!=2
-            || fscanf( fp, "%i\n\n", &l )!=1) {
-        fprintf(stderr,"Error reading %s\n",file);
+    fp = fopen(file, "r");
+    if (fp == nullptr) {
+        perror(file);
+        exit(-5);
+    }
+    // dummy should be 0, it is only nonzero when the mpf version of this
+    // program is called.
+    if (fscanf(fp, "%d", &dummy) != 1 ||
+        fscanf(fp, "%d %lf", &weakness_level, &precision) != 2 ||
+        fscanf(fp, "%i\n\n", &l) != 1) {
+        fprintf(stderr, "Error reading %s\n", file);
         exit(-5);
     }
 
-	for( t = 1; t <= l; t++ )
-	{
-        if (fscanf( fp, "%i\n\n%i\n\n%lf\n\n%lf\n\n", &degx, &degy, &re, &im )!=4) {
-            fprintf(stderr,"Error reading %s\n",file);
+    for (t = 1; t <= l; t++) {
+        if (fscanf(fp, "%i\n\n%i\n\n%lf\n\n%lf\n\n", &degx, &degy, &re, &im) !=
+            4) {
+            fprintf(stderr, "Error reading %s\n", file);
             exit(-5);
         }
-		ins_hom_poly( vec_field, degx, degy, re, im );
-	}
-	fclose( fp );
+        ins_hom_poly(vec_field, degx, degy, re, im);
+    }
+    fclose(fp);
 }

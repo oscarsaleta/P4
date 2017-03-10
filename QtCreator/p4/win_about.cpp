@@ -25,87 +25,91 @@
 
 #include <QLabel>
 
-
-QP4AboutDlg::QP4AboutDlg( QWidget * parent, Qt::WindowFlags f )
-    : QDialog( parent, f )
+QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
+    : QDialog(parent, f)
 {
     // general initialization
 
-//  setFont( QFont( FONTSTYLE, FONTSIZE ) );
+    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     // define controls
 
-    if( p4smallicon != nullptr )
-        setWindowIcon( *p4smallicon );
+    if (p4smallicon != nullptr)
+        setWindowIcon(*p4smallicon);
 
-    btn_ok = new QPushButton( "&Ok" );
-    btn_settings = new QPushButton( "&Main Settings" );
+    btn_ok = new QPushButton("&Ok");
+    btn_settings = new QPushButton("&Main Settings");
 
 #ifdef TOOLTIPS
-    btn_ok->setToolTip( "Go back to program" );
-    btn_settings->setToolTip( "Access general program settings" );
+    btn_ok->setToolTip("Go back to program");
+    btn_settings->setToolTip("Access general program settings");
 #endif
 
     // define placement of controls
 
-    mainLayout = new QBoxLayout( QBoxLayout::TopToBottom );
+    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    QGridLayout * lay00 = new QGridLayout();
-    lay00->addWidget( new QLabel( "P4 (Planar Polynomial Phase Portraits) by" ), 0, 1 );
-    lay00->addWidget( new QLabel( "" ), 1, 1 );
-    lay00->addWidget(new QLabel( QString::fromUtf8("    O. Saleta (Universitat Autònoma de Barcelona)")), 2, 1);
-    lay00->addWidget( new QLabel( QString::fromUtf8("    J.C. Artés (Universitat Autònoma de Barcelona)") ), 3, 1 );
-    lay00->addWidget( new QLabel( "    C. Herssens (Hasselt University)" ), 4, 1 );
-    lay00->addWidget( new QLabel( "    P. De Maesschalck (Hasselt University)" ), 5, 1 );
-    lay00->addWidget( new QLabel( "    F. Dumortier (Hasselt University)" ), 6, 1 );
-    lay00->addWidget( new QLabel( QString::fromUtf8("    J. Llibre (Universitat Autònoma de Barcelona)") ), 7, 1 );
-    lay00->addWidget( new QLabel( "" ), 8, 1 );
-
+    QGridLayout *lay00 = new QGridLayout();
+    lay00->addWidget(new QLabel("P4 (Planar Polynomial Phase Portraits) by"), 0,
+                     1);
+    lay00->addWidget(new QLabel(""), 1, 1);
+    lay00->addWidget(new QLabel(QString::fromUtf8(
+                         "    O. Saleta (Universitat Autònoma de Barcelona)")),
+                     2, 1);
+    lay00->addWidget(new QLabel(QString::fromUtf8(
+                         "    J.C. Artés (Universitat Autònoma de Barcelona)")),
+                     3, 1);
+    lay00->addWidget(new QLabel("    C. Herssens (Hasselt University)"), 4, 1);
+    lay00->addWidget(new QLabel("    P. De Maesschalck (Hasselt University)"),
+                     5, 1);
+    lay00->addWidget(new QLabel("    F. Dumortier (Hasselt University)"), 6, 1);
+    lay00->addWidget(new QLabel(QString::fromUtf8(
+                         "    J. Llibre (Universitat Autònoma de Barcelona)")),
+                     7, 1);
+    lay00->addWidget(new QLabel(""), 8, 1);
 
     QString versionstr;
-    versionstr = " Version " + p4Version + "   " + p4VersionDate + " " + p4Platform;
+    versionstr =
+        " Version " + p4Version + "   " + p4VersionDate + " " + p4Platform;
 
-    lay00->addWidget( new QLabel( versionstr ), 9, 1 );
+    lay00->addWidget(new QLabel(versionstr), 9, 1);
 
-    QLabel * l;
-    l = new QLabel( "(missing image)" );
-    if( p4image.load( getP4BinPath() + "/portrait.png" ) )
-        l->setPixmap( p4image );
+    QLabel *l;
+    l = new QLabel("(missing image)");
+    if (p4image.load(getP4BinPath() + "/portrait.png"))
+        l->setPixmap(p4image);
 
-    lay00->addWidget( l, 0, 0, 9, 1 );
+    lay00->addWidget(l, 0, 0, 9, 1);
 
-    mainLayout->addLayout( lay00 );
-    QHBoxLayout * buttons = new QHBoxLayout();
+    mainLayout->addLayout(lay00);
+    QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(1);
-    buttons->addWidget( btn_ok );
+    buttons->addWidget(btn_ok);
     buttons->addStretch(0);
-    buttons->addWidget( btn_settings );
-    mainLayout->addLayout( buttons );
-    setLayout( mainLayout );
+    buttons->addWidget(btn_settings);
+    mainLayout->addLayout(buttons);
+    setLayout(mainLayout);
 
     // connections
 
-    QObject::connect( btn_ok, SIGNAL(clicked()), this, SLOT(OnOk()) );
-    QObject::connect( btn_settings, SIGNAL(clicked()), this, SLOT(OnSettings()) );
+    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(OnOk()));
+    QObject::connect(btn_settings, SIGNAL(clicked()), this, SLOT(OnSettings()));
 
     btn_ok->setFocus();
 
-    setP4WindowTitle( this, "About P4" );
+    setP4WindowTitle(this, "About P4");
 }
 
-void QP4AboutDlg::OnOk( void )
-{
-    done(0);
-}
+void QP4AboutDlg::OnOk(void) { done(0); }
 
-void QP4AboutDlg::OnSettings( void )
+void QP4AboutDlg::OnSettings(void)
 {
     int value;
-    QSettingsDlg * psettings;
-    psettings = new QSettingsDlg( this, 0 );
+    QSettingsDlg *psettings;
+    psettings = new QSettingsDlg(this, 0);
     value = psettings->exec();
     delete psettings;
     psettings = nullptr;
-    if( value )
+    if (value)
         done(0);
 }
