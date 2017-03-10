@@ -1153,7 +1153,7 @@ void QInputVF::finishEvaluation( int exitCode )
     if ( ProcessButton != nullptr )
         ProcessButton->setEnabled(false);
         
-    if ( EvalProcess != nullptr ) {
+//    if ( EvalProcess != nullptr ) {
         if ( ProcessText != nullptr ) {
             QString buf;
             buf = "\n-------------------------------------------------------------------------------\n";
@@ -1180,7 +1180,7 @@ void QInputVF::finishEvaluation( int exitCode )
             }
             ProcessText->append(buf);
         }
-    }
+//    }
     if ( ProcessText != nullptr ) {
 //      ProcessText->hide();
         if ( ProcessText->isActiveWindow() ) {
