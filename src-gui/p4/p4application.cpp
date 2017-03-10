@@ -81,15 +81,13 @@ void QP4Application::Signal_Evaluated( int exitCode )
     QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
     p4app->postEvent( p4startdlg, e );
 
-    if( cmdLine_AutoExit )
-    {
+    if ( cmdLine_AutoExit ) {
         cmdLine_AutoPlot = false;
         p4startdlg->OnQuit();
         return;
     }
 
-    if( cmdLine_AutoPlot )
-    {
+    if ( cmdLine_AutoPlot ) {
         cmdLine_AutoPlot = false;
         p4startdlg->OnPlot();
     }
@@ -122,14 +120,12 @@ void QP4Application::Signal_Loaded( void )
     QP4Event * e = new QP4Event( (QEvent::Type)TYPE_SIGNAL_LOADED, nullptr );
     p4app->postEvent( p4startdlg, e );
 
-    if( cmdLine_AutoEvaluate )
-    {
+    if ( cmdLine_AutoEvaluate ) {
         cmdLine_AutoEvaluate = false;
         p4startdlg->Find_Window->OnBtnEval();
         return;
     }
-    if( cmdLine_AutoPlot )
-    {
+    if ( cmdLine_AutoPlot ) {
         cmdLine_AutoPlot = false;
         p4startdlg->OnPlot();
         return;
