@@ -332,12 +332,10 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
     int dashes, d;
 
     if (VFResults.current_lim_cycle == nullptr) {
-        VFResults.first_lim_cycle =
-            new orbits; //(struct orbits *) malloc(sizeof(struct orbits));
+        VFResults.first_lim_cycle = new orbits;
         VFResults.current_lim_cycle = VFResults.first_lim_cycle;
     } else {
-        VFResults.current_lim_cycle->next_orbit =
-            new orbits; //(struct orbits *) malloc(sizeof(struct orbits));
+        VFResults.current_lim_cycle->next_orbit = new orbits;
         VFResults.current_lim_cycle = VFResults.current_lim_cycle->next_orbit;
     }
 
@@ -352,9 +350,7 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
     (*plot_p)(spherewnd, p1, CLIMIT);
     MATHFUNC(integrate_sphere_orbit)
     (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    VFResults.current_lim_cycle->f_orbits =
-        new orbits_points; //(struct orbits_points *)malloc(sizeof(struct
-                           //orbits_points));
+    VFResults.current_lim_cycle->f_orbits = new orbits_points;
     VFResults.current_lim_cycle->current_f_orbits =
         VFResults.current_lim_cycle->f_orbits;
     copy_x_into_y(p2, VFResults.current_lim_cycle->current_f_orbits->pcoord);
@@ -371,8 +367,7 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
         VFResults.current_lim_cycle->current_f_orbits->next_point =
-            new orbits_points; //(struct orbits_points *)malloc(sizeof(struct
-                               //orbits_points));
+            new orbits_points;
         VFResults.current_lim_cycle->current_f_orbits =
             VFResults.current_lim_cycle->current_f_orbits->next_point;
         copy_x_into_y(p2,
@@ -398,8 +393,7 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
         VFResults.current_lim_cycle->current_f_orbits->next_point =
-            new orbits_points; //(struct orbits_points *)malloc(sizeof(struct
-                               //orbits_points));
+            new orbits_points;
         VFResults.current_lim_cycle->current_f_orbits =
             VFResults.current_lim_cycle->current_f_orbits->next_point;
         copy_x_into_y(p2,

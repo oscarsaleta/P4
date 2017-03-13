@@ -3,9 +3,7 @@
  *  Copyright (C) 1996-2016  J.C. Artés, C. Herssens, P. De Maesschalck,
  *                           F. Dumortier, J. Llibre, O. Saleta
  *
- *  P4 is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published
- *  by the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  *
  *  This program is distributed in the hope that it will be useful,
@@ -225,7 +223,6 @@ void QVFStudy::deleteSaddle(saddle *p)
         delete_term2(q->vector_field[1]);
         if (q->notadummy)
             deleteSeparatrices(q->separatrices); // separatrices may be nullptr
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -247,7 +244,6 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
         delete_term2(q->vector_field[1]);
         if (q->notadummy)
             deleteSeparatrices(q->separatrices); // separatrices may be nullptr
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -266,7 +262,6 @@ void QVFStudy::deleteNode(node *p)
         p = p->next_node;
         delete q;
         q = nullptr;
-        // free(q);
     }
 }
 
@@ -281,7 +276,6 @@ void QVFStudy::deleteStrongFocus(strong_focus *p)
     while (p != nullptr) {
         q = p;
         p = p->next_sf;
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -298,7 +292,6 @@ void QVFStudy::deleteWeakFocus(weak_focus *p)
     while (p != nullptr) {
         q = p;
         p = p->next_wf;
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -316,9 +309,8 @@ void QVFStudy::deleteDegenerate(degenerate *p)
         q = p;
         p = p->next_de;
 
-        if (q->notadummy)
+        if (q->notadummy && (q->blow_up != nullptr))
             deleteBlowup(q->blow_up);
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -339,7 +331,6 @@ void QVFStudy::deleteSeparatrices(sep *p)
         deleteOrbitPoint(q->first_sep_point);
         if (q->notadummy)
             delete_term1(q->separatrice);
-        // free( q );
         delete q;
         q = nullptr;
     }
@@ -356,7 +347,6 @@ void QVFStudy::deleteTransformations(transformations *t)
     while (t != nullptr) {
         u = t;
         t = t->next_trans;
-        // free(u);
         delete u;
         u = nullptr;
     }
@@ -378,7 +368,6 @@ void QVFStudy::deleteBlowup(blow_up_points *b)
         delete_term2(c->vector_field[1]);
         delete_term1(c->sep);
         deleteOrbitPoint(c->first_sep_point);
-        // free(c);
         delete c;
         c = nullptr;
     }
@@ -405,7 +394,6 @@ void QVFStudy::deleteOrbitPoint(P4ORBIT p)
         q = p;
         p = p->next_point;
 
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -424,7 +412,6 @@ void QVFStudy::deleteOrbit(orbits *p)
         p = p->next_orbit;
 
         deleteOrbitPoint(q->f_orbits);
-        // free(q);
         delete q;
         q = nullptr;
     }
@@ -663,7 +650,7 @@ bool QVFStudy::readGCF(FILE *fp)
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            gcf_C = new term3; // (P4POLYNOM3)malloc( sizeof(term3) );
+            gcf_C = new term3;
             gcf_C->next_term3 = nullptr;
             if (!readTerm3(fp, gcf_C, N))
                 return false;
@@ -713,7 +700,7 @@ bool QVFStudy::readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf)
 {
     int N;
 
-    vf[0] = new term3; // (P4POLYNOM3)malloc( sizeof( term3 ) );
+    vf[0] = new term3;
     vf[0]->next_term3 = nullptr;
     vf[1] = new term3;
     vf[1]->next_term3 = nullptr;
@@ -873,7 +860,7 @@ bool QVFStudy::readTerm3(FILE *fp, P4POLYNOM3 p, int N)
         return false;
 
     for (i = 2; i <= N; i++) {
-        p->next_term3 = new term3; // (P4POLYNOM3)malloc( sizeof( term3 ) );
+        p->next_term3 = new term3;
         p = p->next_term3;
         p->next_term3 = nullptr;
         if (fscanf(fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si),
@@ -1098,7 +1085,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             if (fscanf(fp, "%d ", &N) != 1)
                 return false;
             sep1->notadummy = true;
-            sep1->separatrice = new term1; // (term1 *)malloc( sizeof(term1) );
+            sep1->separatrice = new term1;
             readTerm1(fp, sep1->separatrice, N);
             sep1->first_sep_point = nullptr;
             sep1->last_sep_point = nullptr;
@@ -1106,7 +1093,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             if (point->chart == CHART_R2 || singinf) {
                 // read second (hyperbolic) separatrix
 
-                sep1->next_sep = new sep; // (sep *)malloc( sizeof(sep) );
+                sep1->next_sep = new sep;
                 sep1 = sep1->next_sep;
                 sep1->type = OT_UNSTABLE;
                 sep1->d = 1;
@@ -1134,8 +1121,8 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         }
         break;
 
-    case 2:                            // saddle-node
-        point->separatrices = new sep; // (sep *) malloc(sizeof(sep));
+    case 2: // saddle-node
+        point->separatrices = new sep;
         sep1 = point->separatrices;
         if (s)
             sep1->type = STYPE_CENUNSTABLE;

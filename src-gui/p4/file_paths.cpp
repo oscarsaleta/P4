@@ -498,20 +498,22 @@ QByteArray Win_GetShortPathName(QByteArray f)
     DWORD siz, reqsiz;
 
     longfname = (const char *)f;
-    shortfname = (char *)malloc(siz = ba_fname.length() + 1);
+    shortfname = new char[siz = ba_fname.length() + 1];
 
     // call to Windows API
 
     reqsiz = GetShortPathNameA(longfname, shortfname, siz);
     if (reqsiz > siz) {
-        shortfname = (char *)realloc(shortfname, reqsiz);
+        shortfname = new char[reqsiz];
         reqsiz = GetShortPathNameA(longfname, shortfname, reqsiz);
     }
-    if (reqsiz == 0)
-        free(shortfname);
-    else {
+    if (reqsiz == 0) {
+        delete shortfname;
+        shortfname = nullptr;
+    } else {
         f = QByteArray(shortfname);
-        free(shortfname);
+        delete shortfname;
+        shortfname = nullptr;
     }
     return f;
 }

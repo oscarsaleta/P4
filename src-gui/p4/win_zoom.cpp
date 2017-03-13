@@ -114,7 +114,7 @@ void QZoomWnd::Signal_Evaluated(void)
 
 void QZoomWnd::OnBtnClose(void)
 {
-    int *data = new int; //(int *)malloc( sizeof(int) );
+    int *data = new int;
     *data = zoomid;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
@@ -123,7 +123,7 @@ void QZoomWnd::OnBtnClose(void)
 
 bool QZoomWnd::close(void)
 {
-    int *data = new int; //(int *)malloc( sizeof(int) );
+    int *data = new int;
     *data = zoomid;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
@@ -202,7 +202,7 @@ void QZoomWnd::hideEvent(QHideEvent *h)
 {
     UNUSED(h);
     if (!isMinimized()) {
-        int *data = new int; //(int *)malloc( sizeof(int) );
+        int *data = new int;
         *data = zoomid;
 
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);

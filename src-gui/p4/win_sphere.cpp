@@ -140,7 +140,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
     if (id == Qt::Key_F && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // F: integrate orbit forwards in time
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -148,7 +148,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
     if (id == Qt::Key_C && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // C: continue integrate orbit
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 0;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -156,7 +156,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
     if (id == Qt::Key_B && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // B: integrate orbit backwards in time
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = -1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -164,7 +164,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
     if (id == Qt::Key_D && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // D: delete orbit
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 2;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -173,7 +173,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
     if (id == Qt::Key_A && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // A: delete all orbits
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 3;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -183,7 +183,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
                             bs == Qt::AltModifier + Qt::ShiftModifier)) {
         // SHIFT+C:  continue integrating separatrice
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 0;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -193,7 +193,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
                             bs == Qt::AltModifier + Qt::ShiftModifier)) {
         // SHIFT+N: select next separatrice
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 3;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -203,7 +203,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
                             bs == Qt::AltModifier + Qt::ShiftModifier)) {
         // SHIFT+I: integrate next separatrice
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 2;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -213,7 +213,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
                             bs == Qt::AltModifier + Qt::ShiftModifier)) {
         // SHIFT+S: start integrate separatrice
 
-        data1 = new int; //(int *)malloc(sizeof(int));
+        data1 = new int;
         *data1 = 1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         p4app->postEvent(parentWnd, e1);
@@ -1016,8 +1016,7 @@ void QWinSphere::mousePressEvent(QMouseEvent *e)
         // However, when the limit cycle window is open, select the first
         // and second point of a transverse section.
 
-        struct DOUBLEPOINT *data1 = (struct DOUBLEPOINT *)malloc(
-            sizeof(struct DOUBLEPOINT) + sizeof(void *));
+        struct DOUBLEPOINT *data1 = new DOUBLEPOINT;//(struct DOUBLEPOINT *)malloc(sizeof(struct DOUBLEPOINT) + sizeof(void *));
         data1->x = coWorldX(e->x());
         data1->y = coWorldY(e->y());
         *((void **)(data1 + 1)) = this;
@@ -1065,7 +1064,7 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             selectingZoom = false;
 
             double *data1 =
-                new double[4]; //(double *)malloc( sizeof(double) * 4 );
+                new double[4];
             data1[0] = coWorldX(zoomAnchor1.x());
             data1[1] = coWorldY(zoomAnchor1.y());
             data1[2] = coWorldX(zoomAnchor2.x());
@@ -1080,7 +1079,7 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             selectingLCSection = false;
 
             double *data1 =
-                new double[4]; //(double *)malloc( sizeof(double) * 4 );
+                new double[4];
             data1[0] = coWorldX(lcAnchor1.x());
             data1[1] = coWorldY(lcAnchor1.y());
             data1[2] = coWorldX(lcAnchor2.x());
@@ -1182,7 +1181,7 @@ void QWinSphere::SelectNearestSingularity(QPoint winpos)
         msgBar->showMessage("Search nearest critical point: Found");
 
         int *data1;
-        data1 = new int; //(int *)malloc( sizeof(int) );
+        data1 = new int;
         *data1 = -1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         p4app->postEvent(parentWnd, e1);

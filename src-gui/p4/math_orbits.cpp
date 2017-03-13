@@ -67,7 +67,6 @@ void integrateOrbit(QWinSphere *sphere, int dir)
     } else {
         VFResults.current_orbit->current_f_orbits->next_point =
             new orbits_points;
-        //(struct orbits_points *) malloc(sizeof(struct orbits_points));
         VFResults.current_orbit->current_f_orbits =
             VFResults.current_orbit->current_f_orbits->next_point;
         copy_x_into_y(pcoord,
@@ -93,12 +92,10 @@ bool startOrbit(QWinSphere *sphere, double x, double y, bool R)
     double ucoord[2];
 
     if (VFResults.first_orbit == nullptr) {
-        VFResults.first_orbit =
-            new orbits; //(struct orbits *)malloc( sizeof(struct orbits) );
+        VFResults.first_orbit = new orbits;
         VFResults.current_orbit = VFResults.first_orbit;
     } else {
-        VFResults.current_orbit->next_orbit =
-            new orbits; //(struct orbits *)malloc( sizeof(struct orbits) );
+        VFResults.current_orbit->next_orbit = new orbits;
         VFResults.current_orbit = VFResults.current_orbit->next_orbit;
     }
     if (R)
@@ -323,15 +320,11 @@ struct orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
             set_current_step(fabs(hhi));
 
         if (last_orbit == nullptr) {
-            first_orbit = new orbits_points; //(struct orbits_points *)
-                                             //malloc(sizeof(struct
-                                             //orbits_points));
+            first_orbit = new orbits_points;
             last_orbit = first_orbit;
             h = dir;
         } else {
-            last_orbit->next_point =
-                new orbits_points; //(struct orbits_points *)
-                                   //malloc(sizeof(struct orbits_points));
+            last_orbit->next_point = new orbits_points;
             h = last_orbit->dir;
             last_orbit = last_orbit->next_point;
         }

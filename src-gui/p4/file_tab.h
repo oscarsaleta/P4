@@ -151,7 +151,7 @@ struct saddle {
     int chart;
 
     double epsilon;
-    int notadummy;
+    bool notadummy;
 
     struct sep *separatrices;
     struct term2 *vector_field[2]; // vector field {xdot,ydot}
@@ -165,7 +165,7 @@ struct semi_elementary {
     int chart;
 
     double epsilon;
-    int notadummy;
+    bool notadummy;
 
     struct sep *separatrices;      // center sep (t,f(t)), sep (g(t),t)
     struct term2 *vector_field[2]; // vector field
@@ -181,7 +181,7 @@ struct degenerate {
     int chart;
 
     double epsilon;
-    int notadummy;
+    bool notadummy;
 
     struct blow_up_points *blow_up;
 };
