@@ -21,15 +21,20 @@
 set -e
 
 # check input variables
-if [ "$1" = "--verbose" ] || [ "$2" = "--verbose" ]; then
+if [ "$1" = "--verbose" ] || [ "$2" = "--verbose" ] || [ "$3" = "--verbose" ]; then
     VERBOSE=true
 else
     VERBOSE=false
 fi
-if [ "$1" = "--uninstall" ] || [ "$2" = "--uninstall" ]; then
+if [ "$1" = "--uninstall" ] || [ "$2" = "--uninstall" ] || [ "$3" = "--uninstall" ]; then
     ONLYUNINSTALL=true
 else
     ONLYUNINSTALL=false
+fi
+if [ "$1" = "--debug" ] || [ "$2" = "--debug" ] || [ "$3" = "--debug" ]; then
+    COMPILE_DEBUG="CONFIG+=debug"
+else
+    COMPILE_DEBUG=
 fi
 
 # Title
@@ -40,13 +45,11 @@ if [ $ONLYUNINSTALL = false ]; then
     # Welcome screen
     if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
 
-    If you want a more VERBOSE OUTPUT (in order to see possible errors during compilation), execute this script using the following command:
+    Optional arguments:
 
-    ./compile_install_linux --verbose
-
-    If you want to only UNINSTALL P4, execute this script using the following command:
-
-    ./compile_install_linux --uninstall
+    --verbose : more VERBOSE output (in order to see possible errors during compilation)
+    --uninstall : to only UNINSTALL P4
+    --debug : to compile with DEBUGGING symbols
 
     These options can be used together in any given order.
 
@@ -187,7 +190,7 @@ echo "Running qmake..."
 if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
 fi
-if ! $QMAKE -r P4.pro >$OUT 2>$ERR; then
+if ! $QMAKE $COMPILE_DEBUG -r P4.pro >$OUT 2>$ERR; then
     whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:
 - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
 - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
