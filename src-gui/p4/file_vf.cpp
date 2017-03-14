@@ -244,7 +244,7 @@ bool QInputVF::load(void)
             return false;
         }
         parlabel[i] = scanbuf;
-        while ((c = fgetc(fp)) == '\n')
+        while ((c = fgetc(fp)) == '\n' || c == 13)
             ;
         ungetc(c, fp);
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
