@@ -34,6 +34,8 @@ struct term1 {
     int exp;
     double coeff;
     struct term1 *next_term1;
+
+    term1() : next_term1(nullptr){};
 };
 
 typedef struct term1 *P4POLYNOM1;
@@ -45,6 +47,8 @@ struct term2 {
     int exp_y;
     double coeff;
     struct term2 *next_term2;
+
+    term2() : next_term2(nullptr){};
 };
 
 // Linked list of terms a*r^i*cos(theta)^j*sin(theta)^k
@@ -57,6 +61,8 @@ struct term3 {
     int exp_Si;
     double coeff;
     struct term3 *next_term3;
+
+    term3() : next_term3(nullptr){};
 };
 
 typedef struct term3 *P4POLYNOM3;
@@ -78,6 +84,8 @@ struct orbits_points {
               // and sometimes the type
 
     struct orbits_points *next_point;
+
+    orbits_points() : next_point(nullptr){};
 };
 
 typedef struct orbits_points *P4ORBIT;
@@ -88,6 +96,8 @@ struct orbits {
     P4ORBIT f_orbits;         // orbit
     P4ORBIT current_f_orbits; // orbit
     struct orbits *next_orbit;
+
+    orbits() : next_orbit(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -99,6 +109,8 @@ struct transformations {
     int c1, c2, d1, d2, d3, d4; // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
     int d;                      // X/x^d
     struct transformations *next_trans;
+
+    transformations() : next_trans(nullptr){};
 };
 
 struct blow_up_points {
@@ -117,6 +129,10 @@ struct blow_up_points {
     struct orbits_points *first_sep_point;
     struct orbits_points *last_sep_point;
     struct blow_up_points *next_blow_up_point;
+
+    blow_up_points()
+        : trans(nullptr), sep(nullptr), first_sep_point(nullptr),
+          last_sep_point(nullptr), next_blow_up_point(nullptr){};
 };
 
 struct sep {
@@ -129,6 +145,10 @@ struct sep {
                     // through a symmetry)
     struct term1 *separatrice; // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
     struct sep *next_sep;
+
+    sep()
+        : first_sep_point(nullptr), last_sep_point(nullptr),
+          separatrice(nullptr), next_sep(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -142,6 +162,8 @@ struct genericsingularity // part of the structure that is the same for all
     double y0;
     struct genericsingularity *next;
     int chart;
+
+    genericsingularity() : next(nullptr){};
 };
 
 struct saddle {
@@ -156,6 +178,8 @@ struct saddle {
     struct sep *separatrices;
     struct term2 *vector_field[2]; // vector field {xdot,ydot}
     double a11, a12, a21, a22;     // transformation matrix
+
+    saddle() : next_saddle(nullptr), separatrices(nullptr){};
 };
 
 struct semi_elementary {
@@ -172,6 +196,8 @@ struct semi_elementary {
     double a11, a12, a21, a22;     // transformation matrix
 
     int type; // type of semi-elementary point
+
+    semi_elementary() : next_se(nullptr), separatrices(nullptr){};
 };
 
 struct degenerate {
@@ -184,6 +210,8 @@ struct degenerate {
     bool notadummy;
 
     struct blow_up_points *blow_up;
+
+    degenerate() : next_de(nullptr), blow_up(nullptr){};
 };
 
 struct node {
@@ -193,6 +221,8 @@ struct node {
     int chart;
 
     int stable;
+
+    node() : next_node(nullptr){};
 };
 
 struct strong_focus {
@@ -202,6 +232,8 @@ struct strong_focus {
     int chart;
 
     int stable;
+
+    strong_focus() : next_sf(nullptr){};
 };
 
 struct weak_focus {
@@ -211,6 +243,8 @@ struct weak_focus {
     int chart;
 
     int type;
+
+    weak_focus() : next_wf(nullptr){};
 };
 
 // -----------------------------------------------------------------------
