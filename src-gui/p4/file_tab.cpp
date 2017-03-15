@@ -26,6 +26,8 @@
 #include "math_separatrice.h"
 #include "p4application.h"
 
+#include <iostream>
+
 QVFStudy VFResults;
 
 /*
@@ -359,15 +361,25 @@ void QVFStudy::deleteTransformations(transformations *t)
 void QVFStudy::deleteBlowup(blow_up_points *b)
 {
     blow_up_points *c;
+    int i=1;
+    std::cerr << i << std::endl;
 
     while (b != nullptr) {
+        std::cerr << ++i << std::endl;
+
         c = b;
         b = b->next_blow_up_point;
+        std::cerr << i << std::endl;
         deleteTransformations(c->trans);
+        std::cerr << i << std::endl;
         delete_term2(c->vector_field[0]);
+        std::cerr << i << std::endl;
         delete_term2(c->vector_field[1]);
+        std::cerr << i << std::endl;
         delete_term1(c->sep);
+        std::cerr << i << std::endl;
         deleteOrbitPoint(c->first_sep_point);
+        std::cerr << i << std::endl;
         delete c;
         c = nullptr;
     }
@@ -434,13 +446,13 @@ bool QVFStudy::readTables(QString basename)
     deleteVF(); // initialize structures, delete previous vector field if any
     fp = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
     if (fp == nullptr) {
-        dump(basename, "Cannot open file *_vec.tab");
+        fprintf(stderr, "Cannot open file *_vec.tab\n");
         deleteVF();
         return false;
     }
 
     if (fscanf(fp, "%d %d %d ", &typeofstudy, &p, &q) != 3) {
-        dump(basename, "Cannot read typeofstudy in *_vec.tab");
+        fprintf(stderr, "Cannot read typeofstudy in *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
@@ -448,7 +460,7 @@ bool QVFStudy::readTables(QString basename)
 
     if (typeofstudy == TYPEOFSTUDY_ONE) {
         if (fscanf(fp, "%lf %lf %lf %lf", &xmin, &xmax, &ymin, &ymax) != 4) {
-            dump(basename, "Cannot read min-max coords in *_vec.tab");
+            fprintf(stderr, "Cannot read min-max coords in *_vec.tab\n");
             deleteVF();
             fclose(fp);
             return false;
@@ -468,42 +480,42 @@ bool QVFStudy::readTables(QString basename)
     double_q_minus_p = (double)(q - p);
 
     if (!readGCF(fp)) {
-        dump(basename, "Cannot read gcf *_vec.tab");
+        fprintf(stderr, "Cannot read gcf *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
     }
 
     if (!readVectorField(fp, f_vec_field)) {
-        dump(basename, "Cannot read vector field in *_vec.tab");
+        fprintf(stderr, "Cannot read vector field in *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
     }
 
     if (!readVectorField(fp, vec_field_U1)) {
-        dump(basename, "Cannot read vector field in U1-chart in *_vec.tab");
+        fprintf(stderr, "Cannot read vector field in U1-chart in *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
     }
 
     if (!readVectorField(fp, vec_field_V1)) {
-        dump(basename, "Cannot read vector field in V1-chart in *_vec.tab");
+        fprintf(stderr, "Cannot read vector field in V1-chart in *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
     }
 
     if (!readVectorField(fp, vec_field_U2)) {
-        dump(basename, "Cannot read vector field in U2-chart in *_vec.tab");
+        fprintf(stderr, "Cannot read vector field in U2-chart in *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
     }
 
     if (!readVectorField(fp, vec_field_V2)) {
-        dump(basename, "Cannot read vector field in V2-chart in *_vec.tab");
+        fprintf(stderr, "Cannot read vector field in V2-chart in *_vec.tab\n");
         deleteVF();
         fclose(fp);
         return false;
@@ -511,8 +523,8 @@ bool QVFStudy::readTables(QString basename)
 
     if (plweights) {
         if (!readVectorFieldCylinder(fp, vec_field_C)) {
-            dump(basename,
-                 "Cannot read vector field in Cylinder-chart in *_vec.tab");
+            fprintf(stderr,
+                 "Cannot read vector field in Cylinder-chart in *_vec.tab\n");
             deleteVF();
             fclose(fp);
             return false;
@@ -520,8 +532,8 @@ bool QVFStudy::readTables(QString basename)
         singinf = 0;
     } else {
         if (fscanf(fp, "%d %d", &flag, &VFResults.dir_vec_field) != 2) {
-            dump(basename, "Cannot read sing-at-infinity flag and directions "
-                           "flag in *_vec.tab");
+            fprintf(stderr, "Cannot read sing-at-infinity flag and directions "
+                           "flag in *_vec.tab\n");
             deleteVF();
             fclose(fp);
             return false;
@@ -536,17 +548,16 @@ bool QVFStudy::readTables(QString basename)
         fp = fopen(QFile::encodeName(basename + "_fin.tab"), "rt");
         if (fp != nullptr) {
             if (!readPoints(fp)) {
-                dump(basename,
-                     QString(
-                         "Problem reading singularity info from *_fin.tab:") +
-                         lasterror);
+                fprintf(stderr,
+                         "Problem reading singularity info from *_fin.tab: %s\n",
+                         lasterror.toLatin1().data());
                 deleteVF();
                 fclose(fp);
                 return false;
             }
             fclose(fp);
         } else {
-            dump(basename, "Cannot open *_fin.tab");
+            fprintf(stderr, "Cannot open *_fin.tab\n");
             deleteVF();
             return false;
         }
@@ -558,10 +569,8 @@ bool QVFStudy::readTables(QString basename)
             if (p == 1 && q == 1) {
                 for (j = 1; j <= 2; j++) {
                     if (!readPoints(fp)) {
-                        dump(basename,
-                             QString(
-                                 "Cannot read singular points in *_inf.tab (") +
-                                 QString::number(j) + "):" + lasterror);
+                        fprintf(stderr,
+                                 "Cannot read singular points in *_inf.tab (%d): %s\n",j, lasterror.toLatin1().data());
                         deleteVF();
                         fclose(fp);
                         return false;
@@ -570,10 +579,8 @@ bool QVFStudy::readTables(QString basename)
             } else {
                 for (j = 1; j <= 4; j++) {
                     if (!readPoints(fp)) {
-                        dump(basename,
-                             QString(
-                                 "Cannot read singular points in *_inf.tab (") +
-                                 QString::number(j) + "):" + lasterror);
+                        fprintf(stderr,
+                                 "Cannot read singular points in *_inf.tab (%d): %s\n",j, lasterror.toLatin1().data());
                         deleteVF();
                         fclose(fp);
                         return false;
@@ -582,13 +589,13 @@ bool QVFStudy::readTables(QString basename)
             }
             fclose(fp);
         } else {
-            dump(basename, "Cannot open *_inf.tab");
+            fprintf(stderr, "Cannot open *_inf.tab");
             deleteVF();
             return false;
         }
     }
 
-    dump(basename, "all's well.");
+    fprintf(stderr, "all's well.");
     return true;
 }
 
@@ -896,12 +903,12 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
     }
 
     point = new saddle;
+    point->next_saddle = nullptr;
+    point->separatrices = nullptr;
     if (last == nullptr)
         first_saddle_point = point;
     else
         last->next_saddle = point;
-
-    point->next_saddle = nullptr;
 
     // fill structure
 
@@ -919,6 +926,10 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
     }
     point->separatrices = new sep;
     sep1 = point->separatrices;
+    sep1->first_sep_point = nullptr;
+    sep1->last_sep_point = nullptr;
+    sep1->separatrice = nullptr;
+    sep1->next_sep = nullptr;
     if (fscanf(fp, "%d ", &(sep1->type)) != 1) {
         return false;
     }
@@ -1678,27 +1689,31 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
     }
 
     point = new degenerate;
+    //point->next_de = nullptr;
+    //point->blow_up = nullptr;
     if (last == nullptr)
         first_de_point = point;
     else
         last->next_de = point;
 
-    point->next_de = nullptr;
-
     // load structure
 
     if (fscanf(fp, "%lf %lf %lf %d ", &(point->x0), &(point->y0),
-               &(point->epsilon), &n) != 4)
-        return false;
-    point->blow_up = nullptr;
+               &(point->epsilon), &n) != 4) {
+                   fprintf(stderr,"false 1\n");
+                   return false;
+               }
+    //point->blow_up = nullptr;
     if (n) {
         point->blow_up = new blow_up_points;
         readBlowupPoints(fp, point->blow_up, n);
         point->blow_up->blow_up_vec_field = true;
     }
 
-    if (fscanf(fp, "%d ", &(point->chart)) != 1)
+    if (fscanf(fp, "%d ", &(point->chart)) != 1) {
+        fprintf(stderr,"false 2\n");
         return false;
+    }
 
     point->notadummy = true;
 
@@ -1708,7 +1723,7 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
         last = point;
         point = new degenerate;
         last->next_de = point;
-        point->next_de = nullptr;
+        //point->next_de = nullptr;
 
         point->x0 = last->x0;
         point->y0 = 0.0;
