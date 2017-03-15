@@ -216,7 +216,7 @@ fi
 # Use multicore make for faster compilation
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
-make -j$CPUCNT >$OUT 2>$ERR
+make -j$CPUCNT >$OUT #2>$ERR
 if [ -f src-mpl/p4.m ]; then
     if whiptail --title "Recompile Maple scripts" --yesno --defaultno "Do you want to recompile Maple scripts from src-mpl?
 If your Maple version is Maple 2015, this is not necessary." 20 60; then
@@ -235,77 +235,50 @@ echo "Done."
 
 # Install
 echo "=== Installing P4..."
-if whiptail --title "Install P4" --yesno --yes-button "User" --no-button "Root" "Where do you want to install P4?
+if whiptail --title "Install P4?" --yesno "Do you want to install P4 in your system?" 20 60; then
+    if whiptail --title "Install P4" --yesno --yes-button "User" --no-button  "Root" --defaultno "Where do you want to install P4?
 
-    User: $HOME/p4
-    Root: /usr/local/p4" 20 60; then
-    mv p4 $HOME/
-    INSTALLDIR=$HOME/p4
-    ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
-    whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
+        User: $HOME/p4
+        Root: /usr/local/p4" 20 60; then
+        mv p4 $HOME/
+        INSTALLDIR=$HOME/p4
+        ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
+        whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
 
-P4_DIR=$INSTALLDIR
-PATH=$INSTALLDIR/bin:\$PATH
-export P4_DIR PATH
+    P4_DIR=$INSTALLDIR
+    PATH=$INSTALLDIR/bin:\$PATH
+    export P4_DIR PATH
 
-In case you don't know which shell you're using, open a terminal and execute this command:
+    In case you don't know which shell you're using, open a terminal and execute this command:
 
-echo .\$(echo \$0)rc
+    echo .\$(echo \$0)rc
 
-And edit that file." 20 80
-echo "Done."
-echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
-echo "  P4_DIR=$INSTALLDIR"
-echo "  PATH=$INSTALLDIR/bin:\$PATH"
-echo "  export P4_DIR PATH"
-else
-    sudo mv p4 /usr/local
-    INSTALLDIR=/usr/local/p4
-    sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
-    sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
-    whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
+    And edit that file." 20 80
+    echo "Done."
+    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
+    echo "  P4_DIR=$INSTALLDIR"
+    echo "  PATH=$INSTALLDIR/bin:\$PATH"
+    echo "  export P4_DIR PATH"
+    else
+        sudo mv p4 /usr/local
+        INSTALLDIR=/usr/local/p4
+        sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
+        sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
+        whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
 
-P4_DIR=$INSTALLDIR
-export P4_DIR
+    P4_DIR=$INSTALLDIR
+    export P4_DIR
 
-In case you don't know which shell you're using, open a terminal and execute this command:
+    In case you don't know which shell you're using, open a terminal and execute this command:
 
-echo .\$(echo \$0)rc
+    echo .\$(echo \$0)rc
 
-And edit that file." 20 80
-echo "Done."
-echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
-echo "  P4_DIR=$INSTALLDIR"
-echo "  export P4_DIR"
+    And edit that file." 20 80
+    echo "Done."
+    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
+    echo "  P4_DIR=$INSTALLDIR"
+    echo "  export P4_DIR"
+    fi
 fi
 
-
 echo "=== Finished."
-
-
-#if ($INSTALLED)
-#then
-#    echo "=== Creating application entry..."
-#    TMPDIR=/tmp/p4install
-#    mkdir -p $TMPDIR
-#    APPNAME=$HOME/.local/share/applications/p4.desktop
-#    TMPAPPNAME=$TMPDIR/p4.desktop
-#    VERSION=$(cat src-gui/version.h | grep -we VERSION | awk '{gsub("#define VERSION \"","\"");gsub("-.*,","");print}' | awk -F'"' '$0=$2')
-#    echo "[Desktop Entry]" > $TMPAPPNAME
-#    echo "Name=P4" >> $TMPAPPNAME
-#    echo "Version="$VERSION >> $TMPAPPNAME
-#    echo "Comment=Polynomial Planar Phase Portraits" >> $TMPAPPNAME
-#    echo "Icon=$INSTALLDIR/bin/p4smallicon.png" >> $TMPAPPNAME
-#    echo "Keywords=Math" >> $TMPAPPNAME
-#    echo "Exec=env P4_DIR=$INSTALLDIR $INSTALLDIR/bin/p4" >> $TMPAPPNAME
-#    echo "Path=$HOME" >> $TMPAPPNAME
-#    echo "Terminal=true" >> $TMPAPPNAME
-#    echo "Type=Application" >> $TMPAPPNAME
-#    echo "Categories=Education;Science;Math" >> $TMPAPPNAME
-#    echo "StartupNotify=true" >> $TMPAPPNAME
-#    mv $TMPAPPNAME $APPNAME
-#    chmod 664 $APPNAME
-    # remove temporary files
-#    rm -r $TMPDIR
-#    echo "=== Creating application entry... Done."
-#fi
