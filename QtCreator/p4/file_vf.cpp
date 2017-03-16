@@ -247,7 +247,7 @@ bool QInputVF::load(void)
         while ((c = fgetc(fp)) == '\n' || c == 13)
             ;
         ungetc(c, fp);
-        if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
+        if (fscanf(fp, "%[^\r\n]\n", scanbuf) != 1) {
             fclose(fp);
             return false;
         }

@@ -146,14 +146,10 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
             break;
         }
         if (last_orbit == nullptr) {
-            first_orbit = new orbits_points; //(struct orbits_points *)
-                                             //malloc(sizeof(struct
-                                             //orbits_points));
+            first_orbit = new orbits_points;
             last_orbit = first_orbit;
         } else {
-            last_orbit->next_point =
-                new orbits_points; //(struct orbits_points *)
-                                   //malloc(sizeof(struct orbits_points));
+            last_orbit->next_point = new orbits_points;
             last_orbit = last_orbit->next_point;
         }
         last_orbit->pcoord[0] = pcoord[0];

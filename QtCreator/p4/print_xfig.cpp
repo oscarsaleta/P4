@@ -617,10 +617,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     LastXfigcolor = -1;
 
     xfig_line_busy = false;
-    xfig_line_points =
-        new int[XFIG_LINE_MAXPOINTS * 2]; //(int *)malloc( sizeof(int) *
-                                          //XFIG_LINE_MAXPOINTS * 2 );  // * 2
-                                          //for x and y coord
+    xfig_line_points = new int[XFIG_LINE_MAXPOINTS * 2];
 
     XFigW = w * 1200;
     XFigW /= resolution;

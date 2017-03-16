@@ -34,6 +34,8 @@ struct P4POLYLINES {
     double x2;
     double y2;
     P4POLYLINES *next;
+
+    P4POLYLINES() : next(nullptr){};
 };
 
 extern bool lcWindowIsUp; // true when Limitcycles window is shown.

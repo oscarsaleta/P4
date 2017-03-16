@@ -280,15 +280,11 @@ static orbits_points *integrate_sep(QWinSphere *spherewnd, double pcoord[3],
         if ((i % UPDATEFREQ_STEPSIZE) == 0)
             set_current_step(fabs(hhi));
         if (last_orbit == nullptr) {
-            first_orbit = new orbits_points; //(struct orbits_points *)
-                                             //malloc(sizeof(struct
-                                             //orbits_points));
+            first_orbit = new orbits_points;
             last_orbit = first_orbit;
             h = dir;
         } else {
-            last_orbit->next_point =
-                new orbits_points; //(struct orbits_points *)
-                                   //malloc(sizeof(struct orbits_points));
+            last_orbit->next_point = new orbits_points;
             h = last_orbit->dir;
             last_orbit = last_orbit->next_point;
         }
@@ -418,8 +414,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
     /* h=(epsilon/100)*sep1->direction; */
     h = find_step(sep1->separatrice, epsilon, sep1->direction) / 100;
 
-    first_orbit = new orbits_points; //(struct orbits_points *)
-                                     //malloc(sizeof(struct orbits_points));
+    first_orbit = new orbits_points;
     last_orbit = first_orbit;
     point[0] = x0;
     point[1] = y0;
@@ -487,9 +482,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
             point[0] = x0 + a11 * t + a12 * y;
             point[1] = y0 + a21 * t + a22 * y;
         }
-        last_orbit->next_point = new orbits_points; //(struct orbits_points *)
-                                                    //malloc(sizeof(struct
-                                                    //orbits_points));
+        last_orbit->next_point = new orbits_points;
         last_orbit = last_orbit->next_point;
         dashes = true;
         switch (chart) {
@@ -652,8 +645,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
         dir = 0;
         break;
     }
-    first_orbit = new orbits_points; //(struct orbits_points *)
-                                     //malloc(sizeof(struct orbits_points));
+    first_orbit = new orbits_points;
     last_orbit = first_orbit;
     point[0] = x0;
     point[1] = y0;
@@ -691,9 +683,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
     last_orbit->dashes = 0;
     copy_x_into_y(pcoord, pcoord2);
     for (i = 0; i <= 99; i++) {
-        last_orbit->next_point = new orbits_points; //(struct orbits_points *)
-                                                    //malloc(sizeof(struct
-                                                    //orbits_points));
+        last_orbit->next_point = new orbits_points;
         last_orbit = last_orbit->next_point;
         dashes = true;
         t = t + h;

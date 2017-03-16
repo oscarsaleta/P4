@@ -131,7 +131,7 @@ void delete_term1(P4POLYNOM1 p)
     while (p != nullptr) {
         q = p;
         p = p->next_term1;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
@@ -146,7 +146,7 @@ void delete_term2(P4POLYNOM2 p)
     while (p != nullptr) {
         q = p;
         p = p->next_term2;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
@@ -162,7 +162,7 @@ void delete_term3(P4POLYNOM3 p)
     while (p != nullptr) {
         q = p;
         p = p->next_term3;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
