@@ -150,6 +150,25 @@ saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
     openfile( terminal );
     lambda1 := (rho - sqrt(sigma))/2;
     lambda2 := (rho + sqrt(sigma))/2;
+    if rounded then
+        if lambda1 > lambda2 then
+            lambda_ratio := lambda1/lambda2;
+        else
+            lambda_ratio := lambda2/lambda1;
+        end if;
+        writef( "The ratio between eigenvalues is 1:%a\n", lambda_ratio );
+        openfile( result_file );
+        writef( "The ratio between eigenvalues is 1:%a\n", lambda_ratio );
+        openfile( terminal );
+    else
+        lambda_ratio := simplify(lambda1/lambda2);
+        lambda_ratio_num := numer(lambda_ratio);
+        lambda_ratio_den := denom(lambda_ratio);
+        writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_num, lambda_ratio_den);
+        openfile( result_file );
+        writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_num, lambda_ratio_den);
+        openfile( terminal );
+    end if;
     v1 := eigenvector( a-lambda1, b, c, d-lambda1 );
     v2 := eigenvector( a-lambda2, b, c, d-lambda2 );
     if save_all then
