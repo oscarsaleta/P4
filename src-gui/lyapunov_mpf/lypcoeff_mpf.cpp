@@ -1,64 +1,56 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <math.h>
 #include "lyapunov_mpf.h"
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void DEBUG_MONOME( struct poly * f )
+void DEBUG_MONOME(poly *f)
 {
-    mpfr_t absre,absim;
+    mpfr_t absre, absim;
     mpfr_init(absre);
     mpfr_init(absim);
-    mpfr_abs(absre, f->re,MPFR_RNDN);
-    mpfr_abs(absim, f->im,MPFR_RNDN);
+    mpfr_abs(absre, f->re, MPFR_RNDN);
+    mpfr_abs(absim, f->im, MPFR_RNDN);
 
-    if( f->degz + f->degzb != 0 )
-        if( !mpfr_negligible( absre ) || !mpfr_negligible( absim ) )
-            printf( "(" );
-    if( mpfr_negligible( absre) )
-    {
-        if( mpfr_negligible( absim ) )
-        {
-            printf( "0.0" );
+    if (f->degz + f->degzb != 0)
+        if (!mpfr_negligible(absre) || !mpfr_negligible(absim))
+            printf("(");
+    if (mpfr_negligible(absre)) {
+        if (mpfr_negligible(absim)) {
+            printf("0.0");
+        } else {
+            printf("%gi", mpfr_get_d(f->im, MPFR_RNDN));
         }
-        else
-        {
-            printf( "%gi", mpfr_get_d(f->im,MPFR_RNDN) );
-        }
-    }
-    else
-    {
-        printf( "%g", mpfr_get_d(f->re,MPFR_RNDN) );
+    } else {
+        printf("%g", mpfr_get_d(f->re, MPFR_RNDN));
 
-        if( !mpfr_negligible( absim ) )
-            printf( "%+gi", mpfr_get_d(f->im,MPFR_RNDN) );
+        if (!mpfr_negligible(absim))
+            printf("%+gi", mpfr_get_d(f->im, MPFR_RNDN));
     }
-    if( f->degz + f->degzb != 0 )
-        if( !mpfr_negligible( absre ) || !mpfr_negligible( absim ) )
-            printf( ")" );
-    if( f->degz > 0 )
-        if( f->degz == 1 )
-            printf( "z" );
+    if (f->degz + f->degzb != 0)
+        if (!mpfr_negligible(absre) || !mpfr_negligible(absim))
+            printf(")");
+    if (f->degz > 0)
+        if (f->degz == 1)
+            printf("z");
         else
-            printf( "z^%d", f->degz );
-    if( f->degzb > 0 )
-        if( f->degzb == 1 )
-            printf( "w" );
+            printf("z^%d", f->degz);
+    if (f->degzb > 0)
+        if (f->degzb == 1)
+            printf("w");
         else
-            printf( "w^%d", f->degzb );
+            printf("w^%d", f->degzb);
 }
 
-void DEBUG_POLY( struct poly * f )
+void DEBUG_POLY(poly *f)
 {
-    if( f->next_poly == NULL )
-        printf( "0" );
-    else
-    {
-        for( f = f->next_poly; f != NULL; f = f->next_poly )
-        {
-            DEBUG_MONOME( f );
-            if( f->next_poly != NULL )
-                printf( " + " );
+    if (f->next_poly == nullptr)
+        printf("0");
+    else {
+        for (f = f->next_poly; f != nullptr; f = f->next_poly) {
+            DEBUG_MONOME(f);
+            if (f->next_poly != nullptr)
+                printf(" + ");
         }
     }
 }
@@ -67,48 +59,45 @@ void DEBUG_POLY( struct poly * f )
 //                      FIND_POLY
 // --------------------------------------------------------------------------
 
-struct poly * find_poly( struct hom_poly * f, int i )
+poly *find_poly(hom_poly *f, int i)
 {
-	struct poly *g = NULL;
+    poly *g = nullptr;
 
-	while ( ( f = f->next_hom_poly ) != NULL )
-		if ( i > f->total_degree )
-			break;
-		else if ( f->total_degree == i )
-		{
-			g = f->p;
-			break;
-		}
-	return ( g );
+    while ((f = f->next_hom_poly) != nullptr)
+        if (i > f->total_degree)
+            break;
+        else if (f->total_degree == i) {
+            g = f->p;
+            break;
+        }
+    return (g);
 }
 
 // --------------------------------------------------------------------------
 //                      DIFF
 // --------------------------------------------------------------------------
 
-void diff( struct poly * f )
+void diff(poly *f)
 {
-	struct poly *w = f->next_poly;
+    poly *w = f->next_poly;
     mpfr_t accu;
 
     mpfr_init(accu);
-	while ( w != NULL )
-	{
-		if ( w->degz )
-		{
-            mpfr_mul_ui( accu, w->re, w->degz,MPFR_RNDN ); mpfr_set( w->re, accu,MPFR_RNDN);
-            mpfr_mul_ui( accu, w->im, w->degz,MPFR_RNDN ); mpfr_set( w->im, accu,MPFR_RNDN);
-			w->degz--;
-			f = w;
-			w = w->next_poly;
-		}
-		else
-		{
-            delete_coeff( f );
+    while (w != nullptr) {
+        if (w->degz) {
+            mpfr_mul_ui(accu, w->re, w->degz, MPFR_RNDN);
+            mpfr_set(w->re, accu, MPFR_RNDN);
+            mpfr_mul_ui(accu, w->im, w->degz, MPFR_RNDN);
+            mpfr_set(w->im, accu, MPFR_RNDN);
+            w->degz--;
             f = w;
             w = w->next_poly;
-		}
-	}
+        } else {
+            delete_coeff(f);
+            f = w;
+            w = w->next_poly;
+        }
+    }
     mpfr_clear(accu);
 }
 
@@ -116,42 +105,37 @@ void diff( struct poly * f )
 //                      G
 // --------------------------------------------------------------------------
 
-void G( struct poly * f )
+void G(poly *f)
 {
-	int deg;
-    mpfr_t a,b;
+    int deg;
+    mpfr_t a, b;
     mpfr_init(a);
     mpfr_init(b);
-	struct poly *w = f->next_poly;
+    poly *w = f->next_poly;
 
-	if ( w )
-		deg = w->degz + w->degzb;
-	while ( w != NULL )
-	{
-		if ( deg - 2 * w->degzb )
-		{
-            if( deg - 2*w->degzb > 0 )
-            {
-                mpfr_set_si(a, 2,MPFR_RNDN);
-                mpfr_div_ui(b,a, deg - 2 * w->degzb ,MPFR_RNDN);
+    if (w)
+        deg = w->degz + w->degzb;
+    while (w != nullptr) {
+        if (deg - 2 * w->degzb) {
+            if (deg - 2 * w->degzb > 0) {
+                mpfr_set_si(a, 2, MPFR_RNDN);
+                mpfr_div_ui(b, a, deg - 2 * w->degzb, MPFR_RNDN);
+            } else {
+                mpfr_set_si(a, -2, MPFR_RNDN);
+                mpfr_div_ui(b, a, 2 * w->degzb - deg, MPFR_RNDN);
             }
-            else
-            {
-                mpfr_set_si(a, -2,MPFR_RNDN);
-                mpfr_div_ui(b,a, 2 * w->degzb - deg,MPFR_RNDN);
-            }
-            mpfr_mul( a, w->re, b,MPFR_RNDN ); mpfr_set( w->re, a,MPFR_RNDN );
-            mpfr_mul( a, w->im, b,MPFR_RNDN ); mpfr_set( w->im, a,MPFR_RNDN );
-			f = w;
-			w = w->next_poly;
-		}
-		else
-		{
-            delete_coeff( f );
+            mpfr_mul(a, w->re, b, MPFR_RNDN);
+            mpfr_set(w->re, a, MPFR_RNDN);
+            mpfr_mul(a, w->im, b, MPFR_RNDN);
+            mpfr_set(w->im, a, MPFR_RNDN);
             f = w;
             w = w->next_poly;
-		}
-	}
+        } else {
+            delete_coeff(f);
+            f = w;
+            w = w->next_poly;
+        }
+    }
     mpfr_clear(a);
     mpfr_clear(b);
 }
@@ -160,145 +144,135 @@ void G( struct poly * f )
 //                      IMGZ
 // --------------------------------------------------------------------------
 
-void Imgz( struct poly * f, struct poly * g )
+void Imgz(poly *f, poly *g)
 {
-	struct poly * h;
-	prod_poly( f, g );
-    diff( f );
-	G( f );
-	h = conj_poly( f );
-	sub_poly( f, h );
-	delete_poly( h );
-    multc_poly( f, zero, minusonehalf );
+    poly *h;
+    prod_poly(f, g);
+    diff(f);
+    G(f);
+    h = conj_poly(f);
+    sub_poly(f, h);
+    delete_poly(h);
+    multc_poly(f, zero, minusonehalf);
 }
 
 // --------------------------------------------------------------------------
 //                      REGZ
 // --------------------------------------------------------------------------
 
-void Regz( struct poly * f, struct poly * g )
+void Regz(poly *f, poly *g)
 {
-	struct poly * h;
+    poly *h;
 
-	prod_poly( f, g );
-    multc_poly( f, zero,minusone );
-    diff( f );
-    G( f );
-    h = conj_poly( f );
-    add_poly( f, h );
-    delete_poly( h );
-    multc_poly( f, onehalf, zero );
+    prod_poly(f, g);
+    multc_poly(f, zero, minusone);
+    diff(f);
+    G(f);
+    h = conj_poly(f);
+    add_poly(f, h);
+    delete_poly(h);
+    multc_poly(f, onehalf, zero);
 }
 
 // --------------------------------------------------------------------------
 //                      LL
 // --------------------------------------------------------------------------
 
-void LL( struct poly * f, struct poly * g, int i, mpfr_t * v )
+void LL(poly *f, poly *g, int i, mpfr_t *v)
 {
-    mpfr_set_si( v[ 0 ], 0,MPFR_RNDN);
-    mpfr_set_si( v[ 1 ], 0,MPFR_RNDN);
-	prod_poly( f, g );
-	diff( f );
-	while ( ( f = f->next_poly ) != NULL )
-	{
-		if ( i > f->degz )
-			break;
-		if ( i == f->degz && i > f->degzb )
-			break;
-		if ( i == f->degz && i == f->degzb )
-		{
-            mpfr_set( v[ 0 ], f->re,MPFR_RNDN );
-            mpfr_set( v[ 1 ], f->im,MPFR_RNDN );
-			break;
-		}
-	}
+    mpfr_set_si(v[0], 0, MPFR_RNDN);
+    mpfr_set_si(v[1], 0, MPFR_RNDN);
+    prod_poly(f, g);
+    diff(f);
+    while ((f = f->next_poly) != nullptr) {
+        if (i > f->degz)
+            break;
+        if (i == f->degz && i > f->degzb)
+            break;
+        if (i == f->degz && i == f->degzb) {
+            mpfr_set(v[0], f->re, MPFR_RNDN);
+            mpfr_set(v[1], f->im, MPFR_RNDN);
+            break;
+        }
+    }
 }
 
 // --------------------------------------------------------------------------
 //                      PART_LYAPUNOV_COEFF
 // --------------------------------------------------------------------------
 
-void part_lyapunov_coeff( char * s, int k, mpfr_t * returnvalue )
+void part_lyapunov_coeff(char *s, int k, mpfr_t *returnvalue)
 {
-	struct poly * R[ DIM1 ], *f = NULL;
-	int i, t = 0, ok = 1, j = 0;
-	char a[ DIM1 ];
-    mpfr_t v[ 2 ], w;
+    poly *R[DIM1], *f = nullptr;
+    int i, t = 0, ok = 1, j = 0;
+    char a[DIM1];
+    mpfr_t v[2], w;
 
-    mpfr_init( v[0] );
-    mpfr_init( v[1] );
-    mpfr_init( w );
+    mpfr_init(v[0]);
+    mpfr_init(v[1]);
+    mpfr_init(w);
 
-	for ( i = 0;s[ i ];i++ )
-	{
-		if ( s[ i ] == ',' )
-		{
-			R[ t ] = find_poly( vec_field, atoi( a ) + 1 );  /* find the homogeneus part
-			                                                    of degree a+1 */
-			if ( R[ t ] == NULL )
-			{
-				ok = 0;
-				break;
-			}
-			t++;
-			j = 0;
-		}
-		else
-		{
-			a[ j ] = s[ i ];
-			j++;
-		}
-	}
-	if ( ok )
-	{
-		R[ t ] = find_poly( vec_field, atoi( a ) + 1 );
-		if ( R[ t ] == NULL )
-			ok = 0;
-	}
-	if ( ok )
-	{
-//        printf( "k=%d\n", k);
-/*
+    for (i = 0; s[i]; i++) {
+        if (s[i] == ',') {
+            R[t] =
+                find_poly(vec_field, atoi(a) + 1); /* find the homogeneus part
+                                                      of degree a+1 */
+            if (R[t] == nullptr) {
+                ok = 0;
+                break;
+            }
+            t++;
+            j = 0;
+        } else {
+            a[j] = s[i];
+            j++;
+        }
+    }
+    if (ok) {
+        R[t] = find_poly(vec_field, atoi(a) + 1);
+        if (R[t] == nullptr)
+            ok = 0;
+    }
+    if (ok) {
+        //        printf( "k=%d\n", k);
+        /*
         for( i = 0; i <= t; i++ )
         {
             printf( "R[%d] = ",i);
             DEBUG_POLY(R[i]);
             printf( "\n");
         }
-*/      f = ( struct poly * ) malloc( sizeof( struct poly ) );
-		f->next_poly = NULL;
-        ins_poly( f, 0, 0, minusone, zero ); /* f=-1 */
-//        printf( "f = ",i);        DEBUG_POLY(f);        printf( "\n");
-        for ( i = 0;i < t;i++ )
-        {
-			if ( i % 2 )
-				Regz( f, R[ i ] );
-			else
-				Imgz( f, R[ i ] );
-//            printf( "f = ",i);        DEBUG_POLY(f);        printf( "\n");
+*/ f = (poly *)malloc(sizeof(poly));
+        f->next_poly = nullptr;
+        ins_poly(f, 0, 0, minusone, zero); /* f=-1 */
+        //        printf( "f = ",i);        DEBUG_POLY(f);        printf( "\n");
+        for (i = 0; i < t; i++) {
+            if (i % 2)
+                Regz(f, R[i]);
+            else
+                Imgz(f, R[i]);
+            //            printf( "f = ",i);        DEBUG_POLY(f);
+            //            printf( "\n");
         }
-		if ( t % 2 )
-		{
-            multc_poly( f, zero, minusone );
-			LL( f, R[ t ], ( k - 1 ) / 2, v );
-//            printf( "f = ",i);        DEBUG_POLY(f);        printf( "\n");
-            mpfr_set( w , v[ 1 ],MPFR_RNDN );
-		}
-		else
-		{
-			LL( f, R[ t ], ( k - 1 ) / 2, v );
-//            printf( "f = ",i);        DEBUG_POLY(f);        printf( "\n");
-            mpfr_set( w, v[ 0 ],MPFR_RNDN );
-		}
-		delete_poly( f );
-	}
-	else
-        mpfr_set_si(w,0,MPFR_RNDN);
-//    printf( "w = %f\n", mpfr_get_d(w));
-    mpfr_set( *returnvalue, w,MPFR_RNDN );
+        if (t % 2) {
+            multc_poly(f, zero, minusone);
+            LL(f, R[t], (k - 1) / 2, v);
+            //            printf( "f = ",i);        DEBUG_POLY(f);
+            //            printf( "\n");
+            mpfr_set(w, v[1], MPFR_RNDN);
+        } else {
+            LL(f, R[t], (k - 1) / 2, v);
+            //            printf( "f = ",i);        DEBUG_POLY(f);
+            //            printf( "\n");
+            mpfr_set(w, v[0], MPFR_RNDN);
+        }
+        delete_poly(f);
+    } else
+        mpfr_set_si(w, 0, MPFR_RNDN);
+    //    printf( "w = %f\n", mpfr_get_d(w));
+    mpfr_set(*returnvalue, w, MPFR_RNDN);
 
-    mpfr_clear( v[0] );
-    mpfr_clear( v[1] );
-    mpfr_clear( w );
+    mpfr_clear(v[0]);
+    mpfr_clear(v[1]);
+    mpfr_clear(w);
 }
