@@ -1,0 +1,283 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+#include "lyapunov_mpf.h"
+#include "../version.h"
+
+/*
+	LYAPUNOV	inputfile outputfile
+
+			--> work in reduce/linux mode
+
+			In linux mode, we use the env. variable P4_DIR
+			to locate the sumtable files.  New sum tables
+			are created in the current working directory temporarily,
+			and are then copied with the correct permissions to the
+			P4_DIR/sum_tables directory.
+
+			The output file is in a syntax that can be understood by reduce.
+
+	LYAPUNOV	inputfile outputfile MAPLE
+
+			--> work in maple/linux mode
+
+			Same as before for the sum tables, but the outputfile
+			has the syntax that can be understood by maple.
+
+	LYAPUNOV	inputfile outputfile MAPLE WINDOWS [path]
+
+			--> work in maple/windows mode
+				optionally use path to load&store sum tables.
+				if not present, using current working directory.
+*/
+
+bool env_maple = false;
+bool env_reduce = false;
+bool env_windows = false;
+char * win_sumtablepath = NULL;
+int weakness_level = 0;
+mpfr_t precision;
+mpfr_t one,zero,onehalf,minusonehalf,minusone;
+struct hom_poly * vec_field = NULL;
+
+// --------------------------------------------------------------------------
+//                      REMOVEQUOTES
+// --------------------------------------------------------------------------
+
+char * RemoveQuotes( char * x )
+{
+	while( *x == '\"' || *x == ' ' )
+		x++;
+
+	while( strlen(x) > 0 )
+	{
+		if( x[strlen(x)-1] == '\"' || x[strlen(x)-1] == ' ' )
+			x[strlen(x)-1] = 0;
+		else
+			break;
+	}
+
+	return x;
+}
+
+// --------------------------------------------------------------------------
+//                      ADDTRAILINGSLASH
+// --------------------------------------------------------------------------
+
+char * AddTrailingSlash( char * buf, char s )
+{
+	int i;
+	i = strlen(buf);
+	if(i>0)
+	{
+		if( buf[i-1] != '\\' && buf[i-1] != '/' )
+		{
+			buf[i] = s;
+			buf[i+1] = 0;
+		}
+	}
+
+	return buf;
+}
+
+// --------------------------------------------------------------------------
+//                      MAIN
+// --------------------------------------------------------------------------
+
+int main( int argc, char *argv[] )
+{
+    mpfr_t V, Vi, accu;
+    double _V;
+    int k, ok = 0;
+	char file_name[ 220 ], s[ DIM2 ];
+	static char wstpbuf[256];
+	FILE *fp, *fp2;
+    double _prec;
+
+    env_reduce = true;
+	env_maple = false;
+	env_windows = false;
+	win_sumtablepath = NULL;
+
+    if( argc <= 1 )
+    {
+        printf( "Lyapunov Version: %s Date: %s\n%s", VERSION, VERSIONDATE,
+                "THIS FILE IS PART OF THE P4 DISTRIBUTION.\n"
+                "It is called automatically from reduce/maple.  It calculates\n"
+                "lyapunov coefficients for a weak focus/center.\n\n"
+                "SYNTAX: lyapunov inputfile outputfile\n"
+                "\t--> work in reduce/linux mode\n"
+                "\tIn linux mode, we use the env. variable P4_DIR to locate\n"
+                "\tthe sumtable files.  New sum tables are created in the current\n"
+                "\tworking directory temporarily, and are then copied with the \n"
+                "\tcorrect permissions to the P4_DIR/sum_tables directory.\n"
+                "\tThe output file is in a syntax that can be understood by reduce.\n"
+                "\n"
+                "SYNTAX: lyapunov inputfile outputfile MAPLE\n"
+                "\t--> work in maple/linux mode\n"
+                "\tSame as before for the sum tables, but the outputfile\n"
+                "\thas the syntax that can be understood by maple.\n"
+                "\n"
+                "SYNTAX: lyapunov inputfile outputfile MAPLE WINDOWS [path]\n"
+                "\t--> work in maple/windows mode\n"
+                "\toptionally use path to load&store sum tables.\n"
+                "\tIf not present, using current working directory.\n" );
+        exit(-3);
+    }
+
+	if( argc >= 4 )
+	{
+		if( !strcmp( argv[3], "MAPLE" ) )
+        {
+            env_maple = true;
+            env_reduce = false;
+        }
+
+		if( argc >= 5 )
+		{
+		    if( !strcmp( argv[4], "WINDOWS" ) )
+			{
+				env_windows = true;
+				env_reduce = false;
+				env_maple = true;
+				if( argc >= 6 )
+				{
+					win_sumtablepath = AddTrailingSlash(RemoveQuotes(strcpy(wstpbuf,argv[5])),'\\');
+				}
+			}
+		}
+	}
+
+    if( getenv( "P4_DIR" ) == NULL && win_sumtablepath == NULL )
+    {
+        printf( "Warning: P4_DIR environment variable is unset.\n" );
+        printf( "Using current directory as place to store sumtables...\n");
+    }
+
+    read_table( RemoveQuotes( argv[1]) );  // read in precision and vector field
+
+    mpfr_init_set_si(V,0,MPFR_RNDN);
+    mpfr_init_set_si(Vi,0,MPFR_RNDN);
+    mpfr_init_set_si(zero,0,MPFR_RNDN);
+    mpfr_init_set_si(one,1,MPFR_RNDN);
+    mpfr_init_set_si(minusone,-1,MPFR_RNDN);
+    mpfr_init(onehalf);       mpfr_div_ui(onehalf,one,2,MPFR_RNDN);
+    mpfr_init(minusonehalf);  mpfr_div_ui(minusonehalf,minusone,2,MPFR_RNDN);
+    mpfr_init(accu);
+
+	fp2 = fopen( RemoveQuotes(argv[2]), "w" );
+	if( fp2 == NULL )
+		exit(-4);
+
+	if( env_reduce )
+	{
+		fprintf( fp2, "off echo$\n" );
+		fprintf( fp2, "openfile(result_file)$\n" );
+		fprintf( fp2, "write$\n" );
+	}
+
+	for( k = 1; k <= weakness_level; k++ )
+	{
+		check_sum( file_name, 2*k );
+		// check if table for the decomposition of 2*k exist, if not create it
+
+		fp = fopen( file_name, "r" );
+		if( fp == NULL )
+		{
+			perror(file_name);
+			exit(-3);
+		}
+
+        mpfr_set_si(V,0,MPFR_RNDN);  // V is the lyapunov coeff that we want to calculate
+		while ( !feof( fp ) )
+		{
+			fscanf( fp, "%s", s );
+			if ( !feof( fp ) )
+            {
+                part_lyapunov_coeff( s, 2 * k + 1, &Vi );
+                mpfr_sub(accu, V, Vi,MPFR_RNDN); // V -= Vi;
+                mpfr_set(V,accu,MPFR_RNDN);
+            }
+		}
+		fclose( fp );
+		// V*=2.0*PI/(k+1);
+        _V = mpfr_get_d(V,MPFR_RNDN);
+        _prec=mpfr_get_d(precision,MPFR_RNDN);
+
+        printf( "k=%d V=%20.19f, precision=%20.19f\n", k, _V, _prec );
+		
+		if( env_reduce )
+            fprintf( fp2, "write \"V(%d)=%e\"$\n", 2 * k + 1, _V );
+
+		if( env_maple )
+            fprintf( fp2, "%d\n%e\n", 2*k+1, _V );
+		
+        if( !mpfr_negligible_V( V ) )
+		{
+			ok = 1;
+			if( env_maple )
+				fprintf( fp2, "-1\n" );
+			break;
+		}
+	}
+
+	// write the result to a file
+    _V = mpfr_get_d(V,MPFR_RNDN);
+
+    if( env_reduce )
+	{
+		fprintf( fp2, "out 't$\n" );
+		if( ok )
+            fprintf( fp2, "w:=%d$\n lyp:=%e$\n", k, _V );
+		else
+			fprintf( fp2, "lyp:=0$\n" );
+	}
+
+	if( env_maple )
+	{
+		if( ok )
+            fprintf( fp2, "1\n%d\n%e\n", k, _V );
+		else
+			fprintf( fp2, "0\n0\n0\n" );
+	}
+
+	fclose( fp2 );
+
+    mpfr_clear( precision );
+    mpfr_clear( V );
+    mpfr_clear( Vi );
+    mpfr_clear( zero );
+    mpfr_clear( minusone );
+    mpfr_clear( onehalf );
+    mpfr_clear( minusonehalf );
+    mpfr_clear( one );
+    return 0;
+}
+
+
+bool mpfr_negligible( mpfr_t accu )
+{
+    static mpfr_t s;
+    static bool s_init = false;
+    if( !s_init )
+        { mpfr_init(s); s_init = true; }
+
+    mpfr_abs(s,accu,MPFR_RNDN);
+    if( mpfr_cmp_ui(s,0) == 0 )
+        return true;
+    return false;
+}
+
+bool mpfr_negligible_V( mpfr_t accu )
+{
+    static mpfr_t s;
+    static bool s_init = false;
+    if( !s_init )
+        { mpfr_init(s); s_init = true; }
+
+    mpfr_abs(s,accu,MPFR_RNDN);
+    if( mpfr_cmp( s, precision ) >= 0 )
+        return false;
+    return true;
+}
