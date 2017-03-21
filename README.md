@@ -61,32 +61,37 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 
 * **Installation with `compile_install_linux` or compilation from source using `qmake`:**
     - Git: must have to work with *git projects*:
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install git`
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install git`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install git`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S git`
         + (See the <a href="https://wiki.archlinux.org/index.php/git">git ArchWiki page</a> for more information and configuration instructions).
 	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested):
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install qt5-default`
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install qt5-default`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install qt5*-devel --allowerasing`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S qt5-base`
 	- `qmake` (version 3.0 recommended):
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install qt5-qmake`
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install qt5-qmake`
         + Other distros: already installed if you followed the install instructions for Qt 5.
 	- C++ compiler: `g++` (version >= 4.9 recommended, must support the **C++11** standard):
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install gcc g++`
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install gcc g++`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf group install 'Development Tools'`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S gcc`
     - `pkg-config` (0.28 or greater):
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install pkg-config`
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install pkg-config`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install pkgconfig`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S pkg-config`
+    - If you want to compile the multiprecision version of `lyapunov`:
+        + `mpfr` library (version >= 3.1.2):
+            * Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libmpfr-dev`
+            * Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install mpfr-devel`
+            * Arch-based (Archlinux/Angergos): `sudo pacman -S mpfr`
 * **Compilation from source using Qt Creator:**
     - Dependencies itemized above,
 	- Qt Creator IDE:
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt install qtcreator`
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install qtcreator`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install qt-creator`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S qtcreator`
-	
+
 ### Windows
 
 * **Installation using `P4setup.exe`**:
