@@ -50,16 +50,18 @@ void DEBUG_MONOME(poly *f)
     if (f->degz + f->degzb != 0)
         if (!mpfr_negligible(absre) || !mpfr_negligible(absim))
             printf(")");
-    if (f->degz > 0)
+    if (f->degz > 0) {
         if (f->degz == 1)
             printf("z");
         else
             printf("z^%d", f->degz);
-    if (f->degzb > 0)
+    }
+    if (f->degzb > 0) {
         if (f->degzb == 1)
             printf("w");
         else
             printf("w^%d", f->degzb);
+    }
 }
 
 void DEBUG_POLY(poly *f)
