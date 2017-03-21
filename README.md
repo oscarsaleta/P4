@@ -24,9 +24,16 @@
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
-<img src="help/screenshots/p4_main_window.png" alt="file not found" height="430px"/>
-<img src="help/screenshots/p4_plot_poincare.png" alt="file not found" height="430px" align="right" />
+![Main window](help/screenshots/p4_main_window.png)|![Plot window](help/screenshots/p4_plot_poincare.png)
+:-------------------------------------------------:|:---------------------------------------------------:
 
+
+
+
+<!--
+<img src="help/screenshots/p4_main_window.png" alt="file not found" height="430px"/>
+<img src="help/screenshots/p4_plot_poincare.png" alt="file not found" height="430px" align="right"/>
+-->
 ## Installation
 
 Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page</a> to see more detailed instructions and download links.
