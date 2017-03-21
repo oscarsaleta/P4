@@ -67,7 +67,7 @@ void create_sum(int k)
             exit(-2);
         }
         do {
-            fscanf(fp2, "%s", &s);
+            fscanf(fp2, "%s", s);
             if (!feof(fp2))
                 fprintf(fp1, "%d,%s\n", i, s);
         } while (!feof(fp2));
