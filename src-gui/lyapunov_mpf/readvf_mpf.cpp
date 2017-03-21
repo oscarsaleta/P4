@@ -59,7 +59,7 @@ void SetMPFPrecision(int digits)
         exit(1);
     }
     mpfr_init(accu1);
-    printf("Working with >= %d bits (=%d bits) precision.\n", k,
+    printf("Working with >= %d bits (=%ld bits) precision.\n", k,
            mpfr_get_prec(accu1));
     mpfr_clear(accu1);
     return;
