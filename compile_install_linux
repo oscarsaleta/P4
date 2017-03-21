@@ -127,12 +127,12 @@ if (pkg-config --version >/dev/null 2>&1); then
     else
         whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
 
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
     - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
         echo "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
 
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
     - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base"
         exit 1
@@ -140,12 +140,12 @@ if (pkg-config --version >/dev/null 2>&1); then
 else
     whiptail --title "Missing pkg-config" --msgbox "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
 
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt install pkg-config
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
     - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config" 20 80
     echo "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
 
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt install pkg-config
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
     - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
     exit 1
@@ -155,10 +155,13 @@ if (ldconfig --version >/dev/null 2>&1); then
         echo "GCC libraries found in the system."
     else
         whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt install gcc g++
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++
     - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
     - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
-        echo "Missing gcc libraries which are needed for compiling the source code."
+        echo "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
+    - Arch-based (Archlinux/Antergos): sudo pacman -S gcc"
         exit 1
     fi
 else
@@ -168,6 +171,19 @@ else
         echo "Cannot execute command ldconfig, make sure it is available and you have permission to use this command."
         exit 1
     fi
+fi
+if [ -f /usr/include/mpfr.h ]; then
+    echo "Multiprecision Real library mpfr found"
+else
+    whiptail --title "Missing mpfr library" --msgbox "Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel
+- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr" 20 80
+    echo "Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel
+- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr"
+    exit 1
 fi
 echo "Done."
 
