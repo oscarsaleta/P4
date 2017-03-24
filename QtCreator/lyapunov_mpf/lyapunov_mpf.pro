@@ -36,12 +36,10 @@ unix:LIBS += -lgmp -lmpfr
 #win32:INCLUDEPATH += -L$$PWD/mpfr/dll/x64/Release/
 #win32:DEPENDPATH += -L$$PWD/mpfr/dll/x64/Release/
 
-win32:LIBS += -L$$PWD/../../gmp/lib/ -lgmp
+win32:LIBS += -L$$PWD/../gmp/lib/ -lgmp
+win32:INCLUDEPATH += $$PWD/../gmp/include
+win32:DEPENDPATH += $$PWD/../gmp/include
 
-win32:INCLUDEPATH += $$PWD/../../gmp/include
-win32:DEPENDPATH += $$PWD/../../gmp/include
-
-win32:LIBS += -L$$PWD/../../mpfr/lib/ -llibmpfr
-
-win32:INCLUDEPATH += $$PWD/../../mpfr/include
-win32:DEPENDPATH += $$PWD/../../mpfr/include
+win32:LIBS += -L$$PWD/../mpfr/lib/ -llibmpfr
+win32:INCLUDEPATH += $$PWD/../mpfr/include
+win32:DEPENDPATH += $$PWD/../mpfr/include

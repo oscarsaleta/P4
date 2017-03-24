@@ -17,6 +17,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef LYAPUNOV_MPF_H
+#define LYAPUNOV_MPF_H
+
 #include "mpfr.h"
 
 // definitions
@@ -90,3 +93,5 @@ extern mpfr_t one;
 
 bool mpfr_negligible(mpfr_t);
 bool mpfr_negligible_V(mpfr_t);
+
+#endif // LYAPUNOV_MPF_H
