@@ -26,4 +26,12 @@ SOURCES =  lyapunov_mpf.cpp lypcoeff_mpf.cpp polynom_mpf.cpp \
            checktbl_mpf.cpp createtbl_mpf.cpp readvf_mpf.cpp
 HEADERS =  lyapunov_mpf.h ../version.h
 
-LIBS += -lgmp -lmpfr
+unix:LIBS += -lgmp -lmpfr
+
+win32:LIBS += -L$$PWD/mpir/dll/x64/Release/
+win32:INCLUDEPATH += -L$$PWD/mpir/dll/x64/Release
+win32:DEPENDPATH += -L$$PWD/mpir/dll/x64/Release
+
+win32:LIBS += -L$$PWD/mpfr/dll/x64/Release/
+win32:INCLUDEPATH += -L$$PWD/mpfr/dll/x64/Release
+win32:DEPENDPATH += -L$$PWD/mpfr/dll/x64/Release
