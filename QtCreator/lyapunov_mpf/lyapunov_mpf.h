@@ -17,7 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef Q_OS_WIN
+#include "mpfr/x64/Release/mpfr.h"
+#else
 #include "mpfr.h"
+#endif
 
 // definitions
 
