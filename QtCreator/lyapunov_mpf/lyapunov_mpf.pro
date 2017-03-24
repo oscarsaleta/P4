@@ -28,10 +28,10 @@ HEADERS =  lyapunov_mpf.h ../version.h
 
 unix:LIBS += -lgmp -lmpfr
 
-win32:LIBS += -L$$PWD/mpir/dll/x64/Release/mpir
-win32:INCLUDEPATH += -L$$PWD/mpir/dll/x64/Release/
-win32:DEPENDPATH += -L$$PWD/mpir/dll/x64/Release/
+win32:LIBS += "-L$$PWD\mpir\dll\x64\Release\mpir"
+win32:INCLUDEPATH += "-L$$PWD\mpir\dll\x64\Release\"
+win32:DEPENDPATH += "-L$$PWD\mpir\dll\x64\Release\"
 
-win32:LIBS += -L$$PWD/mpfr/dll/x64/Release/mpfr
-win32:INCLUDEPATH += -L$$PWD/mpfr/dll/x64/Release/
-win32:DEPENDPATH += -L$$PWD/mpfr/dll/x64/Release/
+win32:LIBS += "-L$$PWD\mpfr\dll\x64\Release\mpfr"
+win32:INCLUDEPATH += "-L$$PWD\mpfr\dll\x64\Release\"
+win32:DEPENDPATH += "-L$$PWD\mpfr\dll\x64\Release\"
