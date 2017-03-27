@@ -34,6 +34,7 @@ Check <a href="README.md">the main README</a> for a complete list of dependencie
 
 * **p4**: source files of the main GUI and computing component of the P4 program,
 * **lyapunov**: source files of the C++ application that computes Lyapunov constants numerically,
+* **lyapunov_mpf**: source files of the C++ application that computes Lyapunov constants numerically with multiple precision,
 * **separatrice**: source code of the C++ application used to compute separatrices,
 * **mplstrip**: C++ program that parses _.tex_ files and converts them to maple modules.
 
@@ -41,6 +42,7 @@ Check <a href="README.md">the main README</a> for a complete list of dependencie
 
 * *p4*: contains the source of the main GUI elements. Load a project in Qt Creator through the file `QtCreator/p4/p4.pro`, select a Qt kit, and compile.
 * *lyapunov*: contains the source of the Lyapunov constants calculator. Load a project in Qt Creator through the file `QtCreator/lyapunov/lyapunov.pro`, select a Qt kit, and compile.
+* *lyapunov_mpf*: contains the source of the Lyapunov constants calculator (multiprecision version). Load a project in Qt Creator through the file `QtCreator/lyapunov_mpf/lyapunov_mpf.pro`, select a Qt kit, and compile.
 * *separatrice*: contains the source of the separatrice numeric calculator. Load a project in Qt Creator through the file `QtCreator/separatrice/separatrice.pro`, select a Qt kit, and compile.
 * *mplstrip*: contains the source of the *TeX-to-Maple* parser for generating the Maple scripts. Load a project in Qt Creator through the file `QtCreator/mplstrip/mplstrip.pro`, select a Qt kit, and compile.
     - If you need to update the Maple scripts, copy the `mplstrip` executable to *src-mpl/mplstrip* and run `make -f MakeTexMaple` from *src-mpl*.
@@ -58,15 +60,27 @@ Once all the projects have been compiled:
 The executable files have to be put in the following tree somewhere in the file system following this structure (in Linux, `make install` and the scripts `installP4.sh` and `installP4_root.sh` do this automatically; in Windows, the installer also does this automatically):
 
 * **Linux**: in a folder named p4:
-    * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
+    * p4/bin: *p4*, *lyapunov*, *lyapunov_mpf*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
     * p4/help: contents of **P4/help** folder,
     * p4/sumtables: empty folder used by P4 to store some files (**permissions must be read/write/execute for user**: `chmod 777 sumtables`).
     * p4/sum_tables: soft link to p4/sumtables (`ln -s p4/sumtables p4/sum_tables`).
 * **Windows**: in a folder named p4:
-    * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
+    * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*, *mpfr.dll*, *mpir.dll*, other _dll_s for Qt (execute `windeployqt.exe` on `p4.exe` in order to get the full list)
     * p4\help: contents of **P4\help** folder,
     * p4\sumtables: empty folder used by P4 to store some files (**user must have read/write permissions on this folder**).
     * p4\sum_tables: shortcut to p4\sumtables.
+
+## Multiprecision libraries in Windows
+
+In Linux, if you installed the required libraries from <a href="README.md#Dependencies">here</a>, the MPFR library will be installed and the compiler should be able to find it without issues.
+
+For Windows, however, these libraries are harder to install, so we package a precompiled 64 bit version in the directories `P4/mpir` and `P4/mpfr`. There are Visual Studio 2015 projects for compiling these libraries, and the already compiled libraries are under the subdirectory `dll/x64/Release/`.
+
+The `QtCreator/lyapunov_mpf/lyapunov_mpf.pro` file is already configured to use the libraries from these two folders.
+
+The `lyapunov_mpf.h` header includes the headers from MPFR and GMP libraries from their custom locations, and the `P4/mpfr/dll/x64/Release/mpfr.h` header has been modified to not include `<gmp.h>` to avoid linker problems, since `gmp.h` is already included in `lyapunov_mpf.h`.
+
+This means that if you decide to compile your own version of the libraries (e.g. if you need a 32 bit version), you will need to modify the previously mentioned files in order to be able to compile and link everything with Qt Creator.
 
 ## Contributors
 

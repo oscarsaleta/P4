@@ -49,6 +49,7 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 * **src-gui**:
     * **p4**: C++/Qt source code for the GUI of P4,
     * **lyapunov**: C++ code for numerical computation of Lyapunov constants
+    * **lyapunov**: C++ code for numerical computation of Lyapunov constants (multiprecision version)
     * **separatrice**: C++ code for numerical computation of separatrices
 * **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
 * **help**: Help files in *.html* format and supporting images.
@@ -120,30 +121,11 @@ Qt's `qmake` makes it easy to compile the whole project with two commands.
 
 ### Build using Qt Creator
 
-There is a special directory in the repository called *QtCreator*, which contains 4 subfolders:
-
-* *p4*: contains the source of the main GUI elements. Load a project in Qt Creator through the file `QtCreator/p4/p4.pro`, select a Qt kit, and compile.
-* *lyapunov*: contains the source of the Lyapunov constants calculator. Load a project in Qt Creator through the file `QtCreator/lyapunov/lyapunov.pro`, select a Qt kit, and compile.
-* *separatrice*: contains the source of the separatrice numeric calculator. Load a project in Qt Creator through the file `QtCreator/separatrice/separatrice.pro`, select a Qt kit, and compile.
-* *mplstrip*: contains the source of the *TeX-to-Maple* parser for generating the Maple scripts. Load a project in Qt Creator through the file `QtCreator/mplstrip/mplstrip.pro`, select a Qt kit, and compile.
-    - If you need to update the Maple scripts, copy the `mplstrip` executable to *src-mpl/mplstrip* and run `make -f MakeTexMaple` from *src-mpl*.
-
-Once all the projects have been compiled, create a directory following the instructions of <a href="#binary-tree">the next section</a> and place it anywhere in your system.
+Check <a href="QtCreator/README.md">here</a> for instructions on how to build this project using Qt Creator.
 
 ## Binary tree
 
-The executable files have to be put in the following tree somewhere in the file system following this structure (in Linux, `make install` and the scripts `installP4.sh` and `installP4_root.sh` do this automatically; in Windows, the installer also does this automatically):
-
-* **Linux**: in a folder named p4:
-    * p4/bin: *p4*, *lyapunov*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
-    * p4/help: contents of **P4/help** folder,
-    * p4/sumtables: empty folder used by P4 to store some files (**permissions must be read/write/execute for user**: `chmod 777 sumtables`).
-    * p4/sum_tables: soft link to p4/sumtables (`ln -s p4/sumtables p4/sum_tables`).
-* **Windows**: in a folder named p4:
-    * p4\bin: *p4.exe*, *lyapunov.exe*, *separatrice.exe*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
-    * p4\help: contents of **P4\help** folder,
-    * p4\sumtables: empty folder used by P4 to store some files (**user must have read/write permissions on this folder**).
-    * p4\sum_tables: shortcut to p4\sumtables.
+Check <a href="QtCreator/README.md">here</a> for instructions of how to create a correct file tree for P4 to work after each of its parts has been compiled.
 
 ## Contributors
 
