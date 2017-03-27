@@ -28,18 +28,14 @@ HEADERS = lyapunov_mpf.h ../version.h
 
 unix:LIBS += -lgmp -lmpfr
 
-#win32:LIBS += -L$$PWD/mpir/dll/x64/Release -lmpir
-#win32:INCLUDEPATH += -L$$PWD/mpir/dll/x64/Release/
-#win32:DEPENDPATH += -L$$PWD/mpir/dll/x64/Release/
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpir/dll/x64/release/ -lmpir
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mpir/dll/x64/debug/ -lmpir
 
-#win32:LIBS += -L$$PWD/mpfr/dll/x64/Release -lmpfr
-#win32:INCLUDEPATH += -L$$PWD/mpfr/dll/x64/Release/
-#win32:DEPENDPATH += -L$$PWD/mpfr/dll/x64/Release/
+INCLUDEPATH += $$PWD/mpir/dll/x64/Release
+DEPENDPATH += $$PWD/mpir/dll/x64/Release
 
-win32:LIBS += -L$$PWD/../gmp/lib/ -lgmp
-win32:INCLUDEPATH += $$PWD/../gmp/include
-win32:DEPENDPATH += $$PWD/../gmp/include
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpfr/dll/x64/release/ -lmpfr
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mpfr/dll/x64/debug/ -lmpfr
 
-win32:LIBS += -L$$PWD/../mpfr/lib/ -llibmpfr
-win32:INCLUDEPATH += $$PWD/../mpfr/include
-win32:DEPENDPATH += $$PWD/../mpfr/include
+INCLUDEPATH += $$PWD/mpfr/dll/x64/Release
+DEPENDPATH += $$PWD/mpfr/dll/x64/Release
