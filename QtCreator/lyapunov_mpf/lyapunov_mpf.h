@@ -21,7 +21,7 @@
 #define LYAPUNOV_MPF_H
 
 #ifdef _WIN32
-#include "mpfr/dll/Release/mpfr.h"
+#include "mpfr/dll/x64/Release/mpfr.h"
 #else
 #include "mpfr.h"
 #endif
