@@ -20,7 +20,11 @@
 #ifndef LYAPUNOV_MPF_H
 #define LYAPUNOV_MPF_H
 
+#ifdef _WIN32
+#include "mpfr/dll/Release/mpfr.h"
+#else
 #include "mpfr.h"
+#endif
 
 // definitions
 
