@@ -94,7 +94,7 @@ char *RemoveQuotes(char *x)
 char *AddTrailingSlash(char *buf, char s)
 {
     int i;
-    i = strlen(buf);
+    i = (int) strlen(buf);
     if (i > 0) {
         if (buf[i - 1] != '\\' && buf[i - 1] != '/') {
             buf[i] = s;
