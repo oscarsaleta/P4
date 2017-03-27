@@ -80,11 +80,10 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install pkg-config`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install pkgconfig`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S pkg-config`
-    - If you want to compile the multiprecision version of `lyapunov`:
-        + `mpfr` library (version >= 3.1.2):
-            * Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libmpfr-dev`
-            * Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install mpfr-devel`
-            * Arch-based (Archlinux/Angergos): `sudo pacman -S mpfr`
+    - `mpfr` library (version >= 3.1.2):
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libmpfr-dev`
+        + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install mpfr-devel`
+        + Arch-based (Archlinux/Angergos): `sudo pacman -S mpfr`
 * **Compilation from source using Qt Creator:**
     - Dependencies itemized above,
 	- Qt Creator IDE:
