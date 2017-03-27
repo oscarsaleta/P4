@@ -20,6 +20,10 @@
 # LYAPUNOV_MPF PROJECT FILE.  Use qmake to build makefile
 #
 
+include(../../P4.pri)
+
+DESTDIR = $$BUILD_DIR/lyapunov_mpf/
+
 CONFIG += console c++11
 
 SOURCES = lyapunov_mpf.cpp lypcoeff_mpf.cpp polynom_mpf.cpp \
