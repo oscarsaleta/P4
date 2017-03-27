@@ -29,6 +29,9 @@ chmod 777 $DIR/sumtables
 cp ../../src-mpl/p4*m $DIR/bin/
 cp ../../QtCreator/build-p4-Windows-Release/release/p4.exe $DIR/bin/
 cp ../../QtCreator/build-lyapunov-Windows-Release/release/lyapunov.exe $DIR/bin/
+cp ../../QtCreator/build-lyapunov_mpf-Windows-Release/release/lyapunov_mpf.exe $DIR/bin/
+cp ../../QtCreator/lyapunov_mpf/mpfr/dll/x64/Release/mpfr.dll $DIR/bin/
+cp ../../QtCreator/lyapunov_mpf/mpir/dll/x64/Release/mpir.dll $DIR/bin/
 cp ../../QtCreator/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/
 cp ../../help/*.* $DIR/help/
 cp -r ../../help/screenshots/ $DIR/help/
@@ -91,6 +94,7 @@ echo '; Executables' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\p4.exe"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\separatrice.exe"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\lyapunov.exe"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
+echo 'Source: "'$DIRWIN'\bin\lyapunov_mpf.exe"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\p4.m"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\p4gcf.m"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\help\*"; DestDir: "{app}\help"; Flags: ignoreversion' >> $SCRIPTNAME
