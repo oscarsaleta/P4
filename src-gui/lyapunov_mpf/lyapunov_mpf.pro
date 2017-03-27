@@ -20,14 +20,22 @@
 # LYAPUNOV_MPF PROJECT FILE.  Use qmake to build makefile
 #
 
-include(../../P4.pri)
+CONFIG += console c++11
 
-DESTDIR = $$BUILD_DIR/lyapunov_mpf/
+SOURCES = lyapunov_mpf.cpp lypcoeff_mpf.cpp polynom_mpf.cpp \
+          checktbl_mpf.cpp createtbl_mpf.cpp readvf_mpf.cpp
+HEADERS = lyapunov_mpf.h ../version.h
 
-CONFIG  +=  console c++11
+unix:LIBS += -lgmp -lmpfr
 
-SOURCES =  lyapunov_mpf.cpp lypcoeff_mpf.cpp polynom_mpf.cpp \
-           checktbl_mpf.cpp createtbl_mpf.cpp readvf_mpf.cpp
-HEADERS =  lyapunov_mpf.h ../version.h
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpir/dll/x64/release/ -lmpir
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mpir/dll/x64/debug/ -lmpir
 
-LIBS += -lgmp -lmpfr
+INCLUDEPATH += $$PWD/mpir/dll/x64/Release
+DEPENDPATH += $$PWD/mpir/dll/x64/Release
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpfr/dll/x64/release/ -lmpfr
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mpfr/dll/x64/debug/ -lmpfr
+
+INCLUDEPATH += $$PWD/mpfr/dll/x64/Release
+DEPENDPATH += $$PWD/mpfr/dll/x64/Release
