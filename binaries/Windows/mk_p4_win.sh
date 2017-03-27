@@ -30,8 +30,8 @@ cp ../../src-mpl/p4*m $DIR/bin/
 cp ../../QtCreator/build-p4-Windows-Release/release/p4.exe $DIR/bin/
 cp ../../QtCreator/build-lyapunov-Windows-Release/release/lyapunov.exe $DIR/bin/
 cp ../../QtCreator/build-lyapunov_mpf-Windows-Release/release/lyapunov_mpf.exe $DIR/bin/
-cp ../../QtCreator/lyapunov_mpf/mpfr/dll/x64/Release/mpfr.dll $DIR/bin/
-cp ../../QtCreator/lyapunov_mpf/mpir/dll/x64/Release/mpir.dll $DIR/bin/
+cp ../../mpfr/dll/x64/Release/mpfr.dll $DIR/bin/
+cp ../../mpir/dll/x64/Release/mpir.dll $DIR/bin/
 cp ../../QtCreator/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/
 cp ../../help/*.* $DIR/help/
 cp -r ../../help/screenshots/ $DIR/help/
