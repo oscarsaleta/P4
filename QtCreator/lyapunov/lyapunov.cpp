@@ -74,11 +74,11 @@ struct hom_poly volatile *vec_field = nullptr;
 
 char *RemoveQuotes(char *x)
 {
-    while (*x == '\"' || *x == ' ')
+    while (*x == '\"' || *x == ' ') //"
         x++;
 
     while (strlen(x) > 0) {
-        if (x[strlen(x) - 1] == '\"' || x[strlen(x) - 1] == ' ')
+        if (x[strlen(x) - 1] == '\"' || x[strlen(x) - 1] == ' ') //"
             x[strlen(x) - 1] = 0;
         else
             break;
@@ -94,7 +94,7 @@ char *RemoveQuotes(char *x)
 char *AddTrailingSlash(char *buf, char s)
 {
     int i;
-    i = (int) strlen(buf);
+    i = strlen(buf);
     if (i > 0) {
         if (buf[i - 1] != '\\' && buf[i - 1] != '/') {
             buf[i] = s;
@@ -197,7 +197,8 @@ int main(int argc, char *argv[])
 
         V = 0.0; // V is the lyapunov coeff that we want to calculate
         while (!feof(fp)) {
-            fscanf(fp, "%s", s);
+            if (fscanf(fp, "%s", s) != 1)
+                break;
             if (!feof(fp)) {
                 V -= part_lyapunov_coeff(s, 2 * k + 1);
             }

@@ -51,7 +51,7 @@ int ExitValue;
 
 // -----------------------------------------------------------------------
 //								FUNCTION
-//PROTOTYPES
+// PROTOTYPES
 // -----------------------------------------------------------------------
 
 int main(int, char *[]);
@@ -331,7 +331,9 @@ void RunMaple(char *fname)
     else
         strcat(strcat(strcpy(cmd, MapleCommand), " "), fname);
 
-    system(cmd);
+    if (system(cmd) < 0) {
+		fprintf(stderr, "Cannot run Maple on file %s\n", fname);
+	}
 }
 
 // -----------------------------------------------------------------------
@@ -340,12 +342,6 @@ void RunMaple(char *fname)
 //
 // Returns true if the filename specification contains an extension,
 // or false if not.
-//
-// Examples:	c:\program files\test.txt	--> true
-//				c:\file.					-->
-//true
-//				a:\bin.win\alpha			-->
-//false
 
 bool HasExtension(const char *fname)
 {
