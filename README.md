@@ -46,13 +46,17 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 
 ## Files
 
+* **binaries**: some development scripts that help creating binaries (this directory doesn't actually contain any binaries, you can find those <a href="https://github.com/oscarsaleta/P4/releases/latest">here</a>).
+* **help**: Help files in *.html* format and supporting images.
+* **mpir**: copy of <a href="https://github.com/wbhart/mpir">MPIR repository</a>, a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
+* **mpfr**: copy of <a href="https://github.com/BrianGladman/mpfr">MPFR repository</a>, the GNU MPFR library, for multiprecision floating point computations.
+* **QtCreator**: files and projects for building P4 using Qt Creator.
 * **src-gui**:
-    * **p4**: C++/Qt source code for the GUI of P4,
     * **lyapunov**: C++ code for numerical computation of Lyapunov constants
-    * **lyapunov**: C++ code for numerical computation of Lyapunov constants (multiprecision version)
+    * **lyapunov_mpf**: C++ code for numerical computation of Lyapunov constants (multiprecision version)
+    * **p4**: C++/Qt source code for the GUI of P4,
     * **separatrice**: C++ code for numerical computation of separatrices
 * **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
-* **help**: Help files in *.html* format and supporting images.
 
 ## Dependencies
 
