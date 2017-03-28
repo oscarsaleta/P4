@@ -31,33 +31,30 @@
 #include <string.h>
 
 /*
-        LYAPUNOV	inputfile outputfile
-
-                        --> work in reduce/linux mode
-
-                        In linux mode, we use the env. variable P4_DIR
-                        to locate the sumtable files.  New sum tables
-                        are created in the current working directory
-   temporarily,
-                        and are then copied with the correct permissions to the
-            P4_DIR/sumtables directory.
-
-                        The output file is in a syntax that can be understood by
-   reduce.
-
-        LYAPUNOV	inputfile outputfile MAPLE
-
-                        --> work in maple/linux mode
-
-                        Same as before for the sum tables, but the outputfile
-                        has the syntax that can be understood by maple.
-
-        LYAPUNOV	inputfile outputfile MAPLE WINDOWS [path]
-
-                        --> work in maple/windows mode
-                                optionally use path to load&store sum tables.
-                                if not present, using current working directory.
-*/
+ *  LYAPUNOV    inputfile outputfile
+ *  --> work in reduce/linux mode
+ *
+ *      In linux mode, we use the env. variable P4_DIR to
+ *      locate the sumtable files.  New sum tables are created
+ *      in the current working directory temporarily, and are
+ *      and are then copied with the correct permissions to the
+ *      P4_DIR/sumtables directory.
+ *
+ *      The output file is in a syntax that can be understood by
+ *      reduce.
+ *
+ *  LYAPUNOV	inputfile outputfile MAPLE
+ *  --> work in maple/linux mode
+ *
+ *      Same as before for the sum tables, but the outputfile
+ *      has the syntax that can be understood by maple.
+ *
+ *  LYAPUNOV	inputfile outputfile MAPLE WINDOWS [path]
+ *  --> work in maple/windows mode
+ *
+ *      Optionally use path to load&store sum tables.
+ *      if not present, using current working directory.
+ */
 
 // initialise lyapunov.h global variables
 bool env_maple = false;

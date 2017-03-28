@@ -31,33 +31,30 @@
 #include <string.h>
 
 /*
-        LYAPUNOV	inputfile outputfile
-
-                        --> work in reduce/linux mode
-
-                        In linux mode, we use the env. variable P4_DIR
-                        to locate the sumtable files.  New sum tables
-                        are created in the current working directory
-   temporarily,
-                        and are then copied with the correct permissions to the
-                        P4_DIR/sum_tables directory.
-
-                        The output file is in a syntax that can be understood by
-   reduce.
-
-        LYAPUNOV	inputfile outputfile MAPLE
-
-                        --> work in maple/linux mode
-
-                        Same as before for the sum tables, but the outputfile
-                        has the syntax that can be understood by maple.
-
-        LYAPUNOV	inputfile outputfile MAPLE WINDOWS [path]
-
-                        --> work in maple/windows mode
-                                optionally use path to load&store sum tables.
-                                if not present, using current working directory.
-*/
+ *  LYAPUNOV	inputfile outputfile
+ *  --> work in reduce/linux mode
+ *
+ *      In linux mode, we use the env. variable P4_DIR to
+ *      locate the sumtable files.  New sum tables are created
+ *      in the current working directory temporarily, and are
+ *      then copied with the correct permissions to the
+ *      P4_DIR/sum_tables directory.
+ *
+ *      The output file is in a syntax that can be understood by
+ *      reduce.
+ *
+ *  LYAPUNOV	inputfile outputfile MAPLE
+ *  --> work in maple/linux mode
+ *
+ *      Same as before for the sum tables, but the outputfile
+ *      has the syntax that can be understood by maple.
+ *
+ *  LYAPUNOV	inputfile outputfile MAPLE WINDOWS [path]
+ *  --> work in maple/windows mode
+ *
+ *      Optionally use path to load&store sum tables.
+ *      if not present, using current working directory.
+ */
 
 bool env_maple = false;
 bool env_reduce = false;
@@ -199,18 +196,16 @@ int main(int argc, char *argv[])
     }
 
     for (k = 1; k <= weakness_level; k++) {
-        check_sum(file_name, 2 * k);
         // check if table for the decomposition of 2*k exist, if not create it
+        check_sum(file_name, 2 * k);
 
         fp = fopen(file_name, "r");
         if (fp == nullptr) {
             perror(file_name);
             exit(-3);
         }
-
-        mpfr_set_si(
-            V, 0,
-            MPFR_RNDN); // V is the lyapunov coeff that we want to calculate
+        // here V is the lyapunov coeff that we want to calculate
+        mpfr_set_si(V, 0, MPFR_RNDN);
         while (!feof(fp)) {
             if (fscanf(fp, "%s", s) != 1)
                 break;
