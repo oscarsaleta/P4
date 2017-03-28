@@ -72,7 +72,7 @@ The executable files have to be put in the following tree somewhere in the file 
 
 ## Multiprecision libraries in Windows
 
-In Linux, if you installed the required libraries from <a href="../README.md#Dependencies">here</a>, the MPFR library will be installed and the compiler should be able to find it without issues.
+In Linux, if you installed the required libraries from <a href="../README.md#dependencies">here</a>, the MPFR library will be installed and the compiler should be able to find it without issues.
 
 For Windows, however, these libraries are harder to install, so we package a precompiled 64 bit version in the directories `P4/mpir` and `P4/mpfr`. There are Visual Studio 2015 projects for compiling these libraries, and the already compiled libraries are under the subdirectory `dll/x64/Release/`.
 
