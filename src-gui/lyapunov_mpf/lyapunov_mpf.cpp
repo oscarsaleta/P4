@@ -94,7 +94,7 @@ char *RemoveQuotes(char *x)
 char *AddTrailingSlash(char *buf, char s)
 {
     int i;
-    i = (int) strlen(buf);
+    i = (int)strlen(buf);
     if (i > 0) {
         if (buf[i - 1] != '\\' && buf[i - 1] != '/') {
             buf[i] = s;
@@ -212,7 +212,8 @@ int main(int argc, char *argv[])
             V, 0,
             MPFR_RNDN); // V is the lyapunov coeff that we want to calculate
         while (!feof(fp)) {
-            fscanf(fp, "%s", s);
+            if (fscanf(fp, "%s", s) != 1)
+                break;
             if (!feof(fp)) {
                 part_lyapunov_coeff(s, 2 * k + 1, &Vi);
                 mpfr_sub(accu, V, Vi, MPFR_RNDN); // V -= Vi;
