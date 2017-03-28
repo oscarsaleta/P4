@@ -29,7 +29,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 ## Installation
 
-Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page</a> to see more detailed instructions and download links.
+Check [release page](https://github.com/oscarsaleta/P4/releases/latest "rel pg") <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page</a> to see more detailed instructions and download links.
 
 ### Linux
 
