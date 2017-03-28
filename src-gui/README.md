@@ -33,7 +33,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 ## Build from source
 
-Generally, only source from *src-gui* needs to be compiled. Check <a href="README.md">the main README file</a> for instructions on every possible way of building P4.
+Generally, only source from *src-gui* needs to be compiled. Check [the main README file](../README.md "Main readme") for instructions on every possible way of building P4.
 
 ## Contributors
 
