@@ -134,11 +134,11 @@ Qt's `qmake` makes it easy to compile the whole project with two commands.
 
 ### Build using Qt Creator
 
-Check <a href="QtCreator/README.md">here</a> for instructions on how to build this project using Qt Creator.
+Check <a href="QtCreator/README.md#manually-build-p4-from-source-using-qt-creator">here</a> for instructions on how to build this project using Qt Creator.
 
 ## Binary tree
 
-Check <a href="QtCreator/README.md">here</a> for instructions of how to create a correct file tree for P4 to work after each of its parts has been compiled.
+Check <a href="QtCreator/README.md#binary-tree">here</a> for instructions of how to create a correct file tree for P4 to work after each of its parts has been compiled.
 
 ## Contributors
 
