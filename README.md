@@ -29,27 +29,27 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 ## Installation
 
-Check [release page](https://github.com/oscarsaleta/P4/releases/latest "rel pg") <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page</a> to see more detailed instructions and download links.
+Check [release page][latest_release] to see more detailed instructions and download links.
 
 ### Linux
 
-0. Check <a href="#dependencies">dependencies</a>,
+0. Check [dependencies](#dependencies "Dependencies section"),
 1. `git clone https://github.com/oscarsaleta/P4.git && cd P4`,
 2. `./compile_install_linux` and follow the instructions,
 3. Done!
 
 ### Windows
 
-1. Download *P4setup.exe* from <a href="https://github.com/oscarsaleta/P4/releases/latest">here</a>,
+1. Download *P4setup.exe* from [here][latest_release],
 2. Execute installer and follow the instructions,
 3. Done!
 
 ## Files
 
-* **binaries**: some development scripts that help creating binaries for Linux and Windows (this directory doesn't actually contain any binaries, you can find those <a href="https://github.com/oscarsaleta/P4/releases/latest">here</a>).
+* **binaries**: some development scripts that help creating binaries for Linux and Windows (this directory doesn't actually contain any binaries, you can find those [here][latest_release]).
 * **help**: Help files in *.html* format and supporting images.
-* **mpir**: copy of <a href="https://github.com/wbhart/mpir">MPIR repository</a>, a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
-* **mpfr**: copy of <a href="https://github.com/BrianGladman/mpfr">MPFR repository</a>, the GNU MPFR library, for multiprecision floating point computations.
+* **mpir**: copy of [MPIR repository](https://github.com/wbhart/mpir "MPIR GitHub repository"), a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
+* **mpfr**: copy of [MPFR repository](https://github.com/BrianGladman/mpfr "MPFR GitHub repository"), the GNU MPFR library, for multiprecision floating point computations.
 * **QtCreator**: files and projects for building P4 using Qt Creator.
 * **src-gui**:
     * **lyapunov**: C++ code for numerical computation of Lyapunov constants
@@ -69,7 +69,7 @@ Check [release page](https://github.com/oscarsaleta/P4/releases/latest "rel pg")
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install git`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install git`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S git`
-        + (See the <a href="https://wiki.archlinux.org/index.php/git">git ArchWiki page</a> for more information and configuration instructions).
+        + (See the [git ArchWiki page](https://wiki.archlinux.org/index.php/git "Git ArchWiki page") for more information and configuration instructions).
 	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install qt5-default`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install qt5*-devel --allowerasing`
@@ -102,9 +102,9 @@ Check [release page](https://github.com/oscarsaleta/P4/releases/latest "rel pg")
 	- Dependencies are taken care of.
 * **Compilation from source using Qt Creator:**
 	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested).
-        + Download from <a href="https://www.qt.io/">Qt website</a>,
+        + Download from [Qt website](https://www.qt.io/ "Qt official website"),
 	- C++ compiler: Microsoft Visual C++ (tested with version 14.0).
-        + Download from <a href="https://www.visualstudio.com/vs/cplusplus/#downloadvs">Visual Studio Community</a>.
+        + Download from [Visual Studio Community](https://www.visualstudio.com/vs/cplusplus/#downloads "Visual Studio Community C++ download").
 
 ## Manually build P4 from source
 
@@ -129,16 +129,16 @@ Qt's `qmake` makes it easy to compile the whole project with two commands.
     - `make -f MakeTexMaple clean`
     - `make p4.m`. 
     This will generate **p4gcf.m** and **p4.m**, two Maple scripts needed by P4.
-* From the root directory of the project, run `make install` to generate a *p4* folder with the layout explained <a href="#binary-tree">below</a>. This directory can be placed anywhere in the system and P4 can be executed using `/path/to/p4/bin/p4`.
+* From the root directory of the project, run `make install` to generate a *p4* folder with the layout explained [here][binary_tree]. This directory can be placed anywhere in the system and P4 can be executed using `/path/to/p4/bin/p4`.
 * It is advisable that you set the environment variable `P4_DIR=/path/to/p4` to the correct path of the P4 directory.
 
 ### Build using Qt Creator
 
-Check <a href="QtCreator/README.md#manually-build-p4-from-source-using-qt-creator">here</a> for instructions on how to build this project using Qt Creator.
+Check [here](QtCreator/README.md#manually-build-p4-from-source-using-qt-creator "Build P4 from source with Qt Creator") for instructions on how to build this project using Qt Creator.
 
 ## Binary tree
 
-Check <a href="QtCreator/README.md#binary-tree">here</a> for instructions of how to create a correct file tree for P4 to work after each of its parts has been compiled.
+Check [here][binary_tree] for instructions of how to create a correct file tree for P4 to work after each of its parts has been compiled.
 
 ## Contributors
 
@@ -148,3 +148,7 @@ Check <a href="QtCreator/README.md#binary-tree">here</a> for instructions of how
 - F. Dumortier (Hasselt University)
 - J. Llibre (Universitat Autònoma de Barcelona)
 - O. Saleta (Universitat Autònoma de Barcelona)
+
+
+[latest_release]: https://github.com/oscarsaleta/P4/releases/latest "Latest P4 release"
+[binary_tree]: QtCreator/README.md#binary-tree "Binary tree section"
