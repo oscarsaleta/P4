@@ -108,6 +108,15 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 
 ## Manually build P4 from source
 
+### Automatic build and install for Linux using `compile_install_linux`
+
+This is the easiest way in Linux to get a working P4 application.
+
+* Clone this repository: `git clone https://github.com/oscarsaleta/P4.git`
+* Change dir into the repository folder: `cd P4`
+* Execute the script and follow the instructions: `./compile_install_linux`. This will check for dependencies, compile, and install P4 in your computer (if requirements are met).
+* If you want the **latest version** of P4 (which is not as tested as the stable release), checkout the _release candidate_ branch: `git checkout release_candidate` and then run the script from the previous step.
+
 ### Build using `qmake`
 
 Qt's `qmake` makes it easy to compile the whole project with two commands.
