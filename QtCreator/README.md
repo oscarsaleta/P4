@@ -28,7 +28,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 **Maple must be installed in the computer in order to use P4.**
 
-Check <a href="README.md">the main README</a> for a complete list of dependencies for building P4 with Qt Creator.
+Check <a href="../README.md">the main README</a> for a complete list of dependencies for building P4 with Qt Creator.
 
 ## Files
 
@@ -42,7 +42,7 @@ Check <a href="README.md">the main README</a> for a complete list of dependencie
 
 * *p4*: contains the source of the main GUI elements. Load a project in Qt Creator through the file `QtCreator/p4/p4.pro`, select a Qt kit, and compile.
 * *lyapunov*: contains the source of the Lyapunov constants calculator. Load a project in Qt Creator through the file `QtCreator/lyapunov/lyapunov.pro`, select a Qt kit, and compile.
-* *lyapunov_mpf*: contains the source of the Lyapunov constants calculator (multiprecision version). Load a project in Qt Creator through the file `QtCreator/lyapunov_mpf/lyapunov_mpf.pro`, select a Qt kit, and compile.
+* *lyapunov_mpf*: contains the source of the Lyapunov constants calculator (multiprecision version). Load a project in Qt Creator through the file `QtCreator/lyapunov_mpf/lyapunov_mpf.pro`, select a Qt kit, and compile (see <a href="#multiprecision-libraries-in-windows">this section</a> if something doesn't work).
 * *separatrice*: contains the source of the separatrice numeric calculator. Load a project in Qt Creator through the file `QtCreator/separatrice/separatrice.pro`, select a Qt kit, and compile.
 * *mplstrip*: contains the source of the *TeX-to-Maple* parser for generating the Maple scripts. Load a project in Qt Creator through the file `QtCreator/mplstrip/mplstrip.pro`, select a Qt kit, and compile.
     - If you need to update the Maple scripts, copy the `mplstrip` executable to *src-mpl/mplstrip* and run `make -f MakeTexMaple` from *src-mpl*.
@@ -57,7 +57,7 @@ Once all the projects have been compiled:
 
 ## Binary tree
 
-The executable files have to be put in the following tree somewhere in the file system following this structure (in Linux, `make install` and the scripts `installP4.sh` and `installP4_root.sh` do this automatically; in Windows, the installer also does this automatically):
+The executable files have to be put in the following tree somewhere in the file system following this structure:
 
 * **Linux**: in a folder named p4:
     * p4/bin: *p4*, *lyapunov*, *lyapunov_mpf*, *separatrice*, *p4.m*, *p4gcf.m*, *p4smallicon.png*, *portrait.png*,
