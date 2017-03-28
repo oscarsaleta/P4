@@ -46,7 +46,7 @@ Check <a href="https://github.com/oscarsaleta/P4/releases/latest">releases page<
 
 ## Files
 
-* **binaries**: some development scripts that help creating binaries (this directory doesn't actually contain any binaries, you can find those <a href="https://github.com/oscarsaleta/P4/releases/latest">here</a>).
+* **binaries**: some development scripts that help creating binaries for Linux and Windows (this directory doesn't actually contain any binaries, you can find those <a href="https://github.com/oscarsaleta/P4/releases/latest">here</a>).
 * **help**: Help files in *.html* format and supporting images.
 * **mpir**: copy of <a href="https://github.com/wbhart/mpir">MPIR repository</a>, a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
 * **mpfr**: copy of <a href="https://github.com/BrianGladman/mpfr">MPFR repository</a>, the GNU MPFR library, for multiprecision floating point computations.
