@@ -48,8 +48,8 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 * **binaries**: some development scripts that help creating binaries for Linux and Windows (this directory doesn't actually contain any binaries, you can find those [here][latest_release]).
 * **help**: Help files in *.html* format and supporting images.
-* **mpir**: copy of [MPIR repository](https://github.com/wbhart/mpir "MPIR GitHub repository"), a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
-* **mpfr**: copy of [MPFR repository](https://github.com/BrianGladman/mpfr "MPFR GitHub repository"), the GNU MPFR library, for multiprecision floating point computations.
+* **mpir**: *(relevant to Windows only)* copy of [MPIR repository](https://github.com/wbhart/mpir "MPIR GitHub repository"), a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
+* **mpfr**: *(relevant to Windows only)* copy of [MPFR repository](https://github.com/BrianGladman/mpfr "MPFR GitHub repository"), the GNU MPFR library, for multiprecision floating point computations.
 * **QtCreator**: files and projects for building P4 using Qt Creator.
 * **src-gui**:
     * **lyapunov**: C++ code for numerical computation of Lyapunov constants
@@ -88,7 +88,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
     - `mpfr` library (version >= 3.1.2):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libmpfr-dev`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install mpfr-devel`
-        + Arch-based (Archlinux/Angergos): `sudo pacman -S mpfr`
+        + Arch-based (Archlinux/Angergos): `sudo pacman -S gmp mpfr`
 * **Compilation from source using Qt Creator:**
     - Dependencies itemized above,
 	- Qt Creator IDE:
