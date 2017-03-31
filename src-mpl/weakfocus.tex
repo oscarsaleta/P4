@@ -55,16 +55,19 @@ read( "writelog.m" );
 
 weak_focus := proc(f, x0, y0, chart)
     global hamiltonian;
-    local stype, ff, aa10, aa01, bb10, s, g, _x, gg, lyp;
+    local stype, ff, aa10, aa01, bb10, s, g, _x, gg, lyp, h;
 
     writef( "(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0) );
     openfile( result_file );
     writef( "(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0) );
     openfile( terminal );
     if hamiltonian then
+        h:=integrate(f[1],y)+integrate(-diff(integrate(f[1],y),x) - f[2],x);
         writef( "Since the system is hamiltonian, we have a center.\n" );
+        writef("The Hamiltonian function is %a\n",h);
         openfile( result_file );
         writef( "Since the system is hamiltonian, we have a center.\n" );
+        writef("The Hamiltonian function is %a\n",h);
         openfile( terminal );
         stype := 4;
     else
