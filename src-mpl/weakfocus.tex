@@ -64,10 +64,10 @@ weak_focus := proc(f, x0, y0, chart)
     if hamiltonian then
         h:=integrate(f[1],y)+integrate(-diff(integrate(f[1],y),x) - f[2],x);
         writef( "Since the system is hamiltonian, we have a center.\n" );
-        writef("The Hamiltonian function is %a\n",h);
+        writef("The Hamiltonian function is:\n H(x,y)=%a\n",h);
         openfile( result_file );
         writef( "Since the system is hamiltonian, we have a center.\n" );
-        writef("The Hamiltonian function is %a\n",h);
+        writef("The Hamiltonian function is:\n H(x,y)=%a\n",h);
         openfile( terminal );
         stype := 4;
     else
