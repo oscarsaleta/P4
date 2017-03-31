@@ -143,7 +143,7 @@ end:
 
 \begin{lstlisting}[name=type]
 saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
-    local lambda1, lambda2, ff, g, g1, v1, v2, stable, sep1, sep2;
+    local lambda1, lambda2, lambda_ratio, lambda_ratio_num, lambda_ratio_den, ff, g, g1, v1, v2, stable, sep1, sep2;
     writef( "(%a,%a) is a saddle point.\n", evalf(x0), evalf(y0) );
     openfile( result_file );
     writef( "(%a,%a) is a saddle point.\n", evalf(x0), evalf(y0) );
