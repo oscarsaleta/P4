@@ -182,40 +182,40 @@ behaviour_inf := proc(f, d)
             lyp := lyapunov( gg - I*zz, zz, zzb );
 
             if lyp[1] <> 0 then
-                 writef( "The order of weakness is %d.\n", lyp[2] );
-                 writef( "The lyapunov constant is %g.\n", -lyp[1] );
-                 openfile( result_file );
-                 writef( "The order of weakness is %d.\n", lyp[2] );
-                 writef( "The lyapunov constant is %g.\n", -lyp[1] );
-                 openfile( terminal );
-                 if lyp[1] < 0 then
+                writef( "The order of weakness is %d.\n", lyp[2] );
+                writef( "The lyapunov constant is %g.\n", -lyp[1] );
+                openfile( result_file );
+                writef( "The order of weakness is %d.\n", lyp[2] );
+                writef( "The lyapunov constant is %g.\n", -lyp[1] );
+                openfile( terminal );
+                if lyp[1] < 0 then
                      writef( "The equator is weakly repelling.\n" );
                      openfile( result_file );
                      writef( "The equator is weakly repelling.\n" );
                      openfile( terminal );
-                 else
+                else
                      writef( "The equator is weakly attracting.\n" );
                      openfile( result_file );
                      writef( "The equator is weakly attracting.\n" );
                      openfile( terminal );
-                 fi;
-             else
-                 if lyp[3] = 2 or lyp[4]=1 then
+                fi;
+            else
+                if lyp[3] = 2 or lyp[4]=1 then
                      writef( "We have a center behaviour at infinity.\n" );
                      openfile( result_file );
                      writef( "We have a center behaviour at infinity.\n" );
                      openfile( terminal );
-                 else
+                else
                      writef( "The order of weakness at infinity is at least %d.\n", weakness_level+1 );
                      openfile( result_file );
                      writef( "The order of weakness at infinity is at least %d.\n", weakness_level+1 );
                      openfile( terminal );
-                 fi;
-             fi;
-             openfile( result_file );
-             writef( "##########################################\n" );
-             openfile( terminal );
-             writef( "##########################################\n" );
+                fi;
+            fi;
+            openfile( result_file );
+            writef( "##########################################\n" );
+            openfile( terminal );
+            writef( "##########################################\n" );
         else
             # strong focus
             L1 := evalf( (rho - sqrt(sigma))/2 );

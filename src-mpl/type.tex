@@ -84,23 +84,23 @@ read( "tools.m" );
 read( "writelog.m" );
 
 jacobian := proc( f, xeq, yeq )
-   local expr;
-   eval( map( expr -> subs( { xeq, yeq }, expr ),
-   [ diff( f[1], lhs(xeq) ), diff( f[1], lhs(yeq) ), diff( f[2], lhs(xeq) ), diff( f[2], lhs(yeq) ) ] ) );
+    local expr;
+    eval( map( expr -> subs( { xeq, yeq }, expr ),
+    [ diff( f[1], lhs(xeq) ), diff( f[1], lhs(yeq) ), diff( f[2], lhs(xeq) ), diff( f[2], lhs(yeq) ) ] ) );
 end:
 
 eigenvector := proc( a,b,c,d )
-   local _c, n;
-   if reduce_nneq( b, 0 ) then _c := [ 1, -a/b ]
-   else if reduce_nneq( a, 0 ) then _c := [0,1]
-   else if reduce_nneq( d, 0 ) then _c := [1,-c/d]
-   else  _c := [0,1]
-   fi fi fi;
-   if rounded then
-      n := sqrt(_c[1]^2 + _c[2]^2);
-      _c := evalf( [ _c[1]/n, _c[2]/n ] );
-   fi;
-   _c
+    local _c, n;
+    if reduce_nneq( b, 0 ) then _c := [ 1, -a/b ]
+    else if reduce_nneq( a, 0 ) then _c := [0,1]
+    else if reduce_nneq( d, 0 ) then _c := [1,-c/d]
+    else  _c := [0,1]
+    fi fi fi;
+    if rounded then
+        n := sqrt(_c[1]^2 + _c[2]^2);
+        _c := evalf( [ _c[1]/n, _c[2]/n ] );
+    fi;
+    _c
 end:
 
 translation := proc( v, x, y, x0, y0 )
@@ -395,7 +395,7 @@ semi_elementary := proc( f, x0, y0, a, b, c, d, lambda2, chart )
         writef( "stable separatrice %a\n", [sep2,t] ); fi;
         openfile( terminal );
     else
-       writef( "We have a stable node.\n" );
+        writef( "We have a stable node.\n" );
         writef( "center separatrice %a\n", [t,sep1] );
         writef( "stable separatrice %a\n", [sep2,t] );
         openfile( result_file );
@@ -414,42 +414,42 @@ end:
 
 \begin{lstlisting}[name=type]
 sing_type := proc(f, x0,y0, chart )
-   local jac,delta,rho,sigma;
-   jac := jacobian(f,x=x0,y=y0); if not(rounded) and user_simplify then jac := map(user_simplifycmd,jac) fi;
-   delta := jac[1]*jac[4]-jac[2]*jac[3];
-   if not(rounded) and user_simplify then delta := user_simplifycmd(delta); fi;
-   rho := jac[1]+jac[4]; if not(rounded) and user_simplify then rho := user_simplifycmd(rho); fi;
-   sigma := rho^2-4*delta; if not(rounded) and user_simplify then sigma := user_simplifycmd(sigma); fi;
-   if save_all then
-       openfile( result_file );
-       writef( "(%a,%a) is a singular point.\n", x0, y0 );
-       writef( "Jacobian = [ [ %a, %a ], [ %a, %a ] ]\n", jac[1], jac[2], jac[3], jac[4] );
-       writef( "Delta = %a\n", delta );
-       writef( "Rho = %a\n", rho );
-       writef( "Sigma = %a\n", sigma );
-       openfile( terminal );
-   fi;
-   if reduce_llt( delta, 0 ) then
-       saddle( f, x0, y0, jac[1], jac[2], jac[3], jac[4], rho, sigma, chart );
-   else
-       if reduce_gt( delta, 0 ) then
-          if reduce_gteq( sigma, 0 ) then
-              node( f, sigma, rho, x0, y0, chart )
-          else
-              if reduce_eeq( rho, 0 ) then
-                  weak_focus( f, x0, y0, chart )
-              else
-                  strong_focus( sigma, rho, x0, y0, chart )
-              fi
-          fi
-      else
-          if reduce_eeq( rho, 0 ) then
-              degenerate( f, x0, y0, chart );
-          else
-              semi_elementary( f, x0, y0,jac[1],jac[2],jac[3],jac[4],rho,chart );
-          fi
-      fi;
-   fi;
+    local jac,delta,rho,sigma;
+    jac := jacobian(f,x=x0,y=y0); if not(rounded) and user_simplify then jac := map(user_simplifycmd,jac) fi;
+    delta := jac[1]*jac[4]-jac[2]*jac[3];
+    if not(rounded) and user_simplify then delta := user_simplifycmd(delta); fi;
+    rho := jac[1]+jac[4]; if not(rounded) and user_simplify then rho := user_simplifycmd(rho); fi;
+    sigma := rho^2-4*delta; if not(rounded) and user_simplify then sigma := user_simplifycmd(sigma); fi;
+    if save_all then
+        openfile( result_file );
+        writef( "(%a,%a) is a singular point.\n", x0, y0 );
+        writef( "Jacobian = [ [ %a, %a ], [ %a, %a ] ]\n", jac[1], jac[2], jac[3], jac[4] );
+        writef( "Delta = %a\n", delta );
+        writef( "Rho = %a\n", rho );
+        writef( "Sigma = %a\n", sigma );
+        openfile( terminal );
+    fi;
+    if reduce_llt( delta, 0 ) then
+        saddle( f, x0, y0, jac[1], jac[2], jac[3], jac[4], rho, sigma, chart );
+    else
+        if reduce_gt( delta, 0 ) then
+            if reduce_gteq( sigma, 0 ) then
+                node( f, sigma, rho, x0, y0, chart )
+            else
+                if reduce_eeq( rho, 0 ) then
+                    weak_focus( f, x0, y0, chart )
+                else
+                    strong_focus( sigma, rho, x0, y0, chart )
+                fi
+            fi
+        else
+            if reduce_eeq( rho, 0 ) then
+                degenerate( f, x0, y0, chart );
+            else
+                semi_elementary( f, x0, y0,jac[1],jac[2],jac[3],jac[4],rho,chart );
+            fi
+        fi;
+    fi;
 end:
 \end{lstlisting}
 
@@ -478,54 +478,54 @@ manifold := proc( g, n, stable )
         ok := separatrice_test( sep, g, n, stable, 1 );
         n1 := n;
         while not(ok) and n1 < max_level do
-             n1 := n1 + 1;
-             if n1 >= numeric_level then if n1 = numeric_level then vf1 := evalf(vf1); vf2 := evalf(vf2) fi;
-                 lambda := evalf( coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2) );
-                 h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
-                 h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
-                 vf1 := subs( _y=y, h1 );
-                 vf2 := subs( _y=y, h2 );
-                 sep := sep + lambda*x^n1;
-             else
-                 lambda := coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2);
-                 if not rounded and user_simplify then lambda := user_simplifycmd(lambda) fi;
-                 h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
-                 h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
-                 vf1 := subs( _y=y, h1 );
-                 vf2 := subs( _y=y, h2 );
-                 sep := sep + lambda*x^n1;
-             fi;
-             ok := separatrice_test( sep, g, n1, stable, 1 );
-         od;
-     fi;
+            n1 := n1 + 1;
+            if n1 >= numeric_level then if n1 = numeric_level then vf1 := evalf(vf1); vf2 := evalf(vf2) fi;
+                lambda := evalf( coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2) );
+                h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
+                h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
+                vf1 := subs( _y=y, h1 );
+                vf2 := subs( _y=y, h2 );
+                sep := sep + lambda*x^n1;
+            else
+                lambda := coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2);
+                if not rounded and user_simplify then lambda := user_simplifycmd(lambda) fi;
+                h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
+                h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
+                vf1 := subs( _y=y, h1 );
+                vf2 := subs( _y=y, h2 );
+                sep := sep + lambda*x^n1;
+            fi;
+            ok := separatrice_test( sep, g, n1, stable, 1 );
+        od;
+    fi;
 
-     # Test separatrice for x=-2epsilon..0
+    # Test separatrice for x=-2epsilon..0
 
     if test_sep then
         writef( "Testing separatrix for x < 0\n" );
         ok := separatrice_test( sep, g, n1, stable, -1 );
         while not(ok) and n1 < max_level do
-             n1 := n1 + 1;
-             if n1 >= numeric_level then if n1 = numeric_level then vf1 := evalf(vf1); vf2 := evalf(vf2) fi;
-                 lambda := evalf( coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2) );
-                 h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
-                 h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
-                 vf1 := subs( _y=y, h1 );
-                 vf2 := subs( _y=y, h2 );
-                 sep := sep + lambda*x^n1;
-             else
-                 lambda := coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2);
-                 if not rounded and user_simplify then lambda := user_simplifycmd(lambda) fi;
-                 h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
-                 h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
-                 vf1 := subs( _y=y, h1 );
-                 vf2 := subs( _y=y, h2 );
-                 sep := sep + lambda*x^n1;
-             fi;
-             ok := separatrice_test( sep, g, n1, stable, 1 );
-         od;
-     fi;
-     subs( x=t, sep );
+            n1 := n1 + 1;
+            if n1 >= numeric_level then if n1 = numeric_level then vf1 := evalf(vf1); vf2 := evalf(vf2) fi;
+                lambda := evalf( coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2) );
+                h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
+                h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
+                vf1 := subs( _y=y, h1 );
+                vf2 := subs( _y=y, h2 );
+                sep := sep + lambda*x^n1;
+            else
+                lambda := coeff(collect( subs(y=0,vf2),x),x,n1) / (L1*n1-L2);
+                if not rounded and user_simplify then lambda := user_simplifycmd(lambda) fi;
+                h1 := expand( subs( y=_y+lambda*x^n1,vf1) );
+                h2 := expand( subs( y=_y+lambda*x^n1,vf2) - lambda*n1*x^(n1-1)*h1);
+                vf1 := subs( _y=y, h1 );
+                vf2 := subs( _y=y, h2 );
+                sep := sep + lambda*x^n1;
+            fi;
+            ok := separatrice_test( sep, g, n1, stable, 1 );
+        od;
+    fi;
+    subs( x=t, sep );
 end:
 \end{lstlisting}
 
@@ -587,9 +587,9 @@ center_manifold := proc( g, n, stable )
                 ok := separatrice_test( sep, g, n1, stable2, 1 );
             od;
         end if;
-     fi;
+    fi;
 
-     # Test separatrice for x=-2epsilon..0
+    # Test separatrice for x=-2epsilon..0
 
     if test_sep then
         if member( stype,{4,6}) then stable2:=0 else stable2:=1; fi;
@@ -619,34 +619,34 @@ center_manifold := proc( g, n, stable )
         end if;
      end if;
 
-     dx := optimizepolynomial1( subs( y=sep, vf1 ), x );
-     [subs( x=t, sep ), dx, stype ];
+    dx := optimizepolynomial1( subs( y=sep, vf1 ), x );
+    [subs( x=t, sep ), dx, stype ];
 end:
 \end{lstlisting}
 
 \begin{lstlisting}[name=type]
 separatrice_test := proc( sep, vf, n, stable, dir )
-   local ok, rndnum, exefile, sepfile, k;
-   global user_exeprefix, user_tmpdir, user_lypexe, user_bindir, user_removecmd, epsilon;
+    local ok, rndnum, exefile, sepfile, k;
+    global user_exeprefix, user_tmpdir, user_lypexe, user_bindir, user_removecmd, epsilon;
 
-   exefile := cat( user_bindir, user_sepexe );
-   rndnum := irem(rand(),1000);
-   sepfile := cat( user_tmpdir, "P4SEP_", rndnum, ".TMP" );
-   openfile( sepfile );
-   writef( "%g\n", epsilon );
-   writef( "%d\n", dir );
-   writef( "%d\n", stable );
-   write_vec_field( vf );
-   writef( "%d\n", n-1 );
-   for k from 2 to n do
-      writef( "%d %g ", k, coeff(sep,x,k) );
-   end do;
-   writef( "\n" );
-   closefile( sepfile );
-   writef( "Separatrix test (n=%d)... ", n );
-   ok := ssystem( cat( user_exeprefix, exefile, " \"", sepfile, "\"" ) );
-   ssystem( cat( user_removecmd, " \"", sepfile, "\"" ) );
-   if ok[1] = 0 then
+    exefile := cat( user_bindir, user_sepexe );
+    rndnum := irem(rand(),1000);
+    sepfile := cat( user_tmpdir, "P4SEP_", rndnum, ".TMP" );
+    openfile( sepfile );
+    writef( "%g\n", epsilon );
+    writef( "%d\n", dir );
+    writef( "%d\n", stable );
+    write_vec_field( vf );
+    writef( "%d\n", n-1 );
+    for k from 2 to n do
+        writef( "%d %g ", k, coeff(sep,x,k) );
+    end do;
+    writef( "\n" );
+    closefile( sepfile );
+    writef( "Separatrix test (n=%d)... ", n );
+    ok := ssystem( cat( user_exeprefix, exefile, " \"", sepfile, "\"" ) );
+    ssystem( cat( user_removecmd, " \"", sepfile, "\"" ) );
+    if ok[1] = 0 then
         writef( "not ok\n" );
         false;
     else
