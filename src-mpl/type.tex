@@ -269,27 +269,25 @@ node := proc( f, sigma, rho, x0, y0, chart )
         openfile( terminal );
         L := 1;
     fi;
-    lambda1 := (rho - sqrt(sigma))/2;
-    lambda2 := (rho + sqrt(sigma))/2;
-    if abs(lambda1) > abs(lambda2) then
+    if abs(evalf(lambda1)) > abs(evalf(lambda2)) then
         lambda_ratio := lambda1/lambda2;
     else
         lambda_ratio := lambda2/lambda1;
     end if;
-    if rounded then
-        lambda_ratio := convert(lambda_ratio, rational);
+    if (not rounded) and (type(lambda1, integer)) and (type(lambda2, integer)) then 
         lambda_ratio_num := numer(lambda_ratio);
         lambda_ratio_den := denom(lambda_ratio);
-        writef( "The ratio between eigenvalues is %a:%a (approximation)\n", lambda_ratio_den, lambda_ratio_num );
+        writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
         openfile( result_file );
-        writef( "The ratio between eigenvalues is %a:%a (approximation)\n", lambda_ratio_den, lambda_ratio_num );
+        writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
         openfile( terminal );
     else
+        lambda_ratio := convert(evalf(lambda_ratio), rational);
         lambda_ratio_num := numer(lambda_ratio);
         lambda_ratio_den := denom(lambda_ratio);
-        writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
+        writef( "The ratio between eigenvalues is %a:%a (approximation)\n", lambda_ratio_den, lambda_ratio_num );
         openfile( result_file );
-        writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
+        writef( "The ratio between eigenvalues is %a:%a (approximation)\n", lambda_ratio_den, lambda_ratio_num );
         openfile( terminal );
     end if;
     writef( "########################################################\n" );
