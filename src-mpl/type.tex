@@ -148,13 +148,9 @@ saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
     openfile( result_file );
     writef( "(%a,%a) is a saddle point.\n", evalf(x0), evalf(y0) );
     openfile( terminal );
-    lambda1 := simplify((rho - sqrt(sigma))/2);
-    lambda2 := simplify((rho + sqrt(sigma))/2);
-    writef("test1\n");
-    openfile(result_file);
-    writef("test1\n");
-    openfile(terminal);
-    if abs(lambda1) > abs(lambda2) then
+    lambda1 := (rho - sqrt(sigma))/2;
+    lambda2 := (rho + sqrt(sigma))/2;
+    if abs(evalf(lambda1)) > abs(evalf(lambda2)) then
         lambda_ratio := lambda1/lambda2;
     else
         lambda_ratio := lambda2/lambda1;
