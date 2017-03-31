@@ -269,6 +269,8 @@ node := proc( f, sigma, rho, x0, y0, chart )
         openfile( terminal );
         L := 1;
     fi;
+    lambda1 := (rho - sqrt(sigma))/2;
+    lambda2 := (rho + sqrt(sigma))/2;
     if abs(evalf(lambda1)) > abs(evalf(lambda2)) then
         lambda_ratio := lambda1/lambda2;
     else
