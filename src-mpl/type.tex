@@ -150,9 +150,9 @@ saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
     openfile( terminal );
     lambda1 := simplify((rho - sqrt(sigma))/2);
     lambda2 := simplify((rho + sqrt(sigma))/2);
-    writef("lambda1=%a\nlambda2=%a\n",lambda1,lambda2);
+    writef("test1\n");
     openfile(result_file);
-    writef("lambda1=%a\nlambda2=%a\n",lambda1,lambda2);
+    writef("test1\n");
     openfile(terminal);
     if abs(lambda1) > abs(lambda2) then
         lambda_ratio := lambda1/lambda2;
