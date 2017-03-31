@@ -20,7 +20,7 @@
 # LYAPUNOV_MPF PROJECT FILE.  Use qmake to build makefile
 #
 
-CONFIG += console c++11
+CONFIG += console c++14
 
 SOURCES = lyapunov_mpf.cpp lypcoeff_mpf.cpp polynom_mpf.cpp \
           checktbl_mpf.cpp createtbl_mpf.cpp readvf_mpf.cpp

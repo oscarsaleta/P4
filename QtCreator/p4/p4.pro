@@ -23,7 +23,7 @@ QT += printsupport
 
 CONFIG += qt
 CONFIG += static
-CONFIG += c++11
+CONFIG += c++14
 CONFIG += fwhopr
 
 SOURCES += win_view.cpp \
@@ -66,7 +66,7 @@ SOURCES += win_view.cpp \
     win_zoom.cpp \
     p4application.cpp \
     win_event.cpp \
-    win_separatrice.cpp \
+    win_separatrice.cpp
 
 HEADERS += win_view.h \
     win_vf.h \

@@ -20,7 +20,7 @@
 # LYAPUNOV PROJECT FILE.  Use qmake to build makefile
 #
 
-CONFIG  +=  console c++11
+CONFIG  +=  console c++14
 QMAKE_CXXFLAGS += -g -O2
 QMAKE_CFLAGS += -g -O2
 QMAKE_LFLAGS += -g -O1
