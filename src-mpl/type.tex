@@ -148,8 +148,8 @@ saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
     openfile( result_file );
     writef( "(%a,%a) is a saddle point.\n", evalf(x0), evalf(y0) );
     openfile( terminal );
-    lambda1 := (rho - sqrt(sigma))/2;
-    lambda2 := (rho + sqrt(sigma))/2;
+    lambda1 := simplify((rho - sqrt(sigma))/2);
+    lambda2 := simplify((rho + sqrt(sigma))/2);
     writef("lambda1=%a\nlambda2=%a\n",lambda1,lambda2);
     openfile(result_file);
     writef("lambda1=%a\nlambda2=%a\n",lambda1,lambda2);
