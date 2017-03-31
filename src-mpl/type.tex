@@ -155,7 +155,7 @@ saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
     else
         lambda_ratio := lambda2/lambda1;
     end if;
-    if not rounded and type(lambda1, integer) and type(lambda2, integer) then 
+    if (not rounded) and (type(lambda1, integer)) and (type(lambda2, integer)) then 
         lambda_ratio_num := numer(lambda_ratio);
         lambda_ratio_den := denom(lambda_ratio);
         writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
@@ -163,7 +163,7 @@ saddle := proc( f, x0, y0, a, b, c, d, rho, sigma, chart )
         writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
         openfile( terminal );
     else
-        lambda_ratio := convert(lambda_ratio, rational);
+        lambda_ratio := convert(evalf(lambda_ratio), rational);
         lambda_ratio_num := numer(lambda_ratio);
         lambda_ratio_den := denom(lambda_ratio);
         writef( "The ratio between eigenvalues is %a:%a (approximation)\n", lambda_ratio_den, lambda_ratio_num );
