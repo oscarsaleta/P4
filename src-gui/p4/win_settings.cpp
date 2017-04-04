@@ -262,8 +262,8 @@ void QSettingsDlg::OnOk(void)
 #endif
 
     setMapleExe(AddQuotes(s));
-    s = StripQuotes(StripQuotes(edt_red->text()).trimmed());
-    setReduceExe(AddQuotes(s));
+    //s = StripQuotes(StripQuotes(edt_red->text()).trimmed());
+    //setReduceExe(AddQuotes(s));
 
     done(1);
 }
@@ -274,7 +274,7 @@ void QSettingsDlg::OnReset(void)
     edt_sum->setText(StripQuotes(getDefaultP4SumTablePath()));
     edt_temp->setText(StripQuotes(getDefaultP4TempPath()));
     edt_maple->setText(StripQuotes(getDefaultMapleInstallation()));
-    edt_red->setText(StripQuotes(getDefaultReduceInstallation()));
+    //edt_red->setText(StripQuotes(getDefaultReduceInstallation()));
 }
 
 void QSettingsDlg::OnBrowseReduce(void)
