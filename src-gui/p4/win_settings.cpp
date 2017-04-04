@@ -99,10 +99,14 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     btn_maple = new QPushButton("Browse...", this);
     lbl_maple->setBuddy(edt_maple);
 
-    edt_red = new QLineEdit(StripQuotes(getReduceExe()), this);
-    lbl_red = new QLabel("R&educe Executable", this);
-    btn_red = new QPushButton("Browse...", this);
-    lbl_red->setBuddy(edt_red);
+    //edt_red = new QLineEdit(StripQuotes(getReduceExe()), this);
+    //edt_red->setReadOnly(true);
+    //edt_red->setEnabled(false);
+    //lbl_red = new QLabel("R&educe Executable", this);
+    //lbl_red->setEnabled(false);
+    //btn_red = new QPushButton("Browse...", this);
+    //btn_red->setEnabled(false);
+    //lbl_red->setBuddy(edt_red);
 
     btn_ok = new QPushButton("&Ok", this);
     btn_reset = new QPushButton("&Reset", this);
@@ -117,7 +121,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     btn_maple->setToolTip("Search for this file on your computer.\nYou need a "
                           "command-line version of Maple.\nThe name would be "
                           "something like cmaple9.5.exe in Windows.");
-    btn_red->setToolTip("Search for this file on your computer.\n");
+    //btn_red->setToolTip("Search for this file on your computer.\n");
 
     edt_base->setToolTip("The base installation path.  In here, one finds "
                          "bin/, help/ and reduce/ subdirectories.");
@@ -128,7 +132,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
                          "directory.");
     edt_maple->setToolTip(
         "The name of the Maple executable (command-line version)");
-    edt_red->setToolTip("The name of the reduce executable");
+    //edt_red->setToolTip("The name of the reduce executable");
 
     btn_ok->setToolTip("Store changes, and go back to program");
     btn_cancel->setToolTip("Undo any changes");
@@ -171,12 +175,13 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     lay00->addWidget(lbl_maple, 3, 0);
     lay00->addWidget(edt_maple, 3, 1);
     lay00->addWidget(btn_maple, 3, 2);
-    lay00->addWidget(lbl_red, 4, 0);
-    lay00->addWidget(edt_red, 4, 1);
-    lay00->addWidget(btn_red, 4, 2);
+    //lay00->addWidget(lbl_red, 4, 0);
+    //lay00->addWidget(edt_red, 4, 1);
+    //lay00->addWidget(btn_red, 4, 2);
 
     mainLayout->addLayout(lay00);
-    mainLayout->addSpacing(4);
+    mainLayout->addSpacing(3);
+    //mainLayout->addSpacing(4);
     mainLayout->addLayout(buttons);
 
     setLayout(mainLayout);
@@ -185,15 +190,15 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     QObject::connect(btn_sum, SIGNAL(clicked()), this, SLOT(OnBrowseSum()));
     QObject::connect(btn_temp, SIGNAL(clicked()), this, SLOT(OnBrowseTemp()));
     QObject::connect(btn_maple, SIGNAL(clicked()), this, SLOT(OnBrowseMaple()));
-    QObject::connect(btn_red, SIGNAL(clicked()), this, SLOT(OnBrowseReduce()));
+    //QObject::connect(btn_red, SIGNAL(clicked()), this, SLOT(OnBrowseReduce()));
     QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(OnOk()));
     QObject::connect(btn_reset, SIGNAL(clicked()), this, SLOT(OnReset()));
     QObject::connect(btn_cancel, SIGNAL(clicked()), this, SLOT(OnCancel()));
 
-#ifdef Q_OS_WIN
-    edt_red->setEnabled(false);
-    btn_red->setEnabled(false);
-#endif
+//#ifdef Q_OS_WIN
+//    edt_red->setEnabled(false);
+//    btn_red->setEnabled(false);
+//#endif
 
     setP4WindowTitle(this, "Main Program Settings");
 }

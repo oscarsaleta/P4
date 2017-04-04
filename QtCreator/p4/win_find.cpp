@@ -60,15 +60,14 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     p4title->setFont(*(p4app->TitleFont));
 #endif
 
-    QLabel *symlabel = new QLabel("Symbolic package: ", this);
-    symlabel->setFont(*(p4app->BoldFont));
-    btn_maple = new QRadioButton("Maple", this);
-    btn_reduce = new QRadioButton("Reduce", this);
-// btn_reduce->setEnabled(false);
+    //QLabel *symlabel = new QLabel("Symbolic package: ", this);
+    //symlabel->setFont(*(p4app->BoldFont));
+    //btn_maple = new QRadioButton("Maple", this);
+    //btn_reduce = new QRadioButton("Reduce", this);
 
-#ifdef Q_OS_WIN
-    btn_reduce->setEnabled(false); // reduce is not available under windows
-#endif
+//#ifdef Q_OS_WIN
+    //btn_reduce->setEnabled(false); // reduce is not available under windows
+//#endif
 
     QLabel *actlabel = new QLabel("File Action:  ", this);
     actlabel->setFont(*(p4app->BoldFont));
@@ -99,9 +98,9 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
         btn_eval = new QPushButton("&Evaluate", this);
 
 #ifdef TOOLTIPS
-    btn_maple->setToolTip("Select Maple as the symbolic manipulator");
-    btn_reduce->setToolTip("Select Reduce as the symbolic manipulator.\n"
-                           "This is only available in the Unix version.");
+    //btn_maple->setToolTip("Select Maple as the symbolic manipulator");
+    //btn_reduce->setToolTip("Select Reduce as the symbolic manipulator.\n"
+    //                       "This is only available in the Unix version.");
     btn_actionrun->setToolTip(
         "Make sure the symbolic manipulator processes the file");
     btn_actionprep->setToolTip(
@@ -140,9 +139,9 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 #endif
 
     QHBoxLayout *symLayout = new QHBoxLayout();
-    symLayout->addWidget(symlabel);
-    symLayout->addWidget(btn_maple);
-    symLayout->addWidget(btn_reduce);
+    //symLayout->addWidget(symlabel);
+    //symLayout->addWidget(btn_maple);
+    //symLayout->addWidget(btn_reduce);
     symLayout->addStretch(0);
     mainLayout->addLayout(symLayout);
 
@@ -216,18 +215,18 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btngrp2->addButton(btn_yes);
     btngrp2->addButton(btn_no);
 
-    QButtonGroup *btngrp3 = new QButtonGroup(this);
-    btngrp3->addButton(btn_maple);
-    btngrp3->addButton(btn_reduce);
+    //QButtonGroup *btngrp3 = new QButtonGroup(this);
+    //btngrp3->addButton(btn_maple);
+    //btngrp3->addButton(btn_reduce);
 
     QButtonGroup *btngrp4 = new QButtonGroup(this);
     btngrp4->addButton(btn_actionrun);
     btngrp4->addButton(btn_actionprep);
 
-    if (ThisVF->symbolicpackage == PACKAGE_MAPLE)
-        btn_maple->toggle();
-    else
-        btn_reduce->toggle();
+    //if (ThisVF->symbolicpackage == PACKAGE_MAPLE)
+    //    btn_maple->toggle();
+    //else
+    //    btn_reduce->toggle();
 
     if (action_OnlyPrepareFile)
         btn_actionprep->toggle();
@@ -254,10 +253,10 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     else
         btn_no->toggle();
 
-    QObject::connect(btn_maple, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_maple_toggled(bool)));
-    QObject::connect(btn_reduce, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_reduce_toggled(bool)));
+    //QObject::connect(btn_maple, SIGNAL(toggled(bool)), this,
+    //                 SLOT(btn_maple_toggled(bool)));
+    //QObject::connect(btn_reduce, SIGNAL(toggled(bool)), this,
+    //                 SLOT(btn_reduce_toggled(bool)));
     QObject::connect(btn_actionrun, SIGNAL(toggled(bool)), this,
                      SLOT(btn_actionrun_toggled(bool)));
     QObject::connect(btn_actionprep, SIGNAL(toggled(bool)), this,

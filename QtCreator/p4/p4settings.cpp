@@ -115,12 +115,12 @@ QString getMathManipulator(void) { return Settings_mathmanipulator; }
 
 int getMathPackage(void)
 {
-    QString s;
-    s = getMathManipulator().simplified().toLower();
-    if (s == "maple")
+    //QString s;
+    //s = getMathManipulator().simplified().toLower();
+    //if (s == "maple")
         return PACKAGE_MAPLE;
-    else
-        return PACKAGE_REDUCE;
+    //else
+    //    return PACKAGE_REDUCE;
 }
 
 void setMathPackage(int pck)
