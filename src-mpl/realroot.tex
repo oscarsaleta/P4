@@ -183,7 +183,8 @@ find_real_roots := proc( f, x, y )
                     abs( op(2,gn[k])-an[2] ) < 10^(-user_precision) then break fi
             od;
             if k > nops(gn) then
-                g := [op(g),a]; gn := [op(gn),an];
+                g := [op(g),a];
+                gn := [op(gn),an];
         fi fi
     od;
     s := []; sn := [];
@@ -195,7 +196,15 @@ find_real_roots := proc( f, x, y )
         fi;
     od;
     #s:=subs(I=0,evalf(s)):
-    s:=coeff(expand(s),I,0):
+    #openfile(results_file,terminal);
+    #writef("\ns is %a\n\n",s);
+    #s:=[coeff(expand(op(s)),I,0)]:
+
+    for j from 1 to nops(s) do
+        s[j][1]:=Re(s[j][1]):
+        s[j][2]:=Re(s[j][2]):
+    end do;
+
 
     if nops(s) = 0 then writef( "No symbolic real singularities are found.\n" )
         else writef( "Symbolic real singularities:\n" );
