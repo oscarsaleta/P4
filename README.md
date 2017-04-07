@@ -143,11 +143,12 @@ Check [here][binary_tree] for instructions of how to create a correct file tree 
 ## Contributors
 
 - J.C. Artés (Universitat Autònoma de Barcelona)
-- C. Herssens (Hasselt University)
 - P. De Maesschalck (Hasselt University)
 - F. Dumortier (Hasselt University)
+- C. Herssens (Hasselt University)
 - J. Llibre (Universitat Autònoma de Barcelona)
 - O. Saleta (Universitat Autònoma de Barcelona)
+- J. Torregrosa (Universitat Autònoma de Barcelona)
 
 
 [latest_release]: https://github.com/oscarsaleta/P4/releases/latest "Latest P4 release"
