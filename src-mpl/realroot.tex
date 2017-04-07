@@ -195,10 +195,6 @@ find_real_roots := proc( f, x, y )
             s := [op(s),g[k]]
         fi;
     od;
-    #s:=subs(I=0,evalf(s)):
-    #openfile(results_file,terminal);
-    #writef("\ns is %a\n\n",s);
-    #s:=[coeff(expand(op(s)),I,0)]:
 
     for j from 1 to nops(s) do
         s[j][1]:=Re(s[j][1]):
