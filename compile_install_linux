@@ -20,6 +20,61 @@
 
 set -e
 
+
+
+# functions
+
+function install_home {
+    echo "=== Installing P4 in $HOME/p4..."
+    mv p4 $HOME/
+    INSTALLDIR=$HOME/p4
+    ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
+    whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
+
+    P4_DIR=$INSTALLDIR
+    PATH=$INSTALLDIR/bin:\$PATH
+    export P4_DIR PATH
+
+    In case you don't know which shell you're using, open a terminal and execute this command:
+
+    echo .\$(echo \$0)rc
+
+    And edit that file." 20 80
+    echo "Done."
+    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
+    echo "  P4_DIR=$INSTALLDIR"
+    echo "  PATH=$INSTALLDIR/bin:\$PATH"
+    echo "  export P4_DIR PATH"
+}
+
+function install_root {
+    echo "=== Installing P4 in /usr/local/p4..."    
+    sudo mv p4 /usr/local
+    INSTALLDIR=/usr/local/p4
+    sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
+    sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
+    whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
+
+    P4_DIR=$INSTALLDIR
+    export P4_DIR
+
+    In case you don't know which shell you're using, open a terminal and execute this command:
+
+    echo .\$(echo \$0)rc
+
+    And edit that file." 20 80
+    echo "Done."
+    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
+    echo "  P4_DIR=$INSTALLDIR"
+    echo "  export P4_DIR"
+}
+
+
+
+
+
+# START OF SCRIPT
+
 # check input variables
 if [ "$1" = "--verbose" ] || [ "$2" = "--verbose" ] || [ "$3" = "--verbose" ]; then
     VERBOSE=true
@@ -66,23 +121,26 @@ fi
 # Uninstalling
 echo "=== Checking for older P4 versions..."
 UNINSTALLED=false
+INSTALLEDHOME=false
+INSTALLEDROOT=false
 if [ -d $HOME/p4 ]; then
+    INSTALLEDHOME=true
     if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in $HOME/p4.
 Do you want to remove it?" 20 60; then
         UNINSTALLED=true
+        INSTALLEDHOME=false
         rm -rf $HOME/p4
         if [ -f $HOME/.local/share/applications/p4.desktop ]; then
             rm -f $HOME/.local/share/applications/p4.desktop
         fi
-    else
-        echo "Not uninstalling present P4, so the installation script will stop."
-        exit 1
     fi
 fi
 if [ -d /usr/local/p4 ]; then
+    INSTALLEDROOT=true
     if whiptail --title "Uninstalling older versions" --yesno "Older P4 install found in /usr/local/p4.
 Do you want to remove it?" 20 60; then
         UNINSTALLED=true
+        INSTALLEDROOT=false
         sudo rm -rf /usr/local/p4
         sudo rm -f /usr/local/bin/p4
         if [ -f /usr/share/applications/p4.desktop ]; then
@@ -102,13 +160,14 @@ Do you want to remove it?" 20 60; then
     fi
 fi
 if [ $UNINSTALLED = false ]; then
-    echo "No older P4 version found."
+    echo "No older P4 version removed."
 fi
-
-if [ -d $HOME/.config/P4 ]; then
-    if whiptail --title "Uninstalling older versions" --yesno --defaultno "Do you want to remove P4 configuration?" 20 60; then
-        if test -d $HOME/.config/P4; then
-            rm -rf $HOME/.config/P4
+if [ $UNINSTALLED = true ]; then
+    if [ -d $HOME/.config/P4 ]; then
+        if whiptail --title "Uninstalling older versions" --yesno --defaultno "Do you want to remove P4 configuration?" 20 60; then
+            if test -d $HOME/.config/P4; then
+                rm -rf $HOME/.config/P4
+            fi
         fi
     fi
 fi
@@ -123,7 +182,7 @@ fi
 echo "=== Checking for dependencies..."
 if (pkg-config --version >/dev/null 2>&1); then
     if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
-        echo "Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
+        echo "- Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
     else
         whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
 
@@ -166,14 +225,14 @@ if (ldconfig --version >/dev/null 2>&1); then
     fi
 else
     if (sudo ldconfig -p | grep libstdc++ >/dev/null && sudo ldconfig -p | grep libgcc_s >/dev/null && sudo ldconfig -p | grep libc >/dev/null); then
-        echo "GCC libraries found in the system."
+        echo "- GCC libraries found in the system."
     else
         echo "Cannot execute command ldconfig, make sure it is available and you have permission to use this command."
         exit 1
     fi
 fi
 if [ -f /usr/include/mpfr.h ]; then
-    echo "Multiprecision Real library mpfr found"
+    echo "- Multiprecision Real library mpfr found"
 else
     whiptail --title "Missing mpfr library" --msgbox "Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:
 - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev
@@ -190,7 +249,7 @@ echo "Done."
 # Compile
 echo "=== Compiling P4..."
 whiptail --infobox --title "Compiling P4..." "Compiling P4, this could take several minutes!" 20 60
-echo "Cleaning old builds..."
+echo "- Cleaning old builds..."
 if [ $VERBOSE = false ]; then
     OUT=/dev/null
     ERR=/dev/null
@@ -202,7 +261,7 @@ rm -rf build p4 $DEST
 #if ! make distclean >$OUT 2>$ERR; then
 #    echo "Nothing to clean."
 #fi
-echo "Running qmake..."
+echo "- Running qmake..."
 if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
 fi
@@ -231,70 +290,43 @@ env QMAKE=/path/to/qmake ./compile_install_linux --verbose
 fi
 # Use multicore make for faster compilation
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
-echo "Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
+echo "- Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
 make -j$CPUCNT >$OUT #2>$ERR
 if [ -f src-mpl/p4.m ]; then
     if whiptail --title "Recompile Maple scripts" --yesno --defaultno "Do you want to recompile Maple scripts from src-mpl?
 If your Maple version is Maple 2015, this is not necessary." 20 60; then
-        echo "Recompiling Maple scripts..."
+        echo "- Recompiling Maple scripts..."
         cd src-mpl
         make -f MakeTexMaple clean >$OUT 2>$ERR
         cd ..
         make -C src-mpl p4.m >$OUT 2>$ERR
     fi
 else
-    echo "Compiling Maple scripts..."
+    echo "- Compiling Maple scripts..."
     make -C src-mpl p4.m >$OUT 2>$ERR
 fi
 make install >$OUT 2>$ERR
 echo "Done."
 
 # Install
-echo "=== Installing P4..."
-if whiptail --title "Install P4?" --yesno "Do you want to install P4 in your system?" 20 60; then
-    if whiptail --title "Install P4" --yesno --yes-button "User" --no-button  "Root" --defaultno "Where do you want to install P4?
+if [ $INSTALLEDROOT = true ]; then
+    if whiptail --title "Install P4?" --yesno "Do you want to install P4 in $HOME/p4?" 20 60; then
+        install_home
+    fi
+elif [ $INSTALLEDHOME = true ]; then
+    if whiptail --title "Install P4?" --yesno "Do you want to install P4 in /usr/local/p4?" 20 60; then
+        install_root
+    fi
+else
+    if whiptail --title "Install P4?" --yesno "Do you want to install P4 in your system?" 20 60; then
+        if whiptail --title "Install P4" --yesno --yes-button "User" --no-button  "Root" --defaultno "Where do you want to install P4?
 
-        User: $HOME/p4
-        Root: /usr/local/p4" 20 60; then
-        mv p4 $HOME/
-        INSTALLDIR=$HOME/p4
-        ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
-        whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
-
-    P4_DIR=$INSTALLDIR
-    PATH=$INSTALLDIR/bin:\$PATH
-    export P4_DIR PATH
-
-    In case you don't know which shell you're using, open a terminal and execute this command:
-
-    echo .\$(echo \$0)rc
-
-    And edit that file." 20 80
-    echo "Done."
-    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
-    echo "  P4_DIR=$INSTALLDIR"
-    echo "  PATH=$INSTALLDIR/bin:\$PATH"
-    echo "  export P4_DIR PATH"
-    else
-        sudo mv p4 /usr/local
-        INSTALLDIR=/usr/local/p4
-        sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
-        sudo ln -s $INSTALLDIR/bin/p4 /usr/local/bin/p4
-        whiptail --title "Create P4_DIR variable" --msgbox "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):
-
-    P4_DIR=$INSTALLDIR
-    export P4_DIR
-
-    In case you don't know which shell you're using, open a terminal and execute this command:
-
-    echo .\$(echo \$0)rc
-
-    And edit that file." 20 80
-    echo "Done."
-    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
-    echo "  P4_DIR=$INSTALLDIR"
-    echo "  export P4_DIR"
+            User: $HOME/p4
+            Root: /usr/local/p4" 20 60; then
+            install_home
+        else
+            install_root
+        fi
     fi
 fi
-
 echo "=== Finished."
