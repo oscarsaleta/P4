@@ -54,32 +54,36 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
                      1);
     lay00->addWidget(new QLabel(""), 1, 1);
     lay00->addWidget(new QLabel(QString::fromUtf8(
-                         "    O. Saleta (Universitat Autònoma de Barcelona)")),
-                     2, 1);
-    lay00->addWidget(new QLabel(QString::fromUtf8(
                          "    J.C. Artés (Universitat Autònoma de Barcelona)")),
-                     3, 1);
-    lay00->addWidget(new QLabel("    C. Herssens (Hasselt University)"), 4, 1);
+                     2, 1);
     lay00->addWidget(new QLabel("    P. De Maesschalck (Hasselt University)"),
-                     5, 1);
-    lay00->addWidget(new QLabel("    F. Dumortier (Hasselt University)"), 6, 1);
+                     3, 1);
+    lay00->addWidget(new QLabel("    F. Dumortier (Hasselt University)"), 4, 1);
+    lay00->addWidget(new QLabel("    C. Herssens (Hasselt University)"), 5, 1);
     lay00->addWidget(new QLabel(QString::fromUtf8(
                          "    J. Llibre (Universitat Autònoma de Barcelona)")),
+                     6, 1);
+    lay00->addWidget(new QLabel(QString::fromUtf8(
+                         "    O. Saleta (Universitat Autònoma de Barcelona)")),
                      7, 1);
-    lay00->addWidget(new QLabel(""), 8, 1);
+    lay00->addWidget(
+        new QLabel(QString::fromUtf8(
+            "    J. Torregrosa (Universitat Autònoma de Barcelona)")),
+        8, 1);
+    lay00->addWidget(new QLabel(""), 9, 1);
 
     QString versionstr;
     versionstr =
         " Version " + p4Version + "   " + p4VersionDate + " " + p4Platform;
 
-    lay00->addWidget(new QLabel(versionstr), 9, 1);
+    lay00->addWidget(new QLabel(versionstr), 10, 1);
 
     QLabel *l;
     l = new QLabel("(missing image)");
     if (p4image.load(getP4BinPath() + "/portrait.png"))
         l->setPixmap(p4image);
 
-    lay00->addWidget(l, 0, 0, 9, 1);
+    lay00->addWidget(l, 0, 0, 10, 1);
 
     mainLayout->addLayout(lay00);
     QHBoxLayout *buttons = new QHBoxLayout();
