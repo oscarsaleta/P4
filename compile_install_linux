@@ -22,10 +22,9 @@ set -e
 
 
 
-# functions
-
+# Functions
 function install_home {
-    echo "=== Installing P4 in $HOME/p4..."
+    printf "\n=== Installing P4 in $HOME/p4...\n"
     mv p4 $HOME/
     INSTALLDIR=$HOME/p4
     ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
@@ -40,15 +39,11 @@ function install_home {
     echo .\$(echo \$0)rc
 
     And edit that file." 20 80
-    echo "Done."
-    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
-    echo "  P4_DIR=$INSTALLDIR"
-    echo "  PATH=$INSTALLDIR/bin:\$PATH"
-    echo "  export P4_DIR PATH"
+    printf "Done.\n\n[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):\n\nP4_DIR=$INSTALLDIR\nPATH=$INSTALLDIR/bin:\$PATH\nexport P4_DIR PATH\n"
 }
 
 function install_root {
-    echo "=== Installing P4 in /usr/local/p4..."    
+    printf "\n=== Installing P4 in /usr/local/p4...\n"
     sudo mv p4 /usr/local
     INSTALLDIR=/usr/local/p4
     sudo ln -s $INSTALLDIR/sumtables $INSTALLDIR/sum_tables
@@ -63,16 +58,54 @@ function install_root {
     echo .\$(echo \$0)rc
 
     And edit that file." 20 80
-    echo "Done."
-    echo "[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):"
-    echo "  P4_DIR=$INSTALLDIR"
-    echo "  export P4_DIR"
+    printf "Done.\n\n[Optional] add to the end of $HOME/.${SHELL:5}rc (or preferred shell configuration script):\n\nP4_DIR=$INSTALLDIR\nPATH=$INSTALLDIR/bin:\$PATH\nexport P4_DIR PATH\n"
 }
 
+# Error messages
+QT5_ERROR="[Error]
+Some Qt5 modules were not found in the system.
+Install them using the proper method for your distribution, e.g.:
+
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+    - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base"
+PKGCONFIG_ERROR="[Error]
+The command pkg-config is needed in order to check for other needed packages.
+Install it using the proper method for your distribution, e.g.:
+
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
+    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
+GCC_ERROR="[Error]
+Some GCC libraries were not found in the system.
+Install them using the proper method for your distribution, e.g.:
+    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++
+    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
+    - Arch-based (Archlinux/Antergos): sudo pacman -S gcc"
+LDCONFIG_ERROR="[Error]
+Cannot execute command ldconfig, make sure it is available and you have permission to use this command."
+MPFR_ERROR="[Error]
+Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel
+- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr"
+QMAKE_ERROR="[Error]
+$QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:
+- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
+- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
+- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base
+
+or that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run
+
+env QMAKE=/path/to/qmake ./compile_install_linux --verbose
+
+(where /path/to/qmake should be replaced by the actual path or command of qmake in your system)."
 
 
 
 
+
+###############################################
 # START OF SCRIPT
 
 # check input variables
@@ -94,9 +127,7 @@ fi
 
 # Title
 if [ $ONLYUNINSTALL = false ]; then
-    echo "========================================"
-    echo "|| COMPILATION AND INSTALLATION OF P4 ||"
-    echo "========================================"
+    printf "\t========================================\n\t|| COMPILATION AND INSTALLATION OF P4 ||\n\t========================================\n"
     # Welcome screen
     if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
 
@@ -108,18 +139,16 @@ if [ $ONLYUNINSTALL = false ]; then
 
     These options can be used together in any given order.
 
-    Select <Continue> to go on with the installation or <Exit> to quit." 25 60; then
-        echo "Program exited."
+    Select <Continue> to go on with the installation or <Exit> to quit." 15 100; then
+        printf "=== Finished\n"
         exit 1
     fi
 else
-    echo "========================"
-    echo "|| UNINSTALLER FOR P4 ||"
-    echo "========================"
+    printf "\t========================\n\t|| UNINSTALLER FOR P4 ||\n\t========================\n"
 fi
 
 # Uninstalling
-echo "=== Checking for older P4 versions..."
+printf "\n=== Checking for older P4 versions...\n"
 UNINSTALLED=false
 INSTALLEDHOME=false
 INSTALLEDROOT=false
@@ -160,7 +189,7 @@ Do you want to remove it?" 20 60; then
     fi
 fi
 if [ $UNINSTALLED = false ]; then
-    echo "No older P4 version removed."
+    echo "- No older P4 version removed."
 fi
 if [ $UNINSTALLED = true ]; then
     if [ -d $HOME/.config/P4 ]; then
@@ -179,75 +208,48 @@ if [ $ONLYUNINSTALL = true ]; then
 fi
 
 # Check for dependencies
-echo "=== Checking for dependencies..."
+printf "\n=== Checking for dependencies...\n"
 if (pkg-config --version >/dev/null 2>&1); then
     if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
         echo "- Qt5Core, Qt5Gui, Qt5Widgets and Qt5PrintSupport found in the system."
     else
-        whiptail --title "Missing Qt5 modules" --msgbox "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
-
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake
-    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
-    - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base" 20 80
-        echo "Some Qt5 modules were not found in the system. Install them using the proper method for your distribution, e.g.:
-
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake
-    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
-    - Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base"
+        whiptail --title "Missing Qt5 modules" --msgbox "$QT5_ERROR" 15 100
+        echo "$QT5_ERROR"
         exit 1
     fi
 else
-    whiptail --title "Missing pkg-config" --msgbox "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
-
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config
-    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
-    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config" 20 80
-    echo "The command pkg-config is needed in order to check for other needed packages. Install it using the proper method for your distribution, e.g.:
-
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config
-    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig
-    - Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
+    whiptail --title "Missing pkg-config" --msgbox "$PKGCONFIG_ERROR" 15 80
+    echo "$PKGCONFIG_ERROR"
     exit 1
 fi
 if (ldconfig --version >/dev/null 2>&1); then
     if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
-        echo "GCC libraries found in the system."
+        echo "- GCC libraries found in the system."
     else
-        whiptail --title "Missing GCC libraries" --msgbox "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++
-    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
-    - Arch-based (Archlinux/Antergos): sudo pacman -S gcc" 20 80
-        echo "Some GCC libraries were not found in the system. Install them using the proper method for your distribution, e.g.:
-    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++
-    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'
-    - Arch-based (Archlinux/Antergos): sudo pacman -S gcc"
+        whiptail --title "Missing GCC libraries" --msgbox "$GCC_ERROR" 15 80
+        echo "$GCC_ERROR"
         exit 1
     fi
 else
+    echo "- [Warning] the command ldconfig could not be executed, will try as super user..."
     if (sudo ldconfig -p | grep libstdc++ >/dev/null && sudo ldconfig -p | grep libgcc_s >/dev/null && sudo ldconfig -p | grep libc >/dev/null); then
         echo "- GCC libraries found in the system."
     else
-        echo "Cannot execute command ldconfig, make sure it is available and you have permission to use this command."
+        echo "$LDCONFIG_ERROR"
         exit 1
     fi
 fi
 if [ -f /usr/include/mpfr.h ]; then
     echo "- Multiprecision Real library mpfr found"
 else
-    whiptail --title "Missing mpfr library" --msgbox "Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:
-- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev
-- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel
-- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr" 20 80
-    echo "Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:
-- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev
-- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel
-- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr"
+    whiptail --title "Missing mpfr library" --msgbox "$MPFR_ERROR" 20 80
+    echo "$MPFR_ERROR"
     exit 1
 fi
 echo "Done."
 
 # Compile
-echo "=== Compiling P4..."
+printf "\n=== Compiling P4...\n"
 whiptail --infobox --title "Compiling P4..." "Compiling P4, this could take several minutes!" 20 60
 echo "- Cleaning old builds..."
 if [ $VERBOSE = false ]; then
@@ -258,34 +260,14 @@ else
     ERR=/dev/stderr
 fi
 rm -rf build p4 $DEST
-#if ! make distclean >$OUT 2>$ERR; then
-#    echo "Nothing to clean."
-#fi
 echo "- Running qmake..."
 if [ -z ${QMAKE+x} ]; then
     QMAKE=qmake
 fi
+
 if ! $QMAKE $COMPILE_DEBUG -r P4.pro >$OUT 2>$ERR; then
-    whiptail --title "qmake error" --msgbox "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:
-- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
-- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
-- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base
-
-or that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run
-
-env QMAKE=/path/to/qmake ./compile_install_linux --verbose
-
-(where /path/to/qmake should be replaced by the actual path or command of qmake in your system)." 20 80
-    echo "Error, $QMAKE is not a valid command for building a Qt application. Possible causes are that Qt5 is not properly installed:
-- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake
-- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing
-- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base
-
-or that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run
-
-env QMAKE=/path/to/qmake ./compile_install_linux --verbose
-
-(where /path/to/qmake should be replaced by the actual path or command of qmake in your system)."
+    whiptail --title "qmake error" --msgbox "$QMAKE_ERROR" 20 80
+    printf "\n$QMAKE_ERROR"
     exit 1
 fi
 # Use multicore make for faster compilation
@@ -329,4 +311,4 @@ else
         fi
     fi
 fi
-echo "=== Finished."
+printf "\n=== Finished.\n"
