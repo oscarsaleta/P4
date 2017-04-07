@@ -127,7 +127,7 @@ fi
 
 # Title
 if [ $ONLYUNINSTALL = false ]; then
-    printf "\t========================================\n\t|| COMPILATION AND INSTALLATION OF P4 ||\n\t========================================\n"
+    printf "\n\t========================================\n\t|| COMPILATION AND INSTALLATION OF P4 ||\n\t========================================\n"
     # Welcome screen
     if ! whiptail --title "Compilation and installation of P4" --yesno --yes-button "Continue" --no-button "Exit" "Welcome to the Linux compilation and  installation script for the program P4.
 
@@ -144,7 +144,7 @@ if [ $ONLYUNINSTALL = false ]; then
         exit 1
     fi
 else
-    printf "\t========================\n\t|| UNINSTALLER FOR P4 ||\n\t========================\n"
+    printf "\n\t========================\n\t|| UNINSTALLER FOR P4 ||\n\t========================\n"
 fi
 
 # Uninstalling
