@@ -231,7 +231,7 @@ if (ldconfig --version >/dev/null 2>&1); then
         exit 1
     fi
 else
-    printf "- [Warning] the command ldconfig could not be executed, will try as super user..."
+    printf -- "- [Warning] the command ldconfig could not be executed, will try as super user..."
     if (sudo ldconfig -p | grep libstdc++ >/dev/null && sudo ldconfig -p | grep libgcc_s >/dev/null && sudo ldconfig -p | grep libc >/dev/null); then
         printf " Success.\n"
         echo "- GCC libraries found in the system."
