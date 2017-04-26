@@ -655,6 +655,7 @@ type_inf := proc( f, chart, x0, L1, b, L2, sdegree )
                     openfile( terminal );
                 else
                     lambda_ratio := convert(evalf(lambda_ratio), rational);
+                    lambda_ratio := convert(evalf(lambda_ratio), rational);
                     lambda_ratio_num := numer(lambda_ratio);
                     lambda_ratio_den := denom(lambda_ratio);
                     openfile(terminal);
@@ -690,6 +691,7 @@ type_inf := proc( f, chart, x0, L1, b, L2, sdegree )
                     writef( "The ratio between eigenvalues is %a:%a\n", lambda_ratio_den, lambda_ratio_num);
                     openfile( terminal );
                 else
+                    lambda_ratio := convert(evalf(lambda_ratio), rational);
                     lambda_ratio := convert(evalf(lambda_ratio), rational);
                     lambda_ratio_num := numer(lambda_ratio);
                     lambda_ratio_den := denom(lambda_ratio);
