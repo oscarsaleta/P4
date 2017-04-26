@@ -32,7 +32,7 @@
 #include <QWidget>
 
 class QVFParams; // declare them first because both classes defined in
-                 // this file need each other*/
+                 // this file need each other
 
 class QVectorFieldDlg : public QWidget
 {

@@ -286,6 +286,7 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
     currentpageindex = 0;
 
     for (i = 0; i < currentshownparams; i++) {
+        // parlabel and parvalue might (or not) be filled from the input file
         Param_Names[i] = new QLineEdit(ThisVF->parlabel[i], this);
         Param_Labels[i] = new QLabel(" = ", this);
         Param_Values[i] = new QLineEdit(ThisVF->parvalue[i], this);
