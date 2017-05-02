@@ -32,12 +32,13 @@
 #include <QMainWindow>
 
 /* Forward-declarations to solve cross-include problems */
-class QGcfDlg;         // in win_gcf.h
-class QIntParamsDlg;   // in win_params.h
-class QSepDlg;         // in win_separatrices.h
-class QOrbitsDlg;      // in win_orbits.h
-class QLimitCyclesDlg; // in win_limitcycles.h
-class QZoomWnd;        // in win_zoom.h
+class QGcfDlg;          // in win_gcf.h
+class QCurveDlg;        // in win_curve.h
+class QIntParamsDlg;    // in win_params.h
+class QSepDlg;          // in win_separatrices.h
+class QOrbitsDlg;       // in win_orbits.h
+class QLimitCyclesDlg;  // in win_limitcycles.h
+class QZoomWnd;         // in win_zoom.h
 
 class QPlotWnd : public QMainWindow
 {
@@ -57,6 +58,7 @@ class QPlotWnd : public QMainWindow
     QAction *ActIntParams;
     QAction *ActView;
     QAction *ActGCF;
+    QAction *ActCurve;
     QAction *ActPlotSep;
     QAction *ActPlotAllSeps;
     QAction *ActLimitCycles;
@@ -67,6 +69,7 @@ class QPlotWnd : public QMainWindow
     QSepDlg *Sep_Window;
     QLimitCyclesDlg *LC_Window;
     QGcfDlg *GCF_Window;
+    QCurveDlg *Curve_Window;
 
     QWinSphere *sphere; // main sphere
 
@@ -90,6 +93,7 @@ class QPlotWnd : public QMainWindow
     void OnBtnIntParams(void);
     void OnBtnView(void);
     void OnBtnGCF(void);
+    void OnBtnCurve(void);
     void OnBtnPlotSep(void);
     void OnBtnPlotAllSeps(void);
     void OnBtnLimitCycles(void);

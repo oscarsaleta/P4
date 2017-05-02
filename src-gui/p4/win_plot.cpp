@@ -27,6 +27,7 @@
 #include "plot_tools.h"
 #include "win_event.h"
 #include "win_gcf.h"
+#include "win_curve.h"
 #include "win_intparams.h"
 #include "win_limitcycles.h"
 #include "win_orbits.h"
@@ -92,6 +93,11 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     connect(ActGCF, SIGNAL(triggered()), this, SLOT(OnBtnGCF()));
     toolBar1->addAction(ActGCF);
 
+    ActCurve = new QAction("&Curve", this);
+    ActCurve->setShortcut(Qt::ALT+Qt::Key_C); // NOTE: conflict?
+    connect(ActCurve,SIGNAL(triggered()),this,SLOT(OnBtnCurve()));
+    toolBar1->addAction(ActCurve);
+
     ActPlotSep = new QAction("Plot &Separatrice", this);
     ActPlotSep->setShortcut(Qt::ALT + Qt::Key_S);
     connect(ActPlotSep, SIGNAL(triggered()), this, SLOT(OnBtnPlotSep()));
@@ -133,6 +139,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     ActIntParams->setToolTip("Opens \"Integration Parameters\" window");
     ActGCF->setToolTip("Opens Greatest-Common-Factor window.\n"
                        "Disabled if there is no GCF");
+    ActCurve->setToolTip("Opens curve plot window.");
     ActPlotSep->setToolTip("Opens \"Plot separatrices\" window");
     ActPlotAllSeps->setToolTip("Plots all separatrices of all singular points "
                                "with default integration parameters.\n"
@@ -153,6 +160,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     ViewParams_Window = new QViewDlg(this);
     LC_Window = new QLimitCyclesDlg(this, sphere);
     GCF_Window = new QGcfDlg(this, sphere);
+    Curve_Window = new QCurveDlg(this,sphere);
     lcWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere->show();
@@ -195,6 +203,9 @@ QPlotWnd::~QPlotWnd()
     delete GCF_Window;
     GCF_Window = nullptr;
     ThisVF->gcfDlg = nullptr;
+    delete Curve_Window;
+    Curve_Window = nullptr;
+    ThisVF->curveDlg = nullptr;
 }
 
 void QPlotWnd::AdjustHeight(void)
@@ -285,6 +296,12 @@ void QPlotWnd::OnBtnGCF(void)
     GCF_Window->raise();
 }
 
+void QPlotWnd::OnBtnCurve(void)
+{
+    Curve_Window->show();
+    Curve_Window->raise();
+}
+
 void QPlotWnd::OnBtnPlotSep(void)
 {
     getDlgData();
@@ -356,6 +373,7 @@ void QPlotWnd::configure(void)
     Sep_Window->Reset();
     LC_Window->Reset();
     GCF_Window->Reset();
+    Curve_Window->Reset();
 
     sphere->update();
     if (VFResults.gcf == nullptr) // reconfigure GCF button
