@@ -48,6 +48,7 @@ class QP4Application : public QApplication
     void Signal_Evaluating(void);
     void Signal_Evaluated(int);
     void Signal_GcfEvaluated(int);
+    void Signal_CurveEvaluated(int);
     void Signal_Changed(void);
     void Signal_Loaded(void);
     void Signal_Saved(void);
