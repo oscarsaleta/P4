@@ -135,23 +135,19 @@
 #define MAX_LINEWIDTH 10.0 // maximum line width
 
 // limit cycles window:
-
 #define DEFAULT_LCORBITS                                                       \
     1 // number of orbits to integrate before progress window is updated
 #define MIN_LCORBITS 1 // when dividing transverse section length by
 #define MAX_LCORBITS                                                           \
     32767 //  grid: number of orbits must lie between these values
-
 #define DEFAULT_LCPOINTS 2000 // number of points to integrate EACH orbit
 #define MIN_LCPOINTS 1
 #define MAX_LCPOINTS 32767
-
 #define DEFAULT_LCGRID 0.01 // division interval for the transverse section
 #define MIN_LCGRID 1.E-16
 #define MAX_LCGRID 1E16
 
 // Greatest common factor window
-
 #define DEFAULT_GCFPOINTS 40 // 40 horizontal and vertical points
 #define MIN_GCFPOINTS 1
 #define MAX_GCFPOINTS 32767
@@ -162,8 +158,18 @@
 #define MIN_GCFMEMORY 64
 #define MAX_GCFMEMORY 512000
 
-// Window appearance
+// Curve window
+#define DEFAULT_CURVEPOINTS 40 // 40 horizontal and vertical points
+#define MIN_CURVEPOINTS 1
+#define MAX_CURVEPOINTS 32767
+#define DEFAULT_CURVEPRECIS 12 // 12 digits precision
+#define MIN_CURVEPRECIS 1
+#define MAX_CURVEPRECIS 99
+#define DEFAULT_CURVEMEMORY 16000 // 16 MB of memory
+#define MIN_CURVEMEMORY 64
+#define MAX_CURVEMEMORY 512000
 
+// Window appearance
 #define FONTSIZE +0         // 0 points larger than system font
 #define TITLEFONTSIZE +2    // 2 points larger than system font
 #define LEGENDFONTSIZE (-1) // 1 smaller than system font
