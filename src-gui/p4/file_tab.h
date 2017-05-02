@@ -349,6 +349,16 @@ class QVFStudy : public QObject
 
     orbits_points *gcf_points;
 
+    // one curve to plot (for now, maybe later will be a vector)
+    P4POLYNOM2 curve;
+    P4POLYNOM2 curve_U1;
+    P4POLYNOM2 curve_U2;
+    P4POLYNOM2 curve_V1;
+    P4POLYNOM2 curve_V2;
+    P4POLYNOM3 curve_C;
+
+    orbits_points *curve_points;
+
     // limit cycles
 
     orbits *first_lim_cycle;
@@ -436,6 +446,7 @@ class QVFStudy : public QObject
 
     bool readTables(QString basename);
     bool readGCF(FILE *fp);
+    bool readCurve(FILE *fp);
     bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
     bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
     bool readPoints(FILE *fp);
