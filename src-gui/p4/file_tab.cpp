@@ -671,6 +671,82 @@ bool QVFStudy::readGCF(FILE *fp)
 }
 
 // -----------------------------------------------------------------------
+//                      QVFStudy::ReadCurve
+// -----------------------------------------------------------------------
+
+bool QVFStudy::readCurve(FILE *fp)
+{
+    int N, degree_curve;
+
+    if (fscanf(fp, "%d", &degree_curve) != 1)
+        return false;
+
+    if (degree_curve) {
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        curve = new term2;
+        curve->next_term2 = nullptr;
+
+        if (!readTerm2(fp, curve, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        curve_U1 = new term2;
+        curve_U1->next_term2 = nullptr;
+
+        if (!readTerm2(fp, curve_U1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        curve_U2 = new term2;
+        curve_U2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, curve_U2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        curve_V1 = new term2;
+        curve_V1->next_term2 = nullptr;
+        if (!readTerm2(fp, curve_V1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+        curve_V2 = new term2;
+        curve_V2->next_term2 = nullptr;
+        if (!readTerm2(fp, curve_V2, N))
+            return false;
+
+        if (p != 1 || q != 1) {
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            curve_C = new term3;
+            curve_C->next_term3 = nullptr;
+            if (!readTerm3(fp, curve_C, N))
+                return false;
+        }
+    } else {
+        curve = nullptr;
+        curve_U1 = nullptr;
+        curve_U2 = nullptr;
+        curve_V1 = nullptr;
+        curve_V2 = nullptr;
+        curve_C = nullptr;
+    }
+
+    return true;
+}
+
+
+// -----------------------------------------------------------------------
 //                      QVFStudy::ReadVectorField
 // -----------------------------------------------------------------------
 
