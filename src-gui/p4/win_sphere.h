@@ -110,6 +110,7 @@ class QWinSphere : public QWidget
     void plotPoints(void);
     void plotSeparatrices(void);
     void plotGcf(void);
+    void plotCurve(void);
     void plotPoincareSphere(void);
     void plotPoincareLyapunovSphere(void);
     void plotLineAtInfinity(void);
@@ -127,6 +128,7 @@ class QWinSphere : public QWidget
     void printPoints(void);
     void printSeparatrices(void);
     void printGcf(void);
+    void printCurve(void);
     void printPoincareSphere(void);
     void printPoincareLyapunovSphere(void);
     void printLineAtInfinity(void);

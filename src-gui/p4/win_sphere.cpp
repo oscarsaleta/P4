@@ -22,6 +22,7 @@
 #include "file_vf.h"
 #include "math_findpoint.h"
 #include "math_gcf.h"
+#include "math_curve.h"
 #include "math_limitcycles.h"
 #include "math_orbits.h"
 #include "math_p4.h"
@@ -1467,6 +1468,11 @@ void QWinSphere::plotGcf(void)
     draw_gcf(this, VFResults.gcf_points, CSING, 1);
 }
 
+void QWinSphere::plotCurve(void)
+{
+    draw_curve(this, VFResults.curve_points, CSING, 1);
+}
+
 // -----------------------------------------------------------------------
 //                          PLOT TOOLS
 // -----------------------------------------------------------------------
@@ -2102,6 +2108,17 @@ void QWinSphere::printGcf(void)
         comment = "Printing Greatest common factor:";
         print_comment(comment);
         draw_gcf(this, VFResults.gcf_points, CSING, 1);
+    }
+}
+
+void QWinSphere::printCurve(void)
+{
+    QString comment;
+
+    if (VFResults.curve_points != nullptr) {
+        comment = "Printing Greatest common factor:";
+        print_comment(comment);
+        draw_curve(this, VFResults.curve_points, CSING, 1);
     }
 }
 
