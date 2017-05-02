@@ -43,6 +43,7 @@ SOURCES += win_view.cpp \
     win_intparams.cpp \
     win_gcf.cpp \
     win_find.cpp \
+    win_curve.cpp \
     win_about.cpp \
     print_xfig.cpp \
     print_postscript.cpp \
@@ -60,6 +61,7 @@ SOURCES += win_view.cpp \
     math_intblowup.cpp \
     math_gcf.cpp \
     math_findpoint.cpp \
+    math_curve.cpp \
     math_charts.cpp \
     math_changedir.cpp \
     main.cpp \
@@ -86,6 +88,7 @@ HEADERS += win_view.h \
     win_gcf.h \
     win_find.h \
     win_event.h \
+    win_curve.h \
     win_about.h \
     p4application.h \
     math_p4.h \
@@ -105,6 +108,7 @@ HEADERS += win_view.h \
     math_findpoint.h \
     math_gcf.h \
     math_intblowup.h \
+    math_curve.h \
     plot_tools.h \
     math_polynom.h \
     math_orbits.h \
