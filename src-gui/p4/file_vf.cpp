@@ -509,6 +509,10 @@ QString QInputVF::getfilename_gcf(void) const
 {
     return getbarefilename().append("_gcf.tab");
 }
+QString QInputVF::getfilename_curve(void) const
+{
+    return getbarefilename().append("_curve.tab");
+}
 QString QInputVF::getfilename_gcfresults(void) const
 {
     return getbarefilename().append("_gcf.res");
@@ -1945,5 +1949,300 @@ bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
 
         fclose(fp);
     }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          EVALUATEGCF
+// -----------------------------------------------------------------------
+
+bool QInputVF::evaluateCurve(void)
+{
+    QString filedotmpl;
+    QString filedotgcf;
+    QString s;
+
+    
+    filedotmpl = getmaplefilename();
+
+    s = getMapleExe();
+    s = s.append(" ");
+    if (filedotmpl.contains(' ')) {
+        s = s.append("\"");
+        s = s.append(filedotmpl);
+        s = s.append("\"");
+    } else
+        s = s.append(filedotmpl);
+
+    if (ProcessText == nullptr)
+        createProcessWindow();
+    else {
+        ProcessText->append("\n\n------------------------------------------"
+                            "-------------------------------------\n\n");
+        ProcessText->show();
+        ProcessButton->setEnabled(true);
+    }
+
+    QProcess *proc;
+    if (EvalProcess != nullptr) { // re-use process of last GCF
+        proc = EvalProcess;
+        disconnect(proc, SIGNAL(finished(int)), p4app, 0);
+        connect(proc, SIGNAL(finished(int)), p4app,
+                SLOT(Signal_CurveEvaluated(int)));
+    } else {
+        proc = new QProcess(this);
+        connect(proc, SIGNAL(finished(int)), p4app,
+                SLOT(Signal_CurveEvaluated(int)));
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+                SLOT(cathProcessError(QProcess::ProcessError)));
+        connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                SLOT(ReadProcessStdout()));
+    }
+
+    proc->setWorkingDirectory(QDir::currentPath());
+
+    processfailed = false;
+    QString pa = "External Command: ";
+    pa += getMapleExe();
+    pa += " ";
+    pa += filedotmpl;
+    ProcessText->append(pa);
+    proc->start(getMapleExe(), QStringList(filedotmpl),
+                QIODevice::ReadWrite);
+    if (proc->state() != QProcess::Running &&
+        proc->state() != QProcess::Starting) {
+        processfailed = true;
+        delete proc;
+        proc = nullptr;
+        EvalProcess = nullptr;
+        EvalFile = "";
+        EvalFile2 = "";
+        p4app->Signal_CurveEvaluated(-1);
+        ProcessButton->setEnabled(false);
+        return false;
+    } else {
+        EvalProcess = proc;
+        EvalFile = filedotmpl;
+        EvalFile2 = "";
+        evaluatingCurve = true;
+
+        return true;
+    }
+}
+
+// -----------------------------------------------------------------------
+//              PREPARECURVE
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating curve in plane/U1/U2 charts.  This
+// is only called in case of Poincare-compactification (weights p=q=1)
+
+bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2, int precision,
+                          int numpoints)
+{
+    FILE *fp;
+    int i;
+    char buf[100];
+
+    QString mainmaple;
+    QString user_platform;
+    QString user_file;
+    QString filedotmpl;
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_file;
+
+    filedotmpl = getmaplefilename();
+
+    fp = fopen(QFile::encodeName(filedotmpl), "w");
+    if (fp == nullptr)
+        return false;
+
+    mainmaple = getP4MaplePath();
+    mainmaple += QDir::separator();
+
+    user_platform = USERPLATFORM;
+    mainmaple += MAINMAPLEGCFFILE; // NOTE: que fer aqui??
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    user_file = getfilename_curve();
+    removeFile(user_file);
+    ba_user_file = maplepathformat(user_file);
+
+    fprintf(fp, "restart;\n");
+    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+    fprintf(fp, "user_numpoints := %d:\n", numpoints);
+    fprintf(fp, "user_x1 := %g:\n", (float)(-1.0));
+    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+    fprintf(fp, "user_y1 := %g:\n", (float)y1);
+    fprintf(fp, "user_y2 := %g:\n", (float)y2);
+
+    fprintf(fp, "u := %s:\n", "x");
+    fprintf(fp, "v := %s:\n", "y");
+    fprintf(fp, "user_f := ");
+    for (i = 0; f != nullptr; i++) {
+        fprintf(fp, "%s",
+                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
+        f = f->next_term2;
+    }
+    if (i == 0)
+        fprintf(fp, "0:\n");
+    else
+        fprintf(fp, ":\n");
+
+    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
+
+    fclose(fp);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//              PREPARECURVE_LYAPUNOVCYL
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating a curve in charts near infinity.  This
+// is only called in case of Poincare-Lyapunov compactification (weights (p,q)
+// !=(1,1))
+
+bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
+                                      int precision, int numpoints)
+{
+    FILE *fp;
+    char buf[100];
+    P4POLYNOM3 f;
+    int i;
+
+    f = VFResults.curve_C;
+
+    QString mainmaple;
+    QString user_platform;
+    QString user_file;
+    QString filedotmpl;
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_file;
+
+    filedotmpl = getmaplefilename();
+
+    fp = fopen(QFile::encodeName(filedotmpl), "w");
+    if (fp == nullptr)
+        return false;
+
+    mainmaple = getP4MaplePath();
+    mainmaple += QDir::separator();
+
+    user_platform = USERPLATFORM;
+    mainmaple += MAINMAPLEGCFFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    user_file = getfilename_curve();
+    removeFile(user_file);
+    ba_user_file = maplepathformat(user_file);
+
+    fprintf(fp, "restart;\n");
+    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+    fprintf(fp, "user_numpoints := %d:\n", numpoints);
+    fprintf(fp, "user_x1 := %g:\n", (float)0.0);
+    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+    fprintf(fp, "user_y1 := %g:\n", (float)theta1);
+    fprintf(fp, "user_y2 := %g:\n", (float)theta2);
+
+    fprintf(fp, "u := %s:\n", "cos(y)");
+    fprintf(fp, "v := %s:\n", "sin(y)");
+    fprintf(fp, "user_f := ");
+
+    for (i = 0; f != nullptr; i++) {
+        fprintf(fp, "%s",
+                printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V"));
+        f = f->next_term3;
+    }
+    if (i == 0)
+        fprintf(fp, "0:\n");
+    else
+        fprintf(fp, ":\n");
+
+    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
+
+    fclose(fp);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//              PREPARECURVE_LYAPUNOVR2
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating a curve in charts near infinity.  This
+// is only called in case of Poincare-Lyapunov compactification (weights (p,q)
+// !=(1,1))
+//
+// same as preparegcf, except for the "u := " and "v := " assignments,
+// and the fact that one always refers to the same function VFResults.gcf,
+// and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
+
+bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
+{
+    FILE *fp;
+    char buf[100];
+    P4POLYNOM2 f;
+    int i;
+
+    f = VFResults.curve;
+
+    QString mainmaple;
+    QString user_platform;
+    QString user_file;
+    QString filedotmpl;
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_file;
+
+    filedotmpl = getmaplefilename();
+
+    fp = fopen(QFile::encodeName(filedotmpl), "w");
+    if (fp == nullptr)
+        return false;
+
+    mainmaple = getP4MaplePath();
+    mainmaple += QDir::separator();
+
+    user_platform = USERPLATFORM;
+    mainmaple = mainmaple.append(MAINMAPLEGCFFILE);
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    user_file = getfilename_curve();
+    removeFile(user_file);
+    ba_user_file = maplepathformat(user_file);
+
+    fprintf(fp, "restart;\n");
+    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+    fprintf(fp, "user_numpoints := %d:\n", numpoints);
+    fprintf(fp, "user_x1 := %g:\n", (float)0.0);
+    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+    fprintf(fp, "user_y1 := %g:\n", (float)0.0);
+    fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
+
+    fprintf(fp, "u := %s:\n", "x*cos(y)");
+    fprintf(fp, "v := %s:\n", "x*sin(y)");
+    fprintf(fp, "user_f := ");
+
+    for (i = 0; f != nullptr; i++) {
+        fprintf(fp, "%s",
+                printterm2(buf, f, (i == 0) ? true : false, "U", "V"));
+        f = f->next_term2;
+    }
+    if (i == 0)
+        fprintf(fp, "0:\n");
+    else
+        fprintf(fp, ":\n");
+
+    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
+
+    fclose(fp);
+    
     return true;
 }

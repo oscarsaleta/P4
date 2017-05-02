@@ -64,6 +64,7 @@ class QInputVF : public QObject
     QString xdot;
     QString ydot;
     QString gcf;
+    QString curve;
     QString EvalFile;
     QString EvalFile2;
 
@@ -81,9 +82,11 @@ class QInputVF : public QObject
     bool evaluating;      // set while evaluating
     bool cleared;         // initial state, when records are clear
     bool evaluatinggcf;   // true when evaluation is of GCF kind
+    bool evaluatingCurve;
     bool processfailed;   // true when process failed;
     QString processError; // only relevant when processfailed=true
     QGcfDlg *gcfDlg;
+    QCurveDlg *curveDlg;
 
   public:
     QInputVF();
@@ -98,6 +101,7 @@ class QInputVF : public QObject
     QString getfilename_gcf(void) const; // filename_gcf.tab (temporary file)
     QString getfilename_gcfresults(void)
         const; // filename_gcf.res (temporary file, only used in case of reduce)
+    QString getfilename_curve(void) const; // filename_curve.tab (temporary file)
     QString getreducefilename(void) const; // filename.red
     QString getmaplefilename(void) const;  // filename.mpl
     QString getrunfilename(void) const;    // filename.run
@@ -126,6 +130,12 @@ class QInputVF : public QObject
     bool prepareGcf_LyapunovCyl(double, double, int, int);
     bool prepareGcf_LyapunovR2(int, int);
     bool evaluateGcf(void);
+    
+    bool prepareCurve(struct term2 *f, double, double, int, int);
+    bool prepareCurve_LyapunovCyl(double, double, int, int);
+    bool prepareCurve_LyapunovR2(int, int);
+    bool evaluateCurve(void);
+
     void createProcessWindow(void);
 
   public slots:
