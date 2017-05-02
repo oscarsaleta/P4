@@ -434,7 +434,7 @@ bool QVFStudy::readTables(QString basename)
     int j;
     int flag;
 
-    setlocale(LC_ALL,"C");    
+    setlocale(LC_ALL, "C");
 
     deleteVF(); // initialize structures, delete previous vector field if any
     fp = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
@@ -542,7 +542,7 @@ bool QVFStudy::readTables(QString basename)
         if (fp != nullptr) {
             if (!readPoints(fp)) {
                 dump(basename,
-                    QString(
+                     QString(
                          "Problem reading singularity info from *_fin.tab:") +
                          lasterror);
                 deleteVF();
@@ -564,8 +564,9 @@ bool QVFStudy::readTables(QString basename)
                 for (j = 1; j <= 2; j++) {
                     if (!readPoints(fp)) {
                         dump(basename,
-                            QString(
-                                 "Cannot read singular points in *_inf.tab (")+QString::number(j)+"):"+ lasterror);
+                             QString(
+                                 "Cannot read singular points in *_inf.tab (") +
+                                 QString::number(j) + "):" + lasterror);
                         deleteVF();
                         fclose(fp);
                         return false;
@@ -575,8 +576,9 @@ bool QVFStudy::readTables(QString basename)
                 for (j = 1; j <= 4; j++) {
                     if (!readPoints(fp)) {
                         dump(basename,
-                            QString(
-                                 "Cannot read singular points in *_inf.tab (")+QString::number(j)+"):"+ lasterror);
+                             QString(
+                                 "Cannot read singular points in *_inf.tab (") +
+                                 QString::number(j) + "):" + lasterror);
                         deleteVF();
                         fclose(fp);
                         return false;
@@ -744,7 +746,6 @@ bool QVFStudy::readCurve(FILE *fp)
 
     return true;
 }
-
 
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadVectorField
@@ -1761,8 +1762,8 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
     }
 
     point = new degenerate;
-    //point->next_de = nullptr;
-    //point->blow_up = nullptr;
+    // point->next_de = nullptr;
+    // point->blow_up = nullptr;
     if (last == nullptr)
         first_de_point = point;
     else
@@ -1772,8 +1773,8 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
 
     if (fscanf(fp, "%lf %lf %lf %d ", &(point->x0), &(point->y0),
                &(point->epsilon), &n) != 4)
-                   return false;
-    //point->blow_up = nullptr;
+        return false;
+    // point->blow_up = nullptr;
     if (n) {
         point->blow_up = new blow_up_points;
         readBlowupPoints(fp, point->blow_up, n);
@@ -1791,7 +1792,7 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
         last = point;
         point = new degenerate;
         last->next_de = point;
-        //point->next_de = nullptr;
+        // point->next_de = nullptr;
 
         point->x0 = last->x0;
         point->y0 = 0.0;
@@ -1830,7 +1831,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
     else
         last->next_node = point;
 
-    //point->next_node = nullptr;
+    // point->next_node = nullptr;
 
     // load point structure
 
