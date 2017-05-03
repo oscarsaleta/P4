@@ -2037,7 +2037,7 @@ bool QInputVF::evaluateCurve(void)
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
 
-bool QInputVF::prepareCurve(/*struct term2 *f*/QString f_str, double y1, double y2, int precision,
+bool QInputVF::prepareCurve(QString f_str, double y1, double y2, int precision,
                           int numpoints)
 {
     FILE *fp;
@@ -2080,11 +2080,6 @@ bool QInputVF::prepareCurve(/*struct term2 *f*/QString f_str, double y1, double 
     fprintf(fp, "u := %s:\n", "x");
     fprintf(fp, "v := %s:\n", "y");
     fprintf(fp, "user_f := %s:\n", f_str.toLatin1().data());
-    /*for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
-        f = f->next_term2;
-    }*/
     if (i == 0)
         fprintf(fp, "0:\n");
     else
