@@ -453,6 +453,83 @@ write_gcf := proc( gcff )
 end proc:
 \end{lstlisting}
 
+\subsubsection{Writing arbitrary curve for plotting}
+
+The curve, after it is introduced and the evaluate button is pressed, is reported in all different charts (R2, U1, U2, V1, V2) and in case $(p,q)\not=(1,1)$ also in the cylinder chart.  This is done regardless of the fact a study at infinity is requested or not.
+
+\begin{lstlisting}[name=writelog]
+
+write_curve := proc( curvef )
+    local j, p, q, z1, z2, s, _co, _si, d, L, g;
+    global user_p, user_q;
+    openfile(curve_table);
+    d := ddeg( curvef, x, y );
+    if d = 0 then
+        writef( "%d\n", 0 )
+    else
+        L := coeff_degree2( curvef, x, y );
+        writef( "%d %d", d, nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+        p := user_p; q := user_q;
+        g := subs( x = 1/z2^p, y = z1/z2^q, curvef );
+        g := norpoly2( g, z1, z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        g := subs( x = z1/z2^p, y = 1/z2^q, curvef );
+        g := norpoly2( g, z1,z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        g := subs( x = -1/z2^p, y = z1/z2^q, curvef );
+        g := norpoly2( g, z1,z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        g := subs( x = z1/z2^p, y = -1/z2^q, curvef );
+        g := norpoly2( g, z1,z2 );
+        g := numer( g );
+        L := coeff_degree2( g, z1, z2 );
+        writef( "%d", nops(L) );
+        for j from 1 to nops(L) do
+            writef( " %d %d %g", op(1, L[j]), op(2, L[j]), evalf( op(3,L[j]) ) );
+        end do;
+        writef( "\n" );
+
+        if p <> 1 or q <> 1 then
+            g := subs( x=_co/s^p, y = _si/s^q, curvef );
+            g := norpoly3( g, s, _co, _si );
+            g := numer( g );
+            L := coeff_degree3( g, s, _co, _si );
+            writef( "%d", nops(L) );
+            for j from 1 to nops(L) do
+                writef( " %d %d %d %g", op(1, L[j]), op(2, L[j]), op(3, L[j]), evalf( op(4,L[j]) ) );
+            end do;
+            writef( "\n" );
+        end if;
+    end if;
+    openfile(terminal);
+end proc:
+\end{lstlisting}
+
 \subsection{Saving the routines in a library}
 
 All global variables and routines are saved in a library "writelog.m".
@@ -462,7 +539,8 @@ save( coeff_degree1, coeff_degree2, coeff_degree3,
       write_vec_field, write_vec_field_cylinder,
       write_saddle, write_node, write_weak_focus,
       write_strong_focus, write_semi_elementary,
-      write_separatrice, write_degenerate, write_gcf, "writelog.m" );
+      write_separatrice, write_degenerate, write_gcf,
+      write_curve, "writelog.m" );
 \end{lstlisting}
 
 \end{document}
