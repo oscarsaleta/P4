@@ -112,7 +112,7 @@ bool runTaskCurve(int task, int points, int prec)
 
     switch (task) {
     case EVAL_CURVE_R2:
-        value = ThisVF->prepareCurve(ThisVF->curve, -1, 1, prec, points);
+        value = ThisVF->prepareCurve(VFResults.curve, -1, 1, prec, points);
         break;
     case EVAL_CURVE_U1:
         value = ThisVF->prepareCurve(VFResults.curve_U1, 0, 1, prec, points);

@@ -131,7 +131,6 @@ class QInputVF : public QObject
     bool prepareGcf_LyapunovR2(int, int);
     bool evaluateGcf(void);
     
-    bool prepareCurve(QString, double, double, int, int);
     bool prepareCurve(struct term2 *f, double, double, int, int);
     bool prepareCurve_LyapunovCyl(double, double, int, int);
     bool prepareCurve_LyapunovR2(int, int);
