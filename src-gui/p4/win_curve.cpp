@@ -51,6 +51,8 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     QLabel *lbl4 = new QLabel("Max. Memory: ", this);
 
     btn_evaluate = new QPushButton("&Evaluate", this);
+    btn_plot = new QPushButton("&Plot", this);
+    btn_plot->setEnabled(false);
 
 #ifdef TOOLTIPS
     btn_dots->setToolTip(
@@ -61,7 +63,8 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_precis->setToolTip("Required precision");
     edt_memory->setToolTip(
         "Maximum amount of memory (in kilobytes) spent on plotting the curve");
-    btn_evaluate->setToolTip("Start evaluation (using symbolic manipulator)");
+    btn_evaluate->setToolTip("Evaluate singular points of plynomial curve");
+    btn_plot->setToolTip("Plot curve (using symbolic manipulator)");
 #endif
 
     // layout
@@ -86,6 +89,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addStretch(0);
     layout2->addWidget(btn_evaluate);
+    layout2->addWidget(btn_plot);
     layout2->addStretch(0);
 
     mainLayout->addLayout(layout1);
@@ -99,6 +103,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
 
     QObject::connect(btn_evaluate, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
+    QObject::connect(btn_plot, SIGNAL(clicked()), this, SLOT(onbtn_plot()));
     QObject::connect(btn_dots, SIGNAL(toggled(bool)), this,
                      SLOT(btn_dots_toggled(bool)));
     QObject::connect(btn_dashes, SIGNAL(toggled(bool)), this,
@@ -157,8 +162,7 @@ void QCurveDlg::ExclusiveToggle(bool on, QRadioButton *first,
 
 void QCurveDlg::onbtn_evaluate(void)
 {
-    bool dashes, result;
-    int points, precis, memory;
+    /*int points, precis, memory;*/
 
     if (edt_curve->text().isNull() || edt_curve->text().isEmpty()) {
         QMessageBox::information(this, "P4",
@@ -167,6 +171,64 @@ void QCurveDlg::onbtn_evaluate(void)
         return;
     }
     ThisVF->curve = edt_curve->text().trimmed();
+
+    /*bool ok;
+    QString buf;
+
+    dashes = btn_dashes->isChecked();
+
+    ok = true;
+
+    buf = edt_points->text();
+    points = buf.toInt();
+
+    if (points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
+        buf += " ???";
+        edt_points->setText(buf);
+        ok = false;
+    }
+
+    buf = edt_precis->text();
+    precis = buf.toInt();
+    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
+        buf += " ???";
+        edt_precis->setText(buf);
+        ok = false;
+    }
+
+    buf = edt_memory->text();
+    memory = buf.toInt();
+    if (memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
+        buf += " ???";
+        edt_memory->setText(buf);
+        ok = false;
+    }
+
+    if (!ok) {
+        QMessageBox::information(
+            this, "P4", "One of the fields has a value that is out of bounds.\n"
+                        "Please correct before continuing.\n");
+        return;
+    }*/
+
+    // FIRST: create filename_veccurve.tab for transforming the curve QString to
+    // a list of P4POLYNOM2
+    ThisVF->evaluateCurveTable();
+    btn_plot->setEnabled(true);
+}
+
+void QCurveDlg::onbtn_plot(void)
+{
+    bool dashes, result;
+    int points, precis, memory;
+
+    /*if (edt_curve->text().isNull() || edt_curve->text().isEmpty()) {
+        QMessageBox::information(this, "P4",
+                                 "The curve field has to be filled\n"
+                                 "with the equation of a curve.\n");
+        return;
+    }
+    ThisVF->curve = edt_curve->text().trimmed();*/
 
     bool ok;
     QString buf;
@@ -204,27 +266,34 @@ void QCurveDlg::onbtn_evaluate(void)
         QMessageBox::information(
             this, "P4", "One of the fields has a value that is out of bounds.\n"
                         "Please correct before continuing.\n");
-
         return;
     }
 
-    // Evaluate curve with given parameters {dashes, points, precis, memory}.
+    // SECOND: read the resulting file and store the list
+    if (!VFResults.readCurve(ThisVF->getbarefilename())) {
+        QMessageBox::critical(this, "P4", "Cannot read curve.\n"
+                                          "Please check the input field!\n");
+        return;
+    }
+
+    // THIRD: evaluate curve with given parameters {dashes, points, precis,
+    // memory}.
 
     evaluating_points = points;
     evaluating_memory = memory;
     evaluating_precision = precis;
 
-    btn_evaluate->setEnabled(false);
+    btn_plot->setEnabled(false);
 
     ThisVF->curveDlg = this;
     result = evalCurveStart(mainSphere, dashes, points, precis);
     if (!result) {
-        btn_evaluate->setEnabled(true);
-        QMessageBox::critical(this, "P4",
-                              "An error occured while plotting the "
-                              "curve.\nThe singular locus may not be "
-                              "visible, or may "
-                              "be partially visible.");
+        btn_plot->setEnabled(true);
+        QMessageBox::critical(this, "P4", "An error occured while plotting the "
+                                          "curve.\nThe singular locus may not "
+                                          "be visible, or may be partially "
+                                          "visible.");
+        return;
     }
 }
 
@@ -232,13 +301,13 @@ void QCurveDlg::finishCurveEvaluation(void)
 {
     bool result;
 
-    if (btn_evaluate->isEnabled() == true)
+    if (btn_plot->isEnabled() == true)
         return; // not busy??
 
     result = evalCurveContinue(evaluating_points, evaluating_precision);
 
     if (result) {
-        btn_evaluate->setEnabled(true);
+        btn_plot->setEnabled(false);
         result = evalCurveFinish(); // return false in case an error occured
         if (!result) {
             QMessageBox::critical(this, "P4", "An error occured while plotting "

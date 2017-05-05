@@ -43,6 +43,7 @@ class QCurveDlg : public QWidget
     QPlotWnd *plotwnd;
 
     QPushButton *btn_evaluate;
+    QPushButton *btn_plot;
 
     QRadioButton *btn_dots;
     QRadioButton *btn_dashes;
@@ -61,6 +62,7 @@ class QCurveDlg : public QWidget
 
   public slots:
     void onbtn_evaluate(void);
+    void onbtn_plot(void);
     void btn_dots_toggled(bool);
     void btn_dashes_toggled(bool);
 };
