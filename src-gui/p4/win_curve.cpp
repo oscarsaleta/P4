@@ -162,8 +162,6 @@ void QCurveDlg::ExclusiveToggle(bool on, QRadioButton *first,
 
 void QCurveDlg::onbtn_evaluate(void)
 {
-    /*int points, precis, memory;*/
-
     if (edt_curve->text().isNull() || edt_curve->text().isEmpty()) {
         QMessageBox::information(this, "P4",
                                  "The curve field has to be filled\n"
@@ -171,45 +169,6 @@ void QCurveDlg::onbtn_evaluate(void)
         return;
     }
     ThisVF->curve = edt_curve->text().trimmed();
-
-    /*bool ok;
-    QString buf;
-
-    dashes = btn_dashes->isChecked();
-
-    ok = true;
-
-    buf = edt_points->text();
-    points = buf.toInt();
-
-    if (points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
-        buf += " ???";
-        edt_points->setText(buf);
-        ok = false;
-    }
-
-    buf = edt_precis->text();
-    precis = buf.toInt();
-    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
-        buf += " ???";
-        edt_precis->setText(buf);
-        ok = false;
-    }
-
-    buf = edt_memory->text();
-    memory = buf.toInt();
-    if (memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
-        buf += " ???";
-        edt_memory->setText(buf);
-        ok = false;
-    }
-
-    if (!ok) {
-        QMessageBox::information(
-            this, "P4", "One of the fields has a value that is out of bounds.\n"
-                        "Please correct before continuing.\n");
-        return;
-    }*/
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
@@ -221,14 +180,6 @@ void QCurveDlg::onbtn_plot(void)
 {
     bool dashes, result;
     int points, precis, memory;
-
-    /*if (edt_curve->text().isNull() || edt_curve->text().isEmpty()) {
-        QMessageBox::information(this, "P4",
-                                 "The curve field has to be filled\n"
-                                 "with the equation of a curve.\n");
-        return;
-    }
-    ThisVF->curve = edt_curve->text().trimmed();*/
 
     bool ok;
     QString buf;

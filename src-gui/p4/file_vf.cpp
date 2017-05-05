@@ -1126,7 +1126,7 @@ void QInputVF::prepareCurveFile(QTextStream *fp)
     *fp << "user_simplify := " << user_simplify << ":\n";
     *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
     *fp << "all_crit_points := " << typeofstudy << ":\n";
-    
+
     name_curvetab = getfilename_curvetable();
     removeFile(name_curvetab);
     ba_name_curvetab = maplepathformat(name_curvetab);
@@ -1469,6 +1469,9 @@ void QInputVF::finishEvaluation(int exitCode)
     if (evaluatinggcf) {
         finishGcfEvaluation();
     }
+    if (evaluatingCurve) {
+        finishCurveEvaluation();
+    }
 }
 
 // -----------------------------------------------------------------------
@@ -1483,6 +1486,14 @@ void QInputVF::finishGcfEvaluation(void)
         //        QP4Event * e = new QP4Event(
         //        (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
         //        p4app->postEvent( p4startdlg, e );
+    }
+}
+
+void QInputVF::finishCurveEvaluation(void)
+{
+    evaluatingCurve = false;
+    if (curveDlg != nullptr) {
+        curveDlg->finishCurveEvaluation();
     }
 }
 

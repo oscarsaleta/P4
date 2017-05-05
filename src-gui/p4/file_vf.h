@@ -22,6 +22,7 @@
 
 #include "custom.h"
 #include "win_gcf.h"
+#include "win_curve.h"
 
 #include <QObject>
 #include <QProcess>
@@ -151,6 +152,7 @@ class QInputVF : public QObject
     void onTerminateButton(void);
     void onClearButton(void);
     void finishGcfEvaluation(void);
+    void finishCurveEvaluation(void);
 };
 
 extern QInputVF *ThisVF;
