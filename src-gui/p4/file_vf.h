@@ -77,11 +77,11 @@ class QInputVF : public QObject
     QString parlabel[MAXNUMPARAMS];
     QString parvalue[MAXNUMPARAMS];
 
-    bool changed;         // set when data needs to be saved
-    bool evaluated;       // set when data has been evaluated
-    bool evaluating;      // set while evaluating
-    bool cleared;         // initial state, when records are clear
-    bool evaluatinggcf;   // true when evaluation is of GCF kind
+    bool changed;       // set when data needs to be saved
+    bool evaluated;     // set when data has been evaluated
+    bool evaluating;    // set while evaluating
+    bool cleared;       // initial state, when records are clear
+    bool evaluatinggcf; // true when evaluation is of GCF kind
     bool evaluatingCurve;
     bool processfailed;   // true when process failed;
     QString processError; // only relevant when processfailed=true
@@ -98,13 +98,15 @@ class QInputVF : public QObject
     QString getfilename_fintable(void) const;   // filename_fin.tab
     QString getfilename_inftable(void) const;   // filename_inf.tab
     QString getfilename_vectable(void) const;   // filename_vec.tab
+    QString getfilename_curvetable(void) const; // filename_veccurve.tab
     QString getfilename_gcf(void) const; // filename_gcf.tab (temporary file)
     QString getfilename_gcfresults(void)
         const; // filename_gcf.res (temporary file, only used in case of reduce)
-    QString getfilename_curve(void) const; // filename_curve.tab (temporary file)
+    QString getfilename_curve(void) const; // filename_curve.tab (tmp file)
     QString getreducefilename(void) const; // filename.red
-    QString getmaplefilename(void) const;  // filename.mpl
-    QString getrunfilename(void) const;    // filename.run
+    QString getmaplefilename(void) const;  // filename.txt
+    QString getPrepareCurveFileName(void) const; // filename_curve_prep.txt
+    QString getrunfilename(void) const;          // filename.run
 
     bool load(void);
     bool save(void);
@@ -117,20 +119,24 @@ class QInputVF : public QObject
     void prepareReduceVectorField(QTextStream *);
     void prepareMapleParameters(QTextStream *);
     void prepareMapleVectorField(QTextStream *);
+    void prepareMapleCurve(QTextStream *);
     QString booleanString(int value) const;
     QString convertMapleUserParameterLabels(QString);
     QString convertReduceUserParameterLabels(QString);
 
     void prepareFile(QTextStream *); // used by Prepare()
+    void prepareCurveFile(QTextStream *);
 
     void prepare(void);
+    void prepareCurve(void);
     void evaluate(void);
+    void evaluateCurveTable(void);
 
     bool prepareGcf(struct term2 *f, double, double, int, int);
     bool prepareGcf_LyapunovCyl(double, double, int, int);
     bool prepareGcf_LyapunovR2(int, int);
     bool evaluateGcf(void);
-    
+
     bool prepareCurve(struct term2 *f, double, double, int, int);
     bool prepareCurve_LyapunovCyl(double, double, int, int);
     bool prepareCurve_LyapunovR2(int, int);

@@ -108,7 +108,6 @@ QInputVF::QInputVF()
 // -----------------------------------------------------------------------
 //                  RESET
 // -----------------------------------------------------------------------
-
 void QInputVF::reset(void)
 {
     filename = DEFAULTFILENAME;
@@ -147,7 +146,6 @@ void QInputVF::reset(void)
 // -----------------------------------------------------------------------
 //                  LOAD
 // -----------------------------------------------------------------------
-
 bool QInputVF::load(void)
 {
     FILE *fp;
@@ -270,7 +268,6 @@ bool QInputVF::load(void)
 // -----------------------------------------------------------------------
 //                  CHECKEVALUATED
 // -----------------------------------------------------------------------
-
 bool QInputVF::checkevaluated(void)
 {
     // if the evaluate files are already found on disc, then set the flag to
@@ -335,7 +332,6 @@ bool QInputVF::checkevaluated(void)
 // -----------------------------------------------------------------------
 //                  SAVE
 // -----------------------------------------------------------------------
-
 bool QInputVF::save(void)
 {
     FILE *fp;
@@ -484,7 +480,6 @@ QString QInputVF::getfilename(void) const
 // -----------------------------------------------------------------------
 //                  GETFILENAME_xxx
 // -----------------------------------------------------------------------
-
 QString QInputVF::getfilename_finresults(void) const
 {
     return getbarefilename().append("_fin.res");
@@ -504,6 +499,10 @@ QString QInputVF::getfilename_inftable(void) const
 QString QInputVF::getfilename_vectable(void) const
 {
     return getbarefilename().append("_vec.tab");
+}
+QString QInputVF::getfilename_curvetable(void) const
+{
+    return getbarefilename().append("_veccurve.tab");
 }
 QString QInputVF::getfilename_gcf(void) const
 {
@@ -526,6 +525,10 @@ QString QInputVF::getmaplefilename(void) const
 {
     return getbarefilename().append(".txt");
 }
+QString QInputVF::getPrepareCurveFileName(void) const
+{
+    return getbarefilename().append("_curve_prep.txt");
+}
 QString QInputVF::getrunfilename(void) const
 {
     return getbarefilename().append(".run");
@@ -534,7 +537,6 @@ QString QInputVF::getrunfilename(void) const
 // -----------------------------------------------------------------------
 //                          FILEEXISTS
 // -----------------------------------------------------------------------
-
 bool QInputVF::FileExists(QString fname)
 {
     QFile fp(fname);
@@ -547,7 +549,6 @@ bool QInputVF::FileExists(QString fname)
 // -----------------------------------------------------------------------
 //                  PREPAREREDUCEPARAMETERS
 // -----------------------------------------------------------------------
-
 void QInputVF::prepareReduceParameters(QTextStream *fp)
 {
     QString s;
@@ -593,7 +594,6 @@ void QInputVF::prepareReduceParameters(QTextStream *fp)
 // -----------------------------------------------------------------------
 //                  PREPAREMAPLEPARAMETERS
 // -----------------------------------------------------------------------
-
 void QInputVF::prepareMapleParameters(QTextStream *fp)
 {
     QString s;
@@ -640,7 +640,6 @@ void QInputVF::prepareMapleParameters(QTextStream *fp)
 // -----------------------------------------------------------------------
 //                      PREPAREREDUCEVECTORFIELD
 // -----------------------------------------------------------------------
-
 void QInputVF::prepareReduceVectorField(QTextStream *fp)
 {
     QString myxdot;
@@ -671,7 +670,6 @@ void QInputVF::prepareReduceVectorField(QTextStream *fp)
 // -----------------------------------------------------------------------
 //                      PREPAREMAPLEVECTORFIELD
 // -----------------------------------------------------------------------
-
 void QInputVF::prepareMapleVectorField(QTextStream *fp)
 {
     QString myxdot;
@@ -704,6 +702,34 @@ void QInputVF::prepareMapleVectorField(QTextStream *fp)
 }
 
 // -----------------------------------------------------------------------
+//                      PREPAREMAPLECURVE
+// -----------------------------------------------------------------------
+void QInputVF::prepareMapleCurve(QTextStream *fp)
+{
+    QString mycurve;
+    QString lbl;
+    QString val;
+    int k;
+
+    mycurve = convertMapleUserParameterLabels(curve);
+    *fp << "user_curve := " << mycurve << ":\n";
+
+    for (k = 0; k < numparams; k++) {
+        lbl = convertMapleUserParameterLabels(parlabel[k]);
+        val = convertMapleUserParameterLabels(parvalue[k]);
+
+        if (lbl.length() == 0)
+            continue;
+
+        if (!numeric) {
+            *fp << lbl << " := " << val << ":\n";
+        } else {
+            *fp << lbl << " := evalf( " << val << " ):\n";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
 //                          CONVERTMAPLEUSERPARAMETERLABELS
 // -----------------------------------------------------------------------
 //
@@ -712,7 +738,6 @@ void QInputVF::prepareMapleVectorField(QTextStream *fp)
 //  we add a suffix to these qualifier names and change them to "alpha_" or
 //  "b_",
 //  in order to avoid mixing with internal variables.
-
 int indexOfWordInString(const QString *src, const QString *word, int start = 0)
 {
     int i, j;
@@ -810,7 +835,6 @@ QString QInputVF::convertReduceUserParameterLabels(QString src)
 // -----------------------------------------------------------------------
 //
 // returns string representations "true" and "false" for booleans true and false
-
 QString QInputVF::booleanString(int value) const
 {
     if (value == 0) {
@@ -868,7 +892,6 @@ QByteArray maplepathformat(const QString fname)
 // -----------------------------------------------------------------------
 //                          PREPAREFILE
 // -----------------------------------------------------------------------
-
 void QInputVF::prepareFile(QTextStream *fp)
 {
     QString bsaveall;
@@ -1038,9 +1061,91 @@ void QInputVF::prepareFile(QTextStream *fp)
 }
 
 // -----------------------------------------------------------------------
+//                          PREPAREFILE CURVE
+// -----------------------------------------------------------------------
+void QInputVF::prepareCurveFile(QTextStream *fp)
+{
+    QString name_curvetab;
+    QString s;
+
+    QString mainmaple;
+    QString user_bindir;
+    QString user_tmpdir;
+    QString user_platform;
+    QString user_removecmd;
+    QString user_simplify;
+    QString user_simplifycmd;
+    QString user_sumtablepath;
+    QString user_exeprefix;
+
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_bindir;
+    QByteArray ba_user_tmpdir;
+    QByteArray ba_name_curvetab;
+
+    user_exeprefix = "";
+
+    mainmaple = getP4MaplePath();
+    user_bindir = getP4BinPath();
+    user_tmpdir = getP4TempPath();
+    user_sumtablepath = getP4SumTablePath();
+
+    mainmaple += QDir::separator();
+    if (user_bindir != "")
+        user_bindir += QDir::separator();
+    if (user_tmpdir != "")
+        user_tmpdir += QDir::separator();
+    user_platform = USERPLATFORM;
+#ifdef Q_OS_WIN
+    user_removecmd = "cmd /c del";
+    user_exeprefix = "cmd /c ";
+#else
+    user_removecmd = "rm";
+    user_exeprefix = "";
+#endif
+    mainmaple += MAINMAPLEFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    ba_user_bindir = maplepathformat(user_bindir);
+    ba_user_tmpdir = maplepathformat(user_tmpdir);
+
+    if (numeric)
+        user_simplify = "false";
+    else
+        user_simplify = "true";
+
+    user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
+
+    *fp << "restart;\n";
+    *fp << "read( \"" << ba_mainmaple << "\" );\n";
+    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    *fp << "user_platform := \"" << user_platform << "\":\n";
+    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    *fp << "user_simplify := " << user_simplify << ":\n";
+    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    *fp << "all_crit_points := " << typeofstudy << ":\n";
+    
+    name_curvetab = getfilename_curvetable();
+    removeFile(name_curvetab);
+    ba_name_curvetab = maplepathformat(name_curvetab);
+    *fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
+
+    prepareMapleCurve(fp);
+    prepareMapleParameters(fp);
+
+    *fp << "try prepareCurve() catch:\n"
+           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+           "lastexception[2] );\n"
+           "finally: closeallfiles();\n"
+           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+           "try:\n";
+}
+
+// -----------------------------------------------------------------------
 //                          EVALUATE
 // -----------------------------------------------------------------------
-
 void QInputVF::evaluate(void)
 {
     QString filedotred;
@@ -1052,6 +1157,7 @@ void QInputVF::evaluate(void)
     QProcess *proc;
 
     evaluatinggcf = false;
+    evaluatingCurve = false;
     if (EvalProcess != nullptr) // possible clean up after last GCF evaluation
     {
         delete EvalProcess;
@@ -1191,9 +1297,91 @@ void QInputVF::evaluate(void)
 }
 
 // -----------------------------------------------------------------------
+//                          EVALUATE CURVE
+// -----------------------------------------------------------------------
+void QInputVF::evaluateCurveTable(void)
+{
+    QString filedotmpl;
+    QString s, e;
+    QProcess *proc;
+
+    evaluatinggcf = false;
+    evaluatingCurve = false;
+    if (EvalProcess != nullptr) // possible clean up after last Curve evaluation
+    {
+        delete EvalProcess;
+        EvalProcess = nullptr;
+    }
+
+    prepareCurve();
+    filedotmpl = getPrepareCurveFileName();
+
+    s = getMapleExe();
+    if (s.isNull()) {
+        s = "";
+    } else {
+        s = s.append(" ");
+        if (filedotmpl.contains(' ')) {
+            s = s.append("\"");
+            s = s.append(filedotmpl);
+            s = s.append("\"");
+        } else
+            s = s.append(filedotmpl);
+
+        /* Here a window for displaying the output text of the Maple process
+         * is created */
+        if (ProcessText == nullptr)
+            createProcessWindow();
+        else {
+            ProcessText->append("\n\n--------------------------------------"
+                                "-----------------------------------------"
+                                "\n\n");
+            ProcessText->show();
+            ProcessButton->setEnabled(true);
+        }
+
+        proc = new QProcess(this);
+
+        proc->setWorkingDirectory(QDir::currentPath());
+
+        connect(proc, SIGNAL(finished(int)), p4app,
+                SLOT(Signal_Evaluated(int)));
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+                SLOT(cathProcessError(QProcess::ProcessError)));
+        connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                SLOT(ReadProcessStdout()));
+
+        processfailed = false;
+        QString pa = "External Command: ";
+        pa += getMapleExe();
+        pa += " ";
+        pa += filedotmpl;
+        ProcessText->append(pa);
+        proc->start(getMapleExe(), QStringList(filedotmpl),
+                    QIODevice::ReadWrite);
+
+        if (proc->state() != QProcess::Running &&
+            proc->state() != QProcess::Starting) {
+            processfailed = true;
+            delete proc;
+            proc = nullptr;
+            EvalProcess = nullptr;
+            EvalFile = "";
+            EvalFile2 = "";
+            p4app->Signal_Evaluated(-1);
+            ProcessButton->setEnabled(false);
+        } else {
+            EvalProcess = proc;
+            EvalFile = filedotmpl;
+            EvalFile2 = "";
+        }
+    }
+    //}
+}
+
+// -----------------------------------------------------------------------
 //                          CATCHPROCESSERROR
 // -----------------------------------------------------------------------
-
 void QInputVF::catchProcessError(QProcess::ProcessError prerr)
 {
     processfailed = true;
@@ -1219,7 +1407,6 @@ void QInputVF::catchProcessError(QProcess::ProcessError prerr)
 // -----------------------------------------------------------------------
 //                          FINISHEVALUATION
 // -----------------------------------------------------------------------
-
 void QInputVF::finishEvaluation(int exitCode)
 {
     UNUSED(exitCode);
@@ -1287,7 +1474,6 @@ void QInputVF::finishEvaluation(int exitCode)
 // -----------------------------------------------------------------------
 //          FINISHGCFEVALUATION
 // -----------------------------------------------------------------------
-
 void QInputVF::finishGcfEvaluation(void)
 {
     evaluatinggcf = false;
@@ -1303,7 +1489,6 @@ void QInputVF::finishGcfEvaluation(void)
 // -----------------------------------------------------------------------
 //                          PREPARE
 // -----------------------------------------------------------------------
-
 void QInputVF::prepare(void)
 {
     QString filedotred;
@@ -1352,9 +1537,37 @@ void QInputVF::prepare(void)
 }
 
 // -----------------------------------------------------------------------
+//                          PREPARE CURVE
+// -----------------------------------------------------------------------
+void QInputVF::prepareCurve(void)
+{
+    QString filedotmpl;
+    QFile *fptr;
+    QTextStream *fp;
+
+    filedotmpl = getPrepareCurveFileName();
+
+    fptr = new QFile(filedotmpl);
+    if (fptr->open(QIODevice::WriteOnly)) {
+        fp = new QTextStream(fptr);
+        prepareCurveFile(fp);
+        fp->flush();
+        delete fp;
+        fp = nullptr;
+        fptr->close();
+        delete fptr;
+        fptr = nullptr;
+    } else {
+        delete fptr;
+        fptr = nullptr;
+
+        // cannot open?
+    }
+}
+
+// -----------------------------------------------------------------------
 //          READPROCESSSTDOUT
 // -----------------------------------------------------------------------
-
 void QInputVF::ReadProcessStdout(void)
 {
     QByteArray t;
@@ -1394,7 +1607,6 @@ void QInputVF::ReadProcessStdout(void)
 // -----------------------------------------------------------------------
 //              ONCLEARBUTTON
 // -----------------------------------------------------------------------
-
 void QInputVF::onClearButton(void)
 {
     if (ProcessText != nullptr)
@@ -1404,7 +1616,6 @@ void QInputVF::onClearButton(void)
 // -----------------------------------------------------------------------
 //              ONTERMINATEBUTTON
 // -----------------------------------------------------------------------
-
 void QInputVF::onTerminateButton(void)
 {
     QString buf;
@@ -1426,7 +1637,6 @@ void QInputVF::onTerminateButton(void)
 // -----------------------------------------------------------------------
 //          CREATEPROCESSWINDOW
 // -----------------------------------------------------------------------
-
 void QInputVF::createProcessWindow(void)
 {
     if (ProcessText != nullptr)
@@ -1468,7 +1678,6 @@ void QInputVF::createProcessWindow(void)
 // -----------------------------------------------------------------------
 //          EVALUATEGCF
 // -----------------------------------------------------------------------
-
 bool QInputVF::evaluateGcf(void)
 {
     QString filedotred;
@@ -1953,16 +2162,13 @@ bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
 }
 
 // -----------------------------------------------------------------------
-//          EVALUATEGCF
+//          EVALUATECURVE
 // -----------------------------------------------------------------------
-
 bool QInputVF::evaluateCurve(void)
 {
     QString filedotmpl;
-    QString filedotgcf;
     QString s;
 
-    
     filedotmpl = getmaplefilename();
 
     s = getMapleExe();
@@ -2007,8 +2213,7 @@ bool QInputVF::evaluateCurve(void)
     pa += " ";
     pa += filedotmpl;
     ProcessText->append(pa);
-    proc->start(getMapleExe(), QStringList(filedotmpl),
-                QIODevice::ReadWrite);
+    proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
         processfailed = true;
@@ -2036,9 +2241,8 @@ bool QInputVF::evaluateCurve(void)
 //
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-
-bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2, int precision,
-                          int numpoints)
+bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
+                            int precision, int numpoints)
 {
     FILE *fp;
     int i;
@@ -2105,9 +2309,8 @@ bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2, int precision
 // Prepare files in case of calculating a curve in charts near infinity.  This
 // is only called in case of Poincare-Lyapunov compactification (weights (p,q)
 // !=(1,1))
-
 bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
-                                      int precision, int numpoints)
+                                        int precision, int numpoints)
 {
     FILE *fp;
     char buf[100];
@@ -2182,7 +2385,6 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
 // same as preparegcf, except for the "u := " and "v := " assignments,
 // and the fact that one always refers to the same function VFResults.gcf,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
-
 bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 {
     FILE *fp;
@@ -2243,6 +2445,6 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
                 "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
-    
+
     return true;
 }
