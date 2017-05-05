@@ -39,7 +39,6 @@ QVFStudy VFResults;
 // -----------------------------------------------------------------------
 //                              QVFStudy CONSTRUCTOR
 // -----------------------------------------------------------------------
-
 QVFStudy::QVFStudy()
 {
     // initialize vector field structures:
@@ -116,13 +115,11 @@ QVFStudy::QVFStudy()
 // -----------------------------------------------------------------------
 //                              QVFStudy DESTRUCTOR
 // -----------------------------------------------------------------------
-
 QVFStudy::~QVFStudy() { deleteVF(); }
 
 // -----------------------------------------------------------------------
 //                          QVFStudy::DeleteVF
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteVF()
 {
     // Delete Vector Field
@@ -215,7 +212,6 @@ void QVFStudy::deleteVF()
 // -----------------------------------------------------------------------
 //                          QVFStudy::DeleteSaddle
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteSaddle(saddle *p)
 {
     saddle *q;
@@ -234,7 +230,6 @@ void QVFStudy::deleteSaddle(saddle *p)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteSemiElementary
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteSemiElementary(semi_elementary *p)
 {
     semi_elementary *q;
@@ -255,7 +250,6 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
 // -----------------------------------------------------------------------
 //                          QVFStudy::DeleteNode
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteNode(node *p)
 {
     node *q;
@@ -271,7 +265,6 @@ void QVFStudy::deleteNode(node *p)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteStrongFocus
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteStrongFocus(strong_focus *p)
 {
     strong_focus *q;
@@ -287,7 +280,6 @@ void QVFStudy::deleteStrongFocus(strong_focus *p)
 // -----------------------------------------------------------------------
 //                          QVFStudy::DeleteWeakFocus
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteWeakFocus(weak_focus *p)
 {
     weak_focus *q;
@@ -303,7 +295,6 @@ void QVFStudy::deleteWeakFocus(weak_focus *p)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteDegenerate
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteDegenerate(degenerate *p)
 {
     degenerate *q;
@@ -322,7 +313,6 @@ void QVFStudy::deleteDegenerate(degenerate *p)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteSeparatrices
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteSeparatrices(sep *p)
 {
     sep *q;
@@ -342,7 +332,6 @@ void QVFStudy::deleteSeparatrices(sep *p)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteTransformations
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteTransformations(transformations *t)
 {
     transformations *u;
@@ -358,7 +347,6 @@ void QVFStudy::deleteTransformations(transformations *t)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteBlowup
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteBlowup(blow_up_points *b)
 {
     blow_up_points *c;
@@ -379,7 +367,6 @@ void QVFStudy::deleteBlowup(blow_up_points *b)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteLimitCycle
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteLimitCycle(orbits *p)
 {
     deleteOrbit(p); // limit cycle is implemented as orbit.
@@ -388,7 +375,6 @@ void QVFStudy::deleteLimitCycle(orbits *p)
 // -----------------------------------------------------------------------
 //                  QVFStudy::DeleteOrbitPoint
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteOrbitPoint(P4ORBIT p)
 {
     P4ORBIT q;
@@ -405,7 +391,6 @@ void QVFStudy::deleteOrbitPoint(P4ORBIT p)
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteOrbit
 // -----------------------------------------------------------------------
-
 void QVFStudy::deleteOrbit(orbits *p)
 {
     orbits *q;
@@ -600,7 +585,6 @@ bool QVFStudy::readTables(QString basename)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadGCF
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readGCF(FILE *fp)
 {
     int N, degree_gcf;
@@ -675,15 +659,26 @@ bool QVFStudy::readGCF(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadCurve
 // -----------------------------------------------------------------------
-
-bool QVFStudy::readCurve(FILE *fp)
+bool QVFStudy::readCurve(QString basename)
 {
     int N, degree_curve;
+    FILE *fp = nullptr;
+    setlocale(LC_ALL, "C");
+
+    fp = fopen(QFile::encodeName(basename + "_veccurve.tab"), "rt");
+    if (fp == nullptr) {
+        dump(basename, "Cannot open file " + basename + "_veccurve.tab");
+        return false;
+    }
+    /*if (fp == nullptr) {
+        dump(basename, "Cannot open file " + basename + "_veccurve.tab");
+        return false;
+    }*/
 
     if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
 
-    if (degree_curve) {
+    if (degree_curve > 0) {
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
@@ -750,7 +745,6 @@ bool QVFStudy::readCurve(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadVectorField
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readVectorField(FILE *fp, P4POLYNOM2 *vf)
 {
     int M, N;
@@ -775,7 +769,6 @@ bool QVFStudy::readVectorField(FILE *fp, P4POLYNOM2 *vf)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadVectorFieldCylinder
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf)
 {
     int N;
@@ -800,7 +793,6 @@ bool QVFStudy::readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadPoints
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readPoints(FILE *fp)
 {
     int N, i, typ;
@@ -872,7 +864,6 @@ bool QVFStudy::readPoints(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadTerm1
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readTerm1(FILE *fp, P4POLYNOM1 p, int N)
 {
     int i;
@@ -900,7 +891,6 @@ bool QVFStudy::readTerm1(FILE *fp, P4POLYNOM1 p, int N)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadTerm2
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readTerm2(FILE *fp, P4POLYNOM2 p, int N)
 {
     int i;
@@ -928,7 +918,6 @@ bool QVFStudy::readTerm2(FILE *fp, P4POLYNOM2 p, int N)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadTerm3
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readTerm3(FILE *fp, P4POLYNOM3 p, int N)
 {
     int i;
@@ -956,7 +945,6 @@ bool QVFStudy::readTerm3(FILE *fp, P4POLYNOM3 p, int N)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadSaddlePoint
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readSaddlePoint(FILE *fp)
 {
     int N;
@@ -1098,7 +1086,6 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadSemiElementaryPoint
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readSemiElementaryPoint(FILE *fp)
 {
     // make room in structure
@@ -1557,7 +1544,6 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadStrongFocusPoint
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readStrongFocusPoint(FILE *fp)
 {
     double y[2];
@@ -1744,7 +1730,6 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
 // -----------------------------------------------------------------------
 //                  QVFStudy::ReadDegeneratePoint
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readDegeneratePoint(FILE *fp)
 {
     int n;
@@ -1808,7 +1793,6 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadNodePoint
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readNodePoint(FILE *fp)
 {
     double y[2];
@@ -1899,7 +1883,6 @@ bool QVFStudy::readNodePoint(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadTransformations
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readTransformations(FILE *fp, transformations *trans, int n)
 {
 
@@ -1930,7 +1913,6 @@ bool QVFStudy::readTransformations(FILE *fp, transformations *trans, int n)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadBlowupPoints
 // -----------------------------------------------------------------------
-
 bool QVFStudy::readBlowupPoints(FILE *fp, blow_up_points *b, int n)
 {
     int i, N, typ;
@@ -2325,6 +2307,26 @@ void QVFStudy::dump(QString basename, QString info)
     } else {
         DUMP((" "))
         DUMP(("Contents of filename_inf.tab"))
+        DUMP(("----------------------------"))
+        DUMP((" "))
+        DUMP(("FILE DOES NOT EXIST."))
+    }
+    QFile fcurve(basename + "_veccurve.tab");
+    if (fcurve.open(QIODevice::ReadOnly)) {
+        DUMP((" "))
+        DUMP(("Contents of filename_veccurve.tab"))
+        DUMP(("----------------------------"))
+        DUMP((" "))
+
+        QTextStream tcurve(&fcurve);
+        while (!tcurve.atEnd()) {
+            s = tcurve.readLine();
+            m->append(s);
+        }
+        fcurve.close();
+    } else {
+        DUMP((" "))
+        DUMP(("Contents of filename_veccurve.tab"))
         DUMP(("----------------------------"))
         DUMP((" "))
         DUMP(("FILE DOES NOT EXIST."))
