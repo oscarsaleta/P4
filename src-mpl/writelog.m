@@ -52,4 +52,10 @@ _\m?(F/FCFCFbtFDFjilF\]l>F[[m-F][m6%/F&,$F`[mFeblFb[mF3>F[[mFf[m>F[[mFj[m>F]rF^
 \mF_\m?(F/FCFCFbtFDFjilF\]l>F[[m-F][m6%Fe\m/FZ,$Fh\mFeblF3>F[[mFf[m>F[[mFj[m>F]
 rF^\mF_\m?(F/FCFCFbtFDFjilF\]l@$50F6FC0FBFCC)>F[[m-F][m6%/F&*&F\pFC)FeoF6Febl/F
 Z*&F[sFC)FeoFBFeblF3>F[[m-Fhq6&F[[mFeoF\pF[s>F[[mFj[m>F]r-FhpF__mF_\m?(F/FCFCFb
-tFD-Fbu6'Q-~%d~%d~%d~%gF,F]jlF`jlFdjl-Fcv6#-FM6$F_xF_jlF\]lFc]lF,6$FgjlFijlF,F,
+tFD-Fbu6'Q-~%d~%d~%d~%gF,F]jlF`jlFdjl-Fcv6#-FM6$F_xF_jlF\]lFc]lF,6$FgjlFijlF,F,,
+I,write_curvef*6#%'curvefGFahlF,F,C'-Fby6#%,curve_tableG>FfsF\il@%F`ilFailCE>F]
+rFeilFfil?(F/FCFCFbtFDFjilF\]l>F6Fgjl>FBFijl>F[[mF\[m>F[[mFf[m>F[[mFj[m>F]rF^\m
+F_\m?(F/FCFCFbtFDFjilF\]l>F[[mFc\m>F[[mFf[m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFj
+ilF\]l>F[[mF^]m>F[[mFf[m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l>F[[mFg]m>F[[
+mFf[m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l@$F`^mC)>F[[mFe^m>F[[mF^_m>F[[mF
+j[m>F]rFb_mF_\m?(F/FCFCFbtFDFd_mF\]l-%*closefileGFb`mFc]lF,6%FgjlFijlFc`mF,F,
