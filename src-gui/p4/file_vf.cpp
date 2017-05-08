@@ -1344,8 +1344,8 @@ void QInputVF::evaluateCurveTable(void)
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_Evaluated(int)));
+        // connect(proc, SIGNAL(finished(int)), p4app,
+        //        SLOT(Signal_Evaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
                 SLOT(cathProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -2253,7 +2253,7 @@ bool QInputVF::evaluateCurve(void)
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
 bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
-                            int precision, int numpoints)
+                            int numpoints)
 {
     FILE *fp;
     int i;
@@ -2276,7 +2276,7 @@ bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
     mainmaple += QDir::separator();
 
     user_platform = USERPLATFORM;
-    mainmaple += MAINMAPLEGCFFILE; // NOTE: que fer aqui??
+    mainmaple += MAINMAPLEGCFFILE;
 
     ba_mainmaple = maplepathformat(mainmaple);
     user_file = getfilename_curve();
@@ -2321,7 +2321,7 @@ bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
 // is only called in case of Poincare-Lyapunov compactification (weights (p,q)
 // !=(1,1))
 bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
-                                        int precision, int numpoints)
+                                        int numpoints)
 {
     FILE *fp;
     char buf[100];
@@ -2396,7 +2396,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
 // same as preparegcf, except for the "u := " and "v := " assignments,
 // and the fact that one always refers to the same function VFResults.gcf,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
-bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
+bool QInputVF::prepareCurve_LyapunovR2(int numpoints)
 {
     FILE *fp;
     char buf[100];

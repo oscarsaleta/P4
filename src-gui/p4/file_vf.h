@@ -21,8 +21,8 @@
 #define FILE_VF_H
 
 #include "custom.h"
-#include "win_gcf.h"
 #include "win_curve.h"
+#include "win_gcf.h"
 
 #include <QObject>
 #include <QProcess>
@@ -138,9 +138,9 @@ class QInputVF : public QObject
     bool prepareGcf_LyapunovR2(int, int);
     bool evaluateGcf(void);
 
-    bool prepareCurve(struct term2 *f, double, double, int, int);
-    bool prepareCurve_LyapunovCyl(double, double, int, int);
-    bool prepareCurve_LyapunovR2(int, int);
+    bool prepareCurve(struct term2 *f, double, double, int);
+    bool prepareCurve_LyapunovCyl(double, double, int);
+    bool prepareCurve_LyapunovR2(int);
     bool evaluateCurve(void);
 
     void createProcessWindow(void);
