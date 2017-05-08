@@ -49,22 +49,20 @@ class QCurveDlg : public QWidget
     QRadioButton *btn_dashes;
     QLineEdit *edt_curve;
     QLineEdit *edt_points;
-    QLineEdit *edt_precis;
     QLineEdit *edt_memory;
 
     QBoxLayout *mainLayout;
 
-    void ExclusiveToggle(bool, QRadioButton *, QRadioButton *);
+    //void ExclusiveToggle(bool, QRadioButton *, QRadioButton *);
 
     int evaluating_points;
     int evaluating_memory;
-    int evaluating_precision;
 
   public slots:
     void onbtn_evaluate(void);
     void onbtn_plot(void);
-    void btn_dots_toggled(bool);
-    void btn_dashes_toggled(bool);
+    //void btn_dots_toggled(bool);
+    //void btn_dashes_toggled(bool);
 };
 
 #endif /* WIN_CURVE_H */

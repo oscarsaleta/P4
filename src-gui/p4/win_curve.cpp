@@ -24,6 +24,7 @@
 #include "math_curve.h"
 
 #include <QMessageBox>
+#include <QButtonGroup>
 
 QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -36,19 +37,19 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_curve = new QLineEdit("", this);
     QLabel *lbl0 = new QLabel("Curve: ", this);
 
+    QButtonGroup *btngrp = new QButtonGroup(this);
     btn_dots = new QRadioButton("Dots", this);
     btn_dashes = new QRadioButton("Dashes", this);
+    btngrp->addButton(btn_dots);
+    btngrp->addButton(btn_dashes);
 
     QLabel *lbl1 = new QLabel("Appearance: ", this);
 
     edt_points = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("#Points: ", this);
-
-    edt_precis = new QLineEdit("", this);
-    QLabel *lbl3 = new QLabel("Precision: ", this);
+    QLabel *lbl2 = new QLabel("Num. Points: ", this);
 
     edt_memory = new QLineEdit("", this);
-    QLabel *lbl4 = new QLabel("Max. Memory: ", this);
+    QLabel *lbl3 = new QLabel("Max. Memory: ", this);
 
     btn_evaluate = new QPushButton("&Evaluate", this);
     btn_plot = new QPushButton("&Plot", this);
@@ -60,7 +61,6 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dashes->setToolTip("Connect points of the curve of singularities with "
                            "small line segments");
     edt_points->setToolTip("Number of points");
-    edt_precis->setToolTip("Required precision");
     edt_memory->setToolTip(
         "Maximum amount of memory (in kilobytes) spent on plotting the curve");
     btn_evaluate->setToolTip("Evaluate singular points of plynomial curve");
@@ -82,9 +82,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     lay00->addWidget(lbl2, 1, 0);
     lay00->addWidget(edt_points, 1, 1);
     lay00->addWidget(lbl3, 2, 0);
-    lay00->addWidget(edt_precis, 2, 1);
-    lay00->addWidget(lbl4, 3, 0);
-    lay00->addWidget(edt_memory, 3, 1);
+    lay00->addWidget(edt_memory, 2, 1);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addStretch(0);
@@ -104,11 +102,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     QObject::connect(btn_evaluate, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
     QObject::connect(btn_plot, SIGNAL(clicked()), this, SLOT(onbtn_plot()));
-    QObject::connect(btn_dots, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dots_toggled(bool)));
-    QObject::connect(btn_dashes, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dashes_toggled(bool)));
-
+    
     // finishing
 
     setP4WindowTitle(this, "Curve plot");
@@ -123,41 +117,13 @@ void QCurveDlg::Reset(void)
     buf.sprintf("%d", DEFAULT_CURVEPOINTS);
     edt_points->setText(buf);
 
-    buf.sprintf("%d", DEFAULT_CURVEPRECIS);
-    edt_precis->setText(buf);
-
     buf.sprintf("%d", DEFAULT_CURVEMEMORY);
     edt_memory->setText(buf);
 
     if (VFResults.config_dashes)
-        ExclusiveToggle(true, btn_dashes, btn_dots);
+        btn_dashes->toggle();
     else
-        ExclusiveToggle(true, btn_dots, btn_dashes);
-}
-
-void QCurveDlg::btn_dots_toggled(bool on)
-{
-    ExclusiveToggle(on, btn_dots, btn_dashes);
-}
-
-void QCurveDlg::btn_dashes_toggled(bool on)
-{
-    ExclusiveToggle(on, btn_dashes, btn_dots);
-}
-
-void QCurveDlg::ExclusiveToggle(bool on, QRadioButton *first,
-                                QRadioButton *second)
-{
-    if (on) {
-        if (first->isChecked() == false)
-            first->toggle();
-
-        if (second->isChecked() == true)
-            second->toggle();
-    } else {
-        if (second->isChecked() == false)
-            first->toggle();
-    }
+        btn_dots->toggle();
 }
 
 void QCurveDlg::onbtn_evaluate(void)
@@ -179,7 +145,7 @@ void QCurveDlg::onbtn_evaluate(void)
 void QCurveDlg::onbtn_plot(void)
 {
     bool dashes, result;
-    int points, precis, memory;
+    int points, memory;
 
     bool ok;
     QString buf;
@@ -194,14 +160,6 @@ void QCurveDlg::onbtn_plot(void)
     if (points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
         buf += " ???";
         edt_points->setText(buf);
-        ok = false;
-    }
-
-    buf = edt_precis->text();
-    precis = buf.toInt();
-    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
-        buf += " ???";
-        edt_precis->setText(buf);
         ok = false;
     }
 
@@ -227,17 +185,15 @@ void QCurveDlg::onbtn_plot(void)
         return;
     }
 
-    // THIRD: evaluate curve with given parameters {dashes, points, precis,
-    // memory}.
+    // THIRD: evaluate curve with given parameters {dashes, points, memory}.
 
     evaluating_points = points;
     evaluating_memory = memory;
-    evaluating_precision = precis;
 
     btn_plot->setEnabled(false);
 
     ThisVF->curveDlg = this;
-    result = evalCurveStart(mainSphere, dashes, points, precis);
+    result = evalCurveStart(mainSphere, dashes, points);
     if (!result) {
         btn_plot->setEnabled(true);
         QMessageBox::critical(this, "P4", "An error occured while plotting the "
@@ -255,7 +211,7 @@ void QCurveDlg::finishCurveEvaluation(void)
     if (btn_plot->isEnabled() == true)
         return; // not busy??
 
-    result = evalCurveContinue(evaluating_points, evaluating_precision);
+    result = evalCurveContinue(evaluating_points);
 
     if (result) {
         btn_plot->setEnabled(false);
