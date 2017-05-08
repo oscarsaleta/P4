@@ -68,6 +68,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
         "Maximum amount of memory (in kilobytes) spent on plotting the curve");
     btn_evaluate->setToolTip("Evaluate singular points of plynomial curve");
     btn_plot->setToolTip("Plot curve (using symbolic manipulator)");
+    btn_delete->setTooltip("Delete curve");
 #endif
 
     // layout
