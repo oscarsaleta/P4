@@ -446,7 +446,7 @@ class QVFStudy : public QObject
 
     bool readTables(QString basename);
     bool readGCF(FILE *fp);
-    bool readCurve(FILE *fp);
+    bool readCurve(QString basename);
     bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
     bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
     bool readPoints(FILE *fp);

@@ -22,7 +22,9 @@
 #include "custom.h"
 #include "file_vf.h"
 #include "math_curve.h"
+#include "math_polynom.h"
 
+#include <QButtonGroup>
 #include <QMessageBox>
 
 QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
@@ -36,21 +38,25 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_curve = new QLineEdit("", this);
     QLabel *lbl0 = new QLabel("Curve: ", this);
 
+    QButtonGroup *btngrp = new QButtonGroup(this);
     btn_dots = new QRadioButton("Dots", this);
     btn_dashes = new QRadioButton("Dashes", this);
+    btngrp->addButton(btn_dots);
+    btngrp->addButton(btn_dashes);
 
     QLabel *lbl1 = new QLabel("Appearance: ", this);
 
     edt_points = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("#Points: ", this);
-
-    edt_precis = new QLineEdit("", this);
-    QLabel *lbl3 = new QLabel("Precision: ", this);
+    QLabel *lbl2 = new QLabel("Num. Points: ", this);
 
     edt_memory = new QLineEdit("", this);
-    QLabel *lbl4 = new QLabel("Max. Memory: ", this);
+    QLabel *lbl3 = new QLabel("Max. Memory: ", this);
 
-    btn_evaluate = new QPushButton("&Evaluate", this);
+    btn_evaluate = new QPushButton("Evaluate", this);
+    btn_plot = new QPushButton("Plot", this);
+    btn_plot->setEnabled(false);
+    btn_delete = new QPushButton("Delete", this);
+    btn_delete->setEnabled(false);
 
 #ifdef TOOLTIPS
     btn_dots->setToolTip(
@@ -58,10 +64,10 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dashes->setToolTip("Connect points of the curve of singularities with "
                            "small line segments");
     edt_points->setToolTip("Number of points");
-    edt_precis->setToolTip("Required precision");
     edt_memory->setToolTip(
         "Maximum amount of memory (in kilobytes) spent on plotting the curve");
-    btn_evaluate->setToolTip("Start evaluation (using symbolic manipulator)");
+    btn_evaluate->setToolTip("Evaluate singular points of plynomial curve");
+    btn_plot->setToolTip("Plot curve (using symbolic manipulator)");
 #endif
 
     // layout
@@ -79,13 +85,13 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     lay00->addWidget(lbl2, 1, 0);
     lay00->addWidget(edt_points, 1, 1);
     lay00->addWidget(lbl3, 2, 0);
-    lay00->addWidget(edt_precis, 2, 1);
-    lay00->addWidget(lbl4, 3, 0);
-    lay00->addWidget(edt_memory, 3, 1);
+    lay00->addWidget(edt_memory, 2, 1);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addStretch(0);
     layout2->addWidget(btn_evaluate);
+    layout2->addWidget(btn_plot);
+    layout2->addWidget(btn_delete);
     layout2->addStretch(0);
 
     mainLayout->addLayout(layout1);
@@ -99,10 +105,8 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
 
     QObject::connect(btn_evaluate, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
-    QObject::connect(btn_dots, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dots_toggled(bool)));
-    QObject::connect(btn_dashes, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dashes_toggled(bool)));
+    QObject::connect(btn_plot, SIGNAL(clicked()), this, SLOT(onbtn_plot()));
+    QObject::connect(btn_delete, SIGNAL(clicked()), this, SLOT(onbtn_delete()));
 
     // finishing
 
@@ -118,48 +122,17 @@ void QCurveDlg::Reset(void)
     buf.sprintf("%d", DEFAULT_CURVEPOINTS);
     edt_points->setText(buf);
 
-    buf.sprintf("%d", DEFAULT_CURVEPRECIS);
-    edt_precis->setText(buf);
-
     buf.sprintf("%d", DEFAULT_CURVEMEMORY);
     edt_memory->setText(buf);
 
     if (VFResults.config_dashes)
-        ExclusiveToggle(true, btn_dashes, btn_dots);
+        btn_dashes->toggle();
     else
-        ExclusiveToggle(true, btn_dots, btn_dashes);
-}
-
-void QCurveDlg::btn_dots_toggled(bool on)
-{
-    ExclusiveToggle(on, btn_dots, btn_dashes);
-}
-
-void QCurveDlg::btn_dashes_toggled(bool on)
-{
-    ExclusiveToggle(on, btn_dashes, btn_dots);
-}
-
-void QCurveDlg::ExclusiveToggle(bool on, QRadioButton *first,
-                                QRadioButton *second)
-{
-    if (on) {
-        if (first->isChecked() == false)
-            first->toggle();
-
-        if (second->isChecked() == true)
-            second->toggle();
-    } else {
-        if (second->isChecked() == false)
-            first->toggle();
-    }
+        btn_dots->toggle();
 }
 
 void QCurveDlg::onbtn_evaluate(void)
 {
-    bool dashes, result;
-    int points, precis, memory;
-
     if (edt_curve->text().isNull() || edt_curve->text().isEmpty()) {
         QMessageBox::information(this, "P4",
                                  "The curve field has to be filled\n"
@@ -167,6 +140,17 @@ void QCurveDlg::onbtn_evaluate(void)
         return;
     }
     ThisVF->curve = edt_curve->text().trimmed();
+
+    // FIRST: create filename_veccurve.tab for transforming the curve QString to
+    // a list of P4POLYNOM2
+    ThisVF->evaluateCurveTable();
+    btn_plot->setEnabled(true);
+}
+
+void QCurveDlg::onbtn_plot(void)
+{
+    bool dashes, result;
+    int points, memory;
 
     bool ok;
     QString buf;
@@ -184,14 +168,6 @@ void QCurveDlg::onbtn_evaluate(void)
         ok = false;
     }
 
-    buf = edt_precis->text();
-    precis = buf.toInt();
-    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
-        buf += " ???";
-        edt_precis->setText(buf);
-        ok = false;
-    }
-
     buf = edt_memory->text();
     memory = buf.toInt();
     if (memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
@@ -204,41 +180,71 @@ void QCurveDlg::onbtn_evaluate(void)
         QMessageBox::information(
             this, "P4", "One of the fields has a value that is out of bounds.\n"
                         "Please correct before continuing.\n");
-
         return;
     }
 
-    // Evaluate curve with given parameters {dashes, points, precis, memory}.
+    // SECOND: read the resulting file and store the list
+    if (!VFResults.readCurve(ThisVF->getbarefilename())) {
+        QMessageBox::critical(this, "P4", "Cannot read curve.\n"
+                                          "Please check the input field!\n");
+        return;
+    }
+
+    // THIRD: evaluate curve with given parameters {dashes, points, memory}.
 
     evaluating_points = points;
     evaluating_memory = memory;
-    evaluating_precision = precis;
 
-    btn_evaluate->setEnabled(false);
+    btn_plot->setEnabled(false);
 
     ThisVF->curveDlg = this;
-    result = evalCurveStart(mainSphere, dashes, points, precis);
+    result = evalCurveStart(mainSphere, dashes, points);
     if (!result) {
-        btn_evaluate->setEnabled(true);
-        QMessageBox::critical(this, "P4",
-                              "An error occured while plotting the "
-                              "curve.\nThe singular locus may not be "
-                              "visible, or may "
-                              "be partially visible.");
+        btn_plot->setEnabled(true);
+        QMessageBox::critical(this, "P4", "An error occured while plotting the "
+                                          "curve.\nThe singular locus may not "
+                                          "be visible, or may be partially "
+                                          "visible.");
+        return;
     }
+
+    btn_delete->setEnabled(true);
+}
+
+void QCurveDlg::onbtn_delete(void)
+{
+    delete_term2(VFResults.curve);
+    delete_term2(VFResults.curve_U1);
+    delete_term2(VFResults.curve_U2);
+    delete_term2(VFResults.curve_V1);
+    delete_term2(VFResults.curve_V2);
+    delete_term3(VFResults.curve_C);
+    VFResults.deleteOrbitPoint(VFResults.curve_points);
+
+    VFResults.curve = nullptr;
+    VFResults.curve_U1 = nullptr;
+    VFResults.curve_U2 = nullptr;
+    VFResults.curve_V1 = nullptr;
+    VFResults.curve_V2 = nullptr;
+    VFResults.curve_C = nullptr;
+    VFResults.curve_points = nullptr;
+
+    mainSphere->refresh();
+    btn_delete->setEnabled(false);
+    btn_plot->setEnabled(false);
 }
 
 void QCurveDlg::finishCurveEvaluation(void)
 {
     bool result;
 
-    if (btn_evaluate->isEnabled() == true)
+    if (btn_plot->isEnabled() == true)
         return; // not busy??
 
-    result = evalCurveContinue(evaluating_points, evaluating_precision);
+    result = evalCurveContinue(evaluating_points);
 
     if (result) {
-        btn_evaluate->setEnabled(true);
+        btn_plot->setEnabled(false);
         result = evalCurveFinish(); // return false in case an error occured
         if (!result) {
             QMessageBox::critical(this, "P4", "An error occured while plotting "

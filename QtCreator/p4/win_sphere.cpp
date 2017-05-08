@@ -698,6 +698,7 @@ void QWinSphere::paintEvent(QPaintEvent *p)
         }
         plotSeparatrices();
         plotGcf();
+        plotCurve();
         drawOrbits(this);
         drawLimitCycles(this);
         plotPoints();
@@ -1470,7 +1471,7 @@ void QWinSphere::plotGcf(void)
 
 void QWinSphere::plotCurve(void)
 {
-    draw_curve(this, VFResults.curve_points, CSING, 1);
+    draw_curve(this, VFResults.curve_points, CCURV, 1);
 }
 
 // -----------------------------------------------------------------------
@@ -2569,6 +2570,7 @@ void QWinSphere::print(void)
     printOrbits();
     printSeparatrices();
     printGcf();
+    printCurve();
     printLimitCycles();
     printPoints();
 }

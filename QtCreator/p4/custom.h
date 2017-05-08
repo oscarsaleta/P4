@@ -234,6 +234,7 @@
 #define CORBIT YELLOW   // orbits (use GREEN1 when background is white)
 #define CLIMIT MAGENTA2 // limit cycles
 #define CSING GREEN     // curve of singularities
+#define CCURV CYAN
 
 // IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
 // printing.

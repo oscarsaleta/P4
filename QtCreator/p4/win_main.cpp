@@ -269,6 +269,9 @@ void QStartDlg::OnPlot(void)
 
         return;
     }
+    if (!VFResults.readCurve(ThisVF->getbarefilename())){
+        // nothing, we simply don't have a curve for plotting
+    }
 
     VFResults.setupCoordinateTransformations();
 

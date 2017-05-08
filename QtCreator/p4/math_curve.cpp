@@ -42,7 +42,7 @@ static bool ReadTaskResults(int); // , int, int, int );
 static bool read_curve(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalCurveStart(QWinSphere *sp, int dashes, int points, int precis)
+bool evalCurveStart(QWinSphere *sp, int dashes, int points)
 {
     if (VFResults.curve_points != nullptr) {
         sp->prepareDrawing();
@@ -60,17 +60,17 @@ bool evalCurveStart(QWinSphere *sp, int dashes, int points, int precis)
     CurveError = false;
     CurveSphere = sp;
     CurveDashes = dashes;
-    return runTaskCurve(CurveTask, points, precis);
+    return runTaskCurve(CurveTask, points);
 }
 
-bool evalCurveContinue(int points, int prec) // returns true when finished.  Then
-                                           // run EvalGCfFinish to see if error
-                                           // occurred or not
+bool evalCurveContinue(int points) // returns true when finished. Then
+// run EvalGCfFinish to see if error
+// occurred or not
 {
     if (CurveTask == EVAL_CURVE_NONE)
         return true;
 
-    if (!ReadTaskResults(CurveTask)) // , points, prec, memory ) )
+    if (!ReadTaskResults(CurveTask))
     {
         CurveError = true;
         return true;
@@ -81,7 +81,7 @@ bool evalCurveContinue(int points, int prec) // returns true when finished.  The
         return true;
     }
 
-    if (!runTaskCurve(CurveTask, points, prec)) {
+    if (!runTaskCurve(CurveTask, points)) {
         CurveError = true;
         return true;
     }
@@ -93,7 +93,7 @@ bool evalCurveFinish(void) // return false in case an error occured
 {
     if (CurveTask != EVAL_CURVE_NONE) {
         CurveSphere->prepareDrawing();
-        draw_curve(CurveSphere, VFResults.curve_points, CSING, 1);
+        draw_curve(CurveSphere, VFResults.curve_points, CCURV, 1);
         CurveSphere->finishDrawing();
 
         CurveTask = EVAL_CURVE_NONE;
@@ -106,43 +106,42 @@ bool evalCurveFinish(void) // return false in case an error occured
     return true;
 }
 
-bool runTaskCurve(int task, int points, int prec)
+bool runTaskCurve(int task, int points)
 {
     bool value;
 
     switch (task) {
     case EVAL_CURVE_R2:
-        value = ThisVF->prepareCurve(VFResults.curve, -1, 1, prec, points);
+        value = ThisVF->prepareCurve(VFResults.curve, -1, 1, points);
         break;
     case EVAL_CURVE_U1:
-        value = ThisVF->prepareCurve(VFResults.curve_U1, 0, 1, prec, points);
+        value = ThisVF->prepareCurve(VFResults.curve_U1, 0, 1, points);
         break;
     case EVAL_CURVE_V1:
-        value = ThisVF->prepareCurve(VFResults.curve_U1, -1, 0, prec, points);
+        value = ThisVF->prepareCurve(VFResults.curve_U1, -1, 0, points);
         break;
     case EVAL_CURVE_U2:
-        value = ThisVF->prepareCurve(VFResults.curve_U2, 0, 1, prec, points);
+        value = ThisVF->prepareCurve(VFResults.curve_U2, 0, 1, points);
         break;
     case EVAL_CURVE_V2:
-        value = ThisVF->prepareCurve(VFResults.curve_U2, -1, 0, prec, points);
+        value = ThisVF->prepareCurve(VFResults.curve_U2, -1, 0, points);
         break;
     case EVAL_CURVE_LYP_R2:
-        value = ThisVF->prepareCurve_LyapunovR2(prec, points);
+        value = ThisVF->prepareCurve_LyapunovR2(points);
         break;
     case EVAL_CURVE_CYL1:
-        value = ThisVF->prepareCurve_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points);
+        value = ThisVF->prepareCurve_LyapunovCyl(-PI_DIV4, PI_DIV4, points);
         break;
     case EVAL_CURVE_CYL2:
-        value =
-            ThisVF->prepareCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec, points);
+        value = ThisVF->prepareCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4, points);
         break;
     case EVAL_CURVE_CYL3:
-        value = ThisVF->prepareCurve_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4, prec,
-                                               points);
+        value = ThisVF->prepareCurve_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
+                                                 points);
         break;
     case EVAL_CURVE_CYL4:
-        value = ThisVF->prepareCurve_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
-                                               points);
+        value =
+            ThisVF->prepareCurve_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, points);
         break;
     default:
         value = false;
@@ -155,7 +154,7 @@ bool runTaskCurve(int task, int points, int prec)
         return false;
 }
 
-static bool ReadTaskResults(int task) // , int points, int prec, int memory )
+static bool ReadTaskResults(int task)
 {
     bool value;
 
@@ -200,7 +199,7 @@ static bool ReadTaskResults(int task) // , int points, int prec, int memory )
 }
 
 void draw_curve(QWinSphere *spherewnd, struct orbits_points *sep, int color,
-              int dashes)
+                int dashes)
 {
     double pcoord[3];
 
@@ -230,7 +229,7 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes)
     last_curve_point->pcoord[2] = z0;
 
     last_curve_point->dashes = dashes;
-    last_curve_point->color = CSING;
+    last_curve_point->color = CCURV;
     last_curve_point->next_point = nullptr;
 }
 
