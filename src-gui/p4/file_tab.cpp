@@ -123,7 +123,6 @@ QVFStudy::~QVFStudy() { deleteVF(); }
 void QVFStudy::deleteVF()
 {
     // Delete Vector Field
-
     delete_term2(f_vec_field[0]);
     delete_term2(f_vec_field[1]);
     delete_term2(vec_field_U1[0]);
@@ -166,7 +165,6 @@ void QVFStudy::deleteVF()
     first_de_point = nullptr;
 
     // Delete GCF:
-
     delete_term2(gcf);
     delete_term2(gcf_U1);
     delete_term2(gcf_U2);
@@ -183,19 +181,33 @@ void QVFStudy::deleteVF()
     gcf_C = nullptr;
     gcf_points = nullptr;
 
-    // Delete all orbits
+    // Delete curve:
+    delete_term2(curve);
+    delete_term2(curve_U1);
+    delete_term2(curve_U2);
+    delete_term2(curve_V1);
+    delete_term2(curve_V2);
+    delete_term3(curve_C);
+    deleteOrbitPoint(curve_points);
 
+    curve = nullptr;
+    curve_U1 = nullptr;
+    curve_U2 = nullptr;
+    curve_V1 = nullptr;
+    curve_V2 = nullptr;
+    curve_C = nullptr;
+    curve_points = nullptr;
+
+    // Delete all orbits
     deleteOrbit(first_orbit);
     first_orbit = nullptr;
     current_orbit = nullptr;
 
     // Delete limit cycles
-
     deleteLimitCycle(first_lim_cycle);
     first_lim_cycle = nullptr;
 
     // reset others
-
     xmin = -1.0;
     xmax = 1.0;
     ymin = -1.0;
