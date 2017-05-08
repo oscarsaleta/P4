@@ -1471,7 +1471,7 @@ void QWinSphere::plotGcf(void)
 
 void QWinSphere::plotCurve(void)
 {
-    draw_curve(this, VFResults.curve_points, CSING, 1);
+    draw_curve(this, VFResults.curve_points, CCURV, 1);
 }
 
 // -----------------------------------------------------------------------

@@ -93,7 +93,7 @@ bool evalCurveFinish(void) // return false in case an error occured
 {
     if (CurveTask != EVAL_CURVE_NONE) {
         CurveSphere->prepareDrawing();
-        draw_curve(CurveSphere, VFResults.curve_points, CSING, 1);
+        draw_curve(CurveSphere, VFResults.curve_points, CCURV, 1);
         CurveSphere->finishDrawing();
 
         CurveTask = EVAL_CURVE_NONE;
@@ -229,7 +229,7 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes)
     last_curve_point->pcoord[2] = z0;
 
     last_curve_point->dashes = dashes;
-    last_curve_point->color = CSING;
+    last_curve_point->color = CCURV;
     last_curve_point->next_point = nullptr;
 }
 
