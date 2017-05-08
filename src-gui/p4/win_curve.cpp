@@ -22,9 +22,10 @@
 #include "custom.h"
 #include "file_vf.h"
 #include "math_curve.h"
+#include "math_polynom.h"
 
-#include <QMessageBox>
 #include <QButtonGroup>
+#include <QMessageBox>
 
 QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -51,9 +52,11 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_memory = new QLineEdit("", this);
     QLabel *lbl3 = new QLabel("Max. Memory: ", this);
 
-    btn_evaluate = new QPushButton("&Evaluate", this);
-    btn_plot = new QPushButton("&Plot", this);
+    btn_evaluate = new QPushButton("Evaluate", this);
+    btn_plot = new QPushButton("Plot", this);
     btn_plot->setEnabled(false);
+    btn_delete = new QPushButton("Delete", this);
+    btn_delete->setEnabled(false);
 
 #ifdef TOOLTIPS
     btn_dots->setToolTip(
@@ -88,6 +91,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     layout2->addStretch(0);
     layout2->addWidget(btn_evaluate);
     layout2->addWidget(btn_plot);
+    layout2->addWidget(btn_delete);
     layout2->addStretch(0);
 
     mainLayout->addLayout(layout1);
@@ -102,7 +106,8 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     QObject::connect(btn_evaluate, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
     QObject::connect(btn_plot, SIGNAL(clicked()), this, SLOT(onbtn_plot()));
-    
+    QObject::connect(btn_delete, SIGNAL(clicked()), this, SLOT(onbtn_delete()));
+
     // finishing
 
     setP4WindowTitle(this, "Curve plot");
@@ -202,6 +207,31 @@ void QCurveDlg::onbtn_plot(void)
                                           "visible.");
         return;
     }
+
+    btn_delete->setEnabled(true);
+}
+
+void QCurveDlg::onbtn_delete(void)
+{
+    delete_term2(VFResults.curve);
+    delete_term2(VFResults.curve_U1);
+    delete_term2(VFResults.curve_U2);
+    delete_term2(VFResults.curve_V1);
+    delete_term2(VFResults.curve_V2);
+    delete_term3(VFResults.curve_C);
+    VFResults.deleteOrbitPoint(VFResults.curve_points);
+
+    VFResults.curve = nullptr;
+    VFResults.curve_U1 = nullptr;
+    VFResults.curve_U2 = nullptr;
+    VFResults.curve_V1 = nullptr;
+    VFResults.curve_V2 = nullptr;
+    VFResults.curve_C = nullptr;
+    VFResults.curve_points = nullptr;
+
+    mainSphere->refresh();
+    btn_delete->setEnabled(false);
+    btn_plot->setEnabled(false);
 }
 
 void QCurveDlg::finishCurveEvaluation(void)
