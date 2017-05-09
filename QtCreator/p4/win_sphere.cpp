@@ -20,9 +20,9 @@
 #include "win_sphere.h"
 
 #include "file_vf.h"
+#include "math_curve.h"
 #include "math_findpoint.h"
 #include "math_gcf.h"
-#include "math_curve.h"
 #include "math_limitcycles.h"
 #include "math_orbits.h"
 #include "math_p4.h"
@@ -1018,7 +1018,9 @@ void QWinSphere::mousePressEvent(QMouseEvent *e)
         // However, when the limit cycle window is open, select the first
         // and second point of a transverse section.
 
-        struct DOUBLEPOINT *data1 = new DOUBLEPOINT;//(struct DOUBLEPOINT *)malloc(sizeof(struct DOUBLEPOINT) + sizeof(void *));
+        struct DOUBLEPOINT *data1 =
+            new DOUBLEPOINT; //(struct DOUBLEPOINT *)malloc(sizeof(struct
+                             // DOUBLEPOINT) + sizeof(void *));
         data1->x = coWorldX(e->x());
         data1->y = coWorldY(e->y());
         *((void **)(data1 + 1)) = this;
@@ -1065,8 +1067,7 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             SaveAnchorMap();
             selectingZoom = false;
 
-            double *data1 =
-                new double[4];
+            double *data1 = new double[4];
             data1[0] = coWorldX(zoomAnchor1.x());
             data1[1] = coWorldY(zoomAnchor1.y());
             data1[2] = coWorldX(zoomAnchor2.x());
@@ -1080,8 +1081,7 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             SaveAnchorMap();
             selectingLCSection = false;
 
-            double *data1 =
-                new double[4];
+            double *data1 = new double[4];
             data1[0] = coWorldX(lcAnchor1.x());
             data1[1] = coWorldY(lcAnchor1.y());
             data1[2] = coWorldX(lcAnchor2.x());
@@ -2119,7 +2119,7 @@ void QWinSphere::printCurve(void)
     if (VFResults.curve_points != nullptr) {
         comment = "Printing Greatest common factor:";
         print_comment(comment);
-        draw_curve(this, VFResults.curve_points, CSING, 1);
+        draw_curve(this, VFResults.curve_points, CCURV, 1);
     }
 }
 
