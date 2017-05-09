@@ -98,9 +98,10 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     paint.drawText(hmargin1, vmargin1, "Non-Degenerate:");
     paint.drawText(hmargin4, vmargin1, "Semi-hyperbolic:");
     paint.drawText(hmargin1, vmargin3, "Separatrices:");
-    paint.drawText(hmargin4, vmargin3, "Orbits:");
-    paint.drawText(hmargin4, vmargin5, "Curve of Singularities:");
-    paint.drawText(hmargin4, vmargin6, "Limit Cycles:");
+    paint.drawText(hmargin4, vmargin25, "Orbits:");
+    paint.drawText(hmargin4, vmargin3, "Curve of Singularities:");
+    paint.drawText(hmargin4, vmargin4, "Limit Cycles:");
+    paint.drawText(hmargin4, vmargin4 + 2 * interline, "Arbitrary Curve:");
 
     paint.setPen(QPen(QXFIGCOLOR(CSADDLE)));
     paint.drawText(hmargin2, vmargin2, "Saddle");
@@ -180,14 +181,18 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
                    hmargin1 + sepwidth - 1, vmargin4 + 3 * interline - xheight);
 
     paint.setPen(QPen(QXFIGCOLOR(CORBIT)));
+    paint.drawLine(hmargin4, vmargin25 + interline - xheight,
+                   hmargin4 + orbitwidth - 1, vmargin25 + interline - xheight);
+    paint.setPen(QPen(QXFIGCOLOR(CSING)));
     paint.drawLine(hmargin4, vmargin3 + interline - xheight,
                    hmargin4 + orbitwidth - 1, vmargin3 + interline - xheight);
-    paint.setPen(QPen(QXFIGCOLOR(CSING)));
-    paint.drawLine(hmargin4, vmargin5 + interline - xheight,
-                   hmargin4 + orbitwidth - 1, vmargin5 + interline - xheight);
     paint.setPen(QPen(QXFIGCOLOR(CLIMIT)));
-    paint.drawLine(hmargin4, vmargin6 + interline - xheight,
-                   hmargin4 + orbitwidth - 1, vmargin6 + interline - xheight);
+    paint.drawLine(hmargin4, vmargin4 + interline - xheight,
+                   hmargin4 + orbitwidth - 1, vmargin4 + interline - xheight);
+    paint.setPen(QPen(QXFIGCOLOR(CCURV)));
+    paint.drawLine(hmargin4, vmargin4 + 3 * interline - xheight,
+                   hmargin4 + orbitwidth - 1,
+                   vmargin4 + 3 * interline - xheight);
 
     setP4WindowTitle(this, "P4 Legend");
 }
@@ -329,6 +334,7 @@ void QLegendWnd::calculateGeometry(void)
 
     vmargin1 = fm.height() + fm.descent();
     vmargin2 = vmargin1 + 2 * interline;
+    vmargin25 = vmargin2 + 8 * interline;
     vmargin3 = vmargin2 + 10 * interline;
     vmargin4 = vmargin3 + 2 * interline;
 

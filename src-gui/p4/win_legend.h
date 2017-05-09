@@ -50,6 +50,7 @@ class QLegendWnd : public QWidget
 
     int vmargin1;
     int vmargin2;
+    int vmargin25;
     int vmargin3;
     int vmargin4;
     int vmargin5;
