@@ -39,23 +39,25 @@ class QCurveDlg : public QWidget
     void finishCurveEvaluation(void);
 
   private:
-    QWinSphere *mainSphere;
-    QPlotWnd *plotwnd;
+    QWinSphere *mainSphere_;
+    QPlotWnd *plotwnd_;
 
-    QPushButton *btn_evaluate;
-    QPushButton *btn_plot;
-    QPushButton *btn_delete;
+    QPushButton *btn_evaluate_;
+    QPushButton *btn_plot_;
+    QPushButton *btn_delete_;
 
-    QRadioButton *btn_dots;
-    QRadioButton *btn_dashes;
-    QLineEdit *edt_curve;
-    QLineEdit *edt_points;
-    QLineEdit *edt_memory;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_curve_;
+    QLineEdit *edt_points_;
+    QLineEdit *edt_precis_;
+    QLineEdit *edt_memory_;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
-    int evaluating_points;
-    int evaluating_memory;
+    int evaluating_points_;
+    int evaluating_memory_;
+    int evaluating_precision_;
 
   public slots:
     void onbtn_evaluate(void);

@@ -116,14 +116,14 @@ class QInputVF : public QObject
 
     static bool FileExists(QString);
 
-    void prepareReduceParameters(QTextStream *);
-    void prepareReduceVectorField(QTextStream *);
+    // void prepareReduceParameters(QTextStream *);
+    // void prepareReduceVectorField(QTextStream *);
     void prepareMapleParameters(QTextStream *);
     void prepareMapleVectorField(QTextStream *);
     void prepareMapleCurve(QTextStream *);
     QString booleanString(int value) const;
     QString convertMapleUserParameterLabels(QString);
-    QString convertReduceUserParameterLabels(QString);
+    // QString convertReduceUserParameterLabels(QString);
 
     void prepareFile(QTextStream *); // used by Prepare()
     void prepareCurveFile(QTextStream *);
@@ -138,9 +138,9 @@ class QInputVF : public QObject
     bool prepareGcf_LyapunovR2(int, int);
     bool evaluateGcf(void);
 
-    bool prepareCurve(struct term2 *f, double, double, int);
-    bool prepareCurve_LyapunovCyl(double, double, int);
-    bool prepareCurve_LyapunovR2(int);
+    bool prepareCurve(struct term2 *f, double, double, int, int);
+    bool prepareCurve_LyapunovCyl(double, double, int, int);
+    bool prepareCurve_LyapunovR2(int, int);
     bool evaluateCurve(void);
 
     void createProcessWindow(void);

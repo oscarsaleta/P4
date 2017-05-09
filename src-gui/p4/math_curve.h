@@ -39,11 +39,12 @@
 
 extern orbits_points *last_curve_point;
 
-bool evalCurveStart(QWinSphere *sp, int dashes, int points);
-bool evalCurveContinue(int points);
+bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points);
+bool evalCurveContinue(int precision, int points);
 bool evalCurveFinish(void);
-bool runTaskCurve(int task, int points);
+bool runTaskCurve(int task, int precision, int points);
 void rplane_plsphere0(double x, double y, double *pcoord);
-void draw_curve(QWinSphere *spherewnd, orbits_points *sep, int color, int dashes);
+void draw_curve(QWinSphere *spherewnd, orbits_points *sep, int color,
+                int dashes);
 
 #endif // MATH_CURVE_H
