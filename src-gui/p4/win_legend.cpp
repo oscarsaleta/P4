@@ -207,14 +207,14 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     X Stable Weak Focus
     X Unstable Weak Focus           X Non-elementary
     X Center
-    X Stable Strong Focus
-    X Unstable Strong Focus
-
-    Separatrices:                   Orbits:
+    X Stable Strong Focus           
+    X Unstable Strong Focus         Orbits:
+                                    -----------------
+    Separatrices:                   Line of Singularities:
                                     ------------------
-    ------ Stable                   Line of Singularities:
+    ------ Stable                   Limit Cycles:
     ------ Unstable                 -----------------
-    ------ Center-Stable            Limit Cycles:
+    ------ Center-Stable            Arbitrary Curve:
     ------ Center-unstable          -----------------
 
 horizontal margins:
@@ -223,6 +223,7 @@ horizontal margins:
 vertical margins:
     1 non-deg / semi-hyp
     2 saddle / saddle-node
+    25 unstable strong focus
     3 sep/orbits
     4 stable
     5 line of sing
