@@ -18,97 +18,137 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <HTML>
-<HEAD><TITLE>P4 Parameters Help Page</TITLE></HEAD>
+
+<HEAD>
+    <TITLE>P4 Parameters Help Page</TITLE>
+</HEAD>
+
 <body>
-<P><CENTER><IMG SRC="p4_logo.png"></center></p>
-<p><center><FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT></center></p>
+    <P>
+        <CENTER>
+            <IMG SRC="p4_logo.png">
+        </center>
+    </p>
+    <p>
+        <center>
+            <FONT SIZE=+3><b>Polynomial Planar Phase Portraits</b></FONT>
+        </center>
+    </p>
 
-<P><CENTER><FONT SIZE=+2>THE PARAMETERS (SUB)WINDOW</FONT></CENTER></P>
+    <P>
+        <CENTER>
+            <FONT SIZE=+2>THE PARAMETERS (SUB)WINDOW</FONT>
+        </CENTER>
+    </P>
 
-<P><CENTER><IMG SRC="window_parameters.png"></CENTER></P>
+    <P>
+        <CENTER>
+            <IMG SRC="window_parameters.png">
+        </CENTER>
+    </P>
 
-<FONT SIZE=+1>
-<br><ul>
-<li>
-    The Option Set <IMG SRC="field_algnum.png">&nbsp;will
-    toggle between the two options showed here. In <i>Algebraic</i> mode
-    some computation will be done in algebraic mode. These computations are
-    the search of singular points (finite and infinite), and the first terms
-    of the <B>Taylor</B> approximations of the separatrices. In <i>Numeric</i> mode,
-    everything is done in numerics. You will need to use the <i>Numeric</i> mode
-    if the degree of the Polynomial Differential System is high and it has
-    many coefficients. This is somehow subjective, and the fact is that you
-    will simply need to toggle to <i>Numeric</i> when
-    you have already tried a system in the <i>Algebraic</i> mode and the program has collapsed.
-<br></li>
-<li>
-    The Option Set <IMG SRC="field_testsep.png">&nbsp;will decide whether <B>P4</B> tests every <B>Taylor</B>
-    approximation it has found, so it enters in a self-controlled procedure for improving it or
-    not. Normally it is recommended to use this option, but if you see a concrete
-    system where a separatrix is hard to deal with and you are not specially interested in it, you may
-    deactivate this option.
-<br></li>
-<li>
-    The input <IMG SRC="field_precision.png">&nbsp;gives the value (negative power of 10) such that we will consider
-    any number below it (in module) as 0. In any numeric program you need to define such a number so to avoid that
-    a rounding error may produce a variable being different from 0 when it should be null. Of course this may mean
-    that you take as zero something that it should not, and so we allow this value to be modified. Anyway, if a
-    problem depends greatly on such small values, its numerical study may be hazardous.
-<br></li>
-<li>
-    The input <IMG SRC="field_epsilon.png">&nbsp;gives the distance we will move from the singular point in order to
-    chose the first point of the integration for each separatrix. This value is the default one we will use for
-    every separatrix. When we choose the initial point we are making an error which is directly proportional to
-    this number elevated to the power of the <B>Taylor</B> approximation that we have done (greater or equal
-    than input <IMG SRC="field_levelapproximation.png">&nbsp;explained in this same window). You may modify this
-    number but it may be more interesting to modify it for individual slow separatrices and this can be done in the
-    <A HREF="plot_separatrices_window.html">Plot Separatrices</A> window.
-<br></li>
-<li>
-    The integer input <IMG SRC="field_levelapproximation.png">&nbsp;will determine the degree up to which the
-    coefficients of the <B>Taylor</B> approximations of the separatrices will be done in any case. The computations
-    will be done in the mode defined by the Option Set <IMG SRC="field_algnum.png">. If the Option Set
-    <IMG SRC="field_testsep.png">&nbsp;is activated, then <B>P4</B> will test if the <B>Taylor</B> approximation
-    fits properly with the vector field. In case it does not, it will look for one degree more and will repeat
-    the test until the maximum degree (see below) is reached or the test passes.
-<br></li>
-<li>
-    The procedure described above will continue being done in algebraic mode until we reach the value defined in
-    the integer input <IMG SRC="field_numericlevel.png">. From now on, the computation will be done in numeric mode.
-    We remark that <IMG SRC="field_numericlevel.png">&nbsp;must be larger than
-    <img SRC="field_levelapproximation.png">.
-<br></li>
-<li>
-    As this process needs to have an end, the integer input <IMG SRC="field_maximumlevel.png">&nbsp;is the
-    maximum value
-    we will allow for the separatrix. If the test fails up to this level, this will be explained in the report
-    that <B>P4</B> will produce.
-<br></li>
-<li>
-    The integer input <IMG SRC="field_maxlevelweakness.png">&nbsp;will determine the number of
-    <B>Lyapunov</B> constants that we wish to calculate for every <B>focus-center</B> that <B>P4</B> may meet. We
-    know that you may be very interested in getting a large number of them, but you must be careful as the time for
-    computing them increases exponentialy. This can be a good reason to use the option
-    <IMG SRC="button_prepare.png">&nbsp;in the <A HREF="p4_window.html">P4</A>
-    window and then leave the <B>REDUCE/MAPLE</B> program running in batch mode.
-<br></li>
-<li>
-    In the case you have selected to study all the singular points (or just the infinite ones) in the
-    <A HREF="p4_window.html">P4</A> window, you will be asked to enter
-    the values of the powers <IMG SRC="field_p.png">&nbsp;and <img SRC="field_q.png">&nbsp;which will define the
-    <B>Poincare-Lyapunov Compactification</B>. By default these two numbers are <B>1</B>, and this leads
-    to the standard <B>Poincare Compactification</B>.
-<br></li>
-<li>
-    In the case you have selected to study only one singular point in the
-    <A HREF="p4_window.html">P4</A> window, you will be asked to enter
-    the coordinates of that point in the inputs <IMG SRC="field_x0.png">&nbsp;and <IMG SRC="field_y0.png">.
-    Be sure to introduce a real singular point.  If you introduce parameters in the
-    <a href="vf_window.html">Vector Field</a> window, you may use these parameters in the (x0,y0) fields as well.
-<br></li>
-</ul>
+    <FONT SIZE=+1>
 
-<br><br><A HREF="p4.html"><IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
-<A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A></FONT>
-<BR><BR><BR><BR></BODY>
+        <ul>
+            <li>
+                The Option Set
+                <IMG SRC="field_algnum.png">&nbsp;will toggle between the two options showed here. In <i>Algebraic</i> mode some computation will be
+                done in algebraic mode. These computations are the search of singular points (finite and infinite), and the
+                first terms of the
+                <B>Taylor</B> approximations of the separatrices. In <i>Numeric</i> mode, everything is done in numerics. You will need
+                to use the <i>Numeric</i> mode if the degree of the Polynomial Differential System is high and it has many
+                coefficients. This is somehow subjective, and the fact is that you will simply need to toggle to <i>Numeric</i>                when you have already tried a system in the <i>Algebraic</i> mode and the program has collapsed.
+            </li>
+            <li>
+                The Option Set
+                <IMG SRC="field_testsep.png">&nbsp;will decide whether
+                <B>P4</B> tests every
+                <B>Taylor</B> approximation it has found, so it enters in a self-controlled procedure for improving it or not. Normally
+                it is recommended to use this option, but if you see a concrete system where a separatrix is hard to deal
+                with and you are not specially interested in it, you may deactivate this option.
+            </li>
+            <li>
+                The input
+                <IMG SRC="field_accuracy.png">&nbsp;gives the value (negative power of 10) such that we will consider any number below it (in module) as
+                0. In any numeric program you need to define such a number so to avoid that a rounding error may produce
+                a variable being different from 0 when it should be null. Of course this may mean that you take as zero something
+                that it should not, and so we allow this value to be modified. Anyway, if a problem depends greatly on such
+                small values, its numerical study may be hazardous.
+            </li>
+            <li>
+                The input <img src="field_precision.png">&nbsp;gives the number of digits used in every computation. If 0 is selected, then P4 will use the default double precision. If a different value is selected, computations will be performed using the Multiprecision Format Libraries for C++.
+            </li>
+            <li>
+                The input
+                <IMG SRC="field_epsilon.png">&nbsp;gives the distance we will move from the singular point in order to chose the first point of the integration
+                for each separatrix. This value is the default one we will use for every separatrix. When we choose the initial
+                point we are making an error which is directly proportional to this number elevated to the power of the
+                <B>Taylor</B> approximation that we have done (greater or equal than input
+                <IMG SRC="field_levelapproximation.png">&nbsp;explained in this same window). You may modify this number but it may be more interesting to modify
+                it for individual slow separatrices and this can be done in the
+                <A HREF="plot_separatrices_window.html">Plot Separatrices</A> window.
+            </li>
+            <li>
+                The integer input
+                <IMG SRC="field_levelapproximation.png">&nbsp;will determine the degree up to which the coefficients of the
+                <B>Taylor</B> approximations of the separatrices will be done in any case. The computations will be done in the mode defined
+                by the Option Set
+                <IMG SRC="field_algnum.png">. If the Option Set
+                <IMG SRC="field_testsep.png">&nbsp;is activated, then
+                <B>P4</B> will test if the
+                <B>Taylor</B> approximation fits properly with the vector field. In case it does not, it will look for one degree more
+                and will repeat the test until the maximum degree (see below) is reached or the test passes.
+            </li>
+            <li>
+                The procedure described above will continue being done in algebraic mode until we reach the value defined in the integer
+                input
+                <IMG SRC="field_numericlevel.png">. From now on, the computation will be done in numeric mode. We remark that
+                <IMG SRC="field_numericlevel.png">&nbsp;must be larger than
+                <img SRC="field_levelapproximation.png">.
+            </li>
+            <li>
+                As this process needs to have an end, the integer input
+                <IMG SRC="field_maximumlevel.png">&nbsp;is the maximum value we will allow for the separatrix. If the test fails up to this level, this will
+                be explained in the report that
+                <B>P4</B> will produce.
+            </li>
+            <li>
+                The integer input
+                <IMG SRC="field_maxlevelweakness.png">&nbsp;will determine the number of
+                <B>Lyapunov</B> constants that we wish to calculate for every
+                <B>focus-center</B> that
+                <B>P4</B> may meet. We know that you may be very interested in getting a large number of them, but you must be careful
+                as the time for computing them increases exponentialy. This can be a good reason to use the option
+                <IMG SRC="button_prepare.png">&nbsp;in the
+                <A HREF="p4_window.html">P4</A> window and then leave the
+                <B><!--REDUCE/-->MAPLE</B> program running in batch mode.
+            </li>
+            <li>
+                In the case you have selected to study all the singular points (or just the infinite ones) in the
+                <A HREF="p4_window.html">P4</A> window, you will be asked to enter the values of the powers
+                <IMG SRC="field_p.png">&nbsp;and <img SRC="field_q.png">&nbsp;which will define the
+                <B>Poincare-Lyapunov Compactification</B>. By default these two numbers are
+                <B>1</B>, and this leads to the standard
+                <B>Poincare Compactification</B>.
+            </li>
+            <li>
+                In the case you have selected to study only one singular point in the
+                <A HREF="p4_window.html">P4</A> window, you will be asked to enter the coordinates of that point in the inputs
+                <IMG SRC="field_x0.png">&nbsp;and
+                <IMG SRC="field_y0.png">. Be sure to introduce a real singular point. If you introduce parameters in the
+                <a href="vf_window.html">Vector Field</a> window, you may use these parameters in the (x0,y0) fields as well.
+            </li>
+        </ul>
+
+        <br><br>
+        <A HREF="p4.html">
+            <IMG SRC="arrow1.png" border=0>&nbsp;Back to the main page</A>
+        <A HREF="p4_windows.html"><img SRC="arrow.png" border=0>&nbsp;Back to the windows page</A>
+    </FONT>
+    <BR>
+    <BR>
+    <BR>
+    <BR>
+</BODY>
+
 </HTML>
