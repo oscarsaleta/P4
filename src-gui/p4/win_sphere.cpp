@@ -2119,7 +2119,7 @@ void QWinSphere::printCurve(void)
     if (VFResults.curve_points != nullptr) {
         comment = "Printing Greatest common factor:";
         print_comment(comment);
-        draw_curve(this, VFResults.curve_points, CSING, 1);
+        draw_curve(this, VFResults.curve_points, CCURV, 1);
     }
 }
 
