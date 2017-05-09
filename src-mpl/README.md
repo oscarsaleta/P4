@@ -1,7 +1,7 @@
 <!--
     This file is part of P4 
 
-    Copyright (C) 1996-2016  J.C. Artés, P. De Maesschalck, F. Dumortier, 
+    Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier, 
                             C. Herssens, J. Llibre, O. Saleta, J. Torregrosa 
 
     P4 is free software: you can redistribute it and/or modify 
