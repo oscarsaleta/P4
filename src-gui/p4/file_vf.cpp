@@ -1923,7 +1923,6 @@ bool QInputVF::prepareGcf(struct term2 *f, double y1, double y2, int precision,
     fprintf(fp, "user_x2 := %g:\n", (float)1.0);
     fprintf(fp, "user_y1 := %g:\n", (float)y1);
     fprintf(fp, "user_y2 := %g:\n", (float)y2);
-
     fprintf(fp, "u := %s:\n", "x");
     fprintf(fp, "v := %s:\n", "y");
     fprintf(fp, "user_f := ");
@@ -2036,7 +2035,6 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
     fprintf(fp, "user_x2 := %g:\n", (float)1.0);
     fprintf(fp, "user_y1 := %g:\n", (float)theta1);
     fprintf(fp, "user_y2 := %g:\n", (float)theta2);
-
     fprintf(fp, "u := %s:\n", "cos(y)");
     fprintf(fp, "v := %s:\n", "sin(y)");
     fprintf(fp, "user_f := ");
@@ -2149,7 +2147,6 @@ bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
     fprintf(fp, "user_x2 := %g:\n", (float)1.0);
     fprintf(fp, "user_y1 := %g:\n", (float)0.0);
     fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
-
     fprintf(fp, "u := %s:\n", "x*cos(y)");
     fprintf(fp, "v := %s:\n", "x*sin(y)");
     fprintf(fp, "user_f := ");
@@ -2292,7 +2289,6 @@ bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
     fprintf(fp, "user_x2 := %g:\n", (float)1.0);
     fprintf(fp, "user_y1 := %g:\n", (float)y1);
     fprintf(fp, "user_y2 := %g:\n", (float)y2);
-
     fprintf(fp, "u := %s:\n", "x");
     fprintf(fp, "v := %s:\n", "y");
     fprintf(fp, "user_f := ");
@@ -2364,7 +2360,6 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
     fprintf(fp, "user_x2 := %g:\n", (float)1.0);
     fprintf(fp, "user_y1 := %g:\n", (float)theta1);
     fprintf(fp, "user_y2 := %g:\n", (float)theta2);
-
     fprintf(fp, "u := %s:\n", "cos(y)");
     fprintf(fp, "v := %s:\n", "sin(y)");
     fprintf(fp, "user_f := ");
@@ -2440,7 +2435,6 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
     fprintf(fp, "user_x2 := %g:\n", (float)1.0);
     fprintf(fp, "user_y1 := %g:\n", (float)0.0);
     fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
-
     fprintf(fp, "u := %s:\n", "x*cos(y)");
     fprintf(fp, "v := %s:\n", "x*sin(y)");
     fprintf(fp, "user_f := ");
