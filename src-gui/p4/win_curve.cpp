@@ -28,8 +28,8 @@
 #include <QMessageBox>
 
 QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
-    mainSphere_(sp), plotwnd_(plt)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
+      plotwnd_(plt)
 {
     edt_curve_ = new QLineEdit("", this);
     QLabel *lbl0 = new QLabel("Curve: ", this);
@@ -61,7 +61,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dots_->setToolTip(
         "Plot individual points of the curve of singularities");
     btn_dashes_->setToolTip("Connect points of the curve of singularities with "
-                           "small line segments");
+                            "small line segments");
     edt_points_->setToolTip("Number of points");
     edt_precis_->setToolTip("Required precision");
     edt_memory_->setToolTip(
@@ -109,7 +109,8 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     QObject::connect(btn_evaluate_, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
     QObject::connect(btn_plot_, SIGNAL(clicked()), this, SLOT(onbtn_plot()));
-    QObject::connect(btn_delete_, SIGNAL(clicked()), this, SLOT(onbtn_delete()));
+    QObject::connect(btn_delete_, SIGNAL(clicked()), this,
+                     SLOT(onbtn_delete()));
 
     // finishing
 
@@ -262,7 +263,7 @@ void QCurveDlg::finishCurveEvaluation(void)
     if (btn_plot_->isEnabled() == true)
         return; // not busy??
 
-    result = evalCurveContinue(evaluating_precision_,evaluating_points_);
+    result = evalCurveContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
         btn_plot_->setEnabled(false);
