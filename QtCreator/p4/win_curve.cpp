@@ -68,6 +68,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
         "Maximum amount of memory (in kilobytes) spent on plotting the curve");
     btn_evaluate->setToolTip("Evaluate singular points of plynomial curve");
     btn_plot->setToolTip("Plot curve (using symbolic manipulator)");
+    btn_delete->setToolTip("Delete curve");
 #endif
 
     // layout
@@ -124,6 +125,13 @@ void QCurveDlg::Reset(void)
 
     buf.sprintf("%d", DEFAULT_CURVEMEMORY);
     edt_memory->setText(buf);
+
+    btn_evaluate->setEnabled(true);
+    btn_plot->setEnabled(false);
+    if (VFResults.gcf != nullptr)
+        btn_delete->setEnabled(false);
+    else
+        btn_delete->setEnabled(true);
 
     if (VFResults.config_dashes)
         btn_dashes->toggle();
