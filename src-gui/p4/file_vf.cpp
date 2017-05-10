@@ -1662,6 +1662,8 @@ void QInputVF::createProcessWindow(void)
     outputWindow_ = new QWidget(nullptr);
     outputWindow_->setWindowTitle("Output window");
     outputWindow_->resize(530, 344);
+    if (p4smallicon!=nullptr)
+        outputWindow_->setWindowIcon(*p4smallicon);
 
     QVBoxLayout *vLayout = new QVBoxLayout(outputWindow_);
     vLayout->setSpacing(3);
