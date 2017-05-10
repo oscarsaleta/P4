@@ -43,6 +43,9 @@ class QInputVF : public QObject
 {
     Q_OBJECT
   public:
+    QInputVF();
+    ~QInputVF();
+
     QString filename;
 
     int symbolicpackage; // 0 for reduce, 1 for maple
@@ -66,13 +69,14 @@ class QInputVF : public QObject
     QString ydot;
     QString gcf;
     QString curve;
-    QString EvalFile;
-    QString EvalFile2;
+    QString evalFile_;
+    QString evalFile2_;
 
-    QProcess *EvalProcess;
-    QTextEdit *ProcessText;
-    QPushButton *ProcessButton;
-    QPushButton *ProcessClearButton;
+    QWidget *outputWindow_;
+    QProcess *evalProcess_;
+    QTextEdit *processText_;
+    QPushButton *terminateProcessButton_;
+    QPushButton *clearProcessButton_;
 
     int numparams;
     QString parlabel[MAXNUMPARAMS];
@@ -88,9 +92,6 @@ class QInputVF : public QObject
     QString processError; // only relevant when processfailed=true
     QGcfDlg *gcfDlg;
     QCurveDlg *curveDlg;
-
-  public:
-    QInputVF();
 
     QString getfilename(void) const;            // filename.inp
     QString getbarefilename(void) const;        // filename
@@ -148,7 +149,7 @@ class QInputVF : public QObject
   public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);
-    void ReadProcessStdout(void);
+    void readProcessStdout(void);
     void onTerminateButton(void);
     void onClearButton(void);
     void finishGcfEvaluation(void);
