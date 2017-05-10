@@ -609,4 +609,4 @@ void QFindDlg::UpdateDlgData(void)
 
 void QFindDlg::Signal_Evaluating(void) { btn_eval->setEnabled(false); }
 
-void QFindDlg::Signal_Evaluated(void) { btn_eval->setEnabled(true); }
+void QFindDlg::signalEvaluated(void) { btn_eval->setEnabled(true); }

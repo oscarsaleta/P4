@@ -234,13 +234,13 @@ void QPlotWnd::Signal_Evaluating(void)
         ZoomWindows[i]->Signal_Evaluating();
 }
 
-void QPlotWnd::Signal_Evaluated(void)
+void QPlotWnd::signalEvaluated(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
     for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->Signal_Evaluated();
+        ZoomWindows[i]->signalEvaluated();
 }
 
 void QPlotWnd::OnBtnClose(void)

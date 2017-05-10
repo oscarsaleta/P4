@@ -80,7 +80,7 @@ class QStartDlg : public QWidget
 
   public:
     void Signal_Evaluating(void);
-    void Signal_Evaluated(void);
+    void signalEvaluated(void);
     void Signal_Changed(void);
     void Signal_Loaded(void);
     void Signal_Saved(void);

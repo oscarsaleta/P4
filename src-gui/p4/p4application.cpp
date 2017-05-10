@@ -71,7 +71,7 @@ void QP4Application::Signal_Changed(void)
     p4app->postEvent(p4startdlg, e);
 }
 
-void QP4Application::Signal_Evaluated(int exitCode)
+void QP4Application::signalEvaluated(int exitCode)
 {
     ThisVF->evaluated = true;
     ThisVF->evaluating = false;

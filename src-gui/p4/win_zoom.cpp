@@ -105,7 +105,7 @@ void QZoomWnd::Signal_Evaluating(void)
     sphere->Signal_Evaluating();
 }
 
-void QZoomWnd::Signal_Evaluated(void)
+void QZoomWnd::signalEvaluated(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 

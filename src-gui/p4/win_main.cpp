@@ -340,7 +340,7 @@ void QStartDlg::Signal_Evaluating(void)
         Plot_Window->Signal_Evaluating();
 }
 
-void QStartDlg::Signal_Evaluated(void)
+void QStartDlg::signalEvaluated(void)
 {
     // enable view button, disable plot button:
 
@@ -403,7 +403,7 @@ void QStartDlg::Signal_Evaluated(void)
     // Transfer signal to Find_Window:
 
     if (Find_Window != nullptr) {
-        Find_Window->Signal_Evaluated();
+        Find_Window->signalEvaluated();
     }
 
     // Transfer signal to Plot_Window:
@@ -419,7 +419,7 @@ void QStartDlg::Signal_Evaluated(void)
                 "Please check the input-vector field and parameters!\n");
         }
         VFResults.setupCoordinateTransformations();
-        Plot_Window->Signal_Evaluated();
+        Plot_Window->signalEvaluated();
     }
 
     // the vector field may be changed during evaluation.  In that
@@ -653,7 +653,7 @@ void QStartDlg::customEvent(QEvent *e)
         Signal_Evaluating();
         break;
     case TYPE_SIGNAL_EVALUATED:
-        Signal_Evaluated();
+        signalEvaluated();
         break;
     case TYPE_SIGNAL_CHANGED:
         Signal_Changed();

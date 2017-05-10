@@ -83,7 +83,7 @@ class QPlotWnd : public QMainWindow
 
   public slots:
     void Signal_Evaluating(void);
-    void Signal_Evaluated(void);
+    void signalEvaluated(void);
     void Signal_Changed(void);
 
     void OnBtnClose(void);

@@ -80,7 +80,7 @@ class QFindDlg : public QWidget
     void UpdateDlgData(void);
 
     void Signal_Evaluating(void);
-    void Signal_Evaluated(void);
+    void signalEvaluated(void);
 
     void OnBtnParams(void);
     void OnBtnVf(void);
