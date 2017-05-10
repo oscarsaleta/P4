@@ -89,7 +89,7 @@ class QInputVF : public QObject
     bool evaluatinggcf; // true when evaluation is of GCF kind
     bool evaluatingCurve;
     bool processfailed;   // true when process failed;
-    QString processError; // only relevant when processfailed=true
+    QString processError_; // only relevant when processfailed=true
     QGcfDlg *gcfDlg;
     QCurveDlg *curveDlg;
 

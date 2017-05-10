@@ -1267,7 +1267,7 @@ void QInputVF::evaluate(void)
         proc->setWorkingDirectory(QDir::currentPath());
 
         connect(proc, SIGNAL(finished(int)), p4app, SLOT(signalEvaluated(int)));
-        connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), p4app,
+        connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
@@ -1388,19 +1388,19 @@ void QInputVF::catchProcessError(QProcess::ProcessError prerr)
     processfailed = true;
     switch (prerr) {
     case QProcess::FailedToStart:
-        processError = "Failed to start";
+        processError_ = "Failed to start";
         break;
     case QProcess::Crashed:
-        processError = "Crash";
+        processError_ = "Crash";
         break;
     case QProcess::Timedout:
-        processError = "Time-out";
+        processError_ = "Time-out";
         break;
     case QProcess::WriteError:
     case QProcess::ReadError:
     case QProcess::UnknownError:
     default:
-        processError = "Unknown error";
+        processError_ = "Unknown error";
         break;
     }
 }
@@ -1442,13 +1442,13 @@ void QInputVF::finishEvaluation(int exitCode)
                 else {
                     buf.sprintf("The process stopped abnormally (%d : ",
                                 evalProcess_->exitCode());
-                    buf += processError;
+                    buf += processError_;
                     buf += ")\n";
                 }
             }
         } else {
             if (processfailed)
-                buf = "The following error occured: " + processError + "\n";
+                buf = "The following error occured: " + processError_ + "\n";
             else
                 buf = "";
         }
@@ -1641,7 +1641,7 @@ void QInputVF::onTerminateButton(void)
             buf = "Kill signal sent to process.\n";
             processText_->append(buf);
             processfailed = true;
-            processError = "Terminated by user";
+            processError_ = "Terminated by user";
         }
     }
 }
