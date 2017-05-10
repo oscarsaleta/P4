@@ -58,7 +58,7 @@ class QSettingsDlg : public QDialog
     void BrowseForExistingPathOrFile(QLineEdit *, QString, bool);
 
   public slots:
-    void OnOk(void);
+    void onOk(void);
     void OnCancel(void);
     void OnReset(void);
     void OnBrowseBase(void);

@@ -79,7 +79,7 @@ class QFindDlg : public QWidget
     void btn_no_toggled(bool);
     void UpdateDlgData(void);
 
-    void Signal_Evaluating(void);
+    void signalEvaluating(void);
     void signalEvaluated(void);
 
     void OnBtnParams(void);

@@ -191,7 +191,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     QObject::connect(btn_temp, SIGNAL(clicked()), this, SLOT(OnBrowseTemp()));
     QObject::connect(btn_maple, SIGNAL(clicked()), this, SLOT(OnBrowseMaple()));
     //QObject::connect(btn_red, SIGNAL(clicked()), this, SLOT(OnBrowseReduce()));
-    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(OnOk()));
+    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(onOk()));
     QObject::connect(btn_reset, SIGNAL(clicked()), this, SLOT(OnReset()));
     QObject::connect(btn_cancel, SIGNAL(clicked()), this, SLOT(OnCancel()));
 
@@ -205,7 +205,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
 
 void QSettingsDlg::OnCancel(void) { done(0); }
 
-void QSettingsDlg::OnOk(void)
+void QSettingsDlg::onOk(void)
 {
     QString s;
 

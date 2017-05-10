@@ -57,11 +57,11 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
 #ifdef DOCK_FINDWINDOW
     QLabel *p4title = new QLabel("Find and Examine Singular Points", this);
-    p4title->setFont(*(p4app->TitleFont));
+    p4title->setFont(*(p4app->titleFont_));
 #endif
 
     // QLabel *symlabel = new QLabel("Symbolic package: ", this);
-    // symlabel->setFont(*(p4app->BoldFont));
+    // symlabel->setFont(*(p4app->boldFont_));
     // btn_maple = new QRadioButton("Maple", this);
     // btn_reduce = new QRadioButton("Reduce", this);
 
@@ -70,19 +70,19 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     //#endif
 
     QLabel *actlabel = new QLabel("File Action:  ", this);
-    actlabel->setFont(*(p4app->BoldFont));
+    actlabel->setFont(*(p4app->boldFont_));
     btn_actionrun = new QRadioButton("Run File", this);
     btn_actionprep = new QRadioButton("Prepare File", this);
 
     QLabel *singpoints = new QLabel("Singular points:  \n\n", this);
-    singpoints->setFont(*(p4app->BoldFont));
+    singpoints->setFont(*(p4app->boldFont_));
     btn_all = new QRadioButton("All ", this);
     btn_fin = new QRadioButton("Finite ", this);
     btn_inf = new QRadioButton("Infinite ", this);
     btn_one = new QRadioButton("One ", this);
 
     QLabel *saveall = new QLabel("Save all information: ", this);
-    saveall->setFont(*(p4app->BoldFont));
+    saveall->setFont(*(p4app->boldFont_));
     btn_yes = new QRadioButton("Yes", this);
     btn_no = new QRadioButton("No", this);
 
@@ -358,7 +358,7 @@ void QFindDlg::btn_all_toggled(bool on)
             ThisVF->typeofstudy = TYPEOFSTUDY_ALL;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
             if (Params_Window != nullptr) {
                 Params_Window->GetDataFromDlg();
@@ -375,7 +375,7 @@ void QFindDlg::btn_fin_toggled(bool on)
             ThisVF->typeofstudy = TYPEOFSTUDY_FIN;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
             if (Params_Window != nullptr) {
                 Params_Window->GetDataFromDlg();
@@ -392,7 +392,7 @@ void QFindDlg::btn_inf_toggled(bool on)
             ThisVF->typeofstudy = TYPEOFSTUDY_INF;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
             if (Params_Window != nullptr) {
                 Params_Window->GetDataFromDlg();
@@ -409,7 +409,7 @@ void QFindDlg::btn_one_toggled(bool on)
             ThisVF->typeofstudy = TYPEOFSTUDY_ONE;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
             if (Params_Window != nullptr) {
                 Params_Window->GetDataFromDlg();
@@ -482,7 +482,7 @@ void QFindDlg::OnBtnLoad(void)
         UpdateDlgData();
         if (ThisVF->changed == false) {
             ThisVF->changed = true;
-            p4app->Signal_Changed();
+            p4app->signalChanged();
         }
 
         // then, we signal that the vector field is unchanged
@@ -490,7 +490,7 @@ void QFindDlg::OnBtnLoad(void)
 
         ThisVF->changed = false;
         ThisVF->evaluated = oldeval;
-        p4app->Signal_Loaded();
+        p4app->signalLoaded();
     }
 }
 
@@ -566,7 +566,7 @@ void QFindDlg::OnBtnEval(void)
         ThisVF->evaluated = false;
         ThisVF->evaluating = true;
 
-        Signal_Evaluating();
+        signalEvaluating();
         ThisVF->evaluate();
         //      RunTask( &EvalVF );
     }
@@ -607,6 +607,6 @@ void QFindDlg::UpdateDlgData(void)
     }
 }
 
-void QFindDlg::Signal_Evaluating(void) { btn_eval->setEnabled(false); }
+void QFindDlg::signalEvaluating(void) { btn_eval->setEnabled(false); }
 
 void QFindDlg::signalEvaluated(void) { btn_eval->setEnabled(true); }

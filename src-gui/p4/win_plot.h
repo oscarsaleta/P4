@@ -82,9 +82,9 @@ class QPlotWnd : public QMainWindow
     QViewDlg *ViewParams_Window;
 
   public slots:
-    void Signal_Evaluating(void);
+    void signalEvaluating(void);
     void signalEvaluated(void);
-    void Signal_Changed(void);
+    void signalChanged(void);
 
     void OnBtnClose(void);
     void OnBtnRefresh(void);

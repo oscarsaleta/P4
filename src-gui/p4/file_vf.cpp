@@ -1672,7 +1672,7 @@ void QInputVF::createProcessWindow(void)
     processText_ = new QTextEdit(outputWindow_);
     processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
     processText_->setWordWrapMode(QTextOption::WrapAnywhere);
-    processText_->setFont(*(p4app->CourierFont));
+    processText_->setFont(*(p4app->courierFont_));
     processText_->setLineWrapColumnOrWidth(82);
     processText_->setReadOnly(true);
     processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1682,7 +1682,7 @@ void QInputVF::createProcessWindow(void)
     hLayout->setSpacing(6);
 
     terminateProcessButton_ = new QPushButton("Terminate");
-    terminateProcessButton_->setFont(*(p4app->BoldFont));
+    terminateProcessButton_->setFont(*(p4app->boldFont_));
     terminateProcessButton_->setToolTip(
         "Terminates the process.  First tries to send a "
         "safe signal to the process.\nIf this does not "
@@ -1691,7 +1691,7 @@ void QInputVF::createProcessWindow(void)
     hLayout->addWidget(terminateProcessButton_);
 
     clearProcessButton_ = new QPushButton("Clear");
-    clearProcessButton_->setFont((*p4app->BoldFont));
+    clearProcessButton_->setFont((*p4app->boldFont_));
     clearProcessButton_->setToolTip("Clears this window");
     hLayout->addWidget(clearProcessButton_);
 
@@ -1750,11 +1750,11 @@ bool QInputVF::evaluateGcf(void)
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), p4app, 0);
             connect(proc, SIGNAL(finished(int)), p4app,
-                    SLOT(Signal_GcfEvaluated(int)));
+                    SLOT(signalGcfEvaluated(int)));
         } else {
             proc = new QProcess(this);
             connect(proc, SIGNAL(finished(int)), p4app,
-                    SLOT(Signal_GcfEvaluated(int)));
+                    SLOT(signalGcfEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
                     SLOT(cathProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1785,7 +1785,7 @@ bool QInputVF::evaluateGcf(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            p4app->Signal_GcfEvaluated(-1);
+            p4app->signalGcfEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
             return false;
         } else {
@@ -1820,11 +1820,11 @@ bool QInputVF::evaluateGcf(void)
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), p4app, 0);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_GcfEvaluated(int)));
+                SLOT(signalGcfEvaluated(int)));
     } else {
         proc = new QProcess(this);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_GcfEvaluated(int)));
+                SLOT(signalGcfEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
                 SLOT(cathProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1848,7 +1848,7 @@ bool QInputVF::evaluateGcf(void)
         evalProcess_ = nullptr;
         evalFile_ = "";
         evalFile2_ = "";
-        p4app->Signal_GcfEvaluated(-1);
+        p4app->signalGcfEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2220,11 +2220,11 @@ bool QInputVF::evaluateCurve(void)
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), p4app, 0);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_CurveEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
     } else {
         proc = new QProcess(this);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_CurveEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
                 SLOT(cathProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -2248,7 +2248,7 @@ bool QInputVF::evaluateCurve(void)
         evalProcess_ = nullptr;
         evalFile_ = "";
         evalFile2_ = "";
-        p4app->Signal_CurveEvaluated(-1);
+        p4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {

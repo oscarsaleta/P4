@@ -37,26 +37,26 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
 #ifdef DOCK_VFWINDOW
     QLabel *p4title = new QLabel("Specify the vector field:", this);
-    p4title->setFont(*(p4app->TitleFont));
+    p4title->setFont(*(p4app->titleFont_));
 #endif
 
     edt_xprime = new QLineEdit(ThisVF->xdot, this);
     QLabel *xlabel = new QLabel("&x' = ", this);
-    xlabel->setFont(*(p4app->BoldFont));
+    xlabel->setFont(*(p4app->boldFont_));
     xlabel->setBuddy(edt_xprime);
 
     edt_yprime = new QLineEdit(ThisVF->ydot, this);
     QLabel *ylabel = new QLabel("&y' = ", this);
-    ylabel->setFont(*(p4app->BoldFont));
+    ylabel->setFont(*(p4app->boldFont_));
     ylabel->setBuddy(edt_yprime);
 
     edt_gcf = new QLineEdit(ThisVF->gcf, this);
     QLabel *glabel = new QLabel("&Gcf: ", this);
-    glabel->setFont(*(p4app->BoldFont));
+    glabel->setFont(*(p4app->boldFont_));
     glabel->setBuddy(edt_gcf);
 
     QLabel *plabel = new QLabel("Number of Parameters: ", this);
-    plabel->setFont(*(p4app->BoldFont));
+    plabel->setFont(*(p4app->boldFont_));
 
     spin_numparams = new QSpinBox(this);
     spin_numparams->setMinimum(0);
@@ -162,7 +162,7 @@ void QVectorFieldDlg::numParamsChanged(int val)
             ThisVF->numparams = val;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
             if (val > MAXNUMPARAMSSHOWN) {
                 sb_params = new QScrollBar(Qt::Vertical, this);
@@ -187,7 +187,7 @@ void QVectorFieldDlg::numParamsChanged(int val)
         } else {
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
             ThisVF->numparams = val;
         }
@@ -224,7 +224,7 @@ void QVectorFieldDlg::GetDataFromDlg(void)
         ThisVF->gcf = gcf;
         if (ThisVF->changed == false) {
             ThisVF->changed = true;
-            p4app->Signal_Changed();
+            p4app->signalChanged();
         }
     }
     if (params != nullptr) {
@@ -275,7 +275,7 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
     int i;
 
     QLabel *label0 = new QLabel("Enter values for all parameters");
-    label0->setFont(*(p4app->TitleFont));
+    label0->setFont(*(p4app->titleFont_));
 
     datainvalid = false;
     sb_params = sb;
@@ -374,7 +374,7 @@ bool QVFParams::GetDataFromDlg(void)
     if (changed) {
         if (ThisVF->changed == false) {
             ThisVF->changed = true;
-            p4app->Signal_Changed();
+            p4app->signalChanged();
         }
     }
     return true;

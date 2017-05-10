@@ -96,8 +96,8 @@ class QWinSphere : public QWidget
     bool getChartPos(int, double, double, double *);
     void adjustToNewSize(void);
 
-    void Signal_Evaluating(void);
-    void Signal_Changed(void);
+    void signalEvaluating(void);
+    void signalChanged(void);
     void plotPoint(struct saddle *);
     void plotPoint(struct node *);
     void plotPoint(struct semi_elementary *);

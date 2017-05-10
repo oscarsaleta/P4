@@ -2617,7 +2617,7 @@ void QWinSphere::finishDrawing()
     }
 }
 
-void QWinSphere::Signal_Evaluating(void)
+void QWinSphere::signalEvaluating(void)
 {
     /*
         QPalette palette;
@@ -2627,7 +2627,7 @@ void QWinSphere::Signal_Evaluating(void)
     */
 }
 
-void QWinSphere::Signal_Changed(void)
+void QWinSphere::signalChanged(void)
 {
     /*
         QPalette palette;

@@ -37,21 +37,21 @@ class QP4Application : public QApplication
   public:
     QP4Application(int &argc, char **argv);
 
-    QFont *StandardFont;
-    QFont *BoldFont;
-    QFont *CourierFont;
-    QFont *BoldCourierFont;
-    QFont *TitleFont;
-    QFont *LegendFont;
+    QFont *standardFont_;
+    QFont *boldFont_;
+    QFont *courierFont_;
+    QFont *boldCourierFont_;
+    QFont *titleFont_;
+    QFont *legendFont_;
 
   public slots:
-    void Signal_Evaluating(void);
+    void signalEvaluating(void);
     void signalEvaluated(int);
-    void Signal_GcfEvaluated(int);
-    void Signal_CurveEvaluated(int);
-    void Signal_Changed(void);
-    void Signal_Loaded(void);
-    void Signal_Saved(void);
+    void signalGcfEvaluated(int);
+    void signalCurveEvaluated(int);
+    void signalChanged(void);
+    void signalLoaded(void);
+    void signalSaved(void);
     void cathProcessError(QProcess::ProcessError);
 };
 

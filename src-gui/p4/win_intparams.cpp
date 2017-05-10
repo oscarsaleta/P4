@@ -34,37 +34,37 @@ QIntParamsDlg::QIntParamsDlg()
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *kindlabel = new QLabel("Vector Field: ", this);
-    kindlabel->setFont(*(p4app->BoldFont));
+    kindlabel->setFont(*(p4app->boldFont_));
     btn_org = new QRadioButton("Original", this);
     btn_red = new QRadioButton("Reduced", this);
 
     QLabel *typelabel = new QLabel("Appearance: ", this);
-    typelabel->setFont(*(p4app->BoldFont));
+    typelabel->setFont(*(p4app->boldFont_));
     btn_dots = new QRadioButton("Dots", this);
     btn_dashes = new QRadioButton("Dashes", this);
 
     lbl_stepsize = new QLabel("Step Size:", this);
-    lbl_stepsize->setFont(*(p4app->BoldFont));
+    lbl_stepsize->setFont(*(p4app->boldFont_));
     edt_stepsize = new QLineEdit("0.01", this);
 
     lbl0_curstep = new QLabel("Current Step Size:", this);
-    lbl0_curstep->setFont(*(p4app->BoldFont));
+    lbl0_curstep->setFont(*(p4app->boldFont_));
     lbl_curstep = new QLabel("0.01", this);
 
     lbl_maxstep = new QLabel("Max Step Size:", this);
-    lbl_maxstep->setFont(*(p4app->BoldFont));
+    lbl_maxstep->setFont(*(p4app->boldFont_));
     edt_maxstep = new QLineEdit("0.1", this);
 
     lbl_minstep = new QLabel("Min Step Size:", this);
-    lbl_minstep->setFont(*(p4app->BoldFont));
+    lbl_minstep->setFont(*(p4app->boldFont_));
     edt_minstep = new QLineEdit("1e-06", this);
 
     lbl_tolerance = new QLabel("Tolerance:", this);
-    lbl_tolerance->setFont(*(p4app->BoldFont));
+    lbl_tolerance->setFont(*(p4app->boldFont_));
     edt_tolerance = new QLineEdit("1e-06", this);
 
     QLabel *lbl_numpoints = new QLabel("# Points:", this);
-    lbl_numpoints->setFont(*(p4app->BoldFont));
+    lbl_numpoints->setFont(*(p4app->boldFont_));
     spin_numpoints = new QSpinBox(this);
     spin_numpoints->setMinimum(MIN_INTPOINTS);
     spin_numpoints->setMaximum(MAX_INTPOINTS);
