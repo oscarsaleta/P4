@@ -309,14 +309,8 @@ void QStartDlg::OnQuit(void)
     }
 
     if (ThisVF != nullptr) {
-        if (ThisVF->ProcessText != nullptr) {
-            if (ThisVF->ProcessButton != nullptr) {
-                delete ThisVF->ProcessButton;
-                ThisVF->ProcessButton = nullptr;
-            }
-            delete ThisVF->ProcessText;
-            ThisVF->ProcessText = nullptr;
-        }
+        delete ThisVF;
+        ThisVF = nullptr;
     }
 
     close();
