@@ -52,7 +52,7 @@ class QP4Application : public QApplication
     void signalChanged(void);
     void signalLoaded(void);
     void signalSaved(void);
-    void cathProcessError(QProcess::ProcessError);
+    void catchProcessError(QProcess::ProcessError);
 };
 
 extern QP4Application *p4app;

@@ -118,7 +118,7 @@ void QP4Application::signalEvaluating(void)
     p4app->postEvent(p4startdlg, e);
 }
 
-void QP4Application::cathProcessError(QProcess::ProcessError qperr)
+void QP4Application::catchProcessError(QProcess::ProcessError qperr)
 {
     ThisVF->catchProcessError(qperr);
 }
