@@ -28,32 +28,32 @@ QP4Application *p4app = nullptr;
 QP4Application::QP4Application(int &argc, char **argv)
     : QApplication(argc, argv)
 {
-    StandardFont = new QFont();
-    StandardFont->setPointSize(StandardFont->pointSize() + FONTSIZE);
-    setFont(*StandardFont);
+    standardFont_ = new QFont();
+    standardFont_->setPointSize(standardFont_->pointSize() + FONTSIZE);
+    setFont(*standardFont_);
 
-    BoldFont = new QFont();
-    BoldFont->setWeight(QFont::Bold);
+    boldFont_ = new QFont();
+    boldFont_->setWeight(QFont::Bold);
 
-    TitleFont = new QFont();
-    TitleFont->setPointSize(TitleFont->pointSize() + TITLEFONTSIZE);
-    TitleFont->setWeight(QFont::Bold);
+    titleFont_ = new QFont();
+    titleFont_->setPointSize(titleFont_->pointSize() + TITLEFONTSIZE);
+    titleFont_->setWeight(QFont::Bold);
 
-    CourierFont = new QFont;
-    CourierFont->setFamily("Courier");
-    CourierFont->setFixedPitch(true);
-    CourierFont->setPointSize(CourierFont->pointSize() + FONTSIZE);
+    courierFont_ = new QFont;
+    courierFont_->setFamily("Courier");
+    courierFont_->setFixedPitch(true);
+    courierFont_->setPointSize(courierFont_->pointSize() + FONTSIZE);
 
-    BoldCourierFont = new QFont;
-    BoldCourierFont->setFamily("Courier");
-    BoldCourierFont->setFixedPitch(true);
-    BoldCourierFont->setWeight(QFont::Bold);
-    BoldCourierFont->setPointSize(BoldCourierFont->pointSize() + FONTSIZE);
+    boldCourierFont_ = new QFont;
+    boldCourierFont_->setFamily("Courier");
+    boldCourierFont_->setFixedPitch(true);
+    boldCourierFont_->setWeight(QFont::Bold);
+    boldCourierFont_->setPointSize(boldCourierFont_->pointSize() + FONTSIZE);
 
-    LegendFont = new QFont;
-    LegendFont->setFamily("Courier");
-    LegendFont->setFixedPitch(true);
-    LegendFont->setPointSize(LegendFont->pointSize() + LEGENDFONTSIZE);
+    legendFont_ = new QFont;
+    legendFont_->setFamily("Courier");
+    legendFont_->setFixedPitch(true);
+    legendFont_->setPointSize(legendFont_->pointSize() + LEGENDFONTSIZE);
 }
 
 // -----------------------------------------------------------------------
@@ -62,7 +62,7 @@ QP4Application::QP4Application(int &argc, char **argv)
 //
 // Following signals may be called from another thread
 
-void QP4Application::Signal_Changed(void)
+void QP4Application::signalChanged(void)
 {
     ThisVF->evaluated = false;
     ThisVF->changed = true;
@@ -71,7 +71,7 @@ void QP4Application::Signal_Changed(void)
     p4app->postEvent(p4startdlg, e);
 }
 
-void QP4Application::Signal_Evaluated(int exitCode)
+void QP4Application::signalEvaluated(int exitCode)
 {
     ThisVF->evaluated = true;
     ThisVF->evaluating = false;
@@ -93,7 +93,7 @@ void QP4Application::Signal_Evaluated(int exitCode)
     }
 }
 
-void QP4Application::Signal_GcfEvaluated(int exitCode)
+void QP4Application::signalGcfEvaluated(int exitCode)
 {
     ThisVF->evaluated = true;
     ThisVF->evaluating = false;
@@ -101,7 +101,7 @@ void QP4Application::Signal_GcfEvaluated(int exitCode)
     ThisVF->finishEvaluation(exitCode);
 }
 
-void QP4Application::Signal_CurveEvaluated(int exitCode)
+void QP4Application::signalCurveEvaluated(int exitCode)
 {
     ThisVF->evaluated = true;
     ThisVF->evaluating = false;
@@ -109,7 +109,7 @@ void QP4Application::Signal_CurveEvaluated(int exitCode)
     ThisVF->finishEvaluation(exitCode);
 }
 
-void QP4Application::Signal_Evaluating(void)
+void QP4Application::signalEvaluating(void)
 {
     ThisVF->evaluating = true;
     ThisVF->evaluated = false;
@@ -118,12 +118,12 @@ void QP4Application::Signal_Evaluating(void)
     p4app->postEvent(p4startdlg, e);
 }
 
-void QP4Application::cathProcessError(QProcess::ProcessError qperr)
+void QP4Application::catchProcessError(QProcess::ProcessError qperr)
 {
     ThisVF->catchProcessError(qperr);
 }
 
-void QP4Application::Signal_Loaded(void)
+void QP4Application::signalLoaded(void)
 {
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr);
     p4app->postEvent(p4startdlg, e);
@@ -140,7 +140,7 @@ void QP4Application::Signal_Loaded(void)
     }
 }
 
-void QP4Application::Signal_Saved(void)
+void QP4Application::signalSaved(void)
 {
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr);
     p4app->postEvent(p4startdlg, e);

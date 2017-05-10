@@ -40,76 +40,76 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *p4title = new QLabel("Find Singular Points Parameters", this);
-    p4title->setFont(*(p4app->TitleFont));
+    p4title->setFont(*(p4app->titleFont_));
 
     QLabel *symlabel = new QLabel("Calculations: ", this);
-    symlabel->setFont(*(p4app->BoldFont));
+    symlabel->setFont(*(p4app->boldFont_));
     btn_alg = new QRadioButton("Algebraic", this);
     btn_num = new QRadioButton("Numeric", this);
 
     QLabel *seplabel = new QLabel("Test Separatrices:  ", this);
-    seplabel->setFont(*(p4app->BoldFont));
+    seplabel->setFont(*(p4app->boldFont_));
     btn_sepyes = new QRadioButton("Yes", this);
     btn_sepno = new QRadioButton("No", this);
 
     QLabel *lbl_precis = new QLabel("Accuracy:", this);
-    lbl_precis->setFont(*(p4app->BoldFont));
+    lbl_precis->setFont(*(p4app->boldFont_));
     spin_precis = new QSpinBox(this);
     spin_precis->setMinimum(MINPRECISION);
     spin_precis->setMaximum(MAXPRECISION);
 
     QLabel *lbl_precis0 = new QLabel("Precision:", this);
-    lbl_precis0->setFont(*(p4app->BoldFont));
+    lbl_precis0->setFont(*(p4app->boldFont_));
     spin_precis0 = new QSpinBox(this);
     spin_precis0->setMinimum(MINPRECISION0);
     spin_precis0->setMaximum(MAXPRECISION0);
 
     QLabel *lbl_epsilon = new QLabel("Epsilon:", this);
-    lbl_epsilon->setFont(*(p4app->BoldFont));
+    lbl_epsilon->setFont(*(p4app->boldFont_));
     edt_epsilon = new QLineEdit(ThisVF->epsilon, this);
 
     QLabel *lbl_level = new QLabel("Level of Approximation:", this);
-    lbl_level->setFont(*(p4app->BoldFont));
+    lbl_level->setFont(*(p4app->boldFont_));
     spin_level = new QSpinBox(this);
     spin_level->setMinimum(MINLEVEL);
     spin_level->setMaximum(MAXLEVEL);
 
     QLabel *lbl_numlevel = new QLabel("Numeric level:", this);
-    lbl_numlevel->setFont(*(p4app->BoldFont));
+    lbl_numlevel->setFont(*(p4app->boldFont_));
     spin_numlevel = new QSpinBox(this);
     spin_numlevel->setMinimum(MINNUMLEVEL);
     spin_numlevel->setMaximum(MAXNUMLEVEL);
 
     QLabel *lbl_maxlevel = new QLabel("Maximum level:", this);
-    lbl_maxlevel->setFont(*(p4app->BoldFont));
+    lbl_maxlevel->setFont(*(p4app->boldFont_));
     spin_maxlevel = new QSpinBox(this);
     spin_maxlevel->setMinimum(MINMAXLEVEL);
     spin_maxlevel->setMaximum(MAXMAXLEVEL);
 
     QLabel *lbl_weakness = new QLabel("Maximum level of weakness:", this);
-    lbl_weakness->setFont(*(p4app->BoldFont));
+    lbl_weakness->setFont(*(p4app->boldFont_));
     spin_weakness = new QSpinBox(this);
     spin_weakness->setMinimum(MINWEAKNESS);
     spin_weakness->setMaximum(MAXWEAKNESS);
 
     lbl_p = new QLabel("p:", this);
-    lbl_p->setFont(*(p4app->BoldFont));
+    lbl_p->setFont(*(p4app->boldFont_));
     spin_p = new QSpinBox(this);
     spin_p->setMinimum(MINP);
     spin_p->setMaximum(MAXP);
 
     lbl_q = new QLabel("q:", this);
-    lbl_q->setFont(*(p4app->BoldFont));
+    lbl_q->setFont(*(p4app->boldFont_));
     spin_q = new QSpinBox(this);
     spin_q->setMinimum(MINP);
     spin_q->setMaximum(MAXP);
 
     lbl_x0 = new QLabel("x0:", this);
-    lbl_x0->setFont(*(p4app->BoldFont));
+    lbl_x0->setFont(*(p4app->boldFont_));
     edt_x0 = new QLineEdit("", this);
 
     lbl_y0 = new QLabel("y0:", this);
-    lbl_y0->setFont(*(p4app->BoldFont));
+    lbl_y0->setFont(*(p4app->boldFont_));
     edt_y0 = new QLineEdit("", this);
 
 #ifdef TOOLTIPS
@@ -272,7 +272,7 @@ void QParamsDlg::btn_alg_toggled(bool on)
             ThisVF->numeric = false;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
         }
     }
@@ -285,7 +285,7 @@ void QParamsDlg::btn_num_toggled(bool on)
             ThisVF->numeric = true;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
         }
     }
@@ -298,7 +298,7 @@ void QParamsDlg::btn_sepyes_toggled(bool on)
             ThisVF->testsep = true;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
         }
     }
@@ -311,7 +311,7 @@ void QParamsDlg::btn_sepno_toggled(bool on)
             ThisVF->testsep = false;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
-                p4app->Signal_Changed();
+                p4app->signalChanged();
             }
         }
     }
@@ -346,7 +346,7 @@ void QParamsDlg::GetDataFromDlg(void)
 
         if (ThisVF->changed == false) {
             ThisVF->changed = true;
-            p4app->Signal_Changed();
+            p4app->signalChanged();
         }
     }
 
@@ -366,7 +366,7 @@ void QParamsDlg::GetDataFromDlg(void)
 
         if (ThisVF->changed == false) {
             ThisVF->changed = true;
-            p4app->Signal_Changed();
+            p4app->signalChanged();
         }
     }
 }
@@ -402,10 +402,10 @@ void QParamsDlg::UpdateDlgData(void)
         edt_x0->setEnabled(true);
         edt_y0->setEnabled(true);
 
-        lbl_x0->setFont(*(p4app->BoldFont));
-        lbl_y0->setFont(*(p4app->BoldFont));
-        lbl_p->setFont(*(p4app->StandardFont));
-        lbl_q->setFont(*(p4app->StandardFont));
+        lbl_x0->setFont(*(p4app->boldFont_));
+        lbl_y0->setFont(*(p4app->boldFont_));
+        lbl_p->setFont(*(p4app->standardFont_));
+        lbl_q->setFont(*(p4app->standardFont_));
     } else {
         spin_p->setValue(ThisVF->p);
         spin_q->setValue(ThisVF->q);
@@ -417,9 +417,9 @@ void QParamsDlg::UpdateDlgData(void)
         edt_x0->setEnabled(false);
         edt_y0->setEnabled(false);
 
-        lbl_p->setFont(*(p4app->BoldFont));
-        lbl_q->setFont(*(p4app->BoldFont));
-        lbl_x0->setFont(*(p4app->StandardFont));
-        lbl_y0->setFont(*(p4app->StandardFont));
+        lbl_p->setFont(*(p4app->boldFont_));
+        lbl_q->setFont(*(p4app->boldFont_));
+        lbl_x0->setFont(*(p4app->standardFont_));
+        lbl_y0->setFont(*(p4app->standardFont_));
     }
 }

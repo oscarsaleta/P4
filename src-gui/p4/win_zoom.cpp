@@ -91,21 +91,21 @@ QZoomWnd::~QZoomWnd()
     sphere = nullptr;
 }
 
-void QZoomWnd::Signal_Changed(void)
+void QZoomWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->Signal_Changed();
+    sphere->signalChanged();
 }
 
-void QZoomWnd::Signal_Evaluating(void)
+void QZoomWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->Signal_Evaluating();
+    sphere->signalEvaluating();
 }
 
-void QZoomWnd::Signal_Evaluated(void)
+void QZoomWnd::signalEvaluated(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 

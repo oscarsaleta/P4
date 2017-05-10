@@ -49,9 +49,9 @@ class QZoomWnd : public QMainWindow
     QWinSphere *sphere; // main sphere
 
   public slots:
-    void Signal_Evaluating(void);
-    void Signal_Evaluated(void);
-    void Signal_Changed(void);
+    void signalEvaluating(void);
+    void signalEvaluated(void);
+    void signalChanged(void);
 
     void OnBtnClose(void);
     void OnBtnRefresh(void);

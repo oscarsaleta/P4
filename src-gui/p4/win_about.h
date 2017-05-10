@@ -40,8 +40,8 @@ class QP4AboutDlg : public QDialog
     QP4AboutDlg(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
   public slots:
-    void OnOk(void);
-    void OnSettings(void);
+    void onOk(void);
+    void onSettings(void);
 };
 
 #endif /* WIN_ABOUT_H */
