@@ -1211,7 +1211,7 @@ void QInputVF::evaluate(void)
         connect(proc, SIGNAL(finished(int)), p4app,
                 SLOT(signalEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
 
@@ -1268,7 +1268,7 @@ void QInputVF::evaluate(void)
 
         connect(proc, SIGNAL(finished(int)), p4app, SLOT(signalEvaluated(int)));
         connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
 
@@ -1348,7 +1348,7 @@ void QInputVF::evaluateCurveTable(void)
         proc->setWorkingDirectory(QDir::currentPath());
 
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
 
@@ -1455,7 +1455,7 @@ void QInputVF::finishEvaluation(int exitCode)
         processText_->append(buf);
     }
     //    }
-    if (processText_ != nullptr) {
+    /*if (processText_ != nullptr) {
         //      processText_->hide();
         if (processText_->isActiveWindow()) {
             if (!evaluatinggcf)
@@ -1465,7 +1465,7 @@ void QInputVF::finishEvaluation(int exitCode)
                     gcfDlg->activateWindow();
             }
         }
-    }
+    }*/
 
     if (evaluatinggcf) {
         finishGcfEvaluation();
@@ -1756,7 +1756,7 @@ bool QInputVF::evaluateGcf(void)
             connect(proc, SIGNAL(finished(int)), p4app,
                     SLOT(signalGcfEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                    SLOT(cathProcessError(QProcess::ProcessError)));
+                    SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
                     SLOT(readProcessStdout()));
         }
@@ -1826,7 +1826,7 @@ bool QInputVF::evaluateGcf(void)
         connect(proc, SIGNAL(finished(int)), p4app,
                 SLOT(signalGcfEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
     }
@@ -2226,7 +2226,7 @@ bool QInputVF::evaluateCurve(void)
         connect(proc, SIGNAL(finished(int)), p4app,
                 SLOT(signalCurveEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
     }
