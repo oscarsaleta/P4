@@ -75,10 +75,10 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 #endif
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
 #ifdef DOCK_VFWINDOW
-    mainLayout->addWidget(p4title);
+    mainLayout_->addWidget(p4title);
 #endif
 
     QHBoxLayout *layout1 = new QHBoxLayout();
@@ -100,14 +100,14 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
     paramLayout = new QHBoxLayout();
 
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(layout2);
-    mainLayout->addLayout(layout22);
-    mainLayout->addLayout(layout3);
-    mainLayout->addLayout(paramLayout);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout22);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(paramLayout);
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
 
     sb_params = nullptr;
     params = nullptr;
@@ -297,21 +297,21 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
 #endif
     }
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    mainLayout->addWidget(label0);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
+    mainLayout_->addWidget(label0);
     for (i = 0; i < currentshownparams; i++) {
         Param_Lines[i] = new QHBoxLayout();
         Param_Lines[i]->addWidget(Param_Names[i]);
         Param_Lines[i]->addWidget(Param_Labels[i]);
         Param_Lines[i]->addWidget(Param_Values[i]);
-        mainLayout->addLayout(Param_Lines[i]);
+        mainLayout_->addLayout(Param_Lines[i]);
     }
 
     for (i = 0; i < currentnumparams; i++) {
         S_Labels[i] = ThisVF->parlabel[i];
         S_Values[i] = ThisVF->parvalue[i];
     }
-    setLayout(mainLayout);
+    setLayout(mainLayout_);
 }
 
 QVFParams::~QVFParams()

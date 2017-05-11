@@ -51,7 +51,7 @@ class QSettingsDlg : public QDialog
     QLabel *lbl_temp;
     QLabel *lbl_maple;
     QLabel *lbl_red;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
   public:
     QSettingsDlg(QWidget *, Qt::WindowFlags);

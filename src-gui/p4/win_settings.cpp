@@ -140,10 +140,10 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
                           "executable automatically");
 #endif
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    mainLayout->addSpacing(4);
-    mainLayout->addWidget(new QLabel(
+    mainLayout_->addSpacing(4);
+    mainLayout_->addWidget(new QLabel(
         "These settings are application-wide and will be saved upon exit.\n"
         "An improper value may lead to failure of evaluating vector fields.\n"
 #ifdef Q_OS_WIN
@@ -152,7 +152,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
 #endif
         ,
         this));
-    mainLayout->addSpacing(4);
+    mainLayout_->addSpacing(4);
 
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(0);
@@ -179,12 +179,12 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     //lay00->addWidget(edt_red, 4, 1);
     //lay00->addWidget(btn_red, 4, 2);
 
-    mainLayout->addLayout(lay00);
-    mainLayout->addSpacing(3);
-    //mainLayout->addSpacing(4);
-    mainLayout->addLayout(buttons);
+    mainLayout_->addLayout(lay00);
+    mainLayout_->addSpacing(3);
+    //mainLayout_->addSpacing(4);
+    mainLayout_->addLayout(buttons);
 
-    setLayout(mainLayout);
+    setLayout(mainLayout_);
 
     QObject::connect(btn_base, SIGNAL(clicked()), this, SLOT(OnBrowseBase()));
     QObject::connect(btn_sum, SIGNAL(clicked()), this, SLOT(OnBrowseSum()));

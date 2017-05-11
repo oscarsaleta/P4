@@ -46,7 +46,7 @@ class QIntParamsDlg : public QWidget
   private:
     bool changed;
     QFindDlg *parent;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     QPushButton *btn_reset;
     QRadioButton *btn_org;

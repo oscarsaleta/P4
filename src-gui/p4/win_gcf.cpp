@@ -31,7 +31,7 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     mainSphere_ = sp;
-    plotwnd = plt;
+    plotwnd_ = plt;
 
     btn_dots = new QRadioButton("Dots", this);
     btn_dashes = new QRadioButton("Dashes", this);
@@ -63,7 +63,7 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addWidget(lbl1);
@@ -83,12 +83,12 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     layout2->addWidget(btn_evaluate);
     layout2->addStretch(0);
 
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(lay00);
-    mainLayout->addLayout(layout2);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(lay00);
+    mainLayout_->addLayout(layout2);
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
 
     // connections
 
@@ -104,7 +104,7 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "GCF Plot");
 }
 
-void QGcfDlg::Reset(void)
+void QGcfDlg::reset(void)
 {
     QString buf;
 

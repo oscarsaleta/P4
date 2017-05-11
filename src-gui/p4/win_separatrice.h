@@ -38,11 +38,11 @@ class QSepDlg : public QWidget
 
   public:
     QSepDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
 
   private:
     QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd;
+    QPlotWnd *plotwnd_;
 
     QPushButton *btn_selectnext;
     QPushButton *btn_intnext;
@@ -51,7 +51,7 @@ class QSepDlg : public QWidget
     QLineEdit *edt_epsilon;
     QLabel *lbl_info[4];
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     bool started;
     bool selected;

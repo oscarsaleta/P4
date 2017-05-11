@@ -45,7 +45,7 @@ class QViewDlg : public QWidget
   private:
     bool changed;
     QFindDlg *parent;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     QRadioButton *btn_sphere;
     QRadioButton *btn_plane;

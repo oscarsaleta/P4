@@ -92,20 +92,20 @@ QIntParamsDlg::QIntParamsDlg()
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QHBoxLayout *kindLayout = new QHBoxLayout();
     kindLayout->addWidget(kindlabel);
     kindLayout->addWidget(btn_org);
     kindLayout->addWidget(btn_red);
 
-    mainLayout->addLayout(kindLayout);
+    mainLayout_->addLayout(kindLayout);
 
     QHBoxLayout *typeLayout = new QHBoxLayout();
     typeLayout->addWidget(typelabel);
     typeLayout->addWidget(btn_dots);
     typeLayout->addWidget(btn_dashes);
-    mainLayout->addLayout(typeLayout);
+    mainLayout_->addLayout(typeLayout);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addWidget(lbl_stepsize);
@@ -142,18 +142,18 @@ QIntParamsDlg::QIntParamsDlg()
     layout8->addWidget(btn_reset);
     layout8->addStretch(1);
 
-    mainLayout->addLayout(layout2);
-    mainLayout->addLayout(layout3);
-    mainLayout->addLayout(layout4);
-    mainLayout->addLayout(layout5);
-    mainLayout->addLayout(layout6);
-    mainLayout->addLayout(layout7);
-    mainLayout->addLayout(layout8);
-    mainLayout->addStretch(0);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(layout5);
+    mainLayout_->addLayout(layout6);
+    mainLayout_->addLayout(layout7);
+    mainLayout_->addLayout(layout8);
+    mainLayout_->addStretch(0);
 
-    //   mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+    //   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
-    setLayout(mainLayout);
+    setLayout(mainLayout_);
 
     QButtonGroup *btngrp1 = new QButtonGroup(this);
     btngrp1->addButton(btn_org);

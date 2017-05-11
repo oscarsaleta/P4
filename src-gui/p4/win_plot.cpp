@@ -369,11 +369,11 @@ void QPlotWnd::configure(void)
     sphere->SetupPlot(); // setup sphere window (define pixel transformations)
     IntParams_Window->UpdateDlgData(); // update data of integration parameters
     ViewParams_Window->UpdateDlgData();
-    Orbits_Window->Reset(); // reset forward/backward buttons to initial state
-    Sep_Window->Reset();
-    LC_Window->Reset();
-    GCF_Window->Reset();
-    Curve_Window->Reset();
+    Orbits_Window->reset(); // reset forward/backward buttons to initial state
+    Sep_Window->reset();
+    LC_Window->reset();
+    GCF_Window->reset();
+    Curve_Window->reset();
 
     sphere->update();
     if (VFResults.gcf == nullptr) // reconfigure GCF button

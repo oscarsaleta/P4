@@ -34,7 +34,7 @@ class QLegendWnd : public QWidget
     void calculateGeometry(void);
 
   private:
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     int orbitwidth;
     int sepwidth;

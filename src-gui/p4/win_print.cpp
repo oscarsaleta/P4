@@ -85,9 +85,9 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     edt_symbolsize->setToolTip("The size of the singularity annotation");
 #endif
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    mainLayout->addWidget(new QLabel("Please select printing method...", this));
+    mainLayout_->addWidget(new QLabel("Please select printing method...", this));
 
     QHBoxLayout *buttons = new QHBoxLayout();
 #ifdef USE_SYSTEM_PRINTER
@@ -97,7 +97,7 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     buttons->addWidget(btn_xfigimage);
     buttons->addWidget(btn_jpeg);
     buttons->addWidget(btn_cancel);
-    mainLayout->addLayout(buttons);
+    mainLayout_->addLayout(buttons);
 
 #ifdef USE_SYSTEM_PRINTER
     QObject::connect(btn_default, SIGNAL(clicked()), this,
@@ -111,9 +111,9 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
                      SLOT(OnJpegImagePrinter()));
     QObject::connect(btn_cancel, SIGNAL(clicked()), this, SLOT(OnCancel()));
 
-    mainLayout->addSpacing(2);
-    mainLayout->addWidget(btn_blackwhite);
-    mainLayout->addSpacing(2);
+    mainLayout_->addSpacing(2);
+    mainLayout_->addWidget(btn_blackwhite);
+    mainLayout_->addSpacing(2);
 
     QHBoxLayout *l1 = new QHBoxLayout();
     l1->addWidget(label_1);
@@ -130,10 +130,10 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     l3->addWidget(edt_symbolsize);
     l3->addStretch(0);
 
-    mainLayout->addLayout(l1);
-    mainLayout->addLayout(l2);
-    mainLayout->addLayout(l3);
-    setLayout(mainLayout);
+    mainLayout_->addLayout(l1);
+    mainLayout_->addLayout(l2);
+    mainLayout_->addLayout(l3);
+    setLayout(mainLayout_);
 
     QString s;
     s.sprintf("%g", (float)LastLineWidth);

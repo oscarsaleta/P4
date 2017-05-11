@@ -47,7 +47,7 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // define placement of controls
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
 
     QGridLayout *lay00 = new QGridLayout();
     lay00->addWidget(new QLabel("P4 (Planar Polynomial Phase Portraits) by"), 0,
@@ -85,14 +85,14 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     lay00->addWidget(l, 0, 0, 10, 1);
 
-    mainLayout->addLayout(lay00);
+    mainLayout_->addLayout(lay00);
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(1);
     buttons->addWidget(btn_ok);
     buttons->addStretch(0);
     buttons->addWidget(btn_settings);
-    mainLayout->addLayout(buttons);
-    setLayout(mainLayout);
+    mainLayout_->addLayout(buttons);
+    setLayout(mainLayout_);
 
     // connections
 

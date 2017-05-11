@@ -103,7 +103,7 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     // define placement of controls
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QHBoxLayout *buttons = new QHBoxLayout();
 #ifdef DOCK_FINDWINDOW
@@ -119,17 +119,17 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     buttons->addWidget(btn_plot);
     buttons->addWidget(btn_help);
 #endif
-    mainLayout->addLayout(buttons);
+    mainLayout_->addLayout(buttons);
 
     QHBoxLayout *names = new QHBoxLayout();
     names->addWidget(p4name);
     names->addWidget(edt_name);
     names->addWidget(btn_browse);
     names->addWidget(btn_about);
-    mainLayout->addLayout(names);
+    mainLayout_->addLayout(names);
 
-    setLayout(mainLayout);
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
     // connections
 
@@ -190,7 +190,7 @@ void QStartDlg::OnFind(void)
         Find_Window->show();
         Find_Window->raise();
 #ifdef DOCK_FINDWINDOW
-        mainLayout->addWidget(Find_Window);
+        mainLayout_->addWidget(Find_Window);
         btn_find->setIcon(QIcon(*Pixmap_TriangleUp));
 #endif
     } else {

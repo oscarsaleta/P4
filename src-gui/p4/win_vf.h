@@ -45,7 +45,7 @@ class QVectorFieldDlg : public QWidget
     ~QVectorFieldDlg();
 
   private:
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QFindDlg *parent;
     QLineEdit *edt_xprime;
     QLineEdit *edt_yprime;
@@ -76,7 +76,7 @@ class QVFParams : public QWidget
     int currentpageindex;
 
     QScrollBar *sb_params;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QBoxLayout *superLayout;
     QHBoxLayout *Param_Lines[MAXNUMPARAMSSHOWN];
     QLineEdit *Param_Names[MAXNUMPARAMSSHOWN];

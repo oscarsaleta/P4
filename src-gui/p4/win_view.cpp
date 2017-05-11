@@ -90,9 +90,9 @@ QViewDlg::QViewDlg(QWidget *parent)
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    mainLayout->addWidget(p4title);
+    mainLayout_->addWidget(p4title);
 
     QGridLayout *kindLayout = new QGridLayout();
     kindLayout->addWidget(kindlabel, 0, 0);
@@ -103,7 +103,7 @@ QViewDlg::QViewDlg(QWidget *parent)
     kindLayout->addWidget(btn_V1, 2, 1);
     kindLayout->addWidget(btn_V2, 2, 2);
 
-    mainLayout->addLayout(kindLayout);
+    mainLayout_->addLayout(kindLayout);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addWidget(lbl_projection);
@@ -131,15 +131,15 @@ QViewDlg::QViewDlg(QWidget *parent)
     layout5->addWidget(edt_y1);
     layout5->addStretch(0);
 
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(layout2);
-    mainLayout->addLayout(layout3);
-    mainLayout->addLayout(layout4);
-    mainLayout->addLayout(layout5);
-    mainLayout->addStretch(0);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(layout5);
+    mainLayout_->addStretch(0);
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
 
     // connections
 

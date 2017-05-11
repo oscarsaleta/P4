@@ -33,7 +33,7 @@ class QP4AboutDlg : public QDialog
     QPushButton *btn_ok;
     QPushButton *btn_settings;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QPixmap p4image;
 
   public:

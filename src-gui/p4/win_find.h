@@ -44,7 +44,7 @@ class QFindDlg : public QWidget
   private:
     QStartDlg *parent;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QBoxLayout *superLayout;
 
     QRadioButton *btn_maple;

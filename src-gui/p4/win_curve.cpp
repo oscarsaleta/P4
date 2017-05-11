@@ -117,7 +117,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "Curve plot");
 }
 
-void QCurveDlg::Reset(void)
+void QCurveDlg::reset(void)
 {
     QString buf;
 

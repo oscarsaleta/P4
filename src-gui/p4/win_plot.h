@@ -50,7 +50,7 @@ class QPlotWnd : public QMainWindow
 
   private:
     QStartDlg *parent;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QAction *ActClose;
     QAction *ActRefresh;
     QAction *ActLegend;

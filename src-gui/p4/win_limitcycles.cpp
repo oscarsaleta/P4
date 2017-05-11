@@ -41,7 +41,7 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     mainSphere_ = sp;
-    plotwnd = plt;
+    plotwnd_ = plt;
 
     edt_x0 = new QLineEdit("", this);
     QLabel *lbl1 = new QLabel("x0 = ", this);
@@ -89,7 +89,7 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QGridLayout *lay00 = new QGridLayout();
     lay00->addWidget(lbl1, 0, 0);
@@ -117,14 +117,14 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     layout4->addWidget(btn_dellast);
     layout4->addWidget(btn_delall);
 
-    mainLayout->addLayout(lay00);
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(layout3);
-    mainLayout->addLayout(layout2);
-    mainLayout->addLayout(layout4);
+    mainLayout_->addLayout(lay00);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout4);
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
 
     // connections
 
@@ -180,7 +180,7 @@ void QLimitCyclesDlg::onbtn_start(void)
     QString buf;
     bool empty;
 
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     bufx = edt_x0->text();
     bufy = edt_y0->text();
@@ -270,7 +270,7 @@ void QLimitCyclesDlg::onbtn_cancel(void)
     edt_y1->setText("");
 }
 
-void QLimitCyclesDlg::Reset(void)
+void QLimitCyclesDlg::reset(void)
 {
     // finishing
 
@@ -314,7 +314,7 @@ void QLimitCyclesDlg::hideEvent(QHideEvent *he)
 
 void QLimitCyclesDlg::onbtn_delall(void)
 {
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     btn_delall->setEnabled(false);
     btn_dellast->setEnabled(false);
@@ -328,7 +328,7 @@ void QLimitCyclesDlg::onbtn_delall(void)
 
 void QLimitCyclesDlg::onbtn_dellast(void)
 {
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     mainSphere_->prepareDrawing();
     deleteLastLimitCycle(mainSphere_);

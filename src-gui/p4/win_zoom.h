@@ -41,7 +41,7 @@ class QZoomWnd : public QMainWindow
 
   private:
     QPlotWnd *parent;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QAction *ActClose;
     QAction *ActRefresh;
     QAction *ActPrint;

@@ -35,12 +35,12 @@ class QGcfDlg : public QWidget
 
   public:
     QGcfDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
     void finishGcfEvaluation(void);
 
   private:
     QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd;
+    QPlotWnd *plotwnd_;
 
     QPushButton *btn_evaluate;
 
@@ -50,7 +50,7 @@ class QGcfDlg : public QWidget
     QLineEdit *edt_precis;
     QLineEdit *edt_memory;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     void ExclusiveToggle(bool, QRadioButton *, QRadioButton *);
 

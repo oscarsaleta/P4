@@ -88,7 +88,7 @@ class QStartDlg : public QWidget
     void customEvent(QEvent *e);
 
   private:
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QPushButton *btn_quit;
     QPushButton *btn_find;
     QPushButton *btn_view;

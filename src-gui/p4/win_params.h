@@ -41,7 +41,7 @@ class QParamsDlg : public QWidget
 
   private:
     QFindDlg *parent;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     QRadioButton *btn_sepyes;
     QRadioButton *btn_sepno;

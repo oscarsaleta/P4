@@ -31,7 +31,7 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     mainSphere_ = sp;
-    plotwnd = plt;
+    plotwnd_ = plt;
 
     btn_start = new QPushButton("&Start integrating sep", this);
     btn_cont = new QPushButton("&Cont integrating sep", this);
@@ -49,12 +49,12 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    mainLayout->addWidget(lbl_info[0]);
-    mainLayout->addWidget(lbl_info[1]);
-    mainLayout->addWidget(lbl_info[2]);
-    mainLayout->addWidget(lbl_info[3]);
+    mainLayout_->addWidget(lbl_info[0]);
+    mainLayout_->addWidget(lbl_info[1]);
+    mainLayout_->addWidget(lbl_info[2]);
+    mainLayout_->addWidget(lbl_info[3]);
 
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->addWidget(lbl1);
@@ -68,12 +68,12 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
     layout5->addWidget(btn_intnext);
     layout5->addWidget(btn_selectnext);
 
-    mainLayout->addLayout(layout3);
-    mainLayout->addLayout(layout4);
-    mainLayout->addLayout(layout5);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(layout5);
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
 
 #ifdef TOOLTIPS
     edt_epsilon->setToolTip("Epsilon value for this separatrix\n"
@@ -97,7 +97,7 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // finishing
 
-    Reset();
+    reset();
 
     setP4WindowTitle(this, "Separatrices");
 }
@@ -106,7 +106,7 @@ void QSepDlg::setInitialPoint(void)
 {
     QString buf;
 
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     selected = true;
     started = false;
@@ -132,7 +132,7 @@ void QSepDlg::onbtn_selectnext(void)
     if (!selected)
         return;
 
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     started = false;
 
@@ -151,7 +151,7 @@ void QSepDlg::onbtn_intnext(void)
     if (!selected)
         return;
 
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     started = true;
 
@@ -170,7 +170,7 @@ void QSepDlg::onbtn_start(void)
     if (!selected || started)
         return;
 
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     started = true;
     btn_start->setEnabled(false);
@@ -188,14 +188,14 @@ void QSepDlg::onbtn_cont(void)
     if (!selected || !started)
         return;
 
-    plotwnd->getDlgData();
+    plotwnd_->getDlgData();
 
     mainSphere_->prepareDrawing();
     (*cont_plot_sep)(mainSphere_);
     mainSphere_->finishDrawing();
 }
 
-void QSepDlg::Reset(void)
+void QSepDlg::reset(void)
 {
     lbl_info[0]->setText("no point selected.");
     lbl_info[1]->setText("");

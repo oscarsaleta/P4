@@ -128,14 +128,14 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
 #ifdef DOCK_PARAMSWINDOW
     superLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
 #else
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 #endif
 
 #ifdef DOCK_FINDWINDOW
-    mainLayout->addSpacing(8);
-    mainLayout->addWidget(p4title);
+    mainLayout_->addSpacing(8);
+    mainLayout_->addWidget(p4title);
 #endif
 
     QHBoxLayout *symLayout = new QHBoxLayout();
@@ -143,14 +143,14 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     // symLayout->addWidget(btn_maple);
     // symLayout->addWidget(btn_reduce);
     symLayout->addStretch(0);
-    mainLayout->addLayout(symLayout);
+    mainLayout_->addLayout(symLayout);
 
     QHBoxLayout *actLayout = new QHBoxLayout();
     actLayout->addWidget(actlabel);
     actLayout->addWidget(btn_actionrun);
     actLayout->addWidget(btn_actionprep);
     actLayout->addStretch(0);
-    mainLayout->addLayout(actLayout);
+    mainLayout_->addLayout(actLayout);
 
     QHBoxLayout *singlineLayout = new QHBoxLayout();
     singlineLayout->addWidget(singpoints, 0, Qt::AlignBottom);
@@ -163,7 +163,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     singlineLayout->addLayout(singLayout);
     singlineLayout->addStretch(0);
 
-    mainLayout->addLayout(singlineLayout);
+    mainLayout_->addLayout(singlineLayout);
 
     QHBoxLayout *layout0 = new QHBoxLayout();
     layout0->addWidget(saveall);
@@ -188,19 +188,19 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     layout3->addWidget(btn_eval);
     layout3->addStretch(0);
 
-    mainLayout->addLayout(layout0);
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(layout2);
-    mainLayout->addLayout(layout3);
+    mainLayout_->addLayout(layout0);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
 
-//   mainLayout->setSizeConstraint(QLayout::SetFixedSize);
+//   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
 #ifdef DOCK_PARAMSWINDOW
-    mainLayout->addStretch(0);
-    superLayout->addLayout(mainLayout);
+    mainLayout_->addStretch(0);
+    superLayout->addLayout(mainLayout_);
     setLayout(superLayout);
 #else
-    setLayout(mainLayout);
+    setLayout(mainLayout_);
 #endif
 
     // connections
@@ -453,7 +453,7 @@ void QFindDlg::OnBtnVf(void)
         Vf_Window = new QVectorFieldDlg(this);
 #ifdef DOCK_VFWINDOW
         Vf_Window->show();
-        mainLayout->addWidget(Vf_Window);
+        mainLayout_->addWidget(Vf_Window);
 #else
         Vf_Window->raise();
 #endif

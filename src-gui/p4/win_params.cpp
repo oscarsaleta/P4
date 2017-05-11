@@ -147,21 +147,21 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    mainLayout->addWidget(p4title);
+    mainLayout_->addWidget(p4title);
 
     QHBoxLayout *symLayout = new QHBoxLayout();
     symLayout->addWidget(symlabel);
     symLayout->addWidget(btn_alg);
     symLayout->addWidget(btn_num);
-    mainLayout->addLayout(symLayout);
+    mainLayout_->addLayout(symLayout);
 
     QHBoxLayout *sepLayout = new QHBoxLayout();
     sepLayout->addWidget(seplabel);
     sepLayout->addWidget(btn_sepyes);
     sepLayout->addWidget(btn_sepno);
-    mainLayout->addLayout(sepLayout);
+    mainLayout_->addLayout(sepLayout);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addWidget(lbl_precis);
@@ -212,17 +212,17 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
     layout9->addWidget(edt_y0);
     layout9->addStretch(0);
 
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(layout2);
-    mainLayout->addLayout(layout3);
-    mainLayout->addLayout(layout4);
-    mainLayout->addLayout(layout5);
-    mainLayout->addLayout(layout6);
-    mainLayout->addLayout(layout7);
-    mainLayout->addLayout(layout8);
-    mainLayout->addLayout(layout9);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(layout5);
+    mainLayout_->addLayout(layout6);
+    mainLayout_->addLayout(layout7);
+    mainLayout_->addLayout(layout8);
+    mainLayout_->addLayout(layout9);
 
-    setLayout(mainLayout);
+    setLayout(mainLayout_);
 
     QButtonGroup *btngrp1 = new QButtonGroup(this);
     btngrp1->addButton(btn_alg);

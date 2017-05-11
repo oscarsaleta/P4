@@ -38,14 +38,14 @@ class QLimitCyclesDlg : public QWidget
 
   public:
     QLimitCyclesDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
     void setSection(double, double, double, double);
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
 
   private:
     QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd;
+    QPlotWnd *plotwnd_;
 
     QPushButton *btn_start;
     QPushButton *btn_cancel;
@@ -60,7 +60,7 @@ class QLimitCyclesDlg : public QWidget
 
     QSpinBox *spin_numpoints;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
     double selected_x0;
     double selected_y0;

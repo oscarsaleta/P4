@@ -37,7 +37,7 @@ class QPrintDlg : public QDialog
     QPushButton *btn_xfigimage;
     QPushButton *btn_cancel;
     QPushButton *btn_jpeg;
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
     QCheckBox *btn_blackwhite;
     QLineEdit *edt_resolution;
     QLineEdit *edt_linewidth;
