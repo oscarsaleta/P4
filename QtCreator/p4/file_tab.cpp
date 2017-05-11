@@ -2347,7 +2347,7 @@ void QVFStudy::dump(QString basename, QString info)
     ss = info.toLatin1();
     DUMP(("%s", (const char *)ss))
 
-    m->setFont(*(p4app->CourierFont));
+    m->setFont(*(p4app->courierFont_));
     m->setReadOnly(true);
     m->resize(640, 480);
     setP4WindowTitle(m, "DUMP SCREEN");

@@ -96,17 +96,17 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // connections
 
-    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(OnOk()));
-    QObject::connect(btn_settings, SIGNAL(clicked()), this, SLOT(OnSettings()));
+    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(onOk()));
+    QObject::connect(btn_settings, SIGNAL(clicked()), this, SLOT(onSettings()));
 
     btn_ok->setFocus();
 
     setP4WindowTitle(this, "About P4");
 }
 
-void QP4AboutDlg::OnOk(void) { done(0); }
+void QP4AboutDlg::onOk(void) { done(0); }
 
-void QP4AboutDlg::OnSettings(void)
+void QP4AboutDlg::onSettings(void)
 {
     int value;
     QSettingsDlg *psettings;

@@ -79,11 +79,11 @@ class QStartDlg : public QWidget
     // following slots are called by other P4 widgets when something happened:
 
   public:
-    void Signal_Evaluating(void);
-    void Signal_Evaluated(void);
-    void Signal_Changed(void);
-    void Signal_Loaded(void);
-    void Signal_Saved(void);
+    void signalEvaluating(void);
+    void signalEvaluated(void);
+    void signalChanged(void);
+    void signalLoaded(void);
+    void signalSaved(void);
 
     void customEvent(QEvent *e);
 

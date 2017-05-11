@@ -34,10 +34,10 @@ QViewDlg::QViewDlg(QWidget *parent)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *p4title = new QLabel("View Parameters", this);
-    p4title->setFont(*(p4app->TitleFont));
+    p4title->setFont(*(p4app->titleFont_));
 
     QLabel *kindlabel = new QLabel("Type of view: ", this);
-    kindlabel->setFont(*(p4app->BoldFont));
+    kindlabel->setFont(*(p4app->boldFont_));
     btn_sphere = new QRadioButton("Spherical", this);
     btn_plane = new QRadioButton("Planar", this);
     btn_U1 = new QRadioButton("U1", this);
@@ -46,25 +46,25 @@ QViewDlg::QViewDlg(QWidget *parent)
     btn_V2 = new QRadioButton("V2", this);
 
     QLabel *lbl_projection = new QLabel("Projection:", this);
-    lbl_projection->setFont(*(p4app->BoldFont));
+    lbl_projection->setFont(*(p4app->boldFont_));
     edt_projection = new QLineEdit("-1", this);
 
     QLabel *lbl_x0 = new QLabel("Min. x:", this);
-    lbl_x0->setFont(*(p4app->BoldFont));
+    lbl_x0->setFont(*(p4app->boldFont_));
     edt_x0 = new QLineEdit("-1", this);
 
     btn_square = new QPushButton("&Square", this);
 
     QLabel *lbl_y0 = new QLabel("Min. y:", this);
-    lbl_y0->setFont(*(p4app->BoldFont));
+    lbl_y0->setFont(*(p4app->boldFont_));
     edt_y0 = new QLineEdit("-1", this);
 
     QLabel *lbl_x1 = new QLabel("Max. x", this);
-    lbl_x1->setFont(*(p4app->BoldFont));
+    lbl_x1->setFont(*(p4app->boldFont_));
     edt_x1 = new QLineEdit("1", this);
 
     QLabel *lbl_y1 = new QLabel("Max. y", this);
-    lbl_y1->setFont(*(p4app->BoldFont));
+    lbl_y1->setFont(*(p4app->boldFont_));
     edt_y1 = new QLineEdit("1", this);
 
 #ifdef TOOLTIPS

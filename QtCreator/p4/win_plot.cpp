@@ -216,31 +216,31 @@ void QPlotWnd::AdjustHeight(void)
     statusBar()->showMessage("Ready.");
 }
 
-void QPlotWnd::Signal_Changed(void)
+void QPlotWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->Signal_Changed();
+    sphere->signalChanged();
     for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->Signal_Changed();
+        ZoomWindows[i]->signalChanged();
 }
 
-void QPlotWnd::Signal_Evaluating(void)
+void QPlotWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->Signal_Evaluating();
+    sphere->signalEvaluating();
     for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->Signal_Evaluating();
+        ZoomWindows[i]->signalEvaluating();
 }
 
-void QPlotWnd::Signal_Evaluated(void)
+void QPlotWnd::signalEvaluated(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
     for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->Signal_Evaluated();
+        ZoomWindows[i]->signalEvaluated();
 }
 
 void QPlotWnd::OnBtnClose(void)

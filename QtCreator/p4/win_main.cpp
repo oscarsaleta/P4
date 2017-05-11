@@ -76,7 +76,7 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
         edt_name = new QLineEdit(ThisVF->filename = autofilename, this);
     QLabel *p4name = new QLabel(" &Name: ", this);
     p4name->setBuddy(edt_name);
-    p4name->setFont(*(p4app->BoldFont));
+    p4name->setFont(*(p4app->boldFont_));
 
     edt_name->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name->setCursorPosition(strlen(DEFAULTFILENAME));
@@ -309,14 +309,8 @@ void QStartDlg::OnQuit(void)
     }
 
     if (ThisVF != nullptr) {
-        if (ThisVF->ProcessText != nullptr) {
-            if (ThisVF->ProcessButton != nullptr) {
-                delete ThisVF->ProcessButton;
-                ThisVF->ProcessButton = nullptr;
-            }
-            delete ThisVF->ProcessText;
-            ThisVF->ProcessText = nullptr;
-        }
+        delete ThisVF;
+        ThisVF = nullptr;
     }
 
     close();
@@ -327,7 +321,7 @@ void QStartDlg::OnFilenameChange(const QString &fname)
     ThisVF->filename = fname;
 }
 
-void QStartDlg::Signal_Evaluating(void)
+void QStartDlg::signalEvaluating(void)
 {
     // disable view button, disable plot button:
 
@@ -337,16 +331,16 @@ void QStartDlg::Signal_Evaluating(void)
     // Transfer signal to Find_Window:
 
     if (Find_Window != nullptr) {
-        Find_Window->Signal_Evaluating();
+        Find_Window->signalEvaluating();
     }
 
     // Transfer signal to Plot_Window:
 
     if (Plot_Window != nullptr)
-        Plot_Window->Signal_Evaluating();
+        Plot_Window->signalEvaluating();
 }
 
-void QStartDlg::Signal_Evaluated(void)
+void QStartDlg::signalEvaluated(void)
 {
     // enable view button, disable plot button:
 
@@ -370,7 +364,7 @@ void QStartDlg::Signal_Evaluated(void)
             if (View_Finite_Window != nullptr) {
                 ((QTextEdit *)View_Finite_Window)->clear();
                 ((QTextEdit *)View_Finite_Window)
-                    ->setCurrentFont(*(p4app->BoldCourierFont));
+                    ->setCurrentFont(*(p4app->boldCourierFont_));
                 ((QTextEdit *)View_Finite_Window)
                     ->insertPlainText(
                         "\nA study at the finite region is not available!");
@@ -392,13 +386,13 @@ void QStartDlg::Signal_Evaluated(void)
                 ThisVF->typeofstudy == TYPEOFSTUDY_ONE) {
                 // mark: data invalid according to vf information
 
-                View_Infinite_Window->setFont(*(p4app->CourierFont));
+                View_Infinite_Window->setFont(*(p4app->courierFont_));
             }
         } else {
             if (View_Infinite_Window != nullptr) {
                 ((QTextEdit *)View_Infinite_Window)->clear();
                 ((QTextEdit *)View_Infinite_Window)
-                    ->setCurrentFont(*(p4app->BoldCourierFont));
+                    ->setCurrentFont(*(p4app->boldCourierFont_));
                 ((QTextEdit *)View_Infinite_Window)
                     ->insertPlainText(
                         "\nA study at infinity is not available!");
@@ -409,7 +403,7 @@ void QStartDlg::Signal_Evaluated(void)
     // Transfer signal to Find_Window:
 
     if (Find_Window != nullptr) {
-        Find_Window->Signal_Evaluated();
+        Find_Window->signalEvaluated();
     }
 
     // Transfer signal to Plot_Window:
@@ -425,7 +419,7 @@ void QStartDlg::Signal_Evaluated(void)
                 "Please check the input-vector field and parameters!\n");
         }
         VFResults.setupCoordinateTransformations();
-        Plot_Window->Signal_Evaluated();
+        Plot_Window->signalEvaluated();
     }
 
     // the vector field may be changed during evaluation.  In that
@@ -433,30 +427,30 @@ void QStartDlg::Signal_Evaluated(void)
     // is immediately marked as "old".
 
     if (ThisVF->changed)
-        Signal_Changed();
+        signalChanged();
 }
 
-void QStartDlg::Signal_Saved(void)
+void QStartDlg::signalSaved(void)
 {
     //
 }
 
-void QStartDlg::Signal_Loaded(void)
+void QStartDlg::signalLoaded(void)
 {
     //
 }
 
-void QStartDlg::Signal_Changed(void)
+void QStartDlg::signalChanged(void)
 {
     if (View_Finite_Window != nullptr) {
-        View_Finite_Window->setFont(*(p4app->CourierFont));
+        View_Finite_Window->setFont(*(p4app->courierFont_));
     }
 
     if (View_Infinite_Window != nullptr) {
-        View_Infinite_Window->setFont(*(p4app->CourierFont));
+        View_Infinite_Window->setFont(*(p4app->courierFont_));
     }
     if (Plot_Window != nullptr) {
-        Plot_Window->Signal_Changed();
+        Plot_Window->signalChanged();
     }
 }
 
@@ -515,7 +509,7 @@ void QStartDlg::OnViewFinite()
     if (ThisVF->typeofstudy == TYPEOFSTUDY_INF) {
         // mark: data invalid according to vf information
 
-        View_Finite_Window->setFont(*(p4app->CourierFont));
+        View_Finite_Window->setFont(*(p4app->courierFont_));
         return;
     }
 }
@@ -550,7 +544,7 @@ void QStartDlg::OnViewInfinite()
         ThisVF->typeofstudy == TYPEOFSTUDY_ONE) {
         // mark: data invalid according to vf information
 
-        View_Infinite_Window->setFont(*(p4app->CourierFont));
+        View_Infinite_Window->setFont(*(p4app->courierFont_));
         return;
     }
 }
@@ -580,7 +574,7 @@ QWidget *QStartDlg::Showtext(QWidget *win, QString caption, QString fname)
         shown = true;
         result->hide();
     }
-    result->setFont(*(p4app->CourierFont));
+    result->setFont(*(p4app->courierFont_));
     result->insertPlainText("");
     result->setReadOnly(true);
 
@@ -598,7 +592,7 @@ QWidget *QStartDlg::Showtext(QWidget *win, QString caption, QString fname)
     setP4WindowTitle(result, caption);
 
     if (ThisVF->evaluated == false)
-        result->setFont(*(p4app->CourierFont));
+        result->setFont(*(p4app->courierFont_));
 
     if (shown) {
         result->show();
@@ -656,19 +650,19 @@ void QStartDlg::customEvent(QEvent *e)
 {
     switch ((int)(e->type())) {
     case TYPE_SIGNAL_EVALUATING:
-        Signal_Evaluating();
+        signalEvaluating();
         break;
     case TYPE_SIGNAL_EVALUATED:
-        Signal_Evaluated();
+        signalEvaluated();
         break;
     case TYPE_SIGNAL_CHANGED:
-        Signal_Changed();
+        signalChanged();
         break;
     case TYPE_SIGNAL_LOADED:
-        Signal_Loaded();
+        signalLoaded();
         break;
     case TYPE_SIGNAL_SAVED:
-        Signal_Saved();
+        signalSaved();
         break;
     case TYPE_CLOSE_PLOTWINDOW:
         if (Plot_Window != nullptr) {

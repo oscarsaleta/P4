@@ -98,11 +98,19 @@ QInputVF *ThisVF = nullptr;
 
 QInputVF::QInputVF()
 {
-    ProcessText = nullptr;
-    ProcessButton = nullptr;
-    ProcessClearButton = nullptr;
-    EvalProcess = nullptr;
+    processText_ = nullptr;
+    terminateProcessButton_ = nullptr;
+    clearProcessButton_ = nullptr;
+    evalProcess_ = nullptr;
     reset();
+}
+
+QInputVF::~QInputVF()
+{
+    if (outputWindow_ != nullptr) {
+        delete outputWindow_;
+        outputWindow_ = nullptr;
+    }
 }
 
 // -----------------------------------------------------------------------
@@ -1158,10 +1166,10 @@ void QInputVF::evaluate(void)
 
     evaluatinggcf = false;
     evaluatingCurve = false;
-    if (EvalProcess != nullptr) // possible clean up after last GCF evaluation
-    {
-        delete EvalProcess;
-        EvalProcess = nullptr;
+    // possible clean up after last GCF evaluation
+    if (evalProcess_ != nullptr) {
+        delete evalProcess_;
+        evalProcess_ = nullptr;
     }
 
     prepare();
@@ -1188,46 +1196,45 @@ void QInputVF::evaluate(void)
             // cannot open???
         }
 
-        if (ProcessText == nullptr)
+        if (processText_ == nullptr)
             createProcessWindow();
         else {
-            ProcessText->append("\n\n------------------------------------------"
+            processText_->append("\n\n------------------------------------------"
                                 "-------------------------------------\n\n");
-            ProcessText->show();
-            ProcessButton->setEnabled(true);
-            ProcessClearButton->setEnabled(true);
+            terminateProcessButton_->setEnabled(true);
+            clearProcessButton_->setEnabled(true);
         }
 
         proc = new QProcess(this);
         proc->setWorkingDirectory(QDir::currentPath());
 
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_Evaluated(int)));
+                SLOT(signalEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(ReadProcessStdout()));
+                SLOT(readProcessStdout()));
 
         processfailed = false;
         QString pa = "External Command: ";
         pa += "sh ";
         pa += filedotrun;
-        ProcessText->append(pa);
+        processText_->append(pa);
         proc->start("sh", QStringList(filedotrun), QIODevice::ReadWrite);
         if (proc->state() != QProcess::Running &&
             proc->state() != QProcess::Starting) {
             processfailed = true;
             delete proc;
             proc = nullptr;
-            EvalProcess = nullptr;
-            EvalFile = "";
-            EvalFile2 = "";
-            p4app->Signal_Evaluated(-1);
-            ProcessButton->setEnabled(false);
+            evalProcess_ = nullptr;
+            evalFile_ = "";
+            evalFile2_ = "";
+            p4app->signalEvaluated(-1);
+            terminateProcessButton_->setEnabled(false);
         } else {
-            EvalProcess = proc;
-            EvalFile = filedotred;
-            EvalFile2 = filedotrun;
+            evalProcess_ = proc;
+            evalFile_ = filedotred;
+            evalFile2_ = filedotrun;
         }
     } else {*/
     filedotmpl = getmaplefilename();
@@ -1246,33 +1253,31 @@ void QInputVF::evaluate(void)
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (ProcessText == nullptr)
+        if (outputWindow_ == nullptr || outputWindow_->isVisible() == false)
             createProcessWindow();
         else {
-            ProcessText->append("\n\n--------------------------------------"
-                                "-----------------------------------------"
-                                "\n\n");
-            ProcessText->show();
-            ProcessButton->setEnabled(true);
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
+            terminateProcessButton_->setEnabled(true);
         }
 
         proc = new QProcess(this);
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_Evaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+        connect(proc, SIGNAL(finished(int)), p4app, SLOT(signalEvaluated(int)));
+        connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this,
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(ReadProcessStdout()));
+                SLOT(readProcessStdout()));
 
         processfailed = false;
         QString pa = "External Command: ";
         pa += getMapleExe();
         pa += " ";
         pa += filedotmpl;
-        ProcessText->append(pa);
+        processText_->append(pa);
         proc->start(getMapleExe(), QStringList(filedotmpl),
                     QIODevice::ReadWrite);
 
@@ -1281,15 +1286,15 @@ void QInputVF::evaluate(void)
             processfailed = true;
             delete proc;
             proc = nullptr;
-            EvalProcess = nullptr;
-            EvalFile = "";
-            EvalFile2 = "";
-            p4app->Signal_Evaluated(-1);
-            ProcessButton->setEnabled(false);
+            evalProcess_ = nullptr;
+            evalFile_ = "";
+            evalFile2_ = "";
+            p4app->signalEvaluated(-1);
+            terminateProcessButton_->setEnabled(false);
         } else {
-            EvalProcess = proc;
-            EvalFile = filedotmpl;
-            EvalFile2 = "";
+            evalProcess_ = proc;
+            evalFile_ = filedotmpl;
+            evalFile2_ = "";
         }
     }
     /*}*/
@@ -1306,10 +1311,10 @@ void QInputVF::evaluateCurveTable(void)
 
     evaluatinggcf = false;
     evaluatingCurve = false;
-    if (EvalProcess != nullptr) // possible clean up after last Curve evaluation
-    {
-        delete EvalProcess;
-        EvalProcess = nullptr;
+    // possible clean up after last Curve evaluation
+    if (evalProcess_ != nullptr) {
+        delete evalProcess_;
+        evalProcess_ = nullptr;
     }
 
     prepareCurve();
@@ -1329,33 +1334,30 @@ void QInputVF::evaluateCurveTable(void)
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (ProcessText == nullptr)
+        if (outputWindow_ == nullptr || outputWindow_->isVisible() == false)
             createProcessWindow();
         else {
-            ProcessText->append("\n\n--------------------------------------"
-                                "-----------------------------------------"
-                                "\n\n");
-            ProcessText->show();
-            ProcessButton->setEnabled(true);
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
+            terminateProcessButton_->setEnabled(true);
         }
 
         proc = new QProcess(this);
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        // connect(proc, SIGNAL(finished(int)), p4app,
-        //        SLOT(Signal_Evaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(ReadProcessStdout()));
+                SLOT(readProcessStdout()));
 
         processfailed = false;
         QString pa = "External Command: ";
         pa += getMapleExe();
         pa += " ";
         pa += filedotmpl;
-        ProcessText->append(pa);
+        processText_->append(pa);
         proc->start(getMapleExe(), QStringList(filedotmpl),
                     QIODevice::ReadWrite);
 
@@ -1364,15 +1366,15 @@ void QInputVF::evaluateCurveTable(void)
             processfailed = true;
             delete proc;
             proc = nullptr;
-            EvalProcess = nullptr;
-            EvalFile = "";
-            EvalFile2 = "";
-            p4app->Signal_Evaluated(-1);
-            ProcessButton->setEnabled(false);
+            evalProcess_ = nullptr;
+            evalFile_ = "";
+            evalFile2_ = "";
+            p4app->signalEvaluated(-1);
+            terminateProcessButton_->setEnabled(false);
         } else {
-            EvalProcess = proc;
-            EvalFile = filedotmpl;
-            EvalFile2 = "";
+            evalProcess_ = proc;
+            evalFile_ = filedotmpl;
+            evalFile2_ = "";
         }
     }
     //}
@@ -1386,19 +1388,19 @@ void QInputVF::catchProcessError(QProcess::ProcessError prerr)
     processfailed = true;
     switch (prerr) {
     case QProcess::FailedToStart:
-        processError = "Failed to start";
+        processError_ = "Failed to start";
         break;
     case QProcess::Crashed:
-        processError = "Crash";
+        processError_ = "Crash";
         break;
     case QProcess::Timedout:
-        processError = "Time-out";
+        processError_ = "Time-out";
         break;
     case QProcess::WriteError:
     case QProcess::ReadError:
     case QProcess::UnknownError:
     default:
-        processError = "Unknown error";
+        processError_ = "Unknown error";
         break;
     }
 }
@@ -1409,53 +1411,53 @@ void QInputVF::catchProcessError(QProcess::ProcessError prerr)
 void QInputVF::finishEvaluation(int exitCode)
 {
     UNUSED(exitCode);
-    if (!EvalFile.isNull() && EvalFile != "") {
-        removeFile(EvalFile);
-        EvalFile = "";
+    if (!evalFile_.isNull() && evalFile_ != "") {
+        removeFile(evalFile_);
+        evalFile_ = "";
     }
 
-    if (!EvalFile2.isNull() && EvalFile2 != "") {
-        removeFile(EvalFile2);
-        EvalFile2 = "";
+    if (!evalFile2_.isNull() && evalFile2_ != "") {
+        removeFile(evalFile2_);
+        evalFile2_ = "";
     }
 
-    if (ProcessButton != nullptr)
-        ProcessButton->setEnabled(false);
+    if (terminateProcessButton_ != nullptr)
+        terminateProcessButton_->setEnabled(false);
 
-    //    if ( EvalProcess != nullptr ) {
-    if (ProcessText != nullptr) {
+    //    if ( evalProcess_ != nullptr ) {
+    if (processText_ != nullptr) {
         QString buf;
         buf = "\n--------------------------------------------------------------"
               "-----------------\n";
-        ProcessText->append(buf);
-        if (EvalProcess != nullptr) {
-            if (EvalProcess->state() == QProcess::Running) {
-                EvalProcess->terminate();
-                QTimer::singleShot(5000, EvalProcess, SLOT(kill()));
+        processText_->append(buf);
+        if (evalProcess_ != nullptr) {
+            if (evalProcess_->state() == QProcess::Running) {
+                evalProcess_->terminate();
+                QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
                 buf = "Kill signal sent to process.\n";
             } else {
                 if (!processfailed)
                     buf.sprintf("The process finished normally (%d)\n",
-                                EvalProcess->exitCode());
+                                evalProcess_->exitCode());
                 else {
                     buf.sprintf("The process stopped abnormally (%d : ",
-                                EvalProcess->exitCode());
-                    buf += processError;
+                                evalProcess_->exitCode());
+                    buf += processError_;
                     buf += ")\n";
                 }
             }
         } else {
             if (processfailed)
-                buf = "The following error occured: " + processError + "\n";
+                buf = "The following error occured: " + processError_ + "\n";
             else
                 buf = "";
         }
-        ProcessText->append(buf);
+        processText_->append(buf);
     }
     //    }
-    if (ProcessText != nullptr) {
-        //      ProcessText->hide();
-        if (ProcessText->isActiveWindow()) {
+    /*if (processText_ != nullptr) {
+        //      processText_->hide();
+        if (processText_->isActiveWindow()) {
             if (!evaluatinggcf)
                 p4startdlg->activateWindow();
             else {
@@ -1463,7 +1465,7 @@ void QInputVF::finishEvaluation(int exitCode)
                     gcfDlg->activateWindow();
             }
         }
-    }
+    }*/
 
     if (evaluatinggcf) {
         finishGcfEvaluation();
@@ -1578,17 +1580,17 @@ void QInputVF::prepareCurve(void)
 // -----------------------------------------------------------------------
 //          READPROCESSSTDOUT
 // -----------------------------------------------------------------------
-void QInputVF::ReadProcessStdout(void)
+void QInputVF::readProcessStdout(void)
 {
     QByteArray t;
     QByteArray line;
     int i, j;
 
-    if (EvalProcess == nullptr || ProcessText == nullptr)
+    if (evalProcess_ == nullptr || processText_ == nullptr)
         return;
 
     while (1) {
-        t = EvalProcess->readAllStandardOutput();
+        t = evalProcess_->readAllStandardOutput();
         if (t.length() == 0)
             break;
 
@@ -1605,12 +1607,12 @@ void QInputVF::ReadProcessStdout(void)
                 line = t.left(i);
                 t = t.mid(i + 1);
             }
-            ProcessText->append(line);
+            processText_->append(line);
             i = t.indexOf('\n');
             j = t.indexOf('\r');
         }
         if (t.length() != 0)
-            ProcessText->append(t);
+            processText_->append(t);
     }
 }
 
@@ -1619,8 +1621,8 @@ void QInputVF::ReadProcessStdout(void)
 // -----------------------------------------------------------------------
 void QInputVF::onClearButton(void)
 {
-    if (ProcessText != nullptr)
-        ProcessText->clear();
+    if (processText_ != nullptr)
+        processText_->clear();
 }
 
 // -----------------------------------------------------------------------
@@ -1629,17 +1631,17 @@ void QInputVF::onClearButton(void)
 void QInputVF::onTerminateButton(void)
 {
     QString buf;
-    if (EvalProcess != nullptr) {
-        if (EvalProcess->state() == QProcess::Running) {
+    if (evalProcess_ != nullptr) {
+        if (evalProcess_->state() == QProcess::Running) {
             buf = "\n----------------------------------------------------------"
                   "---------------------\n";
-            ProcessText->append(buf);
-            EvalProcess->terminate();
-            QTimer::singleShot(2000, EvalProcess, SLOT(kill()));
+            processText_->append(buf);
+            evalProcess_->terminate();
+            QTimer::singleShot(2000, evalProcess_, SLOT(kill()));
             buf = "Kill signal sent to process.\n";
-            ProcessText->append(buf);
+            processText_->append(buf);
             processfailed = true;
-            processError = "Terminated by user";
+            processError_ = "Terminated by user";
         }
     }
 }
@@ -1649,39 +1651,60 @@ void QInputVF::onTerminateButton(void)
 // -----------------------------------------------------------------------
 void QInputVF::createProcessWindow(void)
 {
-    if (ProcessText != nullptr)
+    if (outputWindow_ != nullptr) {
+        if (outputWindow_->isVisible() == false)
+            outputWindow_->show();
+        outputWindow_->activateWindow();
+        outputWindow_->raise();
         return;
+    }
 
-    ProcessText = new QTextEdit(nullptr);
-    ProcessText->setLineWrapMode(QTextEdit::FixedColumnWidth);
-    ProcessText->setWordWrapMode(QTextOption::WrapAnywhere);
-    setP4WindowTitle(ProcessText, "Output Window");
-    ProcessText->setFont(*(p4app->CourierFont));
-    ProcessText->setLineWrapColumnOrWidth(82);
-    ProcessText->setReadOnly(true);
-    ProcessText->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ProcessText->show();
-    ProcessButton = new QPushButton("Terminate");
-    ProcessClearButton = new QPushButton("Clear");
-    ProcessButton->setFont(*(p4app->BoldFont));
-    ProcessClearButton->setFont((*p4app->BoldFont));
-    ProcessButton->setToolTip("Terminates the process.  First tries to send a "
-                              "safe signal to the process.\nIf this does not "
-                              "work, then after 2 seconds, the program is "
-                              "abruptly terminated.");
-    ProcessClearButton->setToolTip("Clears this window");
-    QHBoxLayout *ProcessLayout = new QHBoxLayout();
-    ProcessLayout->addWidget(ProcessButton);
-    ProcessLayout->addWidget(ProcessClearButton);
-    ProcessLayout->setMargin(0);
-    QWidget *TestWidget =
-        new QWidget(ProcessText, Qt::SubWindow | Qt::FramelessWindowHint);
-    TestWidget->setContentsMargins(0, 0, 0, 0);
-    TestWidget->setLayout(ProcessLayout);
-    TestWidget->show();
-    QObject::connect(ProcessButton, SIGNAL(clicked()), this,
+    outputWindow_ = new QWidget(nullptr);
+    outputWindow_->setWindowTitle("Output window");
+    outputWindow_->resize(530, 344);
+    if (p4smallicon!=nullptr)
+        outputWindow_->setWindowIcon(*p4smallicon);
+
+    QVBoxLayout *vLayout = new QVBoxLayout(outputWindow_);
+    vLayout->setSpacing(3);
+    vLayout->setContentsMargins(5, 5, 5, 5);
+    QVBoxLayout *vLayout2 = new QVBoxLayout();
+    vLayout2->setSpacing(3);
+
+    processText_ = new QTextEdit(outputWindow_);
+    processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
+    processText_->setWordWrapMode(QTextOption::WrapAnywhere);
+    processText_->setFont(*(p4app->courierFont_));
+    processText_->setLineWrapColumnOrWidth(82);
+    processText_->setReadOnly(true);
+    processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    vLayout2->addWidget(processText_);
+
+    QHBoxLayout *hLayout = new QHBoxLayout();
+    hLayout->setSpacing(6);
+
+    terminateProcessButton_ = new QPushButton("Terminate");
+    terminateProcessButton_->setFont(*(p4app->boldFont_));
+    terminateProcessButton_->setToolTip(
+        "Terminates the process.  First tries to send a "
+        "safe signal to the process.\nIf this does not "
+        "work, then after 2 seconds, the program is "
+        "abruptly terminated.");
+    hLayout->addWidget(terminateProcessButton_);
+
+    clearProcessButton_ = new QPushButton("Clear");
+    clearProcessButton_->setFont((*p4app->boldFont_));
+    clearProcessButton_->setToolTip("Clears this window");
+    hLayout->addWidget(clearProcessButton_);
+
+    vLayout2->addLayout(hLayout);
+    vLayout->addLayout(vLayout2);
+
+    outputWindow_->show();
+
+    QObject::connect(terminateProcessButton_, SIGNAL(clicked()), this,
                      SLOT(onTerminateButton()));
-    QObject::connect(ProcessClearButton, SIGNAL(clicked()), this,
+    QObject::connect(clearProcessButton_, SIGNAL(clicked()), this,
                      SLOT(onClearButton()));
 }
 
@@ -1715,30 +1738,29 @@ bool QInputVF::evaluateGcf(void)
             fptr = nullptr;
         }
 
-        if (ProcessText == nullptr)
+        if (processText_ == nullptr)
             createProcessWindow();
         else {
-            ProcessText->append("\n\n------------------------------------------"
+            processText_->append("\n\n------------------------------------------"
                                 "-------------------------------------\n\n");
-            ProcessText->show();
-            ProcessButton->setEnabled(true);
+            terminateProcessButton_->setEnabled(true);
         }
 
         QProcess *proc;
 
-        if (EvalProcess != nullptr) { // re-use process of last GCF
-            proc = EvalProcess;
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
+            proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), p4app, 0);
             connect(proc, SIGNAL(finished(int)), p4app,
-                    SLOT(Signal_GcfEvaluated(int)));
+                    SLOT(signalGcfEvaluated(int)));
         } else {
             proc = new QProcess(this);
             connect(proc, SIGNAL(finished(int)), p4app,
-                    SLOT(Signal_GcfEvaluated(int)));
+                    SLOT(signalGcfEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                    SLOT(cathProcessError(QProcess::ProcessError)));
+                    SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                    SLOT(ReadProcessStdout()));
+                    SLOT(readProcessStdout()));
         }
 
         proc->setWorkingDirectory(QDir::currentPath());
@@ -1754,7 +1776,7 @@ bool QInputVF::evaluateGcf(void)
 
         QString pa = "External Command: sh ";
         pa += filedotrun;
-        ProcessText->append(pa);
+        processText_->append(pa);
         proc->start("sh", QStringList(filedotrun), QIODevice::ReadWrite);
 
         if (proc->state() != QProcess::Running &&
@@ -1762,16 +1784,16 @@ bool QInputVF::evaluateGcf(void)
             processfailed = true;
             delete proc;
             proc = nullptr;
-            EvalProcess = nullptr;
-            EvalFile = "";
-            EvalFile2 = "";
-            p4app->Signal_GcfEvaluated(-1);
-            ProcessButton->setEnabled(false);
+            evalProcess_ = nullptr;
+            evalFile_ = "";
+            evalFile2_ = "";
+            p4app->signalGcfEvaluated(-1);
+            terminateProcessButton_->setEnabled(false);
             return false;
         } else {
-            EvalProcess = proc;
-            EvalFile = filedotred;
-            EvalFile2 = filedotrun;
+            evalProcess_ = proc;
+            evalFile_ = filedotred;
+            evalFile2_ = filedotrun;
             evaluatinggcf = true;
             return true;
         }
@@ -1787,29 +1809,28 @@ bool QInputVF::evaluateGcf(void)
     } else
         s = s.append(filedotmpl);
 
-    if (ProcessText == nullptr)
+    if (processText_ == nullptr)
         createProcessWindow();
     else {
-        ProcessText->append("\n\n------------------------------------------"
-                            "-------------------------------------\n\n");
-        ProcessText->show();
-        ProcessButton->setEnabled(true);
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
+        terminateProcessButton_->setEnabled(true);
     }
 
     QProcess *proc;
-    if (EvalProcess != nullptr) { // re-use process of last GCF
-        proc = EvalProcess;
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
+        proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), p4app, 0);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_GcfEvaluated(int)));
+                SLOT(signalGcfEvaluated(int)));
     } else {
         proc = new QProcess(this);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_GcfEvaluated(int)));
+                SLOT(signalGcfEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(ReadProcessStdout()));
+                SLOT(readProcessStdout()));
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -1819,23 +1840,23 @@ bool QInputVF::evaluateGcf(void)
     pa += getMapleExe();
     pa += " ";
     pa += filedotmpl;
-    ProcessText->append(pa);
+    processText_->append(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
         processfailed = true;
         delete proc;
         proc = nullptr;
-        EvalProcess = nullptr;
-        EvalFile = "";
-        EvalFile2 = "";
-        p4app->Signal_GcfEvaluated(-1);
-        ProcessButton->setEnabled(false);
+        evalProcess_ = nullptr;
+        evalFile_ = "";
+        evalFile2_ = "";
+        p4app->signalGcfEvaluated(-1);
+        terminateProcessButton_->setEnabled(false);
         return false;
     } else {
-        EvalProcess = proc;
-        EvalFile = filedotmpl;
-        EvalFile2 = "";
+        evalProcess_ = proc;
+        evalFile_ = filedotmpl;
+        evalFile2_ = "";
         evaluatinggcf = true;
 
         return true;
@@ -2188,29 +2209,28 @@ bool QInputVF::evaluateCurve(void)
     } else
         s = s.append(filedotmpl);
 
-    if (ProcessText == nullptr)
+    if (processText_ == nullptr)
         createProcessWindow();
     else {
-        ProcessText->append("\n\n------------------------------------------"
-                            "-------------------------------------\n\n");
-        ProcessText->show();
-        ProcessButton->setEnabled(true);
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
+        terminateProcessButton_->setEnabled(true);
     }
 
     QProcess *proc;
-    if (EvalProcess != nullptr) { // re-use process of last GCF
-        proc = EvalProcess;
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
+        proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), p4app, 0);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_CurveEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
     } else {
         proc = new QProcess(this);
         connect(proc, SIGNAL(finished(int)), p4app,
-                SLOT(Signal_CurveEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
+                SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(ReadProcessStdout()));
+                SLOT(readProcessStdout()));
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -2220,23 +2240,23 @@ bool QInputVF::evaluateCurve(void)
     pa += getMapleExe();
     pa += " ";
     pa += filedotmpl;
-    ProcessText->append(pa);
+    processText_->append(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
         processfailed = true;
         delete proc;
         proc = nullptr;
-        EvalProcess = nullptr;
-        EvalFile = "";
-        EvalFile2 = "";
-        p4app->Signal_CurveEvaluated(-1);
-        ProcessButton->setEnabled(false);
+        evalProcess_ = nullptr;
+        evalFile_ = "";
+        evalFile2_ = "";
+        p4app->signalCurveEvaluated(-1);
+        terminateProcessButton_->setEnabled(false);
         return false;
     } else {
-        EvalProcess = proc;
-        EvalFile = filedotmpl;
-        EvalFile2 = "";
+        evalProcess_ = proc;
+        evalFile_ = filedotmpl;
+        evalFile2_ = "";
         evaluatingCurve = true;
 
         return true;

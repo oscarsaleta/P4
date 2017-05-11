@@ -92,7 +92,7 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     QPainter paint(this);
     UNUSED(p);
 
-    paint.setFont(*(p4app->LegendFont));
+    paint.setFont(*(p4app->legendFont_));
 
     paint.setPen(QPen(QXFIGCOLOR(CFOREGROUND)));
     paint.drawText(hmargin1, vmargin1, "Non-Degenerate:");
@@ -235,7 +235,7 @@ void QLegendWnd::calculateGeometry(void)
 {
     int e, me;
 
-    QFontMetrics fm(*(p4app->LegendFont));
+    QFontMetrics fm(*(p4app->legendFont_));
 
     QPalette palette;
     palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND));
