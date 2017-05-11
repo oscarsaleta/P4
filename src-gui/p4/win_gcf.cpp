@@ -30,7 +30,7 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    mainSphere = sp;
+    mainSphere_ = sp;
     plotwnd = plt;
 
     btn_dots = new QRadioButton("Dots", this);
@@ -202,7 +202,7 @@ void QGcfDlg::onbtn_evaluate(void)
     btn_evaluate->setEnabled(false);
 
     ThisVF->gcfDlg = this;
-    result = evalGcfStart(mainSphere, dashes, points, precis);
+    result = evalGcfStart(mainSphere_, dashes, points, precis);
     if (!result) {
         btn_evaluate->setEnabled(true);
         QMessageBox::critical(this, "P4", "An error occured while plotting the "

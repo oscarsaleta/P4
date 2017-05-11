@@ -30,7 +30,7 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    mainSphere = sp;
+    mainSphere_ = sp;
     plotwnd = plt;
 
     btn_start = new QPushButton("&Start integrating sep", this);
@@ -141,9 +141,9 @@ void QSepDlg::onbtn_selectnext(void)
     btn_selectnext->setEnabled(true);
     btn_intnext->setEnabled(true);
 
-    mainSphere->prepareDrawing();
-    (*select_next_sep)(mainSphere);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    (*select_next_sep)(mainSphere_);
+    mainSphere_->finishDrawing();
 }
 
 void QSepDlg::onbtn_intnext(void)
@@ -160,9 +160,9 @@ void QSepDlg::onbtn_intnext(void)
     btn_selectnext->setEnabled(true);
     btn_intnext->setEnabled(true);
 
-    mainSphere->prepareDrawing();
-    (*plot_next_sep)(mainSphere);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    (*plot_next_sep)(mainSphere_);
+    mainSphere_->finishDrawing();
 }
 
 void QSepDlg::onbtn_start(void)
@@ -178,9 +178,9 @@ void QSepDlg::onbtn_start(void)
     btn_selectnext->setEnabled(true);
     btn_intnext->setEnabled(true);
 
-    mainSphere->prepareDrawing();
-    (*start_plot_sep)(mainSphere);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    (*start_plot_sep)(mainSphere_);
+    mainSphere_->finishDrawing();
 }
 
 void QSepDlg::onbtn_cont(void)
@@ -190,9 +190,9 @@ void QSepDlg::onbtn_cont(void)
 
     plotwnd->getDlgData();
 
-    mainSphere->prepareDrawing();
-    (*cont_plot_sep)(mainSphere);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    (*cont_plot_sep)(mainSphere_);
+    mainSphere_->finishDrawing();
 }
 
 void QSepDlg::Reset(void)
@@ -277,7 +277,7 @@ void QSepDlg::onepsilon_enter(void)
     btn_selectnext->setEnabled(true);
     btn_intnext->setEnabled(true);
 
-    mainSphere->prepareDrawing();
-    (*change_epsilon)(mainSphere, eps);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    (*change_epsilon)(mainSphere_, eps);
+    mainSphere_->finishDrawing();
 }

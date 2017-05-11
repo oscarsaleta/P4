@@ -39,7 +39,7 @@ class QGcfDlg : public QWidget
     void finishGcfEvaluation(void);
 
   private:
-    QWinSphere *mainSphere;
+    QWinSphere *mainSphere_;
     QPlotWnd *plotwnd;
 
     QPushButton *btn_evaluate;

@@ -44,7 +44,7 @@ class QLimitCyclesDlg : public QWidget
     void hideEvent(QHideEvent *);
 
   private:
-    QWinSphere *mainSphere;
+    QWinSphere *mainSphere_;
     QPlotWnd *plotwnd;
 
     QPushButton *btn_start;

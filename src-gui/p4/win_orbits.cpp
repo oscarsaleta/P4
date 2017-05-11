@@ -27,7 +27,7 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    mainSphere = sp;
+    mainSphere_ = sp;
     plotwnd = plt;
 
     edt_x0 = new QLineEdit("", this);
@@ -173,9 +173,9 @@ void QOrbitsDlg::onbtn_backwards(void)
         if (!orbit_selected)
             return;
 
-        mainSphere->prepareDrawing();
-        orbit_started = startOrbit(mainSphere, selected_x0, selected_y0, true);
-        mainSphere->finishDrawing();
+        mainSphere_->prepareDrawing();
+        orbit_started = startOrbit(mainSphere_, selected_x0, selected_y0, true);
+        mainSphere_->finishDrawing();
 
         if (orbit_started) {
             btn_delall->setEnabled(true);
@@ -184,9 +184,9 @@ void QOrbitsDlg::onbtn_backwards(void)
     }
 
     if (orbit_started) {
-        mainSphere->prepareDrawing();
-        integrateOrbit(mainSphere, -1);
-        mainSphere->finishDrawing();
+        mainSphere_->prepareDrawing();
+        integrateOrbit(mainSphere_, -1);
+        mainSphere_->finishDrawing();
 
         btn_backwards->setEnabled(false);
         btn_continue->setEnabled(true);
@@ -198,9 +198,9 @@ void QOrbitsDlg::onbtn_continue(void)
     plotwnd->getDlgData();
 
     if (orbit_started) {
-        mainSphere->prepareDrawing();
-        integrateOrbit(mainSphere, 0);
-        mainSphere->finishDrawing();
+        mainSphere_->prepareDrawing();
+        integrateOrbit(mainSphere_, 0);
+        mainSphere_->finishDrawing();
     }
 }
 
@@ -212,9 +212,9 @@ void QOrbitsDlg::onbtn_forwards(void)
         if (!orbit_selected)
             return;
 
-        mainSphere->prepareDrawing();
-        orbit_started = startOrbit(mainSphere, selected_x0, selected_y0, true);
-        mainSphere->finishDrawing();
+        mainSphere_->prepareDrawing();
+        orbit_started = startOrbit(mainSphere_, selected_x0, selected_y0, true);
+        mainSphere_->finishDrawing();
 
         if (orbit_started) {
             btn_delall->setEnabled(true);
@@ -223,9 +223,9 @@ void QOrbitsDlg::onbtn_forwards(void)
     }
 
     if (orbit_started) {
-        mainSphere->prepareDrawing();
-        integrateOrbit(mainSphere, 1);
-        mainSphere->finishDrawing();
+        mainSphere_->prepareDrawing();
+        integrateOrbit(mainSphere_, 1);
+        mainSphere_->finishDrawing();
 
         btn_forwards->setEnabled(false);
         btn_continue->setEnabled(true);
@@ -246,16 +246,16 @@ void QOrbitsDlg::onbtn_delall(void)
     VFResults.first_orbit = nullptr;
     VFResults.current_orbit = nullptr;
 
-    mainSphere->refresh();
+    mainSphere_->refresh();
 }
 
 void QOrbitsDlg::onbtn_dellast(void)
 {
     plotwnd->getDlgData();
 
-    mainSphere->prepareDrawing();
-    deleteLastOrbit(mainSphere);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    deleteLastOrbit(mainSphere_);
+    mainSphere_->finishDrawing();
 
     orbit_started = false;
     orbit_selected = false;

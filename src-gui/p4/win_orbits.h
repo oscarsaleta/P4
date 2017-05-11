@@ -37,7 +37,7 @@ class QOrbitsDlg : public QWidget
     void Reset(void);
 
   private:
-    QWinSphere *mainSphere;
+    QWinSphere *mainSphere_;
     QPlotWnd *plotwnd;
 
     QPushButton *btn_forwards;

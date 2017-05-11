@@ -41,7 +41,7 @@ class QSepDlg : public QWidget
     void Reset(void);
 
   private:
-    QWinSphere *mainSphere;
+    QWinSphere *mainSphere_;
     QPlotWnd *plotwnd;
 
     QPushButton *btn_selectnext;

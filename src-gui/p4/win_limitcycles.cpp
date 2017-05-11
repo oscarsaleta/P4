@@ -40,7 +40,7 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    mainSphere = sp;
+    mainSphere_ = sp;
     plotwnd = plt;
 
     edt_x0 = new QLineEdit("", this);
@@ -244,7 +244,7 @@ void QLimitCyclesDlg::onbtn_start(void)
     LCprogressDlg->setValue(LCprogressCount = 0);
     setP4WindowTitle(LCprogressDlg, "Searching for limit cycles...");
 
-    searchLimitCycle(mainSphere, selected_x0, selected_y0, selected_x1,
+    searchLimitCycle(mainSphere_, selected_x0, selected_y0, selected_x1,
                      selected_y1, selected_grid);
 
     // update buttons
@@ -323,16 +323,16 @@ void QLimitCyclesDlg::onbtn_delall(void)
     VFResults.first_lim_cycle = nullptr;
     VFResults.current_lim_cycle = nullptr;
 
-    mainSphere->refresh();
+    mainSphere_->refresh();
 }
 
 void QLimitCyclesDlg::onbtn_dellast(void)
 {
     plotwnd->getDlgData();
 
-    mainSphere->prepareDrawing();
-    deleteLastLimitCycle(mainSphere);
-    mainSphere->finishDrawing();
+    mainSphere_->prepareDrawing();
+    deleteLastLimitCycle(mainSphere_);
+    mainSphere_->finishDrawing();
 
     if (VFResults.first_lim_cycle == nullptr) {
         btn_delall->setEnabled(false);
