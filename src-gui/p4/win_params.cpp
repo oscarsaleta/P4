@@ -391,7 +391,7 @@ void QParamsDlg::UpdateDlgData(void)
     spin_precis->setValue(ThisVF->precision);
     spin_precis0->setValue(ThisVF->precision0);
 
-    if (ThisVF->typeofstudy == TYPEOFSTUDY_ONE) {
+    if (ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         edt_x0->setText(ThisVF->x0);
         edt_y0->setText(ThisVF->y0);
         spin_p->setValue(ThisVF->p);

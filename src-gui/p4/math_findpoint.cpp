@@ -241,7 +241,7 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
                 break;
             }
 
-            if (VFResults.plweights == false) {
+            if (VFResults.plweights_ == false) {
                 sx.sprintf("X= %f", (float)(pcoord[0]));
                 sy.sprintf("Y= %f", (float)(pcoord[1]));
                 sz.sprintf("Z= 0");
@@ -294,7 +294,7 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
                 (VFResults.selected_se_point->x0, 0.0, pcoord);
                 break;
             }
-            if (VFResults.plweights == false) {
+            if (VFResults.plweights_ == false) {
                 sx.sprintf("X= %f", (float)(pcoord[0]));
                 sy.sprintf("Y= %f", (float)(pcoord[1]));
                 sz.sprintf("Z= 0");
@@ -345,7 +345,7 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
                 (VFResults.selected_de_point->x0, 0.0, pcoord);
                 break;
             }
-            if (VFResults.plweights == false) {
+            if (VFResults.plweights_ == false) {
                 sx.sprintf("X= %f", (float)(pcoord[0]));
                 sy.sprintf("Y= %f", (float)(pcoord[1]));
                 sz.sprintf("Z= 0");

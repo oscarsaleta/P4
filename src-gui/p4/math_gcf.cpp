@@ -52,7 +52,7 @@ bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
         VFResults.gcf_points = nullptr;
     }
 
-    if (VFResults.plweights)
+    if (VFResults.plweights_)
         GcfTask = EVAL_GCF_LYP_R2;
     else
         GcfTask = EVAL_GCF_R2;

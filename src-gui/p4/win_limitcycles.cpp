@@ -136,8 +136,8 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // finishing
 
-    selected_x0 = 0;
-    selected_y0 = 0;
+    selected_x0_ = 0;
+    selected_y0_ = 0;
     selected_x1 = 0;
     selected_y1 = 0;
     selected_grid = DEFAULT_LCGRID;
@@ -191,8 +191,8 @@ void QLimitCyclesDlg::onbtn_start(void)
         empty = true;
     }
 
-    selected_x0 = bufx.toDouble();
-    selected_y0 = bufy.toDouble();
+    selected_x0_ = bufx.toDouble();
+    selected_y0_ = bufy.toDouble();
 
     bufx = edt_x1->text();
     bufy = edt_y1->text();
@@ -215,8 +215,8 @@ void QLimitCyclesDlg::onbtn_start(void)
 
     selected_numpoints = spin_numpoints->value();
 
-    d = (selected_x0 - selected_x1) * (selected_x0 - selected_x1);
-    d += (selected_y0 - selected_y1) * (selected_y0 - selected_y1);
+    d = (selected_x0_ - selected_x1) * (selected_x0_ - selected_x1);
+    d += (selected_y0_ - selected_y1) * (selected_y0_ - selected_y1);
     d = sqrt(d);
     if (selected_grid > d || selected_grid < MIN_LCGRID ||
         selected_grid > MAX_LCGRID) {
@@ -244,7 +244,7 @@ void QLimitCyclesDlg::onbtn_start(void)
     LCprogressDlg->setValue(LCprogressCount = 0);
     setP4WindowTitle(LCprogressDlg, "Searching for limit cycles...");
 
-    searchLimitCycle(mainSphere_, selected_x0, selected_y0, selected_x1,
+    searchLimitCycle(mainSphere_, selected_x0_, selected_y0_, selected_x1,
                      selected_y1, selected_grid);
 
     // update buttons
@@ -274,8 +274,8 @@ void QLimitCyclesDlg::reset(void)
 {
     // finishing
 
-    selected_x0 = 0;
-    selected_y0 = 0;
+    selected_x0_ = 0;
+    selected_y0_ = 0;
     selected_x1 = 0;
     selected_y1 = 0;
     selected_grid = DEFAULT_LCGRID;

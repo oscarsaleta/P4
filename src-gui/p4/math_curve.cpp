@@ -52,7 +52,7 @@ bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points)
         VFResults.curve_points = nullptr;
     }
 
-    if (VFResults.plweights)
+    if (VFResults.plweights_)
         CurveTask = EVAL_CURVE_LYP_R2;
     else
         CurveTask = EVAL_CURVE_R2;

@@ -233,7 +233,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     else
         btn_actionrun->toggle();
 
-    switch (ThisVF->typeofstudy) {
+    switch (ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
         btn_all->toggle();
         break;
@@ -354,8 +354,8 @@ void QFindDlg::btn_actionprep_toggled(bool on)
 void QFindDlg::btn_all_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy != TYPEOFSTUDY_ALL) {
-            ThisVF->typeofstudy = TYPEOFSTUDY_ALL;
+        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
+            ThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
                 p4app->signalChanged();
@@ -371,8 +371,8 @@ void QFindDlg::btn_all_toggled(bool on)
 void QFindDlg::btn_fin_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy != TYPEOFSTUDY_FIN) {
-            ThisVF->typeofstudy = TYPEOFSTUDY_FIN;
+        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
+            ThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
                 p4app->signalChanged();
@@ -388,8 +388,8 @@ void QFindDlg::btn_fin_toggled(bool on)
 void QFindDlg::btn_inf_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy != TYPEOFSTUDY_INF) {
-            ThisVF->typeofstudy = TYPEOFSTUDY_INF;
+        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_INF) {
+            ThisVF->typeofstudy_ = TYPEOFSTUDY_INF;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
                 p4app->signalChanged();
@@ -405,8 +405,8 @@ void QFindDlg::btn_inf_toggled(bool on)
 void QFindDlg::btn_one_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy != TYPEOFSTUDY_ONE) {
-            ThisVF->typeofstudy = TYPEOFSTUDY_ONE;
+        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
+            ThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
             if (ThisVF->changed == false) {
                 ThisVF->changed = true;
                 p4app->signalChanged();
@@ -584,7 +584,7 @@ void QFindDlg::GetDataFromDlg(void)
 
 void QFindDlg::UpdateDlgData(void)
 {
-    switch (ThisVF->typeofstudy) {
+    switch (ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
         ExclusiveToggle(true, btn_all);
         break;

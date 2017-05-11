@@ -364,7 +364,7 @@ void QIntParamsDlg::UpdateDlgData(void)
     spin_numpoints->setValue(VFResults.config_intpoints);
 
     if (VFResults.gcf != nullptr ||
-        (VFResults.singinf && VFResults.typeofstudy != TYPEOFSTUDY_ONE)) {
+        (VFResults.singinf && VFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
         btn_org->setEnabled(true);
         btn_red->setEnabled(true);
     } else {

@@ -429,7 +429,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
         break;
     case CHART_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
-        if ((VFResults.p == 1) && (VFResults.q == 1))
+        if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
         color = findSepColor2(VFResults.gcf_V1, sep1->type, point);
         break;
@@ -439,7 +439,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
         break;
     case CHART_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
-        if ((VFResults.p == 1) && (VFResults.q == 1))
+        if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
         color = findSepColor2(VFResults.gcf_U2, sep1->type, point);
         break;
@@ -519,7 +519,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
             break;
         case CHART_V1:
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
-            if ((VFResults.p == 1) && (VFResults.q == 1))
+            if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(VFResults.gcf_V1, sep1->type, point);
             break;
@@ -552,7 +552,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
             break;
         case CHART_V2:
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
-            if ((VFResults.p == 1) && (VFResults.q == 1))
+            if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(VFResults.gcf_V2, sep1->type, point);
             break;
@@ -660,7 +660,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
         break;
     case CHART_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
-        if ((VFResults.p == 1) && (VFResults.q == 1))
+        if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
         color = findSepColor2(VFResults.gcf_V1, de_sep->type, point);
         break;
@@ -670,7 +670,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
         break;
     case CHART_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
-        if ((VFResults.p == 1) && (VFResults.q == 1))
+        if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
         color = findSepColor2(VFResults.gcf_V2, de_sep->type, point);
         break;
@@ -721,7 +721,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
             break;
         case CHART_V1:
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
-            if ((VFResults.p == 1) && (VFResults.q == 1))
+            if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(VFResults.gcf_V1, de_sep->type, point);
             break;
@@ -750,7 +750,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
             break;
         case CHART_V2:
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
-            if ((VFResults.p == 1) && (VFResults.q == 1))
+            if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(VFResults.gcf_V2, de_sep->type, point);
             break;

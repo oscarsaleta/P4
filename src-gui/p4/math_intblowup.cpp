@@ -50,7 +50,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
 
     vec_field[0] = de_sep->vector_field[0];
     vec_field[1] = de_sep->vector_field[1];
-    if (VFResults.plweights == false &&
+    if (VFResults.plweights_ == false &&
         (chart == CHART_V1 || chart == CHART_V2))
         dir = VFResults.dir_vec_field * dir;
 
@@ -101,7 +101,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
 
         case CHART_V1:
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
-            if (VFResults.plweights == false)
+            if (VFResults.plweights_ == false)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(VFResults.gcf_V1, type, point);
             break;
@@ -136,7 +136,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
 
         case CHART_V2:
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
-            if (VFResults.plweights == false)
+            if (VFResults.plweights_ == false)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(VFResults.gcf_V2, type, point);
             break;
@@ -157,7 +157,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
         last_orbit->pcoord[2] = pcoord[2];
         last_orbit->color = color;
         last_orbit->dashes = dashes * VFResults.config_dashes;
-        last_orbit->dir = ((VFResults.plweights == false) &&
+        last_orbit->dir = ((VFResults.plweights_ == false) &&
                            (chart == CHART_V1 || chart == CHART_V2))
                               ? VFResults.dir_vec_field * dir
                               : dir;

@@ -87,9 +87,9 @@ QVFStudy::QVFStudy()
     xmax = 1.0;
     ymin = -1.0;
     ymax = 1.0;
-    p = 1;
-    q = 1;
-    typeofstudy = TYPEOFSTUDY_ALL;
+    p_ = 1;
+    q_ = 1;
+    typeofstudy_ = TYPEOFSTUDY_ALL;
     singinf = false;
     VFResults.dir_vec_field = 1;
 
@@ -212,9 +212,9 @@ void QVFStudy::deleteVF()
     xmax = 1.0;
     ymin = -1.0;
     ymax = 1.0;
-    p = 1;
-    q = 1;
-    typeofstudy = TYPEOFSTUDY_ALL;
+    p_ = 1;
+    q_ = 1;
+    typeofstudy_ = TYPEOFSTUDY_ALL;
     singinf = false;
     VFResults.dir_vec_field = 1;
 
@@ -441,33 +441,33 @@ bool QVFStudy::readTables(QString basename)
         return false;
     }
 
-    if (fscanf(fp, "%d %d %d ", &typeofstudy, &p, &q) != 3) {
-        dump(basename, "Cannot read typeofstudy in *_vec.tab");
+    if (fscanf(fp, "%d %d %d ", &typeofstudy_, &p_, &q_) != 3) {
+        dump(basename, "Cannot read typeofstudy_ in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         if (fscanf(fp, "%lf %lf %lf %lf", &xmin, &xmax, &ymin, &ymax) != 4) {
             dump(basename, "Cannot read min-max coords in *_vec.tab");
             deleteVF();
             fclose(fp);
             return false;
         }
-        p = q = 1;
-        typeofview = TYPEOFVIEW_PLANE;
+        p_ = q_ = 1;
+        typeofview_ = TYPEOFVIEW_PLANE;
     } else
-        typeofview = TYPEOFVIEW_SPHERE;
+        typeofview_ = TYPEOFVIEW_SPHERE;
 
-    plweights = ((p == 1 && q == 1) ? false : true);
+    plweights_ = ((p_ == 1 && q_ == 1) ? false : true);
 
-    double_p = (double)p;
-    double_q = (double)q;
-    double_p_plus_q = (double)(p + q);
-    double_p_minus_1 = (double)(p - 1);
-    double_q_minus_1 = (double)(q - 1);
-    double_q_minus_p = (double)(q - p);
+    double_p = (double)p_;
+    double_q = (double)q_;
+    double_p_plus_q = (double)(p_ + q_);
+    double_p_minus_1 = (double)(p_ - 1);
+    double_q_minus_1 = (double)(q_ - 1);
+    double_q_minus_p = (double)(q_ - p_);
 
     if (!readGCF(fp)) {
         dump(basename, "Cannot read gcf *_vec.tab");
@@ -511,7 +511,7 @@ bool QVFStudy::readTables(QString basename)
         return false;
     }
 
-    if (plweights) {
+    if (plweights_) {
         if (!readVectorFieldCylinder(fp, vec_field_C)) {
             dump(basename,
                  "Cannot read vector field in Cylinder-chart in *_vec.tab");
@@ -533,7 +533,7 @@ bool QVFStudy::readTables(QString basename)
 
     fclose(fp);
 
-    if (typeofstudy != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != TYPEOFSTUDY_INF) {
 
         fp = fopen(QFile::encodeName(basename + "_fin.tab"), "rt");
         if (fp != nullptr) {
@@ -554,10 +554,10 @@ bool QVFStudy::readTables(QString basename)
         }
     }
 
-    if (typeofstudy != TYPEOFSTUDY_ONE && typeofstudy != TYPEOFSTUDY_FIN) {
+    if (typeofstudy_ != TYPEOFSTUDY_ONE && typeofstudy_ != TYPEOFSTUDY_FIN) {
         fp = fopen(QFile::encodeName(basename + "_inf.tab"), "rt");
         if (fp != nullptr) {
-            if (p == 1 && q == 1) {
+            if (p_ == 1 && q_ == 1) {
                 for (j = 1; j <= 2; j++) {
                     if (!readPoints(fp)) {
                         dump(basename,
@@ -647,7 +647,7 @@ bool QVFStudy::readGCF(FILE *fp)
         if (!readTerm2(fp, gcf_V2, N))
             return false;
 
-        if (p != 1 || q != 1) {
+        if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
@@ -733,7 +733,7 @@ bool QVFStudy::readCurve(QString basename)
         if (!readTerm2(fp, curve_V2, N))
             return false;
 
-        if (p != 1 || q != 1) {
+        if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
@@ -1157,7 +1157,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1->type = OT_UNSTABLE;
 
             sep1->d = 0;
-            if (((p == 1) && (q == 1) &&
+            if (((p_ == 1) && (q_ == 1) &&
                  ((point->chart == CHART_V1) || (point->chart == CHART_V2))) ||
                 (point->chart == CHART_R2 || singinf)) {
                 sep1->direction = -1;
@@ -1213,7 +1213,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             sep1->type = STYPE_STABLE;
 
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1260,7 +1260,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         else
             sep1->type = STYPE_UNSTABLE;
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1311,7 +1311,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1->type = STYPE_STABLE;
 
             sep1->d = 0;
-            if (((p == 1) && (q == 1) &&
+            if (((p_ == 1) && (q_ == 1) &&
                  ((point->chart == CHART_V1) || (point->chart == CHART_V2))) ||
                 (point->chart == CHART_R2 || singinf))
                 sep1->direction = -1;
@@ -1360,7 +1360,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         else
             sep1->type = STYPE_STABLE;
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1414,7 +1414,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         else
             sep1->type = STYPE_UNSTABLE;
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1477,7 +1477,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 ok = true;
             break;
         case CHART_V1:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
             if (eval_term2(gcf_V1, y) < 0)
                 ok = true;
@@ -1487,7 +1487,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 ok = true;
             break;
         case CHART_V2:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
             if (eval_term2(gcf_V2, y) < 0)
                 ok = true;
@@ -1605,7 +1605,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
         break;
 
     case CHART_V1:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
         if (eval_term2(gcf_V1, y) < 0)
@@ -1618,7 +1618,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
         break;
 
     case CHART_V2:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
         if (eval_term2(gcf_V2, y) < 0)
@@ -1690,7 +1690,7 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
             break;
 
         case CHART_V1:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
             if (eval_term2(gcf_V1, y) < 0)
                 point->type *= -1;
@@ -1702,7 +1702,7 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
             break;
 
         case CHART_V2:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
             if (eval_term2(gcf_V2, y) < 0)
                 point->type *= -1;
@@ -1854,7 +1854,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
         break;
 
     case CHART_V1:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
         if (eval_term2(gcf_V1, y) < 0)
@@ -1867,7 +1867,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
         break;
 
     case CHART_V2:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
         if (eval_term2(gcf_V2, y) < 0)
             point->stable *= -1;
@@ -2185,9 +2185,9 @@ void QVFStudy::dump(QString basename, QString info)
 
     DUMP(("General Info"))
     DUMP(("------------"))
-    DUMP(("  Type of study = %d", typeofstudy))
-    DUMP(("  (p,q) = (%d,%d)", p, q))
-    DUMP(("  plweights = %d", plweights))
+    DUMP(("  Type of study = %d", typeofstudy_))
+    DUMP(("  (p,q) = (%d,%d)", p_, q_))
+    DUMP(("  plweights = %d", plweights_))
     DUMP(("  doubles p,q,p+q,p-1,q-1,q-p = (%g,%g,%g,%g,%g,%g)",
           (float)double_p, (float)double_q, (float)double_p_plus_q,
           (float)double_p_minus_1, (float)double_q_minus_1,
@@ -2356,7 +2356,7 @@ void QVFStudy::dump(QString basename, QString info)
 
 void QVFStudy::setupCoordinateTransformations(void)
 {
-    if (!plweights) {
+    if (!plweights_) {
         U1_to_sphere = U1_to_psphere;
         U2_to_sphere = U2_to_psphere;
         V1_to_sphere = VV1_to_psphere;
@@ -2374,7 +2374,7 @@ void QVFStudy::setupCoordinateTransformations(void)
         less2 = less_poincare;
         change_dir = change_dir_poincare;
 
-        switch (typeofview) {
+        switch (typeofview_) {
         case TYPEOFVIEW_SPHERE:
             viewcoord_to_sphere = ucircle_psphere;
             sphere_to_viewcoord = psphere_ucircle;
@@ -2441,7 +2441,7 @@ void QVFStudy::setupCoordinateTransformations(void)
         less2 = less_lyapunov;
         change_dir = change_dir_lyapunov;
 
-        switch (typeofview) {
+        switch (typeofview_) {
         case TYPEOFVIEW_SPHERE:
             viewcoord_to_sphere = annulus_plsphere;
             sphere_to_viewcoord = plsphere_annulus;

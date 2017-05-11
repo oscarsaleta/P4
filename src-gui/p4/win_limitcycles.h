@@ -62,8 +62,8 @@ class QLimitCyclesDlg : public QWidget
 
     QBoxLayout *mainLayout_;
 
-    double selected_x0;
-    double selected_y0;
+    double selected_x0_;
+    double selected_y0_;
     double selected_x1;
     double selected_y1;
     double selected_grid;

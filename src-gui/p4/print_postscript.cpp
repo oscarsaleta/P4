@@ -492,7 +492,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             w, h);
         PSFileStream << s;
 
-        if (iszoom || VFResults.typeofview == TYPEOFVIEW_PLANE) {
+        if (iszoom || VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
             PSFileStream << "frame\n";
         }
 

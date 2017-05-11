@@ -49,7 +49,7 @@ class QInputVF : public QObject
     QString filename;
 
     int symbolicpackage; // 0 for reduce, 1 for maple
-    int typeofstudy;     // 0, 1, 2, 3 = all, inf, fin, one
+    int typeofstudy_;     // 0, 1, 2, 3 = all, inf, fin, one
 
     bool numeric;
     int precision;

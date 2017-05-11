@@ -248,8 +248,8 @@ bool isvalid_U1viewcoord(double u, double v, double *pcoord)
 {
     // the u coordinate must be positive, except when p is odd.
 
-    if (VFResults.plweights) {
-        if ((VFResults.p % 2) == 0 && u < 0)
+    if (VFResults.plweights_) {
+        if ((VFResults.p_ % 2) == 0 && u < 0)
             return false;
     }
 
@@ -259,8 +259,8 @@ bool isvalid_U1viewcoord(double u, double v, double *pcoord)
 
 bool isvalid_U2viewcoord(double u, double v, double *pcoord)
 {
-    if (VFResults.plweights) {
-        if ((VFResults.q % 2) == 0 && v < 0)
+    if (VFResults.plweights_) {
+        if ((VFResults.q_ % 2) == 0 && v < 0)
             return false;
     }
 
@@ -270,8 +270,8 @@ bool isvalid_U2viewcoord(double u, double v, double *pcoord)
 
 bool isvalid_V1viewcoord(double u, double v, double *pcoord)
 {
-    if (VFResults.plweights) {
-        if ((VFResults.p % 2) == 0 && u < 0)
+    if (VFResults.plweights_) {
+        if ((VFResults.p_ % 2) == 0 && u < 0)
             return false;
     }
 
@@ -281,8 +281,8 @@ bool isvalid_V1viewcoord(double u, double v, double *pcoord)
 
 bool isvalid_V2viewcoord(double u, double v, double *pcoord)
 {
-    if (VFResults.plweights) {
-        if ((VFResults.q % 2) == 0 && v < 0)
+    if (VFResults.plweights_) {
+        if ((VFResults.q_ % 2) == 0 && v < 0)
             return false;
     }
 
@@ -804,7 +804,7 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
         a = cos(y);
 
         if (a < 0) {
-            if ((VFResults.p % 2) == 0) {
+            if ((VFResults.p_ % 2) == 0) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
@@ -819,7 +819,7 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
         rcoord[1] = x * a;                       // x * cos(y)^(-1/p)
     } else {
         if (x < 0) {
-            if ((VFResults.p % 2) == 0) {
+            if ((VFResults.p_ % 2) == 0) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
@@ -849,7 +849,7 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
         a = sin(y);
 
         if (a < 0) {
-            if ((VFResults.q % 2) == 0) {
+            if ((VFResults.q_ % 2) == 0) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
@@ -864,7 +864,7 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
         rcoord[1] = x * a;                       // x * sin(y)^(-1/q)
     } else {
         if (y < 0) {
-            if ((VFResults.q % 2) == 0) {
+            if ((VFResults.q_ % 2) == 0) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
@@ -885,7 +885,7 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
         a = -cos(y);
 
         if (a < 0) {
-            if ((VFResults.p % 2) == 0) {
+            if ((VFResults.p_ % 2) == 0) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
@@ -900,7 +900,7 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
         rcoord[1] = x * a;                       // x * cos(y)^(-1/p)
     } else {
         if (x > 0) {
-            if ((VFResults.p % 2) == 0) {
+            if ((VFResults.p_ % 2) == 0) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;
@@ -928,7 +928,7 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
         a = -sin(y);
 
         if (a < 0) {
-            if ((VFResults.q % 2) == 0) {
+            if ((VFResults.q_ % 2) == 0) {
                 // p is even: so we have a problem
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
@@ -943,7 +943,7 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
         rcoord[1] = x * a;                       // x * sin(y)^(-1/q)
     } else {
         if (y > 0) {
-            if ((VFResults.q % 2) == 0) {
+            if ((VFResults.q_ % 2) == 0) {
                 rcoord[0] = floatinfinity();
                 rcoord[1] = floatinfinity();
                 return;

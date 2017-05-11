@@ -279,7 +279,7 @@ void QWinSphere::SetupPlot(void)
     }
 
     if (!iszoom) {
-        switch (VFResults.typeofview) {
+        switch (VFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
         case TYPEOFVIEW_U1:
         case TYPEOFVIEW_U2:
@@ -309,7 +309,7 @@ void QWinSphere::SetupPlot(void)
 
     idealh = (int)(idealhd + .5);
 
-    switch (VFResults.typeofview) {
+    switch (VFResults.typeofview_) {
     case TYPEOFVIEW_PLANE:
         chartstring = "";
         break;
@@ -317,23 +317,23 @@ void QWinSphere::SetupPlot(void)
         chartstring = "";
         break;
     case TYPEOFVIEW_U1:
-        chartstring = makechartstring(VFResults.p, VFResults.q, true, false);
+        chartstring = makechartstring(VFResults.p_, VFResults.q_, true, false);
         break;
     case TYPEOFVIEW_U2:
-        chartstring = makechartstring(VFResults.p, VFResults.q, false, false);
+        chartstring = makechartstring(VFResults.p_, VFResults.q_, false, false);
         break;
     case TYPEOFVIEW_V1:
-        chartstring = makechartstring(VFResults.p, VFResults.q, true, true);
+        chartstring = makechartstring(VFResults.p_, VFResults.q_, true, true);
         break;
     case TYPEOFVIEW_V2:
-        chartstring = makechartstring(VFResults.p, VFResults.q, false, true);
+        chartstring = makechartstring(VFResults.p_, VFResults.q_, false, true);
         break;
     }
 
-    if (VFResults.typeofview == TYPEOFVIEW_SPHERE) {
+    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         CircleAtInfinity =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-        if (VFResults.plweights)
+        if (VFResults.plweights_)
             PLCircle = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
                                       coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -580,10 +580,10 @@ void QWinSphere::adjustToNewSize(void)
         delete t; // free( t );
         t = nullptr;
     }
-    if (VFResults.typeofview == TYPEOFVIEW_SPHERE) {
+    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         CircleAtInfinity =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-        if (VFResults.plweights)
+        if (VFResults.plweights_)
             PLCircle = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
                                       coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -609,9 +609,9 @@ void QWinSphere::adjustToNewSize(void)
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (VFResults.typeofview != TYPEOFVIEW_PLANE) {
-            if (VFResults.typeofview == TYPEOFVIEW_SPHERE) {
-                if (VFResults.plweights)
+        if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (VFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -687,9 +687,9 @@ void QWinSphere::paintEvent(QPaintEvent *p)
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (VFResults.typeofview != TYPEOFVIEW_PLANE) {
-            if (VFResults.typeofview == TYPEOFVIEW_SPHERE) {
-                if (VFResults.plweights)
+        if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (VFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -784,9 +784,9 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
     */
     double pcoord[3];
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-        switch (VFResults.typeofview) {
+        switch (VFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (VFResults.typeofstudy == TYPEOFSTUDY_ONE)
+            if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study   (x,y) = (%f,%f)", (float)wx,
                             (float)wy);
             else
@@ -796,12 +796,12 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
         case TYPEOFVIEW_SPHERE:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
 
-            if (VFResults.p == 1 && VFResults.q == 1)
+            if (VFResults.p_ == 1 && VFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere  (x,y) = (%f,%f)",
                             (float)ucoord[0], (float)ucoord[1]);
             else
                 buf.sprintf("The P-L sphere of type (%d,%d)  (x,y) = (%f,%f)",
-                            VFResults.p, VFResults.q, (float)ucoord[0],
+                            VFResults.p_, VFResults.q_, (float)ucoord[0],
                             (float)ucoord[1]);
             break;
         case TYPEOFVIEW_U1:
@@ -816,7 +816,7 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!VFResults.plweights) {
+            if (!VFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -840,7 +840,7 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!VFResults.plweights) {
+            if (!VFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -854,19 +854,19 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         }
     } else {
-        switch (VFResults.typeofview) {
+        switch (VFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (VFResults.typeofstudy == TYPEOFSTUDY_ONE)
+            if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study");
             else
                 buf.sprintf("Planar view");
             break;
         case TYPEOFVIEW_SPHERE:
-            if (VFResults.p == 1 && VFResults.q == 1)
+            if (VFResults.p_ == 1 && VFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere");
             else
-                buf.sprintf("The P-L sphere of type (%d,%d)", VFResults.p,
-                            VFResults.q);
+                buf.sprintf("The P-L sphere of type (%d,%d)", VFResults.p_,
+                            VFResults.q_);
             break;
         case TYPEOFVIEW_U1:
             buf.sprintf("The U1 chart");
@@ -1705,7 +1705,7 @@ void QWinSphere::plotPoincareLyapunovSphere(void)
 
 void QWinSphere::plotLineAtInfinity(void)
 {
-    switch (VFResults.typeofview) {
+    switch (VFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0 < 0.0 && x1 > 0.0) {
@@ -2201,7 +2201,7 @@ void QWinSphere::printPoincareLyapunovSphere(void)
 
 void QWinSphere::printLineAtInfinity(void)
 {
-    switch (VFResults.typeofview) {
+    switch (VFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0 < 0.0 && x1 > 0.0)
@@ -2463,7 +2463,7 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
         }
 
         staticPainter->translate(tx, ty);
-        if (iszoom || VFResults.typeofview == TYPEOFVIEW_PLANE) {
+        if (iszoom || VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
             QPen p = QPen(QXFIGCOLOR(printColorTable[CFOREGROUND]), (int)lw);
             staticPainter->setPen(p);
             staticPainter->drawRect(0, 0, w, h);
@@ -2558,9 +2558,9 @@ void QWinSphere::print(void)
     if (PrintMethod == P4PRINT_JPEGIMAGE && p4pixmap == nullptr)
         return;
 
-    if (VFResults.typeofview != TYPEOFVIEW_PLANE) {
-        if (VFResults.typeofview == TYPEOFVIEW_SPHERE) {
-            if (VFResults.plweights)
+    if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+        if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+            if (VFResults.plweights_)
                 printPoincareLyapunovSphere();
             else
                 printPoincareSphere();

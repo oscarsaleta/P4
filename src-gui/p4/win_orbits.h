@@ -52,20 +52,20 @@ class QOrbitsDlg : public QWidget
 
     QBoxLayout *mainLayout_;
 
-    double selected_x0;
-    double selected_y0;
+    double selected_x0_;
+    double selected_y0_;
 
-    bool orbit_started;
-    bool orbit_selected;
+    bool orbitStarted_;
+    bool orbitSelected_;
 
   public slots:
-    void OrbitEvent(int);
-    void onbtnSelect_(void);
-    void onbtnBackwards_(void);
-    void onbtnContinue_(void);
-    void onbtnForwards_(void);
-    void onbtnDelAll_(void);
-    void onbtnDelLast_(void);
+    void orbitEvent(int);
+    void onBtnSelect(void);
+    void onBtnBackwards(void);
+    void onBtnContinue(void);
+    void onBtnForwards(void);
+    void onBtnDelAll(void);
+    void onBtnDelLast(void);
 
     void setInitialPoint(double, double);
 };

@@ -465,7 +465,7 @@ void QPlotWnd::customEvent(QEvent *_e)
 
     if (e->type() == TYPE_ORBIT_EVENT) {
         oet = (int *)(e->data());
-        Orbits_Window->OrbitEvent(*oet);
+        Orbits_Window->orbitEvent(*oet);
         delete oet; // free(oet);
         oet = nullptr;
         return;

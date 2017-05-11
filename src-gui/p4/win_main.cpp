@@ -382,8 +382,8 @@ void QStartDlg::signalEvaluated(void)
         if (ThisVF->FileExists(fname)) {
             View_Infinite_Window = Showtext(View_Infinite_Window,
                                             "View results at infinity", fname);
-            if (ThisVF->typeofstudy == TYPEOFSTUDY_FIN ||
-                ThisVF->typeofstudy == TYPEOFSTUDY_ONE) {
+            if (ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
+                ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
                 // mark: data invalid according to vf information
 
                 View_Infinite_Window->setFont(*(p4app->courierFont_));
@@ -489,7 +489,7 @@ void QStartDlg::OnViewFinite()
     fname = ThisVF->getfilename_finresults();
 
     if (ThisVF->FileExists(fname) == false) {
-        if (ThisVF->typeofstudy == TYPEOFSTUDY_INF) {
+        if (ThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
             QMessageBox::critical(
                 this, "P4",
                 "A study at the finite region was not requested!\n");
@@ -506,7 +506,7 @@ void QStartDlg::OnViewFinite()
     View_Finite_Window->show();
     View_Finite_Window->raise();
 
-    if (ThisVF->typeofstudy == TYPEOFSTUDY_INF) {
+    if (ThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
         // mark: data invalid according to vf information
 
         View_Finite_Window->setFont(*(p4app->courierFont_));
@@ -523,8 +523,8 @@ void QStartDlg::OnViewInfinite()
 
     fname = ThisVF->getfilename_infresults();
     if (ThisVF->FileExists(fname) == false) {
-        if (ThisVF->typeofstudy == TYPEOFSTUDY_FIN ||
-            ThisVF->typeofstudy == TYPEOFSTUDY_ONE) {
+        if (ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
+            ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
             QMessageBox::critical(this, "P4",
                                   "A study at infinity was not requested!\n");
             return;
@@ -540,8 +540,8 @@ void QStartDlg::OnViewInfinite()
         Showtext(View_Infinite_Window, "View results at infinity", fname);
     View_Infinite_Window->show();
     View_Infinite_Window->raise();
-    if (ThisVF->typeofstudy == TYPEOFSTUDY_FIN ||
-        ThisVF->typeofstudy == TYPEOFSTUDY_ONE) {
+    if (ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
+        ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         // mark: data invalid according to vf information
 
         View_Infinite_Window->setFont(*(p4app->courierFont_));

@@ -419,39 +419,39 @@ bool QViewDlg::GetDataFromDlg(void)
 
     changed = false;
     if (btn_sphere->isChecked()) {
-        if (VFResults.typeofview != TYPEOFVIEW_SPHERE) {
+        if (VFResults.typeofview_ != TYPEOFVIEW_SPHERE) {
             changed = true;
-            VFResults.typeofview = TYPEOFVIEW_SPHERE;
+            VFResults.typeofview_ = TYPEOFVIEW_SPHERE;
         }
     }
     if (btn_plane->isChecked()) {
-        if (VFResults.typeofview != TYPEOFVIEW_PLANE) {
+        if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             changed = true;
-            VFResults.typeofview = TYPEOFVIEW_PLANE;
+            VFResults.typeofview_ = TYPEOFVIEW_PLANE;
         }
     }
     if (btn_U1->isChecked()) {
-        if (VFResults.typeofview != TYPEOFVIEW_U1) {
+        if (VFResults.typeofview_ != TYPEOFVIEW_U1) {
             changed = true;
-            VFResults.typeofview = TYPEOFVIEW_U1;
+            VFResults.typeofview_ = TYPEOFVIEW_U1;
         }
     }
     if (btn_U2->isChecked()) {
-        if (VFResults.typeofview != TYPEOFVIEW_U2) {
+        if (VFResults.typeofview_ != TYPEOFVIEW_U2) {
             changed = true;
-            VFResults.typeofview = TYPEOFVIEW_U2;
+            VFResults.typeofview_ = TYPEOFVIEW_U2;
         }
     }
     if (btn_V1->isChecked()) {
-        if (VFResults.typeofview != TYPEOFVIEW_V1) {
+        if (VFResults.typeofview_ != TYPEOFVIEW_V1) {
             changed = true;
-            VFResults.typeofview = TYPEOFVIEW_V1;
+            VFResults.typeofview_ = TYPEOFVIEW_V1;
         }
     }
     if (btn_V2->isChecked()) {
-        if (VFResults.typeofview != TYPEOFVIEW_V2) {
+        if (VFResults.typeofview_ != TYPEOFVIEW_V2) {
             changed = true;
-            VFResults.typeofview = TYPEOFVIEW_V2;
+            VFResults.typeofview_ = TYPEOFVIEW_V2;
         }
     }
 
@@ -487,33 +487,33 @@ void QViewDlg::UpdateDlgData(void)
 
     changed = false;
 
-    if (VFResults.typeofview == TYPEOFVIEW_PLANE)
+    if (VFResults.typeofview_ == TYPEOFVIEW_PLANE)
         ExclusiveToggle(true, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview == TYPEOFVIEW_SPHERE)
+    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE)
         ExclusiveToggle(true, btn_sphere, btn_plane, btn_U1, btn_U2, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview == TYPEOFVIEW_U1)
+    if (VFResults.typeofview_ == TYPEOFVIEW_U1)
         ExclusiveToggle(true, btn_U1, btn_sphere, btn_plane, btn_U2, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview == TYPEOFVIEW_U2)
+    if (VFResults.typeofview_ == TYPEOFVIEW_U2)
         ExclusiveToggle(true, btn_U2, btn_sphere, btn_plane, btn_U1, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview == TYPEOFVIEW_V1)
+    if (VFResults.typeofview_ == TYPEOFVIEW_V1)
         ExclusiveToggle(true, btn_V1, btn_sphere, btn_plane, btn_U1, btn_U2,
                         btn_V2, nullptr);
-    if (VFResults.typeofview == TYPEOFVIEW_V2)
+    if (VFResults.typeofview_ == TYPEOFVIEW_V2)
         ExclusiveToggle(true, btn_V2, btn_sphere, btn_plane, btn_U1, btn_U2,
                         btn_V1, nullptr);
 
-    if (VFResults.typeofstudy == TYPEOFSTUDY_ONE)
+    if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
         btn_sphere->setEnabled(false);
     else
         btn_sphere->setEnabled(true);
 
     buf.sprintf("%g", (float)(VFResults.config_projection));
     edt_projection->setText(buf);
-    if (VFResults.typeofview == TYPEOFVIEW_SPHERE && !VFResults.plweights)
+    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE && !VFResults.plweights_)
         edt_projection->setEnabled(true);
     else
         edt_projection->setEnabled(false);

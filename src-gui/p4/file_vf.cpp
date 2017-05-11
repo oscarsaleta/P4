@@ -120,7 +120,7 @@ void QInputVF::reset(void)
 {
     filename = DEFAULTFILENAME;
     symbolicpackage = getMathPackage();
-    typeofstudy = DEFAULTTYPE;
+    typeofstudy_ = DEFAULTTYPE;
     numeric = DEFAULTNUMERIC;
     precision = DEFAULTPRECISION;
     precision0 = DEFAULTPRECISION0;
@@ -172,7 +172,7 @@ bool QInputVF::load(void)
 
     cleared = false;
 
-    if (fscanf(fp, "%d\n", &typeofstudy) != 1 ||
+    if (fscanf(fp, "%d\n", &typeofstudy_) != 1 ||
         fscanf(fp, "%d\n", &flag_numeric) != 1 ||
         fscanf(fp, "%d\n", &precision) != 1 ||
         fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
@@ -188,7 +188,7 @@ bool QInputVF::load(void)
         epsilon = scanbuf;
         testsep = ((flag_testsep == 0) ? false : true);
     }
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             fclose(fp);
             return false;
@@ -306,7 +306,7 @@ bool QInputVF::checkevaluated(void)
     if (dtvec.secsTo(dt) > 0 || dtvec.daysTo(dt) > 0)
         return false;
 
-    if (typeofstudy != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != TYPEOFSTUDY_INF) {
         fifin = new QFileInfo(getbarefilename() + "_fin.tab");
         if (fifin->isFile() == false) {
             delete fifin;
@@ -320,7 +320,7 @@ bool QInputVF::checkevaluated(void)
             return false;
     }
 
-    if (typeofstudy == TYPEOFSTUDY_INF || typeofstudy == TYPEOFSTUDY_ALL) {
+    if (typeofstudy_ == TYPEOFSTUDY_INF || typeofstudy_ == TYPEOFSTUDY_ALL) {
         fiinf = new QFileInfo(getbarefilename() + "_inf.tab");
         if (fiinf->isFile() == false) {
             delete fiinf;
@@ -354,7 +354,7 @@ bool QInputVF::save(void)
     if (fp == nullptr)
         return false;
 
-    fprintf(fp, "%d\n", typeofstudy);
+    fprintf(fp, "%d\n", typeofstudy_);
     fprintf(fp, "%d\n", numeric);
     fprintf(fp, "%d\n", precision);
 
@@ -371,7 +371,7 @@ bool QInputVF::save(void)
     fprintf(fp, "%d\n", maxlevel);
     fprintf(fp, "%d\n", weakness);
 
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         if (x0.length() == 0)
             fprintf(fp, "%s\n", "(null)");
         s = x0.toLatin1();
@@ -578,7 +578,7 @@ bool QInputVF::FileExists(QString fname)
     s.sprintf("weakness_level:=%d$\n", weakness);
     *fp << s;
 
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         s.sprintf("p:=1$\nq:=1$\n");
         *fp << s;
         *fp << "x0:=" << x0 << "$\n";
@@ -622,7 +622,7 @@ void QInputVF::prepareMapleParameters(QTextStream *fp)
     s.sprintf("weakness_level:=%d:\n", weakness);
     *fp << s;
 
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         *fp << "user_p:=1:\n";
         *fp << "user_q:=1:\n";
 
@@ -954,7 +954,7 @@ void QInputVF::prepareFile(QTextStream *fp)
         removeFile(name_infres);
         removeFile(name_finres);
 
-        s.sprintf("all_crit_points:=%d$\n", typeofstudy);
+        s.sprintf("all_crit_points:=%d$\n", typeofstudy_);
         s += "save_all:=" + bsaveall + "$\n";
         s += "vec_table:=\"" + name_vectab + "\"$\n";
         s += "finite_table:=\"" + name_fintab + "\"$\n";
@@ -1047,7 +1047,7 @@ void QInputVF::prepareFile(QTextStream *fp)
     ba_name_finres = maplepathformat(name_finres);
     ba_name_infres = maplepathformat(name_infres);
 
-    *fp << "all_crit_points := " << typeofstudy << ":\n";
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
     *fp << "save_all := " << bsaveall << ":\n";
 
     *fp << "vec_table := \"" << ba_name_vectab << "\":\n";
@@ -1133,7 +1133,7 @@ void QInputVF::prepareCurveFile(QTextStream *fp)
     *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
     *fp << "user_simplify := " << user_simplify << ":\n";
     *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
-    *fp << "all_crit_points := " << typeofstudy << ":\n";
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
 
     name_curvetab = getfilename_curvetable();
     removeFile(name_curvetab);

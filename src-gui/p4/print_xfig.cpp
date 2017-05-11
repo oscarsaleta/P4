@@ -632,7 +632,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                                   // centimeters)
                       "1200 2\n"; // unused in XFIG???
 
-        if (VFResults.typeofview == TYPEOFVIEW_PLANE || iszoom) {
+        if (VFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
             /*
                 object type     2   (=polyline)
                 subtype         2   (=box)

@@ -301,11 +301,11 @@ class QVFStudy : public QObject
   public:
     // general information
 
-    int typeofstudy;
-    TYPEOFVIEWS typeofview; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    int p;
-    int q;
-    bool plweights; // true if p<>1 or q<>1; false if p=q=1
+    int typeofstudy_;
+    TYPEOFVIEWS typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    int p_;
+    int q_;
+    bool plweights_; // true if p<>1 or q<>1; false if p=q=1
 
     double double_p;         // shortcuts: = (double)p
     double double_q;         // = (double)q
@@ -477,7 +477,7 @@ class QVFStudy : public QObject
 #define DUMPSTR(x) m->append(x);
 #define MATHFUNC(function) (*(VFResults.function))
 
-extern QVFStudy VFResults; // (VFResults.p,VFResults.q) are lyapunov weights
+extern QVFStudy VFResults; // (VFResults.p_,VFResults.q_) are lyapunov weights
 
 #define LINESTYLE_DASHES 1
 #define LINESTYLE_POINTS 0
