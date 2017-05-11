@@ -273,6 +273,8 @@ if ! $QMAKE $COMPILE_DEBUG -r P4.pro >$OUT 2>$ERR; then
     exit 1
 fi
 # Use multicore make for faster compilation
+echo "- Cleaning previous compilations..."
+make clean
 CPUCNT=$(grep -c ^processor /proc/cpuinfo)
 echo "- Compiling... Will use $CPUCNT jobs for make. This will take a moment..."
 make -j$CPUCNT >$OUT #2>$ERR
