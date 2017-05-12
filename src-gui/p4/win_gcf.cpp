@@ -23,18 +23,20 @@
 #include "file_vf.h"
 #include "math_gcf.h"
 
+#include <QButtonGroup>
 #include <QMessageBox>
 
 QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
-    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
-
     mainSphere_ = sp;
     plotwnd_ = plt;
 
+    QButtonGroup *btngrp = new QButtonGroup(this);
     btn_dots_ = new QRadioButton("Dots", this);
     btn_dashes_ = new QRadioButton("Dashes", this);
+    btngrp->addButton(btn_dots_);
+    btngrp->addButton(btn_dashes_);
 
     QLabel *lbl1 = new QLabel("Appearance: ", this);
 
@@ -94,11 +96,6 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
 
     QObject::connect(btn_evaluate_, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
-    QObject::connect(btn_dots_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dots_toggled(bool)));
-    QObject::connect(btn_dashes_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dashes_toggled(bool)));
-
     // finishing
 
     setP4WindowTitle(this, "GCF Plot");
@@ -118,34 +115,9 @@ void QGcfDlg::reset(void)
     edt_memory_->setText(buf);
 
     if (VFResults.config_dashes_)
-        exclusiveToggle(true, btn_dashes_, btn_dots_);
+        btn_dashes_->toggle();
     else
-        exclusiveToggle(true, btn_dots_, btn_dashes_);
-}
-
-void QGcfDlg::btn_dots_toggled(bool on)
-{
-    exclusiveToggle(on, btn_dots_, btn_dashes_);
-}
-
-void QGcfDlg::btn_dashes_toggled(bool on)
-{
-    exclusiveToggle(on, btn_dashes_, btn_dots_);
-}
-
-void QGcfDlg::exclusiveToggle(bool on, QRadioButton *first,
-                              QRadioButton *second)
-{
-    if (on) {
-        if (first->isChecked() == false)
-            first->toggle();
-
-        if (second->isChecked() == true)
-            second->toggle();
-    } else {
-        if (second->isChecked() == false)
-            first->toggle();
-    }
+        btn_dots_->toggle();
 }
 
 void QGcfDlg::onbtn_evaluate(void)

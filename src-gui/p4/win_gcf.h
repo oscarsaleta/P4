@@ -52,16 +52,12 @@ class QGcfDlg : public QWidget
 
     QBoxLayout *mainLayout_;
 
-    void exclusiveToggle(bool, QRadioButton *, QRadioButton *);
-
     int evaluating_points_;
     int evaluating_memory_;
     int evaluating_precision_;
 
   public slots:
     void onbtn_evaluate(void);
-    void btn_dots_toggled(bool);
-    void btn_dashes_toggled(bool);
 };
 
 #endif /* WIN_GCF_H */
