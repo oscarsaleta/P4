@@ -252,7 +252,7 @@ static bool read_gcf(void (*chart)(double, double, double *))
     if (fp == nullptr)
         return false;
 
-    if (ThisVF->symbolicpackage == PACKAGE_REDUCE) {
+    if (ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
         // search the x-label, and check for error.
 
         FILE *fp2;

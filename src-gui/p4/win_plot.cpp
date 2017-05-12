@@ -170,7 +170,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     IntParams_Window->UpdateDlgData();
     ViewParams_Window->UpdateDlgData();
 
-    //  if( ThisVF->evaluated )
+    //  if( ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait");
     //  else
     //      SetP4WindowTitle( this, "Phase Portrait (*)" );
@@ -202,10 +202,10 @@ QPlotWnd::~QPlotWnd()
     LC_Window = nullptr;
     delete GCF_Window;
     GCF_Window = nullptr;
-    ThisVF->gcfDlg = nullptr;
+    ThisVF->gcfDlg_ = nullptr;
     delete Curve_Window;
     Curve_Window = nullptr;
-    ThisVF->curveDlg = nullptr;
+    ThisVF->curveDlg_ = nullptr;
 }
 
 void QPlotWnd::AdjustHeight(void)

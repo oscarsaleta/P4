@@ -38,7 +38,7 @@ class QSettingsDlg : public QDialog
     QPushButton *btn_temp;
     QPushButton *btn_maple;
     QPushButton *btn_red;
-    QPushButton *btn_ok;
+    QPushButton *btn_ok_;
     QPushButton *btn_reset;
     QPushButton *btn_cancel;
     QLineEdit *edt_base;

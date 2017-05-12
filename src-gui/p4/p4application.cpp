@@ -64,8 +64,8 @@ QP4Application::QP4Application(int &argc, char **argv)
 
 void QP4Application::signalChanged(void)
 {
-    ThisVF->evaluated = false;
-    ThisVF->changed = true;
+    ThisVF->evaluated_ = false;
+    ThisVF->changed_ = true;
 
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr);
     p4app->postEvent(p4startdlg, e);
@@ -73,8 +73,8 @@ void QP4Application::signalChanged(void)
 
 void QP4Application::signalEvaluated(int exitCode)
 {
-    ThisVF->evaluated = true;
-    ThisVF->evaluating = false;
+    ThisVF->evaluated_ = true;
+    ThisVF->evaluating_ = false;
 
     ThisVF->finishEvaluation(exitCode);
 
@@ -95,24 +95,24 @@ void QP4Application::signalEvaluated(int exitCode)
 
 void QP4Application::signalGcfEvaluated(int exitCode)
 {
-    ThisVF->evaluated = true;
-    ThisVF->evaluating = false;
+    ThisVF->evaluated_ = true;
+    ThisVF->evaluating_ = false;
 
     ThisVF->finishEvaluation(exitCode);
 }
 
 void QP4Application::signalCurveEvaluated(int exitCode)
 {
-    ThisVF->evaluated = true;
-    ThisVF->evaluating = false;
+    ThisVF->evaluated_ = true;
+    ThisVF->evaluating_ = false;
 
     ThisVF->finishEvaluation(exitCode);
 }
 
 void QP4Application::signalEvaluating(void)
 {
-    ThisVF->evaluating = true;
-    ThisVF->evaluated = false;
+    ThisVF->evaluating_ = true;
+    ThisVF->evaluated_ = false;
 
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATING, nullptr);
     p4app->postEvent(p4startdlg, e);

@@ -664,7 +664,7 @@ void QWinSphere::resizeEvent(QResizeEvent *e)
 void QWinSphere::paintEvent(QPaintEvent *p)
 {
     UNUSED(p);
-    if (ThisVF->evaluating)
+    if (ThisVF->evaluating_)
         return;
 
     if (PainterCache == nullptr || isPainterCacheDirty) {

@@ -108,11 +108,11 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     //btn_red->setEnabled(false);
     //lbl_red->setBuddy(edt_red);
 
-    btn_ok = new QPushButton("&Ok", this);
+    btn_ok_ = new QPushButton("&Ok", this);
     btn_reset = new QPushButton("&Reset", this);
     btn_cancel = new QPushButton("&Cancel", this);
 
-    btn_ok->setDefault(true);
+    btn_ok_->setDefault(true);
 
 #ifdef TOOLTIPS
     btn_base->setToolTip("Search for this path on your computer");
@@ -134,7 +134,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
         "The name of the Maple executable (command-line version)");
     //edt_red->setToolTip("The name of the reduce executable");
 
-    btn_ok->setToolTip("Store changes, and go back to program");
+    btn_ok_->setToolTip("Store changes, and go back to program");
     btn_cancel->setToolTip("Undo any changes");
     btn_reset->setToolTip("Reset to defaults, try to locate Maple/Reduce "
                           "executable automatically");
@@ -156,7 +156,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
 
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(0);
-    buttons->addWidget(btn_ok);
+    buttons->addWidget(btn_ok_);
     buttons->addWidget(btn_reset);
     buttons->addWidget(btn_cancel);
     buttons->addStretch(0);
@@ -191,7 +191,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     QObject::connect(btn_temp, SIGNAL(clicked()), this, SLOT(OnBrowseTemp()));
     QObject::connect(btn_maple, SIGNAL(clicked()), this, SLOT(OnBrowseMaple()));
     //QObject::connect(btn_red, SIGNAL(clicked()), this, SLOT(OnBrowseReduce()));
-    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(onOk()));
+    QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
     QObject::connect(btn_reset, SIGNAL(clicked()), this, SLOT(OnReset()));
     QObject::connect(btn_cancel, SIGNAL(clicked()), this, SLOT(OnCancel()));
 

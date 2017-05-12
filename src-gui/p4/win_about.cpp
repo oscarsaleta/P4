@@ -37,12 +37,12 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     if (p4smallicon != nullptr)
         setWindowIcon(*p4smallicon);
 
-    btn_ok = new QPushButton("&Ok");
-    btn_settings = new QPushButton("&Main Settings");
+    btn_ok_ = new QPushButton("&Ok");
+    btn_settings_ = new QPushButton("&Main Settings");
 
 #ifdef TOOLTIPS
-    btn_ok->setToolTip("Go back to program");
-    btn_settings->setToolTip("Access general program settings");
+    btn_ok_->setToolTip("Go back to program");
+    btn_settings_->setToolTip("Access general program settings");
 #endif
 
     // define placement of controls
@@ -80,26 +80,26 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     QLabel *l;
     l = new QLabel("(missing image)");
-    if (p4image.load(getP4BinPath() + "/portrait.png"))
-        l->setPixmap(p4image);
+    if (p4image_.load(getP4BinPath() + "/portrait.png"))
+        l->setPixmap(p4image_);
 
     lay00->addWidget(l, 0, 0, 10, 1);
 
     mainLayout_->addLayout(lay00);
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(1);
-    buttons->addWidget(btn_ok);
+    buttons->addWidget(btn_ok_);
     buttons->addStretch(0);
-    buttons->addWidget(btn_settings);
+    buttons->addWidget(btn_settings_);
     mainLayout_->addLayout(buttons);
     setLayout(mainLayout_);
 
     // connections
 
-    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_settings, SIGNAL(clicked()), this, SLOT(onSettings()));
+    QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
+    QObject::connect(btn_settings_, SIGNAL(clicked()), this, SLOT(onSettings()));
 
-    btn_ok->setFocus();
+    btn_ok_->setFocus();
 
     setP4WindowTitle(this, "About P4");
 }

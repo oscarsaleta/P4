@@ -201,7 +201,7 @@ void QGcfDlg::onbtn_evaluate(void)
 
     btn_evaluate->setEnabled(false);
 
-    ThisVF->gcfDlg = this;
+    ThisVF->gcfDlg_ = this;
     result = evalGcfStart(mainSphere_, dashes, points, precis);
     if (!result) {
         btn_evaluate->setEnabled(true);

@@ -219,7 +219,7 @@ void QCurveDlg::onbtn_plot(void)
 
     btn_plot_->setEnabled(false);
 
-    ThisVF->curveDlg = this;
+    ThisVF->curveDlg_ = this;
     result = evalCurveStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btn_plot_->setEnabled(true);

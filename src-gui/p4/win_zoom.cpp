@@ -79,7 +79,7 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
     sphere->SetupPlot();
 
-    //  if( ThisVF->evaluated )
+    //  if( ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait - Zoom");
     //  else
     //      SetP4WindowTitle( this, "Phase Portrait - Zoom (*)" );

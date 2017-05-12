@@ -73,7 +73,7 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     if (autofilename.length() == 0)
         edt_name = new QLineEdit(DEFAULTFILENAME, this);
     else
-        edt_name = new QLineEdit(ThisVF->filename = autofilename, this);
+        edt_name = new QLineEdit(ThisVF->filename_ = autofilename, this);
     QLabel *p4name = new QLabel(" &Name: ", this);
     p4name->setBuddy(edt_name);
     p4name->setFont(*(p4app->boldFont_));
@@ -318,7 +318,7 @@ void QStartDlg::OnQuit(void)
 
 void QStartDlg::OnFilenameChange(const QString &fname)
 {
-    ThisVF->filename = fname;
+    ThisVF->filename_ = fname;
 }
 
 void QStartDlg::signalEvaluating(void)
@@ -357,7 +357,7 @@ void QStartDlg::signalEvaluated(void)
 
         fname = ThisVF->getfilename_finresults();
 
-        if (ThisVF->FileExists(fname)) {
+        if (ThisVF->fileExists(fname)) {
             View_Finite_Window = Showtext(
                 View_Finite_Window, "View results at the finite region", fname);
         } else {
@@ -379,7 +379,7 @@ void QStartDlg::signalEvaluated(void)
             Find_Window->GetDataFromDlg();
 
         fname = ThisVF->getfilename_infresults();
-        if (ThisVF->FileExists(fname)) {
+        if (ThisVF->fileExists(fname)) {
             View_Infinite_Window = Showtext(View_Infinite_Window,
                                             "View results at infinity", fname);
             if (ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
@@ -423,10 +423,10 @@ void QStartDlg::signalEvaluated(void)
     }
 
     // the vector field may be changed during evaluation.  In that
-    // case, the flag ThisVF->changed is set, so the newly evaluated context
+    // case, the flag ThisVF->changed_ is set, so the newly evaluated context
     // is immediately marked as "old".
 
-    if (ThisVF->changed)
+    if (ThisVF->changed_)
         signalChanged();
 }
 
@@ -488,7 +488,7 @@ void QStartDlg::OnViewFinite()
 
     fname = ThisVF->getfilename_finresults();
 
-    if (ThisVF->FileExists(fname) == false) {
+    if (ThisVF->fileExists(fname) == false) {
         if (ThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
             QMessageBox::critical(
                 this, "P4",
@@ -522,7 +522,7 @@ void QStartDlg::OnViewInfinite()
         Find_Window->GetDataFromDlg();
 
     fname = ThisVF->getfilename_infresults();
-    if (ThisVF->FileExists(fname) == false) {
+    if (ThisVF->fileExists(fname) == false) {
         if (ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
             ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
             QMessageBox::critical(this, "P4",
@@ -591,7 +591,7 @@ QWidget *QStartDlg::Showtext(QWidget *win, QString caption, QString fname)
     //  result->setCaption( caption );
     setP4WindowTitle(result, caption);
 
-    if (ThisVF->evaluated == false)
+    if (ThisVF->evaluated_ == false)
         result->setFont(*(p4app->courierFont_));
 
     if (shown) {
@@ -619,7 +619,7 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
     if (Find_Window != nullptr)
         Find_Window->GetDataFromDlg();
 
-    if (ThisVF->changed == false) {
+    if (ThisVF->changed_ == false) {
         ce->accept();
         return;
     }
