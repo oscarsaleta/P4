@@ -40,8 +40,8 @@ class QVectorFieldDlg : public QWidget
 
   public:
     QVectorFieldDlg(QFindDlg *startwindow);
-    void GetDataFromDlg(void);
-    void UpdateDlgData(void);
+    void getDataFromDlg(void);
+    void updateDlgData(void);
     ~QVectorFieldDlg();
 
   private:
@@ -66,8 +66,8 @@ class QVFParams : public QWidget
   public:
     QVFParams(QVectorFieldDlg *parent, QScrollBar *sb);
     ~QVFParams();
-    bool GetDataFromDlg(void);
-    bool UpdateDlgData(void);
+    bool getDataFromDlg(void);
+    bool updateDlgData(void);
 
   private:
     bool datainvalid;

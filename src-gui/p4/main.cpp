@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
                 return (-1);
             }
         }
-        p4startdlg->Find_Window->OnBtnLoad();
+        p4startdlg->Find_Window->onBtnLoad();
     }
 
     if (!v) {

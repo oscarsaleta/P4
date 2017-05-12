@@ -42,21 +42,21 @@ class QGcfDlg : public QWidget
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
 
-    QPushButton *btn_evaluate;
+    QPushButton *btn_evaluate_;
 
-    QRadioButton *btn_dots;
-    QRadioButton *btn_dashes;
-    QLineEdit *edt_points;
-    QLineEdit *edt_precis;
-    QLineEdit *edt_memory;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_points_;
+    QLineEdit *edt_precis_;
+    QLineEdit *edt_memory_;
 
     QBoxLayout *mainLayout_;
 
-    void ExclusiveToggle(bool, QRadioButton *, QRadioButton *);
+    void exclusiveToggle(bool, QRadioButton *, QRadioButton *);
 
-    int evaluating_points;
-    int evaluating_memory;
-    int evaluating_precision;
+    int evaluating_points_;
+    int evaluating_memory_;
+    int evaluating_precision_;
 
   public slots:
     void onbtn_evaluate(void);

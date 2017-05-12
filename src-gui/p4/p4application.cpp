@@ -130,7 +130,7 @@ void QP4Application::signalLoaded(void)
 
     if (cmdLine_AutoEvaluate) {
         cmdLine_AutoEvaluate = false;
-        p4startdlg->Find_Window->OnBtnEval();
+        p4startdlg->Find_Window->onBtnEval();
         return;
     }
     if (cmdLine_AutoPlot) {

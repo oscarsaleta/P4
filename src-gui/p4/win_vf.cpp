@@ -200,10 +200,10 @@ QVectorFieldDlg::~QVectorFieldDlg()
         delete params;
         params = nullptr;
     }
-    GetDataFromDlg();
+    getDataFromDlg();
 }
 
-void QVectorFieldDlg::GetDataFromDlg(void)
+void QVectorFieldDlg::getDataFromDlg(void)
 {
     QString xdot;
     QString ydot;
@@ -228,11 +228,11 @@ void QVectorFieldDlg::GetDataFromDlg(void)
         }
     }
     if (params != nullptr) {
-        params->GetDataFromDlg();
+        params->getDataFromDlg();
     }
 }
 
-void QVectorFieldDlg::UpdateDlgData(void)
+void QVectorFieldDlg::updateDlgData(void)
 {
     edt_xprime->setText(ThisVF->xdot_);
     edt_yprime->setText(ThisVF->ydot_);
@@ -240,7 +240,7 @@ void QVectorFieldDlg::UpdateDlgData(void)
     spin_numparams->setValue(ThisVF->numparams_);
 
     if (params != nullptr) {
-        if (!params->UpdateDlgData()) {
+        if (!params->updateDlgData()) {
             delete params;
             params = nullptr;
         }
@@ -317,7 +317,7 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
 QVFParams::~QVFParams()
 {
     if (!datainvalid)
-        GetDataFromDlg();
+        getDataFromDlg();
 }
 
 bool QVFParams::focusNextPrevChild(bool next)
@@ -336,7 +336,7 @@ bool QVFParams::focusNextPrevChild(bool next)
     return QWidget::focusNextPrevChild(next);
 }
 
-bool QVFParams::GetDataFromDlg(void)
+bool QVFParams::getDataFromDlg(void)
 {
     int i;
     bool changed;
@@ -382,7 +382,7 @@ bool QVFParams::GetDataFromDlg(void)
 
 // only called when vf is loaded, and only when numparams did not change.
 
-bool QVFParams::UpdateDlgData(void)
+bool QVFParams::updateDlgData(void)
 {
     int i;
 

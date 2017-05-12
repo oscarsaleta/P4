@@ -72,6 +72,6 @@ void set_current_step(double curstep)
     if (p4startdlg != nullptr)
         if (p4startdlg->Plot_Window != nullptr)
             if (p4startdlg->Plot_Window->IntParams_Window != nullptr)
-                p4startdlg->Plot_Window->IntParams_Window->SetCurrentStep(
+                p4startdlg->Plot_Window->IntParams_Window->setCurrentStep(
                     curstep);
 }

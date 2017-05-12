@@ -27,7 +27,7 @@
 
 #include <QButtonGroup>
 
-QParamsDlg::~QParamsDlg() { GetDataFromDlg(); }
+QParamsDlg::~QParamsDlg() { getDataFromDlg(); }
 
 QParamsDlg::QParamsDlg(QFindDlg *finddlg)
 #ifdef DOCK_PARAMSWINDOW
@@ -247,7 +247,7 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
 
     // finishing
 
-    UpdateDlgData();
+    updateDlgData();
 #ifndef DOCK_PARAMSWINDOW
     SetP4WindowTitle(this, "Parameters");
 #endif
@@ -317,12 +317,12 @@ void QParamsDlg::btn_sepno_toggled(bool on)
     }
 }
 
-void QParamsDlg::ExclusiveToggle(bool on, QRadioButton *first, ...)
+void QParamsDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
 {
     first->setChecked(on);
 }
 
-void QParamsDlg::GetDataFromDlg(void)
+void QParamsDlg::getDataFromDlg(void)
 {
     QString epsilon;
     QString x0;
@@ -371,17 +371,17 @@ void QParamsDlg::GetDataFromDlg(void)
     }
 }
 
-void QParamsDlg::UpdateDlgData(void)
+void QParamsDlg::updateDlgData(void)
 {
     if (ThisVF->numeric_)
-        ExclusiveToggle(true, btn_num, btn_alg, nullptr);
+        exclusiveToggle(true, btn_num, btn_alg, nullptr);
     else
-        ExclusiveToggle(true, btn_alg, btn_num, nullptr);
+        exclusiveToggle(true, btn_alg, btn_num, nullptr);
 
     if (ThisVF->testsep_)
-        ExclusiveToggle(true, btn_sepyes, btn_sepno, nullptr);
+        exclusiveToggle(true, btn_sepyes, btn_sepno, nullptr);
     else
-        ExclusiveToggle(true, btn_sepno, btn_sepyes, nullptr);
+        exclusiveToggle(true, btn_sepno, btn_sepyes, nullptr);
 
     spin_level->setValue(ThisVF->taylorlevel_);
     spin_numlevel->setValue(ThisVF->numericlevel_);

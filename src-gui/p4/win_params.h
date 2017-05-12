@@ -35,9 +35,9 @@ class QParamsDlg : public QWidget
   public:
     QParamsDlg(QFindDlg *startwindow);
     ~QParamsDlg();
-    void GetDataFromDlg(void);
-    void UpdateDlgData(void);
-    void ExclusiveToggle(bool, QRadioButton *, ...);
+    void getDataFromDlg(void);
+    void updateDlgData(void);
+    void exclusiveToggle(bool, QRadioButton *, ...);
 
   private:
     QFindDlg *parent;

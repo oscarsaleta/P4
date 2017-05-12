@@ -38,33 +38,33 @@ class QFindDlg : public QWidget
   public:
     QFindDlg(QStartDlg *startwindow);
     ~QFindDlg();
-    void GetDataFromDlg(void);
-    void ExclusiveToggle(bool, QRadioButton *, ...);
+    void getDataFromDlg(void);
+    void exclusiveToggle(bool, QRadioButton *, ...);
 
   private:
-    QStartDlg *parent;
+    QStartDlg *parent_;
 
     QBoxLayout *mainLayout_;
-    QBoxLayout *superLayout;
+    QBoxLayout *superLayout_;
 
-    QRadioButton *btn_maple;
-    QRadioButton *btn_reduce;
-    QRadioButton *btn_actionrun;
-    QRadioButton *btn_actionprep;
-    QRadioButton *btn_all;
-    QRadioButton *btn_fin;
-    QRadioButton *btn_inf;
-    QRadioButton *btn_one;
-    QRadioButton *btn_yes;
-    QRadioButton *btn_no;
-    QPushButton *btn_params;
-    QPushButton *btn_vf;
-    QPushButton *btn_load;
-    QPushButton *btn_save;
-    QPushButton *btn_eval;
+    //QRadioButton *btn_maple_;
+    //QRadioButton *btn_reduce_;
+    QRadioButton *btn_actionrun_;
+    QRadioButton *btn_actionprep_;
+    QRadioButton *btn_all_;
+    QRadioButton *btn_fin_;
+    QRadioButton *btn_inf_;
+    QRadioButton *btn_one_;
+    QRadioButton *btn_yes_;
+    QRadioButton *btn_no_;
+    QPushButton *btn_params_;
+    QPushButton *btn_vf_;
+    QPushButton *btn_load_;
+    QPushButton *btn_save_;
+    QPushButton *btn_eval_;
 
-    QVectorFieldDlg *Vf_Window;
-    QParamsDlg *Params_Window;
+    QVectorFieldDlg *vfWindow_;
+    QParamsDlg *paramsWindow_;
 
   public slots:
     void btn_maple_toggled(bool);
@@ -77,16 +77,16 @@ class QFindDlg : public QWidget
     void btn_one_toggled(bool);
     void btn_yes_toggled(bool);
     void btn_no_toggled(bool);
-    void UpdateDlgData(void);
+    void updateDlgData(void);
 
     void signalEvaluating(void);
     void signalEvaluated(void);
 
-    void OnBtnParams(void);
-    void OnBtnVf(void);
-    void OnBtnLoad(void);
-    void OnBtnSave(void);
-    void OnBtnEval(void);
+    void onBtnParams(void);
+    void onBtnVf(void);
+    void onBtnLoad(void);
+    void onBtnSave(void);
+    void onBtnEval(void);
 };
 
 #endif /* WIN_FIND_H */

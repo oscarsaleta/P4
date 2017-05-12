@@ -26,7 +26,7 @@
 
 #include <QButtonGroup>
 
-QIntParamsDlg::~QIntParamsDlg() { GetDataFromDlg(); }
+QIntParamsDlg::~QIntParamsDlg() { getDataFromDlg(); }
 
 QIntParamsDlg::QIntParamsDlg()
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -189,7 +189,7 @@ QIntParamsDlg::QIntParamsDlg()
 
     // finishing
 
-    UpdateDlgData();
+    updateDlgData();
 
     setP4WindowTitle(this, "Integration Parameters");
 }
@@ -230,7 +230,7 @@ void QIntParamsDlg::btn_dashes_toggled(bool dummy)
     changed = true;
 }
 
-void QIntParamsDlg::ExclusiveToggle(bool on, QRadioButton *first, ...)
+void QIntParamsDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
 {
     first->setChecked(on);
 }
@@ -273,7 +273,7 @@ void QIntParamsDlg::MarkBad(QLineEdit *edt)
     edt->setText(t);
 }
 
-void QIntParamsDlg::GetDataFromDlg(void)
+void QIntParamsDlg::getDataFromDlg(void)
 {
     if (!changed) {
         return;
@@ -330,21 +330,21 @@ void QIntParamsDlg::GetDataFromDlg(void)
     }
 }
 
-void QIntParamsDlg::UpdateDlgData(void)
+void QIntParamsDlg::updateDlgData(void)
 {
     QString buf;
 
     changed = false;
 
     if (VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
-        ExclusiveToggle(true, btn_org, btn_red, nullptr);
+        exclusiveToggle(true, btn_org, btn_red, nullptr);
     else
-        ExclusiveToggle(true, btn_red, btn_org, nullptr);
+        exclusiveToggle(true, btn_red, btn_org, nullptr);
 
     if (VFResults.config_dashes_)
-        ExclusiveToggle(true, btn_dashes, btn_dots, nullptr);
+        exclusiveToggle(true, btn_dashes, btn_dots, nullptr);
     else
-        ExclusiveToggle(true, btn_dots, btn_dashes, nullptr);
+        exclusiveToggle(true, btn_dots, btn_dashes, nullptr);
 
     buf.sprintf("%g", (float)(VFResults.config_step_));
     edt_stepsize->setText(buf);
@@ -373,7 +373,7 @@ void QIntParamsDlg::UpdateDlgData(void)
     }
 }
 
-void QIntParamsDlg::SetCurrentStep(double curstep)
+void QIntParamsDlg::setCurrentStep(double curstep)
 {
     QString buf;
     buf.sprintf("%g", (float)curstep);
@@ -396,5 +396,5 @@ void QIntParamsDlg::on_btn_reset(void)
         DEFAULT_LINESTYLE; // line style (dashes or points)
     VFResults.config_kindvf_ = DEFAULT_INTCONFIG;
 
-    UpdateDlgData();
+    updateDlgData();
 }

@@ -253,7 +253,7 @@ void QStartDlg::OnPlot(void)
     // show plot window
 
     if (Find_Window != nullptr)
-        Find_Window->GetDataFromDlg();
+        Find_Window->getDataFromDlg();
 
     VFResults.deleteVF(); // delete any previous result object
     if (!VFResults.readTables(
@@ -353,7 +353,7 @@ void QStartDlg::signalEvaluated(void)
         QString fname;
 
         if (Find_Window != nullptr)
-            Find_Window->GetDataFromDlg();
+            Find_Window->getDataFromDlg();
 
         fname = ThisVF->getfilename_finresults();
 
@@ -376,7 +376,7 @@ void QStartDlg::signalEvaluated(void)
         QString fname;
 
         if (Find_Window != nullptr)
-            Find_Window->GetDataFromDlg();
+            Find_Window->getDataFromDlg();
 
         fname = ThisVF->getfilename_infresults();
         if (ThisVF->fileExists(fname)) {
@@ -484,7 +484,7 @@ void QStartDlg::OnViewFinite()
     QString fname;
 
     if (Find_Window != nullptr)
-        Find_Window->GetDataFromDlg();
+        Find_Window->getDataFromDlg();
 
     fname = ThisVF->getfilename_finresults();
 
@@ -519,7 +519,7 @@ void QStartDlg::OnViewInfinite()
     QString fname;
 
     if (Find_Window != nullptr)
-        Find_Window->GetDataFromDlg();
+        Find_Window->getDataFromDlg();
 
     fname = ThisVF->getfilename_infresults();
     if (ThisVF->fileExists(fname) == false) {
@@ -617,7 +617,7 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
     }
 
     if (Find_Window != nullptr)
-        Find_Window->GetDataFromDlg();
+        Find_Window->getDataFromDlg();
 
     if (ThisVF->changed_ == false) {
         ce->accept();

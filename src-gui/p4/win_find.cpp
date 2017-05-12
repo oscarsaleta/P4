@@ -33,15 +33,15 @@
 
 QFindDlg::~QFindDlg()
 {
-    GetDataFromDlg();
+    getDataFromDlg();
 
-    if (Vf_Window != nullptr) {
-        delete Vf_Window;
-        Vf_Window = nullptr;
+    if (vfWindow_ != nullptr) {
+        delete vfWindow_;
+        vfWindow_ = nullptr;
     }
-    if (Params_Window != nullptr) {
-        delete Params_Window;
-        Params_Window = nullptr;
+    if (paramsWindow_ != nullptr) {
+        delete paramsWindow_;
+        paramsWindow_ = nullptr;
     }
 }
 
@@ -52,7 +52,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     : QWidget()
 #endif
 {
-    parent = startdlg;
+    parent_ = startdlg;
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
 #ifdef DOCK_FINDWINDOW
@@ -71,63 +71,63 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
     QLabel *actlabel = new QLabel("File Action:  ", this);
     actlabel->setFont(*(p4app->boldFont_));
-    btn_actionrun = new QRadioButton("Run File", this);
-    btn_actionprep = new QRadioButton("Prepare File", this);
+    btn_actionrun_ = new QRadioButton("Run File", this);
+    btn_actionprep_ = new QRadioButton("Prepare File", this);
 
     QLabel *singpoints = new QLabel("Singular points:  \n\n", this);
     singpoints->setFont(*(p4app->boldFont_));
-    btn_all = new QRadioButton("All ", this);
-    btn_fin = new QRadioButton("Finite ", this);
-    btn_inf = new QRadioButton("Infinite ", this);
-    btn_one = new QRadioButton("One ", this);
+    btn_all_ = new QRadioButton("All ", this);
+    btn_fin_ = new QRadioButton("Finite ", this);
+    btn_inf_ = new QRadioButton("Infinite ", this);
+    btn_one_ = new QRadioButton("One ", this);
 
     QLabel *saveall = new QLabel("Save all information: ", this);
     saveall->setFont(*(p4app->boldFont_));
-    btn_yes = new QRadioButton("Yes", this);
-    btn_no = new QRadioButton("No", this);
+    btn_yes_ = new QRadioButton("Yes", this);
+    btn_no_ = new QRadioButton("No", this);
 
-    btn_params = new QPushButton("P&arameters", this);
-    btn_vf = new QPushButton("&Vector Field", this);
+    btn_params_ = new QPushButton("P&arameters", this);
+    btn_vf_ = new QPushButton("&Vector Field", this);
 
-    btn_load = new QPushButton("&Load", this);
-    btn_save = new QPushButton("&Save", this);
+    btn_load_ = new QPushButton("&Load", this);
+    btn_save_ = new QPushButton("&Save", this);
 
     if (action_OnlyPrepareFile)
-        btn_eval = new QPushButton("Pr&epare", this);
+        btn_eval_ = new QPushButton("Pr&epare", this);
     else
-        btn_eval = new QPushButton("&Evaluate", this);
+        btn_eval_ = new QPushButton("&Evaluate", this);
 
 #ifdef TOOLTIPS
     // btn_maple->setToolTip("Select Maple as the symbolic manipulator");
     // btn_reduce->setToolTip("Select Reduce as the symbolic manipulator.\n"
     //                       "This is only available in the Unix version.");
-    btn_actionrun->setToolTip(
+    btn_actionrun_->setToolTip(
         "Make sure the symbolic manipulator processes the file");
-    btn_actionprep->setToolTip(
+    btn_actionprep_->setToolTip(
         "Do not process the file, only prepare it.\n"
         "Choose this if you want to process the file yourselves\n"
         "from within a terminal window.");
-    btn_all->setToolTip("Study all singularities, finite and infinite");
-    btn_fin->setToolTip("Study only singularities at the finite region");
-    btn_inf->setToolTip("Study only singularities at infinity");
-    btn_one->setToolTip("Study one specific singularity.\n"
+    btn_all_->setToolTip("Study all singularities, finite and infinite");
+    btn_fin_->setToolTip("Study only singularities at the finite region");
+    btn_inf_->setToolTip("Study only singularities at infinity");
+    btn_one_->setToolTip("Study one specific singularity.\n"
                         "Do not forget to specify the coordinates.");
-    btn_yes->setToolTip(
+    btn_yes_->setToolTip(
         "The View/Finite and View/Infinite windows will display more details");
-    btn_no->setToolTip(
+    btn_no_->setToolTip(
         "The View/Finite and View/Infinite windows will display no details");
-    btn_params->setToolTip("Opens/closes the parameters window");
-    btn_vf->setToolTip("Opens/closes the vector field window");
-    btn_load->setToolTip("Load the vector field & parameters from disc");
-    btn_save->setToolTip("Save the vector field & parameters to disc");
-    btn_eval->setToolTip("Prepare a file for the symbolic manipulator, and "
+    btn_params_->setToolTip("Opens/closes the parameters window");
+    btn_vf_->setToolTip("Opens/closes the vector field window");
+    btn_load_->setToolTip("Load the vector field & parameters from disc");
+    btn_save_->setToolTip("Save the vector field & parameters to disc");
+    btn_eval_->setToolTip("Prepare a file for the symbolic manipulator, and "
                          "optionally process it");
 #endif
 
 // layout
 
 #ifdef DOCK_PARAMSWINDOW
-    superLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+    superLayout_ = new QBoxLayout(QBoxLayout::LeftToRight, this);
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
 #else
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
@@ -147,8 +147,8 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
     QHBoxLayout *actLayout = new QHBoxLayout();
     actLayout->addWidget(actlabel);
-    actLayout->addWidget(btn_actionrun);
-    actLayout->addWidget(btn_actionprep);
+    actLayout->addWidget(btn_actionrun_);
+    actLayout->addWidget(btn_actionprep_);
     actLayout->addStretch(0);
     mainLayout_->addLayout(actLayout);
 
@@ -156,10 +156,10 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     singlineLayout->addWidget(singpoints, 0, Qt::AlignBottom);
 
     QGridLayout *singLayout = new QGridLayout();
-    singLayout->addWidget(btn_all, 0, 0);
-    singLayout->addWidget(btn_fin, 0, 1);
-    singLayout->addWidget(btn_inf, 1, 0);
-    singLayout->addWidget(btn_one, 1, 1);
+    singLayout->addWidget(btn_all_, 0, 0);
+    singLayout->addWidget(btn_fin_, 0, 1);
+    singLayout->addWidget(btn_inf_, 1, 0);
+    singLayout->addWidget(btn_one_, 1, 1);
     singlineLayout->addLayout(singLayout);
     singlineLayout->addStretch(0);
 
@@ -167,25 +167,25 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
     QHBoxLayout *layout0 = new QHBoxLayout();
     layout0->addWidget(saveall);
-    layout0->addWidget(btn_yes);
-    layout0->addWidget(btn_no);
+    layout0->addWidget(btn_yes_);
+    layout0->addWidget(btn_no_);
     layout0->addStretch(0);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addStretch(0);
-    layout1->addWidget(btn_params);
-    layout1->addWidget(btn_vf);
+    layout1->addWidget(btn_params_);
+    layout1->addWidget(btn_vf_);
     layout1->addStretch(0);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addStretch(0);
-    layout2->addWidget(btn_load);
-    layout2->addWidget(btn_save);
+    layout2->addWidget(btn_load_);
+    layout2->addWidget(btn_save_);
     layout2->addStretch(0);
 
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->addStretch(0);
-    layout3->addWidget(btn_eval);
+    layout3->addWidget(btn_eval_);
     layout3->addStretch(0);
 
     mainLayout_->addLayout(layout0);
@@ -197,8 +197,8 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
 #ifdef DOCK_PARAMSWINDOW
     mainLayout_->addStretch(0);
-    superLayout->addLayout(mainLayout_);
-    setLayout(superLayout);
+    superLayout_->addLayout(mainLayout_);
+    setLayout(superLayout_);
 #else
     setLayout(mainLayout_);
 #endif
@@ -206,22 +206,22 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     // connections
 
     QButtonGroup *btngrp1 = new QButtonGroup(this);
-    btngrp1->addButton(btn_all);
-    btngrp1->addButton(btn_fin);
-    btngrp1->addButton(btn_inf);
-    btngrp1->addButton(btn_one);
+    btngrp1->addButton(btn_all_);
+    btngrp1->addButton(btn_fin_);
+    btngrp1->addButton(btn_inf_);
+    btngrp1->addButton(btn_one_);
 
     QButtonGroup *btngrp2 = new QButtonGroup(this);
-    btngrp2->addButton(btn_yes);
-    btngrp2->addButton(btn_no);
+    btngrp2->addButton(btn_yes_);
+    btngrp2->addButton(btn_no_);
 
     // QButtonGroup *btngrp3 = new QButtonGroup(this);
     // btngrp3->addButton(btn_maple);
     // btngrp3->addButton(btn_reduce);
 
     QButtonGroup *btngrp4 = new QButtonGroup(this);
-    btngrp4->addButton(btn_actionrun);
-    btngrp4->addButton(btn_actionprep);
+    btngrp4->addButton(btn_actionrun_);
+    btngrp4->addButton(btn_actionprep_);
 
     // if (ThisVF->symbolicpackage_ == PACKAGE_MAPLE)
     //    btn_maple->toggle();
@@ -229,72 +229,72 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     //    btn_reduce->toggle();
 
     if (action_OnlyPrepareFile)
-        btn_actionprep->toggle();
+        btn_actionprep_->toggle();
     else
-        btn_actionrun->toggle();
+        btn_actionrun_->toggle();
 
     switch (ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
-        btn_all->toggle();
+        btn_all_->toggle();
         break;
     case TYPEOFSTUDY_FIN:
-        btn_fin->toggle();
+        btn_fin_->toggle();
         break;
     case TYPEOFSTUDY_INF:
-        btn_inf->toggle();
+        btn_inf_->toggle();
         break;
     case TYPEOFSTUDY_ONE:
-        btn_one->toggle();
+        btn_one_->toggle();
         break;
     }
 
     if (action_SaveAll)
-        btn_yes->toggle();
+        btn_yes_->toggle();
     else
-        btn_no->toggle();
+        btn_no_->toggle();
 
     // QObject::connect(btn_maple, SIGNAL(toggled(bool)), this,
     //                 SLOT(btn_maple_toggled(bool)));
     // QObject::connect(btn_reduce, SIGNAL(toggled(bool)), this,
     //                 SLOT(btn_reduce_toggled(bool)));
-    QObject::connect(btn_actionrun, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_actionrun_toggled(bool)));
-    QObject::connect(btn_actionprep, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_actionprep_toggled(bool)));
-    QObject::connect(btn_all, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_all_toggled(bool)));
-    QObject::connect(btn_one, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_one_toggled(bool)));
-    QObject::connect(btn_fin, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_fin_toggled(bool)));
-    QObject::connect(btn_inf, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_inf_toggled(bool)));
-    QObject::connect(btn_yes, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_yes_toggled(bool)));
-    QObject::connect(btn_no, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_no_toggled(bool)));
+    QObject::connect(btn_actionrun_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_actionrun_toggled_(bool)));
+    QObject::connect(btn_actionprep_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_actionprep_toggled_(bool)));
+    QObject::connect(btn_all_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_all__toggled(bool)));
+    QObject::connect(btn_one_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_one__toggled(bool)));
+    QObject::connect(btn_fin_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_fin__toggled(bool)));
+    QObject::connect(btn_inf_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_inf__toggled(bool)));
+    QObject::connect(btn_yes_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_yes__toggled(bool)));
+    QObject::connect(btn_no_, SIGNAL(toggled(bool)), this,
+                     SLOT(btn_no__toggled(bool)));
 
-    QObject::connect(btn_params, SIGNAL(clicked()), this, SLOT(OnBtnParams()));
-    QObject::connect(btn_vf, SIGNAL(clicked()), this, SLOT(OnBtnVf()));
-    QObject::connect(btn_load, SIGNAL(clicked()), this, SLOT(OnBtnLoad()));
-    QObject::connect(btn_save, SIGNAL(clicked()), this, SLOT(OnBtnSave()));
-    QObject::connect(btn_eval, SIGNAL(clicked()), this, SLOT(OnBtnEval()));
+    QObject::connect(btn_params_, SIGNAL(clicked()), this, SLOT(onBtnParams()));
+    QObject::connect(btn_vf_, SIGNAL(clicked()), this, SLOT(onBtnVf()));
+    QObject::connect(btn_load_, SIGNAL(clicked()), this, SLOT(onBtnLoad()));
+    QObject::connect(btn_save_, SIGNAL(clicked()), this, SLOT(onBtnSave()));
+    QObject::connect(btn_eval_, SIGNAL(clicked()), this, SLOT(onBtnEval()));
 
     // finishing
 
-    Vf_Window = nullptr;
-    Params_Window = nullptr;
+    vfWindow_ = nullptr;
+    paramsWindow_ = nullptr;
 
 #ifdef AUTO_OPEN_VFWINDOW
-    OnBtnVf();
+    onBtnVf();
 #endif
 
 #ifdef AUTO_OPEN_PARAMSWINDOW
-    OnBtnParams();
+    onBtnParams();
 #endif
 
     if (ThisVF->evaluating_)
-        btn_eval->setEnabled(false);
+        btn_eval_->setEnabled(false);
 
 #ifndef DOCK_FINDWINDOW
     SetP4WindowTitle(this, "Find");
@@ -339,7 +339,7 @@ void QFindDlg::btn_actionrun_toggled(bool on)
 {
     if (on) {
         action_OnlyPrepareFile = false;
-        btn_eval->setText("&Evaluate");
+        btn_eval_->setText("&Evaluate");
     }
 }
 
@@ -347,7 +347,7 @@ void QFindDlg::btn_actionprep_toggled(bool on)
 {
     if (on) {
         action_OnlyPrepareFile = true;
-        btn_eval->setText("Pr&epare");
+        btn_eval_->setText("Pr&epare");
     }
 }
 
@@ -360,9 +360,9 @@ void QFindDlg::btn_all_toggled(bool on)
                 ThisVF->changed_ = true;
                 p4app->signalChanged();
             }
-            if (Params_Window != nullptr) {
-                Params_Window->GetDataFromDlg();
-                Params_Window->UpdateDlgData();
+            if (paramsWindow_ != nullptr) {
+                paramsWindow_->getDataFromDlg();
+                paramsWindow_->updateDlgData();
             }
         }
     }
@@ -377,9 +377,9 @@ void QFindDlg::btn_fin_toggled(bool on)
                 ThisVF->changed_ = true;
                 p4app->signalChanged();
             }
-            if (Params_Window != nullptr) {
-                Params_Window->GetDataFromDlg();
-                Params_Window->UpdateDlgData();
+            if (paramsWindow_ != nullptr) {
+                paramsWindow_->getDataFromDlg();
+                paramsWindow_->updateDlgData();
             }
         }
     }
@@ -394,9 +394,9 @@ void QFindDlg::btn_inf_toggled(bool on)
                 ThisVF->changed_ = true;
                 p4app->signalChanged();
             }
-            if (Params_Window != nullptr) {
-                Params_Window->GetDataFromDlg();
-                Params_Window->UpdateDlgData();
+            if (paramsWindow_ != nullptr) {
+                paramsWindow_->getDataFromDlg();
+                paramsWindow_->updateDlgData();
             }
         }
     }
@@ -411,64 +411,64 @@ void QFindDlg::btn_one_toggled(bool on)
                 ThisVF->changed_ = true;
                 p4app->signalChanged();
             }
-            if (Params_Window != nullptr) {
-                Params_Window->GetDataFromDlg();
-                Params_Window->UpdateDlgData();
+            if (paramsWindow_ != nullptr) {
+                paramsWindow_->getDataFromDlg();
+                paramsWindow_->updateDlgData();
             }
         }
     }
 }
 
-void QFindDlg::ExclusiveToggle(bool on, QRadioButton *first, ...)
+void QFindDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
 {
     first->setChecked(on);
 }
 
-void QFindDlg::OnBtnParams(void)
+void QFindDlg::onBtnParams(void)
 {
-    if (Params_Window == nullptr) {
-        Params_Window = new QParamsDlg(this);
-        Params_Window->show();
+    if (paramsWindow_ == nullptr) {
+        paramsWindow_ = new QParamsDlg(this);
+        paramsWindow_->show();
 #ifdef DOCK_PARAMSWINDOW
-        superLayout->addWidget(Params_Window, 0, Qt::AlignTop);
+        superLayout_->addWidget(paramsWindow_, 0, Qt::AlignTop);
 #else
-        Params_Window->raise();
+        paramsWindow_->raise();
 #endif
     } else {
 #ifdef DOCK_PARAMSWINDOW
-        delete Params_Window;
-        Params_Window = nullptr;
+        delete paramsWindow_;
+        paramsWindow_ = nullptr;
 #else
-        Params_Window->show();
-        Params_Window->raise();
+        paramsWindow_->show();
+        paramsWindow_->raise();
 #endif
     }
 }
 
-void QFindDlg::OnBtnVf(void)
+void QFindDlg::onBtnVf(void)
 {
     // show find dialog
 
-    if (Vf_Window == nullptr) {
-        Vf_Window = new QVectorFieldDlg(this);
+    if (vfWindow_ == nullptr) {
+        vfWindow_ = new QVectorFieldDlg(this);
 #ifdef DOCK_VFWINDOW
-        Vf_Window->show();
-        mainLayout_->addWidget(Vf_Window);
+        vfWindow_->show();
+        mainLayout_->addWidget(vfWindow_);
 #else
-        Vf_Window->raise();
+        vfWindow_->raise();
 #endif
     } else {
 #ifdef DOCK_VFWINDOW
-        delete Vf_Window;
-        Vf_Window = nullptr;
+        delete vfWindow_;
+        vfWindow_ = nullptr;
 #else
-        Vf_Window->show();
-        Vf_Window->raise();
+        vfWindow_->show();
+        vfWindow_->raise();
 #endif
     }
 }
 
-void QFindDlg::OnBtnLoad(void)
+void QFindDlg::onBtnLoad(void)
 {
     if (ThisVF->load() == false) {
         QMessageBox::critical(this, "P4",
@@ -479,7 +479,7 @@ void QFindDlg::OnBtnLoad(void)
 
         bool oldeval = ThisVF->evaluated_;
 
-        UpdateDlgData();
+        updateDlgData();
         if (ThisVF->changed_ == false) {
             ThisVF->changed_ = true;
             p4app->signalChanged();
@@ -494,9 +494,9 @@ void QFindDlg::OnBtnLoad(void)
     }
 }
 
-void QFindDlg::OnBtnSave(void)
+void QFindDlg::onBtnSave(void)
 {
-    GetDataFromDlg();
+    getDataFromDlg();
     if (ThisVF->changed_)
         ThisVF->cleared_ = false;
     if (ThisVF->cleared_) {
@@ -511,11 +511,11 @@ void QFindDlg::OnBtnSave(void)
     }
 }
 
-void QFindDlg::OnBtnEval(void)
+void QFindDlg::onBtnEval(void)
 {
     //  int result;
 
-    GetDataFromDlg();
+    getDataFromDlg();
     if (ThisVF->getfilename().length() == 0) {
         // error: need to specify filename first
 
@@ -572,41 +572,41 @@ void QFindDlg::OnBtnEval(void)
     }
 }
 
-void QFindDlg::GetDataFromDlg(void)
+void QFindDlg::getDataFromDlg(void)
 {
-    if (Vf_Window != nullptr) {
-        Vf_Window->GetDataFromDlg();
+    if (vfWindow_ != nullptr) {
+        vfWindow_->getDataFromDlg();
     }
-    if (Params_Window != nullptr) {
-        Params_Window->GetDataFromDlg();
+    if (paramsWindow_ != nullptr) {
+        paramsWindow_->getDataFromDlg();
     }
 }
 
-void QFindDlg::UpdateDlgData(void)
+void QFindDlg::updateDlgData(void)
 {
     switch (ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
-        ExclusiveToggle(true, btn_all);
+        exclusiveToggle(true, btn_all_);
         break;
     case TYPEOFSTUDY_FIN:
-        ExclusiveToggle(true, btn_fin);
+        exclusiveToggle(true, btn_fin_);
         break;
     case TYPEOFSTUDY_INF:
-        ExclusiveToggle(true, btn_inf);
+        exclusiveToggle(true, btn_inf_);
         break;
     case TYPEOFSTUDY_ONE:
-        ExclusiveToggle(true, btn_one);
+        exclusiveToggle(true, btn_one_);
         break;
     }
 
-    if (Vf_Window != nullptr) {
-        Vf_Window->UpdateDlgData();
+    if (vfWindow_ != nullptr) {
+        vfWindow_->updateDlgData();
     }
-    if (Params_Window != nullptr) {
-        Params_Window->UpdateDlgData();
+    if (paramsWindow_ != nullptr) {
+        paramsWindow_->updateDlgData();
     }
 }
 
-void QFindDlg::signalEvaluating(void) { btn_eval->setEnabled(false); }
+void QFindDlg::signalEvaluating(void) { btn_eval_->setEnabled(false); }
 
-void QFindDlg::signalEvaluated(void) { btn_eval->setEnabled(true); }
+void QFindDlg::signalEvaluated(void) { btn_eval_->setEnabled(true); }

@@ -38,9 +38,9 @@ class QViewDlg : public QWidget
   public:
     QViewDlg(QWidget *);
     ~QViewDlg();
-    bool GetDataFromDlg(void);
-    void UpdateDlgData(void);
-    void ExclusiveToggle(bool, QRadioButton *, ...);
+    bool getDataFromDlg(void);
+    void updateDlgData(void);
+    void exclusiveToggle(bool, QRadioButton *, ...);
 
   private:
     bool changed;

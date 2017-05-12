@@ -167,8 +167,8 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     setCentralWidget(sphere);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
-    IntParams_Window->UpdateDlgData();
-    ViewParams_Window->UpdateDlgData();
+    IntParams_Window->updateDlgData();
+    ViewParams_Window->updateDlgData();
 
     //  if( ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait");
@@ -367,8 +367,8 @@ void QPlotWnd::configure(void)
                              // sphere window
     plot_p = spherePlotPoint;
     sphere->SetupPlot(); // setup sphere window (define pixel transformations)
-    IntParams_Window->UpdateDlgData(); // update data of integration parameters
-    ViewParams_Window->UpdateDlgData();
+    IntParams_Window->updateDlgData(); // update data of integration parameters
+    ViewParams_Window->updateDlgData();
     Orbits_Window->reset(); // reset forward/backward buttons to initial state
     Sep_Window->reset();
     LC_Window->reset();
@@ -547,8 +547,8 @@ void QPlotWnd::hideEvent(QHideEvent *h)
 
 void QPlotWnd::getDlgData(void)
 {
-    IntParams_Window->GetDataFromDlg();
-    if (ViewParams_Window->GetDataFromDlg()) {
+    IntParams_Window->getDataFromDlg();
+    if (ViewParams_Window->getDataFromDlg()) {
         // true when a big change occured in the view
 
         VFResults.setupCoordinateTransformations();

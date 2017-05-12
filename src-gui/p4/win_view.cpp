@@ -26,7 +26,7 @@
 #include "math_p4.h"
 #include "p4application.h"
 
-QViewDlg::~QViewDlg() { GetDataFromDlg(); }
+QViewDlg::~QViewDlg() { getDataFromDlg(); }
 
 QViewDlg::QViewDlg(QWidget *parent)
     : QWidget(parent = nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -170,7 +170,7 @@ QViewDlg::QViewDlg(QWidget *parent)
 
     // finishing
 
-    UpdateDlgData();
+    updateDlgData();
 
     setP4WindowTitle(this, "View Parameters");
 }
@@ -184,7 +184,7 @@ void QViewDlg::OnFieldChange(const QString &dummy)
 void QViewDlg::btn_sphere_toggled(bool on)
 {
     changed = true;
-    ExclusiveToggle(on, btn_sphere, btn_plane, btn_U1, btn_U2, btn_V1, btn_V2,
+    exclusiveToggle(on, btn_sphere, btn_plane, btn_U1, btn_U2, btn_V1, btn_V2,
                     nullptr);
 
     if (btn_sphere->isChecked() == false) {
@@ -207,7 +207,7 @@ void QViewDlg::btn_sphere_toggled(bool on)
 void QViewDlg::btn_plane_toggled(bool on)
 {
     changed = true;
-    ExclusiveToggle(on, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1, btn_V2,
+    exclusiveToggle(on, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1, btn_V2,
                     nullptr);
 
     if (btn_sphere->isChecked() == false) {
@@ -230,7 +230,7 @@ void QViewDlg::btn_plane_toggled(bool on)
 void QViewDlg::btn_U1_toggled(bool on)
 {
     changed = true;
-    ExclusiveToggle(on, btn_U1, btn_plane, btn_sphere, btn_U2, btn_V1, btn_V2,
+    exclusiveToggle(on, btn_U1, btn_plane, btn_sphere, btn_U2, btn_V1, btn_V2,
                     nullptr);
 
     if (btn_sphere->isChecked() == false) {
@@ -253,7 +253,7 @@ void QViewDlg::btn_U1_toggled(bool on)
 void QViewDlg::btn_U2_toggled(bool on)
 {
     changed = true;
-    ExclusiveToggle(on, btn_U2, btn_plane, btn_sphere, btn_U1, btn_V1, btn_V2,
+    exclusiveToggle(on, btn_U2, btn_plane, btn_sphere, btn_U1, btn_V1, btn_V2,
                     nullptr);
 
     if (btn_sphere->isChecked() == false) {
@@ -276,7 +276,7 @@ void QViewDlg::btn_U2_toggled(bool on)
 void QViewDlg::btn_V1_toggled(bool on)
 {
     changed = true;
-    ExclusiveToggle(on, btn_V1, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V2,
+    exclusiveToggle(on, btn_V1, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V2,
                     nullptr);
 
     if (btn_sphere->isChecked() == false) {
@@ -299,7 +299,7 @@ void QViewDlg::btn_V1_toggled(bool on)
 void QViewDlg::btn_V2_toggled(bool on)
 {
     changed = true;
-    ExclusiveToggle(on, btn_V2, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1,
+    exclusiveToggle(on, btn_V2, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1,
                     nullptr);
 
     if (btn_sphere->isChecked() == false) {
@@ -341,7 +341,7 @@ void QViewDlg::btn_square_clicked(void)
     }
 }
 
-void QViewDlg::ExclusiveToggle(bool on, QRadioButton *first, ...)
+void QViewDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
 {
     va_list marker;
     QRadioButton *i;
@@ -411,7 +411,7 @@ void QViewDlg::MarkBad(QLineEdit *edt)
     edt->setText(t);
 }
 
-bool QViewDlg::GetDataFromDlg(void)
+bool QViewDlg::getDataFromDlg(void)
 {
     if (!changed) {
         return false;
@@ -481,29 +481,29 @@ bool QViewDlg::GetDataFromDlg(void)
     return false;
 }
 
-void QViewDlg::UpdateDlgData(void)
+void QViewDlg::updateDlgData(void)
 {
     QString buf;
 
     changed = false;
 
     if (VFResults.typeofview_ == TYPEOFVIEW_PLANE)
-        ExclusiveToggle(true, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1,
+        exclusiveToggle(true, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1,
                         btn_V2, nullptr);
     if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE)
-        ExclusiveToggle(true, btn_sphere, btn_plane, btn_U1, btn_U2, btn_V1,
+        exclusiveToggle(true, btn_sphere, btn_plane, btn_U1, btn_U2, btn_V1,
                         btn_V2, nullptr);
     if (VFResults.typeofview_ == TYPEOFVIEW_U1)
-        ExclusiveToggle(true, btn_U1, btn_sphere, btn_plane, btn_U2, btn_V1,
+        exclusiveToggle(true, btn_U1, btn_sphere, btn_plane, btn_U2, btn_V1,
                         btn_V2, nullptr);
     if (VFResults.typeofview_ == TYPEOFVIEW_U2)
-        ExclusiveToggle(true, btn_U2, btn_sphere, btn_plane, btn_U1, btn_V1,
+        exclusiveToggle(true, btn_U2, btn_sphere, btn_plane, btn_U1, btn_V1,
                         btn_V2, nullptr);
     if (VFResults.typeofview_ == TYPEOFVIEW_V1)
-        ExclusiveToggle(true, btn_V1, btn_sphere, btn_plane, btn_U1, btn_U2,
+        exclusiveToggle(true, btn_V1, btn_sphere, btn_plane, btn_U1, btn_U2,
                         btn_V2, nullptr);
     if (VFResults.typeofview_ == TYPEOFVIEW_V2)
-        ExclusiveToggle(true, btn_V2, btn_sphere, btn_plane, btn_U1, btn_U2,
+        exclusiveToggle(true, btn_V2, btn_sphere, btn_plane, btn_U1, btn_U2,
                         btn_V1, nullptr);
 
     if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)

@@ -30,7 +30,7 @@ class QP4Event : public QEvent
     ~QP4Event();
 
   protected:
-    void *customData;
+    void *customData_;
 };
 
 #endif /* WIN_EVENT_H */
