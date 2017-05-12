@@ -258,21 +258,21 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     // QObject::connect(btn_reduce, SIGNAL(toggled(bool)), this,
     //                 SLOT(btn_reduce_toggled(bool)));
     QObject::connect(btn_actionrun_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_actionrun_toggled_(bool)));
+                     SLOT(btn_actionrun_toggled(bool)));
     QObject::connect(btn_actionprep_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_actionprep_toggled_(bool)));
+                     SLOT(btn_actionprep_toggled(bool)));
     QObject::connect(btn_all_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_all__toggled(bool)));
+                     SLOT(btn_all_toggled(bool)));
     QObject::connect(btn_one_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_one__toggled(bool)));
+                     SLOT(btn_one_toggled(bool)));
     QObject::connect(btn_fin_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_fin__toggled(bool)));
+                     SLOT(btn_fin_toggled(bool)));
     QObject::connect(btn_inf_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_inf__toggled(bool)));
+                     SLOT(btn_inf_toggled(bool)));
     QObject::connect(btn_yes_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_yes__toggled(bool)));
+                     SLOT(btn_yes_toggled(bool)));
     QObject::connect(btn_no_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_no__toggled(bool)));
+                     SLOT(btn_no_toggled(bool)));
 
     QObject::connect(btn_params_, SIGNAL(clicked()), this, SLOT(onBtnParams()));
     QObject::connect(btn_vf_, SIGNAL(clicked()), this, SLOT(onBtnVf()));
