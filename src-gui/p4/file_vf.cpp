@@ -96,7 +96,7 @@
 
 QInputVF *ThisVF = nullptr;
 
-QInputVF::QInputVF()
+QInputVF::QInputVF() : outputWindow_(nullptr)
 {
     processText_ = nullptr;
     terminateProcessButton_ = nullptr;
