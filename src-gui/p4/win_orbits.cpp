@@ -113,7 +113,7 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (VFResults.first_orbit == nullptr) {
+    if (VFResults.first_orbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -242,8 +242,8 @@ void QOrbitsDlg::onBtnDelAll(void)
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    VFResults.deleteOrbit(VFResults.first_orbit);
-    VFResults.first_orbit = nullptr;
+    VFResults.deleteOrbit(VFResults.first_orbit_);
+    VFResults.first_orbit_ = nullptr;
     VFResults.current_orbit = nullptr;
 
     mainSphere_->refresh();
@@ -263,7 +263,7 @@ void QOrbitsDlg::onBtnDelLast(void)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (VFResults.first_orbit == nullptr) {
+    if (VFResults.first_orbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -301,7 +301,7 @@ void QOrbitsDlg::reset(void)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (VFResults.first_orbit == nullptr) {
+    if (VFResults.first_orbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }

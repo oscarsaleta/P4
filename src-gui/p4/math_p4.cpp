@@ -67,7 +67,7 @@ bool less_lyapunov(double *p1, double *p2)
 
 void set_current_step(double curstep)
 {
-    VFResults.config_currentstep = curstep;
+    VFResults.config_currentstep_ = curstep;
 
     if (p4startdlg != nullptr)
         if (p4startdlg->Plot_Window != nullptr)

@@ -280,47 +280,47 @@ void QIntParamsDlg::GetDataFromDlg(void)
     }
 
     changed = false;
-    changed |= readFloatField(edt_tolerance, &(VFResults.config_tolerance),
+    changed |= readFloatField(edt_tolerance, &(VFResults.config_tolerance_),
                               DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
-    changed |= readFloatField(edt_minstep, &(VFResults.config_hmi), DEFAULT_HMI,
+    changed |= readFloatField(edt_minstep, &(VFResults.config_hmi_), DEFAULT_HMI,
                               MIN_HMI, MAX_HMI);
-    changed |= readFloatField(edt_maxstep, &(VFResults.config_hma), DEFAULT_HMA,
+    changed |= readFloatField(edt_maxstep, &(VFResults.config_hma_), DEFAULT_HMA,
                               MIN_HMA, MAX_HMA);
-    changed |= readFloatField(edt_stepsize, &(VFResults.config_step),
+    changed |= readFloatField(edt_stepsize, &(VFResults.config_step_),
                               DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
-    //  changed |= ReadFloatField( edt_curstep, &(VFResults.config_currentstep),
+    //  changed |= ReadFloatField( edt_curstep, &(VFResults.config_currentstep_),
     //                      DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA );
 
-    VFResults.config_intpoints = spin_numpoints->value();
+    VFResults.config_intpoints_ = spin_numpoints->value();
 
-    VFResults.config_kindvf =
+    VFResults.config_kindvf_ =
         (btn_org->isChecked()) ? INTCONFIG_ORIGINAL : INTCONFIG_REDUCED;
-    VFResults.config_dashes = (btn_dashes->isChecked()) ? true : false;
+    VFResults.config_dashes_ = (btn_dashes->isChecked()) ? true : false;
 
     if (!changed) {
-        if (VFResults.config_step < VFResults.config_hmi ||
-            VFResults.config_step > VFResults.config_hma) {
+        if (VFResults.config_step_ < VFResults.config_hmi_ ||
+            VFResults.config_step_ > VFResults.config_hma_) {
             // error
 
-            VFResults.config_step = DEFAULT_STEPSIZE;
-            if (VFResults.config_step < VFResults.config_hmi ||
-                VFResults.config_step > VFResults.config_hma) {
-                VFResults.config_step = VFResults.config_hma;
+            VFResults.config_step_ = DEFAULT_STEPSIZE;
+            if (VFResults.config_step_ < VFResults.config_hmi_ ||
+                VFResults.config_step_ > VFResults.config_hma_) {
+                VFResults.config_step_ = VFResults.config_hma_;
             }
             changed = true;
             MarkBad(edt_stepsize);
         }
         /*
-                if( VFResults.config_currentstep < VFResults.config_hmi ||
-           VFResults.config_currentstep > VFResults.config_hma )
+                if( VFResults.config_currentstep_ < VFResults.config_hmi_ ||
+           VFResults.config_currentstep_ > VFResults.config_hma_ )
                 {
                     // error
 
-                    VFResults.config_currentstep = DEFAULT_STEPSIZE;
-                    if( VFResults.config_currentstep < VFResults.config_hmi ||
-           VFResults.config_currentstep > VFResults.config_hma )
+                    VFResults.config_currentstep_ = DEFAULT_STEPSIZE;
+                    if( VFResults.config_currentstep_ < VFResults.config_hmi_ ||
+           VFResults.config_currentstep_ > VFResults.config_hma_ )
                     {
-                        VFResults.config_currentstep = VFResults.config_hma;
+                        VFResults.config_currentstep_ = VFResults.config_hma_;
                     }
                     edt_curstep->setBackgroundColor( QColor(255,192,192) );
                     changed = true;
@@ -336,32 +336,32 @@ void QIntParamsDlg::UpdateDlgData(void)
 
     changed = false;
 
-    if (VFResults.config_kindvf == INTCONFIG_ORIGINAL)
+    if (VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
         ExclusiveToggle(true, btn_org, btn_red, nullptr);
     else
         ExclusiveToggle(true, btn_red, btn_org, nullptr);
 
-    if (VFResults.config_dashes)
+    if (VFResults.config_dashes_)
         ExclusiveToggle(true, btn_dashes, btn_dots, nullptr);
     else
         ExclusiveToggle(true, btn_dots, btn_dashes, nullptr);
 
-    buf.sprintf("%g", (float)(VFResults.config_step));
+    buf.sprintf("%g", (float)(VFResults.config_step_));
     edt_stepsize->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_currentstep));
+    buf.sprintf("%g", (float)(VFResults.config_currentstep_));
     lbl_curstep->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_hmi));
+    buf.sprintf("%g", (float)(VFResults.config_hmi_));
     edt_minstep->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_hma));
+    buf.sprintf("%g", (float)(VFResults.config_hma_));
     edt_maxstep->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_tolerance));
+    buf.sprintf("%g", (float)(VFResults.config_tolerance_));
     edt_tolerance->setText(buf);
 
-    spin_numpoints->setValue(VFResults.config_intpoints);
+    spin_numpoints->setValue(VFResults.config_intpoints_);
 
     if (VFResults.gcf_ != nullptr ||
         (VFResults.singinf_ && VFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
@@ -382,19 +382,19 @@ void QIntParamsDlg::SetCurrentStep(double curstep)
 
 void QIntParamsDlg::on_btn_reset(void)
 {
-    VFResults.config_hma = DEFAULT_HMA;       // maximum step size
-    VFResults.config_hmi = DEFAULT_HMI;       // minimum step size
-    VFResults.config_step = DEFAULT_STEPSIZE; // step size
-    VFResults.config_currentstep =
+    VFResults.config_hma_ = DEFAULT_HMA;       // maximum step size
+    VFResults.config_hmi_ = DEFAULT_HMI;       // minimum step size
+    VFResults.config_step_ = DEFAULT_STEPSIZE; // step size
+    VFResults.config_currentstep_ =
         DEFAULT_STEPSIZE; // current step size (during integration)
-    VFResults.config_tolerance = DEFAULT_TOLERANCE; // tolerance
-    VFResults.config_projection =
+    VFResults.config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
+    VFResults.config_projection_ =
         DEFAULT_PROJECTION; // projection in the case of Poincare sphere
-    VFResults.config_intpoints =
+    VFResults.config_intpoints_ =
         DEFAULT_INTPOINTS; // number of points to integrate
-    VFResults.config_dashes =
+    VFResults.config_dashes_ =
         DEFAULT_LINESTYLE; // line style (dashes or points)
-    VFResults.config_kindvf = DEFAULT_INTCONFIG;
+    VFResults.config_kindvf_ = DEFAULT_INTCONFIG;
 
     UpdateDlgData();
 }

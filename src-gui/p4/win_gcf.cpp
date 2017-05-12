@@ -117,7 +117,7 @@ void QGcfDlg::reset(void)
     buf.sprintf("%d", DEFAULT_GCFMEMORY);
     edt_memory->setText(buf);
 
-    if (VFResults.config_dashes)
+    if (VFResults.config_dashes_)
         ExclusiveToggle(true, btn_dashes, btn_dots);
     else
         ExclusiveToggle(true, btn_dots, btn_dashes);

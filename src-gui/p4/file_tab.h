@@ -362,21 +362,21 @@ class QVFStudy : public QObject
     // limit cycles
 
     orbits *first_lim_cycle_;
-    orbits *first_orbit;
+    orbits *first_orbit_;
 
     // ------ Configuration
 
-    int config_lc_value;
-    double config_hma;
-    double config_hmi;
-    double config_step;
-    double config_currentstep;
-    double config_tolerance;
-    double config_projection;
-    int config_intpoints;
-    int config_lc_numpoints;
-    bool config_dashes;
-    bool config_kindvf; // true for original VF, false for reduced
+    int config_lc_value_;
+    double config_hma_;
+    double config_hmi_;
+    double config_step_;
+    double config_currentstep_;
+    double config_tolerance_;
+    double config_projection_;
+    int config_intpoints_;
+    int config_lc_numpoints_;
+    bool config_dashes_;
+    bool config_kindvf_; // true for original VF, false for reduced
 
     // run-time when plotting
 

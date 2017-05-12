@@ -461,7 +461,7 @@ bool QViewDlg::GetDataFromDlg(void)
     double oldymax = VFResults.ymax_;
 
     changed |=
-        ReadFloatField(edt_projection, &(VFResults.config_projection),
+        ReadFloatField(edt_projection, &(VFResults.config_projection_),
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
     changed |=
         ReadFloatField(edt_x0, &(VFResults.xmin_), X_MIN, MIN_FLOAT, MAX_FLOAT);
@@ -511,7 +511,7 @@ void QViewDlg::UpdateDlgData(void)
     else
         btn_sphere->setEnabled(true);
 
-    buf.sprintf("%g", (float)(VFResults.config_projection));
+    buf.sprintf("%g", (float)(VFResults.config_projection_));
     edt_projection->setText(buf);
     if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE && !VFResults.plweights_)
         edt_projection->setEnabled(true);

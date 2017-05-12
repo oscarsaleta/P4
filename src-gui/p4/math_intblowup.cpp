@@ -27,7 +27,7 @@
 #include "plot_tools.h"
 
 // static global variables
-static struct term2 *vec_field[2];
+static term2 *vec_field[2];
 
 // function definitions
 void eval_blow_vec_field(double *y, double *f)
@@ -36,17 +36,17 @@ void eval_blow_vec_field(double *y, double *f)
     f[1] = eval_term2(vec_field[1], y);
 }
 
-struct orbits_points *
+orbits_points *
 integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
-                  double *pcoord2, struct blow_up_points *de_sep, double step,
-                  int dir, int type, struct orbits_points **orbit, int chart)
+                  double *pcoord2, blow_up_points *de_sep, double step,
+                  int dir, int type, orbits_points **orbit, int chart)
 {
     int i;
     double hhi, point[2];
     double pcoord[3];
     double y[2];
     int color, dashes, ok = true;
-    struct orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
+    orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
 
     vec_field[0] = de_sep->vector_field[0];
     vec_field[1] = de_sep->vector_field[1];
@@ -57,9 +57,9 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
     hhi = (double)dir * step;
     y[0] = de_sep->point[0];
     y[1] = de_sep->point[1];
-    for (i = 1; i <= VFResults.config_intpoints; ++i) {
-        rk78(eval_blow_vec_field, y, &hhi, VFResults.config_hmi,
-             VFResults.config_hma, VFResults.config_tolerance);
+    for (i = 1; i <= VFResults.config_intpoints_; ++i) {
+        rk78(eval_blow_vec_field, y, &hhi, VFResults.config_hmi_,
+             VFResults.config_hma_, VFResults.config_tolerance_);
         make_transformations(
             de_sep->trans, de_sep->x0 + de_sep->a11 * y[0] + de_sep->a12 * y[1],
             de_sep->y0 + de_sep->a21 * y[0] + de_sep->a22 * y[1], point);
@@ -156,7 +156,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
         last_orbit->pcoord[1] = pcoord[1];
         last_orbit->pcoord[2] = pcoord[2];
         last_orbit->color = color;
-        last_orbit->dashes = dashes * VFResults.config_dashes;
+        last_orbit->dashes = dashes * VFResults.config_dashes_;
         last_orbit->dir = ((VFResults.plweights_ == false) &&
                            (chart == CHART_V1 || chart == CHART_V2))
                               ? VFResults.dir_vec_field_ * dir

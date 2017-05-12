@@ -2230,7 +2230,7 @@ void QWinSphere::printOrbits(void)
     int i;
     i = 1;
 
-    for (orbit = VFResults.first_orbit; orbit != nullptr;
+    for (orbit = VFResults.first_orbit_; orbit != nullptr;
          orbit = orbit->next_orbit) {
         s.sprintf("Starting orbit %d", i++);
         print_comment(s);

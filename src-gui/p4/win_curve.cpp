@@ -139,7 +139,7 @@ void QCurveDlg::reset(void)
     else
         btn_delete_->setEnabled(true);
 
-    if (VFResults.config_dashes)
+    if (VFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();

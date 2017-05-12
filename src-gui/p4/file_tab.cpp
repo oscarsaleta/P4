@@ -78,7 +78,7 @@ QVFStudy::QVFStudy()
     // initialize limit cycles & orbits
 
     first_lim_cycle_ = nullptr;
-    first_orbit = nullptr;
+    first_orbit_ = nullptr;
     current_orbit = nullptr;
 
     // initialize others
@@ -95,21 +95,21 @@ QVFStudy::QVFStudy()
 
     // initialize parameters
 
-    config_lc_value =
+    config_lc_value_ =
         DEFAULT_LCORBITS; // number of orbits in the limit cycle window
-    config_lc_numpoints =
+    config_lc_numpoints_ =
         DEFAULT_LCPOINTS;     // number of points in the limit cycle window
-    config_hma = DEFAULT_HMA; // maximum step size
-    config_hmi = DEFAULT_HMI; // minimum step size
-    config_step = DEFAULT_STEPSIZE; // step size
-    config_currentstep =
+    config_hma_ = DEFAULT_HMA; // maximum step size
+    config_hmi_ = DEFAULT_HMI; // minimum step size
+    config_step_ = DEFAULT_STEPSIZE; // step size
+    config_currentstep_ =
         DEFAULT_STEPSIZE; // current step size (during integration)
-    config_tolerance = DEFAULT_TOLERANCE; // tolerance
-    config_projection =
+    config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
+    config_projection_ =
         DEFAULT_PROJECTION; // projection in the case of Poincare sphere
-    config_intpoints = DEFAULT_INTPOINTS; // number of points to integrate
-    config_dashes = DEFAULT_LINESTYLE;    // line style (dashes or points)
-    config_kindvf = DEFAULT_INTCONFIG;
+    config_intpoints_ = DEFAULT_INTPOINTS; // number of points to integrate
+    config_dashes_ = DEFAULT_LINESTYLE;    // line style (dashes or points)
+    config_kindvf_ = DEFAULT_INTCONFIG;
 }
 
 // -----------------------------------------------------------------------
@@ -199,8 +199,8 @@ void QVFStudy::deleteVF()
     curve_points_ = nullptr;
 
     // Delete all orbits
-    deleteOrbit(first_orbit);
-    first_orbit = nullptr;
+    deleteOrbit(first_orbit_);
+    first_orbit_ = nullptr;
     current_orbit = nullptr;
 
     // Delete limit cycles
@@ -2262,26 +2262,26 @@ void QVFStudy::dump(QString basename, QString info)
     DUMP(("Default integration parameters"))
     DUMP(("------------------------------"))
     DUMP((" "))
-    DUMP(("  LC Value           %d", config_lc_value))
-    DUMP(("  Max Step Size      %g", (float)config_hma))
-    DUMP(("  Min Step Size      %g", (float)config_hmi))
-    DUMP(("  Step Size          %g", (float)config_step))
-    DUMP(("  Current Step Size  %g", (float)config_currentstep))
-    DUMP(("  Tolerance          %g", (float)config_tolerance))
-    DUMP(("  Projection         %g", (float)config_projection))
-    DUMP(("  Integration Points %d", config_intpoints))
-    DUMP(("  LC NumPoints       %d", config_lc_numpoints))
-    DUMP(("  Dashes             %d", config_dashes))
+    DUMP(("  LC Value           %d", config_lc_value_))
+    DUMP(("  Max Step Size      %g", (float)config_hma_))
+    DUMP(("  Min Step Size      %g", (float)config_hmi_))
+    DUMP(("  Step Size          %g", (float)config_step_))
+    DUMP(("  Current Step Size  %g", (float)config_currentstep_))
+    DUMP(("  Tolerance          %g", (float)config_tolerance_))
+    DUMP(("  Projection         %g", (float)config_projection_))
+    DUMP(("  Integration Points %d", config_intpoints_))
+    DUMP(("  LC NumPoints       %d", config_lc_numpoints_))
+    DUMP(("  Dashes             %d", config_dashes_))
 
-    if (config_kindvf == INTCONFIG_ORIGINAL)
+    if (config_kindvf_ == INTCONFIG_ORIGINAL)
         s = "(Original)";
-    else if (config_kindvf == INTCONFIG_REDUCED)
+    else if (config_kindvf_ == INTCONFIG_REDUCED)
         s = "(Reduced)";
     else
         s = "???";
 
     ss = s.toLatin1();
-    DUMP(("  Kind of VF         %d %s", config_kindvf, (const char *)ss))
+    DUMP(("  Kind of VF         %d %s", config_kindvf_, (const char *)ss))
 
     ss = basename.toLatin1() + "_fin.tab";
     QFile ffin(ss);
