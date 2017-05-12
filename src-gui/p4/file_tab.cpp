@@ -83,10 +83,10 @@ QVFStudy::QVFStudy()
 
     // initialize others
 
-    xmin = -1.0;
-    xmax = 1.0;
-    ymin = -1.0;
-    ymax = 1.0;
+    xmin_ = -1.0;
+    xmax_ = 1.0;
+    ymin_ = -1.0;
+    ymax_ = 1.0;
     p_ = 1;
     q_ = 1;
     typeofstudy_ = TYPEOFSTUDY_ALL;
@@ -208,10 +208,10 @@ void QVFStudy::deleteVF()
     first_lim_cycle = nullptr;
 
     // reset others
-    xmin = -1.0;
-    xmax = 1.0;
-    ymin = -1.0;
-    ymax = 1.0;
+    xmin_ = -1.0;
+    xmax_ = 1.0;
+    ymin_ = -1.0;
+    ymax_ = 1.0;
     p_ = 1;
     q_ = 1;
     typeofstudy_ = TYPEOFSTUDY_ALL;
@@ -449,7 +449,7 @@ bool QVFStudy::readTables(QString basename)
     }
 
     if (typeofstudy_ == TYPEOFSTUDY_ONE) {
-        if (fscanf(fp, "%lf %lf %lf %lf", &xmin, &xmax, &ymin, &ymax) != 4) {
+        if (fscanf(fp, "%lf %lf %lf %lf", &xmin_, &xmax_, &ymin_, &ymax_) != 4) {
             dump(basename, "Cannot read min-max coords in *_vec.tab");
             deleteVF();
             fclose(fp);
@@ -464,10 +464,10 @@ bool QVFStudy::readTables(QString basename)
 
     double_p = (double)p_;
     double_q = (double)q_;
-    double_p_plus_q = (double)(p_ + q_);
-    double_p_minus_1 = (double)(p_ - 1);
-    double_q_minus_1 = (double)(q_ - 1);
-    double_q_minus_p = (double)(q_ - p_);
+    double_p_plus_q_ = (double)(p_ + q_);
+    double_p_minus_1_ = (double)(p_ - 1);
+    double_q_minus_1_ = (double)(q_ - 1);
+    double_q_minus_p_ = (double)(q_ - p_);
 
     if (!readGCF(fp)) {
         dump(basename, "Cannot read gcf *_vec.tab");
@@ -2189,11 +2189,11 @@ void QVFStudy::dump(QString basename, QString info)
     DUMP(("  (p,q) = (%d,%d)", p_, q_))
     DUMP(("  plweights = %d", plweights_))
     DUMP(("  doubles p,q,p+q,p-1,q-1,q-p = (%g,%g,%g,%g,%g,%g)",
-          (float)double_p, (float)double_q, (float)double_p_plus_q,
-          (float)double_p_minus_1, (float)double_q_minus_1,
-          (float)double_q_minus_p))
-    DUMP(("  Range x: [%g,%g] Range y: [%g,%g]", (float)xmin, (float)xmax,
-          (float)ymin, (float)ymax))
+          (float)double_p, (float)double_q, (float)double_p_plus_q_,
+          (float)double_p_minus_1_, (float)double_q_minus_1_,
+          (float)double_q_minus_p_))
+    DUMP(("  Range x: [%g,%g] Range y: [%g,%g]", (float)xmin_, (float)xmax_,
+          (float)ymin_, (float)ymax_))
     DUMP(("  Line at infinity singular? %d", singinf))
     DUMP(("  Direction of vector field: %d", VFResults.dir_vec_field))
     DUMP((" "))

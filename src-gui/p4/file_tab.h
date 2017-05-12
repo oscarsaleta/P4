@@ -309,12 +309,12 @@ class QVFStudy : public QObject
 
     double double_p;         // shortcuts: = (double)p
     double double_q;         // = (double)q
-    double double_p_plus_q;  // = (double)(p+q)
-    double double_p_minus_1; // = (double)(p-1)
-    double double_q_minus_1; // = (double)(q-1)
-    double double_q_minus_p; // = (double)(q-p)
+    double double_p_plus_q_;  // = (double)(p+q)
+    double double_p_minus_1_; // = (double)(p-1)
+    double double_q_minus_1_; // = (double)(q-1)
+    double double_q_minus_p_; // = (double)(q-p)
 
-    double xmin, xmax, ymin, ymax; // in case of local study
+    double xmin_, xmax_, ymin_, ymax_; // in case of local study
     bool singinf;
     int dir_vec_field;
 

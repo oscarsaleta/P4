@@ -364,8 +364,8 @@ static double func_U1(double x)
 
 static double dfunc_U1(double x)
 {
-    return VFResults.double_p * pow(x, VFResults.double_p_minus_1) +
-           U * U * VFResults.double_q * pow(x, VFResults.double_q_minus_1);
+    return VFResults.double_p * pow(x, VFResults.double_p_minus_1_) +
+           U * U * VFResults.double_q * pow(x, VFResults.double_q_minus_1_);
 }
 
 static double func_U1_s0(double theta)
@@ -378,9 +378,9 @@ static double func_U1_s0(double theta)
 static double dfunc_U1_s0(double theta)
 {
     return (-VFResults.double_q * U *
-                pow(cos(theta), VFResults.double_q_minus_1) * sin(theta) -
+                pow(cos(theta), VFResults.double_q_minus_1_) * sin(theta) -
             VFResults.double_p * cos(theta) *
-                pow(sin(theta), VFResults.double_p_minus_1));
+                pow(sin(theta), VFResults.double_p_minus_1_));
 }
 
 static void U1_to_cylinder(double u, double s, double *c)
@@ -409,7 +409,7 @@ static void U1_to_cylinder(double u, double s, double *c)
         U = u;
         y = find_root(func_U1, dfunc_U1, x);
         c[0] = sqrt(y) * s;
-        c[1] = atan(u * pow(sqrt(y), VFResults.double_q_minus_p));
+        c[1] = atan(u * pow(sqrt(y), VFResults.double_q_minus_p_));
     }
 }
 
@@ -447,7 +447,7 @@ static void V1_to_cylinder(double u, double s, double *c)
         U = u;
         y = find_root(func_U1, dfunc_U1, x);
         c[0] = sqrt(y) * s;
-        c[1] = atan(-u * pow(sqrt(y), VFResults.double_q_minus_p));
+        c[1] = atan(-u * pow(sqrt(y), VFResults.double_q_minus_p_));
         if (c[1] > 0)
             c[1] -= PI;
         else
@@ -480,8 +480,8 @@ static double func_U2(double x)
 
 static double dfunc_U2(double x)
 {
-    return (VFResults.double_p * U * U * pow(x, VFResults.double_p_minus_1) +
-            VFResults.double_q * pow(x, VFResults.double_q_minus_1));
+    return (VFResults.double_p * U * U * pow(x, VFResults.double_p_minus_1_) +
+            VFResults.double_q * pow(x, VFResults.double_q_minus_1_));
 }
 
 static double func_U2_s0(double theta)
@@ -493,9 +493,9 @@ static double func_U2_s0(double theta)
 static double dfunc_U2_s0(double theta)
 {
     return (VFResults.double_p * U * cos(theta) *
-                pow(sin(theta), VFResults.double_p_minus_1) +
+                pow(sin(theta), VFResults.double_p_minus_1_) +
             VFResults.double_q * sin(theta) *
-                pow(cos(theta), VFResults.double_q_minus_1));
+                pow(cos(theta), VFResults.double_q_minus_1_));
 }
 
 static void U2_to_cylinder(double u, double s, double *c)
@@ -524,7 +524,7 @@ static void U2_to_cylinder(double u, double s, double *c)
         U = u;
         y = find_root(func_U2, dfunc_U2, x);
         c[0] = sqrt(y) * s;
-        c[1] = atan(pow(sqrt(y), VFResults.double_q_minus_p) / u);
+        c[1] = atan(pow(sqrt(y), VFResults.double_q_minus_p_) / u);
         if (c[1] < 0)
             c[1] += PI;
     }
@@ -566,7 +566,7 @@ static void V2_to_cylinder(double u, double s, double *c)
             U = u;
             y = find_root(func_U2, dfunc_U2, x);
             c[0] = sqrt(y) * s;
-            c[1] = atan(-pow(sqrt(y), VFResults.double_q_minus_p) / u);
+            c[1] = atan(-pow(sqrt(y), VFResults.double_q_minus_p_) / u);
             if (c[1] > 0)
                 c[1] -= PI;
         }
@@ -667,8 +667,8 @@ static double func(double z)
 
 static double dfunc(double z)
 {
-    return VFResults.double_p * pow(z, VFResults.double_p_minus_1) * A +
-           VFResults.double_q * pow(z, VFResults.double_q_minus_1) * B;
+    return VFResults.double_p * pow(z, VFResults.double_p_minus_1_) * A +
+           VFResults.double_q * pow(z, VFResults.double_q_minus_1_) * B;
 }
 
 void R2_to_plsphere(double x, double y, double *pcoord)
