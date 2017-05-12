@@ -37,7 +37,7 @@
 #define EVAL_GCF_CYL4 11
 #define EVAL_GCF_FINISHLYAPUNOV 12
 
-extern orbits_points *last_gcf_point;
+extern orbits_points *g_last_gcf_point;
 
 bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis);
 bool evalGcfContinue(int points, int prec);

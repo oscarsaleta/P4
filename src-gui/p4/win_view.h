@@ -70,8 +70,8 @@ class QViewDlg : public QWidget
     bool ReadFloatField(QLineEdit *, double *, double, double, double);
 
   public slots:
-    void MarkBad(QLineEdit *edt);
-    void OnFieldChange(const QString &dummy);
+    void markBad(QLineEdit *edt);
+    void onFieldChange(const QString &dummy);
     void btn_sphere_toggled(bool);
     void btn_plane_toggled(bool);
     void btn_square_clicked(void);

@@ -34,60 +34,67 @@ QIntParamsDlg::QIntParamsDlg()
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *kindlabel = new QLabel("Vector Field: ", this);
-    kindlabel->setFont(*(p4app->boldFont_));
-    btn_org = new QRadioButton("Original", this);
-    btn_red = new QRadioButton("Reduced", this);
+    kindlabel->setFont(*(g_p4app->boldFont_));
+    QButtonGroup *btngrp1 = new QButtonGroup(this);
+    btn_org_ = new QRadioButton("Original", this);
+    btn_red_ = new QRadioButton("Reduced", this);
+    btngrp1->addButton(btn_org_);
+    btngrp1->addButton(btn_red_);
 
     QLabel *typelabel = new QLabel("Appearance: ", this);
-    typelabel->setFont(*(p4app->boldFont_));
-    btn_dots = new QRadioButton("Dots", this);
-    btn_dashes = new QRadioButton("Dashes", this);
+    typelabel->setFont(*(g_p4app->boldFont_));
+    QButtonGroup *btngrp2 = new QButtonGroup(this);
+    btn_dots_ = new QRadioButton("Dots", this);
+    btn_dashes_ = new QRadioButton("Dashes", this);
+    btngrp2->addButton(btn_dots_);
+    btngrp2->addButton(btn_dashes_);
 
-    lbl_stepsize = new QLabel("Step Size:", this);
-    lbl_stepsize->setFont(*(p4app->boldFont_));
-    edt_stepsize = new QLineEdit("0.01", this);
+    lbl_stepsize_ = new QLabel("Step Size:", this);
+    lbl_stepsize_->setFont(*(g_p4app->boldFont_));
+    edt_stepsize_ = new QLineEdit("0.01", this);
 
-    lbl0_curstep = new QLabel("Current Step Size:", this);
-    lbl0_curstep->setFont(*(p4app->boldFont_));
-    lbl_curstep = new QLabel("0.01", this);
+    lbl0_curstep_ = new QLabel("Current Step Size:", this);
+    lbl0_curstep_->setFont(*(g_p4app->boldFont_));
+    lbl_curstep_ = new QLabel("0.01", this);
 
-    lbl_maxstep = new QLabel("Max Step Size:", this);
-    lbl_maxstep->setFont(*(p4app->boldFont_));
-    edt_maxstep = new QLineEdit("0.1", this);
+    lbl_maxstep_ = new QLabel("Max Step Size:", this);
+    lbl_maxstep_->setFont(*(g_p4app->boldFont_));
+    edt_maxstep_ = new QLineEdit("0.1", this);
 
-    lbl_minstep = new QLabel("Min Step Size:", this);
-    lbl_minstep->setFont(*(p4app->boldFont_));
-    edt_minstep = new QLineEdit("1e-06", this);
+    lbl_minstep_ = new QLabel("Min Step Size:", this);
+    lbl_minstep_->setFont(*(g_p4app->boldFont_));
+    edt_minstep_ = new QLineEdit("1e-06", this);
 
-    lbl_tolerance = new QLabel("Tolerance:", this);
-    lbl_tolerance->setFont(*(p4app->boldFont_));
-    edt_tolerance = new QLineEdit("1e-06", this);
+    lbl_tolerance_ = new QLabel("Tolerance:", this);
+    lbl_tolerance_->setFont(*(g_p4app->boldFont_));
+    edt_tolerance_ = new QLineEdit("1e-06", this);
 
     QLabel *lbl_numpoints = new QLabel("# Points:", this);
-    lbl_numpoints->setFont(*(p4app->boldFont_));
-    spin_numpoints = new QSpinBox(this);
-    spin_numpoints->setMinimum(MIN_INTPOINTS);
-    spin_numpoints->setMaximum(MAX_INTPOINTS);
+    lbl_numpoints->setFont(*(g_p4app->boldFont_));
+    spin_numpoints_ = new QSpinBox(this);
+    spin_numpoints_->setMinimum(MIN_INTPOINTS);
+    spin_numpoints_->setMaximum(MAX_INTPOINTS);
 
-    btn_reset = new QPushButton("&Reset", this);
+    btn_reset_ = new QPushButton("&Reset", this);
 
 #ifdef TOOLTIPS
-    btn_org->setToolTip("Integrate orbits w.r.t. original vector field");
-    btn_red->setToolTip("Integrate orbits w.r.t. reduced vector field,\n"
-                        "removing common factors.\n"
-                        "This is disabled if there are no common factors.");
-    btn_dots->setToolTip("Plot individual points during orbit-integration");
-    btn_dashes->setToolTip(
+    btn_org_->setToolTip("Integrate orbits w.r.t. original vector field");
+    btn_red_->setToolTip("Integrate orbits w.r.t. reduced vector field,\n"
+                         "removing common factors.\n"
+                         "This is disabled if there are no common factors.");
+    btn_dots_->setToolTip("Plot individual points during orbit-integration");
+    btn_dashes_->setToolTip(
         "Connect orbit-integration points with small line segments");
-    edt_stepsize->setToolTip(
+    edt_stepsize_->setToolTip(
         "Runge-Kutta 7/8 initial step size when starting integration");
-    lbl_curstep->setToolTip(
+    lbl_curstep_->setToolTip(
         "Runge-Kutta 7/8 initial step size when continuing integration");
-    edt_maxstep->setToolTip("Runge-Kutta 7/8 maximum step size");
-    edt_minstep->setToolTip("Runge-Kutta 7/8 minimum step size");
-    edt_tolerance->setToolTip("Runge-Kutta Tolerance");
-    spin_numpoints->setToolTip("Number of points to integrate each time");
-    btn_reset->setToolTip("Reset the integration parameters to default values");
+    edt_maxstep_->setToolTip("Runge-Kutta 7/8 maximum step size");
+    edt_minstep_->setToolTip("Runge-Kutta 7/8 minimum step size");
+    edt_tolerance_->setToolTip("Runge-Kutta Tolerance");
+    spin_numpoints_->setToolTip("Number of points to integrate each time");
+    btn_reset_->setToolTip(
+        "Reset the integration parameters to default values");
 #endif
 
     // layout
@@ -96,50 +103,50 @@ QIntParamsDlg::QIntParamsDlg()
 
     QHBoxLayout *kindLayout = new QHBoxLayout();
     kindLayout->addWidget(kindlabel);
-    kindLayout->addWidget(btn_org);
-    kindLayout->addWidget(btn_red);
+    kindLayout->addWidget(btn_org_);
+    kindLayout->addWidget(btn_red_);
 
     mainLayout_->addLayout(kindLayout);
 
     QHBoxLayout *typeLayout = new QHBoxLayout();
     typeLayout->addWidget(typelabel);
-    typeLayout->addWidget(btn_dots);
-    typeLayout->addWidget(btn_dashes);
+    typeLayout->addWidget(btn_dots_);
+    typeLayout->addWidget(btn_dashes_);
     mainLayout_->addLayout(typeLayout);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
-    layout2->addWidget(lbl_stepsize);
-    layout2->addWidget(edt_stepsize);
+    layout2->addWidget(lbl_stepsize_);
+    layout2->addWidget(edt_stepsize_);
     layout2->addStretch(0);
 
     QHBoxLayout *layout3 = new QHBoxLayout();
-    layout3->addWidget(lbl0_curstep);
-    layout3->addWidget(lbl_curstep);
+    layout3->addWidget(lbl0_curstep_);
+    layout3->addWidget(lbl_curstep_);
     layout3->addStretch(0);
 
     QHBoxLayout *layout4 = new QHBoxLayout();
-    layout4->addWidget(lbl_maxstep);
-    layout4->addWidget(edt_maxstep);
+    layout4->addWidget(lbl_maxstep_);
+    layout4->addWidget(edt_maxstep_);
     layout4->addStretch(0);
 
     QHBoxLayout *layout5 = new QHBoxLayout();
-    layout5->addWidget(lbl_minstep);
-    layout5->addWidget(edt_minstep);
+    layout5->addWidget(lbl_minstep_);
+    layout5->addWidget(edt_minstep_);
     layout5->addStretch(0);
 
     QHBoxLayout *layout6 = new QHBoxLayout();
-    layout6->addWidget(lbl_tolerance);
-    layout6->addWidget(edt_tolerance);
+    layout6->addWidget(lbl_tolerance_);
+    layout6->addWidget(edt_tolerance_);
     layout6->addStretch(0);
 
     QHBoxLayout *layout7 = new QHBoxLayout();
     layout7->addWidget(lbl_numpoints);
-    layout7->addWidget(spin_numpoints);
+    layout7->addWidget(spin_numpoints_);
     layout7->addStretch(0);
 
     QHBoxLayout *layout8 = new QHBoxLayout();
     layout8->addStretch(1);
-    layout8->addWidget(btn_reset);
+    layout8->addWidget(btn_reset_);
     layout8->addStretch(1);
 
     mainLayout_->addLayout(layout2);
@@ -155,37 +162,37 @@ QIntParamsDlg::QIntParamsDlg()
 
     setLayout(mainLayout_);
 
-    QButtonGroup *btngrp1 = new QButtonGroup(this);
-    btngrp1->addButton(btn_org);
-    btngrp1->addButton(btn_red);
+    /*QButtonGroup *btngrp1 = new QButtonGroup(this);
+    btngrp1->addButton(btn_org_);
+    btngrp1->addButton(btn_red_);
 
     QButtonGroup *btngrp2 = new QButtonGroup(this);
-    btngrp2->addButton(btn_dots);
-    btngrp2->addButton(btn_dashes);
+    btngrp2->addButton(btn_dots_);
+    btngrp2->addButton(btn_dashes_);*/
 
     // connections
 
-    QObject::connect(btn_org, SIGNAL(toggled(bool)), this,
+    QObject::connect(btn_org_, SIGNAL(toggled(bool)), this,
                      SLOT(btn_org_toggled(bool)));
-    QObject::connect(btn_red, SIGNAL(toggled(bool)), this,
+    QObject::connect(btn_red_, SIGNAL(toggled(bool)), this,
                      SLOT(btn_red_toggled(bool)));
-    QObject::connect(btn_dots, SIGNAL(toggled(bool)), this,
+    QObject::connect(btn_dots_, SIGNAL(toggled(bool)), this,
                      SLOT(btn_dots_toggled(bool)));
-    QObject::connect(btn_dashes, SIGNAL(toggled(bool)), this,
+    QObject::connect(btn_dashes_, SIGNAL(toggled(bool)), this,
                      SLOT(btn_dashes_toggled(bool)));
-    QObject::connect(edt_stepsize, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
+    QObject::connect(edt_stepsize_, SIGNAL(textChanged(const QString &)), this,
+                     SLOT(onFieldChange(const QString &)));
     // QObject::connect( edt_curstep,        SIGNAL(textChanged(const QString
-    // &)), this, SLOT(OnFieldChange(const QString &)) );
-    QObject::connect(edt_maxstep, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
-    QObject::connect(edt_minstep, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
-    QObject::connect(edt_tolerance, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
-    QObject::connect(spin_numpoints, SIGNAL(valueChanged(int)), this,
-                     SLOT(OnFieldChange(int)));
-    QObject::connect(btn_reset, SIGNAL(clicked()), this, SLOT(on_btn_reset()));
+    // &)), this, SLOT(onFieldChange(const QString &)) );
+    QObject::connect(edt_maxstep_, SIGNAL(textChanged(const QString &)), this,
+                     SLOT(onFieldChange(const QString &)));
+    QObject::connect(edt_minstep_, SIGNAL(textChanged(const QString &)), this,
+                     SLOT(onFieldChange(const QString &)));
+    QObject::connect(edt_tolerance_, SIGNAL(textChanged(const QString &)), this,
+                     SLOT(onFieldChange(const QString &)));
+    QObject::connect(spin_numpoints_, SIGNAL(valueChanged(int)), this,
+                     SLOT(onFieldChange(int)));
+    QObject::connect(btn_reset_, SIGNAL(clicked()), this, SLOT(on_btn_reset()));
 
     // finishing
 
@@ -194,46 +201,46 @@ QIntParamsDlg::QIntParamsDlg()
     setP4WindowTitle(this, "Integration Parameters");
 }
 
-void QIntParamsDlg::OnFieldChange(const QString &dummy)
+void QIntParamsDlg::onFieldChange(const QString &dummy)
 {
     UNUSED(dummy);
-    changed = true;
+    changed_ = true;
 }
 
-void QIntParamsDlg::OnFieldChange(int dummy)
+void QIntParamsDlg::onFieldChange(int dummy)
 {
     UNUSED(dummy);
-    changed = true;
+    changed_ = true;
 }
 
 void QIntParamsDlg::btn_org_toggled(bool dummy)
 {
     UNUSED(dummy);
-    changed = true;
+    changed_ = true;
 }
 
 void QIntParamsDlg::btn_red_toggled(bool dummy)
 {
     UNUSED(dummy);
-    changed = true;
+    changed_ = true;
 }
 
 void QIntParamsDlg::btn_dots_toggled(bool dummy)
 {
     UNUSED(dummy);
-    changed = true;
+    changed_ = true;
 }
 
 void QIntParamsDlg::btn_dashes_toggled(bool dummy)
 {
     UNUSED(dummy);
-    changed = true;
+    changed_ = true;
 }
 
-void QIntParamsDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
+/*void QIntParamsDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
 {
     first->setChecked(on);
-}
+}*/
 
 bool QIntParamsDlg::readFloatField(QLineEdit *edt, double *presult,
                                    double defvalue, double minvalue,
@@ -247,7 +254,7 @@ bool QIntParamsDlg::readFloatField(QLineEdit *edt, double *presult,
     t = edt->text();
     *presult = t.toDouble(&ok);
     if (!ok || *presult < minvalue || *presult > maxvalue) {
-        MarkBad(edt);
+        markBad(edt);
         *presult = defvalue;
         return true;
     }
@@ -259,7 +266,7 @@ bool QIntParamsDlg::readFloatField(QLineEdit *edt, double *presult,
     return false;
 }
 
-void QIntParamsDlg::MarkBad(QLineEdit *edt)
+void QIntParamsDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -275,56 +282,57 @@ void QIntParamsDlg::MarkBad(QLineEdit *edt)
 
 void QIntParamsDlg::getDataFromDlg(void)
 {
-    if (!changed) {
+    if (!changed_) {
         return;
     }
 
-    changed = false;
-    changed |= readFloatField(edt_tolerance, &(VFResults.config_tolerance_),
+    changed_ = false;
+    changed_ |= readFloatField(edt_tolerance_, &(g_VFResults.config_tolerance_),
                               DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
-    changed |= readFloatField(edt_minstep, &(VFResults.config_hmi_), DEFAULT_HMI,
-                              MIN_HMI, MAX_HMI);
-    changed |= readFloatField(edt_maxstep, &(VFResults.config_hma_), DEFAULT_HMA,
-                              MIN_HMA, MAX_HMA);
-    changed |= readFloatField(edt_stepsize, &(VFResults.config_step_),
+    changed_ |= readFloatField(edt_minstep_, &(g_VFResults.config_hmi_),
+                              DEFAULT_HMI, MIN_HMI, MAX_HMI);
+    changed_ |= readFloatField(edt_maxstep_, &(g_VFResults.config_hma_),
+                              DEFAULT_HMA, MIN_HMA, MAX_HMA);
+    changed_ |= readFloatField(edt_stepsize_, &(g_VFResults.config_step_),
                               DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
-    //  changed |= ReadFloatField( edt_curstep, &(VFResults.config_currentstep_),
+    //  changed_ |= ReadFloatField( edt_curstep,
+    //  &(g_VFResults.config_currentstep_),
     //                      DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA );
 
-    VFResults.config_intpoints_ = spin_numpoints->value();
+    g_VFResults.config_intpoints_ = spin_numpoints_->value();
 
-    VFResults.config_kindvf_ =
-        (btn_org->isChecked()) ? INTCONFIG_ORIGINAL : INTCONFIG_REDUCED;
-    VFResults.config_dashes_ = (btn_dashes->isChecked()) ? true : false;
+    g_VFResults.config_kindvf_ =
+        (btn_org_->isChecked()) ? INTCONFIG_ORIGINAL : INTCONFIG_REDUCED;
+    g_VFResults.config_dashes_ = (btn_dashes_->isChecked()) ? true : false;
 
-    if (!changed) {
-        if (VFResults.config_step_ < VFResults.config_hmi_ ||
-            VFResults.config_step_ > VFResults.config_hma_) {
+    if (!changed_) {
+        if (g_VFResults.config_step_ < g_VFResults.config_hmi_ ||
+            g_VFResults.config_step_ > g_VFResults.config_hma_) {
             // error
 
-            VFResults.config_step_ = DEFAULT_STEPSIZE;
-            if (VFResults.config_step_ < VFResults.config_hmi_ ||
-                VFResults.config_step_ > VFResults.config_hma_) {
-                VFResults.config_step_ = VFResults.config_hma_;
+            g_VFResults.config_step_ = DEFAULT_STEPSIZE;
+            if (g_VFResults.config_step_ < g_VFResults.config_hmi_ ||
+                g_VFResults.config_step_ > g_VFResults.config_hma_) {
+                g_VFResults.config_step_ = g_VFResults.config_hma_;
             }
-            changed = true;
-            MarkBad(edt_stepsize);
+            changed_ = true;
+            markBad(edt_stepsize_);
         }
         /*
-                if( VFResults.config_currentstep_ < VFResults.config_hmi_ ||
-           VFResults.config_currentstep_ > VFResults.config_hma_ )
+                if( g_VFResults.config_currentstep_ < g_VFResults.config_hmi_ ||
+           g_VFResults.config_currentstep_ > g_VFResults.config_hma_ )
                 {
                     // error
 
-                    VFResults.config_currentstep_ = DEFAULT_STEPSIZE;
-                    if( VFResults.config_currentstep_ < VFResults.config_hmi_ ||
-           VFResults.config_currentstep_ > VFResults.config_hma_ )
+                    g_VFResults.config_currentstep_ = DEFAULT_STEPSIZE;
+                    if( g_VFResults.config_currentstep_ < g_VFResults.config_hmi_ ||
+           g_VFResults.config_currentstep_ > g_VFResults.config_hma_ )
                     {
-                        VFResults.config_currentstep_ = VFResults.config_hma_;
+                        g_VFResults.config_currentstep_ = g_VFResults.config_hma_;
                     }
                     edt_curstep->setBackgroundColor( QColor(255,192,192) );
-                    changed = true;
-                    MarkBad( edt_curstep );
+                    changed_ = true;
+                    markBad( edt_curstep );
                 }
         */
     }
@@ -334,42 +342,46 @@ void QIntParamsDlg::updateDlgData(void)
 {
     QString buf;
 
-    changed = false;
+    changed_ = false;
 
-    if (VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
-        exclusiveToggle(true, btn_org, btn_red, nullptr);
+    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
+        btn_org_->toggle();
+    // exclusiveToggle(true, btn_org_, btn_red_, nullptr);
     else
-        exclusiveToggle(true, btn_red, btn_org, nullptr);
+        btn_red_->toggle();
+    // exclusiveToggle(true, btn_red_, btn_org_, nullptr);
 
-    if (VFResults.config_dashes_)
-        exclusiveToggle(true, btn_dashes, btn_dots, nullptr);
+    if (g_VFResults.config_dashes_)
+        btn_dashes_->toggle();
+    // exclusiveToggle(true, btn_dashes_, btn_dots_, nullptr);
     else
-        exclusiveToggle(true, btn_dots, btn_dashes, nullptr);
+        btn_dots_->toggle();
+    // exclusiveToggle(true, btn_dots_, btn_dashes_, nullptr);
 
-    buf.sprintf("%g", (float)(VFResults.config_step_));
-    edt_stepsize->setText(buf);
+    buf.sprintf("%g", (float)(g_VFResults.config_step_));
+    edt_stepsize_->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_currentstep_));
-    lbl_curstep->setText(buf);
+    buf.sprintf("%g", (float)(g_VFResults.config_currentstep_));
+    lbl_curstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_hmi_));
-    edt_minstep->setText(buf);
+    buf.sprintf("%g", (float)(g_VFResults.config_hmi_));
+    edt_minstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_hma_));
-    edt_maxstep->setText(buf);
+    buf.sprintf("%g", (float)(g_VFResults.config_hma_));
+    edt_maxstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(VFResults.config_tolerance_));
-    edt_tolerance->setText(buf);
+    buf.sprintf("%g", (float)(g_VFResults.config_tolerance_));
+    edt_tolerance_->setText(buf);
 
-    spin_numpoints->setValue(VFResults.config_intpoints_);
+    spin_numpoints_->setValue(g_VFResults.config_intpoints_);
 
-    if (VFResults.gcf_ != nullptr ||
-        (VFResults.singinf_ && VFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
-        btn_org->setEnabled(true);
-        btn_red->setEnabled(true);
+    if (g_VFResults.gcf_ != nullptr ||
+        (g_VFResults.singinf_ && g_VFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
+        btn_org_->setEnabled(true);
+        btn_red_->setEnabled(true);
     } else {
-        btn_org->setEnabled(false);
-        btn_red->setEnabled(false);
+        btn_org_->setEnabled(false);
+        btn_red_->setEnabled(false);
     }
 }
 
@@ -377,24 +389,24 @@ void QIntParamsDlg::setCurrentStep(double curstep)
 {
     QString buf;
     buf.sprintf("%g", (float)curstep);
-    lbl_curstep->setText(buf);
+    lbl_curstep_->setText(buf);
 }
 
 void QIntParamsDlg::on_btn_reset(void)
 {
-    VFResults.config_hma_ = DEFAULT_HMA;       // maximum step size
-    VFResults.config_hmi_ = DEFAULT_HMI;       // minimum step size
-    VFResults.config_step_ = DEFAULT_STEPSIZE; // step size
-    VFResults.config_currentstep_ =
+    g_VFResults.config_hma_ = DEFAULT_HMA;       // maximum step size
+    g_VFResults.config_hmi_ = DEFAULT_HMI;       // minimum step size
+    g_VFResults.config_step_ = DEFAULT_STEPSIZE; // step size
+    g_VFResults.config_currentstep_ =
         DEFAULT_STEPSIZE; // current step size (during integration)
-    VFResults.config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
-    VFResults.config_projection_ =
+    g_VFResults.config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
+    g_VFResults.config_projection_ =
         DEFAULT_PROJECTION; // projection in the case of Poincare sphere
-    VFResults.config_intpoints_ =
+    g_VFResults.config_intpoints_ =
         DEFAULT_INTPOINTS; // number of points to integrate
-    VFResults.config_dashes_ =
+    g_VFResults.config_dashes_ =
         DEFAULT_LINESTYLE; // line style (dashes or points)
-    VFResults.config_kindvf_ = DEFAULT_INTCONFIG;
+    g_VFResults.config_kindvf_ = DEFAULT_INTCONFIG;
 
     updateDlgData();
 }

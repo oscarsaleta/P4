@@ -40,76 +40,76 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *p4title = new QLabel("Find Singular Points Parameters", this);
-    p4title->setFont(*(p4app->titleFont_));
+    p4title->setFont(*(g_p4app->titleFont_));
 
     QLabel *symlabel = new QLabel("Calculations: ", this);
-    symlabel->setFont(*(p4app->boldFont_));
+    symlabel->setFont(*(g_p4app->boldFont_));
     btn_alg = new QRadioButton("Algebraic", this);
     btn_num = new QRadioButton("Numeric", this);
 
     QLabel *seplabel = new QLabel("Test Separatrices:  ", this);
-    seplabel->setFont(*(p4app->boldFont_));
+    seplabel->setFont(*(g_p4app->boldFont_));
     btn_sepyes = new QRadioButton("Yes", this);
     btn_sepno = new QRadioButton("No", this);
 
     QLabel *lbl_precis = new QLabel("Accuracy:", this);
-    lbl_precis->setFont(*(p4app->boldFont_));
+    lbl_precis->setFont(*(g_p4app->boldFont_));
     spin_precis = new QSpinBox(this);
     spin_precis->setMinimum(MINPRECISION);
     spin_precis->setMaximum(MAXPRECISION);
 
     QLabel *lbl_precis0 = new QLabel("Precision:", this);
-    lbl_precis0->setFont(*(p4app->boldFont_));
+    lbl_precis0->setFont(*(g_p4app->boldFont_));
     spin_precis0 = new QSpinBox(this);
     spin_precis0->setMinimum(MINPRECISION0);
     spin_precis0->setMaximum(MAXPRECISION0);
 
     QLabel *lbl_epsilon = new QLabel("Epsilon:", this);
-    lbl_epsilon->setFont(*(p4app->boldFont_));
-    edt_epsilon = new QLineEdit(ThisVF->epsilon_, this);
+    lbl_epsilon->setFont(*(g_p4app->boldFont_));
+    edt_epsilon = new QLineEdit(g_ThisVF->epsilon_, this);
 
     QLabel *lbl_level = new QLabel("Level of Approximation:", this);
-    lbl_level->setFont(*(p4app->boldFont_));
+    lbl_level->setFont(*(g_p4app->boldFont_));
     spin_level = new QSpinBox(this);
     spin_level->setMinimum(MINLEVEL);
     spin_level->setMaximum(MAXLEVEL);
 
     QLabel *lbl_numlevel = new QLabel("Numeric level:", this);
-    lbl_numlevel->setFont(*(p4app->boldFont_));
+    lbl_numlevel->setFont(*(g_p4app->boldFont_));
     spin_numlevel = new QSpinBox(this);
     spin_numlevel->setMinimum(MINNUMLEVEL);
     spin_numlevel->setMaximum(MAXNUMLEVEL);
 
     QLabel *lbl_maxlevel = new QLabel("Maximum level:", this);
-    lbl_maxlevel->setFont(*(p4app->boldFont_));
+    lbl_maxlevel->setFont(*(g_p4app->boldFont_));
     spin_maxlevel = new QSpinBox(this);
     spin_maxlevel->setMinimum(MINMAXLEVEL);
     spin_maxlevel->setMaximum(MAXMAXLEVEL);
 
     QLabel *lbl_weakness = new QLabel("Maximum level of weakness:", this);
-    lbl_weakness->setFont(*(p4app->boldFont_));
+    lbl_weakness->setFont(*(g_p4app->boldFont_));
     spin_weakness = new QSpinBox(this);
     spin_weakness->setMinimum(MINWEAKNESS);
     spin_weakness->setMaximum(MAXWEAKNESS);
 
     lbl_p = new QLabel("p:", this);
-    lbl_p->setFont(*(p4app->boldFont_));
+    lbl_p->setFont(*(g_p4app->boldFont_));
     spin_p = new QSpinBox(this);
     spin_p->setMinimum(MINP);
     spin_p->setMaximum(MAXP);
 
     lbl_q = new QLabel("q:", this);
-    lbl_q->setFont(*(p4app->boldFont_));
+    lbl_q->setFont(*(g_p4app->boldFont_));
     spin_q = new QSpinBox(this);
     spin_q->setMinimum(MINP);
     spin_q->setMaximum(MAXP);
 
     lbl_x0 = new QLabel("x0:", this);
-    lbl_x0->setFont(*(p4app->boldFont_));
+    lbl_x0->setFont(*(g_p4app->boldFont_));
     edt_x0 = new QLineEdit("", this);
 
     lbl_y0 = new QLabel("y0:", this);
-    lbl_y0->setFont(*(p4app->boldFont_));
+    lbl_y0->setFont(*(g_p4app->boldFont_));
     edt_y0 = new QLineEdit("", this);
 
 #ifdef TOOLTIPS
@@ -268,11 +268,11 @@ void QParamsDlg::OnLevelChange(int value)
 void QParamsDlg::btn_alg_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->numeric_ != false) {
-            ThisVF->numeric_ = false;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->numeric_ != false) {
+            g_ThisVF->numeric_ = false;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
         }
     }
@@ -281,11 +281,11 @@ void QParamsDlg::btn_alg_toggled(bool on)
 void QParamsDlg::btn_num_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->numeric_ != true) {
-            ThisVF->numeric_ = true;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->numeric_ != true) {
+            g_ThisVF->numeric_ = true;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
         }
     }
@@ -294,11 +294,11 @@ void QParamsDlg::btn_num_toggled(bool on)
 void QParamsDlg::btn_sepyes_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->testsep_ != true) {
-            ThisVF->testsep_ = true;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->testsep_ != true) {
+            g_ThisVF->testsep_ = true;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
         }
     }
@@ -307,11 +307,11 @@ void QParamsDlg::btn_sepyes_toggled(bool on)
 void QParamsDlg::btn_sepno_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->testsep_ != false) {
-            ThisVF->testsep_ = false;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->testsep_ != false) {
+            g_ThisVF->testsep_ = false;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
         }
     }
@@ -328,25 +328,25 @@ void QParamsDlg::getDataFromDlg(void)
     QString x0;
     QString y0;
 
-    if (spin_level->value() != ThisVF->taylorlevel_ ||
-        spin_numlevel->value() != ThisVF->numericlevel_ ||
-        spin_maxlevel->value() != ThisVF->maxlevel_ ||
-        spin_weakness->value() != ThisVF->weakness_ ||
-        spin_p->value() != ThisVF->p_ || spin_q->value() != ThisVF->q_ ||
-        spin_precis->value() != ThisVF->precision_ ||
-        spin_precis0->value() != ThisVF->precision0_) {
-        ThisVF->taylorlevel_ = spin_level->value();
-        ThisVF->numericlevel_ = spin_numlevel->value();
-        ThisVF->maxlevel_ = spin_maxlevel->value();
-        ThisVF->weakness_ = spin_weakness->value();
-        ThisVF->p_ = spin_p->value();
-        ThisVF->q_ = spin_q->value();
-        ThisVF->precision_ = spin_precis->value();
-        ThisVF->precision0_ = spin_precis0->value();
+    if (spin_level->value() != g_ThisVF->taylorlevel_ ||
+        spin_numlevel->value() != g_ThisVF->numericlevel_ ||
+        spin_maxlevel->value() != g_ThisVF->maxlevel_ ||
+        spin_weakness->value() != g_ThisVF->weakness_ ||
+        spin_p->value() != g_ThisVF->p_ || spin_q->value() != g_ThisVF->q_ ||
+        spin_precis->value() != g_ThisVF->precision_ ||
+        spin_precis0->value() != g_ThisVF->precision0_) {
+        g_ThisVF->taylorlevel_ = spin_level->value();
+        g_ThisVF->numericlevel_ = spin_numlevel->value();
+        g_ThisVF->maxlevel_ = spin_maxlevel->value();
+        g_ThisVF->weakness_ = spin_weakness->value();
+        g_ThisVF->p_ = spin_p->value();
+        g_ThisVF->q_ = spin_q->value();
+        g_ThisVF->precision_ = spin_precis->value();
+        g_ThisVF->precision0_ = spin_precis0->value();
 
-        if (ThisVF->changed_ == false) {
-            ThisVF->changed_ = true;
-            p4app->signalChanged();
+        if (g_ThisVF->changed_ == false) {
+            g_ThisVF->changed_ = true;
+            g_p4app->signalChanged();
         }
     }
 
@@ -358,68 +358,68 @@ void QParamsDlg::getDataFromDlg(void)
     x0 = x0.trimmed();
     y0 = y0.trimmed();
 
-    if (epsilon.compare(ThisVF->epsilon_) != 0 || x0.compare(ThisVF->x0_) != 0 ||
-        y0.compare(ThisVF->y0_) != 0) {
-        ThisVF->epsilon_ = epsilon;
-        ThisVF->x0_ = x0;
-        ThisVF->y0_ = y0;
+    if (epsilon.compare(g_ThisVF->epsilon_) != 0 || x0.compare(g_ThisVF->x0_) != 0 ||
+        y0.compare(g_ThisVF->y0_) != 0) {
+        g_ThisVF->epsilon_ = epsilon;
+        g_ThisVF->x0_ = x0;
+        g_ThisVF->y0_ = y0;
 
-        if (ThisVF->changed_ == false) {
-            ThisVF->changed_ = true;
-            p4app->signalChanged();
+        if (g_ThisVF->changed_ == false) {
+            g_ThisVF->changed_ = true;
+            g_p4app->signalChanged();
         }
     }
 }
 
 void QParamsDlg::updateDlgData(void)
 {
-    if (ThisVF->numeric_)
+    if (g_ThisVF->numeric_)
         exclusiveToggle(true, btn_num, btn_alg, nullptr);
     else
         exclusiveToggle(true, btn_alg, btn_num, nullptr);
 
-    if (ThisVF->testsep_)
+    if (g_ThisVF->testsep_)
         exclusiveToggle(true, btn_sepyes, btn_sepno, nullptr);
     else
         exclusiveToggle(true, btn_sepno, btn_sepyes, nullptr);
 
-    spin_level->setValue(ThisVF->taylorlevel_);
-    spin_numlevel->setValue(ThisVF->numericlevel_);
-    spin_maxlevel->setValue(ThisVF->maxlevel_);
-    spin_weakness->setValue(ThisVF->weakness_);
-    edt_epsilon->setText(ThisVF->epsilon_);
-    spin_precis->setValue(ThisVF->precision_);
-    spin_precis0->setValue(ThisVF->precision0_);
+    spin_level->setValue(g_ThisVF->taylorlevel_);
+    spin_numlevel->setValue(g_ThisVF->numericlevel_);
+    spin_maxlevel->setValue(g_ThisVF->maxlevel_);
+    spin_weakness->setValue(g_ThisVF->weakness_);
+    edt_epsilon->setText(g_ThisVF->epsilon_);
+    spin_precis->setValue(g_ThisVF->precision_);
+    spin_precis0->setValue(g_ThisVF->precision0_);
 
-    if (ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
-        edt_x0->setText(ThisVF->x0_);
-        edt_y0->setText(ThisVF->y0_);
-        spin_p->setValue(ThisVF->p_);
-        spin_q->setValue(ThisVF->q_);
+    if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+        edt_x0->setText(g_ThisVF->x0_);
+        edt_y0->setText(g_ThisVF->y0_);
+        spin_p->setValue(g_ThisVF->p_);
+        spin_q->setValue(g_ThisVF->q_);
 
         spin_p->setEnabled(false);
         spin_q->setEnabled(false);
         edt_x0->setEnabled(true);
         edt_y0->setEnabled(true);
 
-        lbl_x0->setFont(*(p4app->boldFont_));
-        lbl_y0->setFont(*(p4app->boldFont_));
-        lbl_p->setFont(*(p4app->standardFont_));
-        lbl_q->setFont(*(p4app->standardFont_));
+        lbl_x0->setFont(*(g_p4app->boldFont_));
+        lbl_y0->setFont(*(g_p4app->boldFont_));
+        lbl_p->setFont(*(g_p4app->standardFont_));
+        lbl_q->setFont(*(g_p4app->standardFont_));
     } else {
-        spin_p->setValue(ThisVF->p_);
-        spin_q->setValue(ThisVF->q_);
-        edt_x0->setText(ThisVF->x0_);
-        edt_y0->setText(ThisVF->x0_);
+        spin_p->setValue(g_ThisVF->p_);
+        spin_q->setValue(g_ThisVF->q_);
+        edt_x0->setText(g_ThisVF->x0_);
+        edt_y0->setText(g_ThisVF->x0_);
 
         spin_p->setEnabled(true);
         spin_q->setEnabled(true);
         edt_x0->setEnabled(false);
         edt_y0->setEnabled(false);
 
-        lbl_p->setFont(*(p4app->boldFont_));
-        lbl_q->setFont(*(p4app->boldFont_));
-        lbl_x0->setFont(*(p4app->standardFont_));
-        lbl_y0->setFont(*(p4app->standardFont_));
+        lbl_p->setFont(*(g_p4app->boldFont_));
+        lbl_q->setFont(*(g_p4app->boldFont_));
+        lbl_x0->setFont(*(g_p4app->standardFont_));
+        lbl_y0->setFont(*(g_p4app->standardFont_));
     }
 }

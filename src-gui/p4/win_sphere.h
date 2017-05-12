@@ -42,8 +42,8 @@ class QWinSphere : public QWidget
 {
     Q_OBJECT
 
-    static int numSpheres;
-    static QWinSphere **SphereList; // this could be implemented as a c++ vector
+    static int sm_numSpheres;
+    static QWinSphere **sm_SphereList; // this could be implemented as a c++ vector
 
   public:
     QWinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);

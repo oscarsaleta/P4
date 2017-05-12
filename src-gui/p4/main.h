@@ -38,24 +38,24 @@ struct P4POLYLINES {
     P4POLYLINES() : next(nullptr){};
 };
 
-extern bool lcWindowIsUp; // true when Limitcycles window is shown.
+extern bool g_LCWindowIsUp; // true when Limitcycles window is shown.
                           // in that case, left mouse button action is redefined
 // to set set points for LC window instead of for orbits window
 
-extern QString p4Version;
-extern QString p4VersionDate;
-extern QString p4Platform;
+extern QString g_p4Version;
+extern QString g_p4VersionDate;
+extern QString g_p4Platform;
 
-extern QPixmap *p4smallicon;
-extern QPrinter *p4printer;
+extern QPixmap *g_p4smallicon;
+extern QPrinter *g_p4printer;
 
-extern bool action_OnlyPrepareFile;
-extern bool action_SaveAll;
+extern bool g_action_OnlyPrepareFile;
+extern bool g_action_SaveAll;
 
-extern QString cmdLine_Filename;
-extern bool cmdLine_AutoEvaluate;
-extern bool cmdLine_AutoPlot;
-extern bool cmdLine_AutoExit;
+extern QString g_cmdLine_Filename;
+extern bool g_cmdLine_AutoEvaluate;
+extern bool g_cmdLine_AutoPlot;
+extern bool g_cmdLine_AutoExit;
 
 void setP4WindowTitle(QWidget *win, QString title);
 

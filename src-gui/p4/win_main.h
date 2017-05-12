@@ -107,6 +107,6 @@ class QStartDlg : public QWidget
     QPlotWnd *Plot_Window;
 };
 
-extern QStartDlg *p4startdlg;
+extern QStartDlg *g_p4stardlg;
 
 #endif /* WIN_MAIN_H */

@@ -29,8 +29,8 @@
 #include <QPushButton>
 #include <QWidget>
 
-extern QString CurrentSingularityInfo[];
-extern double CurrentSeparatriceEpsilon;
+extern QString g_CurrentSingularityInfo[];
+extern double g_CurrentSeparatriceEpsilon;
 
 class QSepDlg : public QWidget
 {
@@ -65,7 +65,7 @@ class QSepDlg : public QWidget
     void setInitialPoint(void);
     void SepEvent(int);
     void onepsilon_enter(void);
-    void MarkBad(QLineEdit *);
+    void markBad(QLineEdit *);
 };
 
 #endif /* WIN_SEPARATRICES_H */

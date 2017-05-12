@@ -30,7 +30,7 @@
 //                          Define Colors in RGB
 // -----------------------------------------------------------------------
 
-P4RGBITEM XFigToRGB[NUMXFIGCOLORS] = {
+P4RGBITEM g_XFigToRGB[NUMXFIGCOLORS] = {
     // 8 pure colours:
 
     {0, 0, 0},       // BLACK
@@ -81,7 +81,7 @@ QLegendWnd::QLegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
     // general initialization
 
     calculateGeometry();
-    resize(w = hmargin6 + 1, h = vmargin7 + 1);
+    resize(w = hmargin6_ + 1, h = vmargin7_ + 1);
     setMinimumSize(w, h);
     setMaximumSize(w, h);
     setP4WindowTitle(this, "P4 Legend");
@@ -92,107 +92,107 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     QPainter paint(this);
     UNUSED(p);
 
-    paint.setFont(*(p4app->legendFont_));
+    paint.setFont(*(g_p4app->legendFont_));
 
     paint.setPen(QPen(QXFIGCOLOR(CFOREGROUND)));
-    paint.drawText(hmargin1, vmargin1, "Non-Degenerate:");
-    paint.drawText(hmargin4, vmargin1, "Semi-hyperbolic:");
-    paint.drawText(hmargin1, vmargin3, "Separatrices:");
-    paint.drawText(hmargin4, vmargin25, "Orbits:");
-    paint.drawText(hmargin4, vmargin3, "Curve of Singularities:");
-    paint.drawText(hmargin4, vmargin4, "Limit Cycles:");
-    paint.drawText(hmargin4, vmargin4 + 2 * interline, "Arbitrary Curve:");
+    paint.drawText(hmargin1_, vmargin1_, "Non-Degenerate:");
+    paint.drawText(hmargin4_, vmargin1_, "Semi-hyperbolic:");
+    paint.drawText(hmargin1_, vmargin3_, "Separatrices:");
+    paint.drawText(hmargin4_, vmargin25_, "Orbits:");
+    paint.drawText(hmargin4_, vmargin3_, "Curve of Singularities:");
+    paint.drawText(hmargin4_, vmargin4_, "Limit Cycles:");
+    paint.drawText(hmargin4_, vmargin4_ + 2 * interline_, "Arbitrary Curve:");
 
     paint.setPen(QPen(QXFIGCOLOR(CSADDLE)));
-    paint.drawText(hmargin2, vmargin2, "Saddle");
+    paint.drawText(hmargin2_, vmargin2_, "Saddle");
     paint.setPen(QPen(QXFIGCOLOR(CNODE_S)));
-    paint.drawText(hmargin2, vmargin2 + 1 * interline, "Stable Node");
+    paint.drawText(hmargin2_, vmargin2_ + 1 * interline_, "Stable Node");
     paint.setPen(QPen(QXFIGCOLOR(CNODE_U)));
-    paint.drawText(hmargin2, vmargin2 + 2 * interline, "Unstable Node");
+    paint.drawText(hmargin2_, vmargin2_ + 2 * interline_, "Unstable Node");
     paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS)));
-    paint.drawText(hmargin2, vmargin2 + 3 * interline, "Weak Focus or center");
+    paint.drawText(hmargin2_, vmargin2_ + 3 * interline_, "Weak Focus or center");
     paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS_S)));
-    paint.drawText(hmargin2, vmargin2 + 4 * interline, "Stable Weak Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 4 * interline_, "Stable Weak Focus");
     paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS_U)));
-    paint.drawText(hmargin2, vmargin2 + 5 * interline, "Unstable Weak Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 5 * interline_, "Unstable Weak Focus");
     paint.setPen(QPen(QXFIGCOLOR(CCENTER)));
-    paint.drawText(hmargin2, vmargin2 + 6 * interline, "Center");
+    paint.drawText(hmargin2_, vmargin2_ + 6 * interline_, "Center");
     paint.setPen(QPen(QXFIGCOLOR(CSTRONG_FOCUS_S)));
-    paint.drawText(hmargin2, vmargin2 + 7 * interline, "Stable Strong Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 7 * interline_, "Stable Strong Focus");
     paint.setPen(QPen(QXFIGCOLOR(CSTRONG_FOCUS_U)));
-    paint.drawText(hmargin2, vmargin2 + 8 * interline, "Unstable Strong Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 8 * interline_, "Unstable Strong Focus");
 
-    win_plot_saddle(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                    vmargin2 - SYMBOLHEIGHT / 2);
-    win_plot_stablenode(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                        vmargin2 - SYMBOLHEIGHT / 2 + 1 * interline);
-    win_plot_unstablenode(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                          vmargin2 - SYMBOLHEIGHT / 2 + 2 * interline);
-    win_plot_weakfocus(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                       vmargin2 - SYMBOLHEIGHT / 2 + 3 * interline);
-    win_plot_stableweakfocus(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                             vmargin2 - SYMBOLHEIGHT / 2 + 4 * interline);
-    win_plot_unstableweakfocus(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                               vmargin2 - SYMBOLHEIGHT / 2 + 5 * interline);
-    win_plot_center(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                    vmargin2 - SYMBOLHEIGHT / 2 + 6 * interline);
-    win_plot_stablestrongfocus(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                               vmargin2 - SYMBOLHEIGHT / 2 + 7 * interline);
-    win_plot_unstablestrongfocus(&paint, hmargin1 + SYMBOLWIDTH / 2,
-                                 vmargin2 - SYMBOLHEIGHT / 2 + 8 * interline);
+    win_plot_saddle(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                    vmargin2_ - SYMBOLHEIGHT / 2);
+    win_plot_stablenode(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                        vmargin2_ - SYMBOLHEIGHT / 2 + 1 * interline_);
+    win_plot_unstablenode(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                          vmargin2_ - SYMBOLHEIGHT / 2 + 2 * interline_);
+    win_plot_weakfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                       vmargin2_ - SYMBOLHEIGHT / 2 + 3 * interline_);
+    win_plot_stableweakfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                             vmargin2_ - SYMBOLHEIGHT / 2 + 4 * interline_);
+    win_plot_unstableweakfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                               vmargin2_ - SYMBOLHEIGHT / 2 + 5 * interline_);
+    win_plot_center(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                    vmargin2_ - SYMBOLHEIGHT / 2 + 6 * interline_);
+    win_plot_stablestrongfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                               vmargin2_ - SYMBOLHEIGHT / 2 + 7 * interline_);
+    win_plot_unstablestrongfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
+                                 vmargin2_ - SYMBOLHEIGHT / 2 + 8 * interline_);
 
     paint.setPen(QPen(QXFIGCOLOR(CSADDLE_NODE)));
-    paint.drawText(hmargin5, vmargin2, "Saddle-Node");
+    paint.drawText(hmargin5_, vmargin2_, "Saddle-Node");
     paint.setPen(QPen(QXFIGCOLOR(CNODE_S)));
-    paint.drawText(hmargin5, vmargin2 + 1 * interline, "Stable-Node");
+    paint.drawText(hmargin5_, vmargin2_ + 1 * interline_, "Stable-Node");
     paint.setPen(QPen(QXFIGCOLOR(CNODE_U)));
-    paint.drawText(hmargin5, vmargin2 + 2 * interline, "Unstable-Node");
+    paint.drawText(hmargin5_, vmargin2_ + 2 * interline_, "Unstable-Node");
     paint.setPen(QPen(QXFIGCOLOR(CSADDLE)));
-    paint.drawText(hmargin5, vmargin2 + 3 * interline, "Saddle");
+    paint.drawText(hmargin5_, vmargin2_ + 3 * interline_, "Saddle");
     paint.setPen(QPen(QXFIGCOLOR(CDEGEN)));
-    paint.drawText(hmargin5, vmargin2 + 5 * interline, "Non-elementary");
+    paint.drawText(hmargin5_, vmargin2_ + 5 * interline_, "Non-elementary");
 
-    win_plot_sesaddlenode(&paint, hmargin4 + SYMBOLWIDTH / 2,
-                          vmargin2 - SYMBOLHEIGHT / 2);
-    win_plot_sestablenode(&paint, hmargin4 + SYMBOLWIDTH / 2,
-                          vmargin2 - SYMBOLHEIGHT / 2 + 1 * interline);
-    win_plot_seunstablenode(&paint, hmargin4 + SYMBOLWIDTH / 2,
-                            vmargin2 - SYMBOLHEIGHT / 2 + 2 * interline);
-    win_plot_sesaddle(&paint, hmargin4 + SYMBOLWIDTH / 2,
-                      vmargin2 - SYMBOLHEIGHT / 2 + 3 * interline);
-    win_plot_degen(&paint, hmargin4 + SYMBOLWIDTH / 2,
-                   vmargin2 - SYMBOLHEIGHT / 2 + 5 * interline);
+    win_plot_sesaddlenode(&paint, hmargin4_ + SYMBOLWIDTH / 2,
+                          vmargin2_ - SYMBOLHEIGHT / 2);
+    win_plot_sestablenode(&paint, hmargin4_ + SYMBOLWIDTH / 2,
+                          vmargin2_ - SYMBOLHEIGHT / 2 + 1 * interline_);
+    win_plot_seunstablenode(&paint, hmargin4_ + SYMBOLWIDTH / 2,
+                            vmargin2_ - SYMBOLHEIGHT / 2 + 2 * interline_);
+    win_plot_sesaddle(&paint, hmargin4_ + SYMBOLWIDTH / 2,
+                      vmargin2_ - SYMBOLHEIGHT / 2 + 3 * interline_);
+    win_plot_degen(&paint, hmargin4_ + SYMBOLWIDTH / 2,
+                   vmargin2_ - SYMBOLHEIGHT / 2 + 5 * interline_);
 
     paint.setPen(QPen(QXFIGCOLOR(CSTABLE)));
-    paint.drawText(hmargin3, vmargin4, "Stable");
-    paint.drawLine(hmargin1, vmargin4 - xheight, hmargin1 + sepwidth - 1,
-                   vmargin4 - xheight);
+    paint.drawText(hmargin3_, vmargin4_, "Stable");
+    paint.drawLine(hmargin1_, vmargin4_ - xheight_, hmargin1_ + sepwidth_ - 1,
+                   vmargin4_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CUNSTABLE)));
-    paint.drawText(hmargin3, vmargin4 + 1 * interline, "Unstable");
-    paint.drawLine(hmargin1, vmargin4 + interline - xheight,
-                   hmargin1 + sepwidth - 1, vmargin4 + interline - xheight);
+    paint.drawText(hmargin3_, vmargin4_ + 1 * interline_, "Unstable");
+    paint.drawLine(hmargin1_, vmargin4_ + interline_ - xheight_,
+                   hmargin1_ + sepwidth_ - 1, vmargin4_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CCENT_STABLE)));
-    paint.drawText(hmargin3, vmargin4 + 2 * interline, "Center-Stable");
-    paint.drawLine(hmargin1, vmargin4 + 2 * interline - xheight,
-                   hmargin1 + sepwidth - 1, vmargin4 + 2 * interline - xheight);
+    paint.drawText(hmargin3_, vmargin4_ + 2 * interline_, "Center-Stable");
+    paint.drawLine(hmargin1_, vmargin4_ + 2 * interline_ - xheight_,
+                   hmargin1_ + sepwidth_ - 1, vmargin4_ + 2 * interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CCENT_UNSTABLE)));
-    paint.drawText(hmargin3, vmargin4 + 3 * interline, "Center-Unstable");
-    paint.drawLine(hmargin1, vmargin4 + 3 * interline - xheight,
-                   hmargin1 + sepwidth - 1, vmargin4 + 3 * interline - xheight);
+    paint.drawText(hmargin3_, vmargin4_ + 3 * interline_, "Center-Unstable");
+    paint.drawLine(hmargin1_, vmargin4_ + 3 * interline_ - xheight_,
+                   hmargin1_ + sepwidth_ - 1, vmargin4_ + 3 * interline_ - xheight_);
 
     paint.setPen(QPen(QXFIGCOLOR(CORBIT)));
-    paint.drawLine(hmargin4, vmargin25 + interline - xheight,
-                   hmargin4 + orbitwidth - 1, vmargin25 + interline - xheight);
+    paint.drawLine(hmargin4_, vmargin25_ + interline_ - xheight_,
+                   hmargin4_ + orbitwidth_ - 1, vmargin25_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CSING)));
-    paint.drawLine(hmargin4, vmargin3 + interline - xheight,
-                   hmargin4 + orbitwidth - 1, vmargin3 + interline - xheight);
+    paint.drawLine(hmargin4_, vmargin3_ + interline_ - xheight_,
+                   hmargin4_ + orbitwidth_ - 1, vmargin3_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CLIMIT)));
-    paint.drawLine(hmargin4, vmargin4 + interline - xheight,
-                   hmargin4 + orbitwidth - 1, vmargin4 + interline - xheight);
+    paint.drawLine(hmargin4_, vmargin4_ + interline_ - xheight_,
+                   hmargin4_ + orbitwidth_ - 1, vmargin4_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CCURV)));
-    paint.drawLine(hmargin4, vmargin4 + 3 * interline - xheight,
-                   hmargin4 + orbitwidth - 1,
-                   vmargin4 + 3 * interline - xheight);
+    paint.drawLine(hmargin4_, vmargin4_ + 3 * interline_ - xheight_,
+                   hmargin4_ + orbitwidth_ - 1,
+                   vmargin4_ + 3 * interline_ - xheight_);
 
     setP4WindowTitle(this, "P4 Legend");
 }
@@ -235,119 +235,119 @@ void QLegendWnd::calculateGeometry(void)
 {
     int e, me;
 
-    QFontMetrics fm(*(p4app->legendFont_));
+    QFontMetrics fm(*(g_p4app->legendFont_));
 
     QPalette palette;
     palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND));
     setPalette(palette);
 
-    hmargin1 = fm.maxWidth();
-    interline = fm.lineSpacing();
+    hmargin1_ = fm.maxWidth();
+    interline_ = fm.lineSpacing();
 
-    if (interline < SYMBOLHEIGHT + 2)
-        interline = SYMBOLHEIGHT + 2;
+    if (interline_ < SYMBOLHEIGHT + 2)
+        interline_ = SYMBOLHEIGHT + 2;
 
-    hmargin2 = hmargin1 + SYMBOLWIDTH + fm.maxWidth();
+    hmargin2_ = hmargin1_ + SYMBOLWIDTH + fm.maxWidth();
 
-    orbitwidth = fm.width("abcdefghk");
-    sepwidth = fm.width("abc");
+    orbitwidth_ = fm.width("abcdefghk");
+    sepwidth_ = fm.width("abc");
 
-    hmargin3 = hmargin1 + sepwidth + fm.maxWidth();
+    hmargin3_ = hmargin1_ + sepwidth_ + fm.maxWidth();
 
-    me = hmargin1 + fm.width("Non-degenerate:");
+    me = hmargin1_ + fm.width("Non-degenerate:");
 
-    e = hmargin2 + fm.width("Saddle");
+    e = hmargin2_ + fm.width("Saddle");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Stable Node");
+    e = hmargin2_ + fm.width("Stable Node");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Unstable Node");
+    e = hmargin2_ + fm.width("Unstable Node");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Weak Focus");
+    e = hmargin2_ + fm.width("Weak Focus");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Stable Weak Focus");
+    e = hmargin2_ + fm.width("Stable Weak Focus");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Unstable Weak Focus");
+    e = hmargin2_ + fm.width("Unstable Weak Focus");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Center");
+    e = hmargin2_ + fm.width("Center");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Stable Strong Focus");
+    e = hmargin2_ + fm.width("Stable Strong Focus");
     if (me < e)
         me = e;
-    e = hmargin2 + fm.width("Unstable Strong Focus");
-    if (me < e)
-        me = e;
-
-    e = hmargin1 + fm.width("Separatrices:");
-    if (me < e)
-        me = e;
-    e = hmargin3 + fm.width("Stable");
-    if (me < e)
-        me = e;
-    e = hmargin3 + fm.width("Unstable");
-    if (me < e)
-        me = e;
-    e = hmargin3 + fm.width("Center-Stable");
-    if (me < e)
-        me = e;
-    e = hmargin3 + fm.width("Center-Unstable");
+    e = hmargin2_ + fm.width("Unstable Strong Focus");
     if (me < e)
         me = e;
 
-    hmargin4 = me + fm.maxWidth() * 3; // 3 chars intercolumn space
-
-    hmargin5 = hmargin4 + SYMBOLWIDTH + fm.maxWidth();
-
-    me = hmargin4 + fm.width("Semi-hyperbolic");
-    e = hmargin5 + fm.width("Saddle-Node");
+    e = hmargin1_ + fm.width("Separatrices:");
     if (me < e)
         me = e;
-    e = hmargin5 + fm.width("Stable Node");
+    e = hmargin3_ + fm.width("Stable");
     if (me < e)
         me = e;
-    e = hmargin5 + fm.width("Unstable Node");
+    e = hmargin3_ + fm.width("Unstable");
     if (me < e)
         me = e;
-    e = hmargin5 + fm.width("Saddle");
+    e = hmargin3_ + fm.width("Center-Stable");
     if (me < e)
         me = e;
-
-    e = hmargin5 + fm.width("Non-elementary:");
-    if (me < e)
-        me = e;
-    e = hmargin4 + fm.width("Orbits:");
-    if (me < e)
-        me = e;
-    e = hmargin4 + fm.width("Curve of Singularities:");
-    if (me < e)
-        me = e;
-    e = hmargin4 + fm.width("Limit Cycles:");
+    e = hmargin3_ + fm.width("Center-Unstable");
     if (me < e)
         me = e;
 
-    hmargin6 = me + fm.maxWidth();
+    hmargin4_ = me + fm.maxWidth() * 3; // 3 chars intercolumn space
 
-    vmargin1 = fm.height() + fm.descent();
-    vmargin2 = vmargin1 + 2 * interline;
-    vmargin25 = vmargin2 + 8 * interline;
-    vmargin3 = vmargin2 + 10 * interline;
-    vmargin4 = vmargin3 + 2 * interline;
+    hmargin5_ = hmargin4_ + SYMBOLWIDTH + fm.maxWidth();
 
-    vmargin5 = vmargin3 + (5 * interline) / 2;
-    vmargin6 = vmargin5 + (5 * interline) / 2;
-
-    me = vmargin6 + 2 * interline;
-    e = vmargin4 + 4 * interline;
+    me = hmargin4_ + fm.width("Semi-hyperbolic");
+    e = hmargin5_ + fm.width("Saddle-Node");
+    if (me < e)
+        me = e;
+    e = hmargin5_ + fm.width("Stable Node");
+    if (me < e)
+        me = e;
+    e = hmargin5_ + fm.width("Unstable Node");
+    if (me < e)
+        me = e;
+    e = hmargin5_ + fm.width("Saddle");
     if (me < e)
         me = e;
 
-    vmargin7 = e + interline;
+    e = hmargin5_ + fm.width("Non-elementary:");
+    if (me < e)
+        me = e;
+    e = hmargin4_ + fm.width("Orbits:");
+    if (me < e)
+        me = e;
+    e = hmargin4_ + fm.width("Curve of Singularities:");
+    if (me < e)
+        me = e;
+    e = hmargin4_ + fm.width("Limit Cycles:");
+    if (me < e)
+        me = e;
 
-    xheight = fm.ascent() / 2;
+    hmargin6_ = me + fm.maxWidth();
+
+    vmargin1_ = fm.height() + fm.descent();
+    vmargin2_ = vmargin1_ + 2 * interline_;
+    vmargin25_ = vmargin2_ + 8 * interline_;
+    vmargin3_ = vmargin2_ + 10 * interline_;
+    vmargin4_ = vmargin3_ + 2 * interline_;
+
+    vmargin5_ = vmargin3_ + (5 * interline_) / 2;
+    vmargin6_ = vmargin5_ + (5 * interline_) / 2;
+
+    me = vmargin6_ + 2 * interline_;
+    e = vmargin4_ + 4 * interline_;
+    if (me < e)
+        me = e;
+
+    vmargin7_ = e + interline_;
+
+    xheight_ = fm.ascent() / 2;
 }

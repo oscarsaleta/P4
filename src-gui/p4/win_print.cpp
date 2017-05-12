@@ -31,17 +31,17 @@
     the P4PRINT_ constants.
 */
 
-bool QPrintDlg::LastBlackWhite = false;
-double QPrintDlg::LastLineWidth = DEFAULT_LINEWIDTH;
-double QPrintDlg::LastSymbolSize = DEFAULT_SYMBOLSIZE;
-int QPrintDlg::LastResolution = DEFAULT_RESOLUTION;
+bool QPrintDlg::sm_LastBlackWhite = false;
+double QPrintDlg::sm_LastLineWidth = DEFAULT_LINEWIDTH;
+double QPrintDlg::sm_LastSymbolSize = DEFAULT_SYMBOLSIZE;
+int QPrintDlg::sm_LastResolution = DEFAULT_RESOLUTION;
 
 QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    if (p4smallicon != nullptr)
-        setWindowIcon(*p4smallicon);
+    if (g_p4smallicon != nullptr)
+        setWindowIcon(*g_p4smallicon);
 
 #ifdef USE_SYSTEM_PRINTER
     btn_default = new QPushButton("&System printer", this);
@@ -60,7 +60,7 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     edt_symbolsize = new QLineEdit("", this);
 
     btn_blackwhite = new QCheckBox("&Black&&White printing", this);
-    btn_blackwhite->setChecked(LastBlackWhite);
+    btn_blackwhite->setChecked(sm_LastBlackWhite);
 
 #ifdef TOOLTIPS
 #ifdef USE_SYSTEM_PRINTER
@@ -136,11 +136,11 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     setLayout(mainLayout_);
 
     QString s;
-    s.sprintf("%g", (float)LastLineWidth);
+    s.sprintf("%g", (float)sm_LastLineWidth);
     edt_linewidth->setText(s);
-    s.sprintf("%g", (float)LastSymbolSize);
+    s.sprintf("%g", (float)sm_LastSymbolSize);
     edt_symbolsize->setText(s);
-    s.sprintf("%d", LastResolution);
+    s.sprintf("%d", sm_LastResolution);
     edt_resolution->setText(s);
 
     setP4WindowTitle(this, "Print Phase Portrait");
@@ -153,13 +153,13 @@ bool QPrintDlg::ReadDialog(void)
     double res;
     bool result;
 
-    LastBlackWhite = btn_blackwhite->isChecked();
+    sm_LastBlackWhite = btn_blackwhite->isChecked();
     result = ReadFloatField(edt_resolution, &res, DEFAULT_RESOLUTION, 72, 4800);
-    LastResolution = (int)res;
-    result |= ReadFloatField(edt_linewidth, &LastLineWidth, DEFAULT_LINEWIDTH,
+    sm_LastResolution = (int)res;
+    result |= ReadFloatField(edt_linewidth, &sm_LastLineWidth, DEFAULT_LINEWIDTH,
                              MIN_LINEWIDTH, MAX_LINEWIDTH);
     result |=
-        ReadFloatField(edt_symbolsize, &LastSymbolSize, DEFAULT_SYMBOLSIZE,
+        ReadFloatField(edt_symbolsize, &sm_LastSymbolSize, DEFAULT_SYMBOLSIZE,
                        MIN_SYMBOLSIZE, MAX_SYMBOLSIZE);
 
     return !result;
@@ -170,7 +170,7 @@ void QPrintDlg::OnDefaultPrinter(void)
     if (!ReadDialog())
         return;
 
-    if (LastBlackWhite)
+    if (sm_LastBlackWhite)
         done(-P4PRINT_DEFAULT);
     else
         done(P4PRINT_DEFAULT);
@@ -180,7 +180,7 @@ void QPrintDlg::OnEpsImagePrinter(void)
 {
     if (!ReadDialog())
         return;
-    if (LastBlackWhite)
+    if (sm_LastBlackWhite)
         done(-P4PRINT_EPSIMAGE);
     else
         done(P4PRINT_EPSIMAGE);
@@ -192,7 +192,7 @@ void QPrintDlg::OnXfigImagePrinter(void)
         return;
 
     /*
-        if( LastResolution != 1200 )
+        if( sm_LastResolution != 1200 )
         {
             int i;
             i = QMessageBox::warning( this, "Warning",
@@ -205,10 +205,10 @@ void QPrintDlg::OnXfigImagePrinter(void)
                 return;
             }
 
-            LastResolution = 1200;
+            sm_LastResolution = 1200;
         }
     */
-    if (LastBlackWhite)
+    if (sm_LastBlackWhite)
         done(-P4PRINT_XFIGIMAGE);
     else
         done(P4PRINT_XFIGIMAGE);
@@ -218,7 +218,7 @@ void QPrintDlg::OnJpegImagePrinter(void)
 {
     if (!ReadDialog())
         return;
-    if (LastBlackWhite)
+    if (sm_LastBlackWhite)
         done(-P4PRINT_JPEGIMAGE);
     else
         done(P4PRINT_JPEGIMAGE);
@@ -237,7 +237,7 @@ bool QPrintDlg::ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
     t = edt->text();
     *presult = t.toDouble(&ok);
     if (!ok || *presult < minvalue || *presult > maxvalue) {
-        MarkBad(edt);
+        markBad(edt);
         *presult = defvalue;
         return true;
     }
@@ -249,7 +249,7 @@ bool QPrintDlg::ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
     return false;
 }
 
-void QPrintDlg::MarkBad(QLineEdit *edt)
+void QPrintDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -263,6 +263,6 @@ void QPrintDlg::MarkBad(QLineEdit *edt)
     edt->setText(t);
 }
 
-int QPrintDlg::GetChosenResolution(void) { return LastResolution; }
-double QPrintDlg::GetChosenLineWidth(void) { return LastLineWidth; }
-double QPrintDlg::GetChosenSymbolSize(void) { return LastSymbolSize; }
+int QPrintDlg::GetChosenResolution(void) { return sm_LastResolution; }
+double QPrintDlg::GetChosenLineWidth(void) { return sm_LastLineWidth; }
+double QPrintDlg::GetChosenSymbolSize(void) { return sm_LastSymbolSize; }

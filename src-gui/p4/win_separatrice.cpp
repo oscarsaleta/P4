@@ -22,8 +22,8 @@
 #include "custom.h"
 #include "math_separatrice.h"
 
-QString CurrentSingularityInfo[4] = {"", "", "", ""};
-double CurrentSeparatriceEpsilon = 0;
+QString g_CurrentSingularityInfo[4] = {"", "", "", ""};
+double g_CurrentSeparatriceEpsilon = 0;
 
 QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -115,12 +115,12 @@ void QSepDlg::setInitialPoint(void)
     btn_selectnext->setEnabled(true);
     btn_intnext->setEnabled(true);
 
-    lbl_info[0]->setText(CurrentSingularityInfo[0]);
-    lbl_info[1]->setText(CurrentSingularityInfo[1]);
-    lbl_info[2]->setText(CurrentSingularityInfo[2]);
-    lbl_info[3]->setText(CurrentSingularityInfo[3]);
+    lbl_info[0]->setText(g_CurrentSingularityInfo[0]);
+    lbl_info[1]->setText(g_CurrentSingularityInfo[1]);
+    lbl_info[2]->setText(g_CurrentSingularityInfo[2]);
+    lbl_info[3]->setText(g_CurrentSingularityInfo[3]);
 
-    buf.sprintf("%g", (float)CurrentSeparatriceEpsilon);
+    buf.sprintf("%g", (float)g_CurrentSeparatriceEpsilon);
 
     edt_epsilon->setText(buf);
     show();
@@ -232,7 +232,7 @@ void QSepDlg::SepEvent(int i)
     }
 }
 
-void QSepDlg::MarkBad(QLineEdit *edt)
+void QSepDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -257,11 +257,11 @@ void QSepDlg::onepsilon_enter(void)
     s = edt_epsilon->text();
     eps = s.toDouble(&ok);
     if (!ok || eps <= 0) {
-        MarkBad(edt_epsilon);
+        markBad(edt_epsilon);
         return;
     }
 
-    CurrentSeparatriceEpsilon = eps;
+    g_CurrentSeparatriceEpsilon = eps;
     s.sprintf("%g", (float)eps);
     edt_epsilon->setText(s);
 

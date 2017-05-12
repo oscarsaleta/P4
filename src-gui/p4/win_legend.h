@@ -36,27 +36,27 @@ class QLegendWnd : public QWidget
   private:
     QBoxLayout *mainLayout_;
 
-    int orbitwidth;
-    int sepwidth;
+    int orbitwidth_;
+    int sepwidth_;
 
-    int hmargin1;
-    int hmargin2;
-    int hmargin3;
-    int hmargin4;
-    int hmargin5;
-    int hmargin6;
-    int interline;
-    int xheight;
+    int hmargin1_;
+    int hmargin2_;
+    int hmargin3_;
+    int hmargin4_;
+    int hmargin5_;
+    int hmargin6_;
+    int interline_;
+    int xheight_;
 
-    int vmargin1;
-    int vmargin2;
-    int vmargin25;
-    int vmargin3;
-    int vmargin4;
-    int vmargin5;
-    int vmargin6;
-    int vmargin7;
-    int vmargin8;
+    int vmargin1_;
+    int vmargin2_;
+    int vmargin25_;
+    int vmargin3_;
+    int vmargin4_;
+    int vmargin5_;
+    int vmargin6_;
+    int vmargin7_;
+    int vmargin8_;
 };
 
 #endif /* WIN_LEGEND_H */

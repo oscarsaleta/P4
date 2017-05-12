@@ -41,11 +41,11 @@
 
 #include <cmath>
 
-static QPixmap *p4pixmap = nullptr;
-static double p4pixmap_dpm = 0;
+static QPixmap *s_p4pixmap = nullptr;
+static double s_p4pixmap_dpm = 0;
 
-int QWinSphere::numSpheres = 0;
-QWinSphere **QWinSphere::SphereList = nullptr;
+int QWinSphere::sm_numSpheres = 0;
+QWinSphere **QWinSphere::sm_SphereList = nullptr;
 
 /*
     Coordinates on the sphere:
@@ -75,11 +75,11 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
 
     //    setAttribute( Qt::WA_PaintOnScreen );
 
-    SphereList = (QWinSphere **)realloc(SphereList, sizeof(QWinSphere *) *
-                                                        (numSpheres + 1));
-    SphereList[numSpheres++] = this;
-    if (numSpheres > 1) {
-        SphereList[numSpheres - 2]->next = this;
+    sm_SphereList = (QWinSphere **)realloc(sm_SphereList, sizeof(QWinSphere *) *
+                                                        (sm_numSpheres + 1));
+    sm_SphereList[sm_numSpheres++] = this;
+    if (sm_numSpheres > 1) {
+        sm_SphereList[sm_numSpheres - 2]->next = this;
     }
 
     parentWnd = parent;
@@ -144,7 +144,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
     if (id == Qt::Key_C && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // C: continue integrate orbit
@@ -152,7 +152,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 0;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
     if (id == Qt::Key_B && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // B: integrate orbit backwards in time
@@ -160,7 +160,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = -1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
     if (id == Qt::Key_D && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
         // D: delete orbit
@@ -168,7 +168,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 2;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 
     if (id == Qt::Key_A && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
@@ -177,7 +177,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 3;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 
     if (id == Qt::Key_C && (bs == Qt::ShiftModifier ||
@@ -187,7 +187,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 0;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 
     if (id == Qt::Key_N && (bs == Qt::ShiftModifier ||
@@ -197,7 +197,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 3;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 
     if (id == Qt::Key_I && (bs == Qt::ShiftModifier ||
@@ -207,7 +207,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 2;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 
     if (id == Qt::Key_S && (bs == Qt::ShiftModifier ||
@@ -217,7 +217,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
         data1 = new int;
         *data1 = 1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 
     e->ignore();
@@ -279,16 +279,16 @@ void QWinSphere::SetupPlot(void)
     }
 
     if (!iszoom) {
-        switch (VFResults.typeofview_) {
+        switch (g_VFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
         case TYPEOFVIEW_U1:
         case TYPEOFVIEW_U2:
         case TYPEOFVIEW_V1:
         case TYPEOFVIEW_V2:
-            x0 = VFResults.xmin_;
-            y0 = VFResults.ymin_;
-            x1 = VFResults.xmax_;
-            y1 = VFResults.ymax_;
+            x0 = g_VFResults.xmin_;
+            y0 = g_VFResults.ymin_;
+            x1 = g_VFResults.xmax_;
+            y1 = g_VFResults.ymax_;
             break;
         case TYPEOFVIEW_SPHERE:
             x0 = -1.1;
@@ -309,7 +309,7 @@ void QWinSphere::SetupPlot(void)
 
     idealh = (int)(idealhd + .5);
 
-    switch (VFResults.typeofview_) {
+    switch (g_VFResults.typeofview_) {
     case TYPEOFVIEW_PLANE:
         chartstring = "";
         break;
@@ -317,23 +317,23 @@ void QWinSphere::SetupPlot(void)
         chartstring = "";
         break;
     case TYPEOFVIEW_U1:
-        chartstring = makechartstring(VFResults.p_, VFResults.q_, true, false);
+        chartstring = makechartstring(g_VFResults.p_, g_VFResults.q_, true, false);
         break;
     case TYPEOFVIEW_U2:
-        chartstring = makechartstring(VFResults.p_, VFResults.q_, false, false);
+        chartstring = makechartstring(g_VFResults.p_, g_VFResults.q_, false, false);
         break;
     case TYPEOFVIEW_V1:
-        chartstring = makechartstring(VFResults.p_, VFResults.q_, true, true);
+        chartstring = makechartstring(g_VFResults.p_, g_VFResults.q_, true, true);
         break;
     case TYPEOFVIEW_V2:
-        chartstring = makechartstring(VFResults.p_, VFResults.q_, false, true);
+        chartstring = makechartstring(g_VFResults.p_, g_VFResults.q_, false, true);
         break;
     }
 
-    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         CircleAtInfinity =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-        if (VFResults.plweights_)
+        if (g_VFResults.plweights_)
             PLCircle = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
                                       coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -359,21 +359,21 @@ QWinSphere::~QWinSphere()
         t = nullptr;
     }
 
-    for (i = 0; i < numSpheres; i++) {
-        if (SphereList[i] == this)
+    for (i = 0; i < sm_numSpheres; i++) {
+        if (sm_SphereList[i] == this)
             break;
     }
-    if (i == numSpheres)
+    if (i == sm_numSpheres)
         return; // error: sphere not found?
 
     if (i > 0)
-        SphereList[i - 1]->next = next;
+        sm_SphereList[i - 1]->next = next;
 
-    if (i < numSpheres - 1)
-        memmove(SphereList + i, SphereList + i + 1,
-                sizeof(QWinSphere *) * (numSpheres - i - 1));
+    if (i < sm_numSpheres - 1)
+        memmove(sm_SphereList + i, sm_SphereList + i + 1,
+                sizeof(QWinSphere *) * (sm_numSpheres - i - 1));
 
-    numSpheres--;
+    sm_numSpheres--;
 
     if (PainterCache != nullptr) {
         delete PainterCache;
@@ -580,10 +580,10 @@ void QWinSphere::adjustToNewSize(void)
         delete t; // free( t );
         t = nullptr;
     }
-    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         CircleAtInfinity =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-        if (VFResults.plweights_)
+        if (g_VFResults.plweights_)
             PLCircle = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
                                       coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -598,7 +598,7 @@ void QWinSphere::adjustToNewSize(void)
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(CBACKGROUND)));
 
-        if (VFResults.singinf_)
+        if (g_VFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
         else
             paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
@@ -609,9 +609,9 @@ void QWinSphere::adjustToNewSize(void)
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (VFResults.plweights_)
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (g_VFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -664,7 +664,7 @@ void QWinSphere::resizeEvent(QResizeEvent *e)
 void QWinSphere::paintEvent(QPaintEvent *p)
 {
     UNUSED(p);
-    if (ThisVF->evaluating_)
+    if (g_ThisVF->evaluating_)
         return;
 
     if (PainterCache == nullptr || isPainterCacheDirty) {
@@ -676,7 +676,7 @@ void QWinSphere::paintEvent(QPaintEvent *p)
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(CBACKGROUND)));
 
-        if (VFResults.singinf_)
+        if (g_VFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
         else
             paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
@@ -687,9 +687,9 @@ void QWinSphere::paintEvent(QPaintEvent *p)
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (VFResults.plweights_)
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (g_VFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -784,9 +784,9 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
     */
     double pcoord[3];
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-        switch (VFResults.typeofview_) {
+        switch (g_VFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+            if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study   (x,y) = (%f,%f)", (float)wx,
                             (float)wy);
             else
@@ -796,12 +796,12 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
         case TYPEOFVIEW_SPHERE:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
 
-            if (VFResults.p_ == 1 && VFResults.q_ == 1)
+            if (g_VFResults.p_ == 1 && g_VFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere  (x,y) = (%f,%f)",
                             (float)ucoord[0], (float)ucoord[1]);
             else
                 buf.sprintf("The P-L sphere of type (%d,%d)  (x,y) = (%f,%f)",
-                            VFResults.p_, VFResults.q_, (float)ucoord[0],
+                            g_VFResults.p_, g_VFResults.q_, (float)ucoord[0],
                             (float)ucoord[1]);
             break;
         case TYPEOFVIEW_U1:
@@ -816,7 +816,7 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!VFResults.plweights_) {
+            if (!g_VFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -840,7 +840,7 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!VFResults.plweights_) {
+            if (!g_VFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -854,19 +854,19 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         }
     } else {
-        switch (VFResults.typeofview_) {
+        switch (g_VFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+            if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study");
             else
                 buf.sprintf("Planar view");
             break;
         case TYPEOFVIEW_SPHERE:
-            if (VFResults.p_ == 1 && VFResults.q_ == 1)
+            if (g_VFResults.p_ == 1 && g_VFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere");
             else
-                buf.sprintf("The P-L sphere of type (%d,%d)", VFResults.p_,
-                            VFResults.q_);
+                buf.sprintf("The P-L sphere of type (%d,%d)", g_VFResults.p_,
+                            g_VFResults.q_);
             break;
         case TYPEOFVIEW_U1:
             buf.sprintf("The U1 chart");
@@ -998,7 +998,7 @@ void QWinSphere::mousePressEvent(QMouseEvent *e)
     }
 
     if (e->button() == Qt::LeftButton &&
-        (lcWindowIsUp || e->modifiers() == Qt::AltModifier)) {
+        (g_LCWindowIsUp || e->modifiers() == Qt::AltModifier)) {
         if (selectingLCSection == false) {
             selectingLCSection = true;
             lcAnchor1 = e->pos();
@@ -1029,7 +1029,7 @@ void QWinSphere::mousePressEvent(QMouseEvent *e)
         if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
             QP4Event *e1;
             e1 = new QP4Event((QEvent::Type)TYPE_SELECT_ORBIT, data1);
-            p4app->postEvent(parentWnd, e1);
+            g_p4app->postEvent(parentWnd, e1);
         } else {
             free(data1);
         }
@@ -1074,7 +1074,7 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[3] = coWorldY(zoomAnchor2.y());
             QP4Event *e1 =
                 new QP4Event((QEvent::Type)TYPE_OPENZOOMWINDOW, data1);
-            p4app->postEvent(parentWnd, e1);
+            g_p4app->postEvent(parentWnd, e1);
         }
 
         if (selectingLCSection) {
@@ -1088,7 +1088,7 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[3] = coWorldY(lcAnchor2.y());
             QP4Event *e1 =
                 new QP4Event((QEvent::Type)TYPE_SELECT_LCSECTION, data1);
-            p4app->postEvent(parentWnd, e1);
+            g_p4app->postEvent(parentWnd, e1);
         }
 
         QWidget::mouseReleaseEvent(e);
@@ -1154,16 +1154,16 @@ void QWinSphere::SelectNearestSingularity(QPoint winpos)
     x = winpos.x();
     y = winpos.y();
 
-    (*SphereList)->prepareDrawing();
-    result = find_critical_point(*SphereList, coWorldX(x), coWorldY(y));
-    (*SphereList)->finishDrawing();
+    (*sm_SphereList)->prepareDrawing();
+    result = find_critical_point(*sm_SphereList, coWorldX(x), coWorldY(y));
+    (*sm_SphereList)->finishDrawing();
 
     if (result == false) {
         msgBar->showMessage(
             "Search nearest critical point: None with separatrices found.");
     } else {
-        px = coWinX(VFResults.selected_ucoord_[0]);
-        py = coWinY(VFResults.selected_ucoord_[1]);
+        px = coWinX(g_VFResults.selected_ucoord_[0]);
+        py = coWinY(g_VFResults.selected_ucoord_[1]);
 
         if (SelectingTimer != nullptr) {
             delete SelectingTimer;
@@ -1186,7 +1186,7 @@ void QWinSphere::SelectNearestSingularity(QPoint winpos)
         data1 = new int;
         *data1 = -1;
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        p4app->postEvent(parentWnd, e1);
+        g_p4app->postEvent(parentWnd, e1);
     }
 }
 
@@ -1408,17 +1408,17 @@ void QWinSphere::plotPoints(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
         plotPoint(sp);
-    for (np = VFResults.first_node_point_; np != nullptr; np = np->next_node)
+    for (np = g_VFResults.first_node_point_; np != nullptr; np = np->next_node)
         plotPoint(np);
-    for (wfp = VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
+    for (wfp = g_VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
         plotPoint(wfp);
-    for (sfp = VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
+    for (sfp = g_VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
         plotPoint(sfp);
-    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
+    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         plotPoint(sep);
-    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
+    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
         plotPoint(dp);
 }
 
@@ -1456,22 +1456,22 @@ void QWinSphere::plotSeparatrices(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
         plotPointSeparatrices(sp);
-    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
+    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         plotPointSeparatrices(sep);
-    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
+    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
         plotPointSeparatrices(dp);
 }
 
 void QWinSphere::plotGcf(void)
 {
-    draw_gcf(this, VFResults.gcf_points_, CSING, 1);
+    draw_gcf(this, g_VFResults.gcf_points_, CSING, 1);
 }
 
 void QWinSphere::plotCurve(void)
 {
-    draw_curve(this, VFResults.curve_points_, CCURV, 1);
+    draw_curve(this, g_VFResults.curve_points_, CCURV, 1);
 }
 
 // -----------------------------------------------------------------------
@@ -1666,7 +1666,7 @@ void QWinSphere::plotPoincareSphere(void)
     P4POLYLINES *p;
 
     p = CircleAtInfinity;
-    color = VFResults.singinf_ ? CSING : CLINEATINFINITY;
+    color = g_VFResults.singinf_ ? CSING : CLINEATINFINITY;
 
     staticPainter->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
@@ -1682,7 +1682,7 @@ void QWinSphere::plotPoincareLyapunovSphere(void)
     P4POLYLINES *p;
 
     p = CircleAtInfinity;
-    color = VFResults.singinf_ ? CSING : CLINEATINFINITY;
+    color = g_VFResults.singinf_ ? CSING : CLINEATINFINITY;
 
     staticPainter->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
@@ -1705,7 +1705,7 @@ void QWinSphere::plotPoincareLyapunovSphere(void)
 
 void QWinSphere::plotLineAtInfinity(void)
 {
-    switch (VFResults.typeofview_) {
+    switch (g_VFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0 < 0.0 && x1 > 0.0) {
@@ -2023,17 +2023,17 @@ void QWinSphere::printPoints(void)
 
     print_comment("Printing symbols at all singular points:");
 
-    for (sp = VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
         printPoint(sp);
-    for (np = VFResults.first_node_point_; np != nullptr; np = np->next_node)
+    for (np = g_VFResults.first_node_point_; np != nullptr; np = np->next_node)
         printPoint(np);
-    for (wfp = VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
+    for (wfp = g_VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
         printPoint(wfp);
-    for (sfp = VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
+    for (sfp = g_VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
         printPoint(sfp);
-    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
+    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         printPoint(sep);
-    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
+    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
         printPoint(dp);
 }
 
@@ -2083,18 +2083,18 @@ void QWinSphere::printSeparatrices(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = VFResults.first_saddle_point_; sp != nullptr;
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
          sp = sp->next_saddle) {
         comment = "Printing separatrice for saddle singularity:";
         print_comment(comment);
         printPointSeparatrices(sp);
     }
-    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se) {
+    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se) {
         comment = "Printing separatrices for semi-hyperbolic singularity:";
         print_comment(comment);
         printPointSeparatrices(sep);
     }
-    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de) {
+    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de) {
         comment = "Printing separatrices for degenerate singularity:";
         print_comment(comment);
         printPointSeparatrices(dp);
@@ -2105,10 +2105,10 @@ void QWinSphere::printGcf(void)
 {
     QString comment;
 
-    if (VFResults.gcf_points_ != nullptr) {
+    if (g_VFResults.gcf_points_ != nullptr) {
         comment = "Printing Greatest common factor:";
         print_comment(comment);
-        draw_gcf(this, VFResults.gcf_points_, CSING, 1);
+        draw_gcf(this, g_VFResults.gcf_points_, CSING, 1);
     }
 }
 
@@ -2116,10 +2116,10 @@ void QWinSphere::printCurve(void)
 {
     QString comment;
 
-    if (VFResults.curve_points_ != nullptr) {
+    if (g_VFResults.curve_points_ != nullptr) {
         comment = "Printing Greatest common factor:";
         print_comment(comment);
-        draw_curve(this, VFResults.curve_points_, CCURV, 1);
+        draw_curve(this, g_VFResults.curve_points_, CCURV, 1);
     }
 }
 
@@ -2139,7 +2139,7 @@ void QWinSphere::printPoincareSphere(void)
         q->y2 = coWinY(q->y2);
     }
     print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1),
-                VFResults.singinf_ ? CSING : CLINEATINFINITY, false, p);
+                g_VFResults.singinf_ ? CSING : CLINEATINFINITY, false, p);
 
     while (p != nullptr) {
         q = p;
@@ -2201,7 +2201,7 @@ void QWinSphere::printPoincareLyapunovSphere(void)
 
 void QWinSphere::printLineAtInfinity(void)
 {
-    switch (VFResults.typeofview_) {
+    switch (g_VFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0 < 0.0 && x1 > 0.0)
@@ -2230,7 +2230,7 @@ void QWinSphere::printOrbits(void)
     int i;
     i = 1;
 
-    for (orbit = VFResults.first_orbit_; orbit != nullptr;
+    for (orbit = g_VFResults.first_orbit_; orbit != nullptr;
          orbit = orbit->next_orbit) {
         s.sprintf("Starting orbit %d", i++);
         print_comment(s);
@@ -2247,7 +2247,7 @@ void QWinSphere::printLimitCycles(void)
     int i;
     i = 1;
 
-    for (orbit = VFResults.first_lim_cycle_; orbit != nullptr;
+    for (orbit = g_VFResults.first_lim_cycle_; orbit != nullptr;
          orbit = orbit->next_orbit) {
         s.sprintf("Starting Limit Cycle %d", i++);
         print_comment(s);
@@ -2363,20 +2363,20 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
     aspectratio = 1; // assume aspect ratio 1
 
     if (printmethod == P4PRINT_DEFAULT) {
-        // p4printer->setResolution(myresolution); we have moved this.
+        // g_p4printer->setResolution(myresolution); we have moved this.
         // according to documentation: set of resolution must be done BEFORE
         // setup!
 
         //  aspectratio = metrics.logicalDpiX()/metrics.logicalDpiY();
         aspectratio = 1;
 
-        pagewidth = p4printer->width();
-        pageheight = p4printer->height();
+        pagewidth = g_p4printer->width();
+        pageheight = g_p4printer->height();
     } else
         pagewidth = pageheight = -1; // will be redefined in a minut
 
-    p4pixmap_dpm = lw = ss = hpixels = myresolution;
-    p4pixmap_dpm /= 2.54;
+    s_p4pixmap_dpm = lw = ss = hpixels = myresolution;
+    s_p4pixmap_dpm /= 2.54;
     hpixels *= 15;
     hpixels /= 2.54;
 
@@ -2456,15 +2456,15 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
     case P4PRINT_DEFAULT:
         staticPainter = new QPainter();
 
-        if (!staticPainter->begin(p4printer)) {
+        if (!staticPainter->begin(g_p4printer)) {
             delete staticPainter;
             staticPainter = nullptr;
             return;
         }
 
         staticPainter->translate(tx, ty);
-        if (iszoom || VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p = QPen(QXFIGCOLOR(printColorTable[CFOREGROUND]), (int)lw);
+        if (iszoom || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
+            QPen p = QPen(QXFIGCOLOR(g_printColorTable[CFOREGROUND]), (int)lw);
             staticPainter->setPen(p);
             staticPainter->drawRect(0, 0, w, h);
         }
@@ -2476,20 +2476,20 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
     case P4PRINT_JPEGIMAGE:
         staticPainter = new QPainter();
-        p4pixmap = new QPixmap(w, h);
+        s_p4pixmap = new QPixmap(w, h);
         ReverseYaxis = false; // no need for reversing axes in this case
-        if (p4pixmap->isNull()) {
+        if (s_p4pixmap->isNull()) {
             msgBar->showMessage(
                 "Print failure (try to choose a lower resolution).");
-            delete p4pixmap;
-            p4pixmap = nullptr;
+            delete s_p4pixmap;
+            s_p4pixmap = nullptr;
             delete staticPainter;
             staticPainter = nullptr;
             return;
         }
-        if (!staticPainter->begin(p4pixmap)) {
-            delete p4pixmap;
-            p4pixmap = nullptr;
+        if (!staticPainter->begin(s_p4pixmap)) {
+            delete s_p4pixmap;
+            s_p4pixmap = nullptr;
             delete staticPainter;
             staticPainter = nullptr;
             return;
@@ -2524,7 +2524,7 @@ void QWinSphere::finishPrinting(void)
         h = oldh;
         ReverseYaxis = false;
     } else if (PrintMethod == P4PRINT_JPEGIMAGE) {
-        if (p4pixmap == nullptr) {
+        if (s_p4pixmap == nullptr) {
             finishP4Printing();
             w = oldw;
             h = oldh;
@@ -2537,15 +2537,15 @@ void QWinSphere::finishPrinting(void)
         delete staticPainter;
         staticPainter = nullptr;
 
-        if (p4pixmap->save(ThisVF->getbarefilename() + ".jpg", "JPEG", 100) ==
+        if (s_p4pixmap->save(g_ThisVF->getbarefilename() + ".jpg", "JPEG", 100) ==
             false) {
             QMessageBox::critical(this, "P4", "For some reason, P4 is unable "
                                               "to save the resulting JPEG "
                                               "image to disc.");
         }
 
-        delete p4pixmap;
-        p4pixmap = nullptr;
+        delete s_p4pixmap;
+        s_p4pixmap = nullptr;
         ReverseYaxis = false;
         w = oldw;
         h = oldh;
@@ -2555,12 +2555,12 @@ void QWinSphere::finishPrinting(void)
 
 void QWinSphere::print(void)
 {
-    if (PrintMethod == P4PRINT_JPEGIMAGE && p4pixmap == nullptr)
+    if (PrintMethod == P4PRINT_JPEGIMAGE && s_p4pixmap == nullptr)
         return;
 
-    if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-        if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-            if (VFResults.plweights_)
+    if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+        if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+            if (g_VFResults.plweights_)
                 printPoincareLyapunovSphere();
             else
                 printPoincareSphere();

@@ -30,10 +30,10 @@
 #define PI_DIV4 (PI / 4.)
 #define TWOPI (2.0 * PI)
 
-#define __minus_one_to_q pow(-1.0, VFResults.double_q_) // (-1)^q
-#define __minus_one_to_p pow(-1.0, VFResults.double_p_) // (-1)^p
-#define __one_over_p (1.0 / VFResults.double_p_)        // 1/p
-#define __one_over_q (1.0 / VFResults.double_q_)        // 1/q
+#define __minus_one_to_q pow(-1.0, g_VFResults.double_q_) // (-1)^q
+#define __minus_one_to_p pow(-1.0, g_VFResults.double_p_) // (-1)^p
+#define __one_over_p (1.0 / g_VFResults.double_p_)        // 1/p
+#define __one_over_q (1.0 / g_VFResults.double_q_)        // 1/q
 
 double eval_lc_poincare(double *pp, double, double, double);
 double eval_lc_lyapunov(double *pp, double, double, double);

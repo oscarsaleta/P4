@@ -156,6 +156,6 @@ class QInputVF : public QObject
     void finishCurveEvaluation(void);
 };
 
-extern QInputVF *ThisVF;
+extern QInputVF *g_ThisVF;
 
 #endif /* FILE_VF_H */

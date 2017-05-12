@@ -474,9 +474,9 @@ class QVFStudy : public QObject
 
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
-#define MATHFUNC(function) (*(VFResults.function))
+#define MATHFUNC(function) (*(g_VFResults.function))
 
-extern QVFStudy VFResults; // (VFResults.p_,VFResults.q_) are lyapunov weights
+extern QVFStudy g_VFResults; // (g_VFResults.p_,g_VFResults.q_) are lyapunov weights
 
 #define LINESTYLE_DASHES 1
 #define LINESTYLE_POINTS 0

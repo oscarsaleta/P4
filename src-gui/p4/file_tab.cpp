@@ -29,7 +29,7 @@
 #include <iostream>
 #include <locale.h>
 
-QVFStudy VFResults;
+QVFStudy g_VFResults;
 
 /*
     This file contains the code to read the information from reduce/maple.
@@ -91,7 +91,7 @@ QVFStudy::QVFStudy()
     q_ = 1;
     typeofstudy_ = TYPEOFSTUDY_ALL;
     singinf_ = false;
-    VFResults.dir_vec_field_ = 1;
+    g_VFResults.dir_vec_field_ = 1;
 
     // initialize parameters
 
@@ -216,7 +216,7 @@ void QVFStudy::deleteVF()
     q_ = 1;
     typeofstudy_ = TYPEOFSTUDY_ALL;
     singinf_ = false;
-    VFResults.dir_vec_field_ = 1;
+    g_VFResults.dir_vec_field_ = 1;
 
     lasterror_ = "";
 }
@@ -521,7 +521,7 @@ bool QVFStudy::readTables(QString basename)
         }
         singinf_ = 0;
     } else {
-        if (fscanf(fp, "%d %d", &flag, &VFResults.dir_vec_field_) != 2) {
+        if (fscanf(fp, "%d %d", &flag, &g_VFResults.dir_vec_field_) != 2) {
             dump(basename, "Cannot read sing-at-infinity flag and directions "
                            "flag in *_vec.tab");
             deleteVF();
@@ -1511,7 +1511,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         point->next_se = new semi_elementary;
         point->next_se->x0 = point->x0;
         point->next_se->y0 = 0.0;
-        if (VFResults.dir_vec_field_ == 1)
+        if (g_VFResults.dir_vec_field_ == 1)
             point->next_se->type = point->type;
         else
             switch (point->type) {
@@ -1638,7 +1638,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
         point->y0 = 0.0;
         point->chart = ((point->chart == CHART_U1) ? CHART_V1 : CHART_V2);
         point->stable =
-            last->stable * ((VFResults.dir_vec_field_ == -1) ? -1 : 1);
+            last->stable * ((g_VFResults.dir_vec_field_ == -1) ? -1 : 1);
     }
 
     return true;
@@ -1715,7 +1715,7 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
         point->next_wf->x0 = point->x0;
         point->next_wf->y0 = 0.0;
 
-        if (VFResults.dir_vec_field_ == 1)
+        if (g_VFResults.dir_vec_field_ == 1)
             point->next_wf->type = point->type;
         else
             switch (point->type) {
@@ -1886,7 +1886,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
         point->x0 = last->x0;
         point->y0 = 0.0;
         point->chart = (last->chart == CHART_U1) ? CHART_V1 : CHART_V2;
-        point->stable = last->stable * (VFResults.dir_vec_field_ == -1) ? -1 : 1;
+        point->stable = last->stable * (g_VFResults.dir_vec_field_ == -1) ? -1 : 1;
     }
 
     return true;
@@ -2195,7 +2195,7 @@ void QVFStudy::dump(QString basename, QString info)
     DUMP(("  Range x: [%g,%g] Range y: [%g,%g]", (float)xmin_, (float)xmax_,
           (float)ymin_, (float)ymax_))
     DUMP(("  Line at infinity singular? %d", singinf_))
-    DUMP(("  Direction of vector field: %d", VFResults.dir_vec_field_))
+    DUMP(("  Direction of vector field: %d", g_VFResults.dir_vec_field_))
     DUMP((" "))
     DUMP(("Vector Fields"))
     DUMP(("-------------"))
@@ -2347,7 +2347,7 @@ void QVFStudy::dump(QString basename, QString info)
     ss = info.toLatin1();
     DUMP(("%s", (const char *)ss))
 
-    m->setFont(*(p4app->courierFont_));
+    m->setFont(*(g_p4app->courierFont_));
     m->setReadOnly(true);
     m->resize(640, 480);
     setP4WindowTitle(m, "DUMP SCREEN");

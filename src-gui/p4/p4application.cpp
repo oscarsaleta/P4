@@ -23,7 +23,7 @@
 #include "file_vf.h"
 #include "win_event.h"
 
-QP4Application *p4app = nullptr;
+QP4Application *g_p4app = nullptr;
 
 QP4Application::QP4Application(int &argc, char **argv)
     : QApplication(argc, argv)
@@ -64,78 +64,78 @@ QP4Application::QP4Application(int &argc, char **argv)
 
 void QP4Application::signalChanged(void)
 {
-    ThisVF->evaluated_ = false;
-    ThisVF->changed_ = true;
+    g_ThisVF->evaluated_ = false;
+    g_ThisVF->changed_ = true;
 
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr);
-    p4app->postEvent(p4startdlg, e);
+    g_p4app->postEvent(g_p4stardlg, e);
 }
 
 void QP4Application::signalEvaluated(int exitCode)
 {
-    ThisVF->evaluated_ = true;
-    ThisVF->evaluating_ = false;
+    g_ThisVF->evaluated_ = true;
+    g_ThisVF->evaluating_ = false;
 
-    ThisVF->finishEvaluation(exitCode);
+    g_ThisVF->finishEvaluation(exitCode);
 
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr);
-    p4app->postEvent(p4startdlg, e);
+    g_p4app->postEvent(g_p4stardlg, e);
 
-    if (cmdLine_AutoExit) {
-        cmdLine_AutoPlot = false;
-        p4startdlg->OnQuit();
+    if (g_cmdLine_AutoExit) {
+        g_cmdLine_AutoPlot = false;
+        g_p4stardlg->OnQuit();
         return;
     }
 
-    if (cmdLine_AutoPlot) {
-        cmdLine_AutoPlot = false;
-        p4startdlg->OnPlot();
+    if (g_cmdLine_AutoPlot) {
+        g_cmdLine_AutoPlot = false;
+        g_p4stardlg->OnPlot();
     }
 }
 
 void QP4Application::signalGcfEvaluated(int exitCode)
 {
-    ThisVF->evaluated_ = true;
-    ThisVF->evaluating_ = false;
+    g_ThisVF->evaluated_ = true;
+    g_ThisVF->evaluating_ = false;
 
-    ThisVF->finishEvaluation(exitCode);
+    g_ThisVF->finishEvaluation(exitCode);
 }
 
 void QP4Application::signalCurveEvaluated(int exitCode)
 {
-    ThisVF->evaluated_ = true;
-    ThisVF->evaluating_ = false;
+    g_ThisVF->evaluated_ = true;
+    g_ThisVF->evaluating_ = false;
 
-    ThisVF->finishEvaluation(exitCode);
+    g_ThisVF->finishEvaluation(exitCode);
 }
 
 void QP4Application::signalEvaluating(void)
 {
-    ThisVF->evaluating_ = true;
-    ThisVF->evaluated_ = false;
+    g_ThisVF->evaluating_ = true;
+    g_ThisVF->evaluated_ = false;
 
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATING, nullptr);
-    p4app->postEvent(p4startdlg, e);
+    g_p4app->postEvent(g_p4stardlg, e);
 }
 
 void QP4Application::catchProcessError(QProcess::ProcessError qperr)
 {
-    ThisVF->catchProcessError(qperr);
+    g_ThisVF->catchProcessError(qperr);
 }
 
 void QP4Application::signalLoaded(void)
 {
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr);
-    p4app->postEvent(p4startdlg, e);
+    g_p4app->postEvent(g_p4stardlg, e);
 
-    if (cmdLine_AutoEvaluate) {
-        cmdLine_AutoEvaluate = false;
-        p4startdlg->Find_Window->onBtnEval();
+    if (g_cmdLine_AutoEvaluate) {
+        g_cmdLine_AutoEvaluate = false;
+        g_p4stardlg->Find_Window->onBtnEval();
         return;
     }
-    if (cmdLine_AutoPlot) {
-        cmdLine_AutoPlot = false;
-        p4startdlg->OnPlot();
+    if (g_cmdLine_AutoPlot) {
+        g_cmdLine_AutoPlot = false;
+        g_p4stardlg->OnPlot();
         return;
     }
 }
@@ -143,5 +143,5 @@ void QP4Application::signalLoaded(void)
 void QP4Application::signalSaved(void)
 {
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr);
-    p4app->postEvent(p4startdlg, e);
+    g_p4app->postEvent(g_p4stardlg, e);
 }

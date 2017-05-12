@@ -47,8 +47,8 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     // setAttribute( Qt::WA_PaintOnScreen, true );
     // setAttribute( Qt::WA_PaintOutsidePaintEvent, true );
 
-    if (p4smallicon != nullptr)
-        setWindowIcon(*p4smallicon);
+    if (g_p4smallicon != nullptr)
+        setWindowIcon(*g_p4smallicon);
 
     numZooms = 0;
     lastZoomIdentifier = 0;
@@ -161,7 +161,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     LC_Window = new QLimitCyclesDlg(this, sphere);
     GCF_Window = new QGcfDlg(this, sphere);
     Curve_Window = new QCurveDlg(this,sphere);
-    lcWindowIsUp = false; // Limit cycles: initially hidden
+    g_LCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere->show();
     setCentralWidget(sphere);
@@ -170,7 +170,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     IntParams_Window->updateDlgData();
     ViewParams_Window->updateDlgData();
 
-    //  if( ThisVF->evaluated_ )
+    //  if( g_ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait");
     //  else
     //      SetP4WindowTitle( this, "Phase Portrait (*)" );
@@ -202,10 +202,10 @@ QPlotWnd::~QPlotWnd()
     LC_Window = nullptr;
     delete GCF_Window;
     GCF_Window = nullptr;
-    ThisVF->gcfDlg_ = nullptr;
+    g_ThisVF->gcfDlg_ = nullptr;
     delete Curve_Window;
     Curve_Window = nullptr;
-    ThisVF->curveDlg_ = nullptr;
+    g_ThisVF->curveDlg_ = nullptr;
 }
 
 void QPlotWnd::AdjustHeight(void)
@@ -246,13 +246,13 @@ void QPlotWnd::signalEvaluated(void)
 void QPlotWnd::OnBtnClose(void)
 {
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-    p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent, e1);
 }
 
 bool QPlotWnd::close(void)
 {
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-    p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent, e1);
 
     return QMainWindow::close();
 }
@@ -342,13 +342,13 @@ void QPlotWnd::OnBtnPrint(void)
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            p4printer->setResolution(res);
+            g_p4printer->setResolution(res);
 
-            QPrintDialog dialog(p4printer, this);
+            QPrintDialog dialog(g_p4printer, this);
             if (!dialog.exec())
                 return;
 
-            res = p4printer->resolution();
+            res = g_p4printer->resolution();
         }
 
         if (result < 0)
@@ -376,7 +376,7 @@ void QPlotWnd::configure(void)
     Curve_Window->reset();
 
     sphere->update();
-    if (VFResults.gcf_ == nullptr) // reconfigure GCF button
+    if (g_VFResults.gcf_ == nullptr) // reconfigure GCF button
         ActGCF->setEnabled(false);
     else
         ActGCF->setEnabled(true);
@@ -541,7 +541,7 @@ void QPlotWnd::hideEvent(QHideEvent *h)
     if (!isMinimized()) {
         QP4Event *e1 =
             new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-        p4app->postEvent(parent, e1);
+        g_p4app->postEvent(parent, e1);
     }
 }
 
@@ -551,7 +551,7 @@ void QPlotWnd::getDlgData(void)
     if (ViewParams_Window->getDataFromDlg()) {
         // true when a big change occured in the view
 
-        VFResults.setupCoordinateTransformations();
+        g_VFResults.setupCoordinateTransformations();
         configure();
     }
 }

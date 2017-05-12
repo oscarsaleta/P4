@@ -57,11 +57,11 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
 #ifdef DOCK_FINDWINDOW
     QLabel *p4title = new QLabel("Find and Examine Singular Points", this);
-    p4title->setFont(*(p4app->titleFont_));
+    p4title->setFont(*(g_p4app->titleFont_));
 #endif
 
     // QLabel *symlabel = new QLabel("Symbolic package: ", this);
-    // symlabel->setFont(*(p4app->boldFont_));
+    // symlabel->setFont(*(g_p4app->boldFont_));
     // btn_maple = new QRadioButton("Maple", this);
     // btn_reduce = new QRadioButton("Reduce", this);
 
@@ -70,19 +70,19 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     //#endif
 
     QLabel *actlabel = new QLabel("File Action:  ", this);
-    actlabel->setFont(*(p4app->boldFont_));
+    actlabel->setFont(*(g_p4app->boldFont_));
     btn_actionrun_ = new QRadioButton("Run File", this);
     btn_actionprep_ = new QRadioButton("Prepare File", this);
 
     QLabel *singpoints = new QLabel("Singular points:  \n\n", this);
-    singpoints->setFont(*(p4app->boldFont_));
+    singpoints->setFont(*(g_p4app->boldFont_));
     btn_all_ = new QRadioButton("All ", this);
     btn_fin_ = new QRadioButton("Finite ", this);
     btn_inf_ = new QRadioButton("Infinite ", this);
     btn_one_ = new QRadioButton("One ", this);
 
     QLabel *saveall = new QLabel("Save all information: ", this);
-    saveall->setFont(*(p4app->boldFont_));
+    saveall->setFont(*(g_p4app->boldFont_));
     btn_yes_ = new QRadioButton("Yes", this);
     btn_no_ = new QRadioButton("No", this);
 
@@ -92,7 +92,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btn_load_ = new QPushButton("&Load", this);
     btn_save_ = new QPushButton("&Save", this);
 
-    if (action_OnlyPrepareFile)
+    if (g_action_OnlyPrepareFile)
         btn_eval_ = new QPushButton("Pr&epare", this);
     else
         btn_eval_ = new QPushButton("&Evaluate", this);
@@ -223,17 +223,17 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btngrp4->addButton(btn_actionrun_);
     btngrp4->addButton(btn_actionprep_);
 
-    // if (ThisVF->symbolicpackage_ == PACKAGE_MAPLE)
+    // if (g_ThisVF->symbolicpackage_ == PACKAGE_MAPLE)
     //    btn_maple->toggle();
     // else
     //    btn_reduce->toggle();
 
-    if (action_OnlyPrepareFile)
+    if (g_action_OnlyPrepareFile)
         btn_actionprep_->toggle();
     else
         btn_actionrun_->toggle();
 
-    switch (ThisVF->typeofstudy_) {
+    switch (g_ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
         btn_all_->toggle();
         break;
@@ -248,7 +248,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
         break;
     }
 
-    if (action_SaveAll)
+    if (g_action_SaveAll)
         btn_yes_->toggle();
     else
         btn_no_->toggle();
@@ -293,7 +293,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     onBtnParams();
 #endif
 
-    if (ThisVF->evaluating_)
+    if (g_ThisVF->evaluating_)
         btn_eval_->setEnabled(false);
 
 #ifndef DOCK_FINDWINDOW
@@ -304,22 +304,22 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 void QFindDlg::btn_yes_toggled(bool on)
 {
     if (on) {
-        action_SaveAll = true;
+        g_action_SaveAll = true;
     }
 }
 
 void QFindDlg::btn_no_toggled(bool on)
 {
     if (on) {
-        action_SaveAll = false;
+        g_action_SaveAll = false;
     }
 }
 
 void QFindDlg::btn_maple_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->symbolicpackage_ != PACKAGE_MAPLE) {
-            ThisVF->symbolicpackage_ = PACKAGE_MAPLE;
+        if (g_ThisVF->symbolicpackage_ != PACKAGE_MAPLE) {
+            g_ThisVF->symbolicpackage_ = PACKAGE_MAPLE;
             setMathPackage(PACKAGE_MAPLE);
         }
     }
@@ -328,8 +328,8 @@ void QFindDlg::btn_maple_toggled(bool on)
 void QFindDlg::btn_reduce_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->symbolicpackage_ != PACKAGE_REDUCE) {
-            ThisVF->symbolicpackage_ = PACKAGE_REDUCE;
+        if (g_ThisVF->symbolicpackage_ != PACKAGE_REDUCE) {
+            g_ThisVF->symbolicpackage_ = PACKAGE_REDUCE;
             setMathPackage(PACKAGE_REDUCE);
         }
     }
@@ -338,7 +338,7 @@ void QFindDlg::btn_reduce_toggled(bool on)
 void QFindDlg::btn_actionrun_toggled(bool on)
 {
     if (on) {
-        action_OnlyPrepareFile = false;
+        g_action_OnlyPrepareFile = false;
         btn_eval_->setText("&Evaluate");
     }
 }
@@ -346,7 +346,7 @@ void QFindDlg::btn_actionrun_toggled(bool on)
 void QFindDlg::btn_actionprep_toggled(bool on)
 {
     if (on) {
-        action_OnlyPrepareFile = true;
+        g_action_OnlyPrepareFile = true;
         btn_eval_->setText("Pr&epare");
     }
 }
@@ -354,11 +354,11 @@ void QFindDlg::btn_actionprep_toggled(bool on)
 void QFindDlg::btn_all_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
-            ThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
+            g_ThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
             if (paramsWindow_ != nullptr) {
                 paramsWindow_->getDataFromDlg();
@@ -371,11 +371,11 @@ void QFindDlg::btn_all_toggled(bool on)
 void QFindDlg::btn_fin_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
-            ThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
+            g_ThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
             if (paramsWindow_ != nullptr) {
                 paramsWindow_->getDataFromDlg();
@@ -388,11 +388,11 @@ void QFindDlg::btn_fin_toggled(bool on)
 void QFindDlg::btn_inf_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_INF) {
-            ThisVF->typeofstudy_ = TYPEOFSTUDY_INF;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_INF) {
+            g_ThisVF->typeofstudy_ = TYPEOFSTUDY_INF;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
             if (paramsWindow_ != nullptr) {
                 paramsWindow_->getDataFromDlg();
@@ -405,11 +405,11 @@ void QFindDlg::btn_inf_toggled(bool on)
 void QFindDlg::btn_one_toggled(bool on)
 {
     if (on) {
-        if (ThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
-            ThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
-            if (ThisVF->changed_ == false) {
-                ThisVF->changed_ = true;
-                p4app->signalChanged();
+        if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
+            g_ThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
+            if (g_ThisVF->changed_ == false) {
+                g_ThisVF->changed_ = true;
+                g_p4app->signalChanged();
             }
             if (paramsWindow_ != nullptr) {
                 paramsWindow_->getDataFromDlg();
@@ -470,41 +470,41 @@ void QFindDlg::onBtnVf(void)
 
 void QFindDlg::onBtnLoad(void)
 {
-    if (ThisVF->load() == false) {
+    if (g_ThisVF->load() == false) {
         QMessageBox::critical(this, "P4",
                               "Unable to find the input vector field.\n");
     } else {
         // we first signal that the vector field has changed
         // to invalidate all open windows.
 
-        bool oldeval = ThisVF->evaluated_;
+        bool oldeval = g_ThisVF->evaluated_;
 
         updateDlgData();
-        if (ThisVF->changed_ == false) {
-            ThisVF->changed_ = true;
-            p4app->signalChanged();
+        if (g_ThisVF->changed_ == false) {
+            g_ThisVF->changed_ = true;
+            g_p4app->signalChanged();
         }
 
         // then, we signal that the vector field is unchanged
         // because a save vector field is not needed when quiting.
 
-        ThisVF->changed_ = false;
-        ThisVF->evaluated_ = oldeval;
-        p4app->signalLoaded();
+        g_ThisVF->changed_ = false;
+        g_ThisVF->evaluated_ = oldeval;
+        g_p4app->signalLoaded();
     }
 }
 
 void QFindDlg::onBtnSave(void)
 {
     getDataFromDlg();
-    if (ThisVF->changed_)
-        ThisVF->cleared_ = false;
-    if (ThisVF->cleared_) {
+    if (g_ThisVF->changed_)
+        g_ThisVF->cleared_ = false;
+    if (g_ThisVF->cleared_) {
         QMessageBox::critical(this, "P4", "No data has been entered.\n"
                                           "Please specify vector field.\n");
         return;
     }
-    if (ThisVF->save() == false) {
+    if (g_ThisVF->save() == false) {
         QMessageBox::critical(
             this, "P4", "Unable to save the input vector field.\n"
                         "Please check permissions on the write location.\n");
@@ -516,7 +516,7 @@ void QFindDlg::onBtnEval(void)
     //  int result;
 
     getDataFromDlg();
-    if (ThisVF->getfilename().length() == 0) {
+    if (g_ThisVF->getfilename().length() == 0) {
         // error: need to specify filename first
 
         QMessageBox::critical(this, "P4", "Unable to evaluate.\n"
@@ -524,17 +524,17 @@ void QFindDlg::onBtnEval(void)
         return;
     }
 
-    if (ThisVF->changed_)
-        ThisVF->cleared_ = false;
+    if (g_ThisVF->changed_)
+        g_ThisVF->cleared_ = false;
 
-    if (ThisVF->cleared_) {
+    if (g_ThisVF->cleared_) {
         QMessageBox::critical(this, "P4", "No data has been entered.\n"
                                           "Please specify vector field.\n");
         return;
     }
 
-    /*if (ThisVF->changed_) {
-      ThisVF->evaluated_ = false;
+    /*if (g_ThisVF->changed_) {
+      g_ThisVF->evaluated_ = false;
         result = QMessageBox::information( this, "P4",
                     "The vector field has been changed since "
                     "the last save.\nSave before evaluation?",
@@ -546,7 +546,7 @@ void QFindDlg::onBtnEval(void)
         }
         if( result == 0 )
         {
-            if( ThisVF->save() == false )
+            if( g_ThisVF->save() == false )
             {
                 QMessageBox::critical( this, "P4",
                             "Unable to save the input vector field.\n"
@@ -557,17 +557,17 @@ void QFindDlg::onBtnEval(void)
         }
     }*/
 
-    if (action_OnlyPrepareFile) {
-        ThisVF->evaluated_ = false;
-        ThisVF->evaluating_ = false;
+    if (g_action_OnlyPrepareFile) {
+        g_ThisVF->evaluated_ = false;
+        g_ThisVF->evaluating_ = false;
 
-        ThisVF->prepare();
+        g_ThisVF->prepare();
     } else {
-        ThisVF->evaluated_ = false;
-        ThisVF->evaluating_ = true;
+        g_ThisVF->evaluated_ = false;
+        g_ThisVF->evaluating_ = true;
 
         signalEvaluating();
-        ThisVF->evaluate();
+        g_ThisVF->evaluate();
         //      RunTask( &EvalVF );
     }
 }
@@ -584,7 +584,7 @@ void QFindDlg::getDataFromDlg(void)
 
 void QFindDlg::updateDlgData(void)
 {
-    switch (ThisVF->typeofstudy_) {
+    switch (g_ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
         exclusiveToggle(true, btn_all_);
         break;

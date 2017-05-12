@@ -55,6 +55,6 @@ class QP4Application : public QApplication
     void catchProcessError(QProcess::ProcessError);
 };
 
-extern QP4Application *p4app;
+extern QP4Application *g_p4app;
 
 #endif /* P4APPLICATION_H */

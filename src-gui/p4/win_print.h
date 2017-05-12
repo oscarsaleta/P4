@@ -46,10 +46,10 @@ class QPrintDlg : public QDialog
   public:
     QPrintDlg(QWidget *parent, Qt::WindowFlags f);
 
-    static bool LastBlackWhite;
-    static double LastLineWidth;
-    static double LastSymbolSize;
-    static int LastResolution;
+    static bool sm_LastBlackWhite;
+    static double sm_LastLineWidth;
+    static double sm_LastSymbolSize;
+    static int sm_LastResolution;
 
   public slots:
     void OnDefaultPrinter(void);
@@ -61,7 +61,7 @@ class QPrintDlg : public QDialog
     bool ReadDialog(void);
     bool ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
                         double minvalue, double maxvalue);
-    void MarkBad(QLineEdit *edt);
+    void markBad(QLineEdit *edt);
 
     int GetChosenResolution(void);
     double GetChosenLineWidth(void);

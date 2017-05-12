@@ -34,10 +34,10 @@ QViewDlg::QViewDlg(QWidget *parent)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *p4title = new QLabel("View Parameters", this);
-    p4title->setFont(*(p4app->titleFont_));
+    p4title->setFont(*(g_p4app->titleFont_));
 
     QLabel *kindlabel = new QLabel("Type of view: ", this);
-    kindlabel->setFont(*(p4app->boldFont_));
+    kindlabel->setFont(*(g_p4app->boldFont_));
     btn_sphere = new QRadioButton("Spherical", this);
     btn_plane = new QRadioButton("Planar", this);
     btn_U1 = new QRadioButton("U1", this);
@@ -46,25 +46,25 @@ QViewDlg::QViewDlg(QWidget *parent)
     btn_V2 = new QRadioButton("V2", this);
 
     QLabel *lbl_projection = new QLabel("Projection:", this);
-    lbl_projection->setFont(*(p4app->boldFont_));
+    lbl_projection->setFont(*(g_p4app->boldFont_));
     edt_projection = new QLineEdit("-1", this);
 
     QLabel *lbl_x0 = new QLabel("Min. x:", this);
-    lbl_x0->setFont(*(p4app->boldFont_));
+    lbl_x0->setFont(*(g_p4app->boldFont_));
     edt_x0 = new QLineEdit("-1", this);
 
     btn_square = new QPushButton("&Square", this);
 
     QLabel *lbl_y0 = new QLabel("Min. y:", this);
-    lbl_y0->setFont(*(p4app->boldFont_));
+    lbl_y0->setFont(*(g_p4app->boldFont_));
     edt_y0 = new QLineEdit("-1", this);
 
     QLabel *lbl_x1 = new QLabel("Max. x", this);
-    lbl_x1->setFont(*(p4app->boldFont_));
+    lbl_x1->setFont(*(g_p4app->boldFont_));
     edt_x1 = new QLineEdit("1", this);
 
     QLabel *lbl_y1 = new QLabel("Max. y", this);
-    lbl_y1->setFont(*(p4app->boldFont_));
+    lbl_y1->setFont(*(g_p4app->boldFont_));
     edt_y1 = new QLineEdit("1", this);
 
 #ifdef TOOLTIPS
@@ -158,15 +158,15 @@ QViewDlg::QViewDlg(QWidget *parent)
     QObject::connect(btn_square, SIGNAL(clicked()), this,
                      SLOT(btn_square_clicked()));
     QObject::connect(edt_projection, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
+                     SLOT(onFieldChange(const QString &)));
     QObject::connect(edt_x0, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
+                     SLOT(onFieldChange(const QString &)));
     QObject::connect(edt_x1, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
+                     SLOT(onFieldChange(const QString &)));
     QObject::connect(edt_y0, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
+                     SLOT(onFieldChange(const QString &)));
     QObject::connect(edt_y1, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFieldChange(const QString &)));
+                     SLOT(onFieldChange(const QString &)));
 
     // finishing
 
@@ -175,7 +175,7 @@ QViewDlg::QViewDlg(QWidget *parent)
     setP4WindowTitle(this, "View Parameters");
 }
 
-void QViewDlg::OnFieldChange(const QString &dummy)
+void QViewDlg::onFieldChange(const QString &dummy)
 {
     UNUSED(dummy);
     changed = true;
@@ -385,7 +385,7 @@ bool QViewDlg::ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
     t = edt->text();
     *presult = t.toDouble(&ok);
     if (!ok || *presult < minvalue || *presult > maxvalue) {
-        MarkBad(edt);
+        markBad(edt);
         *presult = defvalue;
         return true;
     }
@@ -397,7 +397,7 @@ bool QViewDlg::ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
     return false;
 }
 
-void QViewDlg::MarkBad(QLineEdit *edt)
+void QViewDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -419,61 +419,61 @@ bool QViewDlg::getDataFromDlg(void)
 
     changed = false;
     if (btn_sphere->isChecked()) {
-        if (VFResults.typeofview_ != TYPEOFVIEW_SPHERE) {
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_SPHERE) {
             changed = true;
-            VFResults.typeofview_ = TYPEOFVIEW_SPHERE;
+            g_VFResults.typeofview_ = TYPEOFVIEW_SPHERE;
         }
     }
     if (btn_plane->isChecked()) {
-        if (VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             changed = true;
-            VFResults.typeofview_ = TYPEOFVIEW_PLANE;
+            g_VFResults.typeofview_ = TYPEOFVIEW_PLANE;
         }
     }
     if (btn_U1->isChecked()) {
-        if (VFResults.typeofview_ != TYPEOFVIEW_U1) {
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_U1) {
             changed = true;
-            VFResults.typeofview_ = TYPEOFVIEW_U1;
+            g_VFResults.typeofview_ = TYPEOFVIEW_U1;
         }
     }
     if (btn_U2->isChecked()) {
-        if (VFResults.typeofview_ != TYPEOFVIEW_U2) {
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_U2) {
             changed = true;
-            VFResults.typeofview_ = TYPEOFVIEW_U2;
+            g_VFResults.typeofview_ = TYPEOFVIEW_U2;
         }
     }
     if (btn_V1->isChecked()) {
-        if (VFResults.typeofview_ != TYPEOFVIEW_V1) {
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_V1) {
             changed = true;
-            VFResults.typeofview_ = TYPEOFVIEW_V1;
+            g_VFResults.typeofview_ = TYPEOFVIEW_V1;
         }
     }
     if (btn_V2->isChecked()) {
-        if (VFResults.typeofview_ != TYPEOFVIEW_V2) {
+        if (g_VFResults.typeofview_ != TYPEOFVIEW_V2) {
             changed = true;
-            VFResults.typeofview_ = TYPEOFVIEW_V2;
+            g_VFResults.typeofview_ = TYPEOFVIEW_V2;
         }
     }
 
-    double oldxmin = VFResults.xmin_;
-    double oldymin = VFResults.ymin_;
-    double oldxmax = VFResults.xmax_;
-    double oldymax = VFResults.ymax_;
+    double oldxmin = g_VFResults.xmin_;
+    double oldymin = g_VFResults.ymin_;
+    double oldxmax = g_VFResults.xmax_;
+    double oldymax = g_VFResults.ymax_;
 
     changed |=
-        ReadFloatField(edt_projection, &(VFResults.config_projection_),
+        ReadFloatField(edt_projection, &(g_VFResults.config_projection_),
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
     changed |=
-        ReadFloatField(edt_x0, &(VFResults.xmin_), X_MIN, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_x0, &(g_VFResults.xmin_), X_MIN, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_y0, &(VFResults.ymin_), Y_MIN, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_y0, &(g_VFResults.ymin_), Y_MIN, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_x1, &(VFResults.xmax_), X_MAX, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_x1, &(g_VFResults.xmax_), X_MAX, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_y1, &(VFResults.ymax_), Y_MAX, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_y1, &(g_VFResults.ymax_), Y_MAX, MIN_FLOAT, MAX_FLOAT);
 
-    if (oldxmin != VFResults.xmin_ || oldymin != VFResults.ymin_ ||
-        oldxmax != VFResults.xmax_ || oldymax != VFResults.ymax_ || changed) {
+    if (oldxmin != g_VFResults.xmin_ || oldymin != g_VFResults.ymin_ ||
+        oldxmax != g_VFResults.xmax_ || oldymax != g_VFResults.ymax_ || changed) {
         changed = false;
         return true;
     }
@@ -487,44 +487,44 @@ void QViewDlg::updateDlgData(void)
 
     changed = false;
 
-    if (VFResults.typeofview_ == TYPEOFVIEW_PLANE)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_PLANE)
         exclusiveToggle(true, btn_plane, btn_sphere, btn_U1, btn_U2, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE)
         exclusiveToggle(true, btn_sphere, btn_plane, btn_U1, btn_U2, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview_ == TYPEOFVIEW_U1)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_U1)
         exclusiveToggle(true, btn_U1, btn_sphere, btn_plane, btn_U2, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview_ == TYPEOFVIEW_U2)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_U2)
         exclusiveToggle(true, btn_U2, btn_sphere, btn_plane, btn_U1, btn_V1,
                         btn_V2, nullptr);
-    if (VFResults.typeofview_ == TYPEOFVIEW_V1)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_V1)
         exclusiveToggle(true, btn_V1, btn_sphere, btn_plane, btn_U1, btn_U2,
                         btn_V2, nullptr);
-    if (VFResults.typeofview_ == TYPEOFVIEW_V2)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_V2)
         exclusiveToggle(true, btn_V2, btn_sphere, btn_plane, btn_U1, btn_U2,
                         btn_V1, nullptr);
 
-    if (VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+    if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
         btn_sphere->setEnabled(false);
     else
         btn_sphere->setEnabled(true);
 
-    buf.sprintf("%g", (float)(VFResults.config_projection_));
+    buf.sprintf("%g", (float)(g_VFResults.config_projection_));
     edt_projection->setText(buf);
-    if (VFResults.typeofview_ == TYPEOFVIEW_SPHERE && !VFResults.plweights_)
+    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE && !g_VFResults.plweights_)
         edt_projection->setEnabled(true);
     else
         edt_projection->setEnabled(false);
 
-    buf.sprintf("%g", (float)(VFResults.xmin_));
+    buf.sprintf("%g", (float)(g_VFResults.xmin_));
     edt_x0->setText(buf);
-    buf.sprintf("%g", (float)(VFResults.xmax_));
+    buf.sprintf("%g", (float)(g_VFResults.xmax_));
     edt_x1->setText(buf);
-    buf.sprintf("%g", (float)(VFResults.ymin_));
+    buf.sprintf("%g", (float)(g_VFResults.ymin_));
     edt_y0->setText(buf);
-    buf.sprintf("%g", (float)(VFResults.ymax_));
+    buf.sprintf("%g", (float)(g_VFResults.ymax_));
     edt_y1->setText(buf);
 
     if (btn_sphere->isChecked() == false) {

@@ -114,7 +114,7 @@ void QGcfDlg::reset(void)
     buf.sprintf("%d", DEFAULT_GCFMEMORY);
     edt_memory_->setText(buf);
 
-    if (VFResults.config_dashes_)
+    if (g_VFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();
@@ -173,7 +173,7 @@ void QGcfDlg::onbtn_evaluate(void)
 
     btn_evaluate_->setEnabled(false);
 
-    ThisVF->gcfDlg_ = this;
+    g_ThisVF->gcfDlg_ = this;
     result = evalGcfStart(mainSphere_, dashes, points, precis);
     if (!result) {
         btn_evaluate_->setEnabled(true);

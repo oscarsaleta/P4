@@ -42,43 +42,43 @@ void integrateOrbit(QWinSphere *sphere, int dir)
     if (dir == 0) {
         // continue orbit button has been pressed
 
-        dir = VFResults.current_orbit_->current_f_orbits->dir;
+        dir = g_VFResults.current_orbit_->current_f_orbits->dir;
 
-        copy_x_into_y(VFResults.current_orbit_->current_f_orbits->pcoord,
+        copy_x_into_y(g_VFResults.current_orbit_->current_f_orbits->pcoord,
                       pcoord);
-        VFResults.current_orbit_->current_f_orbits->next_point =
-            integrate_orbit(sphere, pcoord, VFResults.config_currentstep_, dir,
-                            CORBIT, VFResults.config_intpoints_, &sep);
+        g_VFResults.current_orbit_->current_f_orbits->next_point =
+            integrate_orbit(sphere, pcoord, g_VFResults.config_currentstep_, dir,
+                            CORBIT, g_VFResults.config_intpoints_, &sep);
 
-        VFResults.current_orbit_->current_f_orbits = sep;
+        g_VFResults.current_orbit_->current_f_orbits = sep;
         return;
     }
 
-    copy_x_into_y(VFResults.current_orbit_->pcoord, pcoord);
+    copy_x_into_y(g_VFResults.current_orbit_->pcoord, pcoord);
     MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-    if (VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
-        if (eval_term2(VFResults.gcf_, ucoord) < 0)
+    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
+        if (eval_term2(g_VFResults.gcf_, ucoord) < 0)
             dir = -dir;
 
-    if (VFResults.current_orbit_->f_orbits == nullptr) {
-        VFResults.current_orbit_->f_orbits =
-            integrate_orbit(sphere, pcoord, VFResults.config_step_, dir, CORBIT,
-                            VFResults.config_intpoints_, &sep);
+    if (g_VFResults.current_orbit_->f_orbits == nullptr) {
+        g_VFResults.current_orbit_->f_orbits =
+            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir, CORBIT,
+                            g_VFResults.config_intpoints_, &sep);
     } else {
-        VFResults.current_orbit_->current_f_orbits->next_point =
+        g_VFResults.current_orbit_->current_f_orbits->next_point =
             new orbits_points;
-        VFResults.current_orbit_->current_f_orbits =
-            VFResults.current_orbit_->current_f_orbits->next_point;
+        g_VFResults.current_orbit_->current_f_orbits =
+            g_VFResults.current_orbit_->current_f_orbits->next_point;
         copy_x_into_y(pcoord,
-                      VFResults.current_orbit_->current_f_orbits->pcoord);
-        VFResults.current_orbit_->current_f_orbits->dashes = 0;
-        VFResults.current_orbit_->current_f_orbits->color = CORBIT;
-        VFResults.current_orbit_->current_f_orbits->dir = dir;
-        VFResults.current_orbit_->current_f_orbits->next_point =
-            integrate_orbit(sphere, pcoord, VFResults.config_step_, dir, CORBIT,
-                            VFResults.config_intpoints_, &sep);
+                      g_VFResults.current_orbit_->current_f_orbits->pcoord);
+        g_VFResults.current_orbit_->current_f_orbits->dashes = 0;
+        g_VFResults.current_orbit_->current_f_orbits->color = CORBIT;
+        g_VFResults.current_orbit_->current_f_orbits->dir = dir;
+        g_VFResults.current_orbit_->current_f_orbits->next_point =
+            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir, CORBIT,
+                            g_VFResults.config_intpoints_, &sep);
     }
-    VFResults.current_orbit_->current_f_orbits = sep;
+    g_VFResults.current_orbit_->current_f_orbits = sep;
 }
 
 // -----------------------------------------------------------------------
@@ -91,22 +91,22 @@ bool startOrbit(QWinSphere *sphere, double x, double y, bool R)
     double pcoord[3];
     double ucoord[2];
 
-    if (VFResults.first_orbit_ == nullptr) {
-        VFResults.first_orbit_ = new orbits;
-        VFResults.current_orbit_ = VFResults.first_orbit_;
+    if (g_VFResults.first_orbit_ == nullptr) {
+        g_VFResults.first_orbit_ = new orbits;
+        g_VFResults.current_orbit_ = g_VFResults.first_orbit_;
     } else {
-        VFResults.current_orbit_->next_orbit = new orbits;
-        VFResults.current_orbit_ = VFResults.current_orbit_->next_orbit;
+        g_VFResults.current_orbit_->next_orbit = new orbits;
+        g_VFResults.current_orbit_ = g_VFResults.current_orbit_->next_orbit;
     }
     if (R)
         MATHFUNC(R2_to_sphere)(x, y, pcoord);
     else
         MATHFUNC(viewcoord_to_sphere)(x, y, pcoord);
 
-    copy_x_into_y(pcoord, VFResults.current_orbit_->pcoord);
-    VFResults.current_orbit_->color = CORBIT;
-    VFResults.current_orbit_->f_orbits = nullptr;
-    VFResults.current_orbit_->next_orbit = nullptr;
+    copy_x_into_y(pcoord, g_VFResults.current_orbit_->pcoord);
+    g_VFResults.current_orbit_->color = CORBIT;
+    g_VFResults.current_orbit_->f_orbits = nullptr;
+    g_VFResults.current_orbit_->next_orbit = nullptr;
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     sphere->drawPoint(ucoord[0], ucoord[1], CORBIT);
@@ -147,7 +147,7 @@ void drawOrbits(QWinSphere *spherewnd)
 {
     struct orbits *orbit;
 
-    for (orbit = VFResults.first_orbit_; orbit != nullptr;
+    for (orbit = g_VFResults.first_orbit_; orbit != nullptr;
          orbit = orbit->next_orbit) {
         drawOrbit(spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color);
     }
@@ -161,27 +161,27 @@ void deleteLastOrbit(QWinSphere *spherewnd)
 {
     struct orbits *orbit1, *orbit2;
 
-    if (VFResults.current_orbit_ == nullptr)
+    if (g_VFResults.current_orbit_ == nullptr)
         return;
 
-    orbit2 = VFResults.current_orbit_;
+    orbit2 = g_VFResults.current_orbit_;
     drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
               spherewnd->spherebgcolor);
 
-    if (VFResults.first_orbit_ == VFResults.current_orbit_) {
-        VFResults.first_orbit_ = nullptr;
-        VFResults.current_orbit_ = nullptr;
+    if (g_VFResults.first_orbit_ == g_VFResults.current_orbit_) {
+        g_VFResults.first_orbit_ = nullptr;
+        g_VFResults.current_orbit_ = nullptr;
     } else {
-        orbit1 = VFResults.first_orbit_;
+        orbit1 = g_VFResults.first_orbit_;
 
         do {
-            VFResults.current_orbit_ = orbit1;
+            g_VFResults.current_orbit_ = orbit1;
             orbit1 = orbit1->next_orbit;
         } while (orbit1 != orbit2);
 
-        VFResults.current_orbit_->next_orbit = nullptr;
+        g_VFResults.current_orbit_->next_orbit = nullptr;
     }
-    VFResults.deleteOrbitPoint(orbit2->f_orbits);
+    g_VFResults.deleteOrbitPoint(orbit2->f_orbits);
     delete orbit2; // free( orbit2 );
     orbit2 = nullptr;
 }
@@ -198,7 +198,7 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
     if (pcoord[2] > ZCOORD) {
         psphere_to_R2(p0, p1, p2, y);
         rk78(eval_r_vec_field, y, hhi, h_min, h_max,
-             VFResults.config_tolerance_);
+             g_VFResults.config_tolerance_);
         R2_to_psphere(y[0], y[1], pcoord);
     } else {
         theta = atan2(fabs(p1), fabs(p0));
@@ -206,12 +206,12 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
             if (p0 > 0) {
                 psphere_to_U1(p0, p1, p2, y);
                 rk78(eval_U1_vec_field, y, hhi, h_min, h_max,
-                     VFResults.config_tolerance_);
-                if (y[1] >= 0 || !VFResults.singinf_)
+                     g_VFResults.config_tolerance_);
+                if (y[1] >= 0 || !g_VFResults.singinf_)
                     U1_to_psphere(y[0], y[1], pcoord);
                 else {
                     VV1_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field_ == 1) {
+                    if (g_VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -221,12 +221,12 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
             } else {
                 psphere_to_V1(p0, p1, p2, y);
                 rk78(eval_V1_vec_field, y, hhi, h_min, h_max,
-                     VFResults.config_tolerance_);
-                if (y[1] >= 0 || !VFResults.singinf_)
+                     g_VFResults.config_tolerance_);
+                if (y[1] >= 0 || !g_VFResults.singinf_)
                     V1_to_psphere(y[0], y[1], pcoord);
                 else {
                     UU1_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field_ == 1) {
+                    if (g_VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -238,12 +238,12 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
             if (p1 > 0) {
                 psphere_to_U2(p0, p1, p2, y);
                 rk78(eval_U2_vec_field, y, hhi, h_min, h_max,
-                     VFResults.config_tolerance_);
-                if (y[1] >= 0 || !VFResults.singinf_)
+                     g_VFResults.config_tolerance_);
+                if (y[1] >= 0 || !g_VFResults.singinf_)
                     U2_to_psphere(y[0], y[1], pcoord);
                 else {
                     VV2_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field_ == 1) {
+                    if (g_VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -253,12 +253,12 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
             } else {
                 psphere_to_V2(p0, p1, p2, y);
                 rk78(eval_V2_vec_field, y, hhi, h_min, h_max,
-                     VFResults.config_tolerance_);
-                if (y[1] >= 0 || !VFResults.singinf_)
+                     g_VFResults.config_tolerance_);
+                if (y[1] >= 0 || !g_VFResults.singinf_)
                     V2_to_psphere(y[0], y[1], pcoord);
                 else {
                     UU2_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field_ == 1) {
+                    if (g_VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -283,13 +283,13 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
         y[0] = p1;
         y[1] = p2;
         rk78(eval_r_vec_field, y, hhi, h_min, h_max,
-             VFResults.config_tolerance_);
+             g_VFResults.config_tolerance_);
         R2_to_plsphere(y[0], y[1], pcoord);
     } else {
         y[0] = p1;
         y[1] = p2;
         rk78(eval_vec_field_cyl, y, hhi, h_min, h_max,
-             VFResults.config_tolerance_);
+             g_VFResults.config_tolerance_);
         if (y[1] >= TWOPI)
             y[1] -= TWOPI;
         cylinder_to_plsphere(y[0], y[1], pcoord);
@@ -308,8 +308,8 @@ struct orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
     struct orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
 
     hhi = (double)dir * step;
-    h_min = VFResults.config_hmi_;
-    h_max = VFResults.config_hma_;
+    h_min = g_VFResults.config_hmi_;
+    h_max = g_VFResults.config_hma_;
     copy_x_into_y(pcoord, pcoord2);
     for (i = 1; i <= points_to_int; ++i) {
         MATHFUNC(integrate_sphere_orbit)
@@ -331,10 +331,10 @@ struct orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
 
         copy_x_into_y(pcoord, last_orbit->pcoord);
         last_orbit->color = color;
-        last_orbit->dashes = dashes * VFResults.config_dashes_;
+        last_orbit->dashes = dashes * g_VFResults.config_dashes_;
         last_orbit->dir = d * h;
         last_orbit->next_point = nullptr;
-        if (dashes * VFResults.config_dashes_)
+        if (dashes * g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
             (*plot_p)(spherewnd, pcoord, color);

@@ -94,7 +94,7 @@
     - optional: integer precision0
 */
 
-QInputVF *ThisVF = nullptr;
+QInputVF *g_ThisVF = nullptr;
 
 QInputVF::QInputVF() : outputWindow_(nullptr)
 {
@@ -937,7 +937,7 @@ void QInputVF::prepareFile(QTextStream *fp)
     user_exeprefix = "";
 
     /*if (symbolicpackage_ == PACKAGE_REDUCE) {
-        bsaveall = booleanString(action_SaveAll);
+        bsaveall = booleanString(g_action_SaveAll);
         mainreduce = getP4ReducePath();
         mainreduce += "/";
         mainreduce += MAINREDUCEFILE;
@@ -1027,7 +1027,7 @@ void QInputVF::prepareFile(QTextStream *fp)
     *fp << "user_simplify := " << user_simplify << ":\n";
     *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
 
-    bsaveall = booleanString(action_SaveAll);
+    bsaveall = booleanString(g_action_SaveAll);
 
     name_vectab = getfilename_vectable();
     name_fintab = getfilename_fintable();
@@ -1208,9 +1208,9 @@ void QInputVF::evaluate(void)
         proc = new QProcess(this);
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(finished(int)), p4app,
+        connect(proc, SIGNAL(finished(int)), g_p4app,
                 SLOT(signalEvaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
@@ -1229,7 +1229,7 @@ void QInputVF::evaluate(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            p4app->signalEvaluated(-1);
+            g_p4app->signalEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
         } else {
             evalProcess_ = proc;
@@ -1266,7 +1266,7 @@ void QInputVF::evaluate(void)
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(finished(int)), p4app, SLOT(signalEvaluated(int)));
+        connect(proc, SIGNAL(finished(int)), g_p4app, SLOT(signalEvaluated(int)));
         connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1289,7 +1289,7 @@ void QInputVF::evaluate(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            p4app->signalEvaluated(-1);
+            g_p4app->signalEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
         } else {
             evalProcess_ = proc;
@@ -1347,7 +1347,7 @@ void QInputVF::evaluateCurveTable(void)
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
@@ -1369,7 +1369,7 @@ void QInputVF::evaluateCurveTable(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            p4app->signalEvaluated(-1);
+            g_p4app->signalEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
         } else {
             evalProcess_ = proc;
@@ -1459,7 +1459,7 @@ void QInputVF::finishEvaluation(int exitCode)
         //      processText_->hide();
         if (processText_->isActiveWindow()) {
             if (!evaluatinggcf_)
-                p4startdlg->activateWindow();
+                g_p4stardlg->activateWindow();
             else {
                 if (gcfDlg != nullptr)
                     gcfDlg->activateWindow();
@@ -1486,7 +1486,7 @@ void QInputVF::finishGcfEvaluation(void)
 
         //        QP4Event * e = new QP4Event(
         //        (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
-        //        p4app->postEvent( p4startdlg, e );
+        //        g_p4app->postEvent( g_p4stardlg, e );
     }
 }
 
@@ -1662,8 +1662,8 @@ void QInputVF::createProcessWindow(void)
     outputWindow_ = new QWidget(nullptr);
     outputWindow_->setWindowTitle("Output window");
     outputWindow_->resize(530, 344);
-    if (p4smallicon!=nullptr)
-        outputWindow_->setWindowIcon(*p4smallicon);
+    if (g_p4smallicon!=nullptr)
+        outputWindow_->setWindowIcon(*g_p4smallicon);
 
     QVBoxLayout *vLayout = new QVBoxLayout(outputWindow_);
     vLayout->setSpacing(3);
@@ -1674,7 +1674,7 @@ void QInputVF::createProcessWindow(void)
     processText_ = new QTextEdit(outputWindow_);
     processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
     processText_->setWordWrapMode(QTextOption::WrapAnywhere);
-    processText_->setFont(*(p4app->courierFont_));
+    processText_->setFont(*(g_p4app->courierFont_));
     processText_->setLineWrapColumnOrWidth(82);
     processText_->setReadOnly(true);
     processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1684,7 +1684,7 @@ void QInputVF::createProcessWindow(void)
     hLayout->setSpacing(6);
 
     terminateProcessButton_ = new QPushButton("Terminate");
-    terminateProcessButton_->setFont(*(p4app->boldFont_));
+    terminateProcessButton_->setFont(*(g_p4app->boldFont_));
     terminateProcessButton_->setToolTip(
         "Terminates the process.  First tries to send a "
         "safe signal to the process.\nIf this does not "
@@ -1693,7 +1693,7 @@ void QInputVF::createProcessWindow(void)
     hLayout->addWidget(terminateProcessButton_);
 
     clearProcessButton_ = new QPushButton("Clear");
-    clearProcessButton_->setFont((*p4app->boldFont_));
+    clearProcessButton_->setFont((*g_p4app->boldFont_));
     clearProcessButton_->setToolTip("Clears this window");
     hLayout->addWidget(clearProcessButton_);
 
@@ -1750,14 +1750,14 @@ bool QInputVF::evaluateGcf(void)
 
         if (evalProcess_ != nullptr) { // re-use process of last GCF
             proc = evalProcess_;
-            disconnect(proc, SIGNAL(finished(int)), p4app, 0);
-            connect(proc, SIGNAL(finished(int)), p4app,
+            disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
                     SLOT(signalGcfEvaluated(int)));
         } else {
             proc = new QProcess(this);
-            connect(proc, SIGNAL(finished(int)), p4app,
+            connect(proc, SIGNAL(finished(int)), g_p4app,
                     SLOT(signalGcfEvaluated(int)));
-            connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                     SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
                     SLOT(readProcessStdout()));
@@ -1787,7 +1787,7 @@ bool QInputVF::evaluateGcf(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            p4app->signalGcfEvaluated(-1);
+            g_p4app->signalGcfEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
             return false;
         } else {
@@ -1820,14 +1820,14 @@ bool QInputVF::evaluateGcf(void)
     QProcess *proc;
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
-        disconnect(proc, SIGNAL(finished(int)), p4app, 0);
-        connect(proc, SIGNAL(finished(int)), p4app,
+        disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+        connect(proc, SIGNAL(finished(int)), g_p4app,
                 SLOT(signalGcfEvaluated(int)));
     } else {
         proc = new QProcess(this);
-        connect(proc, SIGNAL(finished(int)), p4app,
+        connect(proc, SIGNAL(finished(int)), g_p4app,
                 SLOT(signalGcfEvaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
@@ -1850,7 +1850,7 @@ bool QInputVF::evaluateGcf(void)
         evalProcess_ = nullptr;
         evalFile_ = "";
         evalFile2_ = "";
-        p4app->signalGcfEvaluated(-1);
+        g_p4app->signalGcfEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -1981,7 +1981,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
     P4POLYNOM3 f;
     int i;
 
-    f = VFResults.gcf_C_;
+    f = g_VFResults.gcf_C_;
 
     /*if (symbolicpackage_ == PACKAGE_REDUCE) {
         QString filedotred;
@@ -2087,7 +2087,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
 // !=(1,1))
 //
 // same as preparegcf, except for the "u := " and "v := " assignments,
-// and the fact that one always refers to the same function VFResults.gcf_,
+// and the fact that one always refers to the same function g_VFResults.gcf_,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
 
 bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
@@ -2097,7 +2097,7 @@ bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
     P4POLYNOM2 f;
     int i;
 
-    f = VFResults.gcf_;
+    f = g_VFResults.gcf_;
 
     /*if (symbolicpackage_ == PACKAGE_REDUCE) {
         QString filedotred;
@@ -2220,14 +2220,14 @@ bool QInputVF::evaluateCurve(void)
     QProcess *proc;
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
-        disconnect(proc, SIGNAL(finished(int)), p4app, 0);
-        connect(proc, SIGNAL(finished(int)), p4app,
+        disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+        connect(proc, SIGNAL(finished(int)), g_p4app,
                 SLOT(signalCurveEvaluated(int)));
     } else {
         proc = new QProcess(this);
-        connect(proc, SIGNAL(finished(int)), p4app,
+        connect(proc, SIGNAL(finished(int)), g_p4app,
                 SLOT(signalCurveEvaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), p4app,
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
                 SLOT(readProcessStdout()));
@@ -2250,7 +2250,7 @@ bool QInputVF::evaluateCurve(void)
         evalProcess_ = nullptr;
         evalFile_ = "";
         evalFile2_ = "";
-        p4app->signalCurveEvaluated(-1);
+        g_p4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2345,7 +2345,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
     P4POLYNOM3 f;
     int i;
 
-    f = VFResults.curve_C_;
+    f = g_VFResults.curve_C_;
 
     QString mainmaple;
     QString user_platform;
@@ -2411,7 +2411,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
 // !=(1,1))
 //
 // same as preparegcf, except for the "u := " and "v := " assignments,
-// and the fact that one always refers to the same function VFResults.gcf_,
+// and the fact that one always refers to the same function g_VFResults.gcf_,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
 bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 {
@@ -2420,7 +2420,7 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
     P4POLYNOM2 f;
     int i;
 
-    f = VFResults.curve_;
+    f = g_VFResults.curve_;
 
     QString mainmaple;
     QString user_platform;

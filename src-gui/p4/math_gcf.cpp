@@ -28,61 +28,61 @@
 #include <cmath>
 
 // static global variables
-static int GcfTask = EVAL_GCF_NONE;
-static QWinSphere *GcfSphere = nullptr;
-static int GcfDashes = 0;
-static bool GcfError = false;
+static int s_GcfTask = EVAL_GCF_NONE;
+static QWinSphere *s_GcfSphere = nullptr;
+static int s_GcfDashes = 0;
+static bool s_GcfError = false;
 
 // non-static global variables
-orbits_points *last_gcf_point = nullptr;
+orbits_points *g_last_gcf_point = nullptr;
 
 // static functions
 static void insert_gcf_point(double x0, double y0, double z0, int dashes);
-static bool ReadTaskResults(int); // , int, int, int );
+static bool readTaskResults(int); // , int, int, int );
 static bool read_gcf(void (*chart)(double, double, double *));
 
 // function definitions
 bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
 {
-    if (VFResults.gcf_points_ != nullptr) {
+    if (g_VFResults.gcf_points_ != nullptr) {
         sp->prepareDrawing();
-        draw_gcf(sp, VFResults.gcf_points_, CBACKGROUND, GcfDashes);
+        draw_gcf(sp, g_VFResults.gcf_points_, CBACKGROUND, s_GcfDashes);
         sp->finishDrawing();
-        VFResults.deleteOrbitPoint(VFResults.gcf_points_);
-        VFResults.gcf_points_ = nullptr;
+        g_VFResults.deleteOrbitPoint(g_VFResults.gcf_points_);
+        g_VFResults.gcf_points_ = nullptr;
     }
 
-    if (VFResults.plweights_)
-        GcfTask = EVAL_GCF_LYP_R2;
+    if (g_VFResults.plweights_)
+        s_GcfTask = EVAL_GCF_LYP_R2;
     else
-        GcfTask = EVAL_GCF_R2;
+        s_GcfTask = EVAL_GCF_R2;
 
-    GcfError = false;
-    GcfSphere = sp;
-    GcfDashes = dashes;
-    return runTask(GcfTask, points, precis);
+    s_GcfError = false;
+    s_GcfSphere = sp;
+    s_GcfDashes = dashes;
+    return runTask(s_GcfTask, points, precis);
 }
 
 bool evalGcfContinue(int points, int prec) // returns true when finished.  Then
                                            // run EvalGCfFinish to see if error
                                            // occurred or not
 {
-    if (GcfTask == EVAL_GCF_NONE)
+    if (s_GcfTask == EVAL_GCF_NONE)
         return true;
 
-    if (!ReadTaskResults(GcfTask)) // , points, prec, memory ) )
+    if (!readTaskResults(s_GcfTask)) // , points, prec, memory ) )
     {
-        GcfError = true;
+        s_GcfError = true;
         return true;
     }
-    GcfTask++;
-    if (GcfTask == EVAL_GCF_FINISHPOINCARE ||
-        GcfTask == EVAL_GCF_FINISHLYAPUNOV) {
+    s_GcfTask++;
+    if (s_GcfTask == EVAL_GCF_FINISHPOINCARE ||
+        s_GcfTask == EVAL_GCF_FINISHLYAPUNOV) {
         return true;
     }
 
-    if (!runTask(GcfTask, points, prec)) {
-        GcfError = true;
+    if (!runTask(s_GcfTask, points, prec)) {
+        s_GcfError = true;
         return true;
     }
 
@@ -91,15 +91,15 @@ bool evalGcfContinue(int points, int prec) // returns true when finished.  Then
 
 bool evalGcfFinish(void) // return false in case an error occured
 {
-    if (GcfTask != EVAL_GCF_NONE) {
-        GcfSphere->prepareDrawing();
-        draw_gcf(GcfSphere, VFResults.gcf_points_, CSING, 1);
-        GcfSphere->finishDrawing();
+    if (s_GcfTask != EVAL_GCF_NONE) {
+        s_GcfSphere->prepareDrawing();
+        draw_gcf(s_GcfSphere, g_VFResults.gcf_points_, CSING, 1);
+        s_GcfSphere->finishDrawing();
 
-        GcfTask = EVAL_GCF_NONE;
+        s_GcfTask = EVAL_GCF_NONE;
 
-        if (GcfError) {
-            GcfError = false;
+        if (s_GcfError) {
+            s_GcfError = false;
             return false;
         }
     }
@@ -112,36 +112,36 @@ bool runTask(int task, int points, int prec)
 
     switch (task) {
     case EVAL_GCF_R2:
-        value = ThisVF->prepareGcf(VFResults.gcf_, -1, 1, prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.gcf_, -1, 1, prec, points);
         break;
     case EVAL_GCF_U1:
-        value = ThisVF->prepareGcf(VFResults.gcf_U1_, 0, 1, prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U1_, 0, 1, prec, points);
         break;
     case EVAL_GCF_V1:
-        value = ThisVF->prepareGcf(VFResults.gcf_U1_, -1, 0, prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U1_, -1, 0, prec, points);
         break;
     case EVAL_GCF_U2:
-        value = ThisVF->prepareGcf(VFResults.gcf_U2_, 0, 1, prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U2_, 0, 1, prec, points);
         break;
     case EVAL_GCF_V2:
-        value = ThisVF->prepareGcf(VFResults.gcf_U2_, -1, 0, prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U2_, -1, 0, prec, points);
         break;
     case EVAL_GCF_LYP_R2:
-        value = ThisVF->prepareGcf_LyapunovR2(prec, points);
+        value = g_ThisVF->prepareGcf_LyapunovR2(prec, points);
         break;
     case EVAL_GCF_CYL1:
-        value = ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points);
+        value = g_ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points);
         break;
     case EVAL_GCF_CYL2:
         value =
-            ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec, points);
+            g_ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec, points);
         break;
     case EVAL_GCF_CYL3:
-        value = ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4, prec,
+        value = g_ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4, prec,
                                                points);
         break;
     case EVAL_GCF_CYL4:
-        value = ThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
+        value = g_ThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
                                                points);
         break;
     default:
@@ -150,7 +150,7 @@ bool runTask(int task, int points, int prec)
     }
 
     if (value)
-        return ThisVF->evaluateGcf();
+        return g_ThisVF->evaluateGcf();
     else
         return false;
 }
@@ -160,7 +160,7 @@ void rplane_plsphere0(double x, double y, double *pcoord)
     R2_to_plsphere(x * cos(y), x * sin(y), pcoord);
 }
 
-static bool ReadTaskResults(int task) // , int points, int prec, int memory )
+static bool readTaskResults(int task) // , int points, int prec, int memory )
 {
     bool value;
 
@@ -222,21 +222,21 @@ void draw_gcf(QWinSphere *spherewnd, struct orbits_points *sep, int color,
 
 static void insert_gcf_point(double x0, double y0, double z0, int dashes)
 {
-    if (VFResults.gcf_points_ != nullptr) {
-        last_gcf_point->next_point = new orbits_points;
-        last_gcf_point = last_gcf_point->next_point;
+    if (g_VFResults.gcf_points_ != nullptr) {
+        g_last_gcf_point->next_point = new orbits_points;
+        g_last_gcf_point = g_last_gcf_point->next_point;
     } else {
-        last_gcf_point = new orbits_points;
-        VFResults.gcf_points_ = last_gcf_point;
+        g_last_gcf_point = new orbits_points;
+        g_VFResults.gcf_points_ = g_last_gcf_point;
     }
 
-    last_gcf_point->pcoord[0] = x0;
-    last_gcf_point->pcoord[1] = y0;
-    last_gcf_point->pcoord[2] = z0;
+    g_last_gcf_point->pcoord[0] = x0;
+    g_last_gcf_point->pcoord[1] = y0;
+    g_last_gcf_point->pcoord[2] = z0;
 
-    last_gcf_point->dashes = dashes;
-    last_gcf_point->color = CSING;
-    last_gcf_point->next_point = nullptr;
+    g_last_gcf_point->dashes = dashes;
+    g_last_gcf_point->color = CSING;
+    g_last_gcf_point->next_point = nullptr;
 }
 
 static bool read_gcf(void (*chart)(double, double, double *))
@@ -248,15 +248,15 @@ static bool read_gcf(void (*chart)(double, double, double *))
     double pcoord[3];
     int d, c;
 
-    fp = fopen(QFile::encodeName(ThisVF->getfilename_gcf()), "r");
+    fp = fopen(QFile::encodeName(g_ThisVF->getfilename_gcf()), "r");
     if (fp == nullptr)
         return false;
 
-    if (ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
+    if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
         // search the x-label, and check for error.
 
         FILE *fp2;
-        fp2 = fopen(QFile::encodeName(ThisVF->getfilename_gcfresults()), "r");
+        fp2 = fopen(QFile::encodeName(g_ThisVF->getfilename_gcfresults()), "r");
         if (fp == nullptr) {
             fclose(fp);
             return false;
@@ -332,7 +332,7 @@ static bool read_gcf(void (*chart)(double, double, double *))
                 chart(x, y, pcoord);
                 insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
                 // d=1;
-                d = GcfDashes;
+                d = s_GcfDashes;
             }
             for (c = getc(fp); isspace(c);)
                 c = getc(fp);

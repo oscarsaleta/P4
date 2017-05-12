@@ -47,27 +47,27 @@ class QLimitCyclesDlg : public QWidget
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
 
-    QPushButton *btn_start;
-    QPushButton *btn_cancel;
-    QPushButton *btn_delall;
-    QPushButton *btn_dellast;
+    QPushButton *btn_start_;
+    QPushButton *btn_cancel_;
+    QPushButton *btn_delall_;
+    QPushButton *btn_dellast_;
 
-    QLineEdit *edt_x0;
-    QLineEdit *edt_y0;
-    QLineEdit *edt_x1;
-    QLineEdit *edt_y1;
-    QLineEdit *edt_grid;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_y0_;
+    QLineEdit *edt_x1_;
+    QLineEdit *edt_y1_;
+    QLineEdit *edt_grid_;
 
-    QSpinBox *spin_numpoints;
+    QSpinBox *spin_numpoints_;
 
     QBoxLayout *mainLayout_;
 
     double selected_x0_;
     double selected_y0_;
-    double selected_x1;
-    double selected_y1;
-    double selected_grid;
-    int selected_numpoints;
+    double selected_x1_;
+    double selected_y1_;
+    double selected_grid_;
+    int selected_numpoints_;
 
   public slots:
     void onbtn_start(void);
