@@ -340,28 +340,28 @@ class QVFStudy : public QObject
 
     // Greatest common factor if present:
 
-    P4POLYNOM2 gcf;
-    P4POLYNOM2 gcf_U1;
-    P4POLYNOM2 gcf_U2;
-    P4POLYNOM2 gcf_V1;
-    P4POLYNOM2 gcf_V2;
-    P4POLYNOM3 gcf_C;
+    P4POLYNOM2 gcf_;
+    P4POLYNOM2 gcf_U1_;
+    P4POLYNOM2 gcf_U2_;
+    P4POLYNOM2 gcf_V1_;
+    P4POLYNOM2 gcf_V2_;
+    P4POLYNOM3 gcf_C_;
 
-    orbits_points *gcf_points;
+    orbits_points *gcf_points_;
 
     // one curve to plot (for now, maybe later will be a vector)
-    P4POLYNOM2 curve;
-    P4POLYNOM2 curve_U1;
-    P4POLYNOM2 curve_U2;
-    P4POLYNOM2 curve_V1;
-    P4POLYNOM2 curve_V2;
-    P4POLYNOM3 curve_C;
+    P4POLYNOM2 curve_;
+    P4POLYNOM2 curve_U1_;
+    P4POLYNOM2 curve_U2_;
+    P4POLYNOM2 curve_V1_;
+    P4POLYNOM2 curve_V2_;
+    P4POLYNOM3 curve_C_;
 
-    orbits_points *curve_points;
+    orbits_points *curve_points_;
 
     // limit cycles
 
-    orbits *first_lim_cycle;
+    orbits *first_lim_cycle_;
     orbits *first_orbit;
 
     // ------ Configuration

@@ -67,8 +67,8 @@ class QInputVF : public QObject
 
     QString xdot;
     QString ydot;
-    QString gcf;
-    QString curve;
+    QString gcf_;
+    QString curve_;
     QString evalFile_;
     QString evalFile2_;
 

@@ -137,7 +137,7 @@ void QInputVF::reset(void)
 
     xdot = DEFAULTXDOT;
     ydot = DEFAULTYDOT;
-    gcf = DEFAULTGCF;
+    gcf_ = DEFAULTGCF;
 
     numparams = 0;
     for (int i = 0; i < MAXNUMPARAMS; i++) {
@@ -224,14 +224,14 @@ bool QInputVF::load(void)
         fclose(fp);
         return false;
     }
-    gcf = scanbuf;
+    gcf_ = scanbuf;
 
     if (xdot == "(null)")
         xdot = "";
     if (ydot == "(null)")
         ydot = "";
-    if (gcf == "(null)")
-        gcf = "";
+    if (gcf_ == "(null)")
+        gcf_ = "";
     if (x0 == "(null)")
         x0 = "";
     if (y0 == "(null)")
@@ -399,10 +399,10 @@ bool QInputVF::save(void)
         fprintf(fp, "%s\n", (const char *)s);
     }
 
-    if (gcf.length() == 0)
+    if (gcf_.length() == 0)
         fprintf(fp, "%s\n", "(null)");
     else {
-        s = gcf.toLatin1();
+        s = gcf_.toLatin1();
         fprintf(fp, "%s\n", (const char *)s);
     }
 
@@ -659,7 +659,7 @@ void QInputVF::prepareMapleParameters(QTextStream *fp)
 
     myxdot = convertReduceUserParameterLabels(xdot);
     myydot = convertReduceUserParameterLabels(ydot);
-    mygcf = convertReduceUserParameterLabels(gcf);
+    mygcf = convertReduceUserParameterLabels(gcf_);
 
     *fp << "f:={" << myxdot << "," << myydot << "}$\n";
     *fp << "gcf:=" << mygcf << "$\n";
@@ -689,7 +689,7 @@ void QInputVF::prepareMapleVectorField(QTextStream *fp)
 
     myxdot = convertMapleUserParameterLabels(xdot);
     myydot = convertMapleUserParameterLabels(ydot);
-    mygcf = convertMapleUserParameterLabels(gcf);
+    mygcf = convertMapleUserParameterLabels(gcf_);
 
     *fp << "user_f := [ " << myxdot << ", " << myydot << " ]:\n";
     *fp << "user_gcf := " << mygcf << ":\n";
@@ -719,7 +719,7 @@ void QInputVF::prepareMapleCurve(QTextStream *fp)
     QString val;
     int k;
 
-    mycurve = convertMapleUserParameterLabels(curve);
+    mycurve = convertMapleUserParameterLabels(curve_);
     *fp << "user_curve := " << mycurve << ":\n";
 
     for (k = 0; k < numparams; k++) {
@@ -1981,7 +1981,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
     P4POLYNOM3 f;
     int i;
 
-    f = VFResults.gcf_C;
+    f = VFResults.gcf_C_;
 
     /*if (symbolicpackage == PACKAGE_REDUCE) {
         QString filedotred;
@@ -2087,7 +2087,7 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
 // !=(1,1))
 //
 // same as preparegcf, except for the "u := " and "v := " assignments,
-// and the fact that one always refers to the same function VFResults.gcf,
+// and the fact that one always refers to the same function VFResults.gcf_,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
 
 bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
@@ -2097,7 +2097,7 @@ bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
     P4POLYNOM2 f;
     int i;
 
-    f = VFResults.gcf;
+    f = VFResults.gcf_;
 
     /*if (symbolicpackage == PACKAGE_REDUCE) {
         QString filedotred;
@@ -2345,7 +2345,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
     P4POLYNOM3 f;
     int i;
 
-    f = VFResults.curve_C;
+    f = VFResults.curve_C_;
 
     QString mainmaple;
     QString user_platform;
@@ -2411,7 +2411,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
 // !=(1,1))
 //
 // same as preparegcf, except for the "u := " and "v := " assignments,
-// and the fact that one always refers to the same function VFResults.gcf,
+// and the fact that one always refers to the same function VFResults.gcf_,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
 bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 {
@@ -2420,7 +2420,7 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
     P4POLYNOM2 f;
     int i;
 
-    f = VFResults.curve;
+    f = VFResults.curve_;
 
     QString mainmaple;
     QString user_platform;

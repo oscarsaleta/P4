@@ -44,12 +44,12 @@ static bool read_curve(void (*chart)(double, double, double *));
 // function definitions
 bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points)
 {
-    if (VFResults.curve_points != nullptr) {
+    if (VFResults.curve_points_ != nullptr) {
         sp->prepareDrawing();
-        draw_curve(sp, VFResults.curve_points, CBACKGROUND, CurveDashes);
+        draw_curve(sp, VFResults.curve_points_, CBACKGROUND, CurveDashes);
         sp->finishDrawing();
-        VFResults.deleteOrbitPoint(VFResults.curve_points);
-        VFResults.curve_points = nullptr;
+        VFResults.deleteOrbitPoint(VFResults.curve_points_);
+        VFResults.curve_points_ = nullptr;
     }
 
     if (VFResults.plweights_)
@@ -93,7 +93,7 @@ bool evalCurveFinish(void) // return false in case an error occured
 {
     if (CurveTask != EVAL_CURVE_NONE) {
         CurveSphere->prepareDrawing();
-        draw_curve(CurveSphere, VFResults.curve_points, CCURV, 1);
+        draw_curve(CurveSphere, VFResults.curve_points_, CCURV, 1);
         CurveSphere->finishDrawing();
 
         CurveTask = EVAL_CURVE_NONE;
@@ -112,23 +112,23 @@ bool runTaskCurve(int task, int precision, int points)
 
     switch (task) {
     case EVAL_CURVE_R2:
-        value = ThisVF->prepareCurve(VFResults.curve, -1, 1, precision, points);
+        value = ThisVF->prepareCurve(VFResults.curve_, -1, 1, precision, points);
         break;
     case EVAL_CURVE_U1:
         value =
-            ThisVF->prepareCurve(VFResults.curve_U1, 0, 1, precision, points);
+            ThisVF->prepareCurve(VFResults.curve_U1_, 0, 1, precision, points);
         break;
     case EVAL_CURVE_V1:
         value =
-            ThisVF->prepareCurve(VFResults.curve_U1, -1, 0, precision, points);
+            ThisVF->prepareCurve(VFResults.curve_U1_, -1, 0, precision, points);
         break;
     case EVAL_CURVE_U2:
         value =
-            ThisVF->prepareCurve(VFResults.curve_U2, 0, 1, precision, points);
+            ThisVF->prepareCurve(VFResults.curve_U2_, 0, 1, precision, points);
         break;
     case EVAL_CURVE_V2:
         value =
-            ThisVF->prepareCurve(VFResults.curve_U2, -1, 0, precision, points);
+            ThisVF->prepareCurve(VFResults.curve_U2_, -1, 0, precision, points);
         break;
     case EVAL_CURVE_LYP_R2:
         value = ThisVF->prepareCurve_LyapunovR2(precision, points);
@@ -222,12 +222,12 @@ void draw_curve(QWinSphere *spherewnd, struct orbits_points *sep, int color,
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
-    if (VFResults.curve_points != nullptr) {
+    if (VFResults.curve_points_ != nullptr) {
         last_curve_point->next_point = new orbits_points;
         last_curve_point = last_curve_point->next_point;
     } else {
         last_curve_point = new orbits_points;
-        VFResults.curve_points = last_curve_point;
+        VFResults.curve_points_ = last_curve_point;
     }
 
     last_curve_point->pcoord[0] = x0;

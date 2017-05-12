@@ -44,12 +44,12 @@ static bool read_gcf(void (*chart)(double, double, double *));
 // function definitions
 bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
 {
-    if (VFResults.gcf_points != nullptr) {
+    if (VFResults.gcf_points_ != nullptr) {
         sp->prepareDrawing();
-        draw_gcf(sp, VFResults.gcf_points, CBACKGROUND, GcfDashes);
+        draw_gcf(sp, VFResults.gcf_points_, CBACKGROUND, GcfDashes);
         sp->finishDrawing();
-        VFResults.deleteOrbitPoint(VFResults.gcf_points);
-        VFResults.gcf_points = nullptr;
+        VFResults.deleteOrbitPoint(VFResults.gcf_points_);
+        VFResults.gcf_points_ = nullptr;
     }
 
     if (VFResults.plweights_)
@@ -93,7 +93,7 @@ bool evalGcfFinish(void) // return false in case an error occured
 {
     if (GcfTask != EVAL_GCF_NONE) {
         GcfSphere->prepareDrawing();
-        draw_gcf(GcfSphere, VFResults.gcf_points, CSING, 1);
+        draw_gcf(GcfSphere, VFResults.gcf_points_, CSING, 1);
         GcfSphere->finishDrawing();
 
         GcfTask = EVAL_GCF_NONE;
@@ -112,19 +112,19 @@ bool runTask(int task, int points, int prec)
 
     switch (task) {
     case EVAL_GCF_R2:
-        value = ThisVF->prepareGcf(VFResults.gcf, -1, 1, prec, points);
+        value = ThisVF->prepareGcf(VFResults.gcf_, -1, 1, prec, points);
         break;
     case EVAL_GCF_U1:
-        value = ThisVF->prepareGcf(VFResults.gcf_U1, 0, 1, prec, points);
+        value = ThisVF->prepareGcf(VFResults.gcf_U1_, 0, 1, prec, points);
         break;
     case EVAL_GCF_V1:
-        value = ThisVF->prepareGcf(VFResults.gcf_U1, -1, 0, prec, points);
+        value = ThisVF->prepareGcf(VFResults.gcf_U1_, -1, 0, prec, points);
         break;
     case EVAL_GCF_U2:
-        value = ThisVF->prepareGcf(VFResults.gcf_U2, 0, 1, prec, points);
+        value = ThisVF->prepareGcf(VFResults.gcf_U2_, 0, 1, prec, points);
         break;
     case EVAL_GCF_V2:
-        value = ThisVF->prepareGcf(VFResults.gcf_U2, -1, 0, prec, points);
+        value = ThisVF->prepareGcf(VFResults.gcf_U2_, -1, 0, prec, points);
         break;
     case EVAL_GCF_LYP_R2:
         value = ThisVF->prepareGcf_LyapunovR2(prec, points);
@@ -222,12 +222,12 @@ void draw_gcf(QWinSphere *spherewnd, struct orbits_points *sep, int color,
 
 static void insert_gcf_point(double x0, double y0, double z0, int dashes)
 {
-    if (VFResults.gcf_points != nullptr) {
+    if (VFResults.gcf_points_ != nullptr) {
         last_gcf_point->next_point = new orbits_points;
         last_gcf_point = last_gcf_point->next_point;
     } else {
         last_gcf_point = new orbits_points;
-        VFResults.gcf_points = last_gcf_point;
+        VFResults.gcf_points_ = last_gcf_point;
     }
 
     last_gcf_point->pcoord[0] = x0;

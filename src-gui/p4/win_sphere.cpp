@@ -1466,12 +1466,12 @@ void QWinSphere::plotSeparatrices(void)
 
 void QWinSphere::plotGcf(void)
 {
-    draw_gcf(this, VFResults.gcf_points, CSING, 1);
+    draw_gcf(this, VFResults.gcf_points_, CSING, 1);
 }
 
 void QWinSphere::plotCurve(void)
 {
-    draw_curve(this, VFResults.curve_points, CCURV, 1);
+    draw_curve(this, VFResults.curve_points_, CCURV, 1);
 }
 
 // -----------------------------------------------------------------------
@@ -2105,10 +2105,10 @@ void QWinSphere::printGcf(void)
 {
     QString comment;
 
-    if (VFResults.gcf_points != nullptr) {
+    if (VFResults.gcf_points_ != nullptr) {
         comment = "Printing Greatest common factor:";
         print_comment(comment);
-        draw_gcf(this, VFResults.gcf_points, CSING, 1);
+        draw_gcf(this, VFResults.gcf_points_, CSING, 1);
     }
 }
 
@@ -2116,10 +2116,10 @@ void QWinSphere::printCurve(void)
 {
     QString comment;
 
-    if (VFResults.curve_points != nullptr) {
+    if (VFResults.curve_points_ != nullptr) {
         comment = "Printing Greatest common factor:";
         print_comment(comment);
-        draw_curve(this, VFResults.curve_points, CCURV, 1);
+        draw_curve(this, VFResults.curve_points_, CCURV, 1);
     }
 }
 
@@ -2247,7 +2247,7 @@ void QWinSphere::printLimitCycles(void)
     int i;
     i = 1;
 
-    for (orbit = VFResults.first_lim_cycle; orbit != nullptr;
+    for (orbit = VFResults.first_lim_cycle_; orbit != nullptr;
          orbit = orbit->next_orbit) {
         s.sprintf("Starting Limit Cycle %d", i++);
         print_comment(s);

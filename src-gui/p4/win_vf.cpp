@@ -50,7 +50,7 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
     ylabel->setFont(*(p4app->boldFont_));
     ylabel->setBuddy(edt_yprime);
 
-    edt_gcf = new QLineEdit(ThisVF->gcf, this);
+    edt_gcf = new QLineEdit(ThisVF->gcf_, this);
     QLabel *glabel = new QLabel("&Gcf: ", this);
     glabel->setFont(*(p4app->boldFont_));
     glabel->setBuddy(edt_gcf);
@@ -218,10 +218,10 @@ void QVectorFieldDlg::GetDataFromDlg(void)
     gcf = gcf.trimmed();
 
     if (xdot.compare(ThisVF->xdot) || ydot.compare(ThisVF->ydot) ||
-        gcf.compare(ThisVF->gcf)) {
+        gcf.compare(ThisVF->gcf_)) {
         ThisVF->xdot = xdot;
         ThisVF->ydot = ydot;
-        ThisVF->gcf = gcf;
+        ThisVF->gcf_ = gcf;
         if (ThisVF->changed == false) {
             ThisVF->changed = true;
             p4app->signalChanged();
@@ -236,7 +236,7 @@ void QVectorFieldDlg::UpdateDlgData(void)
 {
     edt_xprime->setText(ThisVF->xdot);
     edt_yprime->setText(ThisVF->ydot);
-    edt_gcf->setText(ThisVF->gcf);
+    edt_gcf->setText(ThisVF->gcf_);
     spin_numparams->setValue(ThisVF->numparams);
 
     if (params != nullptr) {

@@ -67,17 +67,17 @@ QVFStudy::QVFStudy()
 
     // initialize GCF:
 
-    gcf = nullptr;
-    gcf_U1 = nullptr;
-    gcf_U2 = nullptr;
-    gcf_V1 = nullptr;
-    gcf_V2 = nullptr;
-    gcf_C = nullptr;
-    gcf_points = nullptr;
+    gcf_ = nullptr;
+    gcf_U1_ = nullptr;
+    gcf_U2_ = nullptr;
+    gcf_V1_ = nullptr;
+    gcf_V2_ = nullptr;
+    gcf_C_ = nullptr;
+    gcf_points_ = nullptr;
 
     // initialize limit cycles & orbits
 
-    first_lim_cycle = nullptr;
+    first_lim_cycle_ = nullptr;
     first_orbit = nullptr;
     current_orbit = nullptr;
 
@@ -165,38 +165,38 @@ void QVFStudy::deleteVF()
     first_de_point_ = nullptr;
 
     // Delete GCF:
-    delete_term2(gcf);
-    delete_term2(gcf_U1);
-    delete_term2(gcf_U2);
-    delete_term2(gcf_V1);
-    delete_term2(gcf_V2);
-    delete_term3(gcf_C);
-    deleteOrbitPoint(gcf_points);
+    delete_term2(gcf_);
+    delete_term2(gcf_U1_);
+    delete_term2(gcf_U2_);
+    delete_term2(gcf_V1_);
+    delete_term2(gcf_V2_);
+    delete_term3(gcf_C_);
+    deleteOrbitPoint(gcf_points_);
 
-    gcf = nullptr;
-    gcf_U1 = nullptr;
-    gcf_U2 = nullptr;
-    gcf_V1 = nullptr;
-    gcf_V2 = nullptr;
-    gcf_C = nullptr;
-    gcf_points = nullptr;
+    gcf_ = nullptr;
+    gcf_U1_ = nullptr;
+    gcf_U2_ = nullptr;
+    gcf_V1_ = nullptr;
+    gcf_V2_ = nullptr;
+    gcf_C_ = nullptr;
+    gcf_points_ = nullptr;
 
     // Delete curve:
-    delete_term2(curve);
-    delete_term2(curve_U1);
-    delete_term2(curve_U2);
-    delete_term2(curve_V1);
-    delete_term2(curve_V2);
-    delete_term3(curve_C);
-    deleteOrbitPoint(curve_points);
+    delete_term2(curve_);
+    delete_term2(curve_U1_);
+    delete_term2(curve_U2_);
+    delete_term2(curve_V1_);
+    delete_term2(curve_V2_);
+    delete_term3(curve_C_);
+    deleteOrbitPoint(curve_points_);
 
-    curve = nullptr;
-    curve_U1 = nullptr;
-    curve_U2 = nullptr;
-    curve_V1 = nullptr;
-    curve_V2 = nullptr;
-    curve_C = nullptr;
-    curve_points = nullptr;
+    curve_ = nullptr;
+    curve_U1_ = nullptr;
+    curve_U2_ = nullptr;
+    curve_V1_ = nullptr;
+    curve_V2_ = nullptr;
+    curve_C_ = nullptr;
+    curve_points_ = nullptr;
 
     // Delete all orbits
     deleteOrbit(first_orbit);
@@ -204,8 +204,8 @@ void QVFStudy::deleteVF()
     current_orbit = nullptr;
 
     // Delete limit cycles
-    deleteLimitCycle(first_lim_cycle);
-    first_lim_cycle = nullptr;
+    deleteLimitCycle(first_lim_cycle_);
+    first_lim_cycle_ = nullptr;
 
     // reset others
     xmin_ = -1.0;
@@ -608,61 +608,61 @@ bool QVFStudy::readGCF(FILE *fp)
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf = new term2;
-        gcf->next_term2 = nullptr;
+        gcf_ = new term2;
+        gcf_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, gcf, N))
+        if (!readTerm2(fp, gcf_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf_U1 = new term2;
-        gcf_U1->next_term2 = nullptr;
+        gcf_U1_ = new term2;
+        gcf_U1_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, gcf_U1, N))
+        if (!readTerm2(fp, gcf_U1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf_U2 = new term2;
-        gcf_U2->next_term2 = nullptr;
+        gcf_U2_ = new term2;
+        gcf_U2_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, gcf_U2, N))
+        if (!readTerm2(fp, gcf_U2_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf_V1 = new term2;
-        gcf_V1->next_term2 = nullptr;
-        if (!readTerm2(fp, gcf_V1, N))
+        gcf_V1_ = new term2;
+        gcf_V1_->next_term2 = nullptr;
+        if (!readTerm2(fp, gcf_V1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        gcf_V2 = new term2;
-        gcf_V2->next_term2 = nullptr;
-        if (!readTerm2(fp, gcf_V2, N))
+        gcf_V2_ = new term2;
+        gcf_V2_->next_term2 = nullptr;
+        if (!readTerm2(fp, gcf_V2_, N))
             return false;
 
         if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            gcf_C = new term3;
-            gcf_C->next_term3 = nullptr;
-            if (!readTerm3(fp, gcf_C, N))
+            gcf_C_ = new term3;
+            gcf_C_->next_term3 = nullptr;
+            if (!readTerm3(fp, gcf_C_, N))
                 return false;
         }
     } else {
-        gcf = nullptr;
-        gcf_U1 = nullptr;
-        gcf_U2 = nullptr;
-        gcf_V1 = nullptr;
-        gcf_V2 = nullptr;
-        gcf_C = nullptr;
+        gcf_ = nullptr;
+        gcf_U1_ = nullptr;
+        gcf_U2_ = nullptr;
+        gcf_V1_ = nullptr;
+        gcf_V2_ = nullptr;
+        gcf_C_ = nullptr;
     }
 
     return true;
@@ -694,61 +694,61 @@ bool QVFStudy::readCurve(QString basename)
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve = new term2;
-        curve->next_term2 = nullptr;
+        curve_ = new term2;
+        curve_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve, N))
+        if (!readTerm2(fp, curve_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U1 = new term2;
-        curve_U1->next_term2 = nullptr;
+        curve_U1_ = new term2;
+        curve_U1_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U1, N))
+        if (!readTerm2(fp, curve_U1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U2 = new term2;
-        curve_U2->next_term2 = nullptr;
+        curve_U2_ = new term2;
+        curve_U2_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U2, N))
+        if (!readTerm2(fp, curve_U2_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_V1 = new term2;
-        curve_V1->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V1, N))
+        curve_V1_ = new term2;
+        curve_V1_->next_term2 = nullptr;
+        if (!readTerm2(fp, curve_V1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        curve_V2 = new term2;
-        curve_V2->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V2, N))
+        curve_V2_ = new term2;
+        curve_V2_->next_term2 = nullptr;
+        if (!readTerm2(fp, curve_V2_, N))
             return false;
 
         if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            curve_C = new term3;
-            curve_C->next_term3 = nullptr;
-            if (!readTerm3(fp, curve_C, N))
+            curve_C_ = new term3;
+            curve_C_->next_term3 = nullptr;
+            if (!readTerm3(fp, curve_C_, N))
                 return false;
         }
     } else {
-        curve = nullptr;
-        curve_U1 = nullptr;
-        curve_U2 = nullptr;
-        curve_V1 = nullptr;
-        curve_V2 = nullptr;
-        curve_C = nullptr;
+        curve_ = nullptr;
+        curve_U1_ = nullptr;
+        curve_U2_ = nullptr;
+        curve_V1_ = nullptr;
+        curve_V2_ = nullptr;
+        curve_C_ = nullptr;
     }
 
     return true;
@@ -1469,27 +1469,27 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         ok = false;
         switch (point->chart) {
         case CHART_R2:
-            if (eval_term2(gcf, y) < 0)
+            if (eval_term2(gcf_, y) < 0)
                 ok = true;
             break;
         case CHART_U1:
-            if (eval_term2(gcf_U1, y) < 0)
+            if (eval_term2(gcf_U1_, y) < 0)
                 ok = true;
             break;
         case CHART_V1:
             if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V1, y) < 0)
+            if (eval_term2(gcf_V1_, y) < 0)
                 ok = true;
             break;
         case CHART_U2:
-            if (eval_term2(gcf_U2, y) < 0)
+            if (eval_term2(gcf_U2_, y) < 0)
                 ok = true;
             break;
         case CHART_V2:
             if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V2, y) < 0)
+            if (eval_term2(gcf_V2_, y) < 0)
                 ok = true;
             break;
         }
@@ -1595,12 +1595,12 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
 
     switch (point->chart) {
     case CHART_R2:
-        if (eval_term2(gcf, y) < 0)
+        if (eval_term2(gcf_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U1:
-        if (eval_term2(gcf_U1, y) < 0)
+        if (eval_term2(gcf_U1_, y) < 0)
             point->stable *= -1;
         break;
 
@@ -1608,12 +1608,12 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
         if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
-        if (eval_term2(gcf_V1, y) < 0)
+        if (eval_term2(gcf_V1_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U2:
-        if (eval_term2(gcf_U2, y) < 0)
+        if (eval_term2(gcf_U2_, y) < 0)
             point->stable *= -1;
         break;
 
@@ -1621,7 +1621,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
         if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
-        if (eval_term2(gcf_V2, y) < 0)
+        if (eval_term2(gcf_V2_, y) < 0)
             point->stable *= -1;
         break;
     }
@@ -1680,31 +1680,31 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
 
         switch (point->chart) {
         case CHART_R2:
-            if (eval_term2(gcf, y) < 0)
+            if (eval_term2(gcf_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_U1:
-            if (eval_term2(gcf_U1, y) < 0)
+            if (eval_term2(gcf_U1_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_V1:
             if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V1, y) < 0)
+            if (eval_term2(gcf_V1_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_U2:
-            if (eval_term2(gcf_U2, y) < 0)
+            if (eval_term2(gcf_U2_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_V2:
             if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V2, y) < 0)
+            if (eval_term2(gcf_V2_, y) < 0)
                 point->type *= -1;
             break;
         }
@@ -1844,12 +1844,12 @@ bool QVFStudy::readNodePoint(FILE *fp)
 
     switch (point->chart) {
     case CHART_R2:
-        if (eval_term2(gcf, y) < 0)
+        if (eval_term2(gcf_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U1:
-        if (eval_term2(gcf_U1, y) < 0)
+        if (eval_term2(gcf_U1_, y) < 0)
             point->stable *= -1;
         break;
 
@@ -1857,19 +1857,19 @@ bool QVFStudy::readNodePoint(FILE *fp)
         if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
-        if (eval_term2(gcf_V1, y) < 0)
+        if (eval_term2(gcf_V1_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U2:
-        if (eval_term2(gcf_U2, y) < 0)
+        if (eval_term2(gcf_U2_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_V2:
         if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
-        if (eval_term2(gcf_V2, y) < 0)
+        if (eval_term2(gcf_V2_, y) < 0)
             point->stable *= -1;
         break;
     }
@@ -2220,12 +2220,12 @@ void QVFStudy::dump(QString basename, QString info)
     DUMP((" "))
     DUMP(("Greatest Common Factor"))
     DUMP(("----------------------"))
-    DUMP(("  Finite chart:   %s", dumpPoly2(gcf, "x", "y")))
-    DUMP(("  U1 chart:       %s", dumpPoly2(gcf_U1, "x", "y")))
-    DUMP(("  U2 chart:       %s", dumpPoly2(gcf_U2, "x", "y")))
-    DUMP(("  V1 chart:       %s", dumpPoly2(gcf_V1, "x", "y")))
-    DUMP(("  V2 chart:       %s", dumpPoly2(gcf_V2, "x", "y")))
-    DUMP(("  Cylinder chart: %s", dumpPoly3(gcf_C, "r", "Co", "Si")))
+    DUMP(("  Finite chart:   %s", dumpPoly2(gcf_, "x", "y")))
+    DUMP(("  U1 chart:       %s", dumpPoly2(gcf_U1_, "x", "y")))
+    DUMP(("  U2 chart:       %s", dumpPoly2(gcf_U2_, "x", "y")))
+    DUMP(("  V1 chart:       %s", dumpPoly2(gcf_V1_, "x", "y")))
+    DUMP(("  V2 chart:       %s", dumpPoly2(gcf_V2_, "x", "y")))
+    DUMP(("  Cylinder chart: %s", dumpPoly3(gcf_C_, "r", "Co", "Si")))
     DUMP((" "))
     DUMP(("Singular points - summary"))
     DUMP(("-------------------------"))

@@ -376,7 +376,7 @@ void QPlotWnd::configure(void)
     Curve_Window->reset();
 
     sphere->update();
-    if (VFResults.gcf == nullptr) // reconfigure GCF button
+    if (VFResults.gcf_ == nullptr) // reconfigure GCF button
         ActGCF->setEnabled(false);
     else
         ActGCF->setEnabled(true);

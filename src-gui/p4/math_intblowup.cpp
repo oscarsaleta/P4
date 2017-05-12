@@ -67,7 +67,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
         switch (chart) {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
-            color = findSepColor2(VFResults.gcf, type, point);
+            color = findSepColor2(VFResults.gcf_, type, point);
             break;
 
         case CHART_U1:
@@ -80,7 +80,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
                         dir *= -1;
                 }
                 type = de_sep->type;
-                color = findSepColor2(VFResults.gcf_U1, type, point);
+                color = findSepColor2(VFResults.gcf_U1_, type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
@@ -95,7 +95,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
                     type = de_sep->type;
 
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-                color = findSepColor2(VFResults.gcf_V1, type, point);
+                color = findSepColor2(VFResults.gcf_V1_, type, point);
             }
             break;
 
@@ -103,7 +103,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
             if (VFResults.plweights_ == false)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(VFResults.gcf_V1, type, point);
+            color = findSepColor2(VFResults.gcf_V1_, type, point);
             break;
 
         case CHART_U2:
@@ -116,7 +116,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
                         dir *= -1;
                 }
                 type = de_sep->type;
-                color = findSepColor2(VFResults.gcf_U2, type, point);
+                color = findSepColor2(VFResults.gcf_U2_, type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
@@ -130,7 +130,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
                 else
                     type = de_sep->type;
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-                color = findSepColor2(VFResults.gcf_V2, type, point);
+                color = findSepColor2(VFResults.gcf_V2_, type, point);
             }
             break;
 
@@ -138,7 +138,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
             if (VFResults.plweights_ == false)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(VFResults.gcf_V2, type, point);
+            color = findSepColor2(VFResults.gcf_V2_, type, point);
             break;
 
         default:

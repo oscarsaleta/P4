@@ -137,7 +137,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
         rk78(eval_r_vec_field, y, hhi, h_min, h_max,
              VFResults.config_tolerance);
         R2_to_psphere(y[0], y[1], pcoord);
-        *color = findSepColor2(VFResults.gcf, *type, y);
+        *color = findSepColor2(VFResults.gcf_, *type, y);
     } else {
         theta = atan2(fabs(p1), fabs(p0));
         if ((theta < PI_DIV4) && (theta > -PI_DIV4)) {
@@ -147,7 +147,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                      VFResults.config_tolerance);
                 if (y[1] >= 0 || !VFResults.singinf_) {
                     U1_to_psphere(y[0], y[1], pcoord);
-                    *color = findSepColor2(VFResults.gcf_U1, *type, y);
+                    *color = findSepColor2(VFResults.gcf_U1_, *type, y);
                 } else {
                     VV1_to_psphere(y[0], y[1], pcoord);
                     if (VFResults.dir_vec_field_ == 1) {
@@ -156,7 +156,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                         *type = change_type(*type);
                     }
                     psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], y);
-                    *color = findSepColor2(VFResults.gcf_V1, *type, y);
+                    *color = findSepColor2(VFResults.gcf_V1_, *type, y);
                     *dashes = false;
                 }
             } else {
@@ -165,7 +165,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                      VFResults.config_tolerance);
                 if (y[1] >= 0 || !VFResults.singinf_) {
                     V1_to_psphere(y[0], y[1], pcoord);
-                    *color = findSepColor2(VFResults.gcf_V1, *type, y);
+                    *color = findSepColor2(VFResults.gcf_V1_, *type, y);
                 } else {
                     UU1_to_psphere(y[0], y[1], pcoord);
                     if (VFResults.dir_vec_field_ == 1) {
@@ -174,7 +174,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                         *type = change_type(*type);
                     }
                     psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], y);
-                    *color = findSepColor2(VFResults.gcf_U1, *type, y);
+                    *color = findSepColor2(VFResults.gcf_U1_, *type, y);
                     *dashes = false;
                 }
             }
@@ -185,7 +185,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                      VFResults.config_tolerance);
                 if (y[1] >= 0 || !VFResults.singinf_) {
                     U2_to_psphere(y[0], y[1], pcoord);
-                    *color = findSepColor2(VFResults.gcf_U2, *type, y);
+                    *color = findSepColor2(VFResults.gcf_U2_, *type, y);
                 } else {
                     VV2_to_psphere(y[0], y[1], pcoord);
                     if (VFResults.dir_vec_field_ == 1) {
@@ -194,7 +194,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                         *type = change_type(*type);
                     }
                     psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], y);
-                    *color = findSepColor2(VFResults.gcf_V2, *type, y);
+                    *color = findSepColor2(VFResults.gcf_V2_, *type, y);
                     *dashes = false;
                 }
             } else {
@@ -203,7 +203,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                      VFResults.config_tolerance);
                 if (y[1] >= 0 || !VFResults.singinf_) {
                     V2_to_psphere(y[0], y[1], pcoord);
-                    *color = findSepColor2(VFResults.gcf_V2, *type, y);
+                    *color = findSepColor2(VFResults.gcf_V2_, *type, y);
                 } else {
                     UU2_to_psphere(y[0], y[1], pcoord);
                     if (VFResults.dir_vec_field_ == 1) {
@@ -212,7 +212,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                         *type = change_type(*type);
                     }
                     psphere_to_U2(pcoord[0], pcoord[1], pcoord[2], y);
-                    *color = findSepColor2(VFResults.gcf_U2, *type, y);
+                    *color = findSepColor2(VFResults.gcf_U2_, *type, y);
                     *dashes = false;
                 }
             }
@@ -235,7 +235,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
         rk78(eval_r_vec_field, y, hhi, h_min, h_max,
              VFResults.config_tolerance);
         R2_to_plsphere(y[0], y[1], pcoord);
-        *color = findSepColor2(VFResults.gcf, *type, y);
+        *color = findSepColor2(VFResults.gcf_, *type, y);
     } else {
         y[0] = p1;
         y[1] = p2;
@@ -244,7 +244,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
         if (y[1] >= TWOPI)
             y[1] -= TWOPI;
         cylinder_to_plsphere(y[0], y[1], pcoord);
-        *color = findSepColor3(VFResults.gcf_C, *type, y);
+        *color = findSepColor3(VFResults.gcf_C_, *type, y);
     }
 }
 
@@ -421,27 +421,27 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
     switch (chart) {
     case CHART_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(VFResults.gcf, sep1->type, point);
+        color = findSepColor2(VFResults.gcf_, sep1->type, point);
         break;
     case CHART_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(VFResults.gcf_U1, sep1->type, point);
+        color = findSepColor2(VFResults.gcf_U1_, sep1->type, point);
         break;
     case CHART_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
         if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(VFResults.gcf_V1, sep1->type, point);
+        color = findSepColor2(VFResults.gcf_V1_, sep1->type, point);
         break;
     case CHART_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(VFResults.gcf_U2, sep1->type, point);
+        color = findSepColor2(VFResults.gcf_U2_, sep1->type, point);
         break;
     case CHART_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
         if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(VFResults.gcf_U2, sep1->type, point);
+        color = findSepColor2(VFResults.gcf_U2_, sep1->type, point);
         break;
     default:
         color = 0;
@@ -488,7 +488,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
         switch (chart) {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
-            color = findSepColor2(VFResults.gcf, sep1->type, point);
+            color = findSepColor2(VFResults.gcf_, sep1->type, point);
             break;
         case CHART_U1:
             if (point[1] >= 0 || !VFResults.singinf_) {
@@ -500,7 +500,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
                         dir *= -1;
                 }
                 type = sep1->type;
-                color = findSepColor2(VFResults.gcf_U1, type, point);
+                color = findSepColor2(VFResults.gcf_U1_, type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
@@ -514,14 +514,14 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
                     type = change_type(sep1->type);
                 else
                     type = sep1->type;
-                color = findSepColor2(VFResults.gcf_V1, type, point);
+                color = findSepColor2(VFResults.gcf_V1_, type, point);
             }
             break;
         case CHART_V1:
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
             if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(VFResults.gcf_V1, sep1->type, point);
+            color = findSepColor2(VFResults.gcf_V1_, sep1->type, point);
             break;
         case CHART_U2:
             if (point[1] >= 0 || !VFResults.singinf_) {
@@ -533,7 +533,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
                         dir *= -1;
                 }
                 type = sep1->type;
-                color = findSepColor2(VFResults.gcf_U2, type, point);
+                color = findSepColor2(VFResults.gcf_U2_, type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
@@ -547,14 +547,14 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
                     type = change_type(sep1->type);
                 else
                     type = sep1->type;
-                color = findSepColor2(VFResults.gcf_V2, type, point);
+                color = findSepColor2(VFResults.gcf_V2_, type, point);
             }
             break;
         case CHART_V2:
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
             if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(VFResults.gcf_V2, sep1->type, point);
+            color = findSepColor2(VFResults.gcf_V2_, sep1->type, point);
             break;
         }
 
@@ -652,27 +652,27 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
     switch (chart) {
     case CHART_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(VFResults.gcf, de_sep->type, point);
+        color = findSepColor2(VFResults.gcf_, de_sep->type, point);
         break;
     case CHART_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(VFResults.gcf_U1, de_sep->type, point);
+        color = findSepColor2(VFResults.gcf_U1_, de_sep->type, point);
         break;
     case CHART_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
         if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(VFResults.gcf_V1, de_sep->type, point);
+        color = findSepColor2(VFResults.gcf_V1_, de_sep->type, point);
         break;
     case CHART_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(VFResults.gcf_U2, de_sep->type, point);
+        color = findSepColor2(VFResults.gcf_U2_, de_sep->type, point);
         break;
     case CHART_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
         if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
             psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(VFResults.gcf_V2, de_sep->type, point);
+        color = findSepColor2(VFResults.gcf_V2_, de_sep->type, point);
         break;
     default:
         color = 0;
@@ -694,7 +694,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
         switch (chart) {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
-            color = findSepColor2(VFResults.gcf, de_sep->type, point);
+            color = findSepColor2(VFResults.gcf_, de_sep->type, point);
             break;
         case CHART_U1:
             if (point[1] >= 0 || !VFResults.singinf_) {
@@ -704,7 +704,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
                     ok = true;
                 }
                 type = de_sep->type;
-                color = findSepColor2(VFResults.gcf_U1, type, point);
+                color = findSepColor2(VFResults.gcf_U1_, type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
@@ -716,14 +716,14 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
                     type = change_type(de_sep->type);
                 else
                     type = de_sep->type;
-                color = findSepColor2(VFResults.gcf_V1, type, point);
+                color = findSepColor2(VFResults.gcf_V1_, type, point);
             }
             break;
         case CHART_V1:
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
             if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(VFResults.gcf_V1, de_sep->type, point);
+            color = findSepColor2(VFResults.gcf_V1_, de_sep->type, point);
             break;
         case CHART_U2:
             if (point[1] >= 0 || !VFResults.singinf_) {
@@ -733,7 +733,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
                     ok = true;
                 }
                 type = de_sep->type;
-                color = findSepColor2(VFResults.gcf_U2, type, point);
+                color = findSepColor2(VFResults.gcf_U2_, type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
@@ -745,14 +745,14 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
                     type = change_type(de_sep->type);
                 else
                     type = de_sep->type;
-                color = findSepColor2(VFResults.gcf_V2, type, point);
+                color = findSepColor2(VFResults.gcf_V2_, type, point);
             }
             break;
         case CHART_V2:
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
             if ((VFResults.p_ == 1) && (VFResults.q_ == 1))
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(VFResults.gcf_V2, de_sep->type, point);
+            color = findSepColor2(VFResults.gcf_V2_, de_sep->type, point);
             break;
         }
         copy_x_into_y(pcoord, last_orbit->pcoord);

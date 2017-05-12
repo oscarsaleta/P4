@@ -57,7 +57,7 @@ void integrateOrbit(QWinSphere *sphere, int dir)
     copy_x_into_y(VFResults.current_orbit->pcoord, pcoord);
     MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     if (VFResults.config_kindvf == INTCONFIG_ORIGINAL)
-        if (eval_term2(VFResults.gcf, ucoord) < 0)
+        if (eval_term2(VFResults.gcf_, ucoord) < 0)
             dir = -dir;
 
     if (VFResults.current_orbit->f_orbits == nullptr) {

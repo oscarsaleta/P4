@@ -332,8 +332,8 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
     int dashes, d;
 
     if (VFResults.current_lim_cycle == nullptr) {
-        VFResults.first_lim_cycle = new orbits;
-        VFResults.current_lim_cycle = VFResults.first_lim_cycle;
+        VFResults.first_lim_cycle_ = new orbits;
+        VFResults.current_lim_cycle = VFResults.first_lim_cycle_;
     } else {
         VFResults.current_lim_cycle->next_orbit = new orbits;
         VFResults.current_lim_cycle = VFResults.current_lim_cycle->next_orbit;
@@ -422,7 +422,7 @@ void drawLimitCycles(QWinSphere *spherewnd)
 {
     struct orbits *orbit;
 
-    orbit = VFResults.first_lim_cycle;
+    orbit = VFResults.first_lim_cycle_;
 
     if (orbit != nullptr) {
         do {
@@ -446,11 +446,11 @@ void deleteLastLimitCycle(QWinSphere *spherewnd)
     drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
               spherewnd->spherebgcolor);
 
-    if (VFResults.first_lim_cycle == VFResults.current_lim_cycle) {
-        VFResults.first_lim_cycle = nullptr;
+    if (VFResults.first_lim_cycle_ == VFResults.current_lim_cycle) {
+        VFResults.first_lim_cycle_ = nullptr;
         VFResults.current_lim_cycle = nullptr;
     } else {
-        orbit1 = VFResults.first_lim_cycle;
+        orbit1 = VFResults.first_lim_cycle_;
 
         do {
             VFResults.current_lim_cycle = orbit1;

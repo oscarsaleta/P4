@@ -134,7 +134,7 @@ void QCurveDlg::reset(void)
 
     btn_evaluate_->setEnabled(true);
     btn_plot_->setEnabled(false);
-    if (VFResults.gcf != nullptr)
+    if (VFResults.gcf_ != nullptr)
         btn_delete_->setEnabled(false);
     else
         btn_delete_->setEnabled(true);
@@ -153,7 +153,7 @@ void QCurveDlg::onbtn_evaluate(void)
                                  "with the equation of a curve.\n");
         return;
     }
-    ThisVF->curve = edt_curve_->text().trimmed();
+    ThisVF->curve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
@@ -235,21 +235,21 @@ void QCurveDlg::onbtn_plot(void)
 
 void QCurveDlg::onbtn_delete(void)
 {
-    delete_term2(VFResults.curve);
-    delete_term2(VFResults.curve_U1);
-    delete_term2(VFResults.curve_U2);
-    delete_term2(VFResults.curve_V1);
-    delete_term2(VFResults.curve_V2);
-    delete_term3(VFResults.curve_C);
-    VFResults.deleteOrbitPoint(VFResults.curve_points);
+    delete_term2(VFResults.curve_);
+    delete_term2(VFResults.curve_U1_);
+    delete_term2(VFResults.curve_U2_);
+    delete_term2(VFResults.curve_V1_);
+    delete_term2(VFResults.curve_V2_);
+    delete_term3(VFResults.curve_C_);
+    VFResults.deleteOrbitPoint(VFResults.curve_points_);
 
-    VFResults.curve = nullptr;
-    VFResults.curve_U1 = nullptr;
-    VFResults.curve_U2 = nullptr;
-    VFResults.curve_V1 = nullptr;
-    VFResults.curve_V2 = nullptr;
-    VFResults.curve_C = nullptr;
-    VFResults.curve_points = nullptr;
+    VFResults.curve_ = nullptr;
+    VFResults.curve_U1_ = nullptr;
+    VFResults.curve_U2_ = nullptr;
+    VFResults.curve_V1_ = nullptr;
+    VFResults.curve_V2_ = nullptr;
+    VFResults.curve_C_ = nullptr;
+    VFResults.curve_points_ = nullptr;
 
     mainSphere_->refresh();
     btn_delete_->setEnabled(false);
