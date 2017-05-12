@@ -1253,7 +1253,7 @@ void QInputVF::evaluate(void)
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (outputWindow_ == nullptr || outputWindow_->isVisible() == false)
+        if (outputWindow_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
@@ -1334,7 +1334,7 @@ void QInputVF::evaluateCurveTable(void)
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (outputWindow_ == nullptr || outputWindow_->isVisible() == false)
+        if (outputWindow_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
