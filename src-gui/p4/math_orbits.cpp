@@ -42,43 +42,43 @@ void integrateOrbit(QWinSphere *sphere, int dir)
     if (dir == 0) {
         // continue orbit button has been pressed
 
-        dir = VFResults.current_orbit->current_f_orbits->dir;
+        dir = VFResults.current_orbit_->current_f_orbits->dir;
 
-        copy_x_into_y(VFResults.current_orbit->current_f_orbits->pcoord,
+        copy_x_into_y(VFResults.current_orbit_->current_f_orbits->pcoord,
                       pcoord);
-        VFResults.current_orbit->current_f_orbits->next_point =
+        VFResults.current_orbit_->current_f_orbits->next_point =
             integrate_orbit(sphere, pcoord, VFResults.config_currentstep_, dir,
                             CORBIT, VFResults.config_intpoints_, &sep);
 
-        VFResults.current_orbit->current_f_orbits = sep;
+        VFResults.current_orbit_->current_f_orbits = sep;
         return;
     }
 
-    copy_x_into_y(VFResults.current_orbit->pcoord, pcoord);
+    copy_x_into_y(VFResults.current_orbit_->pcoord, pcoord);
     MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     if (VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
         if (eval_term2(VFResults.gcf_, ucoord) < 0)
             dir = -dir;
 
-    if (VFResults.current_orbit->f_orbits == nullptr) {
-        VFResults.current_orbit->f_orbits =
+    if (VFResults.current_orbit_->f_orbits == nullptr) {
+        VFResults.current_orbit_->f_orbits =
             integrate_orbit(sphere, pcoord, VFResults.config_step_, dir, CORBIT,
                             VFResults.config_intpoints_, &sep);
     } else {
-        VFResults.current_orbit->current_f_orbits->next_point =
+        VFResults.current_orbit_->current_f_orbits->next_point =
             new orbits_points;
-        VFResults.current_orbit->current_f_orbits =
-            VFResults.current_orbit->current_f_orbits->next_point;
+        VFResults.current_orbit_->current_f_orbits =
+            VFResults.current_orbit_->current_f_orbits->next_point;
         copy_x_into_y(pcoord,
-                      VFResults.current_orbit->current_f_orbits->pcoord);
-        VFResults.current_orbit->current_f_orbits->dashes = 0;
-        VFResults.current_orbit->current_f_orbits->color = CORBIT;
-        VFResults.current_orbit->current_f_orbits->dir = dir;
-        VFResults.current_orbit->current_f_orbits->next_point =
+                      VFResults.current_orbit_->current_f_orbits->pcoord);
+        VFResults.current_orbit_->current_f_orbits->dashes = 0;
+        VFResults.current_orbit_->current_f_orbits->color = CORBIT;
+        VFResults.current_orbit_->current_f_orbits->dir = dir;
+        VFResults.current_orbit_->current_f_orbits->next_point =
             integrate_orbit(sphere, pcoord, VFResults.config_step_, dir, CORBIT,
                             VFResults.config_intpoints_, &sep);
     }
-    VFResults.current_orbit->current_f_orbits = sep;
+    VFResults.current_orbit_->current_f_orbits = sep;
 }
 
 // -----------------------------------------------------------------------
@@ -93,20 +93,20 @@ bool startOrbit(QWinSphere *sphere, double x, double y, bool R)
 
     if (VFResults.first_orbit_ == nullptr) {
         VFResults.first_orbit_ = new orbits;
-        VFResults.current_orbit = VFResults.first_orbit_;
+        VFResults.current_orbit_ = VFResults.first_orbit_;
     } else {
-        VFResults.current_orbit->next_orbit = new orbits;
-        VFResults.current_orbit = VFResults.current_orbit->next_orbit;
+        VFResults.current_orbit_->next_orbit = new orbits;
+        VFResults.current_orbit_ = VFResults.current_orbit_->next_orbit;
     }
     if (R)
         MATHFUNC(R2_to_sphere)(x, y, pcoord);
     else
         MATHFUNC(viewcoord_to_sphere)(x, y, pcoord);
 
-    copy_x_into_y(pcoord, VFResults.current_orbit->pcoord);
-    VFResults.current_orbit->color = CORBIT;
-    VFResults.current_orbit->f_orbits = nullptr;
-    VFResults.current_orbit->next_orbit = nullptr;
+    copy_x_into_y(pcoord, VFResults.current_orbit_->pcoord);
+    VFResults.current_orbit_->color = CORBIT;
+    VFResults.current_orbit_->f_orbits = nullptr;
+    VFResults.current_orbit_->next_orbit = nullptr;
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     sphere->drawPoint(ucoord[0], ucoord[1], CORBIT);
@@ -161,25 +161,25 @@ void deleteLastOrbit(QWinSphere *spherewnd)
 {
     struct orbits *orbit1, *orbit2;
 
-    if (VFResults.current_orbit == nullptr)
+    if (VFResults.current_orbit_ == nullptr)
         return;
 
-    orbit2 = VFResults.current_orbit;
+    orbit2 = VFResults.current_orbit_;
     drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
               spherewnd->spherebgcolor);
 
-    if (VFResults.first_orbit_ == VFResults.current_orbit) {
+    if (VFResults.first_orbit_ == VFResults.current_orbit_) {
         VFResults.first_orbit_ = nullptr;
-        VFResults.current_orbit = nullptr;
+        VFResults.current_orbit_ = nullptr;
     } else {
         orbit1 = VFResults.first_orbit_;
 
         do {
-            VFResults.current_orbit = orbit1;
+            VFResults.current_orbit_ = orbit1;
             orbit1 = orbit1->next_orbit;
         } while (orbit1 != orbit2);
 
-        VFResults.current_orbit->next_orbit = nullptr;
+        VFResults.current_orbit_->next_orbit = nullptr;
     }
     VFResults.deleteOrbitPoint(orbit2->f_orbits);
     delete orbit2; // free( orbit2 );

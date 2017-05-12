@@ -79,7 +79,7 @@ QVFStudy::QVFStudy()
 
     first_lim_cycle_ = nullptr;
     first_orbit_ = nullptr;
-    current_orbit = nullptr;
+    current_orbit_ = nullptr;
 
     // initialize others
 
@@ -201,7 +201,7 @@ void QVFStudy::deleteVF()
     // Delete all orbits
     deleteOrbit(first_orbit_);
     first_orbit_ = nullptr;
-    current_orbit = nullptr;
+    current_orbit_ = nullptr;
 
     // Delete limit cycles
     deleteLimitCycle(first_lim_cycle_);

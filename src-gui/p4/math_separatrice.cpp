@@ -784,26 +784,26 @@ void start_plot_saddle_sep(QWinSphere *spherewnd)
     double p[3];
     orbits_points *points;
 
-    draw_sep(spherewnd, VFResults.selected_sep->first_sep_point);
-    if (VFResults.selected_sep->last_sep_point) {
-        copy_x_into_y(VFResults.selected_sep->last_sep_point->pcoord, p);
-        VFResults.selected_sep->last_sep_point->next_point =
+    draw_sep(spherewnd, VFResults.selected_sep_->first_sep_point);
+    if (VFResults.selected_sep_->last_sep_point) {
+        copy_x_into_y(VFResults.selected_sep_->last_sep_point->pcoord, p);
+        VFResults.selected_sep_->last_sep_point->next_point =
             integrate_sep(spherewnd, p, VFResults.config_currentstep_,
-                          VFResults.selected_sep->last_sep_point->dir,
-                          VFResults.selected_sep->last_sep_point->type,
+                          VFResults.selected_sep_->last_sep_point->dir,
+                          VFResults.selected_sep_->last_sep_point->type,
                           VFResults.config_intpoints_, &points);
-        VFResults.selected_sep->last_sep_point = points;
+        VFResults.selected_sep_->last_sep_point = points;
     } else {
-        VFResults.selected_sep->first_sep_point = plot_separatrice(
-            spherewnd, VFResults.selected_saddle_point->x0,
-            VFResults.selected_saddle_point->y0,
-            VFResults.selected_saddle_point->a11,
-            VFResults.selected_saddle_point->a12,
-            VFResults.selected_saddle_point->a21,
-            VFResults.selected_saddle_point->a22,
-            VFResults.selected_saddle_point->epsilon, VFResults.selected_sep,
-            &points, VFResults.selected_saddle_point->chart);
-        VFResults.selected_sep->last_sep_point = points;
+        VFResults.selected_sep_->first_sep_point = plot_separatrice(
+            spherewnd, VFResults.selected_saddle_point_->x0,
+            VFResults.selected_saddle_point_->y0,
+            VFResults.selected_saddle_point_->a11,
+            VFResults.selected_saddle_point_->a12,
+            VFResults.selected_saddle_point_->a21,
+            VFResults.selected_saddle_point_->a22,
+            VFResults.selected_saddle_point_->epsilon, VFResults.selected_sep_,
+            &points, VFResults.selected_saddle_point_->chart);
+        VFResults.selected_sep_->last_sep_point = points;
     }
 }
 
@@ -812,29 +812,29 @@ void cont_plot_saddle_sep(QWinSphere *spherewnd)
     double p[3];
     orbits_points *points;
 
-    copy_x_into_y(VFResults.selected_sep->last_sep_point->pcoord, p);
-    VFResults.selected_sep->last_sep_point->next_point =
+    copy_x_into_y(VFResults.selected_sep_->last_sep_point->pcoord, p);
+    VFResults.selected_sep_->last_sep_point->next_point =
         integrate_sep(spherewnd, p, VFResults.config_currentstep_,
-                      VFResults.selected_sep->last_sep_point->dir,
-                      VFResults.selected_sep->last_sep_point->type,
+                      VFResults.selected_sep_->last_sep_point->dir,
+                      VFResults.selected_sep_->last_sep_point->type,
                       VFResults.config_intpoints_, &points);
-    VFResults.selected_sep->last_sep_point = points;
+    VFResults.selected_sep_->last_sep_point = points;
 }
 
 void plot_next_saddle_sep(QWinSphere *spherewnd)
 {
-    draw_sep(spherewnd, VFResults.selected_sep->first_sep_point);
-    if (!(VFResults.selected_sep = VFResults.selected_sep->next_sep))
-        VFResults.selected_sep = VFResults.selected_saddle_point->separatrices;
+    draw_sep(spherewnd, VFResults.selected_sep_->first_sep_point);
+    if (!(VFResults.selected_sep_ = VFResults.selected_sep_->next_sep))
+        VFResults.selected_sep_ = VFResults.selected_saddle_point_->separatrices;
     start_plot_saddle_sep(spherewnd);
 }
 
 void select_next_saddle_sep(QWinSphere *spherewnd)
 {
-    draw_sep(spherewnd, VFResults.selected_sep->first_sep_point);
-    if (!(VFResults.selected_sep = VFResults.selected_sep->next_sep))
-        VFResults.selected_sep = VFResults.selected_saddle_point->separatrices;
-    draw_selected_sep(spherewnd, VFResults.selected_sep->first_sep_point,
+    draw_sep(spherewnd, VFResults.selected_sep_->first_sep_point);
+    if (!(VFResults.selected_sep_ = VFResults.selected_sep_->next_sep))
+        VFResults.selected_sep_ = VFResults.selected_saddle_point_->separatrices;
+    draw_selected_sep(spherewnd, VFResults.selected_sep_->first_sep_point,
                       CW_SEP);
 }
 
@@ -874,24 +874,24 @@ void start_plot_se_sep(QWinSphere *spherewnd)
     orbits_points *points;
     double p[3];
 
-    draw_sep(spherewnd, VFResults.selected_sep->first_sep_point);
-    if (VFResults.selected_sep->last_sep_point) {
-        copy_x_into_y(VFResults.selected_sep->last_sep_point->pcoord, p);
-        VFResults.selected_sep->last_sep_point->next_point =
+    draw_sep(spherewnd, VFResults.selected_sep_->first_sep_point);
+    if (VFResults.selected_sep_->last_sep_point) {
+        copy_x_into_y(VFResults.selected_sep_->last_sep_point->pcoord, p);
+        VFResults.selected_sep_->last_sep_point->next_point =
             integrate_sep(spherewnd, p, VFResults.config_currentstep_,
-                          VFResults.selected_sep->last_sep_point->dir,
-                          VFResults.selected_sep->last_sep_point->type,
+                          VFResults.selected_sep_->last_sep_point->dir,
+                          VFResults.selected_sep_->last_sep_point->type,
                           VFResults.config_intpoints_, &points);
-        VFResults.selected_sep->last_sep_point = points;
+        VFResults.selected_sep_->last_sep_point = points;
     } else {
-        VFResults.selected_sep->first_sep_point = plot_separatrice(
-            spherewnd, VFResults.selected_se_point->x0,
-            VFResults.selected_se_point->y0, VFResults.selected_se_point->a11,
-            VFResults.selected_se_point->a12, VFResults.selected_se_point->a21,
-            VFResults.selected_se_point->a22,
-            VFResults.selected_se_point->epsilon, VFResults.selected_sep,
-            &points, VFResults.selected_se_point->chart);
-        VFResults.selected_sep->last_sep_point = points;
+        VFResults.selected_sep_->first_sep_point = plot_separatrice(
+            spherewnd, VFResults.selected_se_point_->x0,
+            VFResults.selected_se_point_->y0, VFResults.selected_se_point_->a11,
+            VFResults.selected_se_point_->a12, VFResults.selected_se_point_->a21,
+            VFResults.selected_se_point_->a22,
+            VFResults.selected_se_point_->epsilon, VFResults.selected_sep_,
+            &points, VFResults.selected_se_point_->chart);
+        VFResults.selected_sep_->last_sep_point = points;
     }
 }
 
@@ -900,29 +900,29 @@ void cont_plot_se_sep(QWinSphere *spherewnd)
     double p[3];
     orbits_points *points;
 
-    copy_x_into_y(VFResults.selected_sep->last_sep_point->pcoord, p);
-    VFResults.selected_sep->last_sep_point->next_point =
+    copy_x_into_y(VFResults.selected_sep_->last_sep_point->pcoord, p);
+    VFResults.selected_sep_->last_sep_point->next_point =
         integrate_sep(spherewnd, p, VFResults.config_currentstep_,
-                      VFResults.selected_sep->last_sep_point->dir,
-                      VFResults.selected_sep->last_sep_point->type,
+                      VFResults.selected_sep_->last_sep_point->dir,
+                      VFResults.selected_sep_->last_sep_point->type,
                       VFResults.config_intpoints_, &points);
-    VFResults.selected_sep->last_sep_point = points;
+    VFResults.selected_sep_->last_sep_point = points;
 }
 
 void plot_next_se_sep(QWinSphere *spherewnd)
 {
-    draw_sep(spherewnd, VFResults.selected_sep->first_sep_point);
-    if (!(VFResults.selected_sep = VFResults.selected_sep->next_sep))
-        VFResults.selected_sep = VFResults.selected_se_point->separatrices;
+    draw_sep(spherewnd, VFResults.selected_sep_->first_sep_point);
+    if (!(VFResults.selected_sep_ = VFResults.selected_sep_->next_sep))
+        VFResults.selected_sep_ = VFResults.selected_se_point_->separatrices;
     start_plot_se_sep(spherewnd);
 }
 
 void select_next_se_sep(QWinSphere *spherewnd)
 {
-    draw_sep(spherewnd, VFResults.selected_sep->first_sep_point);
-    if (!(VFResults.selected_sep = VFResults.selected_sep->next_sep))
-        VFResults.selected_sep = VFResults.selected_se_point->separatrices;
-    draw_selected_sep(spherewnd, VFResults.selected_sep->first_sep_point,
+    draw_sep(spherewnd, VFResults.selected_sep_->first_sep_point);
+    if (!(VFResults.selected_sep_ = VFResults.selected_sep_->next_sep))
+        VFResults.selected_sep_ = VFResults.selected_se_point_->separatrices;
+    draw_selected_sep(spherewnd, VFResults.selected_sep_->first_sep_point,
                       CW_SEP);
 }
 
@@ -962,39 +962,39 @@ void start_plot_de_sep(QWinSphere *spherewnd)
     orbits_points *points;
     double p[3];
 
-    draw_sep(spherewnd, VFResults.selected_de_sep->first_sep_point);
-    if (VFResults.selected_de_sep->last_sep_point) {
-        if (VFResults.selected_de_sep->blow_up_vec_field) {
-            copy_x_into_y(VFResults.selected_de_sep->last_sep_point->pcoord, p);
-            VFResults.selected_de_sep->last_sep_point->next_point =
+    draw_sep(spherewnd, VFResults.selected_de_sep_->first_sep_point);
+    if (VFResults.selected_de_sep_->last_sep_point) {
+        if (VFResults.selected_de_sep_->blow_up_vec_field) {
+            copy_x_into_y(VFResults.selected_de_sep_->last_sep_point->pcoord, p);
+            VFResults.selected_de_sep_->last_sep_point->next_point =
                 integrate_blow_up(
                     spherewnd,
-                    // VFResults.selected_de_point->x0,
-                    // VFResults.selected_de_point->y0,
-                    p, VFResults.selected_de_sep, VFResults.config_currentstep_,
-                    VFResults.selected_de_sep->last_sep_point->dir,
-                    VFResults.selected_de_sep->last_sep_point->type, &points,
-                    VFResults.selected_de_point->chart);
+                    // VFResults.selected_de_point_->x0,
+                    // VFResults.selected_de_point_->y0,
+                    p, VFResults.selected_de_sep_, VFResults.config_currentstep_,
+                    VFResults.selected_de_sep_->last_sep_point->dir,
+                    VFResults.selected_de_sep_->last_sep_point->type, &points,
+                    VFResults.selected_de_point_->chart);
 
-            VFResults.selected_de_sep->last_sep_point = points;
+            VFResults.selected_de_sep_->last_sep_point = points;
         } else {
-            copy_x_into_y(VFResults.selected_de_sep->last_sep_point->pcoord, p);
-            VFResults.selected_de_sep->last_sep_point->next_point =
+            copy_x_into_y(VFResults.selected_de_sep_->last_sep_point->pcoord, p);
+            VFResults.selected_de_sep_->last_sep_point->next_point =
                 integrate_sep(spherewnd, p, VFResults.config_currentstep_,
-                              VFResults.selected_de_sep->last_sep_point->dir,
-                              VFResults.selected_de_sep->last_sep_point->type,
+                              VFResults.selected_de_sep_->last_sep_point->dir,
+                              VFResults.selected_de_sep_->last_sep_point->type,
                               VFResults.config_intpoints_, &points);
 
-            VFResults.selected_de_sep->last_sep_point = points;
+            VFResults.selected_de_sep_->last_sep_point = points;
         }
     } else {
-        VFResults.selected_de_sep->first_sep_point = plot_sep_blow_up(
-            spherewnd, VFResults.selected_de_point->x0,
-            VFResults.selected_de_point->y0, VFResults.selected_de_point->chart,
-            VFResults.selected_de_point->epsilon, VFResults.selected_de_sep,
+        VFResults.selected_de_sep_->first_sep_point = plot_sep_blow_up(
+            spherewnd, VFResults.selected_de_point_->x0,
+            VFResults.selected_de_point_->y0, VFResults.selected_de_point_->chart,
+            VFResults.selected_de_point_->epsilon, VFResults.selected_de_sep_,
             &points);
 
-        VFResults.selected_de_sep->last_sep_point = points;
+        VFResults.selected_de_sep_->last_sep_point = points;
     }
 }
 
@@ -1003,44 +1003,44 @@ void cont_plot_de_sep(QWinSphere *spherewnd)
     double p[3];
     orbits_points *points;
 
-    copy_x_into_y(VFResults.selected_de_sep->last_sep_point->pcoord, p);
-    if (VFResults.selected_de_sep->blow_up_vec_field) {
-        VFResults.selected_de_sep->last_sep_point->next_point =
+    copy_x_into_y(VFResults.selected_de_sep_->last_sep_point->pcoord, p);
+    if (VFResults.selected_de_sep_->blow_up_vec_field) {
+        VFResults.selected_de_sep_->last_sep_point->next_point =
             integrate_blow_up(spherewnd,
-                              // VFResults.selected_de_point->x0,
-                              // VFResults.selected_de_point->y0,
-                              p, VFResults.selected_de_sep,
+                              // VFResults.selected_de_point_->x0,
+                              // VFResults.selected_de_point_->y0,
+                              p, VFResults.selected_de_sep_,
                               VFResults.config_currentstep_,
-                              VFResults.selected_de_sep->last_sep_point->dir,
-                              VFResults.selected_de_sep->last_sep_point->type,
-                              &points, VFResults.selected_de_point->chart);
+                              VFResults.selected_de_sep_->last_sep_point->dir,
+                              VFResults.selected_de_sep_->last_sep_point->type,
+                              &points, VFResults.selected_de_point_->chart);
     } else {
-        VFResults.selected_de_sep->last_sep_point->next_point =
+        VFResults.selected_de_sep_->last_sep_point->next_point =
             integrate_sep(spherewnd, p, VFResults.config_currentstep_,
-                          VFResults.selected_de_sep->last_sep_point->dir,
-                          VFResults.selected_de_sep->last_sep_point->type,
+                          VFResults.selected_de_sep_->last_sep_point->dir,
+                          VFResults.selected_de_sep_->last_sep_point->type,
                           VFResults.config_intpoints_, &points);
     }
 
-    VFResults.selected_de_sep->last_sep_point = points;
+    VFResults.selected_de_sep_->last_sep_point = points;
 }
 
 void plot_next_de_sep(QWinSphere *spherewnd)
 {
-    draw_sep(spherewnd, VFResults.selected_de_sep->first_sep_point);
-    if (!(VFResults.selected_de_sep =
-              VFResults.selected_de_sep->next_blow_up_point))
-        VFResults.selected_de_sep = VFResults.selected_de_point->blow_up;
+    draw_sep(spherewnd, VFResults.selected_de_sep_->first_sep_point);
+    if (!(VFResults.selected_de_sep_ =
+              VFResults.selected_de_sep_->next_blow_up_point))
+        VFResults.selected_de_sep_ = VFResults.selected_de_point_->blow_up;
     start_plot_de_sep(spherewnd);
 }
 
 void select_next_de_sep(QWinSphere *spherewnd)
 {
-    draw_sep(spherewnd, VFResults.selected_de_sep->first_sep_point);
-    if (!(VFResults.selected_de_sep =
-              VFResults.selected_de_sep->next_blow_up_point))
-        VFResults.selected_de_sep = VFResults.selected_de_point->blow_up;
-    draw_selected_sep(spherewnd, VFResults.selected_de_sep->first_sep_point,
+    draw_sep(spherewnd, VFResults.selected_de_sep_->first_sep_point);
+    if (!(VFResults.selected_de_sep_ =
+              VFResults.selected_de_sep_->next_blow_up_point))
+        VFResults.selected_de_sep_ = VFResults.selected_de_point_->blow_up;
+    draw_selected_sep(spherewnd, VFResults.selected_de_sep_->first_sep_point,
                       CW_SEP);
 }
 
@@ -1121,8 +1121,8 @@ void change_epsilon_saddle(QWinSphere *spherewnd, double epsilon)
 {
     sep *separatrice;
 
-    VFResults.selected_saddle_point->epsilon = epsilon;
-    separatrice = VFResults.selected_saddle_point->separatrices;
+    VFResults.selected_saddle_point_->epsilon = epsilon;
+    separatrice = VFResults.selected_saddle_point_->separatrices;
     while (separatrice != nullptr) {
         draw_selected_sep(spherewnd, separatrice->first_sep_point, CBACKGROUND);
         VFResults.deleteOrbitPoint(separatrice->first_sep_point);
@@ -1136,8 +1136,8 @@ void change_epsilon_se(QWinSphere *spherewnd, double epsilon)
 {
     sep *separatrice;
 
-    VFResults.selected_se_point->epsilon = epsilon;
-    separatrice = VFResults.selected_se_point->separatrices;
+    VFResults.selected_se_point_->epsilon = epsilon;
+    separatrice = VFResults.selected_se_point_->separatrices;
     while (separatrice != nullptr) {
         draw_selected_sep(spherewnd, separatrice->first_sep_point, CBACKGROUND);
         VFResults.deleteOrbitPoint(separatrice->first_sep_point);
@@ -1151,8 +1151,8 @@ void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
 {
     blow_up_points *separatrice;
 
-    VFResults.selected_de_point->epsilon = epsilon;
-    separatrice = VFResults.selected_de_point->blow_up;
+    VFResults.selected_de_point_->epsilon = epsilon;
+    separatrice = VFResults.selected_de_point_->blow_up;
     while (separatrice != nullptr) {
         draw_selected_sep(spherewnd, separatrice->first_sep_point, CBACKGROUND);
         VFResults.deleteOrbitPoint(separatrice->first_sep_point);

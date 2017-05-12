@@ -331,33 +331,33 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
     double hhi, h_max, h_min;
     int dashes, d;
 
-    if (VFResults.current_lim_cycle == nullptr) {
+    if (VFResults.current_lim_cycle_ == nullptr) {
         VFResults.first_lim_cycle_ = new orbits;
-        VFResults.current_lim_cycle = VFResults.first_lim_cycle_;
+        VFResults.current_lim_cycle_ = VFResults.first_lim_cycle_;
     } else {
-        VFResults.current_lim_cycle->next_orbit = new orbits;
-        VFResults.current_lim_cycle = VFResults.current_lim_cycle->next_orbit;
+        VFResults.current_lim_cycle_->next_orbit = new orbits;
+        VFResults.current_lim_cycle_ = VFResults.current_lim_cycle_->next_orbit;
     }
 
     MATHFUNC(R2_to_sphere)(x, y, p1);
-    copy_x_into_y(p1, VFResults.current_lim_cycle->pcoord);
-    VFResults.current_lim_cycle->color = CLIMIT;
-    VFResults.current_lim_cycle->f_orbits = nullptr;
-    VFResults.current_lim_cycle->next_orbit = nullptr;
+    copy_x_into_y(p1, VFResults.current_lim_cycle_->pcoord);
+    VFResults.current_lim_cycle_->color = CLIMIT;
+    VFResults.current_lim_cycle_->f_orbits = nullptr;
+    VFResults.current_lim_cycle_->next_orbit = nullptr;
     hhi = VFResults.config_step_;
     h_max = VFResults.config_hma_;
     h_min = VFResults.config_hmi_;
     (*plot_p)(spherewnd, p1, CLIMIT);
     MATHFUNC(integrate_sphere_orbit)
     (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    VFResults.current_lim_cycle->f_orbits = new orbits_points;
-    VFResults.current_lim_cycle->current_f_orbits =
-        VFResults.current_lim_cycle->f_orbits;
-    copy_x_into_y(p2, VFResults.current_lim_cycle->current_f_orbits->pcoord);
-    VFResults.current_lim_cycle->current_f_orbits->color = CLIMIT;
-    VFResults.current_lim_cycle->current_f_orbits->dashes =
+    VFResults.current_lim_cycle_->f_orbits = new orbits_points;
+    VFResults.current_lim_cycle_->current_f_orbits =
+        VFResults.current_lim_cycle_->f_orbits;
+    copy_x_into_y(p2, VFResults.current_lim_cycle_->current_f_orbits->pcoord);
+    VFResults.current_lim_cycle_->current_f_orbits->color = CLIMIT;
+    VFResults.current_lim_cycle_->current_f_orbits->dashes =
         VFResults.config_dashes_;
-    VFResults.current_lim_cycle->current_f_orbits->next_point = nullptr;
+    VFResults.current_lim_cycle_->current_f_orbits->next_point = nullptr;
     if (VFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
@@ -366,16 +366,16 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
         copy_x_into_y(p2, p1);
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-        VFResults.current_lim_cycle->current_f_orbits->next_point =
+        VFResults.current_lim_cycle_->current_f_orbits->next_point =
             new orbits_points;
-        VFResults.current_lim_cycle->current_f_orbits =
-            VFResults.current_lim_cycle->current_f_orbits->next_point;
+        VFResults.current_lim_cycle_->current_f_orbits =
+            VFResults.current_lim_cycle_->current_f_orbits->next_point;
         copy_x_into_y(p2,
-                      VFResults.current_lim_cycle->current_f_orbits->pcoord);
-        VFResults.current_lim_cycle->current_f_orbits->color = CLIMIT;
-        VFResults.current_lim_cycle->current_f_orbits->dashes =
+                      VFResults.current_lim_cycle_->current_f_orbits->pcoord);
+        VFResults.current_lim_cycle_->current_f_orbits->color = CLIMIT;
+        VFResults.current_lim_cycle_->current_f_orbits->dashes =
             VFResults.config_dashes_;
-        VFResults.current_lim_cycle->current_f_orbits->next_point = nullptr;
+        VFResults.current_lim_cycle_->current_f_orbits->next_point = nullptr;
         if (VFResults.config_dashes_)
             (*plot_l)(spherewnd, p1, p2, CLIMIT);
         else
@@ -392,16 +392,16 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
         copy_x_into_y(p2, p1);
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-        VFResults.current_lim_cycle->current_f_orbits->next_point =
+        VFResults.current_lim_cycle_->current_f_orbits->next_point =
             new orbits_points;
-        VFResults.current_lim_cycle->current_f_orbits =
-            VFResults.current_lim_cycle->current_f_orbits->next_point;
+        VFResults.current_lim_cycle_->current_f_orbits =
+            VFResults.current_lim_cycle_->current_f_orbits->next_point;
         copy_x_into_y(p2,
-                      VFResults.current_lim_cycle->current_f_orbits->pcoord);
-        VFResults.current_lim_cycle->current_f_orbits->color = CLIMIT;
-        VFResults.current_lim_cycle->current_f_orbits->dashes =
+                      VFResults.current_lim_cycle_->current_f_orbits->pcoord);
+        VFResults.current_lim_cycle_->current_f_orbits->color = CLIMIT;
+        VFResults.current_lim_cycle_->current_f_orbits->dashes =
             VFResults.config_dashes_;
-        VFResults.current_lim_cycle->current_f_orbits->next_point = nullptr;
+        VFResults.current_lim_cycle_->current_f_orbits->next_point = nullptr;
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
             break;
@@ -411,7 +411,7 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
             (*plot_p)(spherewnd, p2, CLIMIT);
     }
     MATHFUNC(R2_to_sphere)(x, y, p2);
-    copy_x_into_y(p2, VFResults.current_lim_cycle->current_f_orbits->pcoord);
+    copy_x_into_y(p2, VFResults.current_lim_cycle_->current_f_orbits->pcoord);
     if (VFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
@@ -439,25 +439,25 @@ void deleteLastLimitCycle(QWinSphere *spherewnd)
 {
     struct orbits *orbit1, *orbit2;
 
-    if (VFResults.current_lim_cycle == nullptr)
+    if (VFResults.current_lim_cycle_ == nullptr)
         return;
 
-    orbit2 = VFResults.current_lim_cycle;
+    orbit2 = VFResults.current_lim_cycle_;
     drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
               spherewnd->spherebgcolor);
 
-    if (VFResults.first_lim_cycle_ == VFResults.current_lim_cycle) {
+    if (VFResults.first_lim_cycle_ == VFResults.current_lim_cycle_) {
         VFResults.first_lim_cycle_ = nullptr;
-        VFResults.current_lim_cycle = nullptr;
+        VFResults.current_lim_cycle_ = nullptr;
     } else {
         orbit1 = VFResults.first_lim_cycle_;
 
         do {
-            VFResults.current_lim_cycle = orbit1;
+            VFResults.current_lim_cycle_ = orbit1;
             orbit1 = orbit1->next_orbit;
         } while (orbit1 != orbit2);
 
-        VFResults.current_lim_cycle->next_orbit = nullptr;
+        VFResults.current_lim_cycle_->next_orbit = nullptr;
     }
     VFResults.deleteOrbitPoint(orbit2->f_orbits);
     delete orbit2; // free( orbit2 );

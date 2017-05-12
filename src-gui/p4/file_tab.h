@@ -299,6 +299,10 @@ enum TYPEOFVIEWS {
 class QVFStudy : public QObject
 {
   public:
+    // Constructor and destructor
+    QVFStudy();  // constructor
+    ~QVFStudy(); // destructor
+
     // general information
 
     int typeofstudy_;
@@ -380,15 +384,15 @@ class QVFStudy : public QObject
 
     // run-time when plotting
 
-    orbits *current_orbit;
-    orbits *current_lim_cycle;
+    orbits *current_orbit_;
+    orbits *current_lim_cycle_;
 
-    double selected_ucoord[2];
-    saddle *selected_saddle_point;
-    semi_elementary *selected_se_point;
-    degenerate *selected_de_point;
-    sep *selected_sep;
-    blow_up_points *selected_de_sep;
+    double selected_ucoord_[2];
+    saddle *selected_saddle_point_;
+    semi_elementary *selected_se_point_;
+    degenerate *selected_de_point_;
+    sep *selected_sep_;
+    blow_up_points *selected_de_sep_;
 
     // coordinate transformation routines, set up when starting the plot
 
@@ -419,11 +423,6 @@ class QVFStudy : public QObject
     bool (*less2)(double *, double *);
     int (*change_dir)(double *);
 
-  public:
-    QVFStudy();  // constructor
-    ~QVFStudy(); // destructor
-
-  public:
     // initialization and destruction of structures
 
     void deleteVF(void);

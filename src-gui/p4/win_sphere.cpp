@@ -1162,8 +1162,8 @@ void QWinSphere::SelectNearestSingularity(QPoint winpos)
         msgBar->showMessage(
             "Search nearest critical point: None with separatrices found.");
     } else {
-        px = coWinX(VFResults.selected_ucoord[0]);
-        py = coWinY(VFResults.selected_ucoord[1]);
+        px = coWinX(VFResults.selected_ucoord_[0]);
+        py = coWinY(VFResults.selected_ucoord_[1]);
 
         if (SelectingTimer != nullptr) {
             delete SelectingTimer;

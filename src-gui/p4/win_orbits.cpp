@@ -244,7 +244,7 @@ void QOrbitsDlg::onBtnDelAll(void)
 
     VFResults.deleteOrbit(VFResults.first_orbit_);
     VFResults.first_orbit_ = nullptr;
-    VFResults.current_orbit = nullptr;
+    VFResults.current_orbit_ = nullptr;
 
     mainSphere_->refresh();
 }

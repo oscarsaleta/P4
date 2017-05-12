@@ -321,7 +321,7 @@ void QLimitCyclesDlg::onbtn_delall(void)
 
     VFResults.deleteOrbit(VFResults.first_lim_cycle_);
     VFResults.first_lim_cycle_ = nullptr;
-    VFResults.current_lim_cycle = nullptr;
+    VFResults.current_lim_cycle_ = nullptr;
 
     mainSphere_->refresh();
 }
