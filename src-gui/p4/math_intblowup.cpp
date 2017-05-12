@@ -52,7 +52,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
     vec_field[1] = de_sep->vector_field[1];
     if (VFResults.plweights_ == false &&
         (chart == CHART_V1 || chart == CHART_V2))
-        dir = VFResults.dir_vec_field * dir;
+        dir = VFResults.dir_vec_field_ * dir;
 
     hhi = (double)dir * step;
     y[0] = de_sep->point[0];
@@ -71,12 +71,12 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
             break;
 
         case CHART_U1:
-            if (point[1] >= 0 || !VFResults.singinf) {
+            if (point[1] >= 0 || !VFResults.singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = de_sep->type;
@@ -86,10 +86,10 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                if (VFResults.dir_vec_field == 1)
+                if (VFResults.dir_vec_field_ == 1)
                     type = change_type(de_sep->type);
                 else
                     type = de_sep->type;
@@ -107,12 +107,12 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
             break;
 
         case CHART_U2:
-            if (point[1] >= 0 || !VFResults.singinf) {
+            if (point[1] >= 0 || !VFResults.singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = de_sep->type;
@@ -122,10 +122,10 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                if (VFResults.dir_vec_field == 1)
+                if (VFResults.dir_vec_field_ == 1)
                     type = change_type(de_sep->type);
                 else
                     type = de_sep->type;
@@ -159,7 +159,7 @@ integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
         last_orbit->dashes = dashes * VFResults.config_dashes;
         last_orbit->dir = ((VFResults.plweights_ == false) &&
                            (chart == CHART_V1 || chart == CHART_V2))
-                              ? VFResults.dir_vec_field * dir
+                              ? VFResults.dir_vec_field_ * dir
                               : dir;
         last_orbit->type = type;
         last_orbit->next_point = nullptr;

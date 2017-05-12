@@ -180,12 +180,12 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
     CurrentSingularityInfo[3] = "";
 
     distance = -1;
-    distance = find_distance_saddle(VFResults.first_saddle_point, x, y,
+    distance = find_distance_saddle(VFResults.first_saddle_point_, x, y,
                                     distance, &type);
     distance =
-        find_distance_se(VFResults.first_se_point, x, y, distance, &type);
+        find_distance_se(VFResults.first_se_point_, x, y, distance, &type);
     distance =
-        find_distance_de(VFResults.first_de_point, x, y, distance, &type);
+        find_distance_de(VFResults.first_de_point_, x, y, distance, &type);
 
     if (distance == -1)
         return false;

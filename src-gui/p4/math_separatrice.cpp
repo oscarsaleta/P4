@@ -145,12 +145,12 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 psphere_to_U1(p0, p1, p2, y);
                 rk78(eval_U1_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf) {
+                if (y[1] >= 0 || !VFResults.singinf_) {
                     U1_to_psphere(y[0], y[1], pcoord);
                     *color = findSepColor2(VFResults.gcf_U1, *type, y);
                 } else {
                     VV1_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                         *type = change_type(*type);
@@ -163,12 +163,12 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 psphere_to_V1(p0, p1, p2, y);
                 rk78(eval_V1_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf) {
+                if (y[1] >= 0 || !VFResults.singinf_) {
                     V1_to_psphere(y[0], y[1], pcoord);
                     *color = findSepColor2(VFResults.gcf_V1, *type, y);
                 } else {
                     UU1_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                         *type = change_type(*type);
@@ -183,12 +183,12 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 psphere_to_U2(p0, p1, p2, y);
                 rk78(eval_U2_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf) {
+                if (y[1] >= 0 || !VFResults.singinf_) {
                     U2_to_psphere(y[0], y[1], pcoord);
                     *color = findSepColor2(VFResults.gcf_U2, *type, y);
                 } else {
                     VV2_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                         *type = change_type(*type);
@@ -201,12 +201,12 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 psphere_to_V2(p0, p1, p2, y);
                 rk78(eval_V2_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf) {
+                if (y[1] >= 0 || !VFResults.singinf_) {
                     V2_to_psphere(y[0], y[1], pcoord);
                     *color = findSepColor2(VFResults.gcf_V2, *type, y);
                 } else {
                     UU2_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                         *type = change_type(*type);
@@ -404,7 +404,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
 
     /* if we have a line of singularities at infinity then we have to change the
     chart if the chart is V1 or V2 */
-    if (VFResults.singinf) {
+    if (VFResults.singinf_) {
         if (chart == CHART_V1)
             chart = CHART_U1;
         else if (chart == CHART_V2)
@@ -491,12 +491,12 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
             color = findSepColor2(VFResults.gcf, sep1->type, point);
             break;
         case CHART_U1:
-            if (point[1] >= 0 || !VFResults.singinf) {
+            if (point[1] >= 0 || !VFResults.singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = sep1->type;
@@ -506,11 +506,11 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-                if (VFResults.dir_vec_field == 1)
+                if (VFResults.dir_vec_field_ == 1)
                     type = change_type(sep1->type);
                 else
                     type = sep1->type;
@@ -524,12 +524,12 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
             color = findSepColor2(VFResults.gcf_V1, sep1->type, point);
             break;
         case CHART_U2:
-            if (point[1] >= 0 || !VFResults.singinf) {
+            if (point[1] >= 0 || !VFResults.singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = sep1->type;
@@ -539,11 +539,11 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (VFResults.dir_vec_field == 1)
+                    if (VFResults.dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-                if (VFResults.dir_vec_field == 1)
+                if (VFResults.dir_vec_field_ == 1)
                     type = change_type(sep1->type);
                 else
                     type = sep1->type;
@@ -616,7 +616,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
 
     /* if we have a line of singularities at infinity then we have to change the
     chart if the chart is V1 or V2 */
-    if (VFResults.singinf) {
+    if (VFResults.singinf_) {
         if (chart == CHART_V1)
             chart = CHART_U1;
         else if (chart == CHART_V2)
@@ -697,7 +697,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
             color = findSepColor2(VFResults.gcf, de_sep->type, point);
             break;
         case CHART_U1:
-            if (point[1] >= 0 || !VFResults.singinf) {
+            if (point[1] >= 0 || !VFResults.singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
@@ -712,7 +712,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
                     ok = false;
                 }
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-                if (VFResults.dir_vec_field == 1)
+                if (VFResults.dir_vec_field_ == 1)
                     type = change_type(de_sep->type);
                 else
                     type = de_sep->type;
@@ -726,7 +726,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
             color = findSepColor2(VFResults.gcf_V1, de_sep->type, point);
             break;
         case CHART_U2:
-            if (point[1] >= 0 || !VFResults.singinf) {
+            if (point[1] >= 0 || !VFResults.singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
@@ -741,7 +741,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
                     ok = false;
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-                if (VFResults.dir_vec_field == 1)
+                if (VFResults.dir_vec_field_ == 1)
                     type = change_type(de_sep->type);
                 else
                     type = de_sep->type;
@@ -1084,9 +1084,9 @@ static void plot_all_de_sep(QWinSphere *spherewnd, struct degenerate *point)
 
 void plot_all_sep(QWinSphere *spherewnd)
 {
-    plot_all_saddle_sep(spherewnd, VFResults.first_saddle_point);
-    plot_all_se_sep(spherewnd, VFResults.first_se_point);
-    plot_all_de_sep(spherewnd, VFResults.first_de_point);
+    plot_all_saddle_sep(spherewnd, VFResults.first_saddle_point_);
+    plot_all_se_sep(spherewnd, VFResults.first_se_point_);
+    plot_all_de_sep(spherewnd, VFResults.first_de_point_);
 }
 
 void draw_sep(QWinSphere *spherewnd, orbits_points *sep)

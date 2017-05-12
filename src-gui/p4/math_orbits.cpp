@@ -207,11 +207,11 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                 psphere_to_U1(p0, p1, p2, y);
                 rk78(eval_U1_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf)
+                if (y[1] >= 0 || !VFResults.singinf_)
                     U1_to_psphere(y[0], y[1], pcoord);
                 else {
                     VV1_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -222,11 +222,11 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                 psphere_to_V1(p0, p1, p2, y);
                 rk78(eval_V1_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf)
+                if (y[1] >= 0 || !VFResults.singinf_)
                     V1_to_psphere(y[0], y[1], pcoord);
                 else {
                     UU1_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -239,11 +239,11 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                 psphere_to_U2(p0, p1, p2, y);
                 rk78(eval_U2_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf)
+                if (y[1] >= 0 || !VFResults.singinf_)
                     U2_to_psphere(y[0], y[1], pcoord);
                 else {
                     VV2_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }
@@ -254,11 +254,11 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                 psphere_to_V2(p0, p1, p2, y);
                 rk78(eval_V2_vec_field, y, hhi, h_min, h_max,
                      VFResults.config_tolerance);
-                if (y[1] >= 0 || !VFResults.singinf)
+                if (y[1] >= 0 || !VFResults.singinf_)
                     V2_to_psphere(y[0], y[1], pcoord);
                 else {
                     UU2_to_psphere(y[0], y[1], pcoord);
-                    if (VFResults.dir_vec_field == 1) {
+                    if (VFResults.dir_vec_field_ == 1) {
                         *dir = -1;
                         *hhi = -(*hhi);
                     }

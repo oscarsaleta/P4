@@ -307,36 +307,36 @@ class QVFStudy : public QObject
     int q_;
     bool plweights_; // true if p<>1 or q<>1; false if p=q=1
 
-    double double_p;         // shortcuts: = (double)p
-    double double_q;         // = (double)q
+    double double_p_;         // shortcuts: = (double)p
+    double double_q_;         // = (double)q
     double double_p_plus_q_;  // = (double)(p+q)
     double double_p_minus_1_; // = (double)(p-1)
     double double_q_minus_1_; // = (double)(q-1)
     double double_q_minus_p_; // = (double)(q-p)
 
     double xmin_, xmax_, ymin_, ymax_; // in case of local study
-    bool singinf;
-    int dir_vec_field;
+    bool singinf_;
+    int dir_vec_field_;
 
-    QString lasterror;
+    QString lasterror_;
 
     // vector field in various charts
 
-    P4POLYNOM2 f_vec_field[2];
-    P4POLYNOM2 vec_field_U1[2];
-    P4POLYNOM2 vec_field_U2[2];
-    P4POLYNOM2 vec_field_V1[2];
-    P4POLYNOM2 vec_field_V2[2];
-    P4POLYNOM3 vec_field_C[2];
+    P4POLYNOM2 f_vec_field_[2];
+    P4POLYNOM2 vec_field_U1_[2];
+    P4POLYNOM2 vec_field_U2_[2];
+    P4POLYNOM2 vec_field_V1_[2];
+    P4POLYNOM2 vec_field_V2_[2];
+    P4POLYNOM3 vec_field_C_[2];
 
     // singular points and their properties:
 
-    saddle *first_saddle_point;
-    semi_elementary *first_se_point;
-    node *first_node_point;
-    strong_focus *first_sf_point;
-    weak_focus *first_wf_point;
-    degenerate *first_de_point;
+    saddle *first_saddle_point_;
+    semi_elementary *first_se_point_;
+    node *first_node_point_;
+    strong_focus *first_sf_point_;
+    weak_focus *first_wf_point_;
+    degenerate *first_de_point_;
 
     // Greatest common factor if present:
 

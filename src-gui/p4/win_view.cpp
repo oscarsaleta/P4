@@ -455,25 +455,25 @@ bool QViewDlg::GetDataFromDlg(void)
         }
     }
 
-    double oldxmin = VFResults.xmin;
-    double oldymin = VFResults.ymin;
-    double oldxmax = VFResults.xmax;
-    double oldymax = VFResults.ymax;
+    double oldxmin = VFResults.xmin_;
+    double oldymin = VFResults.ymin_;
+    double oldxmax = VFResults.xmax_;
+    double oldymax = VFResults.ymax_;
 
     changed |=
         ReadFloatField(edt_projection, &(VFResults.config_projection),
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
     changed |=
-        ReadFloatField(edt_x0, &(VFResults.xmin), X_MIN, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_x0, &(VFResults.xmin_), X_MIN, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_y0, &(VFResults.ymin), Y_MIN, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_y0, &(VFResults.ymin_), Y_MIN, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_x1, &(VFResults.xmax), X_MAX, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_x1, &(VFResults.xmax_), X_MAX, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_y1, &(VFResults.ymax), Y_MAX, MIN_FLOAT, MAX_FLOAT);
+        ReadFloatField(edt_y1, &(VFResults.ymax_), Y_MAX, MIN_FLOAT, MAX_FLOAT);
 
-    if (oldxmin != VFResults.xmin || oldymin != VFResults.ymin ||
-        oldxmax != VFResults.xmax || oldymax != VFResults.ymax || changed) {
+    if (oldxmin != VFResults.xmin_ || oldymin != VFResults.ymin_ ||
+        oldxmax != VFResults.xmax_ || oldymax != VFResults.ymax_ || changed) {
         changed = false;
         return true;
     }
@@ -518,13 +518,13 @@ void QViewDlg::UpdateDlgData(void)
     else
         edt_projection->setEnabled(false);
 
-    buf.sprintf("%g", (float)(VFResults.xmin));
+    buf.sprintf("%g", (float)(VFResults.xmin_));
     edt_x0->setText(buf);
-    buf.sprintf("%g", (float)(VFResults.xmax));
+    buf.sprintf("%g", (float)(VFResults.xmax_));
     edt_x1->setText(buf);
-    buf.sprintf("%g", (float)(VFResults.ymin));
+    buf.sprintf("%g", (float)(VFResults.ymin_));
     edt_y0->setText(buf);
-    buf.sprintf("%g", (float)(VFResults.ymax));
+    buf.sprintf("%g", (float)(VFResults.ymax_));
     edt_y1->setText(buf);
 
     if (btn_sphere->isChecked() == false) {

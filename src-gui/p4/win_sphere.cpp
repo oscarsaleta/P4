@@ -285,10 +285,10 @@ void QWinSphere::SetupPlot(void)
         case TYPEOFVIEW_U2:
         case TYPEOFVIEW_V1:
         case TYPEOFVIEW_V2:
-            x0 = VFResults.xmin;
-            y0 = VFResults.ymin;
-            x1 = VFResults.xmax;
-            y1 = VFResults.ymax;
+            x0 = VFResults.xmin_;
+            y0 = VFResults.ymin_;
+            x1 = VFResults.xmax_;
+            y1 = VFResults.ymax_;
             break;
         case TYPEOFVIEW_SPHERE:
             x0 = -1.1;
@@ -598,7 +598,7 @@ void QWinSphere::adjustToNewSize(void)
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(CBACKGROUND)));
 
-        if (VFResults.singinf)
+        if (VFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
         else
             paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
@@ -676,7 +676,7 @@ void QWinSphere::paintEvent(QPaintEvent *p)
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(CBACKGROUND)));
 
-        if (VFResults.singinf)
+        if (VFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
         else
             paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
@@ -1408,17 +1408,17 @@ void QWinSphere::plotPoints(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle)
+    for (sp = VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
         plotPoint(sp);
-    for (np = VFResults.first_node_point; np != nullptr; np = np->next_node)
+    for (np = VFResults.first_node_point_; np != nullptr; np = np->next_node)
         plotPoint(np);
-    for (wfp = VFResults.first_wf_point; wfp != nullptr; wfp = wfp->next_wf)
+    for (wfp = VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
         plotPoint(wfp);
-    for (sfp = VFResults.first_sf_point; sfp != nullptr; sfp = sfp->next_sf)
+    for (sfp = VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
         plotPoint(sfp);
-    for (sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se)
+    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         plotPoint(sep);
-    for (dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de)
+    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
         plotPoint(dp);
 }
 
@@ -1456,11 +1456,11 @@ void QWinSphere::plotSeparatrices(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle)
+    for (sp = VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
         plotPointSeparatrices(sp);
-    for (sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se)
+    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         plotPointSeparatrices(sep);
-    for (dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de)
+    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
         plotPointSeparatrices(dp);
 }
 
@@ -1666,7 +1666,7 @@ void QWinSphere::plotPoincareSphere(void)
     P4POLYLINES *p;
 
     p = CircleAtInfinity;
-    color = VFResults.singinf ? CSING : CLINEATINFINITY;
+    color = VFResults.singinf_ ? CSING : CLINEATINFINITY;
 
     staticPainter->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
@@ -1682,7 +1682,7 @@ void QWinSphere::plotPoincareLyapunovSphere(void)
     P4POLYLINES *p;
 
     p = CircleAtInfinity;
-    color = VFResults.singinf ? CSING : CLINEATINFINITY;
+    color = VFResults.singinf_ ? CSING : CLINEATINFINITY;
 
     staticPainter->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
@@ -2023,17 +2023,17 @@ void QWinSphere::printPoints(void)
 
     print_comment("Printing symbols at all singular points:");
 
-    for (sp = VFResults.first_saddle_point; sp != nullptr; sp = sp->next_saddle)
+    for (sp = VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
         printPoint(sp);
-    for (np = VFResults.first_node_point; np != nullptr; np = np->next_node)
+    for (np = VFResults.first_node_point_; np != nullptr; np = np->next_node)
         printPoint(np);
-    for (wfp = VFResults.first_wf_point; wfp != nullptr; wfp = wfp->next_wf)
+    for (wfp = VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
         printPoint(wfp);
-    for (sfp = VFResults.first_sf_point; sfp != nullptr; sfp = sfp->next_sf)
+    for (sfp = VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
         printPoint(sfp);
-    for (sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se)
+    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         printPoint(sep);
-    for (dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de)
+    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
         printPoint(dp);
 }
 
@@ -2083,18 +2083,18 @@ void QWinSphere::printSeparatrices(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = VFResults.first_saddle_point; sp != nullptr;
+    for (sp = VFResults.first_saddle_point_; sp != nullptr;
          sp = sp->next_saddle) {
         comment = "Printing separatrice for saddle singularity:";
         print_comment(comment);
         printPointSeparatrices(sp);
     }
-    for (sep = VFResults.first_se_point; sep != nullptr; sep = sep->next_se) {
+    for (sep = VFResults.first_se_point_; sep != nullptr; sep = sep->next_se) {
         comment = "Printing separatrices for semi-hyperbolic singularity:";
         print_comment(comment);
         printPointSeparatrices(sep);
     }
-    for (dp = VFResults.first_de_point; dp != nullptr; dp = dp->next_de) {
+    for (dp = VFResults.first_de_point_; dp != nullptr; dp = dp->next_de) {
         comment = "Printing separatrices for degenerate singularity:";
         print_comment(comment);
         printPointSeparatrices(dp);
@@ -2139,7 +2139,7 @@ void QWinSphere::printPoincareSphere(void)
         q->y2 = coWinY(q->y2);
     }
     print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1),
-                VFResults.singinf ? CSING : CLINEATINFINITY, false, p);
+                VFResults.singinf_ ? CSING : CLINEATINFINITY, false, p);
 
     while (p != nullptr) {
         q = p;
