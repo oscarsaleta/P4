@@ -333,9 +333,9 @@ void QPlotWnd::onBtnPrint(void)
     pdlg = new QPrintDlg(this, 0);
     int result = pdlg->exec();
 
-    res = pdlg->GetChosenResolution();
-    lw = pdlg->GetChosenLineWidth();
-    ss = pdlg->GetChosenSymbolSize();
+    res = pdlg->getChosenResolution();
+    lw = pdlg->getChosenLineWidth();
+    ss = pdlg->getChosenSymbolSize();
 
     delete pdlg;
     pdlg = nullptr;
@@ -526,7 +526,7 @@ void QPlotWnd::customEvent(QEvent *_e)
 
     if (e->type() == TYPE_SEP_EVENT) {
         oet = (int *)(e->data());
-        sepWindow_->SepEvent(*oet);
+        sepWindow_->sepEvent(*oet);
         delete oet; // free(oet);
         oet = nullptr;
         return;

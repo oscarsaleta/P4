@@ -323,7 +323,7 @@ void QViewDlg::btn_square_clicked(void)
 {
     double x0;
 
-    if (ReadFloatField(edt_x0, &x0, X_MIN, MIN_FLOAT, MAX_FLOAT) == false) {
+    if (readFloatField(edt_x0, &x0, X_MIN, MIN_FLOAT, MAX_FLOAT) == false) {
         // no error reading field
 
         if (x0 > 0)
@@ -374,7 +374,7 @@ void QViewDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
     }
 }
 
-bool QViewDlg::ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
+bool QViewDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
                               double minvalue, double maxvalue)
 {
     // returns true in case of error
@@ -461,16 +461,16 @@ bool QViewDlg::getDataFromDlg(void)
     double oldymax = g_VFResults.ymax_;
 
     changed |=
-        ReadFloatField(edt_projection, &(g_VFResults.config_projection_),
+        readFloatField(edt_projection, &(g_VFResults.config_projection_),
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
     changed |=
-        ReadFloatField(edt_x0, &(g_VFResults.xmin_), X_MIN, MIN_FLOAT, MAX_FLOAT);
+        readFloatField(edt_x0, &(g_VFResults.xmin_), X_MIN, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_y0, &(g_VFResults.ymin_), Y_MIN, MIN_FLOAT, MAX_FLOAT);
+        readFloatField(edt_y0, &(g_VFResults.ymin_), Y_MIN, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_x1, &(g_VFResults.xmax_), X_MAX, MIN_FLOAT, MAX_FLOAT);
+        readFloatField(edt_x1, &(g_VFResults.xmax_), X_MAX, MIN_FLOAT, MAX_FLOAT);
     changed |=
-        ReadFloatField(edt_y1, &(g_VFResults.ymax_), Y_MAX, MIN_FLOAT, MAX_FLOAT);
+        readFloatField(edt_y1, &(g_VFResults.ymax_), Y_MAX, MIN_FLOAT, MAX_FLOAT);
 
     if (oldxmin != g_VFResults.xmin_ || oldymin != g_VFResults.ymin_ ||
         oldxmax != g_VFResults.xmax_ || oldymax != g_VFResults.ymax_ || changed) {

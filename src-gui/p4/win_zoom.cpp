@@ -145,9 +145,9 @@ void QZoomWnd::onBtnPrint(void)
     QPrintDlg *pdlg;
     pdlg = new QPrintDlg(this, 0);
     int result = pdlg->exec();
-    res = pdlg->GetChosenResolution();
-    lw = pdlg->GetChosenLineWidth();
-    ss = pdlg->GetChosenSymbolSize();
+    res = pdlg->getChosenResolution();
+    lw = pdlg->getChosenLineWidth();
+    ss = pdlg->getChosenSymbolSize();
 
     delete pdlg;
     pdlg = nullptr;

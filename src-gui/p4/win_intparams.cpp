@@ -295,7 +295,7 @@ void QIntParamsDlg::getDataFromDlg(void)
                               DEFAULT_HMA, MIN_HMA, MAX_HMA);
     changed_ |= readFloatField(edt_stepsize_, &(g_VFResults.config_step_),
                               DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
-    //  changed_ |= ReadFloatField( edt_curstep,
+    //  changed_ |= readFloatField( edt_curstep,
     //  &(g_VFResults.config_currentstep_),
     //                      DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA );
 

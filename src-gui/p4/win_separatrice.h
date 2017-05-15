@@ -44,17 +44,17 @@ class QSepDlg : public QWidget
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
 
-    QPushButton *btn_selectnext;
-    QPushButton *btn_intnext;
-    QPushButton *btn_start;
-    QPushButton *btn_cont;
-    QLineEdit *edt_epsilon;
-    QLabel *lbl_info[4];
+    QPushButton *btn_selectnext_;
+    QPushButton *btn_intnext_;
+    QPushButton *btn_start_;
+    QPushButton *btn_cont_;
+    QLineEdit *edt_epsilon_;
+    QLabel *lbl_info_[4];
 
     QBoxLayout *mainLayout_;
 
-    bool started;
-    bool selected;
+    bool started_;
+    bool selected_;
 
   public slots:
     void onbtn_selectnext(void);
@@ -63,7 +63,7 @@ class QSepDlg : public QWidget
     void onbtn_start(void);
 
     void setInitialPoint(void);
-    void SepEvent(int);
+    void sepEvent(int);
     void onepsilon_enter(void);
     void markBad(QLineEdit *);
 };

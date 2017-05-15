@@ -32,16 +32,16 @@ class QPrintDlg : public QDialog
     Q_OBJECT
 
   private:
-    QPushButton *btn_default;
-    QPushButton *btn_epsimage;
-    QPushButton *btn_xfigimage;
-    QPushButton *btn_cancel;
-    QPushButton *btn_jpeg;
+    QPushButton *btn_default_;
+    QPushButton *btn_epsimage_;
+    QPushButton *btn_xfigimage_;
+    QPushButton *btn_cancel_;
+    QPushButton *btn_jpeg_;
     QBoxLayout *mainLayout_;
-    QCheckBox *btn_blackwhite;
-    QLineEdit *edt_resolution;
-    QLineEdit *edt_linewidth;
-    QLineEdit *edt_symbolsize;
+    QCheckBox *btn_blackwhite_;
+    QLineEdit *edt_resolution_;
+    QLineEdit *edt_linewidth_;
+    QLineEdit *edt_symbolsize_;
 
   public:
     QPrintDlg(QWidget *parent, Qt::WindowFlags f);
@@ -52,20 +52,20 @@ class QPrintDlg : public QDialog
     static int sm_LastResolution;
 
   public slots:
-    void OnDefaultPrinter(void);
-    void OnEpsImagePrinter(void);
-    void OnXfigImagePrinter(void);
-    void OnJpegImagePrinter(void);
-    void OnCancel(void);
+    void onDefaultPrinter(void);
+    void onEpsImagePrinter(void);
+    void onXfigImagePrinter(void);
+    void onJpegImagePrinter(void);
+    void onCancel(void);
 
-    bool ReadDialog(void);
-    bool ReadFloatField(QLineEdit *edt, double *presult, double defvalue,
+    bool readDialog(void);
+    bool readFloatField(QLineEdit *edt, double *presult, double defvalue,
                         double minvalue, double maxvalue);
     void markBad(QLineEdit *edt);
 
-    int GetChosenResolution(void);
-    double GetChosenLineWidth(void);
-    double GetChosenSymbolSize(void);
+    int getChosenResolution(void);
+    double getChosenLineWidth(void);
+    double getChosenSymbolSize(void);
 };
 
 #define P4PRINT_NONE 0

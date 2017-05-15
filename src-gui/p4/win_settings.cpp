@@ -79,25 +79,25 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    edt_base = new QLineEdit(StripQuotes(getP4Path()), this);
-    lbl_base = new QLabel("&Base Installation Path", this);
-    btn_base = new QPushButton("Browse...", this);
-    lbl_base->setBuddy(edt_base);
+    edt_base_ = new QLineEdit(StripQuotes(getP4Path()), this);
+    lbl_base_ = new QLabel("&Base Installation Path", this);
+    btn_base_ = new QPushButton("Browse...", this);
+    lbl_base_->setBuddy(edt_base_);
 
-    edt_sum = new QLineEdit(StripQuotes(getP4SumTablePath()), this);
-    lbl_sum = new QLabel("&Sumtable Path", this);
-    btn_sum = new QPushButton("Browse...", this);
-    lbl_sum->setBuddy(edt_sum);
+    edt_sum_ = new QLineEdit(StripQuotes(getP4SumTablePath()), this);
+    lbl_sum_ = new QLabel("&Sumtable Path", this);
+    btn_sum_ = new QPushButton("Browse...", this);
+    lbl_sum_->setBuddy(edt_sum_);
 
-    edt_temp = new QLineEdit(StripQuotes(getP4TempPath()), this);
-    lbl_temp = new QLabel("&Temporary Files Path", this);
-    btn_temp = new QPushButton("Browse...", this);
-    lbl_temp->setBuddy(edt_temp);
+    edt_temp_ = new QLineEdit(StripQuotes(getP4TempPath()), this);
+    lbl_temp_ = new QLabel("&Temporary Files Path", this);
+    btn_temp_ = new QPushButton("Browse...", this);
+    lbl_temp_->setBuddy(edt_temp_);
 
-    edt_maple = new QLineEdit(StripQuotes(getMapleExe()), this);
-    lbl_maple = new QLabel("&Maple Executable", this);
-    btn_maple = new QPushButton("Browse...", this);
-    lbl_maple->setBuddy(edt_maple);
+    edt_maple_ = new QLineEdit(StripQuotes(getMapleExe()), this);
+    lbl_maple_ = new QLabel("&Maple Executable", this);
+    btn_maple_ = new QPushButton("Browse...", this);
+    lbl_maple_->setBuddy(edt_maple_);
 
     //edt_red = new QLineEdit(StripQuotes(getReduceExe()), this);
     //edt_red->setReadOnly(true);
@@ -109,34 +109,34 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     //lbl_red->setBuddy(edt_red);
 
     btn_ok_ = new QPushButton("&Ok", this);
-    btn_reset = new QPushButton("&Reset", this);
-    btn_cancel = new QPushButton("&Cancel", this);
+    btn_reset_ = new QPushButton("&Reset", this);
+    btn_cancel_ = new QPushButton("&Cancel", this);
 
     btn_ok_->setDefault(true);
 
 #ifdef TOOLTIPS
-    btn_base->setToolTip("Search for this path on your computer");
-    btn_sum->setToolTip("Search for this path on your computer");
-    btn_temp->setToolTip("Search for this path on your computer");
-    btn_maple->setToolTip("Search for this file on your computer.\nYou need a "
+    btn_base_->setToolTip("Search for this path on your computer");
+    btn_sum_->setToolTip("Search for this path on your computer");
+    btn_temp_->setToolTip("Search for this path on your computer");
+    btn_maple_->setToolTip("Search for this file on your computer.\nYou need a "
                           "command-line version of Maple.\nThe name would be "
                           "something like cmaple9.5.exe in Windows.");
     //btn_red->setToolTip("Search for this file on your computer.\n");
 
-    edt_base->setToolTip("The base installation path.  In here, one finds "
+    edt_base_->setToolTip("The base installation path.  In here, one finds "
                          "bin/, help/ and reduce/ subdirectories.");
-    edt_sum->setToolTip("The path where sumtables are stored when calculating "
+    edt_sum_->setToolTip("The path where sumtables are stored when calculating "
                         "Lyapunov constants.");
-    edt_temp->setToolTip("Temporary path name.\nLeave blank when you want "
+    edt_temp_->setToolTip("Temporary path name.\nLeave blank when you want "
                          "temporary files to be stored in the current working "
                          "directory.");
-    edt_maple->setToolTip(
+    edt_maple_->setToolTip(
         "The name of the Maple executable (command-line version)");
     //edt_red->setToolTip("The name of the reduce executable");
 
     btn_ok_->setToolTip("Store changes, and go back to program");
-    btn_cancel->setToolTip("Undo any changes");
-    btn_reset->setToolTip("Reset to defaults, try to locate Maple/Reduce "
+    btn_cancel_->setToolTip("Undo any changes");
+    btn_reset_->setToolTip("Reset to defaults, try to locate Maple/Reduce "
                           "executable automatically");
 #endif
 
@@ -157,24 +157,24 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(0);
     buttons->addWidget(btn_ok_);
-    buttons->addWidget(btn_reset);
-    buttons->addWidget(btn_cancel);
+    buttons->addWidget(btn_reset_);
+    buttons->addWidget(btn_cancel_);
     buttons->addStretch(0);
 
     QGridLayout *lay00 = new QGridLayout();
 
-    lay00->addWidget(lbl_base, 0, 0);
-    lay00->addWidget(edt_base, 0, 1);
-    lay00->addWidget(btn_base, 0, 2);
-    lay00->addWidget(lbl_sum, 1, 0);
-    lay00->addWidget(edt_sum, 1, 1);
-    lay00->addWidget(btn_sum, 1, 2);
-    lay00->addWidget(lbl_temp, 2, 0);
-    lay00->addWidget(edt_temp, 2, 1);
-    lay00->addWidget(btn_temp, 2, 2);
-    lay00->addWidget(lbl_maple, 3, 0);
-    lay00->addWidget(edt_maple, 3, 1);
-    lay00->addWidget(btn_maple, 3, 2);
+    lay00->addWidget(lbl_base_, 0, 0);
+    lay00->addWidget(edt_base_, 0, 1);
+    lay00->addWidget(btn_base_, 0, 2);
+    lay00->addWidget(lbl_sum_, 1, 0);
+    lay00->addWidget(edt_sum_, 1, 1);
+    lay00->addWidget(btn_sum_, 1, 2);
+    lay00->addWidget(lbl_temp_, 2, 0);
+    lay00->addWidget(edt_temp_, 2, 1);
+    lay00->addWidget(btn_temp_, 2, 2);
+    lay00->addWidget(lbl_maple_, 3, 0);
+    lay00->addWidget(edt_maple_, 3, 1);
+    lay00->addWidget(btn_maple_, 3, 2);
     //lay00->addWidget(lbl_red, 4, 0);
     //lay00->addWidget(edt_red, 4, 1);
     //lay00->addWidget(btn_red, 4, 2);
@@ -186,14 +186,14 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
 
     setLayout(mainLayout_);
 
-    QObject::connect(btn_base, SIGNAL(clicked()), this, SLOT(OnBrowseBase()));
-    QObject::connect(btn_sum, SIGNAL(clicked()), this, SLOT(OnBrowseSum()));
-    QObject::connect(btn_temp, SIGNAL(clicked()), this, SLOT(OnBrowseTemp()));
-    QObject::connect(btn_maple, SIGNAL(clicked()), this, SLOT(OnBrowseMaple()));
+    QObject::connect(btn_base_, SIGNAL(clicked()), this, SLOT(onBrowseBase()));
+    QObject::connect(btn_sum_, SIGNAL(clicked()), this, SLOT(onBrowseSum()));
+    QObject::connect(btn_temp_, SIGNAL(clicked()), this, SLOT(onBrowseTemp()));
+    QObject::connect(btn_maple_, SIGNAL(clicked()), this, SLOT(onBrowseMaple()));
     //QObject::connect(btn_red, SIGNAL(clicked()), this, SLOT(OnBrowseReduce()));
     QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_reset, SIGNAL(clicked()), this, SLOT(OnReset()));
-    QObject::connect(btn_cancel, SIGNAL(clicked()), this, SLOT(OnCancel()));
+    QObject::connect(btn_reset_, SIGNAL(clicked()), this, SLOT(onReset()));
+    QObject::connect(btn_cancel_, SIGNAL(clicked()), this, SLOT(onCancel()));
 
 //#ifdef Q_OS_WIN
 //    edt_red->setEnabled(false);
@@ -203,7 +203,7 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     setP4WindowTitle(this, "Main Program Settings");
 }
 
-void QSettingsDlg::OnCancel(void) { done(0); }
+void QSettingsDlg::onCancel(void) { done(0); }
 
 void QSettingsDlg::onOk(void)
 {
@@ -212,16 +212,16 @@ void QSettingsDlg::onOk(void)
     // Strip outer Quotes and white space, in any order, and possible also
     // trailing slash
 
-    s = StripSlash(StripQuotes(StripQuotes(edt_base->text()).trimmed()));
+    s = StripSlash(StripQuotes(StripQuotes(edt_base_->text()).trimmed()));
     setP4Path(s);
-    s = StripSlash(StripQuotes(StripQuotes(edt_sum->text()).trimmed()));
+    s = StripSlash(StripQuotes(StripQuotes(edt_sum_->text()).trimmed()));
     setP4SumTablePath(s);
-    s = StripSlash(StripQuotes(StripQuotes(edt_temp->text()).trimmed()));
+    s = StripSlash(StripQuotes(StripQuotes(edt_temp_->text()).trimmed()));
     setP4TempPath(s);
 
     // for exe's, trailing slash is irrelevant
 
-    s = StripQuotes(StripQuotes(edt_maple->text()).trimmed());
+    s = StripQuotes(StripQuotes(edt_maple_->text()).trimmed());
 
 #ifdef Q_OS_WIN
     // what to do when the user enters a value for a maple executable that does
@@ -268,43 +268,43 @@ void QSettingsDlg::onOk(void)
     done(1);
 }
 
-void QSettingsDlg::OnReset(void)
+void QSettingsDlg::onReset(void)
 {
-    edt_base->setText(StripQuotes(getDefaultP4Path()));
-    edt_sum->setText(StripQuotes(getDefaultP4SumTablePath()));
-    edt_temp->setText(StripQuotes(getDefaultP4TempPath()));
-    edt_maple->setText(StripQuotes(getDefaultMapleInstallation()));
+    edt_base_->setText(StripQuotes(getDefaultP4Path()));
+    edt_sum_->setText(StripQuotes(getDefaultP4SumTablePath()));
+    edt_temp_->setText(StripQuotes(getDefaultP4TempPath()));
+    edt_maple_->setText(StripQuotes(getDefaultMapleInstallation()));
     //edt_red->setText(StripQuotes(getDefaultReduceInstallation()));
 }
 
-void QSettingsDlg::OnBrowseReduce(void)
+/*void QSettingsDlg::OnBrowseReduce(void)
 {
-    BrowseForExistingPathOrFile(edt_red, QString("Select reduce executable:"),
+    browseForExistingPathOrFile(edt_red, QString("Select reduce executable:"),
                                 true);
+}*/
+
+void QSettingsDlg::onBrowseMaple(void)
+{
+    browseForExistingPathOrFile(edt_maple_, "Select maple executable:", true);
 }
 
-void QSettingsDlg::OnBrowseMaple(void)
+void QSettingsDlg::onBrowseTemp(void)
 {
-    BrowseForExistingPathOrFile(edt_maple, "Select maple executable:", true);
+    browseForExistingPathOrFile(edt_temp_, "Select temporary path:", false);
 }
 
-void QSettingsDlg::OnBrowseTemp(void)
+void QSettingsDlg::onBrowseSum(void)
 {
-    BrowseForExistingPathOrFile(edt_temp, "Select temporary path:", false);
+    browseForExistingPathOrFile(edt_sum_, "Select sumtable path:", false);
 }
 
-void QSettingsDlg::OnBrowseSum(void)
+void QSettingsDlg::onBrowseBase(void)
 {
-    BrowseForExistingPathOrFile(edt_sum, "Select sumtable path:", false);
-}
-
-void QSettingsDlg::OnBrowseBase(void)
-{
-    BrowseForExistingPathOrFile(edt_base, "Select P4 base installation path:",
+    browseForExistingPathOrFile(edt_base_, "Select P4 base installation path:",
                                 false);
 }
 
-void QSettingsDlg::BrowseForExistingPathOrFile(QLineEdit *edt, QString caption,
+void QSettingsDlg::browseForExistingPathOrFile(QLineEdit *edt, QString caption,
                                                bool isfile)
 {
     // browse for an existing path if isfile = false, or for an existing file if

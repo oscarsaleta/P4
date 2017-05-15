@@ -67,7 +67,7 @@ class QViewDlg : public QWidget
     QLabel *lbl_y1;
 
     QSpinBox *spin_numpoints;
-    bool ReadFloatField(QLineEdit *, double *, double, double, double);
+    bool readFloatField(QLineEdit *, double *, double, double, double);
 
   public slots:
     void markBad(QLineEdit *edt);

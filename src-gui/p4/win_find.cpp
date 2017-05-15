@@ -62,7 +62,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
     // QLabel *symlabel = new QLabel("Symbolic package: ", this);
     // symlabel->setFont(*(g_p4app->boldFont_));
-    // btn_maple = new QRadioButton("Maple", this);
+    // btn_maple_ = new QRadioButton("Maple", this);
     // btn_reduce = new QRadioButton("Reduce", this);
 
     //#ifdef Q_OS_WIN
@@ -98,7 +98,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
         btn_eval_ = new QPushButton("&Evaluate", this);
 
 #ifdef TOOLTIPS
-    // btn_maple->setToolTip("Select Maple as the symbolic manipulator");
+    // btn_maple_->setToolTip("Select Maple as the symbolic manipulator");
     // btn_reduce->setToolTip("Select Reduce as the symbolic manipulator.\n"
     //                       "This is only available in the Unix version.");
     btn_actionrun_->setToolTip(
@@ -140,7 +140,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
     QHBoxLayout *symLayout = new QHBoxLayout();
     // symLayout->addWidget(symlabel);
-    // symLayout->addWidget(btn_maple);
+    // symLayout->addWidget(btn_maple_);
     // symLayout->addWidget(btn_reduce);
     symLayout->addStretch(0);
     mainLayout_->addLayout(symLayout);
@@ -216,7 +216,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btngrp2->addButton(btn_no_);
 
     // QButtonGroup *btngrp3 = new QButtonGroup(this);
-    // btngrp3->addButton(btn_maple);
+    // btngrp3->addButton(btn_maple_);
     // btngrp3->addButton(btn_reduce);
 
     QButtonGroup *btngrp4 = new QButtonGroup(this);
@@ -224,7 +224,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btngrp4->addButton(btn_actionprep_);
 
     // if (g_ThisVF->symbolicpackage_ == PACKAGE_MAPLE)
-    //    btn_maple->toggle();
+    //    btn_maple_->toggle();
     // else
     //    btn_reduce->toggle();
 
@@ -253,7 +253,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     else
         btn_no_->toggle();
 
-    // QObject::connect(btn_maple, SIGNAL(toggled(bool)), this,
+    // QObject::connect(btn_maple_, SIGNAL(toggled(bool)), this,
     //                 SLOT(btn_maple_toggled(bool)));
     // QObject::connect(btn_reduce, SIGNAL(toggled(bool)), this,
     //                 SLOT(btn_reduce_toggled(bool)));
