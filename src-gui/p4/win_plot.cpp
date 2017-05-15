@@ -211,7 +211,7 @@ QPlotWnd::~QPlotWnd()
 void QPlotWnd::adjustHeight(void)
 {
     sphere_->adjustToNewSize();
-    resize(width(), height() + sphere_->idealh - sphere_->h);
+    resize(width(), height() + sphere_->idealh_ - sphere_->h_);
     sphere_->refresh();
     statusBar()->showMessage("Ready.");
 }
@@ -366,7 +366,7 @@ void QPlotWnd::configure(void)
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
                              // sphere_ window
     plot_p = spherePlotPoint;
-    sphere_->SetupPlot(); // setup sphere_ window (define pixel transformations)
+    sphere_->setupPlot(); // setup sphere_ window (define pixel transformations)
     intParamsWindow_->updateDlgData(); // update data of integration parameters
     viewParamsWindow_->updateDlgData();
     orbitsWindow_->reset(); // reset forward/backward buttons to initial state

@@ -444,7 +444,7 @@ void deleteLastLimitCycle(QWinSphere *spherewnd)
 
     orbit2 = g_VFResults.current_lim_cycle_;
     drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
-              spherewnd->spherebgcolor);
+              spherewnd->spherebgcolor_);
 
     if (g_VFResults.first_lim_cycle_ == g_VFResults.current_lim_cycle_) {
         g_VFResults.first_lim_cycle_ = nullptr;

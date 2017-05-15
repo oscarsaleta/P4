@@ -77,7 +77,7 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     sphere->show();
     setCentralWidget(sphere);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
-    sphere->SetupPlot();
+    sphere->setupPlot();
 
     //  if( g_ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait - Zoom");
@@ -176,7 +176,7 @@ void QZoomWnd::configure(void)
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
                              // sphere window
     plot_p = spherePlotPoint;
-    sphere->SetupPlot(); // setup sphere window (define pixel transformations)
+    sphere->setupPlot(); // setup sphere window (define pixel transformations)
     sphere->update();
     // delete print window
     // delete xfig window
@@ -218,7 +218,7 @@ void QZoomWnd::adjustHeight(void)
     sphere->adjustToNewSize();
 
     w = width();
-    h = height() + sphere->idealh - sphere->h;
+    h = height() + sphere->idealh_ - sphere->h_;
 
     m = g_p4app->desktop()->height();
     m -= m / 10; // occuppy at most 90% of the screen's height
@@ -226,16 +226,16 @@ void QZoomWnd::adjustHeight(void)
     if (h > m) {
         deltah = (double)(h - m);
         deltaw = deltah;
-        deltaw *= sphere->dx;
-        deltaw /= sphere->dy;
+        deltaw *= sphere->dx_;
+        deltaw /= sphere->dy_;
 
         h -= (int)(deltah + 0.5);
         w -= (int)(deltaw + 0.5);
-    } else if (sphere->idealh < MINHEIGHTPLOTWINDOW) {
-        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere->idealh);
+    } else if (sphere->idealh_ < MINHEIGHTPLOTWINDOW) {
+        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere->idealh_);
         deltaw = deltah;
-        deltaw *= sphere->dx;
-        deltaw /= sphere->dy;
+        deltaw *= sphere->dx_;
+        deltaw /= sphere->dy_;
 
         h += (int)(deltah + 0.5);
         w += (int)(deltaw + 0.5);

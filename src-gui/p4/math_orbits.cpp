@@ -166,7 +166,7 @@ void deleteLastOrbit(QWinSphere *spherewnd)
 
     orbit2 = g_VFResults.current_orbit_;
     drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
-              spherewnd->spherebgcolor);
+              spherewnd->spherebgcolor_);
 
     if (g_VFResults.first_orbit_ == g_VFResults.current_orbit_) {
         g_VFResults.first_orbit_ = nullptr;
