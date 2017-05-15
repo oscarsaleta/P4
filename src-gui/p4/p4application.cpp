@@ -83,13 +83,13 @@ void QP4Application::signalEvaluated(int exitCode)
 
     if (g_cmdLine_AutoExit) {
         g_cmdLine_AutoPlot = false;
-        g_p4stardlg->OnQuit();
+        g_p4stardlg->onQuit();
         return;
     }
 
     if (g_cmdLine_AutoPlot) {
         g_cmdLine_AutoPlot = false;
-        g_p4stardlg->OnPlot();
+        g_p4stardlg->onPlot();
     }
 }
 
@@ -135,7 +135,7 @@ void QP4Application::signalLoaded(void)
     }
     if (g_cmdLine_AutoPlot) {
         g_cmdLine_AutoPlot = false;
-        g_p4stardlg->OnPlot();
+        g_p4stardlg->onPlot();
         return;
     }
 }

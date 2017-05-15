@@ -59,26 +59,13 @@ class QStartDlg : public QWidget
 
   public:
     QStartDlg(const QString &);
+    
+    QFindDlg *Find_Window;
+    QPlotWnd *Plot_Window;
+    
     void closeEvent(QCloseEvent *ce);
 
-  public slots:
-    // following slots are called by QT when a button is pressed or a file name
-    // is changed:
-
-    void OnQuit();
-    void OnPlot();
-    void OnViewFinite();
-    void OnViewInfinite();
-    void OnHelp();
-    void OnFind();
-    void OnBrowse();
-    void OnAbout();
-    void OnFilenameChange(const QString &);
-    QWidget *Showtext(QWidget *win, QString caption, QString fname);
-
-    // following slots are called by other P4 widgets when something happened:
-
-  public:
+    // following functions are called by other P4 widgets when something happened:
     void signalEvaluating(void);
     void signalEvaluated(void);
     void signalChanged(void);
@@ -87,24 +74,35 @@ class QStartDlg : public QWidget
 
     void customEvent(QEvent *e);
 
+  public slots:
+    // following slots are called by QT when a button is pressed or a file name
+    // is changed:
+    void onQuit();
+    void onPlot();
+    void onViewFinite();
+    void onViewInfinite();
+    void onHelp();
+    void onFind();
+    void onBrowse();
+    void onAbout();
+    void onFilenameChange(const QString &);
+    QWidget *showText(QWidget *win, QString caption, QString fname);
+
   private:
     QBoxLayout *mainLayout_;
-    QPushButton *btn_quit;
-    QPushButton *btn_find;
-    QPushButton *btn_view;
-    QPushButton *btn_plot;
-    QPushButton *btn_help;
-    QPushButton *btn_about;
-    QLineEdit *edt_name;
-    QMenu *viewmenu;
+    QPushButton *btn_quit_;
+    QPushButton *btn_find_;
+    QPushButton *btn_view_;
+    QPushButton *btn_plot_;
+    QPushButton *btn_help_;
+    QPushButton *btn_about_;
+    QLineEdit *edt_name_;
+    QMenu *viewMenu_;
 
-    QWidget *Help_Window;
-    QWidget *View_Infinite_Window;
-    QWidget *View_Finite_Window;
+    QWidget *helpWindow_;
+    QWidget *viewInfiniteWindow_;
+    QWidget *viewFiniteWindow_;
 
-  public:
-    QFindDlg *Find_Window;
-    QPlotWnd *Plot_Window;
 };
 
 extern QStartDlg *g_p4stardlg;

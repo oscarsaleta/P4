@@ -51,53 +51,53 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     if (g_p4smallicon != nullptr)
         setWindowIcon(*g_p4smallicon);
 
-    btn_quit = new QPushButton("&Quit", this);
+    btn_quit_ = new QPushButton("&Quit", this);
 #ifdef DOCK_FINDWINDOW
-    makeButtonPixmaps(btn_quit->palette());
-    btn_find = new QPushButton("", this);
+    makeButtonPixmaps(btn_quit_->palette());
+    btn_find_ = new QPushButton("", this);
 
 #ifdef AUTO_OPEN_FINDWINDOW
-    btn_find->setIcon(QIcon(*Pixmap_TriangleUp));
+    btn_find_->setIcon(QIcon(*Pixmap_TriangleUp));
 #else
-    btn_find->setIcon(QIcon(*Pixmap_TriangleDown));
+    btn_find_->setIcon(QIcon(*Pixmap_TriangleDown));
 #endif
-    btn_find->setFixedSize(btn_find->sizeHint());
+    btn_find_->setFixedSize(btn_find_->sizeHint());
 #else
-    btn_find = new QPushButton("&Find", this);
+    btn_find_ = new QPushButton("&Find", this);
 #endif
-    btn_view = new QPushButton("Vie&w", this);
-    btn_plot = new QPushButton("&Plot", this);
-    btn_help = new QPushButton("&Help", this);
-    btn_about = new QPushButton("Ab&out P4...", this);
+    btn_view_ = new QPushButton("Vie&w", this);
+    btn_plot_ = new QPushButton("&Plot", this);
+    btn_help_ = new QPushButton("&Help", this);
+    btn_about_ = new QPushButton("Ab&out P4...", this);
 
     if (autofilename.length() == 0)
-        edt_name = new QLineEdit(DEFAULTFILENAME, this);
+        edt_name_ = new QLineEdit(DEFAULTFILENAME, this);
     else
-        edt_name = new QLineEdit(g_ThisVF->filename_ = autofilename, this);
+        edt_name_ = new QLineEdit(g_ThisVF->filename_ = autofilename, this);
     QLabel *p4name = new QLabel(" &Name: ", this);
-    p4name->setBuddy(edt_name);
+    p4name->setBuddy(edt_name_);
     p4name->setFont(*(g_p4app->boldFont_));
 
-    edt_name->setSelection(0, strlen(DEFAULTFILENAME));
-    edt_name->setCursorPosition(strlen(DEFAULTFILENAME));
+    edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
+    edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
 
     QPushButton *btn_browse = new QPushButton("&Browse", this);
 
 #ifdef TOOLTIPS
-    btn_quit->setToolTip("Quit P4");
+    btn_quit_->setToolTip("Quit P4");
 #ifdef DOCK_FINDWINDOW
-    btn_find->setToolTip("Unfolds/hides the \"Find Singular Points\" window");
+    btn_find_->setToolTip("Unfolds/hides the \"Find Singular Points\" window");
 #else
-    btn_find->setToolTip("Opens/closes the \"Find Singular Points\" window");
+    btn_find_->setToolTip("Opens/closes the \"Find Singular Points\" window");
 #endif
-    btn_view->setToolTip(
+    btn_view_->setToolTip(
         "View results of the symbolic manipulator after evaluation");
-    btn_plot->setToolTip("Draw singular points, orbits and separatrices");
-    btn_help->setToolTip("Shows extensive help on the use of P4");
-    edt_name->setToolTip("Enter the filename of the vector field here.\n"
+    btn_plot_->setToolTip("Draw singular points, orbits and separatrices");
+    btn_help_->setToolTip("Shows extensive help on the use of P4");
+    edt_name_->setToolTip("Enter the filename of the vector field here.\n"
                          "You do not need to add the extension (.inp).\n");
     btn_browse->setToolTip("Search for vector field files on your system");
-    btn_about->setToolTip("Displays information about the program P4, its "
+    btn_about_->setToolTip("Displays information about the program P4, its "
                           "version and main settings");
 #endif
 
@@ -107,25 +107,25 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     QHBoxLayout *buttons = new QHBoxLayout();
 #ifdef DOCK_FINDWINDOW
-    buttons->addWidget(btn_quit);
-    buttons->addWidget(btn_view);
-    buttons->addWidget(btn_plot);
-    buttons->addWidget(btn_help);
-    buttons->addWidget(btn_find);
+    buttons->addWidget(btn_quit_);
+    buttons->addWidget(btn_view_);
+    buttons->addWidget(btn_plot_);
+    buttons->addWidget(btn_help_);
+    buttons->addWidget(btn_find_);
 #else
-    buttons->addWidget(btn_quit);
-    buttons->addWidget(btn_find);
-    buttons->addWidget(btn_view);
-    buttons->addWidget(btn_plot);
-    buttons->addWidget(btn_help);
+    buttons->addWidget(btn_quit_);
+    buttons->addWidget(btn_find_);
+    buttons->addWidget(btn_view_);
+    buttons->addWidget(btn_plot_);
+    buttons->addWidget(btn_help_);
 #endif
     mainLayout_->addLayout(buttons);
 
     QHBoxLayout *names = new QHBoxLayout();
     names->addWidget(p4name);
-    names->addWidget(edt_name);
+    names->addWidget(edt_name_);
     names->addWidget(btn_browse);
-    names->addWidget(btn_about);
+    names->addWidget(btn_about_);
     mainLayout_->addLayout(names);
 
     setLayout(mainLayout_);
@@ -133,55 +133,55 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     // connections
 
-    viewmenu = new QMenu(this);
+    viewMenu_ = new QMenu(this);
 
     QAction *ActFin = new QAction("Fini&te", this);
     ActFin->setShortcut(Qt::ALT + Qt::Key_T);
-    connect(ActFin, SIGNAL(triggered()), this, SLOT(OnViewFinite()));
-    viewmenu->addAction(ActFin);
+    connect(ActFin, SIGNAL(triggered()), this, SLOT(onViewFinite()));
+    viewMenu_->addAction(ActFin);
 
     QAction *ActInf = new QAction("&Infinite", this);
     ActInf->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(ActInf, SIGNAL(triggered()), this, SLOT(OnViewInfinite()));
-    viewmenu->addAction(ActInf);
+    connect(ActInf, SIGNAL(triggered()), this, SLOT(onViewInfinite()));
+    viewMenu_->addAction(ActInf);
 
-    btn_view->setMenu(viewmenu);
+    btn_view_->setMenu(viewMenu_);
 
-    QObject::connect(btn_quit, SIGNAL(clicked()), this, SLOT(OnQuit()));
-    QObject::connect(btn_find, SIGNAL(clicked()), this, SLOT(OnFind()));
-    QObject::connect(btn_plot, SIGNAL(clicked()), this, SLOT(OnPlot()));
-    QObject::connect(btn_help, SIGNAL(clicked()), this, SLOT(OnHelp()));
-    QObject::connect(btn_about, SIGNAL(clicked()), this, SLOT(OnAbout()));
-    QObject::connect(btn_browse, SIGNAL(clicked()), this, SLOT(OnBrowse()));
-    QObject::connect(edt_name, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(OnFilenameChange(const QString &)));
+    QObject::connect(btn_quit_, SIGNAL(clicked()), this, SLOT(onQuit()));
+    QObject::connect(btn_find_, SIGNAL(clicked()), this, SLOT(onFind()));
+    QObject::connect(btn_plot_, SIGNAL(clicked()), this, SLOT(onPlot()));
+    QObject::connect(btn_help_, SIGNAL(clicked()), this, SLOT(onHelp()));
+    QObject::connect(btn_about_, SIGNAL(clicked()), this, SLOT(onAbout()));
+    QObject::connect(btn_browse, SIGNAL(clicked()), this, SLOT(onBrowse()));
+    QObject::connect(edt_name_, SIGNAL(textChanged(const QString &)), this,
+                     SLOT(onFilenameChange(const QString &)));
 
     // setting focus
 
-    edt_name->setFocus();
+    edt_name_->setFocus();
 
     // finishing
 
-    //  btn_plot->setDisabled( true );
-    //  viewmenu->setItemEnabled( 1, false );
-    //  viewmenu->setItemEnabled( 2, false );
+    //  btn_plot_->setDisabled( true );
+    //  viewMenu_->setItemEnabled( 1, false );
+    //  viewMenu_->setItemEnabled( 2, false );
 
-    Help_Window = nullptr;
+    helpWindow_ = nullptr;
     Find_Window = nullptr;
-    View_Infinite_Window = nullptr;
-    View_Finite_Window = nullptr;
+    viewInfiniteWindow_ = nullptr;
+    viewFiniteWindow_ = nullptr;
     Plot_Window = nullptr;
 #ifdef AUTO_OPEN_FINDWINDOW
-    OnFind();
+    onFind();
 #else
     if (autofilename.length() != 0)
-        OnFind();
+        onFind();
 #endif
 
     setP4WindowTitle(this, cap);
 }
 
-void QStartDlg::OnFind(void)
+void QStartDlg::onFind(void)
 {
     // show find dialog
 
@@ -191,22 +191,22 @@ void QStartDlg::OnFind(void)
         Find_Window->raise();
 #ifdef DOCK_FINDWINDOW
         mainLayout_->addWidget(Find_Window);
-        btn_find->setIcon(QIcon(*Pixmap_TriangleUp));
+        btn_find_->setIcon(QIcon(*Pixmap_TriangleUp));
 #endif
     } else {
 #ifdef DOCK_FINDWINDOW
         delete Find_Window;
         Find_Window = nullptr;
-        btn_find->setIcon(QIcon(*Pixmap_TriangleDown));
+        btn_find_->setIcon(QIcon(*Pixmap_TriangleDown));
 #else
         Find_Window->show();
         Find_Window->raise();
-        btn_find->setIcon(QIcon(*Pixmap_TriangleUp));
+        btn_find_->setIcon(QIcon(*Pixmap_TriangleUp));
 #endif
     }
 }
 
-void QStartDlg::OnHelp(void)
+void QStartDlg::onHelp(void)
 {
     // display help
     QTextBrowser *hlp;
@@ -230,7 +230,7 @@ void QStartDlg::OnHelp(void)
         return;
     }
 
-    hlp = (QTextBrowser *)Help_Window;
+    hlp = (QTextBrowser *)helpWindow_;
 
     if (hlp == nullptr) {
         hlp = new QTextBrowser();
@@ -245,10 +245,10 @@ void QStartDlg::OnHelp(void)
     hlp->show();
     hlp->raise();
 
-    Help_Window = hlp;
+    helpWindow_ = hlp;
 }
 
-void QStartDlg::OnPlot(void)
+void QStartDlg::onPlot(void)
 {
     // show plot window
 
@@ -282,10 +282,10 @@ void QStartDlg::OnPlot(void)
     Plot_Window->configure(); // configure plot window
     Plot_Window->show();
     Plot_Window->raise();
-    Plot_Window->AdjustHeight();
+    Plot_Window->adjustHeight();
 }
 
-void QStartDlg::OnQuit(void)
+void QStartDlg::onQuit(void)
 {
     if (Plot_Window != nullptr) {
         delete Plot_Window;
@@ -295,17 +295,17 @@ void QStartDlg::OnQuit(void)
         delete Find_Window;
         Find_Window = nullptr;
     }
-    if (Help_Window != nullptr) {
-        delete Help_Window;
-        Help_Window = nullptr;
+    if (helpWindow_ != nullptr) {
+        delete helpWindow_;
+        helpWindow_ = nullptr;
     }
-    if (View_Finite_Window != nullptr) {
-        delete View_Finite_Window;
-        View_Finite_Window = nullptr;
+    if (viewFiniteWindow_ != nullptr) {
+        delete viewFiniteWindow_;
+        viewFiniteWindow_ = nullptr;
     }
-    if (View_Infinite_Window != nullptr) {
-        delete View_Infinite_Window;
-        View_Infinite_Window = nullptr;
+    if (viewInfiniteWindow_ != nullptr) {
+        delete viewInfiniteWindow_;
+        viewInfiniteWindow_ = nullptr;
     }
 
     if (g_ThisVF != nullptr) {
@@ -316,7 +316,7 @@ void QStartDlg::OnQuit(void)
     close();
 }
 
-void QStartDlg::OnFilenameChange(const QString &fname)
+void QStartDlg::onFilenameChange(const QString &fname)
 {
     g_ThisVF->filename_ = fname;
 }
@@ -325,8 +325,8 @@ void QStartDlg::signalEvaluating(void)
 {
     // disable view button, disable plot button:
 
-    btn_view->setEnabled(false);
-    btn_plot->setEnabled(false);
+    btn_view_->setEnabled(false);
+    btn_plot_->setEnabled(false);
 
     // Transfer signal to Find_Window:
 
@@ -344,12 +344,12 @@ void QStartDlg::signalEvaluated(void)
 {
     // enable view button, disable plot button:
 
-    btn_view->setEnabled(true);
-    btn_plot->setEnabled(true);
+    btn_view_->setEnabled(true);
+    btn_plot_->setEnabled(true);
 
     // freshen view finite/infinite windows if they are open:
 
-    if (View_Finite_Window != nullptr) {
+    if (viewFiniteWindow_ != nullptr) {
         QString fname;
 
         if (Find_Window != nullptr)
@@ -358,21 +358,21 @@ void QStartDlg::signalEvaluated(void)
         fname = g_ThisVF->getfilename_finresults();
 
         if (g_ThisVF->fileExists(fname)) {
-            View_Finite_Window = Showtext(
-                View_Finite_Window, "View results at the finite region", fname);
+            viewFiniteWindow_ = showText(
+                viewFiniteWindow_, "View results at the finite region", fname);
         } else {
-            if (View_Finite_Window != nullptr) {
-                ((QTextEdit *)View_Finite_Window)->clear();
-                ((QTextEdit *)View_Finite_Window)
+            if (viewFiniteWindow_ != nullptr) {
+                ((QTextEdit *)viewFiniteWindow_)->clear();
+                ((QTextEdit *)viewFiniteWindow_)
                     ->setCurrentFont(*(g_p4app->boldCourierFont_));
-                ((QTextEdit *)View_Finite_Window)
+                ((QTextEdit *)viewFiniteWindow_)
                     ->insertPlainText(
                         "\nA study at the finite region is not available!");
             }
         }
     }
 
-    if (View_Infinite_Window != nullptr) {
+    if (viewInfiniteWindow_ != nullptr) {
         QString fname;
 
         if (Find_Window != nullptr)
@@ -380,20 +380,20 @@ void QStartDlg::signalEvaluated(void)
 
         fname = g_ThisVF->getfilename_infresults();
         if (g_ThisVF->fileExists(fname)) {
-            View_Infinite_Window = Showtext(View_Infinite_Window,
+            viewInfiniteWindow_ = showText(viewInfiniteWindow_,
                                             "View results at infinity", fname);
             if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
                 g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
                 // mark: data invalid according to vf information
 
-                View_Infinite_Window->setFont(*(g_p4app->courierFont_));
+                viewInfiniteWindow_->setFont(*(g_p4app->courierFont_));
             }
         } else {
-            if (View_Infinite_Window != nullptr) {
-                ((QTextEdit *)View_Infinite_Window)->clear();
-                ((QTextEdit *)View_Infinite_Window)
+            if (viewInfiniteWindow_ != nullptr) {
+                ((QTextEdit *)viewInfiniteWindow_)->clear();
+                ((QTextEdit *)viewInfiniteWindow_)
                     ->setCurrentFont(*(g_p4app->boldCourierFont_));
-                ((QTextEdit *)View_Infinite_Window)
+                ((QTextEdit *)viewInfiniteWindow_)
                     ->insertPlainText(
                         "\nA study at infinity is not available!");
             }
@@ -442,33 +442,33 @@ void QStartDlg::signalLoaded(void)
 
 void QStartDlg::signalChanged(void)
 {
-    if (View_Finite_Window != nullptr) {
-        View_Finite_Window->setFont(*(g_p4app->courierFont_));
+    if (viewFiniteWindow_ != nullptr) {
+        viewFiniteWindow_->setFont(*(g_p4app->courierFont_));
     }
 
-    if (View_Infinite_Window != nullptr) {
-        View_Infinite_Window->setFont(*(g_p4app->courierFont_));
+    if (viewInfiniteWindow_ != nullptr) {
+        viewInfiniteWindow_->setFont(*(g_p4app->courierFont_));
     }
     if (Plot_Window != nullptr) {
         Plot_Window->signalChanged();
     }
 }
 
-void QStartDlg::OnBrowse(void)
+void QStartDlg::onBrowse(void)
 {
     QString result;
 
     result = QFileDialog::getOpenFileName(
-        this, "Select vector field configuration file", edt_name->text(),
+        this, "Select vector field configuration file", edt_name_->text(),
         "Vector Field files (*.inp);;All Files (*.*)", 0,
         QFileDialog::DontConfirmOverwrite);
 
     if (!(result.isNull())) {
-        edt_name->setText(result);
+        edt_name_->setText(result);
     }
 }
 
-void QStartDlg::OnAbout(void)
+void QStartDlg::onAbout(void)
 {
     QP4AboutDlg *pdlg;
     pdlg = new QP4AboutDlg(this, 0);
@@ -477,7 +477,7 @@ void QStartDlg::OnAbout(void)
     pdlg = nullptr;
 }
 
-void QStartDlg::OnViewFinite()
+void QStartDlg::onViewFinite()
 {
     // display help
 
@@ -501,20 +501,20 @@ void QStartDlg::OnViewFinite()
         return;
     }
 
-    View_Finite_Window = Showtext(View_Finite_Window,
+    viewFiniteWindow_ = showText(viewFiniteWindow_,
                                   "View results at the finite region", fname);
-    View_Finite_Window->show();
-    View_Finite_Window->raise();
+    viewFiniteWindow_->show();
+    viewFiniteWindow_->raise();
 
     if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
         // mark: data invalid according to vf information
 
-        View_Finite_Window->setFont(*(g_p4app->courierFont_));
+        viewFiniteWindow_->setFont(*(g_p4app->courierFont_));
         return;
     }
 }
 
-void QStartDlg::OnViewInfinite()
+void QStartDlg::onViewInfinite()
 {
     QString fname;
 
@@ -536,20 +536,20 @@ void QStartDlg::OnViewInfinite()
         return;
     }
 
-    View_Infinite_Window =
-        Showtext(View_Infinite_Window, "View results at infinity", fname);
-    View_Infinite_Window->show();
-    View_Infinite_Window->raise();
+    viewInfiniteWindow_ =
+        showText(viewInfiniteWindow_, "View results at infinity", fname);
+    viewInfiniteWindow_->show();
+    viewInfiniteWindow_->raise();
     if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
         g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         // mark: data invalid according to vf information
 
-        View_Infinite_Window->setFont(*(g_p4app->courierFont_));
+        viewInfiniteWindow_->setFont(*(g_p4app->courierFont_));
         return;
     }
 }
 
-QWidget *QStartDlg::Showtext(QWidget *win, QString caption, QString fname)
+QWidget *QStartDlg::showText(QWidget *win, QString caption, QString fname)
 {
     bool shown;
     QTextEdit *result;

@@ -42,7 +42,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
     QToolBar *toolBar1;
     QToolBar *toolBar2;
-    parent = main;
+    parent_ = main;
 
     // setAttribute( Qt::WA_PaintOnScreen, true );
     // setAttribute( Qt::WA_PaintOutsidePaintEvent, true );
@@ -50,9 +50,9 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     if (g_p4smallicon != nullptr)
         setWindowIcon(*g_p4smallicon);
 
-    numZooms = 0;
-    lastZoomIdentifier = 0;
-    ZoomWindows = nullptr;
+    numZooms_ = 0;
+    lastZoomIdentifier_ = 0;
+    zoomWindows_ = nullptr;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
@@ -63,67 +63,67 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     toolBar1->setMovable(false);
     toolBar2->setMovable(false);
 
-    ActClose = new QAction("Clos&e", this);
-    ActClose->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(ActClose, SIGNAL(triggered()), this, SLOT(OnBtnClose()));
-    toolBar1->addAction(ActClose);
+    actClose_ = new QAction("Clos&e", this);
+    actClose_->setShortcut(Qt::ALT + Qt::Key_E);
+    connect(actClose_, SIGNAL(triggered()), this, SLOT(onBtnClose()));
+    toolBar1->addAction(actClose_);
 
-    ActRefresh = new QAction("&Refresh", this);
-    ActRefresh->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(ActRefresh, SIGNAL(triggered()), this, SLOT(OnBtnRefresh()));
-    toolBar1->addAction(ActRefresh);
+    actRefresh_ = new QAction("&Refresh", this);
+    actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
+    connect(actRefresh_, SIGNAL(triggered()), this, SLOT(onBtnRefresh()));
+    toolBar1->addAction(actRefresh_);
 
-    ActLegend = new QAction("&Legend", this);
-    ActLegend->setShortcut(Qt::ALT + Qt::Key_L);
-    connect(ActLegend, SIGNAL(triggered()), this, SLOT(OnBtnLegend()));
-    toolBar1->addAction(ActLegend);
+    actLegend_ = new QAction("&Legend", this);
+    actLegend_->setShortcut(Qt::ALT + Qt::Key_L);
+    connect(actLegend_, SIGNAL(triggered()), this, SLOT(onBtnLegend()));
+    toolBar1->addAction(actLegend_);
 
-    ActOrbits = new QAction("&Orbits", this);
-    ActOrbits->setShortcut(Qt::ALT + Qt::Key_O);
-    connect(ActOrbits, SIGNAL(triggered()), this, SLOT(OnBtnOrbits()));
-    toolBar1->addAction(ActOrbits);
+    actOrbits_ = new QAction("&Orbits", this);
+    actOrbits_->setShortcut(Qt::ALT + Qt::Key_O);
+    connect(actOrbits_, SIGNAL(triggered()), this, SLOT(onBtnOrbits()));
+    toolBar1->addAction(actOrbits_);
 
-    ActIntParams = new QAction("&Integration Parameters", this);
-    ActIntParams->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(ActIntParams, SIGNAL(triggered()), this, SLOT(OnBtnIntParams()));
-    toolBar1->addAction(ActIntParams);
+    actIntParams_ = new QAction("&Integration Parameters", this);
+    actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
+    connect(actIntParams_, SIGNAL(triggered()), this, SLOT(onBtnIntParams()));
+    toolBar1->addAction(actIntParams_);
 
-    ActGCF = new QAction("&GCF", this);
-    ActGCF->setShortcut(Qt::ALT + Qt::Key_G);
-    connect(ActGCF, SIGNAL(triggered()), this, SLOT(OnBtnGCF()));
-    toolBar1->addAction(ActGCF);
+    actGCF_ = new QAction("&GCF", this);
+    actGCF_->setShortcut(Qt::ALT + Qt::Key_G);
+    connect(actGCF_, SIGNAL(triggered()), this, SLOT(onBtnGCF()));
+    toolBar1->addAction(actGCF_);
 
-    ActCurve = new QAction("&Curve", this);
-    ActCurve->setShortcut(Qt::ALT+Qt::Key_C); // NOTE: conflict?
-    connect(ActCurve,SIGNAL(triggered()),this,SLOT(OnBtnCurve()));
-    toolBar1->addAction(ActCurve);
+    actCurve_ = new QAction("&Curve", this);
+    actCurve_->setShortcut(Qt::ALT+Qt::Key_C); // NOTE: conflict?
+    connect(actCurve_,SIGNAL(triggered()),this,SLOT(onBtnCurve()));
+    toolBar1->addAction(actCurve_);
 
-    ActPlotSep = new QAction("Plot &Separatrice", this);
-    ActPlotSep->setShortcut(Qt::ALT + Qt::Key_S);
-    connect(ActPlotSep, SIGNAL(triggered()), this, SLOT(OnBtnPlotSep()));
-    toolBar2->addAction(ActPlotSep);
+    actPlotSep_ = new QAction("Plot &Separatrice", this);
+    actPlotSep_->setShortcut(Qt::ALT + Qt::Key_S);
+    connect(actPlotSep_, SIGNAL(triggered()), this, SLOT(onBtnPlotSep()));
+    toolBar2->addAction(actPlotSep_);
 
-    ActPlotAllSeps = new QAction("Plot All Separa&trices", this);
-    ActPlotAllSeps->setShortcut(Qt::ALT + Qt::Key_T);
-    connect(ActPlotAllSeps, SIGNAL(triggered()), this,
-            SLOT(OnBtnPlotAllSeps()));
-    toolBar2->addAction(ActPlotAllSeps);
+    actPlotAllSeps_ = new QAction("Plot All Separa&trices", this);
+    actPlotAllSeps_->setShortcut(Qt::ALT + Qt::Key_T);
+    connect(actPlotAllSeps_, SIGNAL(triggered()), this,
+            SLOT(onBtnPlotAllSeps()));
+    toolBar2->addAction(actPlotAllSeps_);
 
-    ActLimitCycles = new QAction("Limit C&ycles", this);
-    ActLimitCycles->setShortcut(Qt::ALT + Qt::Key_Y);
-    connect(ActLimitCycles, SIGNAL(triggered()), this,
-            SLOT(OnBtnLimitCycles()));
-    toolBar2->addAction(ActLimitCycles);
+    actLimitCycles_ = new QAction("Limit C&ycles", this);
+    actLimitCycles_->setShortcut(Qt::ALT + Qt::Key_Y);
+    connect(actLimitCycles_, SIGNAL(triggered()), this,
+            SLOT(onBtnLimitCycles()));
+    toolBar2->addAction(actLimitCycles_);
 
-    ActView = new QAction("&View", this);
-    ActView->setShortcut(Qt::ALT + Qt::Key_V);
-    connect(ActView, SIGNAL(triggered()), this, SLOT(OnBtnView()));
-    toolBar2->addAction(ActView);
+    actView_ = new QAction("&View", this);
+    actView_->setShortcut(Qt::ALT + Qt::Key_V);
+    connect(actView_, SIGNAL(triggered()), this, SLOT(onBtnView()));
+    toolBar2->addAction(actView_);
 
-    ActPrint = new QAction("&Print", this);
-    ActPrint->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(ActPrint, SIGNAL(triggered()), this, SLOT(OnBtnPrint()));
-    toolBar2->addAction(ActPrint);
+    actPrint_ = new QAction("&Print", this);
+    actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
+    connect(actPrint_, SIGNAL(triggered()), this, SLOT(onBtnPrint()));
+    toolBar2->addAction(actPrint_);
 
     addToolBar(Qt::TopToolBarArea, toolBar1);
     addToolBarBreak(Qt::TopToolBarArea);
@@ -131,44 +131,44 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
 #ifdef TOOLTIPS
 
-    ActClose->setToolTip(
+    actClose_->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
-    ActRefresh->setToolTip("Redraw the plot window");
-    ActLegend->setToolTip("Show legend");
-    ActOrbits->setToolTip("Opens \"Integrate Orbits\" window");
-    ActIntParams->setToolTip("Opens \"Integration Parameters\" window");
-    ActGCF->setToolTip("Opens Greatest-Common-Factor window.\n"
+    actRefresh_->setToolTip("Redraw the plot window");
+    actLegend_->setToolTip("Show legend");
+    actOrbits_->setToolTip("Opens \"Integrate Orbits\" window");
+    actIntParams_->setToolTip("Opens \"Integration Parameters\" window");
+    actGCF_->setToolTip("Opens Greatest-Common-Factor window.\n"
                        "Disabled if there is no GCF");
-    ActCurve->setToolTip("Opens curve plot window.");
-    ActPlotSep->setToolTip("Opens \"Plot separatrices\" window");
-    ActPlotAllSeps->setToolTip("Plots all separatrices of all singular points "
+    actCurve_->setToolTip("Opens curve plot window.");
+    actPlotSep_->setToolTip("Opens \"Plot separatrices\" window");
+    actPlotAllSeps_->setToolTip("Plots all separatrices of all singular points "
                                "with default integration parameters.\n"
                                "Change integration parameters if the effect is "
                                "too small to be visible.");
-    ActLimitCycles->setToolTip("Opens limit cycle window");
-    ActView->setToolTip("Opens the \"View parameter\" window");
-    ActPrint->setToolTip("Opens the print window");
+    actLimitCycles_->setToolTip("Opens limit cycle window");
+    actView_->setToolTip("Opens the \"View parameter\" window");
+    actPrint_->setToolTip("Opens the print window");
 #endif
 
     statusBar()->showMessage("Ready");
 
-    sphere = new QWinSphere(this, statusBar(), false, 0, 0, 0, 0);
-    Legend_Window = new QLegendWnd();
-    Orbits_Window = new QOrbitsDlg(this, sphere);
-    Sep_Window = new QSepDlg(this, sphere);
-    IntParams_Window = new QIntParamsDlg();
-    ViewParams_Window = new QViewDlg(this);
-    LC_Window = new QLimitCyclesDlg(this, sphere);
-    GCF_Window = new QGcfDlg(this, sphere);
-    Curve_Window = new QCurveDlg(this,sphere);
+    sphere_ = new QWinSphere(this, statusBar(), false, 0, 0, 0, 0);
+    legendWindow_ = new QLegendWnd();
+    orbitsWindow_ = new QOrbitsDlg(this, sphere_);
+    sepWindow_ = new QSepDlg(this, sphere_);
+    intParamsWindow_ = new QIntParamsDlg();
+    viewParamsWindow_ = new QViewDlg(this);
+    lcWindow_ = new QLimitCyclesDlg(this, sphere_);
+    gcfWindow_ = new QGcfDlg(this, sphere_);
+    curveWindow_ = new QCurveDlg(this,sphere_);
     g_LCWindowIsUp = false; // Limit cycles: initially hidden
 
-    sphere->show();
-    setCentralWidget(sphere);
+    sphere_->show();
+    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
-    IntParams_Window->updateDlgData();
-    ViewParams_Window->updateDlgData();
+    intParamsWindow_->updateDlgData();
+    viewParamsWindow_->updateDlgData();
 
     //  if( g_ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait");
@@ -178,41 +178,41 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
 QPlotWnd::~QPlotWnd()
 {
-    if (numZooms != 0) {
-        for (int i = 0; i < numZooms; i++) {
-            delete ZoomWindows[i];
-            ZoomWindows[i] = nullptr;
+    if (numZooms_ != 0) {
+        for (int i = 0; i < numZooms_; i++) {
+            delete zoomWindows_[i];
+            zoomWindows_[i] = nullptr;
         }
-        delete ZoomWindows;
-        ZoomWindows = nullptr;
-        numZooms = 0;
+        delete zoomWindows_;
+        zoomWindows_ = nullptr;
+        numZooms_ = 0;
     }
 
-    delete Legend_Window;
-    Legend_Window = nullptr;
-    delete Orbits_Window;
-    Orbits_Window = nullptr;
-    delete IntParams_Window;
-    IntParams_Window = nullptr;
-    delete ViewParams_Window;
-    ViewParams_Window = nullptr;
-    delete Sep_Window;
-    Sep_Window = nullptr;
-    delete LC_Window;
-    LC_Window = nullptr;
-    delete GCF_Window;
-    GCF_Window = nullptr;
+    delete legendWindow_;
+    legendWindow_ = nullptr;
+    delete orbitsWindow_;
+    orbitsWindow_ = nullptr;
+    delete intParamsWindow_;
+    intParamsWindow_ = nullptr;
+    delete viewParamsWindow_;
+    viewParamsWindow_ = nullptr;
+    delete sepWindow_;
+    sepWindow_ = nullptr;
+    delete lcWindow_;
+    lcWindow_ = nullptr;
+    delete gcfWindow_;
+    gcfWindow_ = nullptr;
     g_ThisVF->gcfDlg_ = nullptr;
-    delete Curve_Window;
-    Curve_Window = nullptr;
+    delete curveWindow_;
+    curveWindow_ = nullptr;
     g_ThisVF->curveDlg_ = nullptr;
 }
 
-void QPlotWnd::AdjustHeight(void)
+void QPlotWnd::adjustHeight(void)
 {
-    sphere->adjustToNewSize();
-    resize(width(), height() + sphere->idealh - sphere->h);
-    sphere->refresh();
+    sphere_->adjustToNewSize();
+    resize(width(), height() + sphere_->idealh - sphere_->h);
+    sphere_->refresh();
     statusBar()->showMessage("Ready.");
 }
 
@@ -220,18 +220,18 @@ void QPlotWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->signalChanged();
-    for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->signalChanged();
+    sphere_->signalChanged();
+    for (int i = 0; i < numZooms_; i++)
+        zoomWindows_[i]->signalChanged();
 }
 
 void QPlotWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->signalEvaluating();
-    for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->signalEvaluating();
+    sphere_->signalEvaluating();
+    for (int i = 0; i < numZooms_; i++)
+        zoomWindows_[i]->signalEvaluating();
 }
 
 void QPlotWnd::signalEvaluated(void)
@@ -239,91 +239,91 @@ void QPlotWnd::signalEvaluated(void)
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
-    for (int i = 0; i < numZooms; i++)
-        ZoomWindows[i]->signalEvaluated();
+    for (int i = 0; i < numZooms_; i++)
+        zoomWindows_[i]->signalEvaluated();
 }
 
-void QPlotWnd::OnBtnClose(void)
+void QPlotWnd::onBtnClose(void)
 {
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-    g_p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent_, e1);
 }
 
 bool QPlotWnd::close(void)
 {
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-    g_p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
 
-void QPlotWnd::OnBtnRefresh(void)
+void QPlotWnd::onBtnRefresh(void)
 {
     getDlgData();
-    sphere->refresh();
+    sphere_->refresh();
 }
 
-void QPlotWnd::OnBtnLegend(void)
+void QPlotWnd::onBtnLegend(void)
 {
-    if (Legend_Window == nullptr)
-        Legend_Window = new QLegendWnd();
+    if (legendWindow_ == nullptr)
+        legendWindow_ = new QLegendWnd();
 
-    Legend_Window->show();
-    Legend_Window->raise();
+    legendWindow_->show();
+    legendWindow_->raise();
 }
 
-void QPlotWnd::OnBtnOrbits(void)
+void QPlotWnd::onBtnOrbits(void)
 {
-    Orbits_Window->show();
-    Orbits_Window->raise();
+    orbitsWindow_->show();
+    orbitsWindow_->raise();
 }
 
-void QPlotWnd::OnBtnIntParams(void)
+void QPlotWnd::onBtnIntParams(void)
 {
-    IntParams_Window->show();
-    IntParams_Window->raise();
+    intParamsWindow_->show();
+    intParamsWindow_->raise();
 }
 
-void QPlotWnd::OnBtnView(void)
+void QPlotWnd::onBtnView(void)
 {
-    ViewParams_Window->show();
-    ViewParams_Window->raise();
+    viewParamsWindow_->show();
+    viewParamsWindow_->raise();
 }
 
-void QPlotWnd::OnBtnGCF(void)
+void QPlotWnd::onBtnGCF(void)
 {
-    GCF_Window->show();
-    GCF_Window->raise();
+    gcfWindow_->show();
+    gcfWindow_->raise();
 }
 
-void QPlotWnd::OnBtnCurve(void)
+void QPlotWnd::onBtnCurve(void)
 {
-    Curve_Window->show();
-    Curve_Window->raise();
+    curveWindow_->show();
+    curveWindow_->raise();
 }
 
-void QPlotWnd::OnBtnPlotSep(void)
-{
-    getDlgData();
-    Sep_Window->show();
-    Sep_Window->raise();
-}
-
-void QPlotWnd::OnBtnPlotAllSeps(void)
+void QPlotWnd::onBtnPlotSep(void)
 {
     getDlgData();
-    sphere->prepareDrawing();
-    plot_all_sep(sphere);
-    sphere->finishDrawing();
+    sepWindow_->show();
+    sepWindow_->raise();
 }
 
-void QPlotWnd::OnBtnLimitCycles(void)
+void QPlotWnd::onBtnPlotAllSeps(void)
 {
-    LC_Window->show();
-    LC_Window->raise();
+    getDlgData();
+    sphere_->prepareDrawing();
+    plot_all_sep(sphere_);
+    sphere_->finishDrawing();
 }
 
-void QPlotWnd::OnBtnPrint(void)
+void QPlotWnd::onBtnLimitCycles(void)
+{
+    lcWindow_->show();
+    lcWindow_->raise();
+}
+
+void QPlotWnd::onBtnPrint(void)
 {
     int res;
     double lw;
@@ -352,11 +352,11 @@ void QPlotWnd::OnBtnPrint(void)
         }
 
         if (result < 0)
-            sphere->preparePrinting(-result, true, res, lw, ss);
+            sphere_->preparePrinting(-result, true, res, lw, ss);
         else
-            sphere->preparePrinting(result, false, res, lw, ss);
-        sphere->print();
-        sphere->finishPrinting();
+            sphere_->preparePrinting(result, false, res, lw, ss);
+        sphere_->print();
+        sphere_->finishPrinting();
     }
 }
 
@@ -364,25 +364,25 @@ void QPlotWnd::configure(void)
 {
     statusBar()->showMessage("Ready"); // reset status bar
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
-                             // sphere window
+                             // sphere_ window
     plot_p = spherePlotPoint;
-    sphere->SetupPlot(); // setup sphere window (define pixel transformations)
-    IntParams_Window->updateDlgData(); // update data of integration parameters
-    ViewParams_Window->updateDlgData();
-    Orbits_Window->reset(); // reset forward/backward buttons to initial state
-    Sep_Window->reset();
-    LC_Window->reset();
-    GCF_Window->reset();
-    Curve_Window->reset();
+    sphere_->SetupPlot(); // setup sphere_ window (define pixel transformations)
+    intParamsWindow_->updateDlgData(); // update data of integration parameters
+    viewParamsWindow_->updateDlgData();
+    orbitsWindow_->reset(); // reset forward/backward buttons to initial state
+    sepWindow_->reset();
+    lcWindow_->reset();
+    gcfWindow_->reset();
+    curveWindow_->reset();
 
-    sphere->update();
+    sphere_->update();
     if (g_VFResults.gcf_ == nullptr) // reconfigure GCF button
-        ActGCF->setEnabled(false);
+        actGCF_->setEnabled(false);
     else
-        ActGCF->setEnabled(true);
+        actGCF_->setEnabled(true);
 }
 
-void QPlotWnd::OpenZoomWindow(double x1, double y1, double x2, double y2)
+void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
 {
     double swap;
     if (x1 > x2) {
@@ -398,36 +398,36 @@ void QPlotWnd::OpenZoomWindow(double x1, double y1, double x2, double y2)
     if (x1 == x2 || y1 == y2)
         return;
 
-    ZoomWindows =
-        (QZoomWnd **)realloc(ZoomWindows, sizeof(QZoomWnd *) * (numZooms + 1));
-    ZoomWindows[numZooms] =
-        new QZoomWnd(this, ++lastZoomIdentifier, x1, y1, x2, y2);
-    ZoomWindows[numZooms]->show();
-    ZoomWindows[numZooms]->raise();
-    ZoomWindows[numZooms]->AdjustHeight();
-    numZooms++;
+    zoomWindows_ =
+        (QZoomWnd **)realloc(zoomWindows_, sizeof(QZoomWnd *) * (numZooms_ + 1));
+    zoomWindows_[numZooms_] =
+        new QZoomWnd(this, ++lastZoomIdentifier_, x1, y1, x2, y2);
+    zoomWindows_[numZooms_]->show();
+    zoomWindows_[numZooms_]->raise();
+    zoomWindows_[numZooms_]->adjustHeight();
+    numZooms_++;
 }
 
-void QPlotWnd::CloseZoomWindow(int id)
+void QPlotWnd::closeZoomWindow(int id)
 {
     int i;
-    for (i = 0; i < numZooms - 1; i++) {
-        if (ZoomWindows[i]->zoomid == id)
+    for (i = 0; i < numZooms_ - 1; i++) {
+        if (zoomWindows_[i]->zoomid == id)
             break;
     }
-    if (i == numZooms)
+    if (i == numZooms_)
         return; // error: zoom window not found???
 
-    delete ZoomWindows[i];
-    ZoomWindows[i] = nullptr;
-    if (i != numZooms - 1)
-        memmove(ZoomWindows + i, ZoomWindows + i + 1,
-                sizeof(QZoomWnd *) * (numZooms - 1 - i));
+    delete zoomWindows_[i];
+    zoomWindows_[i] = nullptr;
+    if (i != numZooms_ - 1)
+        memmove(zoomWindows_ + i, zoomWindows_ + i + 1,
+                sizeof(QZoomWnd *) * (numZooms_ - 1 - i));
 
-    numZooms--;
-    if (numZooms == 0) {
-        delete ZoomWindows; // free( ZoomWindows );
-        ZoomWindows = nullptr;
+    numZooms_--;
+    if (numZooms_ == 0) {
+        delete zoomWindows_; // free( zoomWindows_ );
+        zoomWindows_ = nullptr;
     }
 }
 
@@ -448,7 +448,7 @@ void QPlotWnd::customEvent(QEvent *_e)
         double *data1;
         data1 = (double *)(e->data());
 
-        OpenZoomWindow(data1[0], data1[1], data1[2], data1[3]);
+        openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
         delete data1; // free( data1 );
         data1 = nullptr;
         return;
@@ -457,7 +457,7 @@ void QPlotWnd::customEvent(QEvent *_e)
     if (e->type() == TYPE_CLOSE_ZOOMWINDOW) {
         int *data2;
         data2 = (int *)(e->data());
-        CloseZoomWindow(*data2);
+        closeZoomWindow(*data2);
         delete data2; // free( data2 );
         data2 = nullptr;
         return;
@@ -465,7 +465,7 @@ void QPlotWnd::customEvent(QEvent *_e)
 
     if (e->type() == TYPE_ORBIT_EVENT) {
         oet = (int *)(e->data());
-        Orbits_Window->orbitEvent(*oet);
+        orbitsWindow_->orbitEvent(*oet);
         delete oet; // free(oet);
         oet = nullptr;
         return;
@@ -484,8 +484,8 @@ void QPlotWnd::customEvent(QEvent *_e)
         if (MATHFUNC(is_valid_viewcoord)(x, y, pcoord)) {
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
 
-            Orbits_Window->show();
-            Orbits_Window->setInitialPoint(ucoord[0], ucoord[1]);
+            orbitsWindow_->show();
+            orbitsWindow_->setInitialPoint(ucoord[0], ucoord[1]);
             if (win != nullptr) {
                 ((QWidget *)win)->activateWindow();
             }
@@ -511,22 +511,22 @@ void QPlotWnd::customEvent(QEvent *_e)
         MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord1);
 
         if (x0 == x1 && y0 == y1) {
-            Orbits_Window->show();
-            Orbits_Window->setInitialPoint(ucoord0[0], ucoord0[1]);
+            orbitsWindow_->show();
+            orbitsWindow_->setInitialPoint(ucoord0[0], ucoord0[1]);
             return;
         }
 
         // mouse clicked in position (x,y)  (world coordinates)
 
-        LC_Window->setSection(ucoord0[0], ucoord0[1], ucoord1[0], ucoord1[1]);
-        LC_Window->show();
-        LC_Window->raise();
+        lcWindow_->setSection(ucoord0[0], ucoord0[1], ucoord1[0], ucoord1[1]);
+        lcWindow_->show();
+        lcWindow_->raise();
         return;
     }
 
     if (e->type() == TYPE_SEP_EVENT) {
         oet = (int *)(e->data());
-        Sep_Window->SepEvent(*oet);
+        sepWindow_->SepEvent(*oet);
         delete oet; // free(oet);
         oet = nullptr;
         return;
@@ -541,14 +541,14 @@ void QPlotWnd::hideEvent(QHideEvent *h)
     if (!isMinimized()) {
         QP4Event *e1 =
             new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-        g_p4app->postEvent(parent, e1);
+        g_p4app->postEvent(parent_, e1);
     }
 }
 
 void QPlotWnd::getDlgData(void)
 {
-    IntParams_Window->getDataFromDlg();
-    if (ViewParams_Window->getDataFromDlg()) {
+    intParamsWindow_->getDataFromDlg();
+    if (viewParamsWindow_->getDataFromDlg()) {
         // true when a big change occured in the view
 
         g_VFResults.setupCoordinateTransformations();

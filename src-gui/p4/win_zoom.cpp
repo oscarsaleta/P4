@@ -35,7 +35,7 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     : QMainWindow()
 {
     QToolBar *toolBar1;
-    parent = main;
+    parent_ = main;
     zoomid = id;
 
     //    QPalette palette;
@@ -48,26 +48,26 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     toolBar1 = new QToolBar("ZoomBar1", this);
     toolBar1->setMovable(false);
 
-    ActClose = new QAction("Close", this);
-    ActClose->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(ActClose, SIGNAL(triggered()), this, SLOT(OnBtnClose()));
-    toolBar1->addAction(ActClose);
+    actClose_ = new QAction("Close", this);
+    actClose_->setShortcut(Qt::ALT + Qt::Key_E);
+    connect(actClose_, SIGNAL(triggered()), this, SLOT(onBtnClose()));
+    toolBar1->addAction(actClose_);
 
-    ActRefresh = new QAction("Refresh", this);
-    ActRefresh->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(ActRefresh, SIGNAL(triggered()), this, SLOT(OnBtnRefresh()));
-    toolBar1->addAction(ActRefresh);
+    actRefresh_ = new QAction("Refresh", this);
+    actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
+    connect(actRefresh_, SIGNAL(triggered()), this, SLOT(onBtnRefresh()));
+    toolBar1->addAction(actRefresh_);
 
-    ActPrint = new QAction("Print", this);
-    ActPrint->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(ActPrint, SIGNAL(triggered()), this, SLOT(OnBtnPrint()));
-    toolBar1->addAction(ActPrint);
+    actPrint_ = new QAction("Print", this);
+    actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
+    connect(actPrint_, SIGNAL(triggered()), this, SLOT(onBtnPrint()));
+    toolBar1->addAction(actPrint_);
 
 #ifdef TOOLTIPS
-    ActClose->setToolTip(
+    actClose_->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
-    ActRefresh->setToolTip("Redraw the plot window");
-    ActPrint->setToolTip("Opens the print window");
+    actRefresh_->setToolTip("Redraw the plot window");
+    actPrint_->setToolTip("Opens the print window");
 #endif
 
     statusBar()->showMessage("Ready");
@@ -112,13 +112,13 @@ void QZoomWnd::signalEvaluated(void)
     configure();
 }
 
-void QZoomWnd::OnBtnClose(void)
+void QZoomWnd::onBtnClose(void)
 {
     int *data = new int;
     *data = zoomid;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    g_p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent_, e1);
 }
 
 bool QZoomWnd::close(void)
@@ -127,18 +127,18 @@ bool QZoomWnd::close(void)
     *data = zoomid;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    g_p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
 
-void QZoomWnd::OnBtnRefresh(void)
+void QZoomWnd::onBtnRefresh(void)
 {
-    parent->getDlgData();
+    parent_->getDlgData();
     sphere->refresh();
 }
 
-void QZoomWnd::OnBtnPrint(void)
+void QZoomWnd::onBtnPrint(void)
 {
     int res;
     double lw, ss;
@@ -191,7 +191,7 @@ void QZoomWnd::customEvent(QEvent *_e)
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
         QP4Event *newe = new QP4Event(e->type(), e->data());
-        g_p4app->postEvent(parent, newe);
+        g_p4app->postEvent(parent_, newe);
         return;
     }
 
@@ -206,11 +206,11 @@ void QZoomWnd::hideEvent(QHideEvent *h)
         *data = zoomid;
 
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-        g_p4app->postEvent(parent, e1);
+        g_p4app->postEvent(parent_, e1);
     }
 }
 
-void QZoomWnd::AdjustHeight(void)
+void QZoomWnd::adjustHeight(void)
 {
     int w, h, m;
     double deltaw, deltah;
