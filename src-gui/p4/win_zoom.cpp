@@ -36,7 +36,7 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
 {
     QToolBar *toolBar1;
     parent_ = main;
-    zoomid = id;
+    zoomid_ = id;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
@@ -73,11 +73,11 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere = new QWinSphere(this, statusBar(), true, x1, y1, x2, y2);
-    sphere->show();
-    setCentralWidget(sphere);
+    sphere_ = new QWinSphere(this, statusBar(), true, x1, y1, x2, y2);
+    sphere_->show();
+    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
-    sphere->setupPlot();
+    sphere_->setupPlot();
 
     //  if( g_ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait - Zoom");
@@ -87,22 +87,22 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
 
 QZoomWnd::~QZoomWnd()
 {
-    delete sphere;
-    sphere = nullptr;
+    delete sphere_;
+    sphere_ = nullptr;
 }
 
 void QZoomWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->signalChanged();
+    sphere_->signalChanged();
 }
 
 void QZoomWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->signalEvaluating();
+    sphere_->signalEvaluating();
 }
 
 void QZoomWnd::signalEvaluated(void)
@@ -115,7 +115,7 @@ void QZoomWnd::signalEvaluated(void)
 void QZoomWnd::onBtnClose(void)
 {
     int *data = new int;
-    *data = zoomid;
+    *data = zoomid_;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
     g_p4app->postEvent(parent_, e1);
@@ -124,7 +124,7 @@ void QZoomWnd::onBtnClose(void)
 bool QZoomWnd::close(void)
 {
     int *data = new int;
-    *data = zoomid;
+    *data = zoomid_;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
     g_p4app->postEvent(parent_, e1);
@@ -135,7 +135,7 @@ bool QZoomWnd::close(void)
 void QZoomWnd::onBtnRefresh(void)
 {
     parent_->getDlgData();
-    sphere->refresh();
+    sphere_->refresh();
 }
 
 void QZoomWnd::onBtnPrint(void)
@@ -162,11 +162,11 @@ void QZoomWnd::onBtnPrint(void)
         }
 
         if (result < 0)
-            sphere->preparePrinting(-result, true, res, lw, ss);
+            sphere_->preparePrinting(-result, true, res, lw, ss);
         else
-            sphere->preparePrinting(result, false, res, lw, ss);
-        sphere->print();
-        sphere->finishPrinting();
+            sphere_->preparePrinting(result, false, res, lw, ss);
+        sphere_->print();
+        sphere_->finishPrinting();
     }
 }
 
@@ -176,8 +176,8 @@ void QZoomWnd::configure(void)
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
                              // sphere window
     plot_p = spherePlotPoint;
-    sphere->setupPlot(); // setup sphere window (define pixel transformations)
-    sphere->update();
+    sphere_->setupPlot(); // setup sphere window (define pixel transformations)
+    sphere_->update();
     // delete print window
     // delete xfig window
 }
@@ -203,7 +203,7 @@ void QZoomWnd::hideEvent(QHideEvent *h)
     UNUSED(h);
     if (!isMinimized()) {
         int *data = new int;
-        *data = zoomid;
+        *data = zoomid_;
 
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
         g_p4app->postEvent(parent_, e1);
@@ -215,10 +215,10 @@ void QZoomWnd::adjustHeight(void)
     int w, h, m;
     double deltaw, deltah;
 
-    sphere->adjustToNewSize();
+    sphere_->adjustToNewSize();
 
     w = width();
-    h = height() + sphere->idealh_ - sphere->h_;
+    h = height() + sphere_->idealh_ - sphere_->h_;
 
     m = g_p4app->desktop()->height();
     m -= m / 10; // occuppy at most 90% of the screen's height
@@ -226,16 +226,16 @@ void QZoomWnd::adjustHeight(void)
     if (h > m) {
         deltah = (double)(h - m);
         deltaw = deltah;
-        deltaw *= sphere->dx_;
-        deltaw /= sphere->dy_;
+        deltaw *= sphere_->dx_;
+        deltaw /= sphere_->dy_;
 
         h -= (int)(deltah + 0.5);
         w -= (int)(deltaw + 0.5);
-    } else if (sphere->idealh_ < MINHEIGHTPLOTWINDOW) {
-        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere->idealh_);
+    } else if (sphere_->idealh_ < MINHEIGHTPLOTWINDOW) {
+        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere_->idealh_);
         deltaw = deltah;
-        deltaw *= sphere->dx_;
-        deltaw /= sphere->dy_;
+        deltaw *= sphere_->dx_;
+        deltaw /= sphere_->dy_;
 
         h += (int)(deltah + 0.5);
         w += (int)(deltaw + 0.5);

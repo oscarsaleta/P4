@@ -32,7 +32,7 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
     : QWidget()
 #endif
 {
-    parent = finddlg;
+    parent_ = finddlg;
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
 #ifdef DOCK_VFWINDOW
@@ -40,37 +40,37 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
     p4title->setFont(*(g_p4app->titleFont_));
 #endif
 
-    edt_xprime = new QLineEdit(g_ThisVF->xdot_, this);
+    edt_xprime_ = new QLineEdit(g_ThisVF->xdot_, this);
     QLabel *xlabel = new QLabel("&x' = ", this);
     xlabel->setFont(*(g_p4app->boldFont_));
-    xlabel->setBuddy(edt_xprime);
+    xlabel->setBuddy(edt_xprime_);
 
-    edt_yprime = new QLineEdit(g_ThisVF->ydot_, this);
+    edt_yprime_ = new QLineEdit(g_ThisVF->ydot_, this);
     QLabel *ylabel = new QLabel("&y' = ", this);
     ylabel->setFont(*(g_p4app->boldFont_));
-    ylabel->setBuddy(edt_yprime);
+    ylabel->setBuddy(edt_yprime_);
 
-    edt_gcf = new QLineEdit(g_ThisVF->gcf_, this);
+    edt_gcf_ = new QLineEdit(g_ThisVF->gcf_, this);
     QLabel *glabel = new QLabel("&Gcf: ", this);
     glabel->setFont(*(g_p4app->boldFont_));
-    glabel->setBuddy(edt_gcf);
+    glabel->setBuddy(edt_gcf_);
 
     QLabel *plabel = new QLabel("Number of Parameters: ", this);
     plabel->setFont(*(g_p4app->boldFont_));
 
-    spin_numparams = new QSpinBox(this);
-    spin_numparams->setMinimum(0);
-    spin_numparams->setMaximum(MAXNUMPARAMS);
+    spin_numparams_ = new QSpinBox(this);
+    spin_numparams_->setMinimum(0);
+    spin_numparams_->setMaximum(MAXNUMPARAMS);
 
 #ifdef TOOLTIPS
-    edt_xprime->setToolTip("Enter your differential equations here.\n"
+    edt_xprime_->setToolTip("Enter your differential equations here.\n"
                            "Use syntax conform to the symbolic manipulator.");
-    edt_yprime->setToolTip("Enter your differential equations here.\n"
+    edt_yprime_->setToolTip("Enter your differential equations here.\n"
                            "Use syntax conform to the symbolic manipulator.");
-    edt_gcf->setToolTip("Enter greatest common factor here.\n"
+    edt_gcf_->setToolTip("Enter greatest common factor here.\n"
                         "Enter \"1\" if you are sure there is no GCF\n"
                         "Enter \"0\" if you want P4 to search for a GCF");
-    spin_numparams->setToolTip("If your vector field contains parameters,\n"
+    spin_numparams_->setToolTip("If your vector field contains parameters,\n"
                                "specify the number of parameters here.");
 #endif
     // layout
@@ -83,63 +83,63 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addWidget(xlabel);
-    layout1->addWidget(edt_xprime);
+    layout1->addWidget(edt_xprime_);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addWidget(ylabel);
-    layout2->addWidget(edt_yprime);
+    layout2->addWidget(edt_yprime_);
 
     QHBoxLayout *layout22 = new QHBoxLayout();
     layout22->addWidget(glabel);
-    layout22->addWidget(edt_gcf);
+    layout22->addWidget(edt_gcf_);
 
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->addWidget(plabel);
-    layout3->addWidget(spin_numparams);
+    layout3->addWidget(spin_numparams_);
     layout3->addStretch(0);
 
-    paramLayout = new QHBoxLayout();
+    paramLayout_ = new QHBoxLayout();
 
     mainLayout_->addLayout(layout1);
     mainLayout_->addLayout(layout2);
     mainLayout_->addLayout(layout22);
     mainLayout_->addLayout(layout3);
-    mainLayout_->addLayout(paramLayout);
+    mainLayout_->addLayout(paramLayout_);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_);
 
-    sb_params = nullptr;
-    params = nullptr;
+    sb_params_ = nullptr;
+    params_ = nullptr;
 
     if (g_ThisVF->numparams_ != 0) {
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            sb_params = new QScrollBar(Qt::Vertical, this);
-            sb_params->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
-            sb_params->setSingleStep(1);
-            sb_params->setPageStep(MAXNUMPARAMSSHOWN);
+            sb_params_ = new QScrollBar(Qt::Vertical, this);
+            sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+            sb_params_->setSingleStep(1);
+            sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         } else
-            sb_params = nullptr;
+            sb_params_ = nullptr;
 
-        params = new QVFParams(this, sb_params);
-        paramLayout->addWidget(params);
+        params_ = new QVFParams(this, sb_params_);
+        paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            paramLayout->addWidget(sb_params);
-            QObject::connect(sb_params, SIGNAL(valueChanged(int)), params,
+            paramLayout_->addWidget(sb_params_);
+            QObject::connect(sb_params_, SIGNAL(valueChanged(int)), params_,
                              SLOT(paramsSliderChanged(int)));
-            QObject::connect(sb_params, SIGNAL(sliderMoved(int)), params,
+            QObject::connect(sb_params_, SIGNAL(sliderMoved(int)), params_,
                              SLOT(paramsSliderChanged(int)));
         }
-        params->show();
+        params_->show();
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
-            sb_params->show();
+            sb_params_->show();
 
-        spin_numparams->setValue(g_ThisVF->numparams_);
+        spin_numparams_->setValue(g_ThisVF->numparams_);
     }
 
     // connections
 
-    QObject::connect(spin_numparams, SIGNAL(valueChanged(int)), this,
+    QObject::connect(spin_numparams_, SIGNAL(valueChanged(int)), this,
                      SLOT(numParamsChanged(int)));
 
 #ifndef DOCK_VFWINDOW
@@ -150,12 +150,12 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 void QVectorFieldDlg::numParamsChanged(int val)
 {
     if (val >= 0 && val <= MAXNUMPARAMS && val != g_ThisVF->numparams_) {
-        delete params;
-        params = nullptr;
+        delete params_;
+        params_ = nullptr;
 
-        if (sb_params != nullptr) {
-            delete sb_params;
-            sb_params = nullptr;
+        if (sb_params_ != nullptr) {
+            delete sb_params_;
+            sb_params_ = nullptr;
         }
 
         if (val != 0) {
@@ -165,25 +165,25 @@ void QVectorFieldDlg::numParamsChanged(int val)
                 g_p4app->signalChanged();
             }
             if (val > MAXNUMPARAMSSHOWN) {
-                sb_params = new QScrollBar(Qt::Vertical, this);
-                sb_params->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
-                sb_params->setSingleStep(1);
-                sb_params->setPageStep(MAXNUMPARAMSSHOWN);
+                sb_params_ = new QScrollBar(Qt::Vertical, this);
+                sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+                sb_params_->setSingleStep(1);
+                sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
             } else
-                sb_params = nullptr;
+                sb_params_ = nullptr;
 
-            params = new QVFParams(this, sb_params);
-            paramLayout->addWidget(params);
+            params_ = new QVFParams(this, sb_params_);
+            paramLayout_->addWidget(params_);
             if (val > MAXNUMPARAMSSHOWN) {
-                paramLayout->addWidget(sb_params);
-                QObject::connect(sb_params, SIGNAL(valueChanged(int)), params,
+                paramLayout_->addWidget(sb_params_);
+                QObject::connect(sb_params_, SIGNAL(valueChanged(int)), params_,
                                  SLOT(paramsSliderChanged(int)));
-                QObject::connect(sb_params, SIGNAL(sliderMoved(int)), params,
+                QObject::connect(sb_params_, SIGNAL(sliderMoved(int)), params_,
                                  SLOT(paramsSliderChanged(int)));
             }
-            params->show();
+            params_->show();
             if (val > MAXNUMPARAMSSHOWN)
-                sb_params->show();
+                sb_params_->show();
         } else {
             if (g_ThisVF->changed_ == false) {
                 g_ThisVF->changed_ = true;
@@ -196,9 +196,9 @@ void QVectorFieldDlg::numParamsChanged(int val)
 
 QVectorFieldDlg::~QVectorFieldDlg()
 {
-    if (params != nullptr) {
-        delete params;
-        params = nullptr;
+    if (params_ != nullptr) {
+        delete params_;
+        params_ = nullptr;
     }
     getDataFromDlg();
 }
@@ -209,9 +209,9 @@ void QVectorFieldDlg::getDataFromDlg(void)
     QString ydot;
     QString gcf;
 
-    xdot = edt_xprime->text();
-    ydot = edt_yprime->text();
-    gcf = edt_gcf->text();
+    xdot = edt_xprime_->text();
+    ydot = edt_yprime_->text();
+    gcf = edt_gcf_->text();
 
     xdot = xdot.trimmed();
     ydot = ydot.trimmed();
@@ -227,46 +227,46 @@ void QVectorFieldDlg::getDataFromDlg(void)
             g_p4app->signalChanged();
         }
     }
-    if (params != nullptr) {
-        params->getDataFromDlg();
+    if (params_ != nullptr) {
+        params_->getDataFromDlg();
     }
 }
 
 void QVectorFieldDlg::updateDlgData(void)
 {
-    edt_xprime->setText(g_ThisVF->xdot_);
-    edt_yprime->setText(g_ThisVF->ydot_);
-    edt_gcf->setText(g_ThisVF->gcf_);
-    spin_numparams->setValue(g_ThisVF->numparams_);
+    edt_xprime_->setText(g_ThisVF->xdot_);
+    edt_yprime_->setText(g_ThisVF->ydot_);
+    edt_gcf_->setText(g_ThisVF->gcf_);
+    spin_numparams_->setValue(g_ThisVF->numparams_);
 
-    if (params != nullptr) {
-        if (!params->updateDlgData()) {
-            delete params;
-            params = nullptr;
+    if (params_ != nullptr) {
+        if (!params_->updateDlgData()) {
+            delete params_;
+            params_ = nullptr;
         }
     }
 
-    if (g_ThisVF->numparams_ != 0 && params == nullptr) {
+    if (g_ThisVF->numparams_ != 0 && params_ == nullptr) {
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            sb_params = new QScrollBar(Qt::Vertical, this);
-            sb_params->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
-            sb_params->setSingleStep(1);
-            sb_params->setPageStep(MAXNUMPARAMSSHOWN);
+            sb_params_ = new QScrollBar(Qt::Vertical, this);
+            sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+            sb_params_->setSingleStep(1);
+            sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         } else
-            sb_params = nullptr;
+            sb_params_ = nullptr;
 
-        params = new QVFParams(this, sb_params);
-        paramLayout->addWidget(params);
+        params_ = new QVFParams(this, sb_params_);
+        paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            paramLayout->addWidget(sb_params);
-            QObject::connect(sb_params, SIGNAL(valueChanged(int)), params,
+            paramLayout_->addWidget(sb_params_);
+            QObject::connect(sb_params_, SIGNAL(valueChanged(int)), params_,
                              SLOT(paramsSliderChanged(int)));
-            QObject::connect(sb_params, SIGNAL(sliderMoved(int)), params,
+            QObject::connect(sb_params_, SIGNAL(sliderMoved(int)), params_,
                              SLOT(paramsSliderChanged(int)));
         }
-        params->show();
+        params_->show();
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
-            sb_params->show();
+            sb_params_->show();
     }
 }
 
@@ -277,46 +277,46 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
     QLabel *label0 = new QLabel("Enter values for all parameters");
     label0->setFont(*(g_p4app->titleFont_));
 
-    datainvalid = false;
-    sb_params = sb;
-    currentnumparams = g_ThisVF->numparams_;
-    currentshownparams = (currentnumparams < MAXNUMPARAMSSHOWN)
-                             ? currentnumparams
+    dataInvalid_ = false;
+    sb_params_ = sb;
+    currentNumParams_ = g_ThisVF->numparams_;
+    currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
+                             ? currentNumParams_
                              : MAXNUMPARAMSSHOWN;
-    currentpageindex = 0;
+    currentPageIndex_ = 0;
 
-    for (i = 0; i < currentshownparams; i++) {
+    for (i = 0; i < currentShownParams_; i++) {
         // parlabel_ and parvalue_ might (or not) be filled from the input file
-        Param_Names[i] = new QLineEdit(g_ThisVF->parlabel_[i], this);
-        Param_Labels[i] = new QLabel(" = ", this);
-        Param_Values[i] = new QLineEdit(g_ThisVF->parvalue_[i], this);
+        paramNames_[i] = new QLineEdit(g_ThisVF->parlabel_[i], this);
+        paramLabels_[i] = new QLabel(" = ", this);
+        paramValues_[i] = new QLineEdit(g_ThisVF->parvalue_[i], this);
 #ifdef TOOLTIPS
-        Param_Names[i]->setToolTip("Enter the name of the parameter");
-        Param_Values[i]->setToolTip(
+        paramNames_[i]->setToolTip("Enter the name of the parameter");
+        paramValues_[i]->setToolTip(
             "Enter the value of this parameter during this evaluation session");
 #endif
     }
 
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
     mainLayout_->addWidget(label0);
-    for (i = 0; i < currentshownparams; i++) {
-        Param_Lines[i] = new QHBoxLayout();
-        Param_Lines[i]->addWidget(Param_Names[i]);
-        Param_Lines[i]->addWidget(Param_Labels[i]);
-        Param_Lines[i]->addWidget(Param_Values[i]);
-        mainLayout_->addLayout(Param_Lines[i]);
+    for (i = 0; i < currentShownParams_; i++) {
+        paramLines_[i] = new QHBoxLayout();
+        paramLines_[i]->addWidget(paramNames_[i]);
+        paramLines_[i]->addWidget(paramLabels_[i]);
+        paramLines_[i]->addWidget(paramValues_[i]);
+        mainLayout_->addLayout(paramLines_[i]);
     }
 
-    for (i = 0; i < currentnumparams; i++) {
-        S_Labels[i] = g_ThisVF->parlabel_[i];
-        S_Values[i] = g_ThisVF->parvalue_[i];
+    for (i = 0; i < currentNumParams_; i++) {
+        sLabels_[i] = g_ThisVF->parlabel_[i];
+        sValues_[i] = g_ThisVF->parvalue_[i];
     }
     setLayout(mainLayout_);
 }
 
 QVFParams::~QVFParams()
 {
-    if (!datainvalid)
+    if (!dataInvalid_)
         getDataFromDlg();
 }
 
@@ -324,13 +324,13 @@ bool QVFParams::focusNextPrevChild(bool next)
 {
     QWidget *p;
     p = focusWidget();
-    if (p == Param_Names[0] && currentpageindex != 0 && !next) {
-        sb_params->setValue(currentpageindex - 1);
+    if (p == paramNames_[0] && currentPageIndex_ != 0 && !next) {
+        sb_params_->setValue(currentPageIndex_ - 1);
         return focusNextPrevChild(true);
     }
-    if (p == Param_Values[currentshownparams - 1] &&
-        currentpageindex < currentnumparams - MAXNUMPARAMSSHOWN && next) {
-        sb_params->setValue(currentpageindex + 1);
+    if (p == paramValues_[currentShownParams_ - 1] &&
+        currentPageIndex_ < currentNumParams_ - MAXNUMPARAMSSHOWN && next) {
+        sb_params_->setValue(currentPageIndex_ + 1);
         return focusNextPrevChild(false);
     }
     return QWidget::focusNextPrevChild(next);
@@ -345,25 +345,25 @@ bool QVFParams::getDataFromDlg(void)
     if (g_ThisVF == nullptr)
         return false;
 
-    if (g_ThisVF->numparams_ != currentnumparams)
+    if (g_ThisVF->numparams_ != currentNumParams_)
         return false;
 
-    currentnumparams = g_ThisVF->numparams_;
+    currentNumParams_ = g_ThisVF->numparams_;
 
     changed = false;
 
-    for (i = 0; i < currentshownparams; i++) {
-        S_Labels[i + currentpageindex] = Param_Names[i]->text();
-        S_Values[i + currentpageindex] = Param_Values[i]->text();
+    for (i = 0; i < currentShownParams_; i++) {
+        sLabels_[i + currentPageIndex_] = paramNames_[i]->text();
+        sValues_[i + currentPageIndex_] = paramValues_[i]->text();
     }
-    for (i = 0; i < currentnumparams; i++) {
-        temp = S_Labels[i];
+    for (i = 0; i < currentNumParams_; i++) {
+        temp = sLabels_[i];
         temp = temp.trimmed();
         if (temp.compare(g_ThisVF->parlabel_[i])) {
             changed = true;
             g_ThisVF->parlabel_[i] = temp;
         }
-        temp = S_Values[i];
+        temp = sValues_[i];
         temp = temp.trimmed();
         if (temp.compare(g_ThisVF->parvalue_[i])) {
             changed = true;
@@ -386,8 +386,8 @@ bool QVFParams::updateDlgData(void)
 {
     int i;
 
-    if (g_ThisVF->numparams_ != currentnumparams) {
-        datainvalid = true;
+    if (g_ThisVF->numparams_ != currentNumParams_) {
+        dataInvalid_ = true;
         return false;
 
         // when the number of parameters changed, signal it to the parent
@@ -397,9 +397,9 @@ bool QVFParams::updateDlgData(void)
         // valid.
     }
 
-    for (i = 0; i < currentshownparams; i++) {
-        Param_Names[i]->setText(g_ThisVF->parlabel_[i + currentpageindex]);
-        Param_Values[i]->setText(g_ThisVF->parvalue_[i + currentpageindex]);
+    for (i = 0; i < currentShownParams_; i++) {
+        paramNames_[i]->setText(g_ThisVF->parlabel_[i + currentPageIndex_]);
+        paramValues_[i]->setText(g_ThisVF->parvalue_[i + currentPageIndex_]);
     }
 
     return true;
@@ -413,20 +413,20 @@ void QVFParams::paramsSliderChanged(int value)
     newindex = value;
     if (newindex < 0)
         newindex = 0;
-    if (newindex > currentnumparams - MAXNUMPARAMSSHOWN)
-        newindex = currentnumparams - MAXNUMPARAMSSHOWN;
+    if (newindex > currentNumParams_ - MAXNUMPARAMSSHOWN)
+        newindex = currentNumParams_ - MAXNUMPARAMSSHOWN;
 
-    if (newindex != currentpageindex) {
-        for (i = 0; i < currentshownparams; i++) {
-            S_Labels[i + currentpageindex] = Param_Names[i]->text();
-            S_Values[i + currentpageindex] = Param_Values[i]->text();
+    if (newindex != currentPageIndex_) {
+        for (i = 0; i < currentShownParams_; i++) {
+            sLabels_[i + currentPageIndex_] = paramNames_[i]->text();
+            sValues_[i + currentPageIndex_] = paramValues_[i]->text();
         }
 
-        currentpageindex = newindex;
+        currentPageIndex_ = newindex;
 
-        for (i = 0; i < currentshownparams; i++) {
-            Param_Names[i]->setText(S_Labels[i + currentpageindex]);
-            Param_Values[i]->setText(S_Values[i + currentpageindex]);
+        for (i = 0; i < currentShownParams_; i++) {
+            paramNames_[i]->setText(sLabels_[i + currentPageIndex_]);
+            paramValues_[i]->setText(sValues_[i + currentPageIndex_]);
         }
     }
 }

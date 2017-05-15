@@ -412,7 +412,7 @@ void QPlotWnd::closeZoomWindow(int id)
 {
     int i;
     for (i = 0; i < numZooms_ - 1; i++) {
-        if (zoomWindows_[i]->zoomid == id)
+        if (zoomWindows_[i]->zoomid_ == id)
             break;
     }
     if (i == numZooms_)

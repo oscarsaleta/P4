@@ -37,7 +37,7 @@ class QZoomWnd : public QMainWindow
     QZoomWnd(QPlotWnd *, int, double x1, double y1, double x2, double y2);
     ~QZoomWnd();
 
-    int zoomid;
+    int zoomid_;
 
   private:
     QPlotWnd *parent_;
@@ -46,7 +46,7 @@ class QZoomWnd : public QMainWindow
     QAction *actRefresh_;
     QAction *actPrint_;
 
-    QWinSphere *sphere; // main sphere
+    QWinSphere *sphere_; // main sphere
 
   public slots:
     void signalEvaluating(void);

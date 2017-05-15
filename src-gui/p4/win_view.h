@@ -40,45 +40,43 @@ class QViewDlg : public QWidget
     ~QViewDlg();
     bool getDataFromDlg(void);
     void updateDlgData(void);
-    void exclusiveToggle(bool, QRadioButton *, ...);
 
   private:
-    bool changed;
-    QFindDlg *parent;
+    bool changed_;
     QBoxLayout *mainLayout_;
 
-    QRadioButton *btn_sphere;
-    QRadioButton *btn_plane;
-    QRadioButton *btn_U1;
-    QRadioButton *btn_V1;
-    QRadioButton *btn_U2;
-    QRadioButton *btn_V2;
-    QLineEdit *edt_projection;
-    QLineEdit *edt_x0;
-    QLineEdit *edt_x1;
-    QLineEdit *edt_y0;
-    QLineEdit *edt_y1;
-    QPushButton *btn_square;
+    QRadioButton *btn_sphere_;
+    QRadioButton *btn_plane_;
+    QRadioButton *btn_U1_;
+    QRadioButton *btn_V1_;
+    QRadioButton *btn_U2_;
+    QRadioButton *btn_V2_;
+    QLineEdit *edt_projection_;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_x1_;
+    QLineEdit *edt_y0_;
+    QLineEdit *edt_y1_;
+    QPushButton *btn_square_;
+    QLabel *lbl_projection_;
+    QLabel *lbl_x0_;
+    QLabel *lbl_x1_;
+    QLabel *lbl_y0_;
+    QLabel *lbl_y1_;
 
-    QLabel *lbl_projection;
-    QLabel *lbl_x0;
-    QLabel *lbl_x1;
-    QLabel *lbl_y0;
-    QLabel *lbl_y1;
+    QSpinBox *spin_numpoints_;
 
-    QSpinBox *spin_numpoints;
     bool readFloatField(QLineEdit *, double *, double, double, double);
 
   public slots:
     void markBad(QLineEdit *edt);
     void onFieldChange(const QString &dummy);
-    void btn_sphere_toggled(bool);
-    void btn_plane_toggled(bool);
+    void btn_sphere_toggled();
+    void btn_plane_toggled();
+    void btn_U1_toggled();
+    void btn_U2_toggled();
+    void btn_V1_toggled();
+    void btn_V2_toggled();
     void btn_square_clicked(void);
-    void btn_U1_toggled(bool);
-    void btn_U2_toggled(bool);
-    void btn_V1_toggled(bool);
-    void btn_V2_toggled(bool);
 };
 
 #endif /* WIN_VIEW_H */
