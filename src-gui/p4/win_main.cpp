@@ -167,10 +167,10 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     //  viewMenu_->setItemEnabled( 2, false );
 
     helpWindow_ = nullptr;
-    Find_Window = nullptr;
+    findWindow_ = nullptr;
     viewInfiniteWindow_ = nullptr;
     viewFiniteWindow_ = nullptr;
-    Plot_Window = nullptr;
+    plotWindow_ = nullptr;
 #ifdef AUTO_OPEN_FINDWINDOW
     onFind();
 #else
@@ -185,22 +185,22 @@ void QStartDlg::onFind(void)
 {
     // show find dialog
 
-    if (Find_Window == nullptr) {
-        Find_Window = new QFindDlg(this);
-        Find_Window->show();
-        Find_Window->raise();
+    if (findWindow_ == nullptr) {
+        findWindow_ = new QFindDlg(this);
+        findWindow_->show();
+        findWindow_->raise();
 #ifdef DOCK_FINDWINDOW
-        mainLayout_->addWidget(Find_Window);
+        mainLayout_->addWidget(findWindow_);
         btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
 #endif
     } else {
 #ifdef DOCK_FINDWINDOW
-        delete Find_Window;
-        Find_Window = nullptr;
+        delete findWindow_;
+        findWindow_ = nullptr;
         btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
 #else
-        Find_Window->show();
-        Find_Window->raise();
+        findWindow_->show();
+        findWindow_->raise();
         btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
 #endif
     }
@@ -251,16 +251,18 @@ void QStartDlg::onHelp(void)
 void QStartDlg::onPlot(void)
 {
     // show plot window
-
-    if (Find_Window != nullptr)
-        Find_Window->getDataFromDlg();
+    
+    if (findWindow_ != nullptr) {
+        findWindow_->onBtnLoad();
+        findWindow_->getDataFromDlg();
+    }
 
     g_VFResults.deleteVF(); // delete any previous result object
     if (!g_VFResults.readTables(
             g_ThisVF->getbarefilename())) // read maple/reduce results
     {
-        delete Plot_Window;
-        Plot_Window = nullptr;
+        delete plotWindow_;
+        plotWindow_ = nullptr;
 
         QMessageBox::critical(
             this, "P4",
@@ -275,25 +277,25 @@ void QStartDlg::onPlot(void)
 
     g_VFResults.setupCoordinateTransformations();
 
-    if (Plot_Window == nullptr) {
-        Plot_Window = new QPlotWnd(this);
+    if (plotWindow_ == nullptr) {
+        plotWindow_ = new QPlotWnd(this);
     }
 
-    Plot_Window->configure(); // configure plot window
-    Plot_Window->show();
-    Plot_Window->raise();
-    Plot_Window->adjustHeight();
+    plotWindow_->configure(); // configure plot window
+    plotWindow_->show();
+    plotWindow_->raise();
+    plotWindow_->adjustHeight();
 }
 
 void QStartDlg::onQuit(void)
 {
-    if (Plot_Window != nullptr) {
-        delete Plot_Window;
-        Plot_Window = nullptr;
+    if (plotWindow_ != nullptr) {
+        delete plotWindow_;
+        plotWindow_ = nullptr;
     }
-    if (Find_Window != nullptr) {
-        delete Find_Window;
-        Find_Window = nullptr;
+    if (findWindow_ != nullptr) {
+        delete findWindow_;
+        findWindow_ = nullptr;
     }
     if (helpWindow_ != nullptr) {
         delete helpWindow_;
@@ -328,16 +330,16 @@ void QStartDlg::signalEvaluating(void)
     btn_view_->setEnabled(false);
     btn_plot_->setEnabled(false);
 
-    // Transfer signal to Find_Window:
+    // Transfer signal to findWindow_:
 
-    if (Find_Window != nullptr) {
-        Find_Window->signalEvaluating();
+    if (findWindow_ != nullptr) {
+        findWindow_->signalEvaluating();
     }
 
-    // Transfer signal to Plot_Window:
+    // Transfer signal to plotWindow_:
 
-    if (Plot_Window != nullptr)
-        Plot_Window->signalEvaluating();
+    if (plotWindow_ != nullptr)
+        plotWindow_->signalEvaluating();
 }
 
 void QStartDlg::signalEvaluated(void)
@@ -352,8 +354,8 @@ void QStartDlg::signalEvaluated(void)
     if (viewFiniteWindow_ != nullptr) {
         QString fname;
 
-        if (Find_Window != nullptr)
-            Find_Window->getDataFromDlg();
+        if (findWindow_ != nullptr)
+            findWindow_->getDataFromDlg();
 
         fname = g_ThisVF->getfilename_finresults();
 
@@ -375,8 +377,8 @@ void QStartDlg::signalEvaluated(void)
     if (viewInfiniteWindow_ != nullptr) {
         QString fname;
 
-        if (Find_Window != nullptr)
-            Find_Window->getDataFromDlg();
+        if (findWindow_ != nullptr)
+            findWindow_->getDataFromDlg();
 
         fname = g_ThisVF->getfilename_infresults();
         if (g_ThisVF->fileExists(fname)) {
@@ -400,15 +402,15 @@ void QStartDlg::signalEvaluated(void)
         }
     }
 
-    // Transfer signal to Find_Window:
+    // Transfer signal to findWindow_:
 
-    if (Find_Window != nullptr) {
-        Find_Window->signalEvaluated();
+    if (findWindow_ != nullptr) {
+        findWindow_->signalEvaluated();
     }
 
-    // Transfer signal to Plot_Window:
+    // Transfer signal to plotWindow_:
 
-    if (Plot_Window != nullptr) {
+    if (plotWindow_ != nullptr) {
         g_VFResults.deleteVF(); // delete any previous result object
         if (!g_VFResults.readTables(
                 g_ThisVF->getbarefilename())) // read maple/reduce results
@@ -419,7 +421,7 @@ void QStartDlg::signalEvaluated(void)
                 "Please check the input-vector field and parameters!\n");
         }
         g_VFResults.setupCoordinateTransformations();
-        Plot_Window->signalEvaluated();
+        plotWindow_->signalEvaluated();
     }
 
     // the vector field may be changed during evaluation.  In that
@@ -449,8 +451,8 @@ void QStartDlg::signalChanged(void)
     if (viewInfiniteWindow_ != nullptr) {
         viewInfiniteWindow_->setFont(*(g_p4app->courierFont_));
     }
-    if (Plot_Window != nullptr) {
-        Plot_Window->signalChanged();
+    if (plotWindow_ != nullptr) {
+        plotWindow_->signalChanged();
     }
 }
 
@@ -483,8 +485,8 @@ void QStartDlg::onViewFinite()
 
     QString fname;
 
-    if (Find_Window != nullptr)
-        Find_Window->getDataFromDlg();
+    if (findWindow_ != nullptr)
+        findWindow_->getDataFromDlg();
 
     fname = g_ThisVF->getfilename_finresults();
 
@@ -518,8 +520,8 @@ void QStartDlg::onViewInfinite()
 {
     QString fname;
 
-    if (Find_Window != nullptr)
-        Find_Window->getDataFromDlg();
+    if (findWindow_ != nullptr)
+        findWindow_->getDataFromDlg();
 
     fname = g_ThisVF->getfilename_infresults();
     if (g_ThisVF->fileExists(fname) == false) {
@@ -616,8 +618,8 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
         return;
     }
 
-    if (Find_Window != nullptr)
-        Find_Window->getDataFromDlg();
+    if (findWindow_ != nullptr)
+        findWindow_->getDataFromDlg();
 
     if (g_ThisVF->changed_ == false) {
         ce->accept();
@@ -665,9 +667,9 @@ void QStartDlg::customEvent(QEvent *e)
         signalSaved();
         break;
     case TYPE_CLOSE_PLOTWINDOW:
-        if (Plot_Window != nullptr) {
-            delete Plot_Window;
-            Plot_Window = nullptr;
+        if (plotWindow_ != nullptr) {
+            delete plotWindow_;
+            plotWindow_ = nullptr;
         }
         break;
     default:

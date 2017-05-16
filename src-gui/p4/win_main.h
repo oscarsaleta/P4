@@ -60,8 +60,8 @@ class QStartDlg : public QWidget
   public:
     QStartDlg(const QString &);
 
-    QFindDlg *Find_Window;
-    QPlotWnd *Plot_Window;
+    QFindDlg *findWindow_;
+    QPlotWnd *plotWindow_;
 
     void closeEvent(QCloseEvent *ce);
 
