@@ -61,6 +61,9 @@ em:|+F$@%FeyFh^lF[y-F[r6%Q7in~the~point~(%a,%a).|+F$F4F5@$FbyC%FhyF[zF^zFet-F_
 .|+F$-%.closeallfilesGF$>FjpF+F$6+FcoF=F?F;F<FMFcxFexFjpF$F$,
 I-prepareCurvef*F$F$F$F$C&-Fjs6#%,curve_tableG-%,write_curveG6#F@-F[r6#Qgn|+We~
 have~finished~writing~the~curve~as~a~C++~readable~list.|+F$>FjpF+F$6$F@FjpF$F$,
+I1prepareIsoclinesf*F$F$F$F$C&-Fjs6#%0isoclines_tableG-%0write_isoclinesG6#%/us
+er_isoclinesG-F[r6#Qjn|+We~have~finished~writing~the~isoclines~as~C++~readable~
+lists.|+F$>FjpF+F$6$F[clFjpF$F$,
 I6CheckIfGoodPolynomialf*6#%"fGF$F$F$O-%%typeG6$-Fgo6#Fin-%(polynomG6$%(numeric
 G7$F[oFaoF$F$F$F$,
 I+normalexitF(F$,

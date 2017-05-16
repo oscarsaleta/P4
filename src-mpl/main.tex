@@ -283,21 +283,32 @@ prepareCurve := proc()
     normalexit := 1;
 end:
 
-save( user_numeric, user_precision, user_precision0, epsilon, test_sep, taylor_level, numeric_level,
-        max_level, weakness_level, x0, y0, x_min, y_min, x_max, y_max, user_p, user_q, user_f, user_gcf, 
-        user_curve, all_crit_points, save_all, vec_table, finite_table, finite_res, infinite_table,
-        infinite_res, hamiltonian, ishamiltonian, p4main, prepareCurve, CheckIfGoodPolynomial, normalexit, 
+prepareIsoclines := proc()
+    global user_isoclines, normalexit;
+    openfile( isoclines_table );
+    write_isoclines(user_isoclines);
+    writef("\nWe have finished writing the isoclines as C++ readable lists.\n");
+    normalexit := 1;
+end:
+
+save( user_numeric, user_precision, user_precision0, epsilon, test_sep, taylor_level, 
+        numeric_level, max_level, weakness_level, x0, y0, x_min, y_min, x_max, y_max,
+        user_p, user_q, user_f, user_gcf, user_curve, all_crit_points, save_all, vec_table,
+        finite_table, finite_res, infinite_table, infinite_res, hamiltonian, ishamiltonian,
+        p4main, prepareCurve, prepareIsoclines, CheckIfGoodPolynomial, normalexit,
         user_exeprefix, "main.m" );
 
-save( epsilon, test_sep, taylor_level, numeric_level, max_level, weakness_level, x0, y0, x_min, y_min, 
-        x_max, y_max, all_crit_points, save_all, vec_table, finite_table, finite_res, infinite_table, 
-        infinite_res, hamiltonian, ishamiltonian, p4main, prepareCurve, CheckIfGoodPolynomial, normalexit,
+save( epsilon, test_sep, taylor_level, numeric_level, max_level, weakness_level, x0, y0,
+        x_min, y_min, x_max, y_max, all_crit_points, save_all, vec_table, finite_table,
+        finite_res, infinite_table, infinite_res, hamiltonian, ishamiltonian, p4main,
+        prepareCurve, prepareIsoclines, CheckIfGoodPolynomial, normalexit,
 #tools
         rounded, Hardware_precision, reduce_coeff, write_number, reduce_llt,
-        reduce_evalf, reduce_gt, reduce_gteq, reduce_eeq, reduce_nneq, optimizepolynomial1, optimizepolynomial2,
-        first_term, lleadterm, nlterm, ddeg, low_ddeg, nterm, low_deg1, optimizevf, quasihom_degree1,
-        quasihom_degree, change_poly, sort_list, reduce_imp, reduce_conj, reduce_re, reduce_im,
-        openfile, closefile, writef, currentopenfile, openfilelist, closeallfiles, norpoly, norpoly2, norpoly3,
+        reduce_evalf, reduce_gt, reduce_gteq, reduce_eeq, reduce_nneq, optimizepolynomial1, 
+        optimizepolynomial2, first_term, lleadterm, nlterm, ddeg, low_ddeg, nterm, low_deg1, 
+        optimizevf, quasihom_degree1, quasihom_degree, change_poly, sort_list, reduce_imp, 
+        reduce_conj, reduce_re, reduce_im, openfile, closefile, writef, currentopenfile, 
+        openfilelist, closeallfiles, norpoly, norpoly2, norpoly3,
 #gcd
         my_gcd,
 
@@ -321,8 +332,8 @@ save( epsilon, test_sep, taylor_level, numeric_level, max_level, weakness_level,
         lyapunovsym,preparelyapunovsym, sumtable, part_lyapunov_coeff,
         lyp_multc_poly, lyp_findpoly, lyp_Regz, lyp_Imgz, lyp_LL, lyp_G, lyp_conj_poly,
 #infinity
-        vec_field_diff_chart, show_charts, behaviour_inf, pl_chart, find_inf_roots, find_inf_roots_sing,
-        saddle_inf, se_inf, change_stab, de_inf, type_inf,
+        vec_field_diff_chart, show_charts, behaviour_inf, pl_chart, find_inf_roots, 
+        find_inf_roots_sing, saddle_inf, se_inf, change_stab, de_inf, type_inf,
 #blowup
         assoc_points, newton_diagram, GAMMA_1, quasi_degree, center_type1,
         center_type2, power, sort_set_pos, sort_set_neg, put_separatrice,

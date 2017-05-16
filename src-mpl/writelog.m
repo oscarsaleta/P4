@@ -58,4 +58,12 @@ rFeilFfil?(F/FCFCFbtFDFjilF\]l>F6Fgjl>FBFijl>F[[mF\[m>F[[mFf[m>F[[mFj[m>F]rF^\m
 F_\m?(F/FCFCFbtFDFjilF\]l>F[[mFc\m>F[[mFf[m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFj
 ilF\]l>F[[mF^]m>F[[mFf[m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l>F[[mFg]m>F[[
 mFf[m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l@$F`^mC)>F[[mFe^m>F[[mF^_m>F[[mF
-j[m>F]rFb_mF_\m?(F/FCFCFbtFDFd_mF\]l-%*closefileGFb`mFc]lF,6%FgjlFijlFc`mF,F,
+j[m>F]rFb_mF_\m?(F/FCFCFbtFDFd_mF\]l-%*closefileGFb`mFc]lF,6%FgjlFijlFc`mF,F,,
+I0write_isoclinesf*6#%+isoclinesfG6.F*FbhlFchlFdhlFehlFfhlFewFfwF)F+F(%"iGF,F,C
+&-Fby6#%0isoclines_tableG?(8/FCFCFavFDC$>Ffs-F]il6%&F36#FdcmF&FZ@%F`ilFailCE>F]
+r-FWFhcmFfil?(F/FCFCFbtFDFjilF\]l>F6Fgjl>FBFijl>F[[m-F][m6%F_[mFb[mFicm>F[[mFf[
+m>F[[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l>F[[m-F][m6%Fe\mFg\mFicm>F[[mFf[m>F[
+[mFj[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l>F[[m-F][m6%F`]mFb[mFicm>F[[mFf[m>F[[mFj
+[m>F]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l>F[[m-F][m6%Fe\mFi]mFicm>F[[mFf[m>F[[mFj[m>F
+]rF^\mF_\m?(F/FCFCFbtFDFjilF\]l@$F`^mC)>F[[m-F][m6%Fg^mFj^mFicm>F[[mF^_m>F[[mFj
+[m>F]rFb_mF_\m?(F/FCFCFbtFDFd_mF\]l-FgbmFacmFc]lF,6%FgjlFijlFbcmF,F,
