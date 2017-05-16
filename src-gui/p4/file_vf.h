@@ -69,7 +69,7 @@ class QInputVF : public QObject
     QString ydot_;
     QString gcf_;
     QString curve_;
-    QString isocline_[2];
+    QString isoclines_[2];
     QString evalFile_;
     QString evalFile2_;
 
@@ -89,6 +89,7 @@ class QInputVF : public QObject
     bool cleared_;       // initial state, when records are clear
     bool evaluatinggcf_; // true when evaluation is of GCF kind
     bool evaluatingCurve_;
+    bool evaluatingIsoclines_;
     bool processfailed_;   // true when process failed;
     QString processError_; // only relevant when processfailed=true
     QGcfDlg *gcfDlg_;
@@ -156,9 +157,11 @@ class QInputVF : public QObject
     bool prepareCurve_LyapunovR2(int, int);
     bool evaluateCurve();
 
-    /* isocline functions */
+    /* isoclines functions */
     void evaluateIsoclinesTable();
     void prepareIsoclines();
+    void prepareIsoclinesFile(QTextStream *);
+    void prepareMapleIsoclines(QTextStream *);
 
     void createProcessWindow();
 

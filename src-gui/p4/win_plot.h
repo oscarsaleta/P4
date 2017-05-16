@@ -24,6 +24,7 @@
 #include "win_main.h"
 #include "win_sphere.h"
 #include "win_view.h"
+#include "win_isoclines.h"
 
 #include <QAction>
 #include <QBoxLayout>
@@ -34,6 +35,7 @@
 /* Forward-declarations to solve cross-include problems */
 class QGcfDlg;         // in win_gcf.h
 class QCurveDlg;       // in win_curve.h
+class QIsoclinesDlg;   // in win_isoclines.h
 class QIntParamsDlg;   // in win_params.h
 class QSepDlg;         // in win_separatrices.h
 class QOrbitsDlg;      // in win_orbits.h
@@ -62,6 +64,7 @@ class QPlotWnd : public QMainWindow
     QAction *actView_;
     QAction *actGCF_;
     QAction *actCurve_;
+    QAction *actIsoclines_;
     QAction *actPlotSep_;
     QAction *actPlotAllSeps_;
     QAction *actLimitCycles_;
@@ -73,6 +76,7 @@ class QPlotWnd : public QMainWindow
     QLimitCyclesDlg *lcWindow_;
     QGcfDlg *gcfWindow_;
     QCurveDlg *curveWindow_;
+    QIsoclinesDlg *isoclinesWindow_;
 
     QWinSphere *sphere_; // main sphere
 
@@ -93,6 +97,7 @@ class QPlotWnd : public QMainWindow
     void onBtnView(void);
     void onBtnGCF(void);
     void onBtnCurve(void);
+    void onBtnIsoclines(void);
     void onBtnPlotSep(void);
     void onBtnPlotAllSeps(void);
     void onBtnLimitCycles(void);

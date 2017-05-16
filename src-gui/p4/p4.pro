@@ -40,6 +40,7 @@ SOURCES += win_view.cpp \
     win_main.cpp \
     win_limitcycles.cpp \
     win_legend.cpp \
+    win_isoclines.cpp \
     win_intparams.cpp \
     win_gcf.cpp \
     win_find.cpp \
@@ -84,6 +85,7 @@ HEADERS += win_view.h \
     win_main.h \
     win_limitcycles.h \
     win_legend.h \
+    win_isoclines.h \
     win_intparams.h \
     win_gcf.h \
     win_find.h \

@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 
     g_p4printer = new QPrinter(QPrinter::PrinterResolution);
     g_p4smallicon = new QPixmap();
-    if (g_p4smallicon->load(getP4BinPath() + "/g_p4smallicon.png") == false) {
+    if (g_p4smallicon->load(getP4BinPath() + "/p4smallicon.png") == false) {
         delete g_p4smallicon;
         g_p4smallicon = nullptr;
     }
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
                 return (-1);
             }
         }
-        g_p4stardlg->Find_Window->onBtnLoad();
+        g_p4stardlg->findWindow_->onBtnLoad();
     }
 
     if (!v) {

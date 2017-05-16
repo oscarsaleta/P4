@@ -758,6 +758,35 @@ void QInputVF::prepareMapleCurve(QTextStream *fp)
 }
 
 // -----------------------------------------------------------------------
+//                      PREPAREMAPLEISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::prepareMapleIsoclines(QTextStream *fp)
+{
+    QString myisoclines[2];
+    QString lbl;
+    QString val;
+    int k;
+
+    myisoclines[0] = convertMapleUserParameterLabels(isoclines_[0]);
+    myisoclines[1] = convertMapleUserParameterLabels(isoclines_[1]);
+    *fp << "user_isoclines := [" << myisoclines[0] << "," << myisoclines[1] << "]:\n";
+
+    for (k = 0; k < numparams_; k++) {
+        lbl = convertMapleUserParameterLabels(parlabel_[k]);
+        val = convertMapleUserParameterLabels(parvalue_[k]);
+
+        if (lbl.length() == 0)
+            continue;
+
+        if (!numeric_) {
+            *fp << lbl << " := " << val << ":\n";
+        } else {
+            *fp << lbl << " := evalf( " << val << " ):\n";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
 //                          CONVERTMAPLEUSERPARAMETERLABELS
 // -----------------------------------------------------------------------
 //
@@ -1172,6 +1201,90 @@ void QInputVF::prepareCurveFile(QTextStream *fp)
 }
 
 // -----------------------------------------------------------------------
+//                          PREPAREFILE ISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::prepareIsoclinesFile(QTextStream *fp)
+{
+    QString name_isoclinestab;
+    QString s;
+
+    QString mainmaple;
+    QString user_bindir;
+    QString user_tmpdir;
+    QString user_platform;
+    QString user_removecmd;
+    QString user_simplify;
+    QString user_simplifycmd;
+    QString user_sumtablepath;
+    QString user_exeprefix;
+
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_bindir;
+    QByteArray ba_user_tmpdir;
+    QByteArray ba_name_isoclinestab;
+
+    user_exeprefix = "";
+
+    mainmaple = getP4MaplePath();
+    user_bindir = getP4BinPath();
+    user_tmpdir = getP4TempPath();
+    user_sumtablepath = getP4SumTablePath();
+
+    mainmaple += QDir::separator();
+    if (user_bindir != "")
+        user_bindir += QDir::separator();
+    if (user_tmpdir != "")
+        user_tmpdir += QDir::separator();
+    user_platform = USERPLATFORM;
+#ifdef Q_OS_WIN
+    user_removecmd = "cmd /c del";
+    user_exeprefix = "cmd /c ";
+#else
+    user_removecmd = "rm";
+    user_exeprefix = "";
+#endif
+    mainmaple += MAINMAPLEFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    ba_user_bindir = maplepathformat(user_bindir);
+    ba_user_tmpdir = maplepathformat(user_tmpdir);
+
+    if (numeric_)
+        user_simplify = "false";
+    else
+        user_simplify = "true";
+
+    user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
+
+    *fp << "restart;\n";
+    *fp << "read( \"" << ba_mainmaple << "\" );\n";
+    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    *fp << "user_platform := \"" << user_platform << "\":\n";
+    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    *fp << "user_simplify := " << user_simplify << ":\n";
+    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+
+    name_isoclinestab = getfilename_isoclinestable();
+    removeFile(name_isoclinestab);
+    ba_name_isoclinestab = maplepathformat(name_isoclinestab);
+    *fp << "isoclines_table := \"" << ba_name_isoclinestab << "\":\n";
+
+    prepareMapleIsoclines(fp);
+    prepareMapleParameters(fp);
+
+    *fp << "try prepareIsoclines() catch:\n"
+           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+           "lastexception[2] );\n"
+           "finally: closeallfiles();\n"
+           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+           "try:\n";
+}
+
+
+// -----------------------------------------------------------------------
 //                          EVALUATE
 // -----------------------------------------------------------------------
 void QInputVF::evaluate(void)
@@ -1575,7 +1688,7 @@ void QInputVF::finishEvaluation(int exitCode)
         finishGcfEvaluation();
     if (evaluatingCurve_)
         finishCurveEvaluation();
-    if (evaluatingIsoclines_)
+    //if (evaluatingIsoclines_)
     // finishIsoclineEvaluation(); //TODO:
 }
 
@@ -1695,7 +1808,7 @@ void QInputVF::prepareIsoclines(void)
     fptr = new QFile(filedotmpl);
     if (fptr->open(QIODevice::WriteOnly)) {
         fp = new QTextStream(fptr);
-        // prepareIsoclinesFile(fp);
+        prepareIsoclinesFile(fp);
         fp->flush();
         delete fp;
         fp = nullptr;
@@ -1816,6 +1929,7 @@ void QInputVF::createProcessWindow(void)
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setSpacing(6);
 
+    hLayout->addStretch();
     terminateProcessButton_ = new QPushButton("Terminate");
     terminateProcessButton_->setFont(*(g_p4app->boldFont_));
     terminateProcessButton_->setToolTip(
@@ -1824,6 +1938,7 @@ void QInputVF::createProcessWindow(void)
         "work, then after 2 seconds, the program is "
         "abruptly terminated.");
     hLayout->addWidget(terminateProcessButton_);
+
 
     clearProcessButton_ = new QPushButton("Clear");
     clearProcessButton_->setFont((*g_p4app->boldFont_));

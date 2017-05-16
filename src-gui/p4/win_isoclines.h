@@ -26,6 +26,7 @@
 #include <QBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QWidget>
 
 class QIsoclinesDlg : public QWidget
@@ -40,11 +41,10 @@ class QIsoclinesDlg : public QWidget
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
 
-    QPushButton *btnPrepare_;
+    QPushButton *btnEvaluate_;
     QPushButton *btnPlot_;
     QPushButton *btnDelAll_;
     QPushButton *btnDelLast_;
-    QPushButton *btnSelect_;
 
     QRadioButton *btn_dots_;
     QRadioButton *btn_dashes_;
@@ -58,7 +58,6 @@ class QIsoclinesDlg : public QWidget
     void setValue(double v);
 
   public slots:
-    void onTextChange(void);
     void onBtnEvaluate(void);
     void onBtnPlot(void);
     void onBtnDelAll(void);

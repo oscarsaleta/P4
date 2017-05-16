@@ -103,10 +103,8 @@ struct orbits {
 // -----------------------------------------------------------------------
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
-//FIXME: isoclines necessiten vectors de longitud 2 per cada cosa
+// FIXME: isoclines necessiten vectors de longitud 2 per cada cosa
 struct curves {
-    double value; // for isoclines
-
     P4POLYNOM2 r2;
     P4POLYNOM2 u1;
     P4POLYNOM2 u2;
@@ -120,6 +118,22 @@ struct curves {
     curves()
         : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
           c(nullptr), points(nullptr), next_curve(nullptr){};
+};
+
+struct isoclines {
+    double value;
+
+    P4POLYNOM2 r2[2];
+    P4POLYNOM2 u1[2];
+    P4POLYNOM2 u2[2];
+    P4POLYNOM2 v1[2];
+    P4POLYNOM2 v2[2];
+    P4POLYNOM3 c[2];
+    P4ORBIT points[2];
+
+    struct isoclines *next_isocline;
+
+    isoclines() : next_isocline(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -385,14 +399,13 @@ class QVFStudy : public QObject
     P4ORBIT curve_points_;
 
     // isoclines
-    curves isoclines_;
+    isoclines *first_isoclines_;
+    isoclines *current_isoclines_;
 
     // limit cycles
 
     orbits *first_lim_cycle_;
     orbits *first_orbit_;
-    // isoclines are not orbits, but the struct is the same
-    orbits *first_isocline_;
 
     // ------ Configuration
 
@@ -412,8 +425,6 @@ class QVFStudy : public QObject
 
     orbits *current_orbit_;
     orbits *current_lim_cycle_;
-    // isoclines are not orbits, but the struct is the same
-    orbits *current_isocline_;
 
     double selected_ucoord_[2];
     saddle *selected_saddle_point_;
@@ -474,6 +485,7 @@ class QVFStudy : public QObject
     bool readTables(QString basename);
     bool readGCF(FILE *fp);
     bool readCurve(QString basename);
+    bool readIsoclines(QString basename);
     bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
     bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
     bool readPoints(FILE *fp);

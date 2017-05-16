@@ -17,10 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_orbits.h"
+#include "win_isoclines.h"
 
 #include "custom.h"
-#include "math_orbits.h"
+#include "file_vf.h"
+#include "math_polynom.h"
+
+#include <QButtonGroup>
+#include <QMessageBox>
 
 QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -57,7 +61,6 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
 #ifdef TOOLTIPS
     edt_value_->setToolTip("Value of isoclines to plot.");
-    btnSelect_->setToolTip("Validate your choice of isoclines value.");
     btnEvaluate_->setToolTip("Evaluate isoclines at the selected value.");
     btnPlot_->setToolTip("Plot isocline.");
     btnDelLast_->setToolTip("Delete last isocline drawn");
@@ -84,13 +87,13 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addWidget(btnEvaluate_);
-    layout2->addWidget(btnPlot_);
     layout2->addStretch(0);
+    layout2->addWidget(btnDelLast_);
 
     QHBoxLayout *layout3 = new QHBoxLayout();
-    layout3->addWidget(btnDelLast_);
-    layout3->addWidget(btnDelAll_);
+    layout3->addWidget(btnPlot_);
     layout3->addStretch(0);
+    layout3->addWidget(btnDelAll_);
 
     mainLayout_->addLayout(layout0);
     mainLayout_->addLayout(layout1);
@@ -110,13 +113,13 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // finishing
 
-    btnEvaluate_->setEnabled(false);
+    btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
-
-    if (g_VFResults.first_isocline_ == nullptr) {
+    //FIXME:
+    /*if (g_VFResults.first_isocline_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
-    }
+    }*/
 
     setP4WindowTitle(this, "Plot Isoclines");
 }
@@ -129,21 +132,22 @@ void QIsoclinesDlg::onBtnEvaluate(void)
             "The value field has to be filled with a valid number.");
         return;
     }
-    g_ThisVF->isocline_[0] =
-        g_ThisVF->xdot_ + "(" + edt_value_->text() + ")";
-    g_ThisVF->isocline_[1] =
-        g_ThisVF->ydot_ + "(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_[0] =
+        g_ThisVF->xdot_ + "+(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_[1] =
+        g_ThisVF->ydot_ + "+(" + edt_value_->text() + ")";
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
     g_ThisVF->evaluateIsoclinesTable();
-    btn_plot_->setEnabled(true);
+    btnPlot_->setEnabled(true);
     plotwnd_->getDlgData();
 }
 
+// TODO:
 void QIsoclinesDlg::onBtnPlot(void)
 {
-    bool dashes, result;
+/*    bool dashes, result;
     int points, precis, memory;
 
     bool ok;
@@ -210,40 +214,11 @@ void QIsoclinesDlg::onBtnPlot(void)
         return;
     }
 
-    btn_delete_->setEnabled(true);
-}
-
-void QIsoclinesDlg::onBtnForwards(void)
-{
-    plotwnd_->getDlgData();
-
-    if (!orbitStarted_) {
-        if (!orbitSelected_)
-            return;
-
-        mainSphere_->prepareDrawing();
-        orbitStarted_ =
-            startOrbit(mainSphere_, selected_x0_, selected_y0_, true);
-        mainSphere_->finishDrawing();
-
-        if (orbitStarted_) {
-            btnDelAll_->setEnabled(true);
-            btnDelLast_->setEnabled(true);
-        }
-    }
-
-    if (orbitStarted_) {
-        mainSphere_->prepareDrawing();
-        integrateOrbit(mainSphere_, 1);
-        mainSphere_->finishDrawing();
-
-        btnForwards_->setEnabled(false);
-        btnContinue_->setEnabled(true);
-    }
+    btn_delete_->setEnabled(true);*/
 }
 
 void QIsoclinesDlg::onBtnDelAll(void)
-{
+{/*
     plotwnd_->getDlgData();
 
     btnForwards_->setEnabled(false);
@@ -256,11 +231,11 @@ void QIsoclinesDlg::onBtnDelAll(void)
     g_VFResults.first_orbit_ = nullptr;
     g_VFResults.current_orbit_ = nullptr;
 
-    mainSphere_->refresh();
+    mainSphere_->refresh();*/
 }
 
 void QIsoclinesDlg::onBtnDelLast(void)
-{
+{/*
     plotwnd_->getDlgData();
 
     mainSphere_->prepareDrawing();
@@ -276,45 +251,34 @@ void QIsoclinesDlg::onBtnDelLast(void)
     if (g_VFResults.first_orbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
-    }
-}
-
-void QIsoclinesDlg::orbitEvent(int i)
-{
-    switch (i) {
-    case -1:
-        onBtnBackwards();
-        break;
-    case 1:
-        onBtnForwards();
-        break;
-    case 0:
-        onBtnContinue();
-        break;
-    case 2:
-        onBtnDelLast();
-        break;
-    case 3:
-        onBtnDelAll();
-        break;
-    }
+    }*/
 }
 
 void QIsoclinesDlg::reset(void)
 {
-    // finishing
+    QString buf;
 
-    selected_x0_ = 0;
-    selected_y0_ = 0;
+    edt_value_->setText("");
 
-    btnForwards_->setEnabled(false);
-    btnBackwards_->setEnabled(false);
-    btnContinue_->setEnabled(false);
+    buf.sprintf("%d", DEFAULT_CURVEPOINTS);
+    edt_points_->setText(buf);
 
-    if (g_VFResults.first_orbit_ == nullptr) {
-        btnDelAll_->setEnabled(false);
-        btnDelLast_->setEnabled(false);
-    }
-    orbitStarted_ = false;
-    orbitSelected_ = false;
+    buf.sprintf("%d", DEFAULT_CURVEMEMORY);
+    edt_memory_->setText(buf);
+
+    buf.sprintf("%d", DEFAULT_CURVEPRECIS);
+    edt_precis_->setText(buf);
+
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+    // FIXME:
+    /*if (g_VFResults.gcf_ != nullptr)
+        btn_delete_->setEnabled(false);
+    else
+        btn_delete_->setEnabled(true);
+*/
+    if (g_VFResults.config_dashes_)
+        btn_dashes_->toggle();
+    else
+        btn_dots_->toggle();
 }

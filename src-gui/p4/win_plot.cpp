@@ -115,6 +115,10 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
             SLOT(onBtnLimitCycles()));
     toolBar2->addAction(actLimitCycles_);
 
+    actIsoclines_ = new QAction("Isoclines", this);
+    connect(actIsoclines_, SIGNAL(triggered()), this, SLOT(onBtnIsoclines()));
+    toolBar2->addAction(actIsoclines_);
+
     actView_ = new QAction("&View", this);
     actView_->setShortcut(Qt::ALT + Qt::Key_V);
     connect(actView_, SIGNAL(triggered()), this, SLOT(onBtnView()));
@@ -162,6 +166,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     lcWindow_ = new QLimitCyclesDlg(this, sphere_);
     gcfWindow_ = new QGcfDlg(this, sphere_);
     curveWindow_ = new QCurveDlg(this, sphere_);
+    isoclinesWindow_ = new QIsoclinesDlg(this, sphere_);
     g_LCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere_->show();
@@ -303,6 +308,12 @@ void QPlotWnd::onBtnCurve(void)
     curveWindow_->raise();
 }
 
+void QPlotWnd::onBtnIsoclines(void)
+{
+    isoclinesWindow_->show();
+    isoclinesWindow_->raise();
+}
+
 void QPlotWnd::onBtnPlotSep(void)
 {
     getDlgData();
@@ -375,6 +386,7 @@ void QPlotWnd::configure(void)
     lcWindow_->reset();
     gcfWindow_->reset();
     curveWindow_->reset();
+    isoclinesWindow_->reset();
 
     sphere_->update();
     if (g_VFResults.gcf_ == nullptr) // reconfigure GCF button
