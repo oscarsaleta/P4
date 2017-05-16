@@ -111,6 +111,9 @@ QInputVF::~QInputVF()
         delete outputWindow_;
         outputWindow_ = nullptr;
     }
+    removeFile(getfilename_curvetable());
+    removeFile(getfilename_curve());
+    removeFile(getPrepareCurveFileName());
 }
 
 // -----------------------------------------------------------------------
