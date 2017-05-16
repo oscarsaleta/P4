@@ -350,7 +350,6 @@ class QVFStudy : public QObject
     P4POLYNOM2 gcf_V1_;
     P4POLYNOM2 gcf_V2_;
     P4POLYNOM3 gcf_C_;
-
     orbits_points *gcf_points_;
 
     // one curve to plot (for now, maybe later will be a vector)
@@ -360,7 +359,6 @@ class QVFStudy : public QObject
     P4POLYNOM2 curve_V1_;
     P4POLYNOM2 curve_V2_;
     P4POLYNOM3 curve_C_;
-
     orbits_points *curve_points_;
 
     // limit cycles
