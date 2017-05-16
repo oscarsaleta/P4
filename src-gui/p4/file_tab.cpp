@@ -678,6 +678,8 @@ bool QVFStudy::readGCF(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadCurve
 // -----------------------------------------------------------------------
+// TODO: canviar això perquè rebi una struct curves (així es podrà usar per
+// corbes i isoclines)
 bool QVFStudy::readCurve(QString basename)
 {
     int N, degree_curve;

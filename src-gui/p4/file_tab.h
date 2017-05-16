@@ -75,8 +75,7 @@ struct orbits_points {
     int color; // color of seperatrice
 
     double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
-                      // or
-                      // on the poincare-lyapunov sphere
+                      // or on the poincare-lyapunov sphere
                       // -> p=(0,x,y) or p=(1,r,theta)
     int dashes;
     int dir;  // if we have a line of sing at infinity and have to change
@@ -97,7 +96,30 @@ struct orbits {
     P4ORBIT current_f_orbits; // orbit
     struct orbits *next_orbit;
 
-    orbits() : next_orbit(nullptr){};
+    orbits()
+        : f_orbits(nullptr), current_f_orbits(nullptr), next_orbit(nullptr){};
+};
+
+// -----------------------------------------------------------------------
+//                      Curves and isoclines
+// -----------------------------------------------------------------------
+//FIXME: isoclines necessiten vectors de longitud 2 per cada cosa
+struct curves {
+    double value; // for isoclines
+
+    P4POLYNOM2 r2;
+    P4POLYNOM2 u1;
+    P4POLYNOM2 u2;
+    P4POLYNOM2 v1;
+    P4POLYNOM2 v2;
+    P4POLYNOM3 c;
+    P4ORBIT points;
+
+    struct curves *next_curve;
+
+    curves()
+        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
+          c(nullptr), points(nullptr), next_curve(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -350,21 +372,27 @@ class QVFStudy : public QObject
     P4POLYNOM2 gcf_V1_;
     P4POLYNOM2 gcf_V2_;
     P4POLYNOM3 gcf_C_;
-    orbits_points *gcf_points_;
+    P4ORBIT gcf_points_;
 
     // one curve to plot (for now, maybe later will be a vector)
+    // TODO: change everything for a struct curves
     P4POLYNOM2 curve_;
     P4POLYNOM2 curve_U1_;
     P4POLYNOM2 curve_U2_;
     P4POLYNOM2 curve_V1_;
     P4POLYNOM2 curve_V2_;
     P4POLYNOM3 curve_C_;
-    orbits_points *curve_points_;
+    P4ORBIT curve_points_;
+
+    // isoclines
+    curves isoclines_;
 
     // limit cycles
 
     orbits *first_lim_cycle_;
     orbits *first_orbit_;
+    // isoclines are not orbits, but the struct is the same
+    orbits *first_isocline_;
 
     // ------ Configuration
 
@@ -384,6 +412,8 @@ class QVFStudy : public QObject
 
     orbits *current_orbit_;
     orbits *current_lim_cycle_;
+    // isoclines are not orbits, but the struct is the same
+    orbits *current_isocline_;
 
     double selected_ucoord_[2];
     saddle *selected_saddle_point_;
