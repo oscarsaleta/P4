@@ -17,8 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_ORBITS_H
-#define WIN_ORBITS_H
+#ifndef WIN_ISOCLINES_H
+#define WIN_ISOCLINES_H
 
 #include "win_plot.h"
 #include "win_sphere.h"
@@ -28,46 +28,41 @@
 #include <QPushButton>
 #include <QWidget>
 
-class QOrbitsDlg : public QWidget
+class QIsoclinesDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QOrbitsDlg(QPlotWnd *, QWinSphere *);
+    QIsoclinesDlg(QPlotWnd *, QWinSphere *);
     void reset(void);
 
   private:
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
 
-    QPushButton *btnForwards_;
-    QPushButton *btnContinue_;
-    QPushButton *btnBackwards_;
+    QPushButton *btnPrepare_;
+    QPushButton *btnPlot_;
     QPushButton *btnDelAll_;
     QPushButton *btnDelLast_;
     QPushButton *btnSelect_;
 
-    QLineEdit *edt_x0_;
-    QLineEdit *edt_y0_;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_value_;
+    QLineEdit *edt_points_;
+    QLineEdit *edt_precis_;
+    QLineEdit *edt_memory_;
 
     QBoxLayout *mainLayout_;
 
-    double selected_x0_;
-    double selected_y0_;
-
-    bool orbitStarted_;
-    bool orbitSelected_;
+    void setValue(double v);
 
   public slots:
-    void orbitEvent(int);
-    void onBtnSelect(void);
-    void onBtnBackwards(void);
-    void onBtnContinue(void);
-    void onBtnForwards(void);
+    void onTextChange(void);
+    void onBtnEvaluate(void);
+    void onBtnPlot(void);
     void onBtnDelAll(void);
     void onBtnDelLast(void);
-
-    void setInitialPoint(double, double);
 };
 
-#endif /* WIN_ORBITS_H */
+#endif /* WIN_ISOCLINES_H */
