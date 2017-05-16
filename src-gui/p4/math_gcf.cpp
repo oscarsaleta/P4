@@ -242,7 +242,7 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes)
 
 static bool read_gcf(void (*chart)(double, double, double *))
 {
-    int t;
+    //int t;
     int k;
     FILE *fp;
     double x, y;
@@ -253,7 +253,7 @@ static bool read_gcf(void (*chart)(double, double, double *))
     if (fp == nullptr)
         return false;
 
-    if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
+    /*if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
         // search the x-label, and check for error.
 
         FILE *fp2;
@@ -324,7 +324,7 @@ static bool read_gcf(void (*chart)(double, double, double *))
             getc(fp);
             c = getc(fp);
         }
-    } else {
+    } else {*/
         k = 0;
         while (1) {
             d = 0;
@@ -340,7 +340,7 @@ static bool read_gcf(void (*chart)(double, double, double *))
             if (c != ',')
                 break;
         }
-    }
+    //}
 
     fclose(fp);
     return true;
