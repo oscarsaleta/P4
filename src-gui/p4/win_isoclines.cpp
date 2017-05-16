@@ -29,15 +29,31 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     plotwnd_ = plt;
 
     edt_value_ = new QLineEdit("", this);
-    QLabel *lbl1 = new QLabel("&Value = ", this);
-    lbl1->setBuddy(edt_value_);
+    QLabel *lbl0 = new QLabel("&Value = ", this);
+    lbl0->setBuddy(edt_value_);
+
+    QButtonGroup *btngrp = new QButtonGroup(this);  
+    btn_dots_ = new QRadioButton("Dots", this);
+    btn_dashes_ = new QRadioButton("Dashes", this);
+    btngrp->addButton(btn_dots_);
+    btngrp->addButton(btn_dashes_);
+
+    QLabel *lbl1 = new QLabel("Appearance: ", this);
+
+    edt_points_ = new QLineEdit("", this);
+    QLabel *lbl2 = new QLabel("Num. Points: ", this);
+
+    edt_precis_ = new QLineEdit("", this);
+    QLabel *lbl3 = new QLabel("Precision: ", this);
+
+    edt_memory_ = new QLineEdit("", this);
+    QLabel *lbl4 = new QLabel("Max. Memory: ", this);
+
 
     btnEvaluate_ = new QPushButton("&Evaluate", this);
     btnPlot_ = new QPushButton("&Plot", this);
     btnDelLast_ = new QPushButton("&Delete Last Orbit", this);
     btnDelAll_ = new QPushButton("Delete &All Orbits", this);
-
-    btnSelect_ = new QPushButton("&Select", this);
 
 #ifdef TOOLTIPS
     edt_value_->setToolTip("Value of isoclines to plot.");
@@ -53,29 +69,38 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     QHBoxLayout *layout0 = new QHBoxLayout();
     layout0->addWidget(lbl1);
-    layout0->addWidget(edt_value_);
-    layout0->addWidget(btn_select_);
-    layout0->addStretch(0);
+    layout0->addWidget(btn_dots_);
+    layout0->addWidget(btn_dashes_);
 
-    QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->addWidget(btnEvaluate_);
-    layout1->addWidget(btnPlot_);
-    layout1->addStretch(0);
+    QGridLayout *layout1 = new QGridLayout();
+    layout1->addWidget(lbl0, 0, 0);
+    layout1->addWidget(edt_value_, 0, 1);
+    layout1->addWidget(lbl2, 1, 0);
+    layout1->addWidget(edt_points_, 1, 1);
+    layout1->addWidget(lbl3, 2, 0);
+    layout1->addWidget(edt_precis_, 2, 1);
+    layout1->addWidget(lbl4, 3, 0);
+    layout1->addWidget(edt_memory_, 3, 1);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
-    layout2->addWidget(btnDelLast_);
-    layout2->addWidget(btnDelAll_);
+    layout2->addWidget(btnEvaluate_);
+    layout2->addWidget(btnPlot_);
     layout2->addStretch(0);
+
+    QHBoxLayout *layout3 = new QHBoxLayout();
+    layout3->addWidget(btnDelLast_);
+    layout3->addWidget(btnDelAll_);
+    layout3->addStretch(0);
 
     mainLayout_->addLayout(layout0);
     mainLayout_->addLayout(layout1);
     mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_);
 
     // connections
-    QObject::connect(btnSelect_, SIGNAL(clicked()), this, SLOT(onBtnSelect()));
     QObject::connect(btnEvaluate_, SIGNAL(clicked()), this,
                      SLOT(onBtnEvaluate()));
     QObject::connect(btnPlot_, SIGNAL(clicked()), this, SLOT(onBtnPlot()));
@@ -84,7 +109,6 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
                      SLOT(onBtnDelLast()));
 
     // finishing
-    selected_value_ = 0;
 
     btnEvaluate_->setEnabled(false);
     btnPlot_->setEnabled(false);
@@ -97,78 +121,96 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "Plot Isoclines");
 }
 
-void QIsoclinesDlg::setValue(double v)
-{
-    QString buf;
-
-    plotwnd_->getDlgData();
-
-    selected_value_ = v;
-
-    buf.sprintf("%g", v);
-
-    edt_value_->setText(buf);
-
-    btnEvaluate_->setEnabled(true);
-    btnPlot_->setEnabled(false);
-}
-
-void QIsoclinesDlg::onBtnSelect(void)
-{
-    plotwnd_->getDlgData();
-    QString buf(edt_value_->text());
-    setValue(buf.toDouble());
-}
-
 void QIsoclinesDlg::onBtnEvaluate(void)
 {
-    /*if (edt_value_->text().isNull() || edt_value_->text().isEmpty()) {
+    if (edt_value_->text().isNull() || edt_value_->text().isEmpty()) {
         QMessageBox::information(
-            this, "P4", "The value field has to be filled with a valid value.");
+            this, "P4",
+            "The value field has to be filled with a valid number.");
         return;
     }
-    g_ThisVF->curve_ = edt_curve_->text().trimmed();
+    g_ThisVF->isocline_[0] =
+        g_ThisVF->xdot_ + "(" + edt_value_->text() + ")";
+    g_ThisVF->isocline_[1] =
+        g_ThisVF->ydot_ + "(" + edt_value_->text() + ")";
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
-    g_ThisVF->evaluateCurveTable();
+    g_ThisVF->evaluateIsoclinesTable();
     btn_plot_->setEnabled(true);
-    plotwnd_->getDlgData();*/
-
-    if (!orbitStarted_) {
-        if (!orbitSelected_)
-            return;
-
-        mainSphere_->prepareDrawing();
-        orbitStarted_ =
-            startOrbit(mainSphere_, selected_x0_, selected_y0_, true);
-        mainSphere_->finishDrawing();
-
-        if (orbitStarted_) {
-            btnDelAll_->setEnabled(true);
-            btnDelLast_->setEnabled(true);
-        }
-    }
-
-    if (orbitStarted_) {
-        mainSphere_->prepareDrawing();
-        integrateOrbit(mainSphere_, -1);
-        mainSphere_->finishDrawing();
-
-        btnBackwards_->setEnabled(false);
-        btnContinue_->setEnabled(true);
-    }
+    plotwnd_->getDlgData();
 }
 
-void QIsoclinesDlg::onBtnContinue(void)
+void QIsoclinesDlg::onBtnPlot(void)
 {
-    plotwnd_->getDlgData();
+    bool dashes, result;
+    int points, precis, memory;
 
-    if (orbitStarted_) {
-        mainSphere_->prepareDrawing();
-        integrateOrbit(mainSphere_, 0);
-        mainSphere_->finishDrawing();
+    bool ok;
+    QString buf;
+
+    dashes = btn_dashes_->isChecked();
+
+    ok = true;
+
+    buf = edt_points_->text();
+    points = buf.toInt();
+    if (points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
+        buf += " ???";
+        edt_points_->setText(buf);
+        ok = false;
     }
+
+    buf = edt_precis_->text();
+    precis = buf.toInt();
+    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
+        buf += " ???";
+        edt_precis_->setText(buf);
+        ok = false;
+    }
+
+    buf = edt_memory_->text();
+    memory = buf.toInt();
+    if (memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
+        buf += " ???";
+        edt_memory_->setText(buf);
+        ok = false;
+    }
+
+    if (!ok) {
+        QMessageBox::information(
+            this, "P4", "One of the fields has a value that is out of bounds.\n"
+                        "Please correct before continuing.\n");
+        return;
+    }
+
+    // SECOND: read the resulting file and store the list
+    if (!g_VFResults.readCurve(g_ThisVF->getbarefilename())) {
+        QMessageBox::critical(this, "P4", "Cannot read curve.\n"
+                                          "Please check the input field!\n");
+        return;
+    }
+
+    // THIRD: evaluate curve with given parameters {dashes, points, memory}.
+
+    evaluating_points_ = points;
+    evaluating_memory_ = memory;
+    evaluating_precision_ = precis;
+
+    btn_plot_->setEnabled(false);
+
+    g_ThisVF->curveDlg_ = this;
+    result = evalCurveStart(mainSphere_, dashes, precis, points);
+    if (!result) {
+        btn_plot_->setEnabled(true);
+        QMessageBox::critical(this, "P4", "An error occured while plotting the "
+                                          "curve.\nThe singular locus may not "
+                                          "be visible, or may be partially "
+                                          "visible.");
+        return;
+    }
+
+    btn_delete_->setEnabled(true);
 }
 
 void QIsoclinesDlg::onBtnForwards(void)
