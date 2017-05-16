@@ -111,9 +111,11 @@ QInputVF::~QInputVF()
         delete outputWindow_;
         outputWindow_ = nullptr;
     }
+    // remove curve auxiliary files
     removeFile(getfilename_curvetable());
     removeFile(getfilename_curve());
     removeFile(getPrepareCurveFileName());
+    // TODO: will have to remove isoclines files too
 }
 
 // -----------------------------------------------------------------------
@@ -511,38 +513,53 @@ QString QInputVF::getfilename_vectable(void) const
 {
     return getbarefilename().append("_vec.tab");
 }
-QString QInputVF::getfilename_curvetable(void) const
-{
-    return getbarefilename().append("_veccurve.tab");
-}
 QString QInputVF::getfilename_gcf(void) const
 {
     return getbarefilename().append("_gcf.tab");
+}
+// only used in case of reduce: contains reduce output, no gcf data and is
+// deleted immediately.
+/*QString QInputVF::getfilename_gcfresults(void) const
+{
+    return getbarefilename().append("_gcf.res");
+}*/
+/*QString QInputVF::getreducefilename(void) const
+{
+    return getbarefilename().append(".red");
+}*/
+QString QInputVF::getmaplefilename(void) const
+{
+    return getbarefilename().append(".txt");
+}
+QString QInputVF::getrunfilename(void) const
+{
+    return getbarefilename().append(".run");
+}
+// curve filenames
+QString QInputVF::getfilename_curvetable(void) const
+{
+    return getbarefilename().append("_veccurve.tab");
 }
 QString QInputVF::getfilename_curve(void) const
 {
     return getbarefilename().append("_curve.tab");
 }
-QString QInputVF::getfilename_gcfresults(void) const
-{
-    return getbarefilename().append("_gcf.res");
-} // only used in case of reduce: contains reduce output, no gcf data and is
-  // deleted immediately.
-QString QInputVF::getreducefilename(void) const
-{
-    return getbarefilename().append(".red");
-}
-QString QInputVF::getmaplefilename(void) const
-{
-    return getbarefilename().append(".txt");
-}
 QString QInputVF::getPrepareCurveFileName(void) const
 {
     return getbarefilename().append("_curve_prep.txt");
 }
-QString QInputVF::getrunfilename(void) const
+// isoclines filenames
+QString QInputVF::getfilename_isoclinestable(void) const
 {
-    return getbarefilename().append(".run");
+    return getbarefilename().append("_vecisoclines.tab");
+}
+QString QInputVF::getfilename_isoclines(void) const
+{
+    return getbarefilename().append("_isoclines.tab");
+}
+QString QInputVF::getPrepareIsoclinesFileName(void) const
+{
+    return getbarefilename().append("_isoclines_prep.txt");
 }
 
 // -----------------------------------------------------------------------
@@ -1169,6 +1186,8 @@ void QInputVF::evaluate(void)
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
+    evaluatingIsoclines_ = false;
+
     // possible clean up after last GCF evaluation
     if (evalProcess_ != nullptr) {
         delete evalProcess_;
@@ -1307,7 +1326,7 @@ void QInputVF::evaluate(void)
 // -----------------------------------------------------------------------
 //                          EVALUATE CURVE
 // -----------------------------------------------------------------------
-void QInputVF::evaluateCurveTable(void)
+void QInputVF::evaluateCurveTable()
 {
     QString filedotmpl;
     QString s, e;
@@ -1315,6 +1334,8 @@ void QInputVF::evaluateCurveTable(void)
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
+    evaluatingIsoclines_ = false;
+
     // possible clean up after last Curve evaluation
     if (evalProcess_ != nullptr) {
         delete evalProcess_;
@@ -1381,7 +1402,86 @@ void QInputVF::evaluateCurveTable(void)
             evalFile2_ = "";
         }
     }
-    //}
+}
+
+// -----------------------------------------------------------------------
+//                          EVALUATE ISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::evaluateIsoclinesTable()
+{
+    QString filedotmpl;
+    QString s, e;
+    QProcess *proc;
+
+    evaluatinggcf_ = false;
+    evaluatingCurve_ = false;
+    evaluatingIsoclines_ = false;
+    // possible clean up after last Curve evaluation
+    if (evalProcess_ != nullptr) {
+        delete evalProcess_;
+        evalProcess_ = nullptr;
+    }
+
+    prepareIsoclines();
+    filedotmpl = getPrepareIsoclinesFileName();
+
+    s = getMapleExe();
+    if (s.isNull()) {
+        s = "";
+    } else {
+        s = s.append(" ");
+        if (filedotmpl.contains(' ')) {
+            s = s.append("\"");
+            s = s.append(filedotmpl);
+            s = s.append("\"");
+        } else
+            s = s.append(filedotmpl);
+
+        /* Here a window for displaying the output text of the Maple process
+         * is created */
+        if (outputWindow_ == nullptr)
+            createProcessWindow();
+        else {
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
+            terminateProcessButton_->setEnabled(true);
+        }
+
+        proc = new QProcess(this);
+
+        proc->setWorkingDirectory(QDir::currentPath());
+
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                SLOT(catchProcessError(QProcess::ProcessError)));
+        connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                SLOT(readProcessStdout()));
+
+        processfailed_ = false;
+        QString pa = "External Command: ";
+        pa += getMapleExe();
+        pa += " ";
+        pa += filedotmpl;
+        processText_->append(pa);
+        proc->start(getMapleExe(), QStringList(filedotmpl),
+                    QIODevice::ReadWrite);
+
+        if (proc->state() != QProcess::Running &&
+            proc->state() != QProcess::Starting) {
+            processfailed_ = true;
+            delete proc;
+            proc = nullptr;
+            evalProcess_ = nullptr;
+            evalFile_ = "";
+            evalFile2_ = "";
+            g_p4app->signalEvaluated(-1);
+            terminateProcessButton_->setEnabled(false);
+        } else {
+            evalProcess_ = proc;
+            evalFile_ = filedotmpl;
+            evalFile2_ = "";
+        }
+    }
 }
 
 // -----------------------------------------------------------------------
@@ -1471,12 +1571,12 @@ void QInputVF::finishEvaluation(int exitCode)
         }
     }*/
 
-    if (evaluatinggcf_) {
+    if (evaluatinggcf_)
         finishGcfEvaluation();
-    }
-    if (evaluatingCurve_) {
+    if (evaluatingCurve_)
         finishCurveEvaluation();
-    }
+    if (evaluatingIsoclines_)
+    // finishIsoclineEvaluation(); //TODO:
 }
 
 // -----------------------------------------------------------------------
@@ -1507,7 +1607,7 @@ void QInputVF::finishCurveEvaluation(void)
 // -----------------------------------------------------------------------
 void QInputVF::prepare(void)
 {
-    QString filedotred;
+    // QString filedotred;
     QString filedotmpl;
     QFile *fptr;
     QTextStream *fp;
@@ -1567,6 +1667,35 @@ void QInputVF::prepareCurve(void)
     if (fptr->open(QIODevice::WriteOnly)) {
         fp = new QTextStream(fptr);
         prepareCurveFile(fp);
+        fp->flush();
+        delete fp;
+        fp = nullptr;
+        fptr->close();
+        delete fptr;
+        fptr = nullptr;
+    } else {
+        delete fptr;
+        fptr = nullptr;
+
+        // cannot open?
+    }
+}
+
+// -----------------------------------------------------------------------
+//                          PREPARE ISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::prepareIsoclines(void)
+{
+    QString filedotmpl;
+    QFile *fptr;
+    QTextStream *fp;
+
+    filedotmpl = getPrepareIsoclinesFileName();
+
+    fptr = new QFile(filedotmpl);
+    if (fptr->open(QIODevice::WriteOnly)) {
+        fp = new QTextStream(fptr);
+        // prepareIsoclinesFile(fp);
         fp->flush();
         delete fp;
         fp = nullptr;
