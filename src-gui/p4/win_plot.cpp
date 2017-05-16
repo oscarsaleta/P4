@@ -25,9 +25,9 @@
 #include "math_separatrice.h"
 #include "p4application.h"
 #include "plot_tools.h"
+#include "win_curve.h"
 #include "win_event.h"
 #include "win_gcf.h"
-#include "win_curve.h"
 #include "win_intparams.h"
 #include "win_limitcycles.h"
 #include "win_orbits.h"
@@ -94,8 +94,8 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     toolBar1->addAction(actGCF_);
 
     actCurve_ = new QAction("&Curve", this);
-    actCurve_->setShortcut(Qt::ALT+Qt::Key_C); // NOTE: conflict?
-    connect(actCurve_,SIGNAL(triggered()),this,SLOT(onBtnCurve()));
+    actCurve_->setShortcut(Qt::ALT + Qt::Key_C); // NOTE: conflict?
+    connect(actCurve_, SIGNAL(triggered()), this, SLOT(onBtnCurve()));
     toolBar1->addAction(actCurve_);
 
     actPlotSep_ = new QAction("Plot &Separatrice", this);
@@ -138,13 +138,14 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     actOrbits_->setToolTip("Opens \"Integrate Orbits\" window");
     actIntParams_->setToolTip("Opens \"Integration Parameters\" window");
     actGCF_->setToolTip("Opens Greatest-Common-Factor window.\n"
-                       "Disabled if there is no GCF");
+                        "Disabled if there is no GCF");
     actCurve_->setToolTip("Opens curve plot window.");
     actPlotSep_->setToolTip("Opens \"Plot separatrices\" window");
-    actPlotAllSeps_->setToolTip("Plots all separatrices of all singular points "
-                               "with default integration parameters.\n"
-                               "Change integration parameters if the effect is "
-                               "too small to be visible.");
+    actPlotAllSeps_->setToolTip(
+        "Plots all separatrices of all singular points "
+        "with default integration parameters.\n"
+        "Change integration parameters if the effect is "
+        "too small to be visible.");
     actLimitCycles_->setToolTip("Opens limit cycle window");
     actView_->setToolTip("Opens the \"View parameter\" window");
     actPrint_->setToolTip("Opens the print window");
@@ -160,7 +161,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     viewParamsWindow_ = new QViewDlg(this);
     lcWindow_ = new QLimitCyclesDlg(this, sphere_);
     gcfWindow_ = new QGcfDlg(this, sphere_);
-    curveWindow_ = new QCurveDlg(this,sphere_);
+    curveWindow_ = new QCurveDlg(this, sphere_);
     g_LCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere_->show();
@@ -398,8 +399,8 @@ void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     if (x1 == x2 || y1 == y2)
         return;
 
-    zoomWindows_ =
-        (QZoomWnd **)realloc(zoomWindows_, sizeof(QZoomWnd *) * (numZooms_ + 1));
+    zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,
+                                        sizeof(QZoomWnd *) * (numZooms_ + 1));
     zoomWindows_[numZooms_] =
         new QZoomWnd(this, ++lastZoomIdentifier_, x1, y1, x2, y2);
     zoomWindows_[numZooms_]->show();

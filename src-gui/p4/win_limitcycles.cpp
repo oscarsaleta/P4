@@ -81,7 +81,7 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_grid_->setToolTip(
         "Diameter of intervals dividing the transverse section");
     btn_start_->setToolTip("Start integrating from the transverse section,\n"
-                          "looking for the presence of a limit cycle");
+                           "looking for the presence of a limit cycle");
     btn_dellast_->setToolTip("Delete last limit cycle");
     btn_delall_->setToolTip("Delete all limit cycles");
     btn_cancel_->setToolTip("Reset set points");
@@ -129,8 +129,10 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     // connections
 
     QObject::connect(btn_start_, SIGNAL(clicked()), this, SLOT(onbtn_start()));
-    QObject::connect(btn_cancel_, SIGNAL(clicked()), this, SLOT(onbtn_cancel()));
-    QObject::connect(btn_delall_, SIGNAL(clicked()), this, SLOT(onbtn_delall()));
+    QObject::connect(btn_cancel_, SIGNAL(clicked()), this,
+                     SLOT(onbtn_cancel()));
+    QObject::connect(btn_delall_, SIGNAL(clicked()), this,
+                     SLOT(onbtn_delall()));
     QObject::connect(btn_dellast_, SIGNAL(clicked()), this,
                      SLOT(onbtn_dellast()));
 

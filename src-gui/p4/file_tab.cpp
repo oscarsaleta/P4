@@ -95,20 +95,26 @@ QVFStudy::QVFStudy()
 
     // initialize parameters
 
-    config_lc_value_ =
-        DEFAULT_LCORBITS; // number of orbits in the limit cycle window
-    config_lc_numpoints_ =
-        DEFAULT_LCPOINTS;     // number of points in the limit cycle window
-    config_hma_ = DEFAULT_HMA; // maximum step size
-    config_hmi_ = DEFAULT_HMI; // minimum step size
-    config_step_ = DEFAULT_STEPSIZE; // step size
-    config_currentstep_ =
-        DEFAULT_STEPSIZE; // current step size (during integration)
-    config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
-    config_projection_ =
-        DEFAULT_PROJECTION; // projection in the case of Poincare sphere
-    config_intpoints_ = DEFAULT_INTPOINTS; // number of points to integrate
-    config_dashes_ = DEFAULT_LINESTYLE;    // line style (dashes or points)
+    // number of orbits in the limit cycle window
+    config_lc_value_ = DEFAULT_LCORBITS;
+    // number of points in the limit cycle window
+    config_lc_numpoints_ = DEFAULT_LCPOINTS;
+    // maximum step size
+    config_hma_ = DEFAULT_HMA;
+    // minimum step size
+    config_hmi_ = DEFAULT_HMI;
+    // step size
+    config_step_ = DEFAULT_STEPSIZE;
+    // current step size (during integration)
+    config_currentstep_ = DEFAULT_STEPSIZE;
+    // tolerance
+    config_tolerance_ = DEFAULT_TOLERANCE;
+    // projection in the case of Poincare sphere
+    config_projection_ = DEFAULT_PROJECTION;
+    // number of points to integrate
+    config_intpoints_ = DEFAULT_INTPOINTS;
+    // line style (dashes or points)
+    config_dashes_ = DEFAULT_LINESTYLE;
     config_kindvf_ = DEFAULT_INTCONFIG;
 }
 
@@ -449,7 +455,8 @@ bool QVFStudy::readTables(QString basename)
     }
 
     if (typeofstudy_ == TYPEOFSTUDY_ONE) {
-        if (fscanf(fp, "%lf %lf %lf %lf", &xmin_, &xmax_, &ymin_, &ymax_) != 4) {
+        if (fscanf(fp, "%lf %lf %lf %lf", &xmin_, &xmax_, &ymin_, &ymax_) !=
+            4) {
             dump(basename, "Cannot read min-max coords in *_vec.tab");
             deleteVF();
             fclose(fp);
@@ -824,48 +831,48 @@ bool QVFStudy::readPoints(FILE *fp)
         case SADDLE:
             if (!readSaddlePoint(fp)) {
                 lasterror_ = QString("sing #") + QString::number(i) +
-                            " = saddle : " + lasterror_;
+                             " = saddle : " + lasterror_;
                 return false;
             }
             break;
         case SEMI_HYPERBOLIC:
             if (!readSemiElementaryPoint(fp)) {
                 lasterror_ = QString("sing #") + QString::number(i) +
-                            " = semi-el : " + lasterror_;
+                             " = semi-el : " + lasterror_;
                 return false;
             }
             break;
         case NODE:
             if (!readNodePoint(fp)) {
                 lasterror_ = QString("sing #") + QString::number(i) +
-                            " = node : " + lasterror_;
+                             " = node : " + lasterror_;
                 return false;
             }
             break;
         case STRONG_FOCUS:
             if (!readStrongFocusPoint(fp)) {
                 lasterror_ = QString("sing #") + QString::number(i) +
-                            " = strongfocus : " + lasterror_;
+                             " = strongfocus : " + lasterror_;
                 return false;
             }
             break;
         case WEAK_FOCUS:
             if (!readWeakFocusPoint(fp)) {
                 lasterror_ = QString("sing #") + QString::number(i) +
-                            " = weakfocus : " + lasterror_;
+                             " = weakfocus : " + lasterror_;
                 return false;
             }
             break;
         case NON_ELEMENTARY:
             if (!readDegeneratePoint(fp)) {
                 lasterror_ = QString("sing #") + QString::number(i) +
-                            " = degen : " + lasterror_;
+                             " = degen : " + lasterror_;
                 return false;
             }
             break;
         default:
             lasterror_ = QString("sing #") + QString::number(i) +
-                        " type not exist (" + QString::number(typ) + ")";
+                         " type not exist (" + QString::number(typ) + ")";
             return false;
         }
     }
@@ -1886,7 +1893,8 @@ bool QVFStudy::readNodePoint(FILE *fp)
         point->x0 = last->x0;
         point->y0 = 0.0;
         point->chart = (last->chart == CHART_U1) ? CHART_V1 : CHART_V2;
-        point->stable = last->stable * (g_VFResults.dir_vec_field_ == -1) ? -1 : 1;
+        point->stable =
+            last->stable * (g_VFResults.dir_vec_field_ == -1) ? -1 : 1;
     }
 
     return true;

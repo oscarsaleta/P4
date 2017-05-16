@@ -288,13 +288,13 @@ void QIntParamsDlg::getDataFromDlg(void)
 
     changed_ = false;
     changed_ |= readFloatField(edt_tolerance_, &(g_VFResults.config_tolerance_),
-                              DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
+                               DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
     changed_ |= readFloatField(edt_minstep_, &(g_VFResults.config_hmi_),
-                              DEFAULT_HMI, MIN_HMI, MAX_HMI);
+                               DEFAULT_HMI, MIN_HMI, MAX_HMI);
     changed_ |= readFloatField(edt_maxstep_, &(g_VFResults.config_hma_),
-                              DEFAULT_HMA, MIN_HMA, MAX_HMA);
+                               DEFAULT_HMA, MIN_HMA, MAX_HMA);
     changed_ |= readFloatField(edt_stepsize_, &(g_VFResults.config_step_),
-                              DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
+                               DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
     //  changed_ |= readFloatField( edt_curstep,
     //  &(g_VFResults.config_currentstep_),
     //                      DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA );
@@ -325,10 +325,12 @@ void QIntParamsDlg::getDataFromDlg(void)
                     // error
 
                     g_VFResults.config_currentstep_ = DEFAULT_STEPSIZE;
-                    if( g_VFResults.config_currentstep_ < g_VFResults.config_hmi_ ||
+                    if( g_VFResults.config_currentstep_ <
+           g_VFResults.config_hmi_ ||
            g_VFResults.config_currentstep_ > g_VFResults.config_hma_ )
                     {
-                        g_VFResults.config_currentstep_ = g_VFResults.config_hma_;
+                        g_VFResults.config_currentstep_ =
+           g_VFResults.config_hma_;
                     }
                     edt_curstep->setBackgroundColor( QColor(255,192,192) );
                     changed_ = true;

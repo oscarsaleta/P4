@@ -218,8 +218,10 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         change_epsilon = change_epsilon_saddle;
 
         if (g_VFResults.selected_saddle_point_->chart == CHART_R2) {
-            sx.sprintf("x = %f", (float)(g_VFResults.selected_saddle_point_->x0));
-            sy.sprintf("y = %f", (float)(g_VFResults.selected_saddle_point_->y0));
+            sx.sprintf("x = %f",
+                       (float)(g_VFResults.selected_saddle_point_->x0));
+            sy.sprintf("y = %f",
+                       (float)(g_VFResults.selected_saddle_point_->y0));
             sz = "";
         } else {
             switch (g_VFResults.selected_saddle_point_->chart) {
@@ -308,8 +310,8 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
 
     case NON_ELEMENTARY:
         g_VFResults.selected_de_sep_ = g_VFResults.selected_de_point_->blow_up;
-        draw_selected_sep(spherewnd, g_VFResults.selected_de_sep_->first_sep_point,
-                          CW_SEP);
+        draw_selected_sep(
+            spherewnd, g_VFResults.selected_de_sep_->first_sep_point, CW_SEP);
 
         for (bc = g_VFResults.selected_de_sep_; bc != nullptr;
              bc = bc->next_blow_up_point)

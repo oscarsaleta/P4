@@ -112,42 +112,43 @@ bool runTaskCurve(int task, int precision, int points)
 
     switch (task) {
     case EVAL_CURVE_R2:
-        value = g_ThisVF->prepareCurve(g_VFResults.curve_, -1, 1, precision, points);
+        value = g_ThisVF->prepareCurve(g_VFResults.curve_, -1, 1, precision,
+                                       points);
         break;
     case EVAL_CURVE_U1:
-        value =
-            g_ThisVF->prepareCurve(g_VFResults.curve_U1_, 0, 1, precision, points);
+        value = g_ThisVF->prepareCurve(g_VFResults.curve_U1_, 0, 1, precision,
+                                       points);
         break;
     case EVAL_CURVE_V1:
-        value =
-            g_ThisVF->prepareCurve(g_VFResults.curve_U1_, -1, 0, precision, points);
+        value = g_ThisVF->prepareCurve(g_VFResults.curve_U1_, -1, 0, precision,
+                                       points);
         break;
     case EVAL_CURVE_U2:
-        value =
-            g_ThisVF->prepareCurve(g_VFResults.curve_U2_, 0, 1, precision, points);
+        value = g_ThisVF->prepareCurve(g_VFResults.curve_U2_, 0, 1, precision,
+                                       points);
         break;
     case EVAL_CURVE_V2:
-        value =
-            g_ThisVF->prepareCurve(g_VFResults.curve_U2_, -1, 0, precision, points);
+        value = g_ThisVF->prepareCurve(g_VFResults.curve_U2_, -1, 0, precision,
+                                       points);
         break;
     case EVAL_CURVE_LYP_R2:
         value = g_ThisVF->prepareCurve_LyapunovR2(precision, points);
         break;
     case EVAL_CURVE_CYL1:
         value = g_ThisVF->prepareCurve_LyapunovCyl(-PI_DIV4, PI_DIV4, precision,
-                                                 points);
+                                                   points);
         break;
     case EVAL_CURVE_CYL2:
         value = g_ThisVF->prepareCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
-                                                 precision, points);
+                                                   precision, points);
         break;
     case EVAL_CURVE_CYL3:
         value = g_ThisVF->prepareCurve_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                 precision, points);
+                                                   precision, points);
         break;
     case EVAL_CURVE_CYL4:
         value = g_ThisVF->prepareCurve_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
-                                                 precision, points);
+                                                   precision, points);
         break;
     default:
         value = false;

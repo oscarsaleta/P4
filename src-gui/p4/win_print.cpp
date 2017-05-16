@@ -65,7 +65,7 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 #ifdef TOOLTIPS
 #ifdef USE_SYSTEM_PRINTER
     btn_default_->setToolTip("Print through default printing mechanism.\nIn "
-                            "Linux, this is based on postscript printing.");
+                             "Linux, this is based on postscript printing.");
 #endif
     btn_epsimage_->setToolTip(
         "Produce a \"Encapsulated Postscript\" image file");
@@ -87,7 +87,8 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    mainLayout_->addWidget(new QLabel("Please select printing method...", this));
+    mainLayout_->addWidget(
+        new QLabel("Please select printing method...", this));
 
     QHBoxLayout *buttons = new QHBoxLayout();
 #ifdef USE_SYSTEM_PRINTER
@@ -154,10 +155,11 @@ bool QPrintDlg::readDialog(void)
     bool result;
 
     sm_LastBlackWhite = btn_blackwhite_->isChecked();
-    result = readFloatField(edt_resolution_, &res, DEFAULT_RESOLUTION, 72, 4800);
+    result =
+        readFloatField(edt_resolution_, &res, DEFAULT_RESOLUTION, 72, 4800);
     sm_LastResolution = (int)res;
-    result |= readFloatField(edt_linewidth_, &sm_LastLineWidth, DEFAULT_LINEWIDTH,
-                             MIN_LINEWIDTH, MAX_LINEWIDTH);
+    result |= readFloatField(edt_linewidth_, &sm_LastLineWidth,
+                             DEFAULT_LINEWIDTH, MIN_LINEWIDTH, MAX_LINEWIDTH);
     result |=
         readFloatField(edt_symbolsize_, &sm_LastSymbolSize, DEFAULT_SYMBOLSIZE,
                        MIN_SYMBOLSIZE, MAX_SYMBOLSIZE);

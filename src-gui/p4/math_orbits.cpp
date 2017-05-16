@@ -47,8 +47,8 @@ void integrateOrbit(QWinSphere *sphere, int dir)
         copy_x_into_y(g_VFResults.current_orbit_->current_f_orbits->pcoord,
                       pcoord);
         g_VFResults.current_orbit_->current_f_orbits->next_point =
-            integrate_orbit(sphere, pcoord, g_VFResults.config_currentstep_, dir,
-                            CORBIT, g_VFResults.config_intpoints_, &sep);
+            integrate_orbit(sphere, pcoord, g_VFResults.config_currentstep_,
+                            dir, CORBIT, g_VFResults.config_intpoints_, &sep);
 
         g_VFResults.current_orbit_->current_f_orbits = sep;
         return;
@@ -62,8 +62,8 @@ void integrateOrbit(QWinSphere *sphere, int dir)
 
     if (g_VFResults.current_orbit_->f_orbits == nullptr) {
         g_VFResults.current_orbit_->f_orbits =
-            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir, CORBIT,
-                            g_VFResults.config_intpoints_, &sep);
+            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir,
+                            CORBIT, g_VFResults.config_intpoints_, &sep);
     } else {
         g_VFResults.current_orbit_->current_f_orbits->next_point =
             new orbits_points;
@@ -75,8 +75,8 @@ void integrateOrbit(QWinSphere *sphere, int dir)
         g_VFResults.current_orbit_->current_f_orbits->color = CORBIT;
         g_VFResults.current_orbit_->current_f_orbits->dir = dir;
         g_VFResults.current_orbit_->current_f_orbits->next_point =
-            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir, CORBIT,
-                            g_VFResults.config_intpoints_, &sep);
+            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir,
+                            CORBIT, g_VFResults.config_intpoints_, &sep);
     }
     g_VFResults.current_orbit_->current_f_orbits = sep;
 }

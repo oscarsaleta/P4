@@ -99,14 +99,14 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     btn_maple_ = new QPushButton("Browse...", this);
     lbl_maple_->setBuddy(edt_maple_);
 
-    //edt_red = new QLineEdit(StripQuotes(getReduceExe()), this);
-    //edt_red->setReadOnly(true);
-    //edt_red->setEnabled(false);
-    //lbl_red = new QLabel("R&educe Executable", this);
-    //lbl_red->setEnabled(false);
-    //btn_red = new QPushButton("Browse...", this);
-    //btn_red->setEnabled(false);
-    //lbl_red->setBuddy(edt_red);
+    // edt_red = new QLineEdit(StripQuotes(getReduceExe()), this);
+    // edt_red->setReadOnly(true);
+    // edt_red->setEnabled(false);
+    // lbl_red = new QLabel("R&educe Executable", this);
+    // lbl_red->setEnabled(false);
+    // btn_red = new QPushButton("Browse...", this);
+    // btn_red->setEnabled(false);
+    // lbl_red->setBuddy(edt_red);
 
     btn_ok_ = new QPushButton("&Ok", this);
     btn_reset_ = new QPushButton("&Reset", this);
@@ -119,25 +119,25 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     btn_sum_->setToolTip("Search for this path on your computer");
     btn_temp_->setToolTip("Search for this path on your computer");
     btn_maple_->setToolTip("Search for this file on your computer.\nYou need a "
-                          "command-line version of Maple.\nThe name would be "
-                          "something like cmaple9.5.exe in Windows.");
-    //btn_red->setToolTip("Search for this file on your computer.\n");
+                           "command-line version of Maple.\nThe name would be "
+                           "something like cmaple9.5.exe in Windows.");
+    // btn_red->setToolTip("Search for this file on your computer.\n");
 
     edt_base_->setToolTip("The base installation path.  In here, one finds "
-                         "bin/, help/ and reduce/ subdirectories.");
+                          "bin/, help/ and reduce/ subdirectories.");
     edt_sum_->setToolTip("The path where sumtables are stored when calculating "
-                        "Lyapunov constants.");
+                         "Lyapunov constants.");
     edt_temp_->setToolTip("Temporary path name.\nLeave blank when you want "
-                         "temporary files to be stored in the current working "
-                         "directory.");
+                          "temporary files to be stored in the current working "
+                          "directory.");
     edt_maple_->setToolTip(
         "The name of the Maple executable (command-line version)");
-    //edt_red->setToolTip("The name of the reduce executable");
+    // edt_red->setToolTip("The name of the reduce executable");
 
     btn_ok_->setToolTip("Store changes, and go back to program");
     btn_cancel_->setToolTip("Undo any changes");
     btn_reset_->setToolTip("Reset to defaults, try to locate Maple/Reduce "
-                          "executable automatically");
+                           "executable automatically");
 #endif
 
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
@@ -175,13 +175,13 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     lay00->addWidget(lbl_maple_, 3, 0);
     lay00->addWidget(edt_maple_, 3, 1);
     lay00->addWidget(btn_maple_, 3, 2);
-    //lay00->addWidget(lbl_red, 4, 0);
-    //lay00->addWidget(edt_red, 4, 1);
-    //lay00->addWidget(btn_red, 4, 2);
+    // lay00->addWidget(lbl_red, 4, 0);
+    // lay00->addWidget(edt_red, 4, 1);
+    // lay00->addWidget(btn_red, 4, 2);
 
     mainLayout_->addLayout(lay00);
     mainLayout_->addSpacing(3);
-    //mainLayout_->addSpacing(4);
+    // mainLayout_->addSpacing(4);
     mainLayout_->addLayout(buttons);
 
     setLayout(mainLayout_);
@@ -189,16 +189,18 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     QObject::connect(btn_base_, SIGNAL(clicked()), this, SLOT(onBrowseBase()));
     QObject::connect(btn_sum_, SIGNAL(clicked()), this, SLOT(onBrowseSum()));
     QObject::connect(btn_temp_, SIGNAL(clicked()), this, SLOT(onBrowseTemp()));
-    QObject::connect(btn_maple_, SIGNAL(clicked()), this, SLOT(onBrowseMaple()));
-    //QObject::connect(btn_red, SIGNAL(clicked()), this, SLOT(OnBrowseReduce()));
+    QObject::connect(btn_maple_, SIGNAL(clicked()), this,
+                     SLOT(onBrowseMaple()));
+    // QObject::connect(btn_red, SIGNAL(clicked()), this,
+    // SLOT(OnBrowseReduce()));
     QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
     QObject::connect(btn_reset_, SIGNAL(clicked()), this, SLOT(onReset()));
     QObject::connect(btn_cancel_, SIGNAL(clicked()), this, SLOT(onCancel()));
 
-//#ifdef Q_OS_WIN
-//    edt_red->setEnabled(false);
-//    btn_red->setEnabled(false);
-//#endif
+    //#ifdef Q_OS_WIN
+    //    edt_red->setEnabled(false);
+    //    btn_red->setEnabled(false);
+    //#endif
 
     setP4WindowTitle(this, "Main Program Settings");
 }
@@ -262,8 +264,8 @@ void QSettingsDlg::onOk(void)
 #endif
 
     setMapleExe(AddQuotes(s));
-    //s = StripQuotes(StripQuotes(edt_red->text()).trimmed());
-    //setReduceExe(AddQuotes(s));
+    // s = StripQuotes(StripQuotes(edt_red->text()).trimmed());
+    // setReduceExe(AddQuotes(s));
 
     done(1);
 }
@@ -274,7 +276,7 @@ void QSettingsDlg::onReset(void)
     edt_sum_->setText(StripQuotes(getDefaultP4SumTablePath()));
     edt_temp_->setText(StripQuotes(getDefaultP4TempPath()));
     edt_maple_->setText(StripQuotes(getDefaultMapleInstallation()));
-    //edt_red->setText(StripQuotes(getDefaultReduceInstallation()));
+    // edt_red->setText(StripQuotes(getDefaultReduceInstallation()));
 }
 
 /*void QSettingsDlg::OnBrowseReduce(void)

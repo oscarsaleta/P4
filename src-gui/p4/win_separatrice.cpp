@@ -77,11 +77,12 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
 
 #ifdef TOOLTIPS
     edt_epsilon_->setToolTip("Epsilon value for this separatrix\n"
-                            "Confirm any change by pressing ENTER");
+                             "Confirm any change by pressing ENTER");
     btn_start_->setToolTip("Start integrating this separatrix");
     btn_cont_->setToolTip("Continue integrating this separatrix");
     btn_intnext_->setToolTip("Select next separatrix, and start integrating");
-    btn_selectnext_->setToolTip("Select next separatrix of this singular point");
+    btn_selectnext_->setToolTip(
+        "Select next separatrix of this singular point");
 #endif
 
     // connections

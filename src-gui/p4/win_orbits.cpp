@@ -174,7 +174,8 @@ void QOrbitsDlg::onBtnBackwards(void)
             return;
 
         mainSphere_->prepareDrawing();
-        orbitStarted_ = startOrbit(mainSphere_, selected_x0_, selected_y0_, true);
+        orbitStarted_ =
+            startOrbit(mainSphere_, selected_x0_, selected_y0_, true);
         mainSphere_->finishDrawing();
 
         if (orbitStarted_) {
@@ -213,7 +214,8 @@ void QOrbitsDlg::onBtnForwards(void)
             return;
 
         mainSphere_->prepareDrawing();
-        orbitStarted_ = startOrbit(mainSphere_, selected_x0_, selected_y0_, true);
+        orbitStarted_ =
+            startOrbit(mainSphere_, selected_x0_, selected_y0_, true);
         mainSphere_->finishDrawing();
 
         if (orbitStarted_) {

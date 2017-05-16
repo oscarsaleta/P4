@@ -36,10 +36,10 @@ void eval_blow_vec_field(double *y, double *f)
     f[1] = eval_term2(s_vec_field[1], y);
 }
 
-orbits_points *
-integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
-                  double *pcoord2, blow_up_points *de_sep, double step,
-                  int dir, int type, orbits_points **orbit, int chart)
+orbits_points *integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
+                                 double *pcoord2, blow_up_points *de_sep,
+                                 double step, int dir, int type,
+                                 orbits_points **orbit, int chart)
 {
     int i;
     double hhi, point[2];

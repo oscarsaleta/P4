@@ -64,14 +64,14 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
 #ifdef TOOLTIPS
     edt_xprime_->setToolTip("Enter your differential equations here.\n"
-                           "Use syntax conform to the symbolic manipulator.");
+                            "Use syntax conform to the symbolic manipulator.");
     edt_yprime_->setToolTip("Enter your differential equations here.\n"
-                           "Use syntax conform to the symbolic manipulator.");
+                            "Use syntax conform to the symbolic manipulator.");
     edt_gcf_->setToolTip("Enter greatest common factor here.\n"
-                        "Enter \"1\" if you are sure there is no GCF\n"
-                        "Enter \"0\" if you want P4 to search for a GCF");
+                         "Enter \"1\" if you are sure there is no GCF\n"
+                         "Enter \"0\" if you want P4 to search for a GCF");
     spin_numparams_->setToolTip("If your vector field contains parameters,\n"
-                               "specify the number of parameters here.");
+                                "specify the number of parameters here.");
 #endif
     // layout
 
@@ -166,7 +166,8 @@ void QVectorFieldDlg::numParamsChanged(int val)
             }
             if (val > MAXNUMPARAMSSHOWN) {
                 sb_params_ = new QScrollBar(Qt::Vertical, this);
-                sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+                sb_params_->setRange(0,
+                                     g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
                 sb_params_->setSingleStep(1);
                 sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
             } else
@@ -281,8 +282,8 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
     sb_params_ = sb;
     currentNumParams_ = g_ThisVF->numparams_;
     currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
-                             ? currentNumParams_
-                             : MAXNUMPARAMSSHOWN;
+                              ? currentNumParams_
+                              : MAXNUMPARAMSSHOWN;
     currentPageIndex_ = 0;
 
     for (i = 0; i < currentShownParams_; i++) {

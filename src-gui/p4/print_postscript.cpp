@@ -50,7 +50,7 @@ static void ps_print_saddle(double x, double y)
         QString s;
         s.sprintf("col%d %f %f box\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CSADDLE],
+                                      : g_printColorTable[CSADDLE],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -62,7 +62,7 @@ static void ps_print_stablenode(double x, double y)
         QString s;
         s.sprintf("col%d %f %f box\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CNODE_S],
+                                      : g_printColorTable[CNODE_S],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -74,7 +74,7 @@ static void ps_print_unstablenode(double x, double y)
         QString s;
         s.sprintf("col%d %f %f box\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CNODE_U],
+                                      : g_printColorTable[CNODE_U],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -86,7 +86,7 @@ static void ps_print_stableweakfocus(double x, double y)
         QString s;
         s.sprintf("col%d %f %f diamond\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CWEAK_FOCUS_S],
+                                      : g_printColorTable[CWEAK_FOCUS_S],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -98,7 +98,7 @@ static void ps_print_unstableweakfocus(double x, double y)
         QString s;
         s.sprintf("col%d %f %f diamond\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CWEAK_FOCUS_U],
+                                      : g_printColorTable[CWEAK_FOCUS_U],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -110,7 +110,7 @@ static void ps_print_weakfocus(double x, double y)
         QString s;
         s.sprintf("col%d %f %f diamond\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CWEAK_FOCUS],
+                                      : g_printColorTable[CWEAK_FOCUS],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -122,7 +122,7 @@ static void ps_print_center(double x, double y)
         QString s;
         s.sprintf("col%d %f %f diamond\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CCENTER],
+                                      : g_printColorTable[CCENTER],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -134,7 +134,7 @@ static void ps_print_stablestrongfocus(double x, double y)
         QString s;
         s.sprintf("col%d %f %f diamond\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CSTRONG_FOCUS_S],
+                                      : g_printColorTable[CSTRONG_FOCUS_S],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -146,7 +146,7 @@ static void ps_print_unstablestrongfocus(double x, double y)
         QString s;
         s.sprintf("col%d %f %f diamond\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CSTRONG_FOCUS_U],
+                                      : g_printColorTable[CSTRONG_FOCUS_U],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -158,7 +158,7 @@ static void ps_print_sesaddle(double x, double y)
         QString s;
         s.sprintf("col%d %f %f triangle\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CSADDLE],
+                                      : g_printColorTable[CSADDLE],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -170,7 +170,7 @@ static void ps_print_sesaddlenode(double x, double y)
         QString s;
         s.sprintf("col%d %f %f triangle\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CSADDLE_NODE],
+                                      : g_printColorTable[CSADDLE_NODE],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -182,7 +182,7 @@ static void ps_print_sestablenode(double x, double y)
         QString s;
         s.sprintf("col%d %f %f triangle\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CNODE_S],
+                                      : g_printColorTable[CNODE_S],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -194,7 +194,7 @@ static void ps_print_seunstablenode(double x, double y)
         QString s;
         s.sprintf("col%d %f %f triangle\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CNODE_U],
+                                      : g_printColorTable[CNODE_U],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -208,7 +208,7 @@ static void ps_print_degen(double x, double y)
                   "col%d %f %f cross\n"
                   "LW setlinewidth\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[CDEGEN],
+                                      : g_printColorTable[CDEGEN],
                   (float)x, (float)y);
         s_PSFileStream << s;
     }
@@ -266,7 +266,7 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
         s.sprintf("%f %f moveto\n%f %f lineto col%d stroke\n", (float)x0,
                   (float)y0, (float)x1, (float)y1,
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[color]);
+                                      : g_printColorTable[color]);
         s_PSFileStream << s;
     }
 }
@@ -289,7 +289,7 @@ static void ps_print_point(double x0, double y0, int color)
         QString s;
         s.sprintf("col%d %f %f dot\n",
                   s_PSBlackWhitePrint ? g_printColorTable[CFOREGROUND]
-                                    : g_printColorTable[color],
+                                      : g_printColorTable[color],
                   (float)x0, (float)y0);
         s_PSFileStream << s;
     }
@@ -410,79 +410,79 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
         s_PSFileStream << s;
 
         s_PSFileStream << "%% Color table:\n"
-                        "/col-1 {} def\n"
-                        "/col0 {0.000 0.000 0.000 setrgbcolor} bind def\n"
-                        "/col1 {0.000 0.000 1.000 setrgbcolor} bind def\n"
-                        "/col2 {0.000 1.000 0.000 setrgbcolor} bind def\n"
-                        "/col3 {0.000 1.000 1.000 setrgbcolor} bind def\n"
-                        "/col4 {1.000 0.000 0.000 setrgbcolor} bind def\n"
-                        "/col5 {1.000 0.000 1.000 setrgbcolor} bind def\n"
-                        "/col6 {1.000 1.000 0.000 setrgbcolor} bind def\n"
-                        "/col7 {1.000 1.000 1.000 setrgbcolor} bind def\n"
-                        "/col8 {0.000 0.000 0.560 setrgbcolor} bind def\n"
-                        "/col9 {0.000 0.000 0.690 setrgbcolor} bind def\n"
-                        "/col10 {0.000 0.000 0.820 setrgbcolor} bind def\n"
-                        "/col11 {0.530 0.810 1.000 setrgbcolor} bind def\n"
-                        "/col12 {0.000 0.560 0.000 setrgbcolor} bind def\n"
-                        "/col13 {0.000 0.690 0.000 setrgbcolor} bind def\n"
-                        "/col14 {0.000 0.820 0.000 setrgbcolor} bind def\n"
-                        "/col15 {0.000 0.560 0.560 setrgbcolor} bind def\n"
-                        "/col16 {0.000 0.690 0.690 setrgbcolor} bind def\n"
-                        "/col17 {0.000 0.820 0.820 setrgbcolor} bind def\n"
-                        "/col18 {0.560 0.000 0.000 setrgbcolor} bind def\n"
-                        "/col19 {0.690 0.000 0.000 setrgbcolor} bind def\n"
-                        "/col20 {0.820 0.000 0.000 setrgbcolor} bind def\n"
-                        "/col21 {0.560 0.000 0.560 setrgbcolor} bind def\n"
-                        "/col22 {0.690 0.000 0.690 setrgbcolor} bind def\n"
-                        "/col23 {0.820 0.000 0.820 setrgbcolor} bind def\n"
-                        "/col24 {0.500 0.190 0.000 setrgbcolor} bind def\n"
-                        "/col25 {0.630 0.250 0.000 setrgbcolor} bind def\n"
-                        "/col26 {0.750 0.380 0.000 setrgbcolor} bind def\n"
-                        "/col27 {1.000 0.500 0.500 setrgbcolor} bind def\n"
-                        "/col28 {1.000 0.630 0.630 setrgbcolor} bind def\n"
-                        "/col29 {1.000 0.750 0.750 setrgbcolor} bind def\n"
-                        "/col30 {1.000 0.880 0.880 setrgbcolor} bind def\n"
-                        "/col31 {1.000 0.840 0.000 setrgbcolor} bind def\n";
+                          "/col-1 {} def\n"
+                          "/col0 {0.000 0.000 0.000 setrgbcolor} bind def\n"
+                          "/col1 {0.000 0.000 1.000 setrgbcolor} bind def\n"
+                          "/col2 {0.000 1.000 0.000 setrgbcolor} bind def\n"
+                          "/col3 {0.000 1.000 1.000 setrgbcolor} bind def\n"
+                          "/col4 {1.000 0.000 0.000 setrgbcolor} bind def\n"
+                          "/col5 {1.000 0.000 1.000 setrgbcolor} bind def\n"
+                          "/col6 {1.000 1.000 0.000 setrgbcolor} bind def\n"
+                          "/col7 {1.000 1.000 1.000 setrgbcolor} bind def\n"
+                          "/col8 {0.000 0.000 0.560 setrgbcolor} bind def\n"
+                          "/col9 {0.000 0.000 0.690 setrgbcolor} bind def\n"
+                          "/col10 {0.000 0.000 0.820 setrgbcolor} bind def\n"
+                          "/col11 {0.530 0.810 1.000 setrgbcolor} bind def\n"
+                          "/col12 {0.000 0.560 0.000 setrgbcolor} bind def\n"
+                          "/col13 {0.000 0.690 0.000 setrgbcolor} bind def\n"
+                          "/col14 {0.000 0.820 0.000 setrgbcolor} bind def\n"
+                          "/col15 {0.000 0.560 0.560 setrgbcolor} bind def\n"
+                          "/col16 {0.000 0.690 0.690 setrgbcolor} bind def\n"
+                          "/col17 {0.000 0.820 0.820 setrgbcolor} bind def\n"
+                          "/col18 {0.560 0.000 0.000 setrgbcolor} bind def\n"
+                          "/col19 {0.690 0.000 0.000 setrgbcolor} bind def\n"
+                          "/col20 {0.820 0.000 0.000 setrgbcolor} bind def\n"
+                          "/col21 {0.560 0.000 0.560 setrgbcolor} bind def\n"
+                          "/col22 {0.690 0.000 0.690 setrgbcolor} bind def\n"
+                          "/col23 {0.820 0.000 0.820 setrgbcolor} bind def\n"
+                          "/col24 {0.500 0.190 0.000 setrgbcolor} bind def\n"
+                          "/col25 {0.630 0.250 0.000 setrgbcolor} bind def\n"
+                          "/col26 {0.750 0.380 0.000 setrgbcolor} bind def\n"
+                          "/col27 {1.000 0.500 0.500 setrgbcolor} bind def\n"
+                          "/col28 {1.000 0.630 0.630 setrgbcolor} bind def\n"
+                          "/col29 {1.000 0.750 0.750 setrgbcolor} bind def\n"
+                          "/col30 {1.000 0.880 0.880 setrgbcolor} bind def\n"
+                          "/col31 {1.000 0.840 0.000 setrgbcolor} bind def\n";
 
         s_PSFileStream << "/box{ moveto\n"
-                        "SW neg 2 div SW 2 div rmoveto\n"
-                        "SW  0 rlineto\n"
-                        "0  SW neg rlineto\n"
-                        "SW neg 0 rlineto\n"
-                        "closepath\n"
-                        "fill\n"
-                        "}bind def\n\n";
+                          "SW neg 2 div SW 2 div rmoveto\n"
+                          "SW  0 rlineto\n"
+                          "0  SW neg rlineto\n"
+                          "SW neg 0 rlineto\n"
+                          "closepath\n"
+                          "fill\n"
+                          "}bind def\n\n";
 
         s_PSFileStream << "/dot{\n"
-                        "LW 2 div 0 360 arc fill\n"
-                        "}bind def\n\n";
+                          "LW 2 div 0 360 arc fill\n"
+                          "}bind def\n\n";
 
         s_PSFileStream << "/diamond{\n"
-                        "moveto\n"
-                        "0  SW 2 div 1.3 mul rmoveto\n"
-                        "SW 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
-                        "SW neg 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
-                        "SW neg 2 div 1.3 mul SW 2 div 1.3 mul rlineto\n"
-                        "closepath\n"
-                        "fill\n"
-                        "}bind def\n\n";
+                          "moveto\n"
+                          "0  SW 2 div 1.3 mul rmoveto\n"
+                          "SW 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
+                          "SW neg 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
+                          "SW neg 2 div 1.3 mul SW 2 div 1.3 mul rlineto\n"
+                          "closepath\n"
+                          "fill\n"
+                          "}bind def\n\n";
 
         s_PSFileStream << "/triangle{\n"
-                        "moveto\n"
-                        "0  SW 2 div 1.2 mul rmoveto\n"
-                        "SW 2 div 1.2 mul SW neg 1.2 mul rlineto\n"
-                        "SW 1.2 mul neg 0  rlineto\n"
-                        "fill\n"
-                        "}bind def\n\n";
+                          "moveto\n"
+                          "0  SW 2 div 1.2 mul rmoveto\n"
+                          "SW 2 div 1.2 mul SW neg 1.2 mul rlineto\n"
+                          "SW 1.2 mul neg 0  rlineto\n"
+                          "fill\n"
+                          "}bind def\n\n";
 
         s_PSFileStream << "/cross{\n"
-                        "moveto\n"
-                        "SW 2 div SW 2 div rmoveto\n"
-                        "SW neg SW neg rlineto\n"
-                        "0  SW rmoveto\n"
-                        "SW SW neg rlineto\n"
-                        "stroke\n"
-                        "}bind def\n\n";
+                          "moveto\n"
+                          "SW 2 div SW 2 div rmoveto\n"
+                          "SW neg SW neg rlineto\n"
+                          "0  SW rmoveto\n"
+                          "SW SW neg rlineto\n"
+                          "stroke\n"
+                          "}bind def\n\n";
 
         s.sprintf(
             "%% Main Picture (local coordinates (x0,y0,x1,y1)=(0,0,%d,%d):\n"
@@ -497,8 +497,8 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
         }
 
         s_PSFileStream << "\n"
-                        "%% Plot the orbits\n\n"
-                        "LW setlinewidth\n";
+                          "%% Plot the orbits\n\n"
+                          "LW setlinewidth\n";
     }
 }
 
@@ -506,8 +506,8 @@ void finishPostscriptPrinting(void)
 {
     if (s_PSFile != nullptr) {
         s_PSFileStream << "grestore\n"
-                        "showpage\n"
-                        "%%EOF\n";
+                          "showpage\n"
+                          "%%EOF\n";
 
         s_PSFileStream.flush();
         s_PSFileStream.setDevice(nullptr);

@@ -336,7 +336,8 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
         g_VFResults.current_lim_cycle_ = g_VFResults.first_lim_cycle_;
     } else {
         g_VFResults.current_lim_cycle_->next_orbit = new orbits;
-        g_VFResults.current_lim_cycle_ = g_VFResults.current_lim_cycle_->next_orbit;
+        g_VFResults.current_lim_cycle_ =
+            g_VFResults.current_lim_cycle_->next_orbit;
     }
 
     MATHFUNC(R2_to_sphere)(x, y, p1);

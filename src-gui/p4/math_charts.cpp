@@ -358,14 +358,15 @@ static double s_U = 0.0;
 
 static double func_U1(double x)
 {
-    return pow(x, g_VFResults.double_p_) + s_U * s_U * pow(x, g_VFResults.double_q_) -
-           1.0;
+    return pow(x, g_VFResults.double_p_) +
+           s_U * s_U * pow(x, g_VFResults.double_q_) - 1.0;
 }
 
 static double dfunc_U1(double x)
 {
     return g_VFResults.double_p_ * pow(x, g_VFResults.double_p_minus_1_) +
-           s_U * s_U * g_VFResults.double_q_ * pow(x, g_VFResults.double_q_minus_1_);
+           s_U * s_U * g_VFResults.double_q_ *
+               pow(x, g_VFResults.double_q_minus_1_);
 }
 
 static double func_U1_s0(double theta)
@@ -474,13 +475,14 @@ static void cylinder_to_V1( double r, double theta, double * c)
 
 static double func_U2(double x)
 {
-    return (s_U * s_U * pow(x, g_VFResults.double_p_) + pow(x, g_VFResults.double_q_) -
-            1.0);
+    return (s_U * s_U * pow(x, g_VFResults.double_p_) +
+            pow(x, g_VFResults.double_q_) - 1.0);
 }
 
 static double dfunc_U2(double x)
 {
-    return (g_VFResults.double_p_ * s_U * s_U * pow(x, g_VFResults.double_p_minus_1_) +
+    return (g_VFResults.double_p_ * s_U * s_U *
+                pow(x, g_VFResults.double_p_minus_1_) +
             g_VFResults.double_q_ * pow(x, g_VFResults.double_q_minus_1_));
 }
 
@@ -661,8 +663,8 @@ static double s_B = 0.0;
 
 static double func(double z)
 {
-    return pow(z, g_VFResults.double_p_) * s_A + pow(z, g_VFResults.double_q_) * s_B -
-           1.0;
+    return pow(z, g_VFResults.double_p_) * s_A +
+           pow(z, g_VFResults.double_q_) * s_B - 1.0;
 }
 
 static double dfunc(double z)
@@ -816,7 +818,7 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
 
         rcoord[0] =
             sin(y) * pow(a, g_VFResults.double_q_); // sin(y) * cos(y)^(-q/p)
-        rcoord[1] = x * a;                       // x * cos(y)^(-1/p)
+        rcoord[1] = x * a;                          // x * cos(y)^(-1/p)
     } else {
         if (x < 0) {
             if ((g_VFResults.p_ % 2) == 0) {
@@ -861,7 +863,7 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
 
         rcoord[0] =
             cos(y) * pow(a, g_VFResults.double_p_); // cos(y) * sin(y)^(-p/q)
-        rcoord[1] = x * a;                       // x * sin(y)^(-1/q)
+        rcoord[1] = x * a;                          // x * sin(y)^(-1/q)
     } else {
         if (y < 0) {
             if ((g_VFResults.q_ % 2) == 0) {
@@ -897,7 +899,7 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
 
         rcoord[0] =
             sin(y) * pow(a, g_VFResults.double_q_); // sin(y) * cos(y)^(-q/p)
-        rcoord[1] = x * a;                       // x * cos(y)^(-1/p)
+        rcoord[1] = x * a;                          // x * cos(y)^(-1/p)
     } else {
         if (x > 0) {
             if ((g_VFResults.p_ % 2) == 0) {
@@ -940,7 +942,7 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
 
         rcoord[0] =
             cos(y) * pow(a, g_VFResults.double_p_); // cos(y) * sin(y)^(-p/q)
-        rcoord[1] = x * a;                       // x * sin(y)^(-1/q)
+        rcoord[1] = x * a;                          // x * sin(y)^(-1/q)
     } else {
         if (y > 0) {
             if ((g_VFResults.q_ % 2) == 0) {
@@ -981,7 +983,8 @@ void eval_U1_vec_field(double *y, double *f)
         g_VFResults.gcf_U1_ != nullptr)
         s = eval_term2(g_VFResults.gcf_U1_, y);
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL && g_VFResults.singinf_)
+    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
+        g_VFResults.singinf_)
         s *= y[1];
 
     f[0] = s * eval_term2(g_VFResults.vec_field_U1_[0], y);
@@ -996,7 +999,8 @@ void eval_U2_vec_field(double *y, double *f)
         g_VFResults.gcf_U2_ != nullptr)
         s = eval_term2(g_VFResults.gcf_U2_, y);
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL && g_VFResults.singinf_)
+    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
+        g_VFResults.singinf_)
         s *= y[1];
 
     f[0] = s * eval_term2(g_VFResults.vec_field_U2_[0], y);
@@ -1011,7 +1015,8 @@ void eval_V1_vec_field(double *y, double *f)
         g_VFResults.gcf_V1_ != nullptr)
         s = eval_term2(g_VFResults.gcf_V1_, y);
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL && g_VFResults.singinf_)
+    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
+        g_VFResults.singinf_)
         s *= y[1];
 
     f[0] = s * eval_term2(g_VFResults.vec_field_V1_[0], y);
@@ -1026,7 +1031,8 @@ void eval_V2_vec_field(double *y, double *f)
         g_VFResults.gcf_V2_ != nullptr)
         s = eval_term2(g_VFResults.gcf_V2_, y);
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL && g_VFResults.singinf_)
+    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
+        g_VFResults.singinf_)
         s *= y[1];
 
     f[0] = s * eval_term2(g_VFResults.vec_field_V2_[0], y);

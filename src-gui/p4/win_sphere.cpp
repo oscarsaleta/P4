@@ -62,8 +62,8 @@ QWinSphere **QWinSphere::sm_SphereList = nullptr;
 
 // parameters x1,... are irrelevant if isZoom is false
 
-QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
-                       double x1, double y1, double x2, double y2)
+QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
+                       double y1, double x2, double y2)
     : QWidget(parent)
 {
     reverseYAxis_ = false;
@@ -75,8 +75,8 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
 
     //    setAttribute( Qt::WA_PaintOnScreen );
 
-    sm_SphereList = (QWinSphere **)realloc(sm_SphereList, sizeof(QWinSphere *) *
-                                                        (sm_numSpheres + 1));
+    sm_SphereList = (QWinSphere **)realloc(
+        sm_SphereList, sizeof(QWinSphere *) * (sm_numSpheres + 1));
     sm_SphereList[sm_numSpheres++] = this;
     if (sm_numSpheres > 1) {
         sm_SphereList[sm_numSpheres - 2]->next_ = this;
@@ -317,16 +317,20 @@ void QWinSphere::setupPlot(void)
         chartstring_ = "";
         break;
     case TYPEOFVIEW_U1:
-        chartstring_ = makechartstring(g_VFResults.p_, g_VFResults.q_, true, false);
+        chartstring_ =
+            makechartstring(g_VFResults.p_, g_VFResults.q_, true, false);
         break;
     case TYPEOFVIEW_U2:
-        chartstring_ = makechartstring(g_VFResults.p_, g_VFResults.q_, false, false);
+        chartstring_ =
+            makechartstring(g_VFResults.p_, g_VFResults.q_, false, false);
         break;
     case TYPEOFVIEW_V1:
-        chartstring_ = makechartstring(g_VFResults.p_, g_VFResults.q_, true, true);
+        chartstring_ =
+            makechartstring(g_VFResults.p_, g_VFResults.q_, true, true);
         break;
     case TYPEOFVIEW_V2:
-        chartstring_ = makechartstring(g_VFResults.p_, g_VFResults.q_, false, true);
+        chartstring_ =
+            makechartstring(g_VFResults.p_, g_VFResults.q_, false, true);
         break;
     }
 
@@ -335,7 +339,7 @@ void QWinSphere::setupPlot(void)
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
         if (g_VFResults.plweights_)
             plCircle_ = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
-                                      coWinH(RADIUS), coWinV(RADIUS));
+                                       coWinH(RADIUS), coWinV(RADIUS));
     }
 
     isPainterCacheDirty_ = true;
@@ -460,13 +464,17 @@ void QWinSphere::loadAnchorMap(void)
     QPainter paint(anchorMap_);
     if (selectingZoom_) {
         // only copy rectangular edges, not inside
-        //   paint.drawPixmap (    0,    0, aw,  1, *painterCache_, x1_, y1_, aw, 1
+        //   paint.drawPixmap (    0,    0, aw,  1, *painterCache_, x1_, y1_,
+        //   aw, 1
         //   );
-        //     paint.drawPixmap (    0, ah-1, aw,  1, *painterCache_, x1_, y2, aw,
+        //     paint.drawPixmap (    0, ah-1, aw,  1, *painterCache_, x1_, y2,
+        //     aw,
         //     1 );
-        //       paint.drawPixmap (    0,    0,  1, ah, *painterCache_, x1_, y1_,
+        //       paint.drawPixmap (    0,    0,  1, ah, *painterCache_, x1_,
+        //       y1_,
         //       1, ah );
-        //         paint.drawPixmap ( aw-1, 0,     1, ah, *painterCache_, x2, y1_,
+        //         paint.drawPixmap ( aw-1, 0,     1, ah, *painterCache_, x2,
+        //         y1_,
         //         1, ah );
 
         paint.drawPixmap(0, 0, aw, ah, *painterCache_, x1_, y1_, aw, ah);
@@ -533,11 +541,14 @@ void QWinSphere::saveAnchorMap(void)
         // only copy rectangular edges, not inside
         //         paint.drawPixmap ( x1_, y1_, aw,  1, *anchorMap_,    0,    0,
         //         aw, 1 );
-        //       paint.drawPixmap ( x1_, y2, aw,  1, *anchorMap_,    0, ah-1, aw,
+        //       paint.drawPixmap ( x1_, y2, aw,  1, *anchorMap_,    0, ah-1,
+        //       aw,
         //       1 );
-        //     paint.drawPixmap ( x1_, y1_,  1, ah, *anchorMap_,    0,    0, 1, ah
+        //     paint.drawPixmap ( x1_, y1_,  1, ah, *anchorMap_,    0,    0, 1,
+        //     ah
         //     );
-        //   paint.drawPixmap ( x2, y1_,  1, ah, *anchorMap_, aw-1,    0, 1, ah );
+        //   paint.drawPixmap ( x2, y1_,  1, ah, *anchorMap_, aw-1,    0, 1, ah
+        //   );
         paint.drawPixmap(x1_, y1_, aw, ah, *anchorMap_, 0, 0, aw, ah);
     } else {
         paint.drawPixmap(x1_, y1_, aw, ah, *anchorMap_, 0, 0, aw, ah);
@@ -585,7 +596,7 @@ void QWinSphere::adjustToNewSize(void)
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
         if (g_VFResults.plweights_)
             plCircle_ = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
-                                      coWinH(RADIUS), coWinV(RADIUS));
+                                       coWinH(RADIUS), coWinV(RADIUS));
     }
 
     if (painterCache_ != nullptr) {
@@ -777,7 +788,8 @@ void QWinSphere::mouseMoveEvent(QMouseEvent *e)
     wy = coWorldY(y);
 
     /*  double ratio;
-        ratio = ( ((double)w_)/horPixelsPerMM_ ) / ( ((double)h_)/verPixelsPerMM_ );
+        ratio = ( ((double)w_)/horPixelsPerMM_ ) / (
+       ((double)h_)/verPixelsPerMM_ );
         sprintf( buf, "Aspect Ratio = %f\n", (float)ratio );
         msgBar_->showMessage(buf);
         return;
@@ -1140,7 +1152,8 @@ void QWinSphere::updatePointSelection(void)
 
     selectingPointStep_--;
     selectingPointRadius_ = (SELECTINGPOINTSTEPS - selectingPointStep_) * 4;
-    update(selectingX_ - selectingPointRadius_, selectingY_ - selectingPointRadius_,
+    update(selectingX_ - selectingPointRadius_,
+           selectingY_ - selectingPointRadius_,
            selectingPointRadius_ + selectingPointRadius_ + 1,
            selectingPointRadius_ + selectingPointRadius_ + 1);
 }
@@ -1408,7 +1421,8 @@ void QWinSphere::plotPoints(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
+         sp = sp->next_saddle)
         plotPoint(sp);
     for (np = g_VFResults.first_node_point_; np != nullptr; np = np->next_node)
         plotPoint(np);
@@ -1456,7 +1470,8 @@ void QWinSphere::plotSeparatrices(void)
     struct semi_elementary *sep;
     struct degenerate *dp;
 
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
+         sp = sp->next_saddle)
         plotPointSeparatrices(sp);
     for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
         plotPointSeparatrices(sep);
@@ -1671,7 +1686,7 @@ void QWinSphere::plotPoincareSphere(void)
     staticPainter_->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
         staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                coWinY(p->y2));
+                                 coWinY(p->y2));
         p = p->next;
     }
 }
@@ -1687,7 +1702,7 @@ void QWinSphere::plotPoincareLyapunovSphere(void)
     staticPainter_->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
         staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                coWinY(p->y2));
+                                 coWinY(p->y2));
         p = p->next;
     }
 
@@ -1697,7 +1712,7 @@ void QWinSphere::plotPoincareLyapunovSphere(void)
     staticPainter_->setPen(QXFIGCOLOR(color));
     while (p != nullptr) {
         staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                coWinY(p->y2));
+                                 coWinY(p->y2));
         p = p->next;
     }
     return;
@@ -1728,8 +1743,7 @@ void QWinSphere::plotLineAtInfinity(void)
     }
 }
 
-void QWinSphere::drawLine(double x1, double y1, double x2, double y2,
-                          int color)
+void QWinSphere::drawLine(double x1, double y1, double x2, double y2, int color)
 {
     int wx1, wy1, wx2, wy2;
 
@@ -2023,7 +2037,8 @@ void QWinSphere::printPoints(void)
 
     print_comment("Printing symbols at all singular points:");
 
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr; sp = sp->next_saddle)
+    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
+         sp = sp->next_saddle)
         printPoint(sp);
     for (np = g_VFResults.first_node_point_; np != nullptr; np = np->next_node)
         printPoint(np);
@@ -2089,7 +2104,8 @@ void QWinSphere::printSeparatrices(void)
         print_comment(comment);
         printPointSeparatrices(sp);
     }
-    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se) {
+    for (sep = g_VFResults.first_se_point_; sep != nullptr;
+         sep = sep->next_se) {
         comment = "Printing separatrices for semi-hyperbolic singularity:";
         print_comment(comment);
         printPointSeparatrices(sep);
@@ -2450,8 +2466,8 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
         break;
     case P4PRINT_XFIGIMAGE:
         reverseYAxis_ = false;
-        prepareXFigPrinting(w_, h_, iszoom_, isblackwhite, myresolution, (int)lw,
-                            2 * (int)ss);
+        prepareXFigPrinting(w_, h_, iszoom_, isblackwhite, myresolution,
+                            (int)lw, 2 * (int)ss);
         break;
     case P4PRINT_DEFAULT:
         staticPainter_ = new QPainter();
@@ -2537,8 +2553,8 @@ void QWinSphere::finishPrinting(void)
         delete staticPainter_;
         staticPainter_ = nullptr;
 
-        if (s_p4pixmap->save(g_ThisVF->getbarefilename() + ".jpg", "JPEG", 100) ==
-            false) {
+        if (s_p4pixmap->save(g_ThisVF->getbarefilename() + ".jpg", "JPEG",
+                             100) == false) {
             QMessageBox::critical(this, "P4", "For some reason, P4 is unable "
                                               "to save the resulting JPEG "
                                               "image to disc.");

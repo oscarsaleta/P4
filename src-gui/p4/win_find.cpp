@@ -111,7 +111,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btn_fin_->setToolTip("Study only singularities at the finite region");
     btn_inf_->setToolTip("Study only singularities at infinity");
     btn_one_->setToolTip("Study one specific singularity.\n"
-                        "Do not forget to specify the coordinates.");
+                         "Do not forget to specify the coordinates.");
     btn_yes_->setToolTip(
         "The View/Finite and View/Infinite windows will display more details");
     btn_no_->setToolTip(
@@ -121,7 +121,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     btn_load_->setToolTip("Load the vector field & parameters from disc");
     btn_save_->setToolTip("Save the vector field & parameters to disc");
     btn_eval_->setToolTip("Prepare a file for the symbolic manipulator, and "
-                         "optionally process it");
+                          "optionally process it");
 #endif
 
 // layout

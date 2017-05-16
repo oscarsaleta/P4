@@ -136,9 +136,10 @@ static void xfig_print_diamond(int x, int y, int color)
     s.sprintf("2 3 0 1 %d %d -1 0 46 0.0 0 0 0 0 0 5\n", color, color);
     s_XFigStream << s;
     s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x,
-              y - s_XFigSymbolWidth * 13 / 20, x + s_XFigSymbolWidth * 13 / 20, y,
-              x, y + s_XFigSymbolWidth * 13 / 20, x - s_XFigSymbolWidth * 13 / 20,
-              y, x, y - s_XFigSymbolWidth * 13 / 20);
+              y - s_XFigSymbolWidth * 13 / 20, x + s_XFigSymbolWidth * 13 / 20,
+              y, x, y + s_XFigSymbolWidth * 13 / 20,
+              x - s_XFigSymbolWidth * 13 / 20, y, x,
+              y - s_XFigSymbolWidth * 13 / 20);
     s_XFigStream << s;
 }
 
@@ -166,9 +167,10 @@ static void xfig_print_triangle(int x, int y, int color)
     s.sprintf("2 3 0 1 %d %d -1 0 46 0.0 0 0 0 0 0 4\n", color, color);
     s_XFigStream << s;
     s.sprintf("    %d %d %d %d %d %d %d %d\n", x + s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20, x, y - s_XFigSymbolWidth * 12 / 20,
-              x - s_XFigSymbolWidth * 12 / 20, y + s_XFigSymbolWidth * 12 / 20,
-              x + s_XFigSymbolWidth * 12 / 20, y + s_XFigSymbolWidth * 12 / 20);
+              y + s_XFigSymbolWidth * 12 / 20, x,
+              y - s_XFigSymbolWidth * 12 / 20, x - s_XFigSymbolWidth * 12 / 20,
+              y + s_XFigSymbolWidth * 12 / 20, x + s_XFigSymbolWidth * 12 / 20,
+              y + s_XFigSymbolWidth * 12 / 20);
     s_XFigStream << s;
 }
 
@@ -238,8 +240,8 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
     if (x0 == x1 && y0 == y1)
         return;
 
-    if (s_xfig_line_busy && s_xfig_line_lastx == x0 && s_xfig_line_lasty == y0 &&
-        s_xfig_line_color == color) {
+    if (s_xfig_line_busy && s_xfig_line_lastx == x0 &&
+        s_xfig_line_lasty == y0 && s_xfig_line_color == color) {
         xfig_line_continue(x1, y1);
     } else {
         if (s_xfig_line_busy)
@@ -343,7 +345,8 @@ static void xfig_line_continue(int x1, int y1)
 {
     if (s_xfig_line_numpoints < XFIG_LINE_MAXPOINTS) {
         s_xfig_line_points[2 * s_xfig_line_numpoints] = s_xfig_line_lastx = x1;
-        s_xfig_line_points[2 * s_xfig_line_numpoints + 1] = s_xfig_line_lasty = y1;
+        s_xfig_line_points[2 * s_xfig_line_numpoints + 1] = s_xfig_line_lasty =
+            y1;
         s_xfig_line_numpoints++;
     } else {
         int x0;
@@ -390,7 +393,8 @@ static void xfig_line_finish(void)
     if (s_XFigFile != nullptr) {
         QString s;
         s.sprintf("2 1 0 %d %d  7 0 0 -1 0.0 0 1 -1 0 0 %d\n   ",
-                  s_XFigLineWidth / 2, s_xfig_line_color, s_xfig_line_numpoints);
+                  s_XFigLineWidth / 2, s_xfig_line_color,
+                  s_xfig_line_numpoints);
         s_XFigStream << s;
         for (i = 0; i < s_xfig_line_numpoints; i += 8) {
             k = 2 * (s_xfig_line_numpoints - i);
@@ -466,8 +470,8 @@ static void xfig_print_point(double _x0, double _y0, int color)
 
     QString s;
     s.sprintf("1 3 0 1 %d %d 0 0 46 0.0 1 0.0 %d %d %d %d %d %d %d %d\n", color,
-              color, x0, y0, s_XFigRealLineWidth / 2, s_XFigRealLineWidth / 2, x0,
-              y0, x0 + s_XFigRealLineWidth, y0);
+              color, x0, y0, s_XFigRealLineWidth / 2, s_XFigRealLineWidth / 2,
+              x0, y0, x0 + s_XFigRealLineWidth, y0);
     s_XFigStream << s;
 }
 
@@ -625,12 +629,13 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     s_XFigH /= resolution;
 
     if (s_XFigFile != nullptr) {
-        s_XFigStream << "#FIG 3.1\n" // XFIG version 3.1 file format
-                      "Portrait\n" // portrait orientation
-                      "Center\n"   // center on page
-                      "Inches\n"  // use inches (XFIG makes rounding errors with
-                                  // centimeters)
-                      "1200 2\n"; // unused in XFIG???
+        s_XFigStream
+            << "#FIG 3.1\n" // XFIG version 3.1 file format
+               "Portrait\n" // portrait orientation
+               "Center\n"   // center on page
+               "Inches\n"   // use inches (XFIG makes rounding errors with
+                            // centimeters)
+               "1200 2\n";  // unused in XFIG???
 
         if (g_VFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
             /*

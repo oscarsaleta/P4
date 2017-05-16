@@ -115,11 +115,11 @@ QString getMathManipulator(void) { return s_Settings_mathmanipulator; }
 
 int getMathPackage(void)
 {
-    //QString s;
-    //s = getMathManipulator().simplified().toLower();
-    //if (s == "maple")
-        return PACKAGE_MAPLE;
-    //else
+    // QString s;
+    // s = getMathManipulator().simplified().toLower();
+    // if (s == "maple")
+    return PACKAGE_MAPLE;
+    // else
     //    return PACKAGE_REDUCE;
 }
 
@@ -199,9 +199,9 @@ bool readP4Settings(void)
 #endif
         if (s_Settings_p4path == "" || (s_Settings_mapleexe == ""
 #ifndef Q_OS_WIN
-                                      && s_Settings_reduceexe == ""
+                                        && s_Settings_reduceexe == ""
 #endif
-                                      )) {
+                                        )) {
             _ok = false;
         }
     }

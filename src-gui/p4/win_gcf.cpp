@@ -55,7 +55,7 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dots_->setToolTip(
         "Plot individual points of the curve of singularities");
     btn_dashes_->setToolTip("Connect points of the curve of singularities with "
-                           "small line segments");
+                            "small line segments");
     edt_points_->setToolTip("Number of points");
     edt_precis_->setToolTip("Required precision");
     edt_memory_->setToolTip(

@@ -110,17 +110,21 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     paint.setPen(QPen(QXFIGCOLOR(CNODE_U)));
     paint.drawText(hmargin2_, vmargin2_ + 2 * interline_, "Unstable Node");
     paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS)));
-    paint.drawText(hmargin2_, vmargin2_ + 3 * interline_, "Weak Focus or center");
+    paint.drawText(hmargin2_, vmargin2_ + 3 * interline_,
+                   "Weak Focus or center");
     paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS_S)));
     paint.drawText(hmargin2_, vmargin2_ + 4 * interline_, "Stable Weak Focus");
     paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS_U)));
-    paint.drawText(hmargin2_, vmargin2_ + 5 * interline_, "Unstable Weak Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 5 * interline_,
+                   "Unstable Weak Focus");
     paint.setPen(QPen(QXFIGCOLOR(CCENTER)));
     paint.drawText(hmargin2_, vmargin2_ + 6 * interline_, "Center");
     paint.setPen(QPen(QXFIGCOLOR(CSTRONG_FOCUS_S)));
-    paint.drawText(hmargin2_, vmargin2_ + 7 * interline_, "Stable Strong Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 7 * interline_,
+                   "Stable Strong Focus");
     paint.setPen(QPen(QXFIGCOLOR(CSTRONG_FOCUS_U)));
-    paint.drawText(hmargin2_, vmargin2_ + 8 * interline_, "Unstable Strong Focus");
+    paint.drawText(hmargin2_, vmargin2_ + 8 * interline_,
+                   "Unstable Strong Focus");
 
     win_plot_saddle(&paint, hmargin1_ + SYMBOLWIDTH / 2,
                     vmargin2_ - SYMBOLHEIGHT / 2);
@@ -170,25 +174,31 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     paint.setPen(QPen(QXFIGCOLOR(CUNSTABLE)));
     paint.drawText(hmargin3_, vmargin4_ + 1 * interline_, "Unstable");
     paint.drawLine(hmargin1_, vmargin4_ + interline_ - xheight_,
-                   hmargin1_ + sepwidth_ - 1, vmargin4_ + interline_ - xheight_);
+                   hmargin1_ + sepwidth_ - 1,
+                   vmargin4_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CCENT_STABLE)));
     paint.drawText(hmargin3_, vmargin4_ + 2 * interline_, "Center-Stable");
     paint.drawLine(hmargin1_, vmargin4_ + 2 * interline_ - xheight_,
-                   hmargin1_ + sepwidth_ - 1, vmargin4_ + 2 * interline_ - xheight_);
+                   hmargin1_ + sepwidth_ - 1,
+                   vmargin4_ + 2 * interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CCENT_UNSTABLE)));
     paint.drawText(hmargin3_, vmargin4_ + 3 * interline_, "Center-Unstable");
     paint.drawLine(hmargin1_, vmargin4_ + 3 * interline_ - xheight_,
-                   hmargin1_ + sepwidth_ - 1, vmargin4_ + 3 * interline_ - xheight_);
+                   hmargin1_ + sepwidth_ - 1,
+                   vmargin4_ + 3 * interline_ - xheight_);
 
     paint.setPen(QPen(QXFIGCOLOR(CORBIT)));
     paint.drawLine(hmargin4_, vmargin25_ + interline_ - xheight_,
-                   hmargin4_ + orbitwidth_ - 1, vmargin25_ + interline_ - xheight_);
+                   hmargin4_ + orbitwidth_ - 1,
+                   vmargin25_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CSING)));
     paint.drawLine(hmargin4_, vmargin3_ + interline_ - xheight_,
-                   hmargin4_ + orbitwidth_ - 1, vmargin3_ + interline_ - xheight_);
+                   hmargin4_ + orbitwidth_ - 1,
+                   vmargin3_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CLIMIT)));
     paint.drawLine(hmargin4_, vmargin4_ + interline_ - xheight_,
-                   hmargin4_ + orbitwidth_ - 1, vmargin4_ + interline_ - xheight_);
+                   hmargin4_ + orbitwidth_ - 1,
+                   vmargin4_ + interline_ - xheight_);
     paint.setPen(QPen(QXFIGCOLOR(CCURV)));
     paint.drawLine(hmargin4_, vmargin4_ + 3 * interline_ - xheight_,
                    hmargin4_ + orbitwidth_ - 1,
@@ -207,7 +217,7 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
     X Stable Weak Focus
     X Unstable Weak Focus           X Non-elementary
     X Center
-    X Stable Strong Focus           
+    X Stable Strong Focus
     X Unstable Strong Focus         Orbits:
                                     -----------------
     Separatrices:                   Line of Singularities:

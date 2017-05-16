@@ -130,19 +130,20 @@ bool runTask(int task, int points, int prec)
         value = g_ThisVF->prepareGcf_LyapunovR2(prec, points);
         break;
     case EVAL_GCF_CYL1:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points);
+        value =
+            g_ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points);
         break;
     case EVAL_GCF_CYL2:
-        value =
-            g_ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec, points);
+        value = g_ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
+                                                 points);
         break;
     case EVAL_GCF_CYL3:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4, prec,
-                                               points);
+        value = g_ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
+                                                 prec, points);
         break;
     case EVAL_GCF_CYL4:
         value = g_ThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
-                                               points);
+                                                 points);
         break;
     default:
         value = false;

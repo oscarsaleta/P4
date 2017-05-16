@@ -1266,7 +1266,8 @@ void QInputVF::evaluate(void)
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(finished(int)), g_p4app, SLOT(signalEvaluated(int)));
+        connect(proc, SIGNAL(finished(int)), g_p4app,
+                SLOT(signalEvaluated(int)));
         connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1662,7 +1663,7 @@ void QInputVF::createProcessWindow(void)
     outputWindow_ = new QWidget(nullptr);
     outputWindow_->setWindowTitle("Output window");
     outputWindow_->resize(530, 344);
-    if (g_p4smallicon!=nullptr)
+    if (g_p4smallicon != nullptr)
         outputWindow_->setWindowIcon(*g_p4smallicon);
 
     QVBoxLayout *vLayout = new QVBoxLayout(outputWindow_);

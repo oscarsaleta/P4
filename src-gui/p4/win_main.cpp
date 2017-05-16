@@ -95,10 +95,10 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     btn_plot_->setToolTip("Draw singular points, orbits and separatrices");
     btn_help_->setToolTip("Shows extensive help on the use of P4");
     edt_name_->setToolTip("Enter the filename of the vector field here.\n"
-                         "You do not need to add the extension (.inp).\n");
+                          "You do not need to add the extension (.inp).\n");
     btn_browse->setToolTip("Search for vector field files on your system");
     btn_about_->setToolTip("Displays information about the program P4, its "
-                          "version and main settings");
+                           "version and main settings");
 #endif
 
     // define placement of controls
@@ -381,7 +381,7 @@ void QStartDlg::signalEvaluated(void)
         fname = g_ThisVF->getfilename_infresults();
         if (g_ThisVF->fileExists(fname)) {
             viewInfiniteWindow_ = showText(viewInfiniteWindow_,
-                                            "View results at infinity", fname);
+                                           "View results at infinity", fname);
             if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
                 g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
                 // mark: data invalid according to vf information
@@ -501,8 +501,8 @@ void QStartDlg::onViewFinite()
         return;
     }
 
-    viewFiniteWindow_ = showText(viewFiniteWindow_,
-                                  "View results at the finite region", fname);
+    viewFiniteWindow_ =
+        showText(viewFiniteWindow_, "View results at the finite region", fname);
     viewFiniteWindow_->show();
     viewFiniteWindow_->raise();
 

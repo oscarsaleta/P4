@@ -73,8 +73,8 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     lay00->addWidget(new QLabel(""), 9, 1);
 
     QString versionstr;
-    versionstr =
-        " Version " + g_p4Version + "   " + g_p4VersionDate + " " + g_p4Platform;
+    versionstr = " Version " + g_p4Version + "   " + g_p4VersionDate + " " +
+                 g_p4Platform;
 
     lay00->addWidget(new QLabel(versionstr), 10, 1);
 
@@ -97,7 +97,8 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     // connections
 
     QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_settings_, SIGNAL(clicked()), this, SLOT(onSettings()));
+    QObject::connect(btn_settings_, SIGNAL(clicked()), this,
+                     SLOT(onSettings()));
 
     btn_ok_->setFocus();
 

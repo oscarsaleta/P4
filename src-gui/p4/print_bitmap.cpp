@@ -74,8 +74,8 @@ static void P4Print_print_saddle(double _x, double _y)
 
     // print box:
     s_P4PrintPainter->drawRect(x - s_P4PrintSymbolWidth / 2,
-                             y - s_P4PrintSymbolWidth / 2, s_P4PrintSymbolWidth,
-                             s_P4PrintSymbolWidth);
+                               y - s_P4PrintSymbolWidth / 2,
+                               s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
 static void P4Print_print_stablenode(double _x, double _y)
@@ -94,8 +94,8 @@ static void P4Print_print_stablenode(double _x, double _y)
 
     // print box:
     s_P4PrintPainter->drawRect(x - s_P4PrintSymbolWidth / 2,
-                             y - s_P4PrintSymbolWidth / 2, s_P4PrintSymbolWidth,
-                             s_P4PrintSymbolWidth);
+                               y - s_P4PrintSymbolWidth / 2,
+                               s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
 static void P4Print_print_unstablenode(double _x, double _y)
@@ -113,8 +113,8 @@ static void P4Print_print_unstablenode(double _x, double _y)
 
     // print box:
     s_P4PrintPainter->drawRect(x - s_P4PrintSymbolWidth / 2,
-                             y - s_P4PrintSymbolWidth / 2, s_P4PrintSymbolWidth,
-                             s_P4PrintSymbolWidth);
+                               y - s_P4PrintSymbolWidth / 2,
+                               s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
 static void P4Print_print_stableweakfocus(double _x, double _y)
@@ -125,7 +125,8 @@ static void P4Print_print_stableweakfocus(double _x, double _y)
 
     x = (int)_x;
     y = (int)_y;
-    color = g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CWEAK_FOCUS_S];
+    color =
+        g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CWEAK_FOCUS_S];
 
     s_P4PrintPainter->setPen(QXFIGCOLOR(color));
     s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -149,7 +150,8 @@ static void P4Print_print_unstableweakfocus(double _x, double _y)
 
     x = (int)_x;
     y = (int)_y;
-    color = g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CWEAK_FOCUS_U];
+    color =
+        g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CWEAK_FOCUS_U];
 
     s_P4PrintPainter->setPen(QXFIGCOLOR(color));
     s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -224,7 +226,8 @@ static void P4Print_print_stablestrongfocus(double _x, double _y)
     x = (int)_x;
     y = (int)_y;
 
-    color = g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CSTRONG_FOCUS_S];
+    color =
+        g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CSTRONG_FOCUS_S];
 
     s_P4PrintPainter->setPen(QXFIGCOLOR(color));
     s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -248,7 +251,8 @@ static void P4Print_print_unstablestrongfocus(double _x, double _y)
     x = (int)_x; // seems to be necessary
     y = (int)_y;
 
-    color = g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CSTRONG_FOCUS_U];
+    color =
+        g_printColorTable[s_P4PrintBlackWhite ? CFOREGROUND : CSTRONG_FOCUS_U];
 
     s_P4PrintPainter->setPen(QXFIGCOLOR(color));
     s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -281,10 +285,11 @@ static void P4Print_print_sesaddle(double _x, double _y)
     // print triangle:
 
     QPolygon qpa(3);
-    qpa.setPoints(
-        3, x - s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20,
-        x + s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20, x,
-        y - s_P4PrintSymbolWidth * 12 / 20);
+    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20,
+                  x + s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20, x,
+                  y - s_P4PrintSymbolWidth * 12 / 20);
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
@@ -303,10 +308,11 @@ static void P4Print_print_sesaddlenode(double _x, double _y)
     // print triangle:
 
     QPolygon qpa(3);
-    qpa.setPoints(
-        3, x - s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20,
-        x + s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20, x,
-        y - s_P4PrintSymbolWidth * 12 / 20);
+    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20,
+                  x + s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20, x,
+                  y - s_P4PrintSymbolWidth * 12 / 20);
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
@@ -326,10 +332,11 @@ static void P4Print_print_sestablenode(double _x, double _y)
     // print triangle:
 
     QPolygon qpa(3);
-    qpa.setPoints(
-        3, x - s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20,
-        x + s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20, x,
-        y - s_P4PrintSymbolWidth * 12 / 20);
+    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20,
+                  x + s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20, x,
+                  y - s_P4PrintSymbolWidth * 12 / 20);
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
@@ -349,10 +356,11 @@ static void P4Print_print_seunstablenode(double _x, double _y)
     // print triangle:
 
     QPolygon qpa(3);
-    qpa.setPoints(
-        3, x - s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20,
-        x + s_P4PrintSymbolWidth * 12 / 20, y + s_P4PrintSymbolWidth * 12 / 20, x,
-        y - s_P4PrintSymbolWidth * 12 / 20);
+    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20,
+                  x + s_P4PrintSymbolWidth * 12 / 20,
+                  y + s_P4PrintSymbolWidth * 12 / 20, x,
+                  y - s_P4PrintSymbolWidth * 12 / 20);
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
@@ -406,7 +414,7 @@ static void P4Print_print_elips(double x0, double y0, double a, double b,
     UNUSED(dotted);
     while (ellipse != nullptr) {
         s_P4PrintPainter->drawLine((int)(ellipse->x1), (int)(ellipse->y1),
-                                 (int)(ellipse->x2), (int)(ellipse->y2));
+                                   (int)(ellipse->x2), (int)(ellipse->y2));
         ellipse = ellipse->next;
     }
 }
@@ -447,7 +455,8 @@ static void P4Print_print_point(double _x0, double _y0, int color)
     x0 = (int)_x0;
     y0 = (int)_y0;
 
-    if (x0 == s_LastP4PrintX0 && y0 == s_LastP4PrintY0 && color == s_LastP4Printcolor)
+    if (x0 == s_LastP4PrintX0 && y0 == s_LastP4PrintY0 &&
+        color == s_LastP4Printcolor)
         return;
 
     s_LastP4PrintX0 = x0;
