@@ -22,61 +22,44 @@
 #include "custom.h"
 #include "math_orbits.h"
 
-QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
+QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
-    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
-
     mainSphere_ = sp;
     plotwnd_ = plt;
 
-    edt_x0_ = new QLineEdit("", this);
-    QLabel *lbl1 = new QLabel("&x0 = ", this);
-    lbl1->setBuddy(edt_x0_);
-    edt_y0_ = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("&y0 = ", this);
-    lbl2->setBuddy(edt_y0_);
+    edt_value_ = new QLineEdit("", this);
+    QLabel *lbl1 = new QLabel("&Value = ", this);
+    lbl1->setBuddy(edt_value_);
 
-    btnSelect_ = new QPushButton("&Select", this);
-
-    btnForwards_ = new QPushButton("&Forwards", this);
-    btnContinue_ = new QPushButton("&Continue", this);
-    btnBackwards_ = new QPushButton("&Backwards", this);
+    btnEvaluate_ = new QPushButton("&Evaluate", this);
+    btnPlot_ = new QPushButton("&Plot", this);
     btnDelLast_ = new QPushButton("&Delete Last Orbit", this);
     btnDelAll_ = new QPushButton("Delete &All Orbits", this);
 
+    btnSelect_ = new QPushButton("&Select", this);
+
 #ifdef TOOLTIPS
-    edt_x0_->setToolTip(
-        "Start point of orbit.\n"
-        "You can also click on the plot window to fill this field.");
-    edt_y0_->setToolTip(
-        "Start point of orbit.\n"
-        "You can also click on the plot window to fill this field.");
-    btnSelect_->setToolTip("Validate your choice of (x0,y0).\n"
-                           "When using the mouse, this is not necessary.");
-    btnForwards_->setToolTip("Start integrating the orbit in forward time");
-    btnBackwards_->setToolTip("Start integrating the orbit in backward time");
-    btnContinue_->setToolTip(
-        "Continue integrating the orbit in the chosen time direction");
-    btnDelLast_->setToolTip("Delete last orbit drawn");
-    btnDelAll_->setToolTip("Delete all orbits (separatrices remain)");
+    edt_value_->setToolTip("Value of isoclines to plot.");
+    btnSelect_->setToolTip("Validate your choice of isoclines value.");
+    btnEvaluate_->setToolTip("Evaluate isoclines at the selected value.");
+    btnPlot_->setToolTip("Plot isocline.");
+    btnDelLast_->setToolTip("Delete last isocline drawn");
+    btnDelAll_->setToolTip("Delete all isoclines (separatrices remain)");
 #endif
 
     // layout
-
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    QGridLayout *lay00 = new QGridLayout();
-    lay00->addWidget(lbl1, 0, 0);
-    lay00->addWidget(edt_x0_, 0, 1);
-    lay00->addWidget(lbl2, 1, 0);
-    lay00->addWidget(edt_y0_, 1, 1);
-    lay00->addWidget(btnSelect_, 0, 2, 2, 1);
+    QHBoxLayout *layout0 = new QHBoxLayout();
+    layout0->addWidget(lbl1);
+    layout0->addWidget(edt_value_);
+    layout0->addWidget(btn_select_);
+    layout0->addStretch(0);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->addWidget(btnForwards_);
-    layout1->addWidget(btnContinue_);
-    layout1->addWidget(btnBackwards_);
+    layout1->addWidget(btnEvaluate_);
+    layout1->addWidget(btnPlot_);
     layout1->addStretch(0);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
@@ -84,7 +67,7 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     layout2->addWidget(btnDelAll_);
     layout2->addStretch(0);
 
-    mainLayout_->addLayout(lay00);
+    mainLayout_->addLayout(layout0);
     mainLayout_->addLayout(layout1);
     mainLayout_->addLayout(layout2);
 
@@ -92,82 +75,65 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     setLayout(mainLayout_);
 
     // connections
-
     QObject::connect(btnSelect_, SIGNAL(clicked()), this, SLOT(onBtnSelect()));
-    QObject::connect(btnForwards_, SIGNAL(clicked()), this,
-                     SLOT(onBtnForwards()));
-    QObject::connect(btnBackwards_, SIGNAL(clicked()), this,
-                     SLOT(onBtnBackwards()));
-    QObject::connect(btnContinue_, SIGNAL(clicked()), this,
-                     SLOT(onBtnContinue()));
+    QObject::connect(btnEvaluate_, SIGNAL(clicked()), this,
+                     SLOT(onBtnEvaluate()));
+    QObject::connect(btnPlot_, SIGNAL(clicked()), this, SLOT(onBtnPlot()));
     QObject::connect(btnDelAll_, SIGNAL(clicked()), this, SLOT(onBtnDelAll()));
     QObject::connect(btnDelLast_, SIGNAL(clicked()), this,
                      SLOT(onBtnDelLast()));
 
     // finishing
+    selected_value_ = 0;
 
-    selected_x0_ = 0;
-    selected_y0_ = 0;
+    btnEvaluate_->setEnabled(false);
+    btnPlot_->setEnabled(false);
 
-    btnForwards_->setEnabled(false);
-    btnBackwards_->setEnabled(false);
-    btnContinue_->setEnabled(false);
-
-    if (g_VFResults.first_orbit_ == nullptr) {
+    if (g_VFResults.first_isocline_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
-    orbitStarted_ = false;
-    orbitSelected_ = false;
 
-    setP4WindowTitle(this, "Plot Orbits");
+    setP4WindowTitle(this, "Plot Isoclines");
 }
 
-void QOrbitsDlg::setInitialPoint(double x, double y)
+void QIsoclinesDlg::setValue(double v)
 {
-    QString bufx;
-    QString bufy;
+    QString buf;
 
     plotwnd_->getDlgData();
 
-    selected_x0_ = x;
-    selected_y0_ = y;
+    selected_value_ = v;
 
-    bufx.sprintf("%g", (float)x);
-    bufy.sprintf("%g", (float)y);
+    buf.sprintf("%g", v);
 
-    edt_x0_->setText(bufx);
-    edt_y0_->setText(bufy);
-    orbitStarted_ = false;
-    orbitSelected_ = true;
-    btnForwards_->setEnabled(true);
-    btnBackwards_->setEnabled(true);
-    btnContinue_->setEnabled(false);
+    edt_value_->setText(buf);
+
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
 }
 
-void QOrbitsDlg::onBtnSelect(void)
+void QIsoclinesDlg::onBtnSelect(void)
 {
     plotwnd_->getDlgData();
-
-    QString bufx;
-    QString bufy;
-
-    bufx = edt_x0_->text();
-    bufy = edt_y0_->text();
-
-    selected_x0_ = bufx.toDouble();
-    selected_y0_ = bufy.toDouble();
-    orbitStarted_ = false;
-    orbitSelected_ = true;
-
-    btnForwards_->setEnabled(true);
-    btnBackwards_->setEnabled(true);
-    btnContinue_->setEnabled(false);
+    QString buf(edt_value_->text());
+    setValue(buf.toDouble());
 }
 
-void QOrbitsDlg::onBtnBackwards(void)
+void QIsoclinesDlg::onBtnEvaluate(void)
 {
-    plotwnd_->getDlgData();
+    /*if (edt_value_->text().isNull() || edt_value_->text().isEmpty()) {
+        QMessageBox::information(
+            this, "P4", "The value field has to be filled with a valid value.");
+        return;
+    }
+    g_ThisVF->curve_ = edt_curve_->text().trimmed();
+
+    // FIRST: create filename_veccurve.tab for transforming the curve QString to
+    // a list of P4POLYNOM2
+    g_ThisVF->evaluateCurveTable();
+    btn_plot_->setEnabled(true);
+    plotwnd_->getDlgData();*/
 
     if (!orbitStarted_) {
         if (!orbitSelected_)
@@ -194,7 +160,7 @@ void QOrbitsDlg::onBtnBackwards(void)
     }
 }
 
-void QOrbitsDlg::onBtnContinue(void)
+void QIsoclinesDlg::onBtnContinue(void)
 {
     plotwnd_->getDlgData();
 
@@ -205,7 +171,7 @@ void QOrbitsDlg::onBtnContinue(void)
     }
 }
 
-void QOrbitsDlg::onBtnForwards(void)
+void QIsoclinesDlg::onBtnForwards(void)
 {
     plotwnd_->getDlgData();
 
@@ -234,7 +200,7 @@ void QOrbitsDlg::onBtnForwards(void)
     }
 }
 
-void QOrbitsDlg::onBtnDelAll(void)
+void QIsoclinesDlg::onBtnDelAll(void)
 {
     plotwnd_->getDlgData();
 
@@ -251,7 +217,7 @@ void QOrbitsDlg::onBtnDelAll(void)
     mainSphere_->refresh();
 }
 
-void QOrbitsDlg::onBtnDelLast(void)
+void QIsoclinesDlg::onBtnDelLast(void)
 {
     plotwnd_->getDlgData();
 
@@ -271,7 +237,7 @@ void QOrbitsDlg::onBtnDelLast(void)
     }
 }
 
-void QOrbitsDlg::orbitEvent(int i)
+void QIsoclinesDlg::orbitEvent(int i)
 {
     switch (i) {
     case -1:
@@ -292,7 +258,7 @@ void QOrbitsDlg::orbitEvent(int i)
     }
 }
 
-void QOrbitsDlg::reset(void)
+void QIsoclinesDlg::reset(void)
 {
     // finishing
 
