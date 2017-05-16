@@ -30,11 +30,11 @@ class QP4AboutDlg : public QDialog
     Q_OBJECT
 
   private:
-    QPushButton *btn_ok;
-    QPushButton *btn_settings;
+    QPushButton *btn_ok_;
+    QPushButton *btn_settings_;
 
-    QBoxLayout *mainLayout;
-    QPixmap p4image;
+    QBoxLayout *mainLayout_;
+    QPixmap p4image_;
 
   public:
     QP4AboutDlg(QWidget *parent = 0, Qt::WindowFlags f = 0);

@@ -34,20 +34,20 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // define controls
 
-    if (p4smallicon != nullptr)
-        setWindowIcon(*p4smallicon);
+    if (g_p4smallicon != nullptr)
+        setWindowIcon(*g_p4smallicon);
 
-    btn_ok = new QPushButton("&Ok");
-    btn_settings = new QPushButton("&Main Settings");
+    btn_ok_ = new QPushButton("&Ok");
+    btn_settings_ = new QPushButton("&Main Settings");
 
 #ifdef TOOLTIPS
-    btn_ok->setToolTip("Go back to program");
-    btn_settings->setToolTip("Access general program settings");
+    btn_ok_->setToolTip("Go back to program");
+    btn_settings_->setToolTip("Access general program settings");
 #endif
 
     // define placement of controls
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
 
     QGridLayout *lay00 = new QGridLayout();
     lay00->addWidget(new QLabel("P4 (Planar Polynomial Phase Portraits) by"), 0,
@@ -73,33 +73,34 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     lay00->addWidget(new QLabel(""), 9, 1);
 
     QString versionstr;
-    versionstr =
-        " Version " + p4Version + "   " + p4VersionDate + " " + p4Platform;
+    versionstr = " Version " + g_p4Version + "   " + g_p4VersionDate + " " +
+                 g_p4Platform;
 
     lay00->addWidget(new QLabel(versionstr), 10, 1);
 
     QLabel *l;
     l = new QLabel("(missing image)");
-    if (p4image.load(getP4BinPath() + "/portrait.png"))
-        l->setPixmap(p4image);
+    if (p4image_.load(getP4BinPath() + "/portrait.png"))
+        l->setPixmap(p4image_);
 
     lay00->addWidget(l, 0, 0, 10, 1);
 
-    mainLayout->addLayout(lay00);
+    mainLayout_->addLayout(lay00);
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addStretch(1);
-    buttons->addWidget(btn_ok);
+    buttons->addWidget(btn_ok_);
     buttons->addStretch(0);
-    buttons->addWidget(btn_settings);
-    mainLayout->addLayout(buttons);
-    setLayout(mainLayout);
+    buttons->addWidget(btn_settings_);
+    mainLayout_->addLayout(buttons);
+    setLayout(mainLayout_);
 
     // connections
 
-    QObject::connect(btn_ok, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_settings, SIGNAL(clicked()), this, SLOT(onSettings()));
+    QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
+    QObject::connect(btn_settings_, SIGNAL(clicked()), this,
+                     SLOT(onSettings()));
 
-    btn_ok->setFocus();
+    btn_ok_->setFocus();
 
     setP4WindowTitle(this, "About P4");
 }

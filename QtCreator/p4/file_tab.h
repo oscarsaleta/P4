@@ -299,96 +299,100 @@ enum TYPEOFVIEWS {
 class QVFStudy : public QObject
 {
   public:
+    // Constructor and destructor
+    QVFStudy();  // constructor
+    ~QVFStudy(); // destructor
+
     // general information
 
-    int typeofstudy;
-    TYPEOFVIEWS typeofview; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    int p;
-    int q;
-    bool plweights; // true if p<>1 or q<>1; false if p=q=1
+    int typeofstudy_;
+    TYPEOFVIEWS typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    int p_;
+    int q_;
+    bool plweights_; // true if p<>1 or q<>1; false if p=q=1
 
-    double double_p;         // shortcuts: = (double)p
-    double double_q;         // = (double)q
-    double double_p_plus_q;  // = (double)(p+q)
-    double double_p_minus_1; // = (double)(p-1)
-    double double_q_minus_1; // = (double)(q-1)
-    double double_q_minus_p; // = (double)(q-p)
+    double double_p_;         // shortcuts: = (double)p
+    double double_q_;         // = (double)q
+    double double_p_plus_q_;  // = (double)(p+q)
+    double double_p_minus_1_; // = (double)(p-1)
+    double double_q_minus_1_; // = (double)(q-1)
+    double double_q_minus_p_; // = (double)(q-p)
 
-    double xmin, xmax, ymin, ymax; // in case of local study
-    bool singinf;
-    int dir_vec_field;
+    double xmin_, xmax_, ymin_, ymax_; // in case of local study
+    bool singinf_;
+    int dir_vec_field_;
 
-    QString lasterror;
+    QString lasterror_;
 
     // vector field in various charts
 
-    P4POLYNOM2 f_vec_field[2];
-    P4POLYNOM2 vec_field_U1[2];
-    P4POLYNOM2 vec_field_U2[2];
-    P4POLYNOM2 vec_field_V1[2];
-    P4POLYNOM2 vec_field_V2[2];
-    P4POLYNOM3 vec_field_C[2];
+    P4POLYNOM2 f_vec_field_[2];
+    P4POLYNOM2 vec_field_U1_[2];
+    P4POLYNOM2 vec_field_U2_[2];
+    P4POLYNOM2 vec_field_V1_[2];
+    P4POLYNOM2 vec_field_V2_[2];
+    P4POLYNOM3 vec_field_C_[2];
 
     // singular points and their properties:
 
-    saddle *first_saddle_point;
-    semi_elementary *first_se_point;
-    node *first_node_point;
-    strong_focus *first_sf_point;
-    weak_focus *first_wf_point;
-    degenerate *first_de_point;
+    saddle *first_saddle_point_;
+    semi_elementary *first_se_point_;
+    node *first_node_point_;
+    strong_focus *first_sf_point_;
+    weak_focus *first_wf_point_;
+    degenerate *first_de_point_;
 
     // Greatest common factor if present:
 
-    P4POLYNOM2 gcf;
-    P4POLYNOM2 gcf_U1;
-    P4POLYNOM2 gcf_U2;
-    P4POLYNOM2 gcf_V1;
-    P4POLYNOM2 gcf_V2;
-    P4POLYNOM3 gcf_C;
+    P4POLYNOM2 gcf_;
+    P4POLYNOM2 gcf_U1_;
+    P4POLYNOM2 gcf_U2_;
+    P4POLYNOM2 gcf_V1_;
+    P4POLYNOM2 gcf_V2_;
+    P4POLYNOM3 gcf_C_;
 
-    orbits_points *gcf_points;
+    orbits_points *gcf_points_;
 
     // one curve to plot (for now, maybe later will be a vector)
-    P4POLYNOM2 curve;
-    P4POLYNOM2 curve_U1;
-    P4POLYNOM2 curve_U2;
-    P4POLYNOM2 curve_V1;
-    P4POLYNOM2 curve_V2;
-    P4POLYNOM3 curve_C;
+    P4POLYNOM2 curve_;
+    P4POLYNOM2 curve_U1_;
+    P4POLYNOM2 curve_U2_;
+    P4POLYNOM2 curve_V1_;
+    P4POLYNOM2 curve_V2_;
+    P4POLYNOM3 curve_C_;
 
-    orbits_points *curve_points;
+    orbits_points *curve_points_;
 
     // limit cycles
 
-    orbits *first_lim_cycle;
-    orbits *first_orbit;
+    orbits *first_lim_cycle_;
+    orbits *first_orbit_;
 
     // ------ Configuration
 
-    int config_lc_value;
-    double config_hma;
-    double config_hmi;
-    double config_step;
-    double config_currentstep;
-    double config_tolerance;
-    double config_projection;
-    int config_intpoints;
-    int config_lc_numpoints;
-    bool config_dashes;
-    bool config_kindvf; // true for original VF, false for reduced
+    int config_lc_value_;
+    double config_hma_;
+    double config_hmi_;
+    double config_step_;
+    double config_currentstep_;
+    double config_tolerance_;
+    double config_projection_;
+    int config_intpoints_;
+    int config_lc_numpoints_;
+    bool config_dashes_;
+    bool config_kindvf_; // true for original VF, false for reduced
 
     // run-time when plotting
 
-    orbits *current_orbit;
-    orbits *current_lim_cycle;
+    orbits *current_orbit_;
+    orbits *current_lim_cycle_;
 
-    double selected_ucoord[2];
-    saddle *selected_saddle_point;
-    semi_elementary *selected_se_point;
-    degenerate *selected_de_point;
-    sep *selected_sep;
-    blow_up_points *selected_de_sep;
+    double selected_ucoord_[2];
+    saddle *selected_saddle_point_;
+    semi_elementary *selected_se_point_;
+    degenerate *selected_de_point_;
+    sep *selected_sep_;
+    blow_up_points *selected_de_sep_;
 
     // coordinate transformation routines, set up when starting the plot
 
@@ -419,11 +423,6 @@ class QVFStudy : public QObject
     bool (*less2)(double *, double *);
     int (*change_dir)(double *);
 
-  public:
-    QVFStudy();  // constructor
-    ~QVFStudy(); // destructor
-
-  public:
     // initialization and destruction of structures
 
     void deleteVF(void);
@@ -475,9 +474,10 @@ class QVFStudy : public QObject
 
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
-#define MATHFUNC(function) (*(VFResults.function))
+#define MATHFUNC(function) (*(g_VFResults.function))
 
-extern QVFStudy VFResults; // (VFResults.p,VFResults.q) are lyapunov weights
+// (g_VFResults.p_,g_VFResults.q_) are lyapunov weights
+extern QVFStudy g_VFResults;
 
 #define LINESTYLE_DASHES 1
 #define LINESTYLE_POINTS 0

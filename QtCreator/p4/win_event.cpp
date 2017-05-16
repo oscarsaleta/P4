@@ -21,10 +21,10 @@
 
 QP4Event::QP4Event(QEvent::Type t, void *data) : QEvent(t)
 {
-    customData = data;
+    customData_ = data;
 }
 
-void *QP4Event::data() const { return customData; }
+void *QP4Event::data() const { return customData_; }
 
 QP4Event::~QP4Event()
 {

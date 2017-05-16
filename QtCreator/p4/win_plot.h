@@ -32,13 +32,13 @@
 #include <QMainWindow>
 
 /* Forward-declarations to solve cross-include problems */
-class QGcfDlg;          // in win_gcf.h
-class QCurveDlg;        // in win_curve.h
-class QIntParamsDlg;    // in win_params.h
-class QSepDlg;          // in win_separatrices.h
-class QOrbitsDlg;       // in win_orbits.h
-class QLimitCyclesDlg;  // in win_limitcycles.h
-class QZoomWnd;         // in win_zoom.h
+class QGcfDlg;         // in win_gcf.h
+class QCurveDlg;       // in win_curve.h
+class QIntParamsDlg;   // in win_params.h
+class QSepDlg;         // in win_separatrices.h
+class QOrbitsDlg;      // in win_orbits.h
+class QLimitCyclesDlg; // in win_limitcycles.h
+class QZoomWnd;        // in win_zoom.h
 
 class QPlotWnd : public QMainWindow
 {
@@ -48,65 +48,64 @@ class QPlotWnd : public QMainWindow
     QPlotWnd(QStartDlg *);
     ~QPlotWnd();
 
+    QIntParamsDlg *intParamsWindow_;
+    QViewDlg *viewParamsWindow_;
+
   private:
-    QStartDlg *parent;
-    QBoxLayout *mainLayout;
-    QAction *ActClose;
-    QAction *ActRefresh;
-    QAction *ActLegend;
-    QAction *ActOrbits;
-    QAction *ActIntParams;
-    QAction *ActView;
-    QAction *ActGCF;
-    QAction *ActCurve;
-    QAction *ActPlotSep;
-    QAction *ActPlotAllSeps;
-    QAction *ActLimitCycles;
-    QAction *ActPrint;
+    QStartDlg *parent_;
+    QBoxLayout *mainLayout_;
+    QAction *actClose_;
+    QAction *actRefresh_;
+    QAction *actLegend_;
+    QAction *actOrbits_;
+    QAction *actIntParams_;
+    QAction *actView_;
+    QAction *actGCF_;
+    QAction *actCurve_;
+    QAction *actPlotSep_;
+    QAction *actPlotAllSeps_;
+    QAction *actLimitCycles_;
+    QAction *actPrint_;
 
-    QLegendWnd *Legend_Window;
-    QOrbitsDlg *Orbits_Window;
-    QSepDlg *Sep_Window;
-    QLimitCyclesDlg *LC_Window;
-    QGcfDlg *GCF_Window;
-    QCurveDlg *Curve_Window;
+    QLegendWnd *legendWindow_;
+    QOrbitsDlg *orbitsWindow_;
+    QSepDlg *sepWindow_;
+    QLimitCyclesDlg *lcWindow_;
+    QGcfDlg *gcfWindow_;
+    QCurveDlg *curveWindow_;
 
-    QWinSphere *sphere; // main sphere
+    QWinSphere *sphere_; // main sphere
 
-    int numZooms;
-    int lastZoomIdentifier;
-    QZoomWnd **ZoomWindows;
-
-  public:
-    QIntParamsDlg *IntParams_Window;
-    QViewDlg *ViewParams_Window;
+    int numZooms_;
+    int lastZoomIdentifier_;
+    QZoomWnd **zoomWindows_;
 
   public slots:
     void signalEvaluating(void);
     void signalEvaluated(void);
     void signalChanged(void);
 
-    void OnBtnClose(void);
-    void OnBtnRefresh(void);
-    void OnBtnLegend(void);
-    void OnBtnOrbits(void);
-    void OnBtnIntParams(void);
-    void OnBtnView(void);
-    void OnBtnGCF(void);
-    void OnBtnCurve(void);
-    void OnBtnPlotSep(void);
-    void OnBtnPlotAllSeps(void);
-    void OnBtnLimitCycles(void);
-    void OnBtnPrint(void);
+    void onBtnClose(void);
+    void onBtnRefresh(void);
+    void onBtnLegend(void);
+    void onBtnOrbits(void);
+    void onBtnIntParams(void);
+    void onBtnView(void);
+    void onBtnGCF(void);
+    void onBtnCurve(void);
+    void onBtnPlotSep(void);
+    void onBtnPlotAllSeps(void);
+    void onBtnLimitCycles(void);
+    void onBtnPrint(void);
     bool close(void);
 
-    void OpenZoomWindow(double, double, double, double);
-    void CloseZoomWindow(int id);
+    void openZoomWindow(double, double, double, double);
+    void closeZoomWindow(int id);
     void configure(void);
     void customEvent(QEvent *e);
     void hideEvent(QHideEvent *h);
     void getDlgData(void);
-    void AdjustHeight(void);
+    void adjustHeight(void);
 };
 
 #endif /* WIN_PLOT_H */

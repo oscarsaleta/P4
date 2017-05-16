@@ -42,56 +42,47 @@ class QWinSphere : public QWidget
 {
     Q_OBJECT
 
-    static int numSpheres;
-    static QWinSphere **SphereList; // this could be implemented as a c++ vector
+    static int sm_numSpheres;
+    // this could be implemented as a c++ vector
+    static QWinSphere **sm_SphereList;
 
   public:
+    /* Constructor and destructor */
     QWinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);
     ~QWinSphere();
+
+    /* Member variables */
+    double horPixelsPerMM_;
+    double verPixelsPerMM_;
+
+    double x0_, y0_; // world-coordinates of upper-left corner
+    double x1_, y1_; // world-coordinates of upper-right corner
+    double dx_;      // x1-x0
+    double dy_;      // y1-y0
+
+    QPixmap *painterCache_;
+    bool isPainterCacheDirty_;
+    int paintedXMin_; // to know the update rectangle after painting
+    int paintedXMax_; // we keep to smallest rectangle enclosing
+    int paintedYMin_; // all painted objects.
+    int paintedYMax_;
+
+    QString chartstring_;
+
+    int spherebgcolor_;
+    QWinSphere *next_; // visible to PlotWnd
+    int selectingX_, selectingY_, selectingPointStep_, selectingPointRadius_;
+    QTimer *selectingTimer_;
+
+    int oldw_; // used while printing
+    int oldh_;
+    int w_;      // width of window
+    int h_;      // height of window
+    int idealh_; // ideal height of window to get good aspect ratio
+
+    /* Member functions */
+
     void paintEvent(QPaintEvent *);
-
-    int
-    coWinX(double x); // coordinate changes: from world to windows coordinates
-    int coWinY(double y);
-    double coWorldX(int x); // from windows to world coordinates
-    double coWorldY(int y);
-    int coWinV(double);
-    int coWinH(double);
-
-    double horPixelsPerMM;
-    double verPixelsPerMM;
-
-    double x0, y0; // world-coordinates of upper-left corner
-    double x1, y1; // world-coordinates of upper-right corner
-    double dx;     // x1-x0
-    double dy;     // y1-y0
-
-    QPixmap *PainterCache;
-    bool isPainterCacheDirty;
-    int paintedXMin; // to know the update rectangle after painting
-    int paintedXMax; // we keep to smallest rectangle enclosing
-    int paintedYMin; // all painted objects.
-    int paintedYMax;
-
-    QString chartstring;
-
-  private:
-    QPainter *staticPainter;
-    QWidget *parentWnd;
-    bool iszoom;
-    bool ReverseYaxis; // when calculating coordinates: this determines
-                       // orientation
-    // of horizontal axis.  Normally false, only true when printing.
-
-    P4POLYLINES *CircleAtInfinity;
-    P4POLYLINES *PLCircle;
-    QTimer *refreshTimeout;
-
-  public:
-    int spherebgcolor;
-    QWinSphere *next; // visible to PlotWnd
-    int SelectingX, SelectingY, SelectingPointStep, SelectingPointRadius;
-    QTimer *SelectingTimer;
 
     bool getChartPos(int, double, double, double *);
     void adjustToNewSize(void);
@@ -114,7 +105,7 @@ class QWinSphere : public QWidget
     void plotPoincareSphere(void);
     void plotPoincareLyapunovSphere(void);
     void plotLineAtInfinity(void);
-    void MarkSelection(int x1, int y1, int x2, int y2, int selectiontype);
+    void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
     void printPoint(struct saddle *);
     void printPoint(struct node *);
@@ -136,7 +127,7 @@ class QWinSphere : public QWidget
     struct P4POLYLINES *produceEllipse(double cx, double cy, double a, double b,
                                        bool dotted, double resa, double resb);
 
-    void SelectNearestSingularity(QPoint winpos);
+    void selectNearestSingularity(QPoint winpos);
 
     void prepareDrawing(void);
     void drawPoint(double x, double y, int color);
@@ -151,40 +142,53 @@ class QWinSphere : public QWidget
     void printLine(double x1, double y1, double x2, double y2, int color);
     void finishPrinting(void);
 
-    void SaveAnchorMap(void);
-    void LoadAnchorMap(void);
+    void saveAnchorMap(void);
+    void loadAnchorMap(void);
+
+    // coordinate changes: from world to windows coordinates
+    int coWinX(double x);
+    int coWinY(double y);
+    // from windows to world coordinates
+    double coWorldX(int x);
+    double coWorldY(int y);
+    int coWinV(double);
+    int coWinH(double);
 
   public slots:
     void resizeEvent(QResizeEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
-    void SetupPlot(void);
+    void setupPlot(void);
     void refresh(void);
     void keyPressEvent(QKeyEvent *e);
-    void CalculateHeightFromWidth(int *width, int *height, int maxheight,
+    void calculateHeightFromWidth(int *width, int *height, int maxheight,
                                   double aspectratio);
     void refreshAfterResize(void);
     void updatePointSelection(void);
 
   private:
-    bool selectingZoom;
-    bool selectingLCSection;
-    QPoint zoomAnchor1;
-    QPoint zoomAnchor2;
-    QPoint lcAnchor1;
-    QPoint lcAnchor2;
-    QPixmap *AnchorMap;
+    QPainter *staticPainter_;
+    QWidget *parentWnd_;
+    bool iszoom_;
+    bool reverseYAxis_; // when calculating coordinates: this determines
+                        // orientation
+    // of horizontal axis.  Normally false, only true when printing.
 
-    QStatusBar *msgBar;
-    int PrintMethod;
+    P4POLYLINES *circleAtInfinity_;
+    P4POLYLINES *plCircle_;
+    QTimer *refreshTimeout_;
 
-  public:
-    int oldw; // used while printing
-    int oldh;
-    int w;      // width of window
-    int h;      // height of window
-    int idealh; // ideal height of window to get good aspect ratio
+    bool selectingZoom_;
+    bool selectingLCSection_;
+    QPoint zoomAnchor1_;
+    QPoint zoomAnchor2_;
+    QPoint lcAnchor1_;
+    QPoint lcAnchor2_;
+    QPixmap *anchorMap_;
+
+    QStatusBar *msgBar_;
+    int printMethod_;
 };
 
 #endif /* WIN_SPHERE_H */

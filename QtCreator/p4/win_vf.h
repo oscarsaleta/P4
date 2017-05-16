@@ -40,20 +40,20 @@ class QVectorFieldDlg : public QWidget
 
   public:
     QVectorFieldDlg(QFindDlg *startwindow);
-    void GetDataFromDlg(void);
-    void UpdateDlgData(void);
     ~QVectorFieldDlg();
+    void getDataFromDlg(void);
+    void updateDlgData(void);
 
   private:
-    QBoxLayout *mainLayout;
-    QFindDlg *parent;
-    QLineEdit *edt_xprime;
-    QLineEdit *edt_yprime;
-    QLineEdit *edt_gcf;
-    QSpinBox *spin_numparams;
-    QHBoxLayout *paramLayout;
-    QScrollBar *sb_params;
-    QVFParams *params;
+    QBoxLayout *mainLayout_;
+    QFindDlg *parent_;
+    QLineEdit *edt_xprime_;
+    QLineEdit *edt_yprime_;
+    QLineEdit *edt_gcf_;
+    QSpinBox *spin_numparams_;
+    QHBoxLayout *paramLayout_;
+    QScrollBar *sb_params_;
+    QVFParams *params_;
 
   public slots:
     void numParamsChanged(int);
@@ -66,25 +66,25 @@ class QVFParams : public QWidget
   public:
     QVFParams(QVectorFieldDlg *parent, QScrollBar *sb);
     ~QVFParams();
-    bool GetDataFromDlg(void);
-    bool UpdateDlgData(void);
+    bool getDataFromDlg(void);
+    bool updateDlgData(void);
 
   private:
-    bool datainvalid;
-    int currentnumparams;
-    int currentshownparams;
-    int currentpageindex;
+    bool dataInvalid_;
+    int currentNumParams_;
+    int currentShownParams_;
+    int currentPageIndex_;
 
-    QScrollBar *sb_params;
-    QBoxLayout *mainLayout;
-    QBoxLayout *superLayout;
-    QHBoxLayout *Param_Lines[MAXNUMPARAMSSHOWN];
-    QLineEdit *Param_Names[MAXNUMPARAMSSHOWN];
-    QLabel *Param_Labels[MAXNUMPARAMSSHOWN];
-    QLineEdit *Param_Values[MAXNUMPARAMSSHOWN];
+    QScrollBar *sb_params_;
+    QBoxLayout *mainLayout_;
+    QBoxLayout *superLayout_;
+    QHBoxLayout *paramLines_[MAXNUMPARAMSSHOWN];
+    QLineEdit *paramNames_[MAXNUMPARAMSSHOWN];
+    QLabel *paramLabels_[MAXNUMPARAMSSHOWN];
+    QLineEdit *paramValues_[MAXNUMPARAMSSHOWN];
 
-    QString S_Labels[MAXNUMPARAMS];
-    QString S_Values[MAXNUMPARAMS];
+    QString sLabels_[MAXNUMPARAMS];
+    QString sValues_[MAXNUMPARAMS];
 
   protected:
     bool focusNextPrevChild(bool next);

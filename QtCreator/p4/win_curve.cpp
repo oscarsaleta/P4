@@ -117,7 +117,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "Curve plot");
 }
 
-void QCurveDlg::Reset(void)
+void QCurveDlg::reset(void)
 {
     QString buf;
 
@@ -134,12 +134,12 @@ void QCurveDlg::Reset(void)
 
     btn_evaluate_->setEnabled(true);
     btn_plot_->setEnabled(false);
-    if (VFResults.gcf != nullptr)
+    if (g_VFResults.gcf_ != nullptr)
         btn_delete_->setEnabled(false);
     else
         btn_delete_->setEnabled(true);
 
-    if (VFResults.config_dashes)
+    if (g_VFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();
@@ -153,11 +153,11 @@ void QCurveDlg::onbtn_evaluate(void)
                                  "with the equation of a curve.\n");
         return;
     }
-    ThisVF->curve = edt_curve_->text().trimmed();
+    g_ThisVF->curve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
-    ThisVF->evaluateCurveTable();
+    g_ThisVF->evaluateCurveTable();
     btn_plot_->setEnabled(true);
 }
 
@@ -205,7 +205,7 @@ void QCurveDlg::onbtn_plot(void)
     }
 
     // SECOND: read the resulting file and store the list
-    if (!VFResults.readCurve(ThisVF->getbarefilename())) {
+    if (!g_VFResults.readCurve(g_ThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4", "Cannot read curve.\n"
                                           "Please check the input field!\n");
         return;
@@ -219,7 +219,7 @@ void QCurveDlg::onbtn_plot(void)
 
     btn_plot_->setEnabled(false);
 
-    ThisVF->curveDlg = this;
+    g_ThisVF->curveDlg_ = this;
     result = evalCurveStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btn_plot_->setEnabled(true);
@@ -235,21 +235,21 @@ void QCurveDlg::onbtn_plot(void)
 
 void QCurveDlg::onbtn_delete(void)
 {
-    delete_term2(VFResults.curve);
-    delete_term2(VFResults.curve_U1);
-    delete_term2(VFResults.curve_U2);
-    delete_term2(VFResults.curve_V1);
-    delete_term2(VFResults.curve_V2);
-    delete_term3(VFResults.curve_C);
-    VFResults.deleteOrbitPoint(VFResults.curve_points);
+    delete_term2(g_VFResults.curve_);
+    delete_term2(g_VFResults.curve_U1_);
+    delete_term2(g_VFResults.curve_U2_);
+    delete_term2(g_VFResults.curve_V1_);
+    delete_term2(g_VFResults.curve_V2_);
+    delete_term3(g_VFResults.curve_C_);
+    g_VFResults.deleteOrbitPoint(g_VFResults.curve_points_);
 
-    VFResults.curve = nullptr;
-    VFResults.curve_U1 = nullptr;
-    VFResults.curve_U2 = nullptr;
-    VFResults.curve_V1 = nullptr;
-    VFResults.curve_V2 = nullptr;
-    VFResults.curve_C = nullptr;
-    VFResults.curve_points = nullptr;
+    g_VFResults.curve_ = nullptr;
+    g_VFResults.curve_U1_ = nullptr;
+    g_VFResults.curve_U2_ = nullptr;
+    g_VFResults.curve_V1_ = nullptr;
+    g_VFResults.curve_V2_ = nullptr;
+    g_VFResults.curve_C_ = nullptr;
+    g_VFResults.curve_points_ = nullptr;
 
     mainSphere_->refresh();
     btn_delete_->setEnabled(false);

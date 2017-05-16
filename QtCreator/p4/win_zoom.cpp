@@ -35,51 +35,51 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     : QMainWindow()
 {
     QToolBar *toolBar1;
-    parent = main;
-    zoomid = id;
+    parent_ = main;
+    zoomid_ = id;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
     //    setPalette(palette);
 
-    if (p4smallicon != nullptr)
-        setWindowIcon(*p4smallicon);
+    if (g_p4smallicon != nullptr)
+        setWindowIcon(*g_p4smallicon);
 
     toolBar1 = new QToolBar("ZoomBar1", this);
     toolBar1->setMovable(false);
 
-    ActClose = new QAction("Close", this);
-    ActClose->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(ActClose, SIGNAL(triggered()), this, SLOT(OnBtnClose()));
-    toolBar1->addAction(ActClose);
+    actClose_ = new QAction("Close", this);
+    actClose_->setShortcut(Qt::ALT + Qt::Key_E);
+    connect(actClose_, SIGNAL(triggered()), this, SLOT(onBtnClose()));
+    toolBar1->addAction(actClose_);
 
-    ActRefresh = new QAction("Refresh", this);
-    ActRefresh->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(ActRefresh, SIGNAL(triggered()), this, SLOT(OnBtnRefresh()));
-    toolBar1->addAction(ActRefresh);
+    actRefresh_ = new QAction("Refresh", this);
+    actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
+    connect(actRefresh_, SIGNAL(triggered()), this, SLOT(onBtnRefresh()));
+    toolBar1->addAction(actRefresh_);
 
-    ActPrint = new QAction("Print", this);
-    ActPrint->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(ActPrint, SIGNAL(triggered()), this, SLOT(OnBtnPrint()));
-    toolBar1->addAction(ActPrint);
+    actPrint_ = new QAction("Print", this);
+    actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
+    connect(actPrint_, SIGNAL(triggered()), this, SLOT(onBtnPrint()));
+    toolBar1->addAction(actPrint_);
 
 #ifdef TOOLTIPS
-    ActClose->setToolTip(
+    actClose_->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
-    ActRefresh->setToolTip("Redraw the plot window");
-    ActPrint->setToolTip("Opens the print window");
+    actRefresh_->setToolTip("Redraw the plot window");
+    actPrint_->setToolTip("Opens the print window");
 #endif
 
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere = new QWinSphere(this, statusBar(), true, x1, y1, x2, y2);
-    sphere->show();
-    setCentralWidget(sphere);
+    sphere_ = new QWinSphere(this, statusBar(), true, x1, y1, x2, y2);
+    sphere_->show();
+    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
-    sphere->SetupPlot();
+    sphere_->setupPlot();
 
-    //  if( ThisVF->evaluated )
+    //  if( g_ThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait - Zoom");
     //  else
     //      SetP4WindowTitle( this, "Phase Portrait - Zoom (*)" );
@@ -87,22 +87,22 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
 
 QZoomWnd::~QZoomWnd()
 {
-    delete sphere;
-    sphere = nullptr;
+    delete sphere_;
+    sphere_ = nullptr;
 }
 
 void QZoomWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->signalChanged();
+    sphere_->signalChanged();
 }
 
 void QZoomWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
-    sphere->signalEvaluating();
+    sphere_->signalEvaluating();
 }
 
 void QZoomWnd::signalEvaluated(void)
@@ -112,61 +112,61 @@ void QZoomWnd::signalEvaluated(void)
     configure();
 }
 
-void QZoomWnd::OnBtnClose(void)
+void QZoomWnd::onBtnClose(void)
 {
     int *data = new int;
-    *data = zoomid;
+    *data = zoomid_;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent_, e1);
 }
 
 bool QZoomWnd::close(void)
 {
     int *data = new int;
-    *data = zoomid;
+    *data = zoomid_;
 
     QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    p4app->postEvent(parent, e1);
+    g_p4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
 
-void QZoomWnd::OnBtnRefresh(void)
+void QZoomWnd::onBtnRefresh(void)
 {
-    parent->getDlgData();
-    sphere->refresh();
+    parent_->getDlgData();
+    sphere_->refresh();
 }
 
-void QZoomWnd::OnBtnPrint(void)
+void QZoomWnd::onBtnPrint(void)
 {
     int res;
     double lw, ss;
     QPrintDlg *pdlg;
     pdlg = new QPrintDlg(this, 0);
     int result = pdlg->exec();
-    res = pdlg->GetChosenResolution();
-    lw = pdlg->GetChosenLineWidth();
-    ss = pdlg->GetChosenSymbolSize();
+    res = pdlg->getChosenResolution();
+    lw = pdlg->getChosenLineWidth();
+    ss = pdlg->getChosenSymbolSize();
 
     delete pdlg;
     pdlg = nullptr;
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            p4printer->setResolution(res);
-            QPrintDialog dialog(p4printer, this);
+            g_p4printer->setResolution(res);
+            QPrintDialog dialog(g_p4printer, this);
             if (!dialog.exec())
                 return;
-            res = p4printer->resolution();
+            res = g_p4printer->resolution();
         }
 
         if (result < 0)
-            sphere->preparePrinting(-result, true, res, lw, ss);
+            sphere_->preparePrinting(-result, true, res, lw, ss);
         else
-            sphere->preparePrinting(result, false, res, lw, ss);
-        sphere->print();
-        sphere->finishPrinting();
+            sphere_->preparePrinting(result, false, res, lw, ss);
+        sphere_->print();
+        sphere_->finishPrinting();
     }
 }
 
@@ -176,8 +176,8 @@ void QZoomWnd::configure(void)
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
                              // sphere window
     plot_p = spherePlotPoint;
-    sphere->SetupPlot(); // setup sphere window (define pixel transformations)
-    sphere->update();
+    sphere_->setupPlot(); // setup sphere window (define pixel transformations)
+    sphere_->update();
     // delete print window
     // delete xfig window
 }
@@ -191,7 +191,7 @@ void QZoomWnd::customEvent(QEvent *_e)
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
         QP4Event *newe = new QP4Event(e->type(), e->data());
-        p4app->postEvent(parent, newe);
+        g_p4app->postEvent(parent_, newe);
         return;
     }
 
@@ -203,43 +203,43 @@ void QZoomWnd::hideEvent(QHideEvent *h)
     UNUSED(h);
     if (!isMinimized()) {
         int *data = new int;
-        *data = zoomid;
+        *data = zoomid_;
 
         QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-        p4app->postEvent(parent, e1);
+        g_p4app->postEvent(parent_, e1);
     }
 }
 
-void QZoomWnd::AdjustHeight(void)
+void QZoomWnd::adjustHeight(void)
 {
     int w, h, m;
     double deltaw, deltah;
 
-    sphere->adjustToNewSize();
+    sphere_->adjustToNewSize();
 
     w = width();
-    h = height() + sphere->idealh - sphere->h;
+    h = height() + sphere_->idealh_ - sphere_->h_;
 
-    m = p4app->desktop()->height();
+    m = g_p4app->desktop()->height();
     m -= m / 10; // occuppy at most 90% of the screen's height
 
     if (h > m) {
         deltah = (double)(h - m);
         deltaw = deltah;
-        deltaw *= sphere->dx;
-        deltaw /= sphere->dy;
+        deltaw *= sphere_->dx_;
+        deltaw /= sphere_->dy_;
 
         h -= (int)(deltah + 0.5);
         w -= (int)(deltaw + 0.5);
-    } else if (sphere->idealh < MINHEIGHTPLOTWINDOW) {
-        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere->idealh);
+    } else if (sphere_->idealh_ < MINHEIGHTPLOTWINDOW) {
+        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere_->idealh_);
         deltaw = deltah;
-        deltaw *= sphere->dx;
-        deltaw /= sphere->dy;
+        deltaw *= sphere_->dx_;
+        deltaw /= sphere_->dy_;
 
         h += (int)(deltah + 0.5);
         w += (int)(deltaw + 0.5);
-        m = p4app->desktop()->width();
+        m = g_p4app->desktop()->width();
         m -= m / 10;
         if (w > m)
             w = m; // occupy at most 90 % of the screen's width

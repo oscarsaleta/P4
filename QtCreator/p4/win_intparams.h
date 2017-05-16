@@ -38,40 +38,40 @@ class QIntParamsDlg : public QWidget
   public:
     QIntParamsDlg(void);
     ~QIntParamsDlg();
-    void GetDataFromDlg(void);
-    void UpdateDlgData(void);
-    void ExclusiveToggle(bool, QRadioButton *, ...);
-    void SetCurrentStep(double curstep);
+    void getDataFromDlg(void);
+    void updateDlgData(void);
+    void exclusiveToggle(bool, QRadioButton *, ...);
+    void setCurrentStep(double curstep);
 
   private:
-    bool changed;
-    QFindDlg *parent;
-    QBoxLayout *mainLayout;
+    bool changed_;
+    QFindDlg *parent_;
+    QBoxLayout *mainLayout_;
 
-    QPushButton *btn_reset;
-    QRadioButton *btn_org;
-    QRadioButton *btn_red;
-    QRadioButton *btn_dots;
-    QRadioButton *btn_dashes;
-    QLineEdit *edt_minstep;
-    QLineEdit *edt_maxstep;
-    QLineEdit *edt_stepsize;
-    QLabel *lbl_curstep;
-    QLineEdit *edt_tolerance;
+    QPushButton *btn_reset_;
+    QRadioButton *btn_org_;
+    QRadioButton *btn_red_;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_minstep_;
+    QLineEdit *edt_maxstep_;
+    QLineEdit *edt_stepsize_;
+    QLabel *lbl_curstep_;
+    QLineEdit *edt_tolerance_;
 
-    QLabel *lbl_minstep;
-    QLabel *lbl_maxstep;
-    QLabel *lbl_stepsize;
-    QLabel *lbl0_curstep;
-    QLabel *lbl_tolerance;
+    QLabel *lbl_minstep_;
+    QLabel *lbl_maxstep_;
+    QLabel *lbl_stepsize_;
+    QLabel *lbl0_curstep_;
+    QLabel *lbl_tolerance_;
 
-    QSpinBox *spin_numpoints;
+    QSpinBox *spin_numpoints_;
     bool readFloatField(QLineEdit *, double *, double, double, double);
 
   public slots:
-    void MarkBad(QLineEdit *edt);
-    void OnFieldChange(const QString &dummy);
-    void OnFieldChange(int dummy);
+    void markBad(QLineEdit *edt);
+    void onFieldChange(const QString &dummy);
+    void onFieldChange(int dummy);
     void btn_org_toggled(bool);
     void on_btn_reset(void);
     void btn_red_toggled(bool);

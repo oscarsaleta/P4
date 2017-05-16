@@ -35,41 +35,40 @@ class QParamsDlg : public QWidget
   public:
     QParamsDlg(QFindDlg *startwindow);
     ~QParamsDlg();
-    void GetDataFromDlg(void);
-    void UpdateDlgData(void);
-    void ExclusiveToggle(bool, QRadioButton *, ...);
+    void getDataFromDlg(void);
+    void updateDlgData(void);
 
   private:
-    QFindDlg *parent;
-    QBoxLayout *mainLayout;
+    QFindDlg *parent_;
+    QBoxLayout *mainLayout_;
 
-    QRadioButton *btn_sepyes;
-    QRadioButton *btn_sepno;
-    QRadioButton *btn_num;
-    QRadioButton *btn_alg;
-    QSpinBox *spin_precis;
-    QSpinBox *spin_precis0;
-    QSpinBox *spin_level;
-    QSpinBox *spin_numlevel;
-    QSpinBox *spin_maxlevel;
-    QSpinBox *spin_weakness;
-    QSpinBox *spin_p;
-    QSpinBox *spin_q;
-    QLineEdit *edt_epsilon;
-    QLineEdit *edt_x0;
-    QLineEdit *edt_y0;
+    QRadioButton *btn_sepyes_;
+    QRadioButton *btn_sepno_;
+    QRadioButton *btn_num_;
+    QRadioButton *btn_alg_;
+    QSpinBox *spin_precis_;
+    QSpinBox *spin_precis0_;
+    QSpinBox *spin_level_;
+    QSpinBox *spin_numlevel_;
+    QSpinBox *spin_maxlevel_;
+    QSpinBox *spin_weakness_;
+    QSpinBox *spin_p_;
+    QSpinBox *spin_q_;
+    QLineEdit *edt_epsilon_;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_y0_;
 
-    QLabel *lbl_x0;
-    QLabel *lbl_y0;
-    QLabel *lbl_p;
-    QLabel *lbl_q;
+    QLabel *lbl_x0_;
+    QLabel *lbl_y0_;
+    QLabel *lbl_p_;
+    QLabel *lbl_q_;
 
   public slots:
     void btn_num_toggled(bool);
     void btn_alg_toggled(bool);
     void btn_sepyes_toggled(bool);
     void btn_sepno_toggled(bool);
-    void OnLevelChange(int);
+    void onLevelChange(int);
 };
 
 #endif /* WIN_PARAMS_H */

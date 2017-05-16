@@ -33,39 +33,39 @@ class QSettingsDlg : public QDialog
     Q_OBJECT
 
   private:
-    QPushButton *btn_base;
-    QPushButton *btn_sum;
-    QPushButton *btn_temp;
-    QPushButton *btn_maple;
-    QPushButton *btn_red;
-    QPushButton *btn_ok;
-    QPushButton *btn_reset;
-    QPushButton *btn_cancel;
-    QLineEdit *edt_base;
-    QLineEdit *edt_sum;
-    QLineEdit *edt_temp;
-    QLineEdit *edt_maple;
-    QLineEdit *edt_red;
-    QLabel *lbl_base;
-    QLabel *lbl_sum;
-    QLabel *lbl_temp;
-    QLabel *lbl_maple;
-    QLabel *lbl_red;
-    QBoxLayout *mainLayout;
+    QPushButton *btn_base_;
+    QPushButton *btn_sum_;
+    QPushButton *btn_temp_;
+    QPushButton *btn_maple_;
+    // QPushButton *btn_red;
+    QPushButton *btn_ok_;
+    QPushButton *btn_reset_;
+    QPushButton *btn_cancel_;
+    QLineEdit *edt_base_;
+    QLineEdit *edt_sum_;
+    QLineEdit *edt_temp_;
+    QLineEdit *edt_maple_;
+    // QLineEdit *edt_red;
+    QLabel *lbl_base_;
+    QLabel *lbl_sum_;
+    QLabel *lbl_temp_;
+    QLabel *lbl_maple_;
+    // QLabel *lbl_red;
+    QBoxLayout *mainLayout_;
 
   public:
     QSettingsDlg(QWidget *, Qt::WindowFlags);
-    void BrowseForExistingPathOrFile(QLineEdit *, QString, bool);
+    void browseForExistingPathOrFile(QLineEdit *, QString, bool);
 
   public slots:
     void onOk(void);
-    void OnCancel(void);
-    void OnReset(void);
-    void OnBrowseBase(void);
-    void OnBrowseSum(void);
-    void OnBrowseTemp(void);
-    void OnBrowseMaple(void);
-    void OnBrowseReduce(void);
+    void onCancel(void);
+    void onReset(void);
+    void onBrowseBase(void);
+    void onBrowseSum(void);
+    void onBrowseTemp(void);
+    void onBrowseMaple(void);
+    // void OnBrowseReduce(void);
 };
 
 #endif /* WIN_SETTINGS_H */

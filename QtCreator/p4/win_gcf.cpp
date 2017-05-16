@@ -23,129 +23,101 @@
 #include "file_vf.h"
 #include "math_gcf.h"
 
+#include <QButtonGroup>
 #include <QMessageBox>
 
 QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
-    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
+    mainSphere_ = sp;
+    plotwnd_ = plt;
 
-    mainSphere = sp;
-    plotwnd = plt;
-
-    btn_dots = new QRadioButton("Dots", this);
-    btn_dashes = new QRadioButton("Dashes", this);
+    QButtonGroup *btngrp = new QButtonGroup(this);
+    btn_dots_ = new QRadioButton("Dots", this);
+    btn_dashes_ = new QRadioButton("Dashes", this);
+    btngrp->addButton(btn_dots_);
+    btngrp->addButton(btn_dashes_);
 
     QLabel *lbl1 = new QLabel("Appearance: ", this);
 
-    edt_points = new QLineEdit("", this);
+    edt_points_ = new QLineEdit("", this);
     QLabel *lbl2 = new QLabel("#Points: ", this);
 
-    edt_precis = new QLineEdit("", this);
+    edt_precis_ = new QLineEdit("", this);
     QLabel *lbl3 = new QLabel("Precision: ", this);
 
-    edt_memory = new QLineEdit("", this);
+    edt_memory_ = new QLineEdit("", this);
     QLabel *lbl4 = new QLabel("Max. Memory: ", this);
 
-    btn_evaluate = new QPushButton("&Evaluate", this);
+    btn_evaluate_ = new QPushButton("&Evaluate", this);
 
 #ifdef TOOLTIPS
-    btn_dots->setToolTip(
+    btn_dots_->setToolTip(
         "Plot individual points of the curve of singularities");
-    btn_dashes->setToolTip("Connect points of the curve of singularities with "
-                           "small line segments");
-    edt_points->setToolTip("Number of points");
-    edt_precis->setToolTip("Required precision");
-    edt_memory->setToolTip(
+    btn_dashes_->setToolTip("Connect points of the curve of singularities with "
+                            "small line segments");
+    edt_points_->setToolTip("Number of points");
+    edt_precis_->setToolTip("Required precision");
+    edt_memory_->setToolTip(
         "Maximum amount of memory (in kilobytes) spent on plotting GCF");
-    btn_evaluate->setToolTip("Start evaluation (using symbolic manipulator)");
+    btn_evaluate_->setToolTip("Start evaluation (using symbolic manipulator)");
 #endif
 
     // layout
 
-    mainLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addWidget(lbl1);
-    layout1->addWidget(btn_dots);
-    layout1->addWidget(btn_dashes);
+    layout1->addWidget(btn_dots_);
+    layout1->addWidget(btn_dashes_);
 
     QGridLayout *lay00 = new QGridLayout();
     lay00->addWidget(lbl2, 0, 0);
-    lay00->addWidget(edt_points, 0, 1);
+    lay00->addWidget(edt_points_, 0, 1);
     lay00->addWidget(lbl3, 1, 0);
-    lay00->addWidget(edt_precis, 1, 1);
+    lay00->addWidget(edt_precis_, 1, 1);
     lay00->addWidget(lbl4, 2, 0);
-    lay00->addWidget(edt_memory, 2, 1);
+    lay00->addWidget(edt_memory_, 2, 1);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
     layout2->addStretch(0);
-    layout2->addWidget(btn_evaluate);
+    layout2->addWidget(btn_evaluate_);
     layout2->addStretch(0);
 
-    mainLayout->addLayout(layout1);
-    mainLayout->addLayout(lay00);
-    mainLayout->addLayout(layout2);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(lay00);
+    mainLayout_->addLayout(layout2);
 
-    mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout);
+    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    setLayout(mainLayout_);
 
     // connections
 
-    QObject::connect(btn_evaluate, SIGNAL(clicked()), this,
+    QObject::connect(btn_evaluate_, SIGNAL(clicked()), this,
                      SLOT(onbtn_evaluate()));
-    QObject::connect(btn_dots, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dots_toggled(bool)));
-    QObject::connect(btn_dashes, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dashes_toggled(bool)));
-
     // finishing
 
     setP4WindowTitle(this, "GCF Plot");
 }
 
-void QGcfDlg::Reset(void)
+void QGcfDlg::reset(void)
 {
     QString buf;
 
     buf.sprintf("%d", DEFAULT_GCFPOINTS);
-    edt_points->setText(buf);
+    edt_points_->setText(buf);
 
     buf.sprintf("%d", DEFAULT_GCFPRECIS);
-    edt_precis->setText(buf);
+    edt_precis_->setText(buf);
 
     buf.sprintf("%d", DEFAULT_GCFMEMORY);
-    edt_memory->setText(buf);
+    edt_memory_->setText(buf);
 
-    if (VFResults.config_dashes)
-        ExclusiveToggle(true, btn_dashes, btn_dots);
+    if (g_VFResults.config_dashes_)
+        btn_dashes_->toggle();
     else
-        ExclusiveToggle(true, btn_dots, btn_dashes);
-}
-
-void QGcfDlg::btn_dots_toggled(bool on)
-{
-    ExclusiveToggle(on, btn_dots, btn_dashes);
-}
-
-void QGcfDlg::btn_dashes_toggled(bool on)
-{
-    ExclusiveToggle(on, btn_dashes, btn_dots);
-}
-
-void QGcfDlg::ExclusiveToggle(bool on, QRadioButton *first,
-                              QRadioButton *second)
-{
-    if (on) {
-        if (first->isChecked() == false)
-            first->toggle();
-
-        if (second->isChecked() == true)
-            second->toggle();
-    } else {
-        if (second->isChecked() == false)
-            first->toggle();
-    }
+        btn_dots_->toggle();
 }
 
 void QGcfDlg::onbtn_evaluate(void)
@@ -156,32 +128,32 @@ void QGcfDlg::onbtn_evaluate(void)
     bool ok;
     QString buf;
 
-    dashes = btn_dashes->isChecked();
+    dashes = btn_dashes_->isChecked();
 
     ok = true;
 
-    buf = edt_points->text();
+    buf = edt_points_->text();
     points = buf.toInt();
 
     if (points < MIN_GCFPOINTS || points > MAX_GCFPOINTS) {
         buf += " ???";
-        edt_points->setText(buf);
+        edt_points_->setText(buf);
         ok = false;
     }
 
-    buf = edt_precis->text();
+    buf = edt_precis_->text();
     precis = buf.toInt();
     if (precis < MIN_GCFPRECIS || precis > MAX_GCFPRECIS) {
         buf += " ???";
-        edt_precis->setText(buf);
+        edt_precis_->setText(buf);
         ok = false;
     }
 
-    buf = edt_memory->text();
+    buf = edt_memory_->text();
     memory = buf.toInt();
     if (memory < MIN_GCFMEMORY || memory > MAX_GCFMEMORY) {
         buf += " ???";
-        edt_memory->setText(buf);
+        edt_memory_->setText(buf);
         ok = false;
     }
 
@@ -195,16 +167,16 @@ void QGcfDlg::onbtn_evaluate(void)
 
     // Evaluate GCF with given parameters {dashes, points, precis, memory}.
 
-    evaluating_points = points;
-    evaluating_memory = memory;
-    evaluating_precision = precis;
+    evaluating_points_ = points;
+    evaluating_memory_ = memory;
+    evaluating_precision_ = precis;
 
-    btn_evaluate->setEnabled(false);
+    btn_evaluate_->setEnabled(false);
 
-    ThisVF->gcfDlg = this;
-    result = evalGcfStart(mainSphere, dashes, points, precis);
+    g_ThisVF->gcfDlg_ = this;
+    result = evalGcfStart(mainSphere_, dashes, points, precis);
     if (!result) {
-        btn_evaluate->setEnabled(true);
+        btn_evaluate_->setEnabled(true);
         QMessageBox::critical(this, "P4", "An error occured while plotting the "
                                           "GCF.\nThe singular locus may not be "
                                           "visible, or may "
@@ -216,13 +188,13 @@ void QGcfDlg::finishGcfEvaluation(void)
 {
     bool result;
 
-    if (btn_evaluate->isEnabled() == true)
+    if (btn_evaluate_->isEnabled() == true)
         return; // not busy??
 
-    result = evalGcfContinue(evaluating_points, evaluating_precision);
+    result = evalGcfContinue(evaluating_points_, evaluating_precision_);
 
     if (result) {
-        btn_evaluate->setEnabled(true);
+        btn_evaluate_->setEnabled(true);
         result = evalGcfFinish(); // return false in case an error occured
         if (!result) {
             QMessageBox::critical(this, "P4", "An error occured while plotting "

@@ -29,8 +29,8 @@
 #include <QPushButton>
 #include <QWidget>
 
-extern QString CurrentSingularityInfo[];
-extern double CurrentSeparatriceEpsilon;
+extern QString g_CurrentSingularityInfo[];
+extern double g_CurrentSeparatriceEpsilon;
 
 class QSepDlg : public QWidget
 {
@@ -38,23 +38,23 @@ class QSepDlg : public QWidget
 
   public:
     QSepDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
 
   private:
-    QWinSphere *mainSphere;
-    QPlotWnd *plotwnd;
+    QWinSphere *mainSphere_;
+    QPlotWnd *plotwnd_;
 
-    QPushButton *btn_selectnext;
-    QPushButton *btn_intnext;
-    QPushButton *btn_start;
-    QPushButton *btn_cont;
-    QLineEdit *edt_epsilon;
-    QLabel *lbl_info[4];
+    QPushButton *btn_selectnext_;
+    QPushButton *btn_intnext_;
+    QPushButton *btn_start_;
+    QPushButton *btn_cont_;
+    QLineEdit *edt_epsilon_;
+    QLabel *lbl_info_[4];
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
-    bool started;
-    bool selected;
+    bool started_;
+    bool selected_;
 
   public slots:
     void onbtn_selectnext(void);
@@ -63,9 +63,9 @@ class QSepDlg : public QWidget
     void onbtn_start(void);
 
     void setInitialPoint(void);
-    void SepEvent(int);
+    void sepEvent(int);
     void onepsilon_enter(void);
-    void MarkBad(QLineEdit *);
+    void markBad(QLineEdit *);
 };
 
 #endif /* WIN_SEPARATRICES_H */

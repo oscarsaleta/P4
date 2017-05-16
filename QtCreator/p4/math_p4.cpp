@@ -45,9 +45,9 @@ double eval_lc_poincare(double *pp, double a, double b, double c)
 double eval_lc_lyapunov(double *pp, double a, double b, double c)
 {
     if (pp[0])
-        return a * pow(pp[1], VFResults.double_q) * cos(pp[2]) +
-               b * pow(pp[1], VFResults.double_p) * sin(pp[2]) +
-               c * pow(pp[1], VFResults.double_p_plus_q);
+        return a * pow(pp[1], g_VFResults.double_q_) * cos(pp[2]) +
+               b * pow(pp[1], g_VFResults.double_p_) * sin(pp[2]) +
+               c * pow(pp[1], g_VFResults.double_p_plus_q_);
     else
         return (a * pp[1] + b * pp[2] + c);
 }
@@ -67,11 +67,11 @@ bool less_lyapunov(double *p1, double *p2)
 
 void set_current_step(double curstep)
 {
-    VFResults.config_currentstep = curstep;
+    g_VFResults.config_currentstep_ = curstep;
 
-    if (p4startdlg != nullptr)
-        if (p4startdlg->Plot_Window != nullptr)
-            if (p4startdlg->Plot_Window->IntParams_Window != nullptr)
-                p4startdlg->Plot_Window->IntParams_Window->SetCurrentStep(
+    if (g_p4stardlg != nullptr)
+        if (g_p4stardlg->Plot_Window != nullptr)
+            if (g_p4stardlg->Plot_Window->intParamsWindow_ != nullptr)
+                g_p4stardlg->Plot_Window->intParamsWindow_->setCurrentStep(
                     curstep);
 }

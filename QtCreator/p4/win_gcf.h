@@ -35,33 +35,29 @@ class QGcfDlg : public QWidget
 
   public:
     QGcfDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
     void finishGcfEvaluation(void);
 
   private:
-    QWinSphere *mainSphere;
-    QPlotWnd *plotwnd;
+    QWinSphere *mainSphere_;
+    QPlotWnd *plotwnd_;
 
-    QPushButton *btn_evaluate;
+    QPushButton *btn_evaluate_;
 
-    QRadioButton *btn_dots;
-    QRadioButton *btn_dashes;
-    QLineEdit *edt_points;
-    QLineEdit *edt_precis;
-    QLineEdit *edt_memory;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_points_;
+    QLineEdit *edt_precis_;
+    QLineEdit *edt_memory_;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
-    void ExclusiveToggle(bool, QRadioButton *, QRadioButton *);
-
-    int evaluating_points;
-    int evaluating_memory;
-    int evaluating_precision;
+    int evaluating_points_;
+    int evaluating_memory_;
+    int evaluating_precision_;
 
   public slots:
     void onbtn_evaluate(void);
-    void btn_dots_toggled(bool);
-    void btn_dashes_toggled(bool);
 };
 
 #endif /* WIN_GCF_H */

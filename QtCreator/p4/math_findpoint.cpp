@@ -67,9 +67,9 @@ static double find_distance_saddle(struct saddle *point, double x, double y,
             if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
                 (distance == -1)) {
                 distance = d;
-                VFResults.selected_saddle_point = point;
-                VFResults.selected_ucoord[0] = ucoord[0];
-                VFResults.selected_ucoord[1] = ucoord[1];
+                g_VFResults.selected_saddle_point_ = point;
+                g_VFResults.selected_ucoord_[0] = ucoord[0];
+                g_VFResults.selected_ucoord_[1] = ucoord[1];
                 *type = SADDLE;
             }
         } while ((point = point->next_saddle) != nullptr);
@@ -110,9 +110,9 @@ static double find_distance_se(struct semi_elementary *point, double x,
                 if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
                     (distance == -1)) {
                     distance = d;
-                    VFResults.selected_se_point = point;
-                    VFResults.selected_ucoord[0] = ucoord[0];
-                    VFResults.selected_ucoord[1] = ucoord[1];
+                    g_VFResults.selected_se_point_ = point;
+                    g_VFResults.selected_ucoord_[0] = ucoord[0];
+                    g_VFResults.selected_ucoord_[1] = ucoord[1];
                     *type = SEMI_HYPERBOLIC;
                 }
             }
@@ -154,9 +154,9 @@ static double find_distance_de(struct degenerate *point, double x, double y,
                     (distance == -1))
                     if ((d < distance) || (distance == -1)) {
                         distance = d;
-                        VFResults.selected_ucoord[0] = ucoord[0];
-                        VFResults.selected_ucoord[1] = ucoord[1];
-                        VFResults.selected_de_point = point;
+                        g_VFResults.selected_ucoord_[0] = ucoord[0];
+                        g_VFResults.selected_ucoord_[1] = ucoord[1];
+                        g_VFResults.selected_de_point_ = point;
                         *type = NON_ELEMENTARY;
                     }
             }
@@ -174,18 +174,18 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
     struct sep *sepc;
     struct blow_up_points *bc;
 
-    CurrentSingularityInfo[0] = "";
-    CurrentSingularityInfo[1] = "";
-    CurrentSingularityInfo[2] = "";
-    CurrentSingularityInfo[3] = "";
+    g_CurrentSingularityInfo[0] = "";
+    g_CurrentSingularityInfo[1] = "";
+    g_CurrentSingularityInfo[2] = "";
+    g_CurrentSingularityInfo[3] = "";
 
     distance = -1;
-    distance = find_distance_saddle(VFResults.first_saddle_point, x, y,
+    distance = find_distance_saddle(g_VFResults.first_saddle_point_, x, y,
                                     distance, &type);
     distance =
-        find_distance_se(VFResults.first_se_point, x, y, distance, &type);
+        find_distance_se(g_VFResults.first_se_point_, x, y, distance, &type);
     distance =
-        find_distance_de(VFResults.first_de_point, x, y, distance, &type);
+        find_distance_de(g_VFResults.first_de_point_, x, y, distance, &type);
 
     if (distance == -1)
         return false;
@@ -199,9 +199,9 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
 
     switch (type) {
     case SADDLE:
-        sepc = VFResults.selected_sep =
-            VFResults.selected_saddle_point->separatrices;
-        draw_selected_sep(spherewnd, VFResults.selected_sep->first_sep_point,
+        sepc = g_VFResults.selected_sep_ =
+            g_VFResults.selected_saddle_point_->separatrices;
+        draw_selected_sep(spherewnd, g_VFResults.selected_sep_->first_sep_point,
                           CW_SEP);
 
         while (sepc != nullptr) {
@@ -214,34 +214,36 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         plot_next_sep = plot_next_saddle_sep;
         select_next_sep = select_next_saddle_sep;
         s = "SADDLE";
-        epsilon = VFResults.selected_saddle_point->epsilon;
+        epsilon = g_VFResults.selected_saddle_point_->epsilon;
         change_epsilon = change_epsilon_saddle;
 
-        if (VFResults.selected_saddle_point->chart == CHART_R2) {
-            sx.sprintf("x = %f", (float)(VFResults.selected_saddle_point->x0));
-            sy.sprintf("y = %f", (float)(VFResults.selected_saddle_point->y0));
+        if (g_VFResults.selected_saddle_point_->chart == CHART_R2) {
+            sx.sprintf("x = %f",
+                       (float)(g_VFResults.selected_saddle_point_->x0));
+            sy.sprintf("y = %f",
+                       (float)(g_VFResults.selected_saddle_point_->y0));
             sz = "";
         } else {
-            switch (VFResults.selected_saddle_point->chart) {
+            switch (g_VFResults.selected_saddle_point_->chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (VFResults.selected_saddle_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_saddle_point_->x0, 0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (VFResults.selected_saddle_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_saddle_point_->x0, 0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (VFResults.selected_saddle_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_saddle_point_->x0, 0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (VFResults.selected_saddle_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_saddle_point_->x0, 0.0, pcoord);
                 break;
             }
 
-            if (VFResults.plweights == false) {
+            if (g_VFResults.plweights_ == false) {
                 sx.sprintf("X= %f", (float)(pcoord[0]));
                 sy.sprintf("Y= %f", (float)(pcoord[1]));
                 sz.sprintf("Z= 0");
@@ -254,9 +256,9 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         break;
 
     case SEMI_HYPERBOLIC:
-        sepc = VFResults.selected_sep =
-            VFResults.selected_se_point->separatrices;
-        draw_selected_sep(spherewnd, VFResults.selected_sep->first_sep_point,
+        sepc = g_VFResults.selected_sep_ =
+            g_VFResults.selected_se_point_->separatrices;
+        draw_selected_sep(spherewnd, g_VFResults.selected_sep_->first_sep_point,
                           CW_SEP);
 
         while (sepc != nullptr) {
@@ -269,32 +271,32 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         plot_next_sep = plot_next_se_sep;
         select_next_sep = select_next_se_sep;
         s = "SEMI-HYPERBOLIC";
-        epsilon = VFResults.selected_se_point->epsilon;
+        epsilon = g_VFResults.selected_se_point_->epsilon;
         change_epsilon = change_epsilon_se;
-        if (VFResults.selected_se_point->chart == CHART_R2) {
-            sx.sprintf("x=%f", (float)(VFResults.selected_se_point->x0));
-            sy.sprintf("y=%f", (float)(VFResults.selected_se_point->y0));
+        if (g_VFResults.selected_se_point_->chart == CHART_R2) {
+            sx.sprintf("x=%f", (float)(g_VFResults.selected_se_point_->x0));
+            sy.sprintf("y=%f", (float)(g_VFResults.selected_se_point_->y0));
             sz = "";
         } else {
-            switch (VFResults.selected_se_point->chart) {
+            switch (g_VFResults.selected_se_point_->chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (VFResults.selected_se_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_se_point_->x0, 0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (VFResults.selected_se_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_se_point_->x0, 0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (VFResults.selected_se_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_se_point_->x0, 0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (VFResults.selected_se_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_se_point_->x0, 0.0, pcoord);
                 break;
             }
-            if (VFResults.plweights == false) {
+            if (g_VFResults.plweights_ == false) {
                 sx.sprintf("X= %f", (float)(pcoord[0]));
                 sy.sprintf("Y= %f", (float)(pcoord[1]));
                 sz.sprintf("Z= 0");
@@ -307,11 +309,11 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         break;
 
     case NON_ELEMENTARY:
-        VFResults.selected_de_sep = VFResults.selected_de_point->blow_up;
-        draw_selected_sep(spherewnd, VFResults.selected_de_sep->first_sep_point,
-                          CW_SEP);
+        g_VFResults.selected_de_sep_ = g_VFResults.selected_de_point_->blow_up;
+        draw_selected_sep(
+            spherewnd, g_VFResults.selected_de_sep_->first_sep_point, CW_SEP);
 
-        for (bc = VFResults.selected_de_sep; bc != nullptr;
+        for (bc = g_VFResults.selected_de_sep_; bc != nullptr;
              bc = bc->next_blow_up_point)
             sepcount++;
 
@@ -320,32 +322,32 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         plot_next_sep = plot_next_de_sep;
         select_next_sep = select_next_de_sep;
         s = "NON-ELEMENTARY";
-        epsilon = VFResults.selected_de_point->epsilon;
+        epsilon = g_VFResults.selected_de_point_->epsilon;
         change_epsilon = change_epsilon_de;
-        if (VFResults.selected_de_point->chart == CHART_R2) {
-            sx.sprintf("x=%f", (float)(VFResults.selected_de_point->x0));
-            sy.sprintf("y=%f", (float)(VFResults.selected_de_point->y0));
+        if (g_VFResults.selected_de_point_->chart == CHART_R2) {
+            sx.sprintf("x=%f", (float)(g_VFResults.selected_de_point_->x0));
+            sy.sprintf("y=%f", (float)(g_VFResults.selected_de_point_->y0));
             sz = "";
         } else {
-            switch (VFResults.selected_de_point->chart) {
+            switch (g_VFResults.selected_de_point_->chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (VFResults.selected_de_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_de_point_->x0, 0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (VFResults.selected_de_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_de_point_->x0, 0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (VFResults.selected_de_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_de_point_->x0, 0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (VFResults.selected_de_point->x0, 0.0, pcoord);
+                (g_VFResults.selected_de_point_->x0, 0.0, pcoord);
                 break;
             }
-            if (VFResults.plweights == false) {
+            if (g_VFResults.plweights_ == false) {
                 sx.sprintf("X= %f", (float)(pcoord[0]));
                 sy.sprintf("Y= %f", (float)(pcoord[1]));
                 sz.sprintf("Z= 0");
@@ -358,11 +360,11 @@ int find_critical_point(QWinSphere *spherewnd, double x, double y)
         break;
     }
 
-    CurrentSingularityInfo[0] = s;
-    CurrentSingularityInfo[1] = sx;
-    CurrentSingularityInfo[2] = sy;
-    CurrentSingularityInfo[3] = sz;
-    CurrentSeparatriceEpsilon = epsilon;
+    g_CurrentSingularityInfo[0] = s;
+    g_CurrentSingularityInfo[1] = sx;
+    g_CurrentSingularityInfo[2] = sy;
+    g_CurrentSingularityInfo[3] = sz;
+    g_CurrentSeparatriceEpsilon = epsilon;
 
     return true;
 }

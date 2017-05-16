@@ -34,38 +34,38 @@ class QOrbitsDlg : public QWidget
 
   public:
     QOrbitsDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
 
   private:
-    QWinSphere *mainSphere;
-    QPlotWnd *plotwnd;
+    QWinSphere *mainSphere_;
+    QPlotWnd *plotwnd_;
 
-    QPushButton *btn_forwards;
-    QPushButton *btn_continue;
-    QPushButton *btn_backwards;
-    QPushButton *btn_delall;
-    QPushButton *btn_dellast;
-    QPushButton *btn_select;
+    QPushButton *btnForwards_;
+    QPushButton *btnContinue_;
+    QPushButton *btnBackwards_;
+    QPushButton *btnDelAll_;
+    QPushButton *btnDelLast_;
+    QPushButton *btnSelect_;
 
-    QLineEdit *edt_x0;
-    QLineEdit *edt_y0;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_y0_;
 
-    QBoxLayout *mainLayout;
+    QBoxLayout *mainLayout_;
 
-    double selected_x0;
-    double selected_y0;
+    double selected_x0_;
+    double selected_y0_;
 
-    bool orbit_started;
-    bool orbit_selected;
+    bool orbitStarted_;
+    bool orbitSelected_;
 
   public slots:
-    void OrbitEvent(int);
-    void onbtn_select(void);
-    void onbtn_backwards(void);
-    void onbtn_continue(void);
-    void onbtn_forwards(void);
-    void onbtn_delall(void);
-    void onbtn_dellast(void);
+    void orbitEvent(int);
+    void onBtnSelect(void);
+    void onBtnBackwards(void);
+    void onBtnContinue(void);
+    void onBtnForwards(void);
+    void onBtnDelAll(void);
+    void onBtnDelLast(void);
 
     void setInitialPoint(double, double);
 };

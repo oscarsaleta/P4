@@ -46,29 +46,29 @@ class QInputVF : public QObject
     QInputVF();
     ~QInputVF();
 
-    QString filename;
+    QString filename_;
 
-    int symbolicpackage; // 0 for reduce, 1 for maple
-    int typeofstudy;     // 0, 1, 2, 3 = all, inf, fin, one
+    int symbolicpackage_; // 0 for reduce, 1 for maple
+    int typeofstudy_;     // 0, 1, 2, 3 = all, inf, fin, one
 
-    bool numeric;
-    int precision;
-    int precision0;
-    QString epsilon;
-    bool testsep;
-    int taylorlevel;
-    int numericlevel;
-    int maxlevel;
-    int weakness;
-    QString x0;
-    QString y0;
-    int p;
-    int q;
+    bool numeric_;
+    int precision_;
+    int precision0_;
+    QString epsilon_;
+    bool testsep_;
+    int taylorlevel_;
+    int numericlevel_;
+    int maxlevel_;
+    int weakness_;
+    QString x0_;
+    QString y0_;
+    int p_;
+    int q_;
 
-    QString xdot;
-    QString ydot;
-    QString gcf;
-    QString curve;
+    QString xdot_;
+    QString ydot_;
+    QString gcf_;
+    QString curve_;
     QString evalFile_;
     QString evalFile2_;
 
@@ -78,20 +78,20 @@ class QInputVF : public QObject
     QPushButton *terminateProcessButton_;
     QPushButton *clearProcessButton_;
 
-    int numparams;
-    QString parlabel[MAXNUMPARAMS];
-    QString parvalue[MAXNUMPARAMS];
+    int numparams_;
+    QString parlabel_[MAXNUMPARAMS];
+    QString parvalue_[MAXNUMPARAMS];
 
-    bool changed;       // set when data needs to be saved
-    bool evaluated;     // set when data has been evaluated
-    bool evaluating;    // set while evaluating
-    bool cleared;       // initial state, when records are clear
-    bool evaluatinggcf; // true when evaluation is of GCF kind
-    bool evaluatingCurve;
-    bool processfailed;   // true when process failed;
+    bool changed_;       // set when data needs to be saved
+    bool evaluated_;     // set when data has been evaluated
+    bool evaluating_;    // set while evaluating
+    bool cleared_;       // initial state, when records are clear
+    bool evaluatinggcf_; // true when evaluation is of GCF kind
+    bool evaluatingCurve_;
+    bool processfailed_;   // true when process failed;
     QString processError_; // only relevant when processfailed=true
-    QGcfDlg *gcfDlg;
-    QCurveDlg *curveDlg;
+    QGcfDlg *gcfDlg_;
+    QCurveDlg *curveDlg_;
 
     QString getfilename(void) const;            // filename.inp
     QString getbarefilename(void) const;        // filename
@@ -115,7 +115,7 @@ class QInputVF : public QObject
     void reset(void);
     bool checkevaluated(void);
 
-    static bool FileExists(QString);
+    static bool fileExists(QString);
 
     // void prepareReduceParameters(QTextStream *);
     // void prepareReduceVectorField(QTextStream *);
@@ -156,6 +156,6 @@ class QInputVF : public QObject
     void finishCurveEvaluation(void);
 };
 
-extern QInputVF *ThisVF;
+extern QInputVF *g_ThisVF;
 
 #endif /* FILE_VF_H */

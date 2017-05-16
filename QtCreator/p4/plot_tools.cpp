@@ -63,13 +63,13 @@ void spherePlotLine(QWinSphere *sp, double *p1, double *p2, int color)
                                           ucoord4)) {
         while (sp != nullptr) {
             sp->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
-            sp = sp->next;
+            sp = sp->next_;
         }
     } else {
         while (sp != nullptr) {
             sp->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
             sp->drawLine(ucoord3[0], ucoord3[1], ucoord4[0], ucoord4[1], color);
-            sp = sp->next;
+            sp = sp->next_;
         }
     }
 }
@@ -82,7 +82,7 @@ void spherePlotPoint(QWinSphere *sp, double *p, int color)
 
     while (sp != nullptr) {
         sp->drawPoint(ucoord[0], ucoord[1], color);
-        sp = sp->next;
+        sp = sp->next_;
     }
 }
 

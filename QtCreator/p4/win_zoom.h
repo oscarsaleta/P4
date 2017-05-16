@@ -37,31 +37,31 @@ class QZoomWnd : public QMainWindow
     QZoomWnd(QPlotWnd *, int, double x1, double y1, double x2, double y2);
     ~QZoomWnd();
 
-    int zoomid;
+    int zoomid_;
 
   private:
-    QPlotWnd *parent;
-    QBoxLayout *mainLayout;
-    QAction *ActClose;
-    QAction *ActRefresh;
-    QAction *ActPrint;
+    QPlotWnd *parent_;
+    QBoxLayout *mainLayout_;
+    QAction *actClose_;
+    QAction *actRefresh_;
+    QAction *actPrint_;
 
-    QWinSphere *sphere; // main sphere
+    QWinSphere *sphere_; // main sphere
 
   public slots:
     void signalEvaluating(void);
     void signalEvaluated(void);
     void signalChanged(void);
 
-    void OnBtnClose(void);
-    void OnBtnRefresh(void);
-    void OnBtnPrint(void);
+    void onBtnClose(void);
+    void onBtnRefresh(void);
+    void onBtnPrint(void);
     bool close(void);
 
     void configure(void);
     void customEvent(QEvent *e);
     void hideEvent(QHideEvent *h);
-    void AdjustHeight(void);
+    void adjustHeight(void);
 };
 
 #endif /* WIN_ZOOM_H */

@@ -29,7 +29,7 @@
 #include <iostream>
 #include <locale.h>
 
-QVFStudy VFResults;
+QVFStudy g_VFResults;
 
 /*
     This file contains the code to read the information from reduce/maple.
@@ -43,73 +43,79 @@ QVFStudy::QVFStudy()
 {
     // initialize vector field structures:
 
-    f_vec_field[0] = nullptr;
-    f_vec_field[1] = nullptr;
-    vec_field_U1[0] = nullptr;
-    vec_field_U1[1] = nullptr;
-    vec_field_U2[0] = nullptr;
-    vec_field_U2[1] = nullptr;
-    vec_field_V1[0] = nullptr;
-    vec_field_V1[1] = nullptr;
-    vec_field_V2[0] = nullptr;
-    vec_field_V2[1] = nullptr;
-    vec_field_C[0] = nullptr;
-    vec_field_C[1] = nullptr;
+    f_vec_field_[0] = nullptr;
+    f_vec_field_[1] = nullptr;
+    vec_field_U1_[0] = nullptr;
+    vec_field_U1_[1] = nullptr;
+    vec_field_U2_[0] = nullptr;
+    vec_field_U2_[1] = nullptr;
+    vec_field_V1_[0] = nullptr;
+    vec_field_V1_[1] = nullptr;
+    vec_field_V2_[0] = nullptr;
+    vec_field_V2_[1] = nullptr;
+    vec_field_C_[0] = nullptr;
+    vec_field_C_[1] = nullptr;
 
     // initialize singular points structures:
 
-    first_saddle_point = nullptr;
-    first_se_point = nullptr;
-    first_node_point = nullptr;
-    first_sf_point = nullptr;
-    first_wf_point = nullptr;
-    first_de_point = nullptr;
+    first_saddle_point_ = nullptr;
+    first_se_point_ = nullptr;
+    first_node_point_ = nullptr;
+    first_sf_point_ = nullptr;
+    first_wf_point_ = nullptr;
+    first_de_point_ = nullptr;
 
     // initialize GCF:
 
-    gcf = nullptr;
-    gcf_U1 = nullptr;
-    gcf_U2 = nullptr;
-    gcf_V1 = nullptr;
-    gcf_V2 = nullptr;
-    gcf_C = nullptr;
-    gcf_points = nullptr;
+    gcf_ = nullptr;
+    gcf_U1_ = nullptr;
+    gcf_U2_ = nullptr;
+    gcf_V1_ = nullptr;
+    gcf_V2_ = nullptr;
+    gcf_C_ = nullptr;
+    gcf_points_ = nullptr;
 
     // initialize limit cycles & orbits
 
-    first_lim_cycle = nullptr;
-    first_orbit = nullptr;
-    current_orbit = nullptr;
+    first_lim_cycle_ = nullptr;
+    first_orbit_ = nullptr;
+    current_orbit_ = nullptr;
 
     // initialize others
 
-    xmin = -1.0;
-    xmax = 1.0;
-    ymin = -1.0;
-    ymax = 1.0;
-    p = 1;
-    q = 1;
-    typeofstudy = TYPEOFSTUDY_ALL;
-    singinf = false;
-    VFResults.dir_vec_field = 1;
+    xmin_ = -1.0;
+    xmax_ = 1.0;
+    ymin_ = -1.0;
+    ymax_ = 1.0;
+    p_ = 1;
+    q_ = 1;
+    typeofstudy_ = TYPEOFSTUDY_ALL;
+    singinf_ = false;
+    g_VFResults.dir_vec_field_ = 1;
 
     // initialize parameters
 
-    config_lc_value =
-        DEFAULT_LCORBITS; // number of orbits in the limit cycle window
-    config_lc_numpoints =
-        DEFAULT_LCPOINTS;     // number of points in the limit cycle window
-    config_hma = DEFAULT_HMA; // maximum step size
-    config_hmi = DEFAULT_HMI; // minimum step size
-    config_step = DEFAULT_STEPSIZE; // step size
-    config_currentstep =
-        DEFAULT_STEPSIZE; // current step size (during integration)
-    config_tolerance = DEFAULT_TOLERANCE; // tolerance
-    config_projection =
-        DEFAULT_PROJECTION; // projection in the case of Poincare sphere
-    config_intpoints = DEFAULT_INTPOINTS; // number of points to integrate
-    config_dashes = DEFAULT_LINESTYLE;    // line style (dashes or points)
-    config_kindvf = DEFAULT_INTCONFIG;
+    // number of orbits in the limit cycle window
+    config_lc_value_ = DEFAULT_LCORBITS;
+    // number of points in the limit cycle window
+    config_lc_numpoints_ = DEFAULT_LCPOINTS;
+    // maximum step size
+    config_hma_ = DEFAULT_HMA;
+    // minimum step size
+    config_hmi_ = DEFAULT_HMI;
+    // step size
+    config_step_ = DEFAULT_STEPSIZE;
+    // current step size (during integration)
+    config_currentstep_ = DEFAULT_STEPSIZE;
+    // tolerance
+    config_tolerance_ = DEFAULT_TOLERANCE;
+    // projection in the case of Poincare sphere
+    config_projection_ = DEFAULT_PROJECTION;
+    // number of points to integrate
+    config_intpoints_ = DEFAULT_INTPOINTS;
+    // line style (dashes or points)
+    config_dashes_ = DEFAULT_LINESTYLE;
+    config_kindvf_ = DEFAULT_INTCONFIG;
 }
 
 // -----------------------------------------------------------------------
@@ -123,102 +129,102 @@ QVFStudy::~QVFStudy() { deleteVF(); }
 void QVFStudy::deleteVF()
 {
     // Delete Vector Field
-    delete_term2(f_vec_field[0]);
-    delete_term2(f_vec_field[1]);
-    delete_term2(vec_field_U1[0]);
-    delete_term2(vec_field_U1[1]);
-    delete_term2(vec_field_U2[0]);
-    delete_term2(vec_field_U2[1]);
-    delete_term2(vec_field_V1[0]);
-    delete_term2(vec_field_V1[1]);
-    delete_term2(vec_field_V2[0]);
-    delete_term2(vec_field_V2[1]);
-    delete_term3(vec_field_C[0]);
-    delete_term3(vec_field_C[1]);
+    delete_term2(f_vec_field_[0]);
+    delete_term2(f_vec_field_[1]);
+    delete_term2(vec_field_U1_[0]);
+    delete_term2(vec_field_U1_[1]);
+    delete_term2(vec_field_U2_[0]);
+    delete_term2(vec_field_U2_[1]);
+    delete_term2(vec_field_V1_[0]);
+    delete_term2(vec_field_V1_[1]);
+    delete_term2(vec_field_V2_[0]);
+    delete_term2(vec_field_V2_[1]);
+    delete_term3(vec_field_C_[0]);
+    delete_term3(vec_field_C_[1]);
 
-    f_vec_field[0] = nullptr;
-    f_vec_field[1] = nullptr;
-    vec_field_U1[0] = nullptr;
-    vec_field_U1[1] = nullptr;
-    vec_field_U2[0] = nullptr;
-    vec_field_U2[1] = nullptr;
-    vec_field_V1[0] = nullptr;
-    vec_field_V1[1] = nullptr;
-    vec_field_V2[0] = nullptr;
-    vec_field_V2[1] = nullptr;
-    vec_field_C[0] = nullptr;
-    vec_field_C[1] = nullptr;
+    f_vec_field_[0] = nullptr;
+    f_vec_field_[1] = nullptr;
+    vec_field_U1_[0] = nullptr;
+    vec_field_U1_[1] = nullptr;
+    vec_field_U2_[0] = nullptr;
+    vec_field_U2_[1] = nullptr;
+    vec_field_V1_[0] = nullptr;
+    vec_field_V1_[1] = nullptr;
+    vec_field_V2_[0] = nullptr;
+    vec_field_V2_[1] = nullptr;
+    vec_field_C_[0] = nullptr;
+    vec_field_C_[1] = nullptr;
 
     // Delete singular points
-    deleteSaddle(first_saddle_point);
-    deleteSemiElementary(first_se_point);
-    deleteNode(first_node_point);
-    deleteDegenerate(first_de_point);
-    deleteStrongFocus(first_sf_point);
-    deleteWeakFocus(first_wf_point);
+    deleteSaddle(first_saddle_point_);
+    deleteSemiElementary(first_se_point_);
+    deleteNode(first_node_point_);
+    deleteDegenerate(first_de_point_);
+    deleteStrongFocus(first_sf_point_);
+    deleteWeakFocus(first_wf_point_);
 
-    first_saddle_point = nullptr;
-    first_se_point = nullptr;
-    first_node_point = nullptr;
-    first_sf_point = nullptr;
-    first_wf_point = nullptr;
-    first_de_point = nullptr;
+    first_saddle_point_ = nullptr;
+    first_se_point_ = nullptr;
+    first_node_point_ = nullptr;
+    first_sf_point_ = nullptr;
+    first_wf_point_ = nullptr;
+    first_de_point_ = nullptr;
 
     // Delete GCF:
-    delete_term2(gcf);
-    delete_term2(gcf_U1);
-    delete_term2(gcf_U2);
-    delete_term2(gcf_V1);
-    delete_term2(gcf_V2);
-    delete_term3(gcf_C);
-    deleteOrbitPoint(gcf_points);
+    delete_term2(gcf_);
+    delete_term2(gcf_U1_);
+    delete_term2(gcf_U2_);
+    delete_term2(gcf_V1_);
+    delete_term2(gcf_V2_);
+    delete_term3(gcf_C_);
+    deleteOrbitPoint(gcf_points_);
 
-    gcf = nullptr;
-    gcf_U1 = nullptr;
-    gcf_U2 = nullptr;
-    gcf_V1 = nullptr;
-    gcf_V2 = nullptr;
-    gcf_C = nullptr;
-    gcf_points = nullptr;
+    gcf_ = nullptr;
+    gcf_U1_ = nullptr;
+    gcf_U2_ = nullptr;
+    gcf_V1_ = nullptr;
+    gcf_V2_ = nullptr;
+    gcf_C_ = nullptr;
+    gcf_points_ = nullptr;
 
     // Delete curve:
-    delete_term2(curve);
-    delete_term2(curve_U1);
-    delete_term2(curve_U2);
-    delete_term2(curve_V1);
-    delete_term2(curve_V2);
-    delete_term3(curve_C);
-    deleteOrbitPoint(curve_points);
+    delete_term2(curve_);
+    delete_term2(curve_U1_);
+    delete_term2(curve_U2_);
+    delete_term2(curve_V1_);
+    delete_term2(curve_V2_);
+    delete_term3(curve_C_);
+    deleteOrbitPoint(curve_points_);
 
-    curve = nullptr;
-    curve_U1 = nullptr;
-    curve_U2 = nullptr;
-    curve_V1 = nullptr;
-    curve_V2 = nullptr;
-    curve_C = nullptr;
-    curve_points = nullptr;
+    curve_ = nullptr;
+    curve_U1_ = nullptr;
+    curve_U2_ = nullptr;
+    curve_V1_ = nullptr;
+    curve_V2_ = nullptr;
+    curve_C_ = nullptr;
+    curve_points_ = nullptr;
 
     // Delete all orbits
-    deleteOrbit(first_orbit);
-    first_orbit = nullptr;
-    current_orbit = nullptr;
+    deleteOrbit(first_orbit_);
+    first_orbit_ = nullptr;
+    current_orbit_ = nullptr;
 
     // Delete limit cycles
-    deleteLimitCycle(first_lim_cycle);
-    first_lim_cycle = nullptr;
+    deleteLimitCycle(first_lim_cycle_);
+    first_lim_cycle_ = nullptr;
 
     // reset others
-    xmin = -1.0;
-    xmax = 1.0;
-    ymin = -1.0;
-    ymax = 1.0;
-    p = 1;
-    q = 1;
-    typeofstudy = TYPEOFSTUDY_ALL;
-    singinf = false;
-    VFResults.dir_vec_field = 1;
+    xmin_ = -1.0;
+    xmax_ = 1.0;
+    ymin_ = -1.0;
+    ymax_ = 1.0;
+    p_ = 1;
+    q_ = 1;
+    typeofstudy_ = TYPEOFSTUDY_ALL;
+    singinf_ = false;
+    g_VFResults.dir_vec_field_ = 1;
 
-    lasterror = "";
+    lasterror_ = "";
 }
 
 // -----------------------------------------------------------------------
@@ -441,33 +447,34 @@ bool QVFStudy::readTables(QString basename)
         return false;
     }
 
-    if (fscanf(fp, "%d %d %d ", &typeofstudy, &p, &q) != 3) {
-        dump(basename, "Cannot read typeofstudy in *_vec.tab");
+    if (fscanf(fp, "%d %d %d ", &typeofstudy_, &p_, &q_) != 3) {
+        dump(basename, "Cannot read typeofstudy_ in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
-        if (fscanf(fp, "%lf %lf %lf %lf", &xmin, &xmax, &ymin, &ymax) != 4) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+        if (fscanf(fp, "%lf %lf %lf %lf", &xmin_, &xmax_, &ymin_, &ymax_) !=
+            4) {
             dump(basename, "Cannot read min-max coords in *_vec.tab");
             deleteVF();
             fclose(fp);
             return false;
         }
-        p = q = 1;
-        typeofview = TYPEOFVIEW_PLANE;
+        p_ = q_ = 1;
+        typeofview_ = TYPEOFVIEW_PLANE;
     } else
-        typeofview = TYPEOFVIEW_SPHERE;
+        typeofview_ = TYPEOFVIEW_SPHERE;
 
-    plweights = ((p == 1 && q == 1) ? false : true);
+    plweights_ = ((p_ == 1 && q_ == 1) ? false : true);
 
-    double_p = (double)p;
-    double_q = (double)q;
-    double_p_plus_q = (double)(p + q);
-    double_p_minus_1 = (double)(p - 1);
-    double_q_minus_1 = (double)(q - 1);
-    double_q_minus_p = (double)(q - p);
+    double_p_ = (double)p_;
+    double_q_ = (double)q_;
+    double_p_plus_q_ = (double)(p_ + q_);
+    double_p_minus_1_ = (double)(p_ - 1);
+    double_q_minus_1_ = (double)(q_ - 1);
+    double_q_minus_p_ = (double)(q_ - p_);
 
     if (!readGCF(fp)) {
         dump(basename, "Cannot read gcf *_vec.tab");
@@ -476,64 +483,64 @@ bool QVFStudy::readTables(QString basename)
         return false;
     }
 
-    if (!readVectorField(fp, f_vec_field)) {
+    if (!readVectorField(fp, f_vec_field_)) {
         dump(basename, "Cannot read vector field in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (!readVectorField(fp, vec_field_U1)) {
+    if (!readVectorField(fp, vec_field_U1_)) {
         dump(basename, "Cannot read vector field in U1-chart in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (!readVectorField(fp, vec_field_V1)) {
+    if (!readVectorField(fp, vec_field_V1_)) {
         dump(basename, "Cannot read vector field in V1-chart in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (!readVectorField(fp, vec_field_U2)) {
+    if (!readVectorField(fp, vec_field_U2_)) {
         dump(basename, "Cannot read vector field in U2-chart in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (!readVectorField(fp, vec_field_V2)) {
+    if (!readVectorField(fp, vec_field_V2_)) {
         dump(basename, "Cannot read vector field in V2-chart in *_vec.tab");
         deleteVF();
         fclose(fp);
         return false;
     }
 
-    if (plweights) {
-        if (!readVectorFieldCylinder(fp, vec_field_C)) {
+    if (plweights_) {
+        if (!readVectorFieldCylinder(fp, vec_field_C_)) {
             dump(basename,
                  "Cannot read vector field in Cylinder-chart in *_vec.tab");
             deleteVF();
             fclose(fp);
             return false;
         }
-        singinf = 0;
+        singinf_ = 0;
     } else {
-        if (fscanf(fp, "%d %d", &flag, &VFResults.dir_vec_field) != 2) {
+        if (fscanf(fp, "%d %d", &flag, &g_VFResults.dir_vec_field_) != 2) {
             dump(basename, "Cannot read sing-at-infinity flag and directions "
                            "flag in *_vec.tab");
             deleteVF();
             fclose(fp);
             return false;
         }
-        singinf = ((flag == 0) ? false : true);
+        singinf_ = ((flag == 0) ? false : true);
     }
 
     fclose(fp);
 
-    if (typeofstudy != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != TYPEOFSTUDY_INF) {
 
         fp = fopen(QFile::encodeName(basename + "_fin.tab"), "rt");
         if (fp != nullptr) {
@@ -541,7 +548,7 @@ bool QVFStudy::readTables(QString basename)
                 dump(basename,
                      QString(
                          "Problem reading singularity info from *_fin.tab:") +
-                         lasterror);
+                         lasterror_);
                 deleteVF();
                 fclose(fp);
                 return false;
@@ -554,16 +561,16 @@ bool QVFStudy::readTables(QString basename)
         }
     }
 
-    if (typeofstudy != TYPEOFSTUDY_ONE && typeofstudy != TYPEOFSTUDY_FIN) {
+    if (typeofstudy_ != TYPEOFSTUDY_ONE && typeofstudy_ != TYPEOFSTUDY_FIN) {
         fp = fopen(QFile::encodeName(basename + "_inf.tab"), "rt");
         if (fp != nullptr) {
-            if (p == 1 && q == 1) {
+            if (p_ == 1 && q_ == 1) {
                 for (j = 1; j <= 2; j++) {
                     if (!readPoints(fp)) {
                         dump(basename,
                              QString(
                                  "Cannot read singular points in *_inf.tab (") +
-                                 QString::number(j) + "):" + lasterror);
+                                 QString::number(j) + "):" + lasterror_);
                         deleteVF();
                         fclose(fp);
                         return false;
@@ -575,7 +582,7 @@ bool QVFStudy::readTables(QString basename)
                         dump(basename,
                              QString(
                                  "Cannot read singular points in *_inf.tab (") +
-                                 QString::number(j) + "):" + lasterror);
+                                 QString::number(j) + "):" + lasterror_);
                         deleteVF();
                         fclose(fp);
                         return false;
@@ -608,61 +615,61 @@ bool QVFStudy::readGCF(FILE *fp)
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf = new term2;
-        gcf->next_term2 = nullptr;
+        gcf_ = new term2;
+        gcf_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, gcf, N))
+        if (!readTerm2(fp, gcf_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf_U1 = new term2;
-        gcf_U1->next_term2 = nullptr;
+        gcf_U1_ = new term2;
+        gcf_U1_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, gcf_U1, N))
+        if (!readTerm2(fp, gcf_U1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf_U2 = new term2;
-        gcf_U2->next_term2 = nullptr;
+        gcf_U2_ = new term2;
+        gcf_U2_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, gcf_U2, N))
+        if (!readTerm2(fp, gcf_U2_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        gcf_V1 = new term2;
-        gcf_V1->next_term2 = nullptr;
-        if (!readTerm2(fp, gcf_V1, N))
+        gcf_V1_ = new term2;
+        gcf_V1_->next_term2 = nullptr;
+        if (!readTerm2(fp, gcf_V1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        gcf_V2 = new term2;
-        gcf_V2->next_term2 = nullptr;
-        if (!readTerm2(fp, gcf_V2, N))
+        gcf_V2_ = new term2;
+        gcf_V2_->next_term2 = nullptr;
+        if (!readTerm2(fp, gcf_V2_, N))
             return false;
 
-        if (p != 1 || q != 1) {
+        if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            gcf_C = new term3;
-            gcf_C->next_term3 = nullptr;
-            if (!readTerm3(fp, gcf_C, N))
+            gcf_C_ = new term3;
+            gcf_C_->next_term3 = nullptr;
+            if (!readTerm3(fp, gcf_C_, N))
                 return false;
         }
     } else {
-        gcf = nullptr;
-        gcf_U1 = nullptr;
-        gcf_U2 = nullptr;
-        gcf_V1 = nullptr;
-        gcf_V2 = nullptr;
-        gcf_C = nullptr;
+        gcf_ = nullptr;
+        gcf_U1_ = nullptr;
+        gcf_U2_ = nullptr;
+        gcf_V1_ = nullptr;
+        gcf_V2_ = nullptr;
+        gcf_C_ = nullptr;
     }
 
     return true;
@@ -694,61 +701,61 @@ bool QVFStudy::readCurve(QString basename)
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve = new term2;
-        curve->next_term2 = nullptr;
+        curve_ = new term2;
+        curve_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve, N))
+        if (!readTerm2(fp, curve_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U1 = new term2;
-        curve_U1->next_term2 = nullptr;
+        curve_U1_ = new term2;
+        curve_U1_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U1, N))
+        if (!readTerm2(fp, curve_U1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U2 = new term2;
-        curve_U2->next_term2 = nullptr;
+        curve_U2_ = new term2;
+        curve_U2_->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U2, N))
+        if (!readTerm2(fp, curve_U2_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_V1 = new term2;
-        curve_V1->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V1, N))
+        curve_V1_ = new term2;
+        curve_V1_->next_term2 = nullptr;
+        if (!readTerm2(fp, curve_V1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        curve_V2 = new term2;
-        curve_V2->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V2, N))
+        curve_V2_ = new term2;
+        curve_V2_->next_term2 = nullptr;
+        if (!readTerm2(fp, curve_V2_, N))
             return false;
 
-        if (p != 1 || q != 1) {
+        if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            curve_C = new term3;
-            curve_C->next_term3 = nullptr;
-            if (!readTerm3(fp, curve_C, N))
+            curve_C_ = new term3;
+            curve_C_->next_term3 = nullptr;
+            if (!readTerm3(fp, curve_C_, N))
                 return false;
         }
     } else {
-        curve = nullptr;
-        curve_U1 = nullptr;
-        curve_U2 = nullptr;
-        curve_V1 = nullptr;
-        curve_V2 = nullptr;
-        curve_C = nullptr;
+        curve_ = nullptr;
+        curve_U1_ = nullptr;
+        curve_U2_ = nullptr;
+        curve_V1_ = nullptr;
+        curve_V2_ = nullptr;
+        curve_C_ = nullptr;
     }
 
     return true;
@@ -810,62 +817,62 @@ bool QVFStudy::readPoints(FILE *fp)
     int N, i, typ;
 
     if (fscanf(fp, "%d ", &N) != 1) {
-        lasterror = "#sing not readable";
+        lasterror_ = "#sing not readable";
         return false;
     }
 
     for (i = 1; i <= N; i++) {
         if (fscanf(fp, "%d ", &typ) != 1) {
-            lasterror =
+            lasterror_ =
                 QString("sing #") + QString::number(i) + " type not readable";
             return false;
         }
         switch (typ) {
         case SADDLE:
             if (!readSaddlePoint(fp)) {
-                lasterror = QString("sing #") + QString::number(i) +
-                            " = saddle : " + lasterror;
+                lasterror_ = QString("sing #") + QString::number(i) +
+                             " = saddle : " + lasterror_;
                 return false;
             }
             break;
         case SEMI_HYPERBOLIC:
             if (!readSemiElementaryPoint(fp)) {
-                lasterror = QString("sing #") + QString::number(i) +
-                            " = semi-el : " + lasterror;
+                lasterror_ = QString("sing #") + QString::number(i) +
+                             " = semi-el : " + lasterror_;
                 return false;
             }
             break;
         case NODE:
             if (!readNodePoint(fp)) {
-                lasterror = QString("sing #") + QString::number(i) +
-                            " = node : " + lasterror;
+                lasterror_ = QString("sing #") + QString::number(i) +
+                             " = node : " + lasterror_;
                 return false;
             }
             break;
         case STRONG_FOCUS:
             if (!readStrongFocusPoint(fp)) {
-                lasterror = QString("sing #") + QString::number(i) +
-                            " = strongfocus : " + lasterror;
+                lasterror_ = QString("sing #") + QString::number(i) +
+                             " = strongfocus : " + lasterror_;
                 return false;
             }
             break;
         case WEAK_FOCUS:
             if (!readWeakFocusPoint(fp)) {
-                lasterror = QString("sing #") + QString::number(i) +
-                            " = weakfocus : " + lasterror;
+                lasterror_ = QString("sing #") + QString::number(i) +
+                             " = weakfocus : " + lasterror_;
                 return false;
             }
             break;
         case NON_ELEMENTARY:
             if (!readDegeneratePoint(fp)) {
-                lasterror = QString("sing #") + QString::number(i) +
-                            " = degen : " + lasterror;
+                lasterror_ = QString("sing #") + QString::number(i) +
+                             " = degen : " + lasterror_;
                 return false;
             }
             break;
         default:
-            lasterror = QString("sing #") + QString::number(i) +
-                        " type not exist (" + QString::number(typ) + ")";
+            lasterror_ = QString("sing #") + QString::number(i) +
+                         " type not exist (" + QString::number(typ) + ")";
             return false;
         }
     }
@@ -969,7 +976,7 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
     saddle *point;
 
     last = nullptr;
-    point = first_saddle_point;
+    point = first_saddle_point_;
     while (point != nullptr) {
         last = point;
         point = point->next_saddle;
@@ -979,7 +986,7 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
     point->next_saddle = nullptr;
     point->separatrices = nullptr;
     if (last == nullptr)
-        first_saddle_point = point;
+        first_saddle_point_ = point;
     else
         last->next_saddle = point;
 
@@ -1018,7 +1025,7 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
     sep1->last_sep_point = nullptr;
     sep1->next_sep = nullptr;
 
-    if (point->chart == CHART_R2 || singinf) {
+    if (point->chart == CHART_R2 || singinf_) {
         // point is finite hence we have 4 separatrices or we have a line of
         // singularities
         // at infinity and hence we have also 4 separatrices after removing the
@@ -1072,7 +1079,7 @@ bool QVFStudy::readSaddlePoint(FILE *fp)
 
     // line at infinity a line of singularities in poincare disc
 
-    if (singinf && point->chart != CHART_R2) {
+    if (singinf_ && point->chart != CHART_R2) {
         last = point;
         point = new saddle;
         last->next_saddle = point;
@@ -1111,7 +1118,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
     bool ok;
 
     last = nullptr;
-    point = first_se_point;
+    point = first_se_point_;
     while (point != nullptr) {
         last = point;
         point = point->next_se;
@@ -1119,7 +1126,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
 
     point = new semi_elementary;
     if (last == nullptr)
-        first_se_point = point;
+        first_se_point_ = point;
     else
         last->next_se = point;
 
@@ -1136,7 +1143,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
 
     switch (point->type) {
     case 1: // saddle-node
-        if (s && point->chart != CHART_R2 && !singinf) {
+        if (s && point->chart != CHART_R2 && !singinf_) {
             // hyperbolic sep = line at infinity, not reported
             // center sep in the wrong direction
             // so no separatrices
@@ -1157,9 +1164,9 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1->type = OT_UNSTABLE;
 
             sep1->d = 0;
-            if (((p == 1) && (q == 1) &&
+            if (((p_ == 1) && (q_ == 1) &&
                  ((point->chart == CHART_V1) || (point->chart == CHART_V2))) ||
-                (point->chart == CHART_R2 || singinf)) {
+                (point->chart == CHART_R2 || singinf_)) {
                 sep1->direction = -1;
             } else {
                 sep1->direction = 1;
@@ -1173,7 +1180,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             sep1->first_sep_point = nullptr;
             sep1->last_sep_point = nullptr;
             sep1->next_sep = nullptr;
-            if (point->chart == CHART_R2 || singinf) {
+            if (point->chart == CHART_R2 || singinf_) {
                 // read second (hyperbolic) separatrix
 
                 sep1->next_sep = new sep;
@@ -1213,7 +1220,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             sep1->type = STYPE_STABLE;
 
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1227,7 +1234,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         sep1->first_sep_point = nullptr;
         sep1->last_sep_point = nullptr;
         sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf) {
+        if (point->chart == CHART_R2 || singinf_) {
             sep1->next_sep = new sep;
             sep1 = sep1->next_sep;
             sep1->type = STYPE_STABLE;
@@ -1260,7 +1267,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         else
             sep1->type = STYPE_UNSTABLE;
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1274,7 +1281,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         sep1->first_sep_point = nullptr;
         sep1->last_sep_point = nullptr;
         sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf) {
+        if (point->chart == CHART_R2 || singinf_) {
             sep1->next_sep = new sep;
             sep1 = sep1->next_sep;
             sep1->type = STYPE_UNSTABLE;
@@ -1300,7 +1307,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         break;
 
     case 4: // saddle-node
-        if (s && (point->chart != CHART_R2) && !singinf) {
+        if (s && (point->chart != CHART_R2) && !singinf_) {
             point->separatrices = nullptr;
         } else {
             point->separatrices = new sep;
@@ -1311,9 +1318,9 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1->type = STYPE_STABLE;
 
             sep1->d = 0;
-            if (((p == 1) && (q == 1) &&
+            if (((p_ == 1) && (q_ == 1) &&
                  ((point->chart == CHART_V1) || (point->chart == CHART_V2))) ||
-                (point->chart == CHART_R2 || singinf))
+                (point->chart == CHART_R2 || singinf_))
                 sep1->direction = -1;
             else
                 sep1->direction = 1;
@@ -1326,7 +1333,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             sep1->first_sep_point = nullptr;
             sep1->last_sep_point = nullptr;
             sep1->next_sep = nullptr;
-            if (point->chart == CHART_R2 || singinf) {
+            if (point->chart == CHART_R2 || singinf_) {
                 sep1->next_sep = new sep;
                 sep1 = sep1->next_sep;
                 sep1->type = STYPE_STABLE;
@@ -1360,7 +1367,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         else
             sep1->type = STYPE_STABLE;
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1373,7 +1380,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         sep1->first_sep_point = nullptr;
         sep1->last_sep_point = nullptr;
         sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf) {
+        if (point->chart == CHART_R2 || singinf_) {
             sep1->next_sep = new sep;
             sep1->next_sep->type = STYPE_CENUNSTABLE;
             sep1->next_sep->d = 0;
@@ -1414,7 +1421,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         else
             sep1->type = STYPE_UNSTABLE;
         sep1->d = 0;
-        if ((p == 1) && (q == 1) &&
+        if ((p_ == 1) && (q_ == 1) &&
             ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
             sep1->direction = -1;
         else
@@ -1427,7 +1434,7 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         sep1->first_sep_point = nullptr;
         sep1->last_sep_point = nullptr;
         sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf) {
+        if (point->chart == CHART_R2 || singinf_) {
             sep1->next_sep = new sep;
             sep1->next_sep->type = STYPE_CENSTABLE;
             sep1->next_sep->d = 0;
@@ -1469,27 +1476,27 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         ok = false;
         switch (point->chart) {
         case CHART_R2:
-            if (eval_term2(gcf, y) < 0)
+            if (eval_term2(gcf_, y) < 0)
                 ok = true;
             break;
         case CHART_U1:
-            if (eval_term2(gcf_U1, y) < 0)
+            if (eval_term2(gcf_U1_, y) < 0)
                 ok = true;
             break;
         case CHART_V1:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V1, y) < 0)
+            if (eval_term2(gcf_V1_, y) < 0)
                 ok = true;
             break;
         case CHART_U2:
-            if (eval_term2(gcf_U2, y) < 0)
+            if (eval_term2(gcf_U2_, y) < 0)
                 ok = true;
             break;
         case CHART_V2:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V2, y) < 0)
+            if (eval_term2(gcf_V2_, y) < 0)
                 ok = true;
             break;
         }
@@ -1507,11 +1514,11 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
 
     // line at infinity a line of singularities in poincare disc
 
-    if (singinf && (point->chart != CHART_R2)) {
+    if (singinf_ && (point->chart != CHART_R2)) {
         point->next_se = new semi_elementary;
         point->next_se->x0 = point->x0;
         point->next_se->y0 = 0.0;
-        if (VFResults.dir_vec_field == 1)
+        if (g_VFResults.dir_vec_field_ == 1)
             point->next_se->type = point->type;
         else
             switch (point->type) {
@@ -1566,7 +1573,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
     strong_focus *point;
 
     last = nullptr;
-    point = first_sf_point;
+    point = first_sf_point_;
     while (point != nullptr) {
         last = point;
         point = point->next_sf;
@@ -1574,7 +1581,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
 
     point = new strong_focus;
     if (last == nullptr)
-        first_sf_point = point;
+        first_sf_point_ = point;
     else
         last->next_sf = point;
 
@@ -1595,40 +1602,40 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
 
     switch (point->chart) {
     case CHART_R2:
-        if (eval_term2(gcf, y) < 0)
+        if (eval_term2(gcf_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U1:
-        if (eval_term2(gcf_U1, y) < 0)
+        if (eval_term2(gcf_U1_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_V1:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
-        if (eval_term2(gcf_V1, y) < 0)
+        if (eval_term2(gcf_V1_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U2:
-        if (eval_term2(gcf_U2, y) < 0)
+        if (eval_term2(gcf_U2_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_V2:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
-        if (eval_term2(gcf_V2, y) < 0)
+        if (eval_term2(gcf_V2_, y) < 0)
             point->stable *= -1;
         break;
     }
 
     // line at infinity a line of singularities in poincare disc
 
-    if (singinf && point->chart != CHART_R2) {
+    if (singinf_ && point->chart != CHART_R2) {
         last = point;
         point = new strong_focus;
         last->next_sf = point;
@@ -1638,7 +1645,7 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
         point->y0 = 0.0;
         point->chart = ((point->chart == CHART_U1) ? CHART_V1 : CHART_V2);
         point->stable =
-            last->stable * ((VFResults.dir_vec_field == -1) ? -1 : 1);
+            last->stable * ((g_VFResults.dir_vec_field_ == -1) ? -1 : 1);
     }
 
     return true;
@@ -1653,7 +1660,7 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
     double y[2];
 
     last = nullptr;
-    point = first_wf_point;
+    point = first_wf_point_;
     while (point != nullptr) {
         last = point;
         point = point->next_wf;
@@ -1661,7 +1668,7 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
 
     point = new weak_focus;
     if (last == nullptr)
-        first_wf_point = point;
+        first_wf_point_ = point;
     else
         last->next_wf = point;
 
@@ -1680,42 +1687,42 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
 
         switch (point->chart) {
         case CHART_R2:
-            if (eval_term2(gcf, y) < 0)
+            if (eval_term2(gcf_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_U1:
-            if (eval_term2(gcf_U1, y) < 0)
+            if (eval_term2(gcf_U1_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_V1:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V1, y) < 0)
+            if (eval_term2(gcf_V1_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_U2:
-            if (eval_term2(gcf_U2, y) < 0)
+            if (eval_term2(gcf_U2_, y) < 0)
                 point->type *= -1;
             break;
 
         case CHART_V2:
-            if ((p == 1) && (q == 1))
+            if ((p_ == 1) && (q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V2, y) < 0)
+            if (eval_term2(gcf_V2_, y) < 0)
                 point->type *= -1;
             break;
         }
     }
 
-    if (singinf && (point->chart != CHART_R2)) {
+    if (singinf_ && (point->chart != CHART_R2)) {
         point->next_wf = new weak_focus;
         point->next_wf->x0 = point->x0;
         point->next_wf->y0 = 0.0;
 
-        if (VFResults.dir_vec_field == 1)
+        if (g_VFResults.dir_vec_field_ == 1)
             point->next_wf->type = point->type;
         else
             switch (point->type) {
@@ -1752,7 +1759,7 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
     degenerate *point;
 
     last = nullptr;
-    point = first_de_point;
+    point = first_de_point_;
     while (point != nullptr) {
         last = point;
         point = point->next_de;
@@ -1762,7 +1769,7 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
     // point->next_de = nullptr;
     // point->blow_up = nullptr;
     if (last == nullptr)
-        first_de_point = point;
+        first_de_point_ = point;
     else
         last->next_de = point;
 
@@ -1785,7 +1792,7 @@ bool QVFStudy::readDegeneratePoint(FILE *fp)
 
     // line at infinity a line of singularities in poincare disc
 
-    if (singinf && point->chart != CHART_R2) {
+    if (singinf_ && point->chart != CHART_R2) {
         last = point;
         point = new degenerate;
         last->next_de = point;
@@ -1815,7 +1822,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
     node *point;
 
     last = nullptr;
-    point = first_node_point;
+    point = first_node_point_;
     while (point != nullptr) {
         last = point;
         point = point->next_node;
@@ -1823,7 +1830,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
 
     point = new node;
     if (last == nullptr)
-        first_node_point = point;
+        first_node_point_ = point;
     else
         last->next_node = point;
 
@@ -1844,32 +1851,32 @@ bool QVFStudy::readNodePoint(FILE *fp)
 
     switch (point->chart) {
     case CHART_R2:
-        if (eval_term2(gcf, y) < 0)
+        if (eval_term2(gcf_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U1:
-        if (eval_term2(gcf_U1, y) < 0)
+        if (eval_term2(gcf_U1_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_V1:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
 
-        if (eval_term2(gcf_V1, y) < 0)
+        if (eval_term2(gcf_V1_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_U2:
-        if (eval_term2(gcf_U2, y) < 0)
+        if (eval_term2(gcf_U2_, y) < 0)
             point->stable *= -1;
         break;
 
     case CHART_V2:
-        if (p == 1 && q == 1)
+        if (p_ == 1 && q_ == 1)
             y[0] = -y[0];
-        if (eval_term2(gcf_V2, y) < 0)
+        if (eval_term2(gcf_V2_, y) < 0)
             point->stable *= -1;
         break;
     }
@@ -1877,7 +1884,7 @@ bool QVFStudy::readNodePoint(FILE *fp)
     // if line at infinity a line of singularities in poincare disc:
     // duplicate singularity by using a symmetry
 
-    if (singinf != 0 && point->chart != CHART_R2) {
+    if (singinf_ != 0 && point->chart != CHART_R2) {
         last = point;
         point = new node;
         last->next_node = point;
@@ -1886,7 +1893,8 @@ bool QVFStudy::readNodePoint(FILE *fp)
         point->x0 = last->x0;
         point->y0 = 0.0;
         point->chart = (last->chart == CHART_U1) ? CHART_V1 : CHART_V2;
-        point->stable = last->stable * (VFResults.dir_vec_field == -1) ? -1 : 1;
+        point->stable =
+            last->stable * (g_VFResults.dir_vec_field_ == -1) ? -1 : 1;
     }
 
     return true;
@@ -2185,103 +2193,103 @@ void QVFStudy::dump(QString basename, QString info)
 
     DUMP(("General Info"))
     DUMP(("------------"))
-    DUMP(("  Type of study = %d", typeofstudy))
-    DUMP(("  (p,q) = (%d,%d)", p, q))
-    DUMP(("  plweights = %d", plweights))
+    DUMP(("  Type of study = %d", typeofstudy_))
+    DUMP(("  (p,q) = (%d,%d)", p_, q_))
+    DUMP(("  plweights = %d", plweights_))
     DUMP(("  doubles p,q,p+q,p-1,q-1,q-p = (%g,%g,%g,%g,%g,%g)",
-          (float)double_p, (float)double_q, (float)double_p_plus_q,
-          (float)double_p_minus_1, (float)double_q_minus_1,
-          (float)double_q_minus_p))
-    DUMP(("  Range x: [%g,%g] Range y: [%g,%g]", (float)xmin, (float)xmax,
-          (float)ymin, (float)ymax))
-    DUMP(("  Line at infinity singular? %d", singinf))
-    DUMP(("  Direction of vector field: %d", VFResults.dir_vec_field))
+          (float)double_p_, (float)double_q_, (float)double_p_plus_q_,
+          (float)double_p_minus_1_, (float)double_q_minus_1_,
+          (float)double_q_minus_p_))
+    DUMP(("  Range x: [%g,%g] Range y: [%g,%g]", (float)xmin_, (float)xmax_,
+          (float)ymin_, (float)ymax_))
+    DUMP(("  Line at infinity singular? %d", singinf_))
+    DUMP(("  Direction of vector field: %d", g_VFResults.dir_vec_field_))
     DUMP((" "))
     DUMP(("Vector Fields"))
     DUMP(("-------------"))
     DUMP(("  Finite chart:"))
-    DUMP(("     x' = %s", dumpPoly2(f_vec_field[0], "x", "y")))
-    DUMP(("     y' = %s", dumpPoly2(f_vec_field[1], "x", "y")))
+    DUMP(("     x' = %s", dumpPoly2(f_vec_field_[0], "x", "y")))
+    DUMP(("     y' = %s", dumpPoly2(f_vec_field_[1], "x", "y")))
     DUMP(("  U1 chart:"))
-    DUMP(("     x' = %s", dumpPoly2(vec_field_U1[0], "x", "y")))
-    DUMP(("     y' = %s", dumpPoly2(vec_field_U1[1], "x", "y")))
+    DUMP(("     x' = %s", dumpPoly2(vec_field_U1_[0], "x", "y")))
+    DUMP(("     y' = %s", dumpPoly2(vec_field_U1_[1], "x", "y")))
     DUMP(("  U2 chart:"))
-    DUMP(("     x' = %s", dumpPoly2(vec_field_U2[0], "x", "y")))
-    DUMP(("     y' = %s", dumpPoly2(vec_field_U2[1], "x", "y")))
+    DUMP(("     x' = %s", dumpPoly2(vec_field_U2_[0], "x", "y")))
+    DUMP(("     y' = %s", dumpPoly2(vec_field_U2_[1], "x", "y")))
     DUMP(("  V1 chart:"))
-    DUMP(("     x' = %s", dumpPoly2(vec_field_V1[0], "x", "y")))
-    DUMP(("     y' = %s", dumpPoly2(vec_field_V1[1], "x", "y")))
+    DUMP(("     x' = %s", dumpPoly2(vec_field_V1_[0], "x", "y")))
+    DUMP(("     y' = %s", dumpPoly2(vec_field_V1_[1], "x", "y")))
     DUMP(("  V2 chart:"))
-    DUMP(("     x' = %s", dumpPoly2(vec_field_V2[0], "x", "y")))
-    DUMP(("     y' = %s", dumpPoly2(vec_field_V2[1], "x", "y")))
+    DUMP(("     x' = %s", dumpPoly2(vec_field_V2_[0], "x", "y")))
+    DUMP(("     y' = %s", dumpPoly2(vec_field_V2_[1], "x", "y")))
     DUMP(("  Cylinder chart: (Co=cos(theta),Si=sin(theta))"))
-    DUMP(("     r'     = %s", dumpPoly3(vec_field_C[0], "r", "Co", "Si")))
-    DUMP(("     theta' = %s", dumpPoly3(vec_field_C[1], "r", "Co", "Si")))
+    DUMP(("     r'     = %s", dumpPoly3(vec_field_C_[0], "r", "Co", "Si")))
+    DUMP(("     theta' = %s", dumpPoly3(vec_field_C_[1], "r", "Co", "Si")))
     DUMP((" "))
     DUMP(("Greatest Common Factor"))
     DUMP(("----------------------"))
-    DUMP(("  Finite chart:   %s", dumpPoly2(gcf, "x", "y")))
-    DUMP(("  U1 chart:       %s", dumpPoly2(gcf_U1, "x", "y")))
-    DUMP(("  U2 chart:       %s", dumpPoly2(gcf_U2, "x", "y")))
-    DUMP(("  V1 chart:       %s", dumpPoly2(gcf_V1, "x", "y")))
-    DUMP(("  V2 chart:       %s", dumpPoly2(gcf_V2, "x", "y")))
-    DUMP(("  Cylinder chart: %s", dumpPoly3(gcf_C, "r", "Co", "Si")))
+    DUMP(("  Finite chart:   %s", dumpPoly2(gcf_, "x", "y")))
+    DUMP(("  U1 chart:       %s", dumpPoly2(gcf_U1_, "x", "y")))
+    DUMP(("  U2 chart:       %s", dumpPoly2(gcf_U2_, "x", "y")))
+    DUMP(("  V1 chart:       %s", dumpPoly2(gcf_V1_, "x", "y")))
+    DUMP(("  V2 chart:       %s", dumpPoly2(gcf_V2_, "x", "y")))
+    DUMP(("  Cylinder chart: %s", dumpPoly3(gcf_C_, "r", "Co", "Si")))
     DUMP((" "))
     DUMP(("Singular points - summary"))
     DUMP(("-------------------------"))
     DUMP((" "))
-    dumpSingularities(m, (genericsingularity *)first_saddle_point,
+    dumpSingularities(m, (genericsingularity *)first_saddle_point_,
                       "SADDLE         ", false);
-    dumpSingularities(m, (genericsingularity *)first_se_point,
+    dumpSingularities(m, (genericsingularity *)first_se_point_,
                       "SEMI-ELEMENTARY", false);
-    dumpSingularities(m, (genericsingularity *)first_node_point,
+    dumpSingularities(m, (genericsingularity *)first_node_point_,
                       "NODE           ", false);
-    dumpSingularities(m, (genericsingularity *)first_wf_point,
+    dumpSingularities(m, (genericsingularity *)first_wf_point_,
                       "WEAK FOCUS     ", false);
-    dumpSingularities(m, (genericsingularity *)first_sf_point,
+    dumpSingularities(m, (genericsingularity *)first_sf_point_,
                       "STRONG FOCUS   ", false);
-    dumpSingularities(m, (genericsingularity *)first_de_point,
+    dumpSingularities(m, (genericsingularity *)first_de_point_,
                       "DEGENERATE     ", false);
     DUMP((" "))
     DUMP(("Singular points - full description"))
     DUMP(("----------------------------------"))
     DUMP((" "))
-    dumpSingularities(m, (genericsingularity *)first_saddle_point,
+    dumpSingularities(m, (genericsingularity *)first_saddle_point_,
                       "SADDLE         ", true);
-    dumpSingularities(m, (genericsingularity *)first_se_point,
+    dumpSingularities(m, (genericsingularity *)first_se_point_,
                       "SEMI-ELEMENTARY", true);
-    dumpSingularities(m, (genericsingularity *)first_node_point,
+    dumpSingularities(m, (genericsingularity *)first_node_point_,
                       "NODE           ", true);
-    dumpSingularities(m, (genericsingularity *)first_wf_point,
+    dumpSingularities(m, (genericsingularity *)first_wf_point_,
                       "WEAK FOCUS     ", true);
-    dumpSingularities(m, (genericsingularity *)first_sf_point,
+    dumpSingularities(m, (genericsingularity *)first_sf_point_,
                       "STRONG FOCUS   ", true);
-    dumpSingularities(m, (genericsingularity *)first_de_point,
+    dumpSingularities(m, (genericsingularity *)first_de_point_,
                       "DEGENERATE     ", true);
     DUMP((" "))
     DUMP(("Default integration parameters"))
     DUMP(("------------------------------"))
     DUMP((" "))
-    DUMP(("  LC Value           %d", config_lc_value))
-    DUMP(("  Max Step Size      %g", (float)config_hma))
-    DUMP(("  Min Step Size      %g", (float)config_hmi))
-    DUMP(("  Step Size          %g", (float)config_step))
-    DUMP(("  Current Step Size  %g", (float)config_currentstep))
-    DUMP(("  Tolerance          %g", (float)config_tolerance))
-    DUMP(("  Projection         %g", (float)config_projection))
-    DUMP(("  Integration Points %d", config_intpoints))
-    DUMP(("  LC NumPoints       %d", config_lc_numpoints))
-    DUMP(("  Dashes             %d", config_dashes))
+    DUMP(("  LC Value           %d", config_lc_value_))
+    DUMP(("  Max Step Size      %g", (float)config_hma_))
+    DUMP(("  Min Step Size      %g", (float)config_hmi_))
+    DUMP(("  Step Size          %g", (float)config_step_))
+    DUMP(("  Current Step Size  %g", (float)config_currentstep_))
+    DUMP(("  Tolerance          %g", (float)config_tolerance_))
+    DUMP(("  Projection         %g", (float)config_projection_))
+    DUMP(("  Integration Points %d", config_intpoints_))
+    DUMP(("  LC NumPoints       %d", config_lc_numpoints_))
+    DUMP(("  Dashes             %d", config_dashes_))
 
-    if (config_kindvf == INTCONFIG_ORIGINAL)
+    if (config_kindvf_ == INTCONFIG_ORIGINAL)
         s = "(Original)";
-    else if (config_kindvf == INTCONFIG_REDUCED)
+    else if (config_kindvf_ == INTCONFIG_REDUCED)
         s = "(Reduced)";
     else
         s = "???";
 
     ss = s.toLatin1();
-    DUMP(("  Kind of VF         %d %s", config_kindvf, (const char *)ss))
+    DUMP(("  Kind of VF         %d %s", config_kindvf_, (const char *)ss))
 
     ss = basename.toLatin1() + "_fin.tab";
     QFile ffin(ss);
@@ -2347,7 +2355,7 @@ void QVFStudy::dump(QString basename, QString info)
     ss = info.toLatin1();
     DUMP(("%s", (const char *)ss))
 
-    m->setFont(*(p4app->courierFont_));
+    m->setFont(*(g_p4app->courierFont_));
     m->setReadOnly(true);
     m->resize(640, 480);
     setP4WindowTitle(m, "DUMP SCREEN");
@@ -2356,7 +2364,7 @@ void QVFStudy::dump(QString basename, QString info)
 
 void QVFStudy::setupCoordinateTransformations(void)
 {
-    if (!plweights) {
+    if (!plweights_) {
         U1_to_sphere = U1_to_psphere;
         U2_to_sphere = U2_to_psphere;
         V1_to_sphere = VV1_to_psphere;
@@ -2374,7 +2382,7 @@ void QVFStudy::setupCoordinateTransformations(void)
         less2 = less_poincare;
         change_dir = change_dir_poincare;
 
-        switch (typeofview) {
+        switch (typeofview_) {
         case TYPEOFVIEW_SPHERE:
             viewcoord_to_sphere = ucircle_psphere;
             sphere_to_viewcoord = psphere_ucircle;
@@ -2441,7 +2449,7 @@ void QVFStudy::setupCoordinateTransformations(void)
         less2 = less_lyapunov;
         change_dir = change_dir_lyapunov;
 
-        switch (typeofview) {
+        switch (typeofview_) {
         case TYPEOFVIEW_SPHERE:
             viewcoord_to_sphere = annulus_plsphere;
             sphere_to_viewcoord = plsphere_annulus;

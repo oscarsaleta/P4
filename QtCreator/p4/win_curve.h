@@ -35,7 +35,7 @@ class QCurveDlg : public QWidget
 
   public:
     QCurveDlg(QPlotWnd *, QWinSphere *);
-    void Reset(void);
+    void reset(void);
     void finishCurveEvaluation(void);
 
   private:
