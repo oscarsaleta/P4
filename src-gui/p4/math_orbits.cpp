@@ -36,12 +36,11 @@
 
 void integrateOrbit(QWinSphere *sphere, int dir)
 {
-    struct orbits_points *sep;
+    orbits_points *sep;
     double pcoord[3], ucoord[2];
 
     if (dir == 0) {
         // continue orbit button has been pressed
-
         dir = g_VFResults.current_orbit_->current_f_orbits->dir;
 
         copy_x_into_y(g_VFResults.current_orbit_->current_f_orbits->pcoord,
@@ -119,7 +118,7 @@ bool startOrbit(QWinSphere *sphere, double x, double y, bool R)
 // -----------------------------------------------------------------------
 
 void drawOrbit(QWinSphere *spherewnd, double *pcoord,
-               struct orbits_points *points, int color)
+               orbits_points *points, int color)
 {
     double pcoord1[3];
 
@@ -145,7 +144,7 @@ void drawOrbit(QWinSphere *spherewnd, double *pcoord,
 
 void drawOrbits(QWinSphere *spherewnd)
 {
-    struct orbits *orbit;
+    orbits *orbit;
 
     for (orbit = g_VFResults.first_orbit_; orbit != nullptr;
          orbit = orbit->next_orbit) {
@@ -159,7 +158,7 @@ void drawOrbits(QWinSphere *spherewnd)
 
 void deleteLastOrbit(QWinSphere *spherewnd)
 {
-    struct orbits *orbit1, *orbit2;
+    orbits *orbit1, *orbit2;
 
     if (g_VFResults.current_orbit_ == nullptr)
         return;
@@ -296,16 +295,16 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
     }
 }
 
-struct orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
+orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
                                       double step, int dir, int color,
                                       int points_to_int,
-                                      struct orbits_points **orbit)
+                                      orbits_points **orbit)
 {
     int i, d, h;
     int dashes;
     double hhi;
     double pcoord2[3], h_min, h_max;
-    struct orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
+    orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
 
     hhi = (double)dir * step;
     h_min = g_VFResults.config_hmi_;
