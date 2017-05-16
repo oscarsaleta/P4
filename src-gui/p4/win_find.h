@@ -47,8 +47,8 @@ class QFindDlg : public QWidget
     QBoxLayout *mainLayout_;
     QBoxLayout *superLayout_;
 
-    //QRadioButton *btn_maple_;
-    //QRadioButton *btn_reduce_;
+    // QRadioButton *btn_maple_;
+    // QRadioButton *btn_reduce_;
     QRadioButton *btn_actionrun_;
     QRadioButton *btn_actionprep_;
     QRadioButton *btn_all_;

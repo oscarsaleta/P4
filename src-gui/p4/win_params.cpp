@@ -317,11 +317,6 @@ void QParamsDlg::btn_sepno_toggled(bool on)
     }
 }
 
-/*void QParamsDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
-{
-    first->setChecked(on);
-}*/
-
 void QParamsDlg::getDataFromDlg(void)
 {
     QString epsilon;
@@ -375,17 +370,13 @@ void QParamsDlg::updateDlgData(void)
 {
     if (g_ThisVF->numeric_)
         btn_num_->toggle();
-    // exclusiveToggle(true, btn_num_, btn_alg_, nullptr);
     else
         btn_alg_->toggle();
-    // exclusiveToggle(true, btn_alg_, btn_num_, nullptr);
 
     if (g_ThisVF->testsep_)
         btn_sepyes_->toggle();
-    // exclusiveToggle(true, btn_sepyes_, btn_sepno_, nullptr);
     else
         btn_sepno_->toggle();
-    // exclusiveToggle(true, btn_sepno_, btn_sepyes_, nullptr);
 
     spin_level_->setValue(g_ThisVF->taylorlevel_);
     spin_numlevel_->setValue(g_ThisVF->numericlevel_);

@@ -57,8 +57,8 @@ class QWinSphere : public QWidget
 
     double x0_, y0_; // world-coordinates of upper-left corner
     double x1_, y1_; // world-coordinates of upper-right corner
-    double dx_;       // x1-x0
-    double dy_;       // y1-y0
+    double dx_;      // x1-x0
+    double dy_;      // y1-y0
 
     QPixmap *painterCache_;
     bool isPainterCacheDirty_;
@@ -172,7 +172,7 @@ class QWinSphere : public QWidget
     QWidget *parentWnd_;
     bool iszoom_;
     bool reverseYAxis_; // when calculating coordinates: this determines
-                       // orientation
+                        // orientation
     // of horizontal axis.  Normally false, only true when printing.
 
     P4POLYLINES *circleAtInfinity_;

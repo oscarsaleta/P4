@@ -59,13 +59,14 @@ class QStartDlg : public QWidget
 
   public:
     QStartDlg(const QString &);
-    
+
     QFindDlg *Find_Window;
     QPlotWnd *Plot_Window;
-    
+
     void closeEvent(QCloseEvent *ce);
 
-    // following functions are called by other P4 widgets when something happened:
+    // following functions are called by other P4 widgets when something
+    // happened:
     void signalEvaluating(void);
     void signalEvaluated(void);
     void signalChanged(void);
@@ -102,7 +103,6 @@ class QStartDlg : public QWidget
     QWidget *helpWindow_;
     QWidget *viewInfiniteWindow_;
     QWidget *viewFiniteWindow_;
-
 };
 
 extern QStartDlg *g_p4stardlg;

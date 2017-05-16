@@ -38,9 +38,10 @@ struct P4POLYLINES {
     P4POLYLINES() : next(nullptr){};
 };
 
-extern bool g_LCWindowIsUp; // true when Limitcycles window is shown.
-                          // in that case, left mouse button action is redefined
+// true when Limitcycles window is shown.
+// in that case, left mouse button action is redefined
 // to set set points for LC window instead of for orbits window
+extern bool g_LCWindowIsUp;
 
 extern QString g_p4Version;
 extern QString g_p4VersionDate;

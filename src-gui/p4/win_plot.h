@@ -32,13 +32,13 @@
 #include <QMainWindow>
 
 /* Forward-declarations to solve cross-include problems */
-class QGcfDlg;          // in win_gcf.h
-class QCurveDlg;        // in win_curve.h
-class QIntParamsDlg;    // in win_params.h
-class QSepDlg;          // in win_separatrices.h
-class QOrbitsDlg;       // in win_orbits.h
-class QLimitCyclesDlg;  // in win_limitcycles.h
-class QZoomWnd;         // in win_zoom.h
+class QGcfDlg;         // in win_gcf.h
+class QCurveDlg;       // in win_curve.h
+class QIntParamsDlg;   // in win_params.h
+class QSepDlg;         // in win_separatrices.h
+class QOrbitsDlg;      // in win_orbits.h
+class QLimitCyclesDlg; // in win_limitcycles.h
+class QZoomWnd;        // in win_zoom.h
 
 class QPlotWnd : public QMainWindow
 {

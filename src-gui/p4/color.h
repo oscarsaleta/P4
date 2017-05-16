@@ -62,7 +62,8 @@
 #define NUMXFIGCOLORS 32
 #define DARKGRAY NUMXFIGCOLORS
 
-#define QXFIGCOLOR(x) QColor(g_XFigToRGB[x].r, g_XFigToRGB[x].g, g_XFigToRGB[x].b)
+#define QXFIGCOLOR(x)                                                          \
+    QColor(g_XFigToRGB[x].r, g_XFigToRGB[x].g, g_XFigToRGB[x].b)
 
 struct P4RGBITEM {
     int r;

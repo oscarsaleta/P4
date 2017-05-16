@@ -37,7 +37,7 @@ class QSettingsDlg : public QDialog
     QPushButton *btn_sum_;
     QPushButton *btn_temp_;
     QPushButton *btn_maple_;
-    //QPushButton *btn_red;
+    // QPushButton *btn_red;
     QPushButton *btn_ok_;
     QPushButton *btn_reset_;
     QPushButton *btn_cancel_;
@@ -45,12 +45,12 @@ class QSettingsDlg : public QDialog
     QLineEdit *edt_sum_;
     QLineEdit *edt_temp_;
     QLineEdit *edt_maple_;
-    //QLineEdit *edt_red;
+    // QLineEdit *edt_red;
     QLabel *lbl_base_;
     QLabel *lbl_sum_;
     QLabel *lbl_temp_;
     QLabel *lbl_maple_;
-    //QLabel *lbl_red;
+    // QLabel *lbl_red;
     QBoxLayout *mainLayout_;
 
   public:
@@ -65,7 +65,7 @@ class QSettingsDlg : public QDialog
     void onBrowseSum(void);
     void onBrowseTemp(void);
     void onBrowseMaple(void);
-    //void OnBrowseReduce(void);
+    // void OnBrowseReduce(void);
 };
 
 #endif /* WIN_SETTINGS_H */
