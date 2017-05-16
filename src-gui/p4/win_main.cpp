@@ -35,8 +35,8 @@ static void makeButtonPixmaps(const QPalette &);
 
 QStartDlg *g_p4stardlg = nullptr;
 
-QPixmap *Pixmap_TriangleUp = nullptr;
-QPixmap *Pixmap_TriangleDown = nullptr;
+QPixmap *g_Pixmap_TriangleUp = nullptr;
+QPixmap *g_Pixmap_TriangleDown = nullptr;
 
 QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 {
@@ -57,9 +57,9 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     btn_find_ = new QPushButton("", this);
 
 #ifdef AUTO_OPEN_FINDWINDOW
-    btn_find_->setIcon(QIcon(*Pixmap_TriangleUp));
+    btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
 #else
-    btn_find_->setIcon(QIcon(*Pixmap_TriangleDown));
+    btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
 #endif
     btn_find_->setFixedSize(btn_find_->sizeHint());
 #else
@@ -191,17 +191,17 @@ void QStartDlg::onFind(void)
         Find_Window->raise();
 #ifdef DOCK_FINDWINDOW
         mainLayout_->addWidget(Find_Window);
-        btn_find_->setIcon(QIcon(*Pixmap_TriangleUp));
+        btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
 #endif
     } else {
 #ifdef DOCK_FINDWINDOW
         delete Find_Window;
         Find_Window = nullptr;
-        btn_find_->setIcon(QIcon(*Pixmap_TriangleDown));
+        btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
 #else
         Find_Window->show();
         Find_Window->raise();
-        btn_find_->setIcon(QIcon(*Pixmap_TriangleUp));
+        btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
 #endif
     }
 }
@@ -681,14 +681,14 @@ void makeButtonPixmaps(const QPalette &qcg)
     QPolygon up(3);
     QPolygon down(3);
 
-    Pixmap_TriangleUp = new QPixmap(16, 16);
-    Pixmap_TriangleDown = new QPixmap(16, 16);
+    g_Pixmap_TriangleUp = new QPixmap(16, 16);
+    g_Pixmap_TriangleDown = new QPixmap(16, 16);
 
     down.setPoints(3, 4, 4, 12, 4, 8, 10);
     up.setPoints(3, 4, 10, 12, 10, 8, 4);
 
     p = new QPainter();
-    p->begin(Pixmap_TriangleUp);
+    p->begin(g_Pixmap_TriangleUp);
     p->setBackground(qcg.color(QPalette::Normal, QPalette::Button));
     p->eraseRect(0, 0, 16, 16);
     p->setPen(qcg.color(QPalette::Normal, QPalette::ButtonText));
@@ -696,7 +696,7 @@ void makeButtonPixmaps(const QPalette &qcg)
     p->drawPolygon(up);
     p->end();
 
-    p->begin(Pixmap_TriangleDown);
+    p->begin(g_Pixmap_TriangleDown);
     p->setBackground(qcg.color(QPalette::Normal, QPalette::Button));
     p->eraseRect(0, 0, 16, 16);
     p->setPen(qcg.color(QPalette::Normal, QPalette::ButtonText));
