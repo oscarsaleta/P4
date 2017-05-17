@@ -59,6 +59,7 @@ SOURCES += win_view.cpp \
     math_orbits.cpp \
     math_numerics.cpp \
     math_limitcycles.cpp \
+    math_isoclines.cpp \
     math_intblowup.cpp \
     math_gcf.cpp \
     math_findpoint.cpp \
@@ -111,11 +112,12 @@ HEADERS += win_view.h \
     math_gcf.h \
     math_intblowup.h \
     math_curve.h \
-    plot_tools.h \
     math_polynom.h \
     math_orbits.h \
-    math_limitcycles.h \
     math_numerics.h \
+    math_limitcycles.h \
+    math_isoclines.h \
+    plot_tools.h \
     plot_points.h \
     print_points.h \
     print_bitmap.h \
