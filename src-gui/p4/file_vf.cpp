@@ -769,7 +769,8 @@ void QInputVF::prepareMapleIsoclines(QTextStream *fp)
 
     myisoclines[0] = convertMapleUserParameterLabels(isoclines_[0]);
     myisoclines[1] = convertMapleUserParameterLabels(isoclines_[1]);
-    *fp << "user_isoclines := [" << myisoclines[0] << "," << myisoclines[1] << "]:\n";
+    *fp << "user_isoclines := [" << myisoclines[0] << "," << myisoclines[1]
+        << "]:\n";
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
@@ -1283,7 +1284,6 @@ void QInputVF::prepareIsoclinesFile(QTextStream *fp)
            "try:\n";
 }
 
-
 // -----------------------------------------------------------------------
 //                          EVALUATE
 // -----------------------------------------------------------------------
@@ -1446,7 +1446,7 @@ void QInputVF::evaluateCurveTable()
     QProcess *proc;
 
     evaluatinggcf_ = false;
-    evaluatingCurve_ = false;
+    evaluatingCurve_ = true;
     evaluatingIsoclines_ = false;
 
     // possible clean up after last Curve evaluation
@@ -1528,7 +1528,7 @@ void QInputVF::evaluateIsoclinesTable()
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
-    evaluatingIsoclines_ = false;
+    evaluatingIsoclines_ = true;
     // possible clean up after last Curve evaluation
     if (evalProcess_ != nullptr) {
         delete evalProcess_;
@@ -1552,7 +1552,7 @@ void QInputVF::evaluateIsoclinesTable()
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (outputWindow_ == nullptr)
+        if (processText_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
@@ -1688,8 +1688,8 @@ void QInputVF::finishEvaluation(int exitCode)
         finishGcfEvaluation();
     if (evaluatingCurve_)
         finishCurveEvaluation();
-    //if (evaluatingIsoclines_)
-    // finishIsoclineEvaluation(); //TODO:
+    if (evaluatingIsoclines_)
+        finishIsoclinesEvaluation(); // TODO:
 }
 
 // -----------------------------------------------------------------------
@@ -1712,6 +1712,14 @@ void QInputVF::finishCurveEvaluation(void)
     evaluatingCurve_ = false;
     if (curveDlg_ != nullptr) {
         curveDlg_->finishCurveEvaluation();
+    }
+}
+
+void QInputVF::finishIsoclinesEvaluation(void)
+{
+    evaluatingIsoclines_ = false;
+    if (isoclinesDlg_ != nullptr) {
+        isoclinesDlg_->finishIsoclinesEvaluation();
     }
 }
 
@@ -1939,7 +1947,6 @@ void QInputVF::createProcessWindow(void)
         "abruptly terminated.");
     hLayout->addWidget(terminateProcessButton_);
 
-
     clearProcessButton_ = new QPushButton("Clear");
     clearProcessButton_->setFont((*g_p4app->boldFont_));
     clearProcessButton_->setToolTip("Clears this window");
@@ -2119,7 +2126,7 @@ bool QInputVF::evaluateGcf(void)
 // Prepare files in case of calculating GCF in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
 
-bool QInputVF::prepareGcf(struct term2 *f, double y1, double y2, int precision,
+bool QInputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
                           int numpoints)
 {
     FILE *fp;
@@ -2517,8 +2524,8 @@ bool QInputVF::evaluateCurve(void)
 //
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
-                            int precision, int numpoints)
+bool QInputVF::prepareCurve(P4POLYNOM2 f, double y1, double y2, int precision,
+                            int numpoints)
 {
     FILE *fp;
     int i;
@@ -2722,5 +2729,294 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 
     fclose(fp);
 
+    return true;
+}
+// TODO:
+// -----------------------------------------------------------------------
+//          EVALUATEISOCLINES
+// -----------------------------------------------------------------------
+bool QInputVF::evaluateIsoclines(void)
+{
+    QString filedotmpl;
+    QString s;
+
+    filedotmpl = getmaplefilename();
+
+    s = getMapleExe();
+    s = s.append(" ");
+    if (filedotmpl.contains(' ')) {
+        s = s.append("\"");
+        s = s.append(filedotmpl);
+        s = s.append("\"");
+    } else
+        s = s.append(filedotmpl);
+
+    if (processText_ == nullptr)
+        createProcessWindow();
+    else {
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
+        terminateProcessButton_->setEnabled(true);
+    }
+
+    QProcess *proc;
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
+        proc = evalProcess_;
+        disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+        connect(proc, SIGNAL(finished(int)), g_p4app,
+                SLOT(signalCurveEvaluated(int)));
+    } else {
+        proc = new QProcess(this);
+        connect(proc, SIGNAL(finished(int)), g_p4app,
+                SLOT(signalCurveEvaluated(int)));
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                SLOT(catchProcessError(QProcess::ProcessError)));
+        connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                SLOT(readProcessStdout()));
+    }
+
+    proc->setWorkingDirectory(QDir::currentPath());
+
+    processfailed_ = false;
+    QString pa = "External Command: ";
+    pa += getMapleExe();
+    pa += " ";
+    pa += filedotmpl;
+    processText_->append(pa);
+    proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
+    if (proc->state() != QProcess::Running &&
+        proc->state() != QProcess::Starting) {
+        processfailed_ = true;
+        delete proc;
+        proc = nullptr;
+        evalProcess_ = nullptr;
+        evalFile_ = "";
+        evalFile2_ = "";
+        g_p4app->signalCurveEvaluated(-1);
+        terminateProcessButton_->setEnabled(false);
+        return false;
+    } else {
+        evalProcess_ = proc;
+        evalFile_ = filedotmpl;
+        evalFile2_ = "";
+        evaluatingIsoclines_ = true;
+
+        return true;
+    }
+}
+
+// -----------------------------------------------------------------------
+//              PREPAREISOCLINES
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating isoclines in plane/U1/U2 charts.
+// This is only called in case of Poincare-compactification (weights p=q=1)
+bool QInputVF::prepareIsoclines(P4POLYNOM2 f, double y1, double y2,
+                                int precision, int numpoints)
+{
+    FILE *fp;
+    int i;
+    char buf[100];
+
+    QString mainmaple;
+    QString user_platform;
+    QString user_file;
+    QString filedotmpl;
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_file;
+
+    filedotmpl = getmaplefilename();
+
+    fp = fopen(QFile::encodeName(filedotmpl), "w");
+    if (fp == nullptr)
+        return false;
+
+    mainmaple = getP4MaplePath();
+    mainmaple += QDir::separator();
+
+    user_platform = USERPLATFORM;
+    mainmaple += MAINMAPLEGCFFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    user_file = getfilename_isoclines();
+    removeFile(user_file);
+    ba_user_file = maplepathformat(user_file);
+
+    fprintf(fp, "restart;\n");
+    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+    fprintf(fp, "user_numpoints := %d:\n", numpoints);
+    fprintf(fp, "Digits := %d:\n", precision);
+    fprintf(fp, "user_x1 := %g:\n", (float)(-1.0));
+    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+    fprintf(fp, "user_y1 := %g:\n", (float)y1);
+    fprintf(fp, "user_y2 := %g:\n", (float)y2);
+    fprintf(fp, "u := %s:\n", "x");
+    fprintf(fp, "v := %s:\n", "y");
+    fprintf(fp, "user_f := ");
+    for (i = 0; f != nullptr; i++) {
+        fprintf(fp, "%s",
+                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
+        f = f->next_term2;
+    }
+    if (i == 0)
+        fprintf(fp, "0:\n");
+    else
+        fprintf(fp, ":\n");
+
+    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
+
+    fclose(fp);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//              PREPAREISOCLINES_LYAPUNOVCYL
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating a curve in charts near infinity.  This
+// is only called in case of Poincare-Lyapunov compactification (weights (p,q)
+// !=(1,1))
+bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
+                                            int precision, int numpoints)
+{
+    FILE *fp;
+    char buf[100];
+    P4POLYNOM3 f;
+    int i;
+
+    for (int j = 0; j < 2; j++) {
+        f = g_VFResults.current_isoclines_->c[j];
+
+        QString mainmaple;
+        QString user_platform;
+        QString user_file;
+        QString filedotmpl;
+        QByteArray ba_mainmaple;
+        QByteArray ba_user_file;
+
+        filedotmpl = getmaplefilename();
+
+        fp = fopen(QFile::encodeName(filedotmpl), "w");
+        if (fp == nullptr)
+            return false;
+
+        mainmaple = getP4MaplePath();
+        mainmaple += QDir::separator();
+
+        user_platform = USERPLATFORM;
+        mainmaple += MAINMAPLEGCFFILE;
+
+        ba_mainmaple = maplepathformat(mainmaple);
+        user_file = getfilename_isoclines();
+        removeFile(user_file);
+        ba_user_file = maplepathformat(user_file);
+
+        fprintf(fp, "restart;\n");
+        fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+        fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+        fprintf(fp, "user_numpoints := %d:\n", numpoints);
+        fprintf(fp, "Digits := %d:\n", precision);
+        fprintf(fp, "user_x1 := %g:\n", (float)0.0);
+        fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+        fprintf(fp, "user_y1 := %g:\n", (float)theta1);
+        fprintf(fp, "user_y2 := %g:\n", (float)theta2);
+        fprintf(fp, "u := %s:\n", "cos(y)");
+        fprintf(fp, "v := %s:\n", "sin(y)");
+        fprintf(fp, "user_f := ");
+
+        for (i = 0; f != nullptr; i++) {
+            fprintf(fp, "%s",
+                    printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V"));
+            f = f->next_term3;
+        }
+        if (i == 0)
+            fprintf(fp, "0:\n");
+        else
+            fprintf(fp, ":\n");
+
+        fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                    "`quit`(0); else `quit(1)` end if: end try:\n");
+
+        fclose(fp);
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//              PREPAREISOCLINES_LYAPUNOVR2
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating an isocline in charts near infinity.
+// This is only called in case of Poincare-Lyapunov compactification
+// (weights (p,q) !=(1,1))
+//
+// same as preparegcf, except for the "u := " and "v := " assignments,
+// and the fact that one always refers to the same function g_VFResults.gcf_,
+// and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
+bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
+{
+    FILE *fp;
+    char buf[100];
+    P4POLYNOM2 f;
+    int i;
+
+    for (int j = 0; j < 2; j++) {
+        f = g_VFResults.current_isoclines_->r2[j];
+
+        QString mainmaple;
+        QString user_platform;
+        QString user_file;
+        QString filedotmpl;
+        QByteArray ba_mainmaple;
+        QByteArray ba_user_file;
+
+        filedotmpl = getmaplefilename();
+
+        fp = fopen(QFile::encodeName(filedotmpl), "w");
+        if (fp == nullptr)
+            return false;
+
+        mainmaple = getP4MaplePath();
+        mainmaple += QDir::separator();
+
+        user_platform = USERPLATFORM;
+        mainmaple = mainmaple.append(MAINMAPLEGCFFILE);
+
+        ba_mainmaple = maplepathformat(mainmaple);
+        user_file = getfilename_isoclines();
+        removeFile(user_file);
+        ba_user_file = maplepathformat(user_file);
+
+        fprintf(fp, "restart;\n");
+        fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+        fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+        fprintf(fp, "user_numpoints := %d:\n", numpoints);
+        fprintf(fp, "Digits := %d:\n", precision);
+        fprintf(fp, "user_x1 := %g:\n", (float)0.0);
+        fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+        fprintf(fp, "user_y1 := %g:\n", (float)0.0);
+        fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
+        fprintf(fp, "u := %s:\n", "x*cos(y)");
+        fprintf(fp, "v := %s:\n", "x*sin(y)");
+        fprintf(fp, "user_f := ");
+
+        for (i = 0; f != nullptr; i++) {
+            fprintf(fp, "%s",
+                    printterm2(buf, f, (i == 0) ? true : false, "U", "V"));
+            f = f->next_term2;
+        }
+        if (i == 0)
+            fprintf(fp, "0:\n");
+        else
+            fprintf(fp, ":\n");
+
+        fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                    "`quit`(0); else `quit(1)` end if: end try:\n");
+
+        fclose(fp);
+    }
     return true;
 }
