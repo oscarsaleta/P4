@@ -75,3 +75,8 @@ void set_current_step(double curstep)
                 g_p4stardlg->plotWindow_->intParamsWindow_->setCurrentStep(
                     curstep);
 }
+
+void rplane_plsphere0(double x, double y, double *pcoord)
+{
+    R2_to_plsphere(x * cos(y), x * sin(y), pcoord);
+}
