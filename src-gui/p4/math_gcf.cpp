@@ -156,11 +156,6 @@ bool runTask(int task, int points, int prec)
         return false;
 }
 
-void rplane_plsphere0(double x, double y, double *pcoord)
-{
-    R2_to_plsphere(x * cos(y), x * sin(y), pcoord);
-}
-
 static bool readTaskResults(int task) // , int points, int prec, int memory )
 {
     bool value;
