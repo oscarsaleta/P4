@@ -42,7 +42,6 @@ QVFStudy g_VFResults;
 QVFStudy::QVFStudy()
 {
     // initialize vector field structures:
-
     f_vec_field_[0] = nullptr;
     f_vec_field_[1] = nullptr;
     vec_field_U1_[0] = nullptr;
@@ -57,7 +56,6 @@ QVFStudy::QVFStudy()
     vec_field_C_[1] = nullptr;
 
     // initialize singular points structures:
-
     first_saddle_point_ = nullptr;
     first_se_point_ = nullptr;
     first_node_point_ = nullptr;
@@ -66,7 +64,6 @@ QVFStudy::QVFStudy()
     first_de_point_ = nullptr;
 
     // initialize GCF:
-
     gcf_ = nullptr;
     gcf_U1_ = nullptr;
     gcf_U2_ = nullptr;
@@ -75,14 +72,25 @@ QVFStudy::QVFStudy()
     gcf_C_ = nullptr;
     gcf_points_ = nullptr;
 
-    // initialize limit cycles & orbits
+    // initialize curve
+    curve_ = nullptr;
+    curve_U1_ = nullptr;
+    curve_U2_ = nullptr;
+    curve_V1_ = nullptr;
+    curve_V2_ = nullptr;
+    curve_C_ = nullptr;
+    curve_points_ = nullptr;
 
+    // initialize isoclines
+    first_isoclines_ = nullptr;
+    current_isoclines_ = nullptr;
+
+    // initialize limit cycles & orbits
     first_lim_cycle_ = nullptr;
     first_orbit_ = nullptr;
     current_orbit_ = nullptr;
 
     // initialize others
-
     xmin_ = -1.0;
     xmax_ = 1.0;
     ymin_ = -1.0;
@@ -94,7 +102,6 @@ QVFStudy::QVFStudy()
     g_VFResults.dir_vec_field_ = 1;
 
     // initialize parameters
-
     // number of orbits in the limit cycle window
     config_lc_value_ = DEFAULT_LCORBITS;
     // number of points in the limit cycle window
@@ -678,8 +685,6 @@ bool QVFStudy::readGCF(FILE *fp)
 // -----------------------------------------------------------------------
 //                      QVFStudy::ReadCurve
 // -----------------------------------------------------------------------
-// TODO: canviar això perquè rebi una struct curves (així es podrà usar per
-// corbes i isoclines)
 bool QVFStudy::readCurve(QString basename)
 {
     int N, degree_curve;
@@ -691,10 +696,6 @@ bool QVFStudy::readCurve(QString basename)
         dump(basename, "Cannot open file " + basename + "_veccurve.tab");
         return false;
     }
-    /*if (fp == nullptr) {
-        dump(basename, "Cannot open file " + basename + "_veccurve.tab");
-        return false;
-    }*/
 
     if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
@@ -761,6 +762,100 @@ bool QVFStudy::readCurve(QString basename)
     }
 
     return true;
+}
+
+// -----------------------------------------------------------------------
+//                      QVFStudy::ReadIsoclines
+// -----------------------------------------------------------------------
+bool QVFStudy::readIsoclines(QString basename)
+{
+    int N, degree_curve;
+    FILE *fp = nullptr;
+    setlocale(LC_ALL, "C");
+
+    fp = fopen(QFile::encodeName(basename + "_vecisoclines.tab"), "rt");
+    if (fp == nullptr) {
+        dump(basename, "Cannot open file " + basename + "_vecisoclines.tab");
+        return false;
+    }
+
+    isoclines *new_isocline = new isoclines;
+    for (int i = 0; i < 2; i++) {
+        if (fscanf(fp, "%d", &degree_curve) != 1)
+            return false;
+
+        if (degree_curve > 0) {
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            // prepare a new isocline and link it to the list
+
+            new_isocline->r2[i] = new term2;
+            new_isocline->r2[i]->next_term2 = nullptr;
+
+            if (!readTerm2(fp, new_isocline->r2[i], N))
+                return false;
+
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            new_isocline->u1[i] = new term2;
+            new_isocline->u1[i]->next_term2 = nullptr;
+
+            if (!readTerm2(fp, new_isocline->u1[i], N))
+                return false;
+
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            new_isocline->u2[i] = new term2;
+            new_isocline->u2[i]->next_term2 = nullptr;
+
+            if (!readTerm2(fp, new_isocline->u2[i], N))
+                return false;
+
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            new_isocline->v1[i] = new term2;
+            new_isocline->v1[i]->next_term2 = nullptr;
+            if (!readTerm2(fp, new_isocline->v1[i], N))
+                return false;
+
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+            new_isocline->v2[i] = new term2;
+            new_isocline->v2[i]->next_term2 = nullptr;
+            if (!readTerm2(fp, new_isocline->v2[i], N))
+                return false;
+
+            if (p_ != 1 || q_ != 1) {
+                if (fscanf(fp, "%d", &N) != 1)
+                    return false;
+
+                new_isocline->c[i] = new term3;
+                new_isocline->c[i]->next_term3 = nullptr;
+                if (!readTerm3(fp, new_isocline->c[i], N))
+                    return false;
+            } else {
+                new_isocline->c[i] = nullptr;
+            }
+        } else {
+            new_isocline = nullptr;
+            break;
+        }
+    }
+    if (new_isocline != nullptr) {
+        if (first_isoclines_ == nullptr) {
+            first_isoclines_ = new_isocline;
+            current_isoclines_ = new_isocline;
+        } else {
+            current_isoclines_->next_isocline = new_isocline;
+            current_isoclines_ = new_isocline;
+        }
+        return true;
+    }
+    return false;
 }
 
 // -----------------------------------------------------------------------
