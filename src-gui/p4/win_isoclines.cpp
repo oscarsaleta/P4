@@ -21,6 +21,8 @@
 
 #include "custom.h"
 #include "file_vf.h"
+#include "math_gcf.h"
+#include "math_isoclines.h"
 #include "math_polynom.h"
 
 #include <QButtonGroup>
@@ -36,7 +38,7 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     QLabel *lbl0 = new QLabel("&Value = ", this);
     lbl0->setBuddy(edt_value_);
 
-    QButtonGroup *btngrp = new QButtonGroup(this);  
+    QButtonGroup *btngrp = new QButtonGroup(this);
     btn_dots_ = new QRadioButton("Dots", this);
     btn_dashes_ = new QRadioButton("Dashes", this);
     btngrp->addButton(btn_dots_);
@@ -52,7 +54,6 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     edt_memory_ = new QLineEdit("", this);
     QLabel *lbl4 = new QLabel("Max. Memory: ", this);
-
 
     btnEvaluate_ = new QPushButton("&Evaluate", this);
     btnPlot_ = new QPushButton("&Plot", this);
@@ -115,11 +116,11 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
-    //FIXME:
-    /*if (g_VFResults.first_isocline_ == nullptr) {
+
+    if (g_VFResults.first_isoclines_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
-    }*/
+    }
 
     setP4WindowTitle(this, "Plot Isoclines");
 }
@@ -132,12 +133,11 @@ void QIsoclinesDlg::onBtnEvaluate(void)
             "The value field has to be filled with a valid number.");
         return;
     }
-    g_ThisVF->isoclines_[0] =
-        g_ThisVF->xdot_ + "+(" + edt_value_->text() + ")";
-    g_ThisVF->isoclines_[1] =
-        g_ThisVF->ydot_ + "+(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_[0] = g_ThisVF->xdot_ + "+(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_[1] = g_ThisVF->ydot_ + "+(" + edt_value_->text() + ")";
 
-    // FIRST: create filename_veccurve.tab for transforming the curve QString to
+    // FIRST: create filename_vecisoclines.tab for transforming the isoclines
+    // QString to
     // a list of P4POLYNOM2
     g_ThisVF->evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
@@ -147,7 +147,7 @@ void QIsoclinesDlg::onBtnEvaluate(void)
 // TODO:
 void QIsoclinesDlg::onBtnPlot(void)
 {
-/*    bool dashes, result;
+    bool dashes, result;
     int points, precis, memory;
 
     bool ok;
@@ -189,70 +189,70 @@ void QIsoclinesDlg::onBtnPlot(void)
     }
 
     // SECOND: read the resulting file and store the list
-    if (!g_VFResults.readCurve(g_ThisVF->getbarefilename())) {
-        QMessageBox::critical(this, "P4", "Cannot read curve.\n"
+    if (!g_VFResults.readIsoclines(g_ThisVF->getbarefilename())) {
+        QMessageBox::critical(this, "P4", "Cannot read isoclines.\n"
                                           "Please check the input field!\n");
         return;
     }
 
-    // THIRD: evaluate curve with given parameters {dashes, points, memory}.
+    // THIRD: evaluate isoclines with given parameters {dashes, points, memory}.
 
     evaluating_points_ = points;
     evaluating_memory_ = memory;
     evaluating_precision_ = precis;
 
-    btn_plot_->setEnabled(false);
+    btnPlot_->setEnabled(false);
 
-    g_ThisVF->curveDlg_ = this;
-    result = evalCurveStart(mainSphere_, dashes, precis, points);
+    g_ThisVF->isoclinesDlg_ = this;
+    result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
     if (!result) {
-        btn_plot_->setEnabled(true);
-        QMessageBox::critical(this, "P4", "An error occured while plotting the "
-                                          "curve.\nThe singular locus may not "
-                                          "be visible, or may be partially "
-                                          "visible.");
+        btnPlot_->setEnabled(true);
+        QMessageBox::critical(this, "P4",
+                              "An error occured while plotting the "
+                              "isoclines.\nThe singular locus may not "
+                              "be visible, or may be partially "
+                              "visible.");
         return;
     }
 
-    btn_delete_->setEnabled(true);*/
+    btnDelAll_->setEnabled(true);
+    btnDelLast_->setEnabled(true);
 }
 
 void QIsoclinesDlg::onBtnDelAll(void)
-{/*
-    plotwnd_->getDlgData();
+{ /*
+     plotwnd_->getDlgData();
 
-    btnForwards_->setEnabled(false);
-    btnBackwards_->setEnabled(false);
-    btnContinue_->setEnabled(false);
-    btnDelAll_->setEnabled(false);
-    btnDelLast_->setEnabled(false);
+     btnForwards_->setEnabled(false);
+     btnBackwards_->setEnabled(false);
+     btnContinue_->setEnabled(false);
+     btnDelAll_->setEnabled(false);
+     btnDelLast_->setEnabled(false);
 
-    g_VFResults.deleteOrbit(g_VFResults.first_orbit_);
-    g_VFResults.first_orbit_ = nullptr;
-    g_VFResults.current_orbit_ = nullptr;
+     g_VFResults.deleteOrbit(g_VFResults.first_orbit_);
+     g_VFResults.first_orbit_ = nullptr;
+     g_VFResults.current_orbit_ = nullptr;
 
-    mainSphere_->refresh();*/
-}
+     mainSphere_->refresh();*/}
 
 void QIsoclinesDlg::onBtnDelLast(void)
-{/*
-    plotwnd_->getDlgData();
+{ /*
+     plotwnd_->getDlgData();
 
-    mainSphere_->prepareDrawing();
-    deleteLastOrbit(mainSphere_);
-    mainSphere_->finishDrawing();
+     mainSphere_->prepareDrawing();
+     deleteLastOrbit(mainSphere_);
+     mainSphere_->finishDrawing();
 
-    orbitStarted_ = false;
-    orbitSelected_ = false;
-    btnForwards_->setEnabled(false);
-    btnBackwards_->setEnabled(false);
-    btnContinue_->setEnabled(false);
+     orbitStarted_ = false;
+     orbitSelected_ = false;
+     btnForwards_->setEnabled(false);
+     btnBackwards_->setEnabled(false);
+     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.first_orbit_ == nullptr) {
-        btnDelAll_->setEnabled(false);
-        btnDelLast_->setEnabled(false);
-    }*/
-}
+     if (g_VFResults.first_orbit_ == nullptr) {
+         btnDelAll_->setEnabled(false);
+         btnDelLast_->setEnabled(false);
+     }*/}
 
 void QIsoclinesDlg::reset(void)
 {
@@ -271,14 +271,36 @@ void QIsoclinesDlg::reset(void)
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
-    // FIXME:
-    /*if (g_VFResults.gcf_ != nullptr)
-        btn_delete_->setEnabled(false);
-    else
-        btn_delete_->setEnabled(true);
-*/
+
+    if (g_VFResults.first_isoclines_ != nullptr) {
+        btnDelLast_->setEnabled(true);
+        btnDelAll_->setEnabled(true);
+    }
+
     if (g_VFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();
+}
+
+void QIsoclinesDlg::finishIsoclinesEvaluation(void)
+{
+    bool result;
+
+    if (btnPlot_->isEnabled() == true)
+        return; // not busy??
+
+    result = evalIsoclinesContinue(evaluating_precision_, evaluating_points_);
+
+    if (result) {
+        btnPlot_->setEnabled(false);
+        result = evalIsoclinesFinish(); // return false in case an error occured
+        if (!result) {
+            QMessageBox::critical(this, "P4",
+                                  "An error occured while plotting "
+                                  "the isoclines.\nThe singular locus "
+                                  "may not be visible, or may "
+                                  "be partially visible.");
+        }
+    }
 }

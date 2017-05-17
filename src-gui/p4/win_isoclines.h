@@ -35,8 +35,8 @@ class QIsoclinesDlg : public QWidget
 
   public:
     QIsoclinesDlg(QPlotWnd *, QWinSphere *);
-    void reset(void);
-
+    void reset();
+    void finishIsoclinesEvaluation();
   private:
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
@@ -55,13 +55,17 @@ class QIsoclinesDlg : public QWidget
 
     QBoxLayout *mainLayout_;
 
+    int evaluating_points_;
+    int evaluating_memory_;
+    int evaluating_precision_;
+
     void setValue(double v);
 
   public slots:
-    void onBtnEvaluate(void);
-    void onBtnPlot(void);
-    void onBtnDelAll(void);
-    void onBtnDelLast(void);
+    void onBtnEvaluate();
+    void onBtnPlot();
+    void onBtnDelAll();
+    void onBtnDelLast();
 };
 
 #endif /* WIN_ISOCLINES_H */
