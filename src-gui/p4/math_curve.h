@@ -43,7 +43,6 @@ bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points);
 bool evalCurveContinue(int precision, int points);
 bool evalCurveFinish(void);
 bool runTaskCurve(int task, int precision, int points);
-void rplane_plsphere0(double x, double y, double *pcoord);
 void draw_curve(QWinSphere *spherewnd, orbits_points *sep, int color,
                 int dashes);
 
