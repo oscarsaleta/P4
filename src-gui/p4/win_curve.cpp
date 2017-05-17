@@ -134,7 +134,7 @@ void QCurveDlg::reset(void)
 
     btn_evaluate_->setEnabled(true);
     btn_plot_->setEnabled(false);
-    if (g_VFResults.gcf_ != nullptr)
+    if (g_VFResults.curve_ != nullptr)
         btn_delete_->setEnabled(false);
     else
         btn_delete_->setEnabled(true);
