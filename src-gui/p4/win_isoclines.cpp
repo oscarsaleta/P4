@@ -133,8 +133,8 @@ void QIsoclinesDlg::onBtnEvaluate(void)
             "The value field has to be filled with a valid number.");
         return;
     }
-    g_ThisVF->isoclines_[0] = g_ThisVF->xdot_ + "+(" + edt_value_->text() + ")";
-    g_ThisVF->isoclines_[1] = g_ThisVF->ydot_ + "+(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_[0] = g_ThisVF->xdot_ + "-(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_[1] = g_ThisVF->ydot_ + "-(" + edt_value_->text() + ")";
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to
