@@ -133,7 +133,23 @@ struct isoclines {
 
     struct isoclines *next_isocline;
 
-    isoclines() : next_isocline(nullptr){};
+    isoclines() : next_isocline(nullptr)
+    {
+        r2[0] = nullptr;
+        r2[1] = nullptr;
+        u1[0] = nullptr;
+        u1[1] = nullptr;
+        u2[0] = nullptr;
+        u2[1] = nullptr;
+        v1[0] = nullptr;
+        v1[1] = nullptr;
+        v2[0] = nullptr;
+        v2[1] = nullptr;
+        c[0] = nullptr;
+        c[1] = nullptr;
+        points[1] = nullptr;
+        points[2] = nullptr;
+    };
 };
 
 // -----------------------------------------------------------------------
