@@ -36,7 +36,7 @@ class QIsoclinesDlg : public QWidget
   public:
     QIsoclinesDlg(QPlotWnd *, QWinSphere *);
     void reset();
-    void finishIsoclinesEvaluation();
+    void finishIsoclinesEvaluation(int);
   private:
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
