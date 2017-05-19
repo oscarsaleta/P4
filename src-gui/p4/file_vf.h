@@ -71,7 +71,7 @@ class QInputVF : public QObject
     QString ydot_;
     QString gcf_;
     QString curve_;
-    QString isoclines_[2];
+    QString isoclines_;
     QString evalFile_;
     QString evalFile2_;
 
@@ -173,7 +173,7 @@ class QInputVF : public QObject
     bool prepareIsoclines(P4POLYNOM2 f, double, double, int, int);
     bool prepareIsoclines_LyapunovCyl(double,double,int,int);
     bool prepareIsoclines_LyapunovR2(int,int);
-    bool evaluateIsoclines(int);
+    bool evaluateIsoclines();
 
     void createProcessWindow();
 
@@ -185,10 +185,7 @@ class QInputVF : public QObject
     void onClearButton();
     void finishGcfEvaluation();
     void finishCurveEvaluation();
-    void finishIsoclinesEvaluation(int);
-
-    private:
-    int isocline_id_; // to know which isocline we are evaluating
+    void finishIsoclinesEvaluation();
 };
 
 extern QInputVF *g_ThisVF;
