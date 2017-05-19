@@ -252,10 +252,10 @@ void QStartDlg::onPlot(void)
 {
     // show plot window
     
-    if (findWindow_ != nullptr) {
+    /*if (findWindow_ != nullptr) {
         findWindow_->onBtnLoad();
         findWindow_->getDataFromDlg();
-    }
+    }*/
 
     g_VFResults.deleteVF(); // delete any previous result object
     if (!g_VFResults.readTables(
