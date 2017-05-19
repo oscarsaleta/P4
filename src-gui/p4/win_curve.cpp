@@ -157,6 +157,7 @@ void QCurveDlg::onbtn_evaluate(void)
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
+    g_ThisVF->curveDlg_ = this;    
     g_ThisVF->evaluateCurveTable();
     btn_plot_->setEnabled(true);
 }

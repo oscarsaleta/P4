@@ -137,8 +137,8 @@ void QIsoclinesDlg::onBtnEvaluate(void)
     g_ThisVF->isoclines_[1] = g_ThisVF->ydot_ + "-(" + edt_value_->text() + ")";
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
-    // QString to
-    // a list of P4POLYNOM2
+    // QString to a list of P4POLYNOM2
+    g_ThisVF->isoclinesDlg_ = this;
     g_ThisVF->evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
     plotwnd_->getDlgData();
