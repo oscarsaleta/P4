@@ -873,7 +873,6 @@ QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
     QString s = src;
     for (k = 0; k < numparams_; k++) {
         p = parlabel_[k];
-        fprintf(stderr,"p=%s\n",p.toLatin1().data());
         newlabel = parvalue_[k];
         if (p.length() == 0)
             continue;
