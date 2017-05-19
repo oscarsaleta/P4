@@ -780,13 +780,10 @@ bool QVFStudy::readIsoclines(QString basename)
     }
 
     boost::shared_ptr<isoclines> new_isocline(new isoclines);
-    if (fscanf(fp, "%d", &degree_curve) != 1) {
-        fprintf(stderr,"cannot read degree\n");
+    if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
-    }
 
     if (degree_curve > 0) {
-        fprintf(stderr,"deg>0\n");
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
@@ -797,8 +794,6 @@ bool QVFStudy::readIsoclines(QString basename)
 
         if (!readTerm2(fp, new_isocline->r2, N))
             return false;
-        fprintf(stderr,"read r2\n");
-            
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
@@ -808,7 +803,6 @@ bool QVFStudy::readIsoclines(QString basename)
 
         if (!readTerm2(fp, new_isocline->u1, N))
             return false;
-        fprintf(stderr,"read u1\n");
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
