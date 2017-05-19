@@ -29,7 +29,7 @@
 #include <QMessageBox>
 
 QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr, Qt::Tool)
 {
     mainSphere_ = sp;
     plotwnd_ = plt;
@@ -117,7 +117,6 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    // if (g_VFResults.first_isoclines_ == nullptr) {
     if (!g_VFResults.current_isoclines_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
@@ -220,18 +219,15 @@ void QIsoclinesDlg::onBtnPlot(void)
 
     g_ThisVF->isoclinesDlg_ = this;
 
-    for (int i = 0; i < 2; i++) {
-        result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
-        fprintf(stderr, "start\n");
-        if (!result) {
-            btnPlot_->setEnabled(true);
-            QMessageBox::critical(this, "P4",
-                                  "An error occured while plotting the "
-                                  "isoclines.\nThe singular locus may not "
-                                  "be visible, or may be partially "
-                                  "visible.");
-            return;
-        }
+    result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
+    if (!result) {
+        btnPlot_->setEnabled(true);
+        QMessageBox::critical(this, "P4",
+                              "An error occured while plotting the "
+                              "isoclines.\nThe singular locus may not "
+                              "be visible, or may be partially "
+                              "visible.");
+        return;
     }
 
     btnDelAll_->setEnabled(true);
@@ -313,7 +309,6 @@ void QIsoclinesDlg::finishIsoclinesEvaluation()
     if (result) {
         btnPlot_->setEnabled(false);
         result = evalIsoclinesFinish(); // return false in case an error occured
-        fprintf(stderr, "finish\n");
         if (!result) {
             QMessageBox::critical(this, "P4",
                                   "An error occured while plotting "
