@@ -45,9 +45,9 @@ static bool read_curve(void (*chart)(double, double, double *));
 bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points)
 {
     if (g_VFResults.curve_points_ != nullptr) {
-        sp->prepareDrawing();
-        draw_curve(sp, g_VFResults.curve_points_, CBACKGROUND, s_CurveDashes);
-        sp->finishDrawing();
+    //    sp->prepareDrawing();
+    //    draw_curve(sp, g_VFResults.curve_points_, CBACKGROUND, s_CurveDashes);
+    //    sp->finishDrawing();
         g_VFResults.deleteOrbitPoint(g_VFResults.curve_points_);
         g_VFResults.curve_points_ = nullptr;
     }
