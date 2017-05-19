@@ -98,7 +98,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
     if (s_IsoclinesTask != EVAL_ISOCLINES_NONE) {
         s_IsoclinesSphere->prepareDrawing();
         draw_isoclines(s_IsoclinesSphere,
-                       g_VFResults.current_isoclines_.back()->points, CCURV, 1);
+                       g_VFResults.current_isoclines_.back().points, CCURV, 1);
         s_IsoclinesSphere->finishDrawing();
 
         s_IsoclinesTask = EVAL_ISOCLINES_NONE;
@@ -118,25 +118,25 @@ bool runTaskIsoclines(int task, int precision, int points)
     switch (task) {
     case EVAL_ISOCLINES_R2:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back()->r2, -1, 1, precision,
+            g_VFResults.current_isoclines_.back().r2, -1, 1, precision,
             points);
         break;
     case EVAL_ISOCLINES_U1:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back()->u1, 0, 1, precision, points);
+            g_VFResults.current_isoclines_.back().u1, 0, 1, precision, points);
         break;
     case EVAL_ISOCLINES_V1:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back()->u1, -1, 0, precision,
+            g_VFResults.current_isoclines_.back().u1, -1, 0, precision,
             points);
         break;
     case EVAL_ISOCLINES_U2:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back()->u2, 0, 1, precision, points);
+            g_VFResults.current_isoclines_.back().u2, 0, 1, precision, points);
         break;
     case EVAL_ISOCLINES_V2:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back()->u2, -1, 0, precision,
+            g_VFResults.current_isoclines_.back().u2, -1, 0, precision,
             points);
         break;
     case EVAL_ISOCLINES_LYP_R2:
@@ -237,7 +237,7 @@ static void insert_isoclines_point(double x0, double y0, double z0, int dashes)
         g_last_isoclines_point = g_last_isoclines_point->next_point;
     } else {
         g_last_isoclines_point = new orbits_points;
-        g_VFResults.current_isoclines_.back()->points = g_last_isoclines_point;
+        g_VFResults.current_isoclines_.back().points = g_last_isoclines_point;
     }
 
     g_last_isoclines_point->pcoord[0] = x0;

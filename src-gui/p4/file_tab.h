@@ -433,7 +433,7 @@ class QVFStudy : public QObject
 
     // isoclines
     //isoclines *first_isoclines_;
-    std::vector<boost::shared_ptr<isoclines>> current_isoclines_;
+    std::vector<isoclines> current_isoclines_;
 
     // limit cycles
 

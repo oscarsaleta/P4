@@ -779,7 +779,7 @@ bool QVFStudy::readIsoclines(QString basename)
         return false;
     }
 
-    boost::shared_ptr<isoclines> new_isocline(new isoclines);
+    isoclines new_isocline;
     if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
 
@@ -789,60 +789,60 @@ bool QVFStudy::readIsoclines(QString basename)
 
         // prepare a new isocline and link it to the list
 
-        new_isocline->r2 = new term2;
-        new_isocline->r2->next_term2 = nullptr;
+        new_isocline.r2 = new term2;
+        new_isocline.r2->next_term2 = nullptr;
 
-        if (!readTerm2(fp, new_isocline->r2, N))
+        if (!readTerm2(fp, new_isocline.r2, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        new_isocline->u1 = new term2;
-        new_isocline->u1->next_term2 = nullptr;
+        new_isocline.u1 = new term2;
+        new_isocline.u1->next_term2 = nullptr;
 
-        if (!readTerm2(fp, new_isocline->u1, N))
+        if (!readTerm2(fp, new_isocline.u1, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        new_isocline->u2 = new term2;
-        new_isocline->u2->next_term2 = nullptr;
+        new_isocline.u2 = new term2;
+        new_isocline.u2->next_term2 = nullptr;
 
-        if (!readTerm2(fp, new_isocline->u2, N))
+        if (!readTerm2(fp, new_isocline.u2, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        new_isocline->v1 = new term2;
-        new_isocline->v1->next_term2 = nullptr;
-        if (!readTerm2(fp, new_isocline->v1, N))
+        new_isocline.v1 = new term2;
+        new_isocline.v1->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline.v1, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        new_isocline->v2 = new term2;
-        new_isocline->v2->next_term2 = nullptr;
-        if (!readTerm2(fp, new_isocline->v2, N))
+        new_isocline.v2 = new term2;
+        new_isocline.v2->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline.v2, N))
             return false;
 
         if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            new_isocline->c = new term3;
-            new_isocline->c->next_term3 = nullptr;
-            if (!readTerm3(fp, new_isocline->c, N))
+            new_isocline.c = new term3;
+            new_isocline.c->next_term3 = nullptr;
+            if (!readTerm3(fp, new_isocline.c, N))
                 return false;
         } else {
-            new_isocline->c = nullptr;
+            new_isocline.c = nullptr;
         }
     } else {
-        new_isocline = nullptr;
+        return false;
     }
-    if (new_isocline != nullptr) {
+    //if (new_isocline != nullptr) {
         /*if (first_isoclines_ == nullptr) {
             first_isoclines_ = new_isocline;
             current_isoclines_ = new_isocline;
@@ -850,11 +850,10 @@ bool QVFStudy::readIsoclines(QString basename)
             current_isoclines_->next_isocline = new_isocline;
             current_isoclines_ = new_isocline;
         }*/
-        current_isoclines_.push_back(
-            boost::shared_ptr<isoclines>(new_isocline));
+        current_isoclines_.push_back(new_isocline);
         return true;
-    }
-    return false;
+    //}
+    //return false;
 }
 
 // -----------------------------------------------------------------------

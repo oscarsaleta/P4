@@ -2958,7 +2958,7 @@ bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isoclines_.back()->c;
+        f = g_VFResults.current_isoclines_.back().c;
 
         QString mainmaple;
         QString user_platform;
@@ -3034,7 +3034,7 @@ bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isoclines_.back()->r2;
+        f = g_VFResults.current_isoclines_.back().r2;
 
         QString mainmaple;
         QString user_platform;
