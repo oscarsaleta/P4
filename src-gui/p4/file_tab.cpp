@@ -82,8 +82,8 @@ QVFStudy::QVFStudy()
     curve_points_ = nullptr;
 
     // initialize isoclines
-    first_isoclines_ = nullptr;
-    current_isoclines_ = nullptr;
+    // first_isoclines_ = nullptr;
+    // current_isoclines_ = nullptr;
 
     // initialize limit cycles & orbits
     first_lim_cycle_ = nullptr;
@@ -779,80 +779,85 @@ bool QVFStudy::readIsoclines(QString basename)
         return false;
     }
 
-    isoclines *new_isocline = new isoclines;
-    for (int i = 0; i < 2; i++) {
-        if (fscanf(fp, "%d", &degree_curve) != 1)
+    boost::shared_ptr<isoclines> new_isocline(new isoclines);
+    if (fscanf(fp, "%d", &degree_curve) != 1) {
+        fprintf(stderr,"cannot read degree\n");
+        return false;
+    }
+
+    if (degree_curve > 0) {
+        fprintf(stderr,"deg>0\n");
+        if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        if (degree_curve > 0) {
+        // prepare a new isocline and link it to the list
+
+        new_isocline->r2 = new term2;
+        new_isocline->r2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline->r2, N))
+            return false;
+        fprintf(stderr,"read r2\n");
+            
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline->u1 = new term2;
+        new_isocline->u1->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline->u1, N))
+            return false;
+        fprintf(stderr,"read u1\n");
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline->u2 = new term2;
+        new_isocline->u2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline->u2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline->v1 = new term2;
+        new_isocline->v1->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline->v1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+        new_isocline->v2 = new term2;
+        new_isocline->v2->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline->v2, N))
+            return false;
+
+        if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            // prepare a new isocline and link it to the list
-
-            new_isocline->curves[i].r2 = new term2;
-            new_isocline->curves[i].r2->next_term2 = nullptr;
-
-            if (!readTerm2(fp, new_isocline->curves[i].r2, N))
+            new_isocline->c = new term3;
+            new_isocline->c->next_term3 = nullptr;
+            if (!readTerm3(fp, new_isocline->c, N))
                 return false;
-
-            if (fscanf(fp, "%d", &N) != 1)
-                return false;
-
-            new_isocline->curves[i].u1 = new term2;
-            new_isocline->curves[i].u1->next_term2 = nullptr;
-
-            if (!readTerm2(fp, new_isocline->curves[i].u1, N))
-                return false;
-
-            if (fscanf(fp, "%d", &N) != 1)
-                return false;
-
-            new_isocline->curves[i].u2 = new term2;
-            new_isocline->curves[i].u2->next_term2 = nullptr;
-
-            if (!readTerm2(fp, new_isocline->curves[i].u2, N))
-                return false;
-
-            if (fscanf(fp, "%d", &N) != 1)
-                return false;
-
-            new_isocline->curves[i].v1 = new term2;
-            new_isocline->curves[i].v1->next_term2 = nullptr;
-            if (!readTerm2(fp, new_isocline->curves[i].v1, N))
-                return false;
-
-            if (fscanf(fp, "%d", &N) != 1)
-                return false;
-            new_isocline->curves[i].v2 = new term2;
-            new_isocline->curves[i].v2->next_term2 = nullptr;
-            if (!readTerm2(fp, new_isocline->curves[i].v2, N))
-                return false;
-
-            if (p_ != 1 || q_ != 1) {
-                if (fscanf(fp, "%d", &N) != 1)
-                    return false;
-
-                new_isocline->curves[i].c = new term3;
-                new_isocline->curves[i].c->next_term3 = nullptr;
-                if (!readTerm3(fp, new_isocline->curves[i].c, N))
-                    return false;
-            } else {
-                new_isocline->curves[i].c = nullptr;
-            }
         } else {
-            new_isocline = nullptr;
-            break;
+            new_isocline->c = nullptr;
         }
+    } else {
+        new_isocline = nullptr;
     }
     if (new_isocline != nullptr) {
-        if (first_isoclines_ == nullptr) {
+        /*if (first_isoclines_ == nullptr) {
             first_isoclines_ = new_isocline;
             current_isoclines_ = new_isocline;
         } else {
             current_isoclines_->next_isocline = new_isocline;
             current_isoclines_ = new_isocline;
-        }
+        }*/
+        current_isoclines_.push_back(
+            boost::shared_ptr<isoclines>(new_isocline));
         return true;
     }
     return false;

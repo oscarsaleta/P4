@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QString>
 #include <QTextEdit>
+#include <boost/shared_ptr.hpp>
 
 // -----------------------------------------------------------------------
 //						General polynomial expressions
@@ -119,22 +120,22 @@ struct curves {
           c(nullptr), points(nullptr), next_curve(nullptr){};
 };
 
-struct isoc_curves {
+struct isoclines {
     P4POLYNOM2 r2, u1, u2, v1, v2;
     P4POLYNOM3 c;
     P4ORBIT points;
 
-    isoc_curves()
+    isoclines()
         : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
           c(nullptr), points(nullptr){};
 };
 
-struct isoclines {
+/*struct isoclines {
     struct isoc_curves curves[2];
     struct isoclines *next_isocline;
 
     isoclines() : next_isocline(nullptr){};
-};
+};*/
 
 /*struct isoclines {
     double value;
@@ -431,8 +432,8 @@ class QVFStudy : public QObject
     P4ORBIT curve_points_;
 
     // isoclines
-    isoclines *first_isoclines_;
-    isoclines *current_isoclines_;
+    //isoclines *first_isoclines_;
+    std::vector<boost::shared_ptr<isoclines>> current_isoclines_;
 
     // limit cycles
 
