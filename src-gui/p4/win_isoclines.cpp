@@ -117,7 +117,8 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (g_VFResults.first_isoclines_ == nullptr) {
+    // if (g_VFResults.first_isoclines_ == nullptr) {
+    if (!g_VFResults.current_isoclines_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -146,8 +147,9 @@ void QIsoclinesDlg::onBtnEvaluate(void)
             return;
         }
     }
-    g_ThisVF->isoclines_[0] = g_ThisVF->xdot_ + "-(" + edt_value_->text() + ")";
-    g_ThisVF->isoclines_[1] = g_ThisVF->ydot_ + "-(" + edt_value_->text() + ")";
+    g_ThisVF->isoclines_ = "(" + g_ThisVF->xdot_ + "-(" + edt_value_->text() +
+                           "))*(" + g_ThisVF->ydot_ + "-(" +
+                           edt_value_->text() + "))";
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
@@ -219,7 +221,7 @@ void QIsoclinesDlg::onBtnPlot(void)
     g_ThisVF->isoclinesDlg_ = this;
 
     for (int i = 0; i < 2; i++) {
-        result = evalIsoclinesStart(i, mainSphere_, dashes, precis, points);
+        result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
         fprintf(stderr, "start\n");
         if (!result) {
             btnPlot_->setEnabled(true);
@@ -287,7 +289,8 @@ void QIsoclinesDlg::reset(void)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (g_VFResults.first_isoclines_ != nullptr) {
+    // if (g_VFResults.first_isoclines_ != nullptr) {
+    if (!g_VFResults.current_isoclines_.empty()) {
         btnDelLast_->setEnabled(true);
         btnDelAll_->setEnabled(true);
     }
@@ -298,20 +301,18 @@ void QIsoclinesDlg::reset(void)
         btn_dots_->toggle();
 }
 
-void QIsoclinesDlg::finishIsoclinesEvaluation(int i)
+void QIsoclinesDlg::finishIsoclinesEvaluation()
 {
     bool result;
 
     if (btnPlot_->isEnabled() == true)
         return; // not busy??
 
-    result =
-        evalIsoclinesContinue(i, evaluating_precision_, evaluating_points_);
+    result = evalIsoclinesContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
         btnPlot_->setEnabled(false);
-        result =
-            evalIsoclinesFinish(i); // return false in case an error occured
+        result = evalIsoclinesFinish(); // return false in case an error occured
         fprintf(stderr, "finish\n");
         if (!result) {
             QMessageBox::critical(this, "P4",
