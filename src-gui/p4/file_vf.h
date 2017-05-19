@@ -22,6 +22,7 @@
 
 #include "custom.h"
 #include "win_curve.h"
+#include "win_find.h"
 #include "win_gcf.h"
 #include "win_isoclines.h"
 
@@ -93,6 +94,8 @@ class QInputVF : public QObject
     bool evaluatingIsoclines_;
     bool processfailed_;   // true when process failed;
     QString processError_; // only relevant when processfailed=true
+
+    QFindDlg *findDlg_;
     QGcfDlg *gcfDlg_;
     QCurveDlg *curveDlg_;
     QIsoclinesDlg *isoclinesDlg_;
@@ -119,6 +122,8 @@ class QInputVF : public QObject
     QString getfilename_isoclines() const; // filename_isocline.tab (tmp file)
     QString getPrepareIsoclinesFileName() const; // filename_isocline_prep.txt
 
+    void getDataFromDlg();
+
     bool load();
     bool save();
     void reset();
@@ -132,6 +137,7 @@ class QInputVF : public QObject
     void prepareMapleVectorField(QTextStream *);
     QString booleanString(int value) const;
     QString convertMapleUserParameterLabels(QString);
+    QString convertMapleUserParametersLabelsToValues(QString);
     // QString convertReduceUserParameterLabels(QString);
 
     void prepareFile(QTextStream *); // used by Prepare()
@@ -167,7 +173,7 @@ class QInputVF : public QObject
     bool prepareIsoclines(P4POLYNOM2 f, double, double, int, int);
     bool prepareIsoclines_LyapunovCyl(double,double,int,int);
     bool prepareIsoclines_LyapunovR2(int,int);
-    bool evaluateIsoclines();
+    bool evaluateIsoclines(int);
 
     void createProcessWindow();
 
@@ -179,7 +185,10 @@ class QInputVF : public QObject
     void onClearButton();
     void finishGcfEvaluation();
     void finishCurveEvaluation();
-    void finishIsoclinesEvaluation();
+    void finishIsoclinesEvaluation(int);
+
+    private:
+    int isocline_id_; // to know which isocline we are evaluating
 };
 
 extern QInputVF *g_ThisVF;

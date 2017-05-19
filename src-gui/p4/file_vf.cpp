@@ -1756,7 +1756,7 @@ void QInputVF::finishEvaluation(int exitCode)
     if (evaluatingCurve_)
         finishCurveEvaluation();
     if (evaluatingIsoclines_)
-        finishIsoclinesEvaluation(); // TODO:
+        finishIsoclinesEvaluation(isocline_id_); // TODO:
 }
 
 // -----------------------------------------------------------------------
@@ -1782,11 +1782,11 @@ void QInputVF::finishCurveEvaluation(void)
     }
 }
 
-void QInputVF::finishIsoclinesEvaluation(void)
+void QInputVF::finishIsoclinesEvaluation(int i)
 {
     evaluatingIsoclines_ = false;
     if (isoclinesDlg_ != nullptr) {
-        isoclinesDlg_->finishIsoclinesEvaluation();
+        isoclinesDlg_->finishIsoclinesEvaluation(i);
     }
 }
 
@@ -2806,8 +2806,9 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 // -----------------------------------------------------------------------
 //          EVALUATEISOCLINES
 // -----------------------------------------------------------------------
-bool QInputVF::evaluateIsoclines(void)
+bool QInputVF::evaluateIsoclines(int i)
 {
+    isocline_id_ = i;
     QString filedotmpl;
     QString s;
 
@@ -2961,7 +2962,7 @@ bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isoclines_->c[j];
+        f = g_VFResults.current_isoclines_->curves[j].c;
 
         QString mainmaple;
         QString user_platform;
@@ -3037,7 +3038,7 @@ bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isoclines_->r2[j];
+        f = g_VFResults.current_isoclines_->curves[i].r2;
 
         QString mainmaple;
         QString user_platform;
