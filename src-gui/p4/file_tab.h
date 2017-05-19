@@ -103,7 +103,6 @@ struct orbits {
 // -----------------------------------------------------------------------
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
-// FIXME: isoclines necessiten vectors de longitud 2 per cada cosa
 struct curves {
     P4POLYNOM2 r2;
     P4POLYNOM2 u1;
@@ -120,7 +119,24 @@ struct curves {
           c(nullptr), points(nullptr), next_curve(nullptr){};
 };
 
+struct isoc_curves {
+    P4POLYNOM2 r2, u1, u2, v1, v2;
+    P4POLYNOM3 c;
+    P4ORBIT points;
+
+    isoc_curves()
+        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
+          c(nullptr), points(nullptr){};
+};
+
 struct isoclines {
+    struct isoc_curves curves[2];
+    struct isoclines *next_isocline;
+
+    isoclines() : next_isocline(nullptr){};
+};
+
+/*struct isoclines {
     double value;
 
     P4POLYNOM2 r2[2];
@@ -150,7 +166,7 @@ struct isoclines {
         points[1] = nullptr;
         points[2] = nullptr;
     };
-};
+};*/
 
 // -----------------------------------------------------------------------
 //						Blow up structure
