@@ -1754,7 +1754,7 @@ void QInputVF::finishEvaluation(int exitCode)
     if (evaluatingCurve_)
         finishCurveEvaluation();
     if (evaluatingIsoclines_)
-        finishIsoclinesEvaluation(); // TODO:
+        finishIsoclinesEvaluation();
 }
 
 // -----------------------------------------------------------------------
@@ -2800,7 +2800,6 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 
     return true;
 }
-// TODO:
 // -----------------------------------------------------------------------
 //          EVALUATEISOCLINES
 // -----------------------------------------------------------------------
@@ -2830,7 +2829,7 @@ bool QInputVF::evaluateIsoclines()
         outputWindow_->raise();
     }
 
-    QProcess *proc;
+    QProcess *proc; //FIXME: QProcess::start: Process is already running
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
