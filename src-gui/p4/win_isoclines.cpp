@@ -127,11 +127,24 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
 void QIsoclinesDlg::onBtnEvaluate(void)
 {
-    if (edt_value_->text().isNull() || edt_value_->text().isEmpty()) {
+    bool ok;
+    if (edt_value_->text().isNull() && edt_value_->text().isEmpty()) {
         QMessageBox::information(
             this, "P4",
             "The value field has to be filled with a valid number.");
         return;
+    } else {
+        QString val = edt_value_->text();
+        g_ThisVF->getDataFromDlg();
+        val = g_ThisVF->convertMapleUserParametersLabelsToValues(val);
+        val.toDouble(&ok);
+        if (!ok) {
+            QMessageBox::information(
+                this, "P4",
+                "The value field has to be filled with a valid number.\n" +
+                    val);
+            return;
+        }
     }
     g_ThisVF->isoclines_[0] = g_ThisVF->xdot_ + "-(" + edt_value_->text() + ")";
     g_ThisVF->isoclines_[1] = g_ThisVF->ydot_ + "-(" + edt_value_->text() + ")";
@@ -204,23 +217,26 @@ void QIsoclinesDlg::onBtnPlot(void)
     btnPlot_->setEnabled(false);
 
     g_ThisVF->isoclinesDlg_ = this;
-    result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
-    if (!result) {
-        btnPlot_->setEnabled(true);
-        QMessageBox::critical(this, "P4",
-                              "An error occured while plotting the "
-                              "isoclines.\nThe singular locus may not "
-                              "be visible, or may be partially "
-                              "visible.");
-        return;
+
+    for (int i = 0; i < 2; i++) {
+        result = evalIsoclinesStart(i, mainSphere_, dashes, precis, points);
+        fprintf(stderr, "start\n");
+        if (!result) {
+            btnPlot_->setEnabled(true);
+            QMessageBox::critical(this, "P4",
+                                  "An error occured while plotting the "
+                                  "isoclines.\nThe singular locus may not "
+                                  "be visible, or may be partially "
+                                  "visible.");
+            return;
+        }
     }
 
     btnDelAll_->setEnabled(true);
     btnDelLast_->setEnabled(true);
 }
 
-void QIsoclinesDlg::onBtnDelAll(void)
-{ /*
+void QIsoclinesDlg::onBtnDelAll(void) { /*
      plotwnd_->getDlgData();
 
      btnForwards_->setEnabled(false);
@@ -235,8 +251,7 @@ void QIsoclinesDlg::onBtnDelAll(void)
 
      mainSphere_->refresh();*/}
 
-void QIsoclinesDlg::onBtnDelLast(void)
-{ /*
+void QIsoclinesDlg::onBtnDelLast(void) { /*
      plotwnd_->getDlgData();
 
      mainSphere_->prepareDrawing();
@@ -283,18 +298,21 @@ void QIsoclinesDlg::reset(void)
         btn_dots_->toggle();
 }
 
-void QIsoclinesDlg::finishIsoclinesEvaluation(void)
+void QIsoclinesDlg::finishIsoclinesEvaluation(int i)
 {
     bool result;
 
     if (btnPlot_->isEnabled() == true)
         return; // not busy??
 
-    result = evalIsoclinesContinue(evaluating_precision_, evaluating_points_);
+    result =
+        evalIsoclinesContinue(i, evaluating_precision_, evaluating_points_);
 
     if (result) {
         btnPlot_->setEnabled(false);
-        result = evalIsoclinesFinish(); // return false in case an error occured
+        result =
+            evalIsoclinesFinish(i); // return false in case an error occured
+        fprintf(stderr, "finish\n");
         if (!result) {
             QMessageBox::critical(this, "P4",
                                   "An error occured while plotting "
