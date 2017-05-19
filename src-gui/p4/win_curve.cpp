@@ -54,25 +54,23 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_evaluate_ = new QPushButton("Evaluate", this);
     btn_plot_ = new QPushButton("Plot", this);
     btn_plot_->setEnabled(false);
-    btn_delete_ = new QPushButton("Delete", this);
+    btn_delete_ = new QPushButton("Reset", this);
     btn_delete_->setEnabled(false);
 
 #ifdef TOOLTIPS
-    btn_dots_->setToolTip(
-        "Plot individual points of the curve of singularities");
-    btn_dashes_->setToolTip("Connect points of the curve of singularities with "
-                            "small line segments");
+    btn_dots_->setToolTip("Plot individual points of the curve");
+    btn_dashes_->setToolTip(
+        "Connect points of the curve with small line segments");
     edt_points_->setToolTip("Number of points");
     edt_precis_->setToolTip("Required precision");
     edt_memory_->setToolTip(
         "Maximum amount of memory (in kilobytes) spent on plotting the curve");
     btn_evaluate_->setToolTip("Evaluate singular points of plynomial curve");
     btn_plot_->setToolTip("Plot curve (using symbolic manipulator)");
-    btn_delete_->setToolTip("Delete curve");
+    btn_delete_->setToolTip("Delete all curves");
 #endif
 
     // layout
-
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QHBoxLayout *layout1 = new QHBoxLayout();
@@ -157,7 +155,7 @@ void QCurveDlg::onbtn_evaluate(void)
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
-    g_ThisVF->curveDlg_ = this;    
+    g_ThisVF->curveDlg_ = this;
     g_ThisVF->evaluateCurveTable();
     btn_plot_->setEnabled(true);
 }
