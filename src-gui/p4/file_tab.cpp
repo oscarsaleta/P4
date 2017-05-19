@@ -790,55 +790,55 @@ bool QVFStudy::readIsoclines(QString basename)
 
             // prepare a new isocline and link it to the list
 
-            new_isocline->r2[i] = new term2;
-            new_isocline->r2[i]->next_term2 = nullptr;
+            new_isocline->curves[i].r2 = new term2;
+            new_isocline->curves[i].r2->next_term2 = nullptr;
 
-            if (!readTerm2(fp, new_isocline->r2[i], N))
+            if (!readTerm2(fp, new_isocline->curves[i].r2, N))
                 return false;
 
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            new_isocline->u1[i] = new term2;
-            new_isocline->u1[i]->next_term2 = nullptr;
+            new_isocline->curves[i].u1 = new term2;
+            new_isocline->curves[i].u1->next_term2 = nullptr;
 
-            if (!readTerm2(fp, new_isocline->u1[i], N))
+            if (!readTerm2(fp, new_isocline->curves[i].u1, N))
                 return false;
 
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            new_isocline->u2[i] = new term2;
-            new_isocline->u2[i]->next_term2 = nullptr;
+            new_isocline->curves[i].u2 = new term2;
+            new_isocline->curves[i].u2->next_term2 = nullptr;
 
-            if (!readTerm2(fp, new_isocline->u2[i], N))
+            if (!readTerm2(fp, new_isocline->curves[i].u2, N))
                 return false;
 
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            new_isocline->v1[i] = new term2;
-            new_isocline->v1[i]->next_term2 = nullptr;
-            if (!readTerm2(fp, new_isocline->v1[i], N))
+            new_isocline->curves[i].v1 = new term2;
+            new_isocline->curves[i].v1->next_term2 = nullptr;
+            if (!readTerm2(fp, new_isocline->curves[i].v1, N))
                 return false;
 
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
-            new_isocline->v2[i] = new term2;
-            new_isocline->v2[i]->next_term2 = nullptr;
-            if (!readTerm2(fp, new_isocline->v2[i], N))
+            new_isocline->curves[i].v2 = new term2;
+            new_isocline->curves[i].v2->next_term2 = nullptr;
+            if (!readTerm2(fp, new_isocline->curves[i].v2, N))
                 return false;
 
             if (p_ != 1 || q_ != 1) {
                 if (fscanf(fp, "%d", &N) != 1)
                     return false;
 
-                new_isocline->c[i] = new term3;
-                new_isocline->c[i]->next_term3 = nullptr;
-                if (!readTerm3(fp, new_isocline->c[i], N))
+                new_isocline->curves[i].c = new term3;
+                new_isocline->curves[i].c->next_term3 = nullptr;
+                if (!readTerm3(fp, new_isocline->curves[i].c, N))
                     return false;
             } else {
-                new_isocline->c[i] = nullptr;
+                new_isocline->curves[i].c = nullptr;
             }
         } else {
             new_isocline = nullptr;
