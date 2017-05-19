@@ -563,6 +563,15 @@ QString QInputVF::getPrepareIsoclinesFileName(void) const
 }
 
 // -----------------------------------------------------------------------
+//                          GETDATAFROMDLG
+// -----------------------------------------------------------------------
+void QInputVF::getDataFromDlg()
+{
+    if (findDlg_!=nullptr)
+    findDlg_->getDataFromDlg();
+}
+
+// -----------------------------------------------------------------------
 //                          FILEEXISTS
 // -----------------------------------------------------------------------
 bool QInputVF::fileExists(QString fname)
@@ -854,6 +863,31 @@ QString QInputVF::convertMapleUserParameterLabels(QString src)
         s = t + s;
     }
 
+    return s;
+}
+
+QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
+{
+    QString t, p, newlabel;
+    int i,k;
+    QString s = src;
+    for (k = 0; k < numparams_; k++) {
+        p = parlabel_[k];
+        fprintf(stderr,"p=%s\n",p.toLatin1().data());
+        newlabel = parvalue_[k];
+        if (p.length() == 0)
+            continue;
+        t = "";
+        while (1) {
+            i = indexOfWordInString(&s, &p);
+            if (i == -1)
+                break;
+            t += s.left(i);
+            t += newlabel;
+            s = s.mid(i + p.length());
+        }
+        s = t + s;
+    }
     return s;
 }
 
@@ -1388,13 +1422,15 @@ void QInputVF::evaluate(void)
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (outputWindow_ == nullptr)
+        if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
                                  "-----------------------------------------"
                                  "\n\n");
             terminateProcessButton_->setEnabled(true);
+            outputWindow_->show();
+            outputWindow_->raise();
         }
 
         proc = new QProcess(this);
@@ -1479,16 +1515,28 @@ void QInputVF::evaluateCurveTable()
                                  "-----------------------------------------"
                                  "\n\n");
             terminateProcessButton_->setEnabled(true);
+            outputWindow_->show();
+            outputWindow_->raise();
         }
 
-        proc = new QProcess(this);
+        // proc = new QProcess(this);
 
-        proc->setWorkingDirectory(QDir::currentPath());
-
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                SLOT(catchProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(readProcessStdout()));
+        // QProcess *proc;
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
+            proc = evalProcess_;
+            disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalGcfEvaluated(int)));
+        } else {
+            proc = new QProcess(this);
+            proc->setWorkingDirectory(QDir::currentPath());
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalGcfEvaluated(int)));
+            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                    SLOT(catchProcessError(QProcess::ProcessError)));
+            connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                    SLOT(readProcessStdout()));
+        }
 
         processfailed_ = false;
         QString pa = "External Command: ";
@@ -1524,7 +1572,7 @@ void QInputVF::evaluateIsoclinesTable()
 {
     QString filedotmpl;
     QString s, e;
-    QProcess *proc;
+    // QProcess *proc;
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
@@ -1552,16 +1600,32 @@ void QInputVF::evaluateIsoclinesTable()
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (processText_ == nullptr)
+        if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
                                  "-----------------------------------------"
                                  "\n\n");
             terminateProcessButton_->setEnabled(true);
+            outputWindow_->show();
+            outputWindow_->raise();
         }
 
-        proc = new QProcess(this);
+        QProcess *proc;
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
+            proc = evalProcess_;
+            disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalGcfEvaluated(int)));
+        } else {
+            proc = new QProcess(this);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalGcfEvaluated(int)));
+            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                    SLOT(catchProcessError(QProcess::ProcessError)));
+            connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                    SLOT(readProcessStdout()));
+        }
 
         proc->setWorkingDirectory(QDir::currentPath());
 
@@ -1641,37 +1705,41 @@ void QInputVF::finishEvaluation(int exitCode)
     if (terminateProcessButton_ != nullptr)
         terminateProcessButton_->setEnabled(false);
 
-    //    if ( evalProcess_ != nullptr ) {
-    if (processText_ != nullptr) {
-        QString buf;
-        buf = "\n--------------------------------------------------------------"
-              "-----------------\n";
-        processText_->append(buf);
-        if (evalProcess_ != nullptr) {
-            if (evalProcess_->state() == QProcess::Running) {
-                evalProcess_->terminate();
-                QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
-                buf = "Kill signal sent to process.\n";
-            } else {
-                if (!processfailed_)
-                    buf.sprintf("The process finished normally (%d)\n",
-                                evalProcess_->exitCode());
-                else {
-                    buf.sprintf("The process stopped abnormally (%d : ",
-                                evalProcess_->exitCode());
-                    buf += processError_;
-                    buf += ")\n";
+    if (evalProcess_ != nullptr) {
+        if (processText_ != nullptr) {
+            outputWindow_->show();
+            outputWindow_->raise();
+            QString buf;
+            buf = "\n----------------------------------------------------------"
+                  "----"
+                  "-----------------\n";
+            processText_->append(buf);
+            if (evalProcess_ != nullptr) {
+                if (evalProcess_->state() == QProcess::Running) {
+                    evalProcess_->terminate();
+                    QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
+                    buf = "Kill signal sent to process.\n";
+                } else {
+                    if (!processfailed_)
+                        buf.sprintf("The process finished normally (%d)\n",
+                                    evalProcess_->exitCode());
+                    else {
+                        buf.sprintf("The process stopped abnormally (%d : ",
+                                    evalProcess_->exitCode());
+                        buf += processError_;
+                        buf += ")\n";
+                    }
                 }
+            } else {
+                if (processfailed_)
+                    buf =
+                        "The following error occured: " + processError_ + "\n";
+                else
+                    buf = "";
             }
-        } else {
-            if (processfailed_)
-                buf = "The following error occured: " + processError_ + "\n";
-            else
-                buf = "";
+            processText_->append(buf);
         }
-        processText_->append(buf);
     }
-    //    }
     /*if (processText_ != nullptr) {
         //      processText_->hide();
         if (processText_->isActiveWindow()) {
@@ -2070,6 +2138,8 @@ bool QInputVF::evaluateGcf(void)
         processText_->append("\n\n------------------------------------------"
                              "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
+        outputWindow_->show();
+        outputWindow_->raise();
     }
 
     QProcess *proc;
@@ -2470,6 +2540,8 @@ bool QInputVF::evaluateCurve(void)
         processText_->append("\n\n------------------------------------------"
                              "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
+        outputWindow_->show();
+        outputWindow_->raise();
     }
 
     QProcess *proc;
@@ -2757,6 +2829,8 @@ bool QInputVF::evaluateIsoclines(void)
         processText_->append("\n\n------------------------------------------"
                              "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
+        outputWindow_->show();
+        outputWindow_->raise();
     }
 
     QProcess *proc;
