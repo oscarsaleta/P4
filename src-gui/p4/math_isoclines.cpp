@@ -34,26 +34,16 @@ static int s_IsoclinesDashes = 0;
 static bool s_IsoclinesError = false;
 
 // non-static global variables
-orbits_points *g_last_isoclines_point = nullptr;
+P4ORBIT g_last_isoclines_point = nullptr;
 
 // static functions
 static void insert_isoclines_point(double x0, double y0, double z0, int dashes);
 static bool readTaskResults(int);
 static bool read_isoclines(void (*chart)(double, double, double *));
 
-// function definitions FIXME: process already running
+// function definitions
 bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points)
 {
-    /*if (g_VFResults.current_isoclines_->points[i] != nullptr) {
-        sp->prepareDrawing();
-        draw_isoclines(sp, g_VFResults.current_isoclines_->points[i],
-                       CBACKGROUND, s_IsoclinesDashes);
-        sp->finishDrawing();
-        g_VFResults.deleteOrbitPoint(
-            g_VFResults.current_isoclines_->points[i]);
-        g_VFResults.current_isoclines_->points[i] = nullptr;
-    }*/
-
     if (g_VFResults.plweights_)
         s_IsoclinesTask = EVAL_ISOCLINES_LYP_R2;
     else
@@ -62,16 +52,12 @@ bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points)
     s_IsoclinesError = false;
     s_IsoclinesSphere = sp;
     s_IsoclinesDashes = dashes;
-    if (!runTaskIsoclines(s_IsoclinesTask, precision, points)) {
-        s_IsoclinesError = true;
-        return false;
-    }
-    return true;
+    return runTaskIsoclines(s_IsoclinesTask, precision, points);
 }
 
 // returns true when finished. Then
 // run EvalIsoclinesFinish to see if error
-// occurred or not FIXME:
+// occurred or not
 bool evalIsoclinesContinue(int precision, int points)
 {
     if (s_IsoclinesTask == EVAL_ISOCLINES_NONE)
@@ -95,10 +81,14 @@ bool evalIsoclinesContinue(int precision, int points)
 
 bool evalIsoclinesFinish() // return false in case an error occured
 {
+    int nisocs = (g_VFResults.isocline_vector_.size() - 1) % 4;
+    g_VFResults.isocline_vector_.back().color = CISOC + nisocs;
+
     if (s_IsoclinesTask != EVAL_ISOCLINES_NONE) {
         s_IsoclinesSphere->prepareDrawing();
         draw_isoclines(s_IsoclinesSphere,
-                       g_VFResults.current_isoclines_.back().points, CCURV, 1);
+                       g_VFResults.isocline_vector_.back().points,
+                       g_VFResults.isocline_vector_.back().color, 1);
         s_IsoclinesSphere->finishDrawing();
 
         s_IsoclinesTask = EVAL_ISOCLINES_NONE;
@@ -118,26 +108,23 @@ bool runTaskIsoclines(int task, int precision, int points)
     switch (task) {
     case EVAL_ISOCLINES_R2:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back().r2, -1, 1, precision,
-            points);
+            g_VFResults.isocline_vector_.back().r2, -1, 1, precision, points);
         break;
     case EVAL_ISOCLINES_U1:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back().u1, 0, 1, precision, points);
+            g_VFResults.isocline_vector_.back().u1, 0, 1, precision, points);
         break;
     case EVAL_ISOCLINES_V1:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back().u1, -1, 0, precision,
-            points);
+            g_VFResults.isocline_vector_.back().u1, -1, 0, precision, points);
         break;
     case EVAL_ISOCLINES_U2:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back().u2, 0, 1, precision, points);
+            g_VFResults.isocline_vector_.back().u2, 0, 1, precision, points);
         break;
     case EVAL_ISOCLINES_V2:
         value = g_ThisVF->prepareIsoclines(
-            g_VFResults.current_isoclines_.back().u2, -1, 0, precision,
-            points);
+            g_VFResults.isocline_vector_.back().u2, -1, 0, precision, points);
         break;
     case EVAL_ISOCLINES_LYP_R2:
         value = g_ThisVF->prepareIsoclines_LyapunovR2(precision, points);
@@ -213,31 +200,30 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_isoclines(QWinSphere *spherewnd, struct orbits_points *sep, int color,
+void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color,
                     int dashes)
 {
     double pcoord[3];
 
-    while (sep != nullptr) {
-        if (sep->dashes && dashes)
-            (*plot_l)(spherewnd, pcoord, sep->pcoord, color);
+    while (isoc != nullptr) {
+        if (isoc->dashes && dashes)
+            (*plot_l)(spherewnd, pcoord, isoc->pcoord, color);
         else
-            (*plot_p)(spherewnd, sep->pcoord, color);
-        copy_x_into_y(sep->pcoord, pcoord);
+            (*plot_p)(spherewnd, isoc->pcoord, color);
+        copy_x_into_y(isoc->pcoord, pcoord);
 
-        sep = sep->next_point;
+        isoc = isoc->next_point;
     }
 }
 
 static void insert_isoclines_point(double x0, double y0, double z0, int dashes)
 {
-    if (/*g_VFResults.current_isoclines_->points[i]*/
-        g_last_isoclines_point != nullptr) {
+    if (g_VFResults.isocline_vector_.back().points != nullptr) {
         g_last_isoclines_point->next_point = new orbits_points;
         g_last_isoclines_point = g_last_isoclines_point->next_point;
     } else {
         g_last_isoclines_point = new orbits_points;
-        g_VFResults.current_isoclines_.back().points = g_last_isoclines_point;
+        g_VFResults.isocline_vector_.back().points = g_last_isoclines_point;
     }
 
     g_last_isoclines_point->pcoord[0] = x0;
@@ -245,7 +231,7 @@ static void insert_isoclines_point(double x0, double y0, double z0, int dashes)
     g_last_isoclines_point->pcoord[2] = z0;
 
     g_last_isoclines_point->dashes = dashes;
-    g_last_isoclines_point->color = CCURV;
+    g_last_isoclines_point->color = CISOC;
     g_last_isoclines_point->next_point = nullptr;
 }
 
@@ -278,4 +264,17 @@ static bool read_isoclines(void (*chart)(double, double, double *))
 
     fclose(fp);
     return true;
+}
+
+void deleteLastIsocline(QWinSphere *sp)
+{
+    if (g_VFResults.isocline_vector_.empty())
+        return;
+
+    sp->prepareDrawing();
+    draw_isoclines(sp, g_VFResults.isocline_vector_.back().points,
+                   sp->spherebgcolor_, 1);
+    sp->finishDrawing();
+
+    g_VFResults.isocline_vector_.pop_back();
 }
