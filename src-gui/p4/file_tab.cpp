@@ -211,7 +211,7 @@ void QVFStudy::deleteVF()
     curve_points_ = nullptr;
 
     // Delete isoclines:
-    current_isocline_.clear();
+    isocline_vector_.clear();
 
     // Delete all orbits
     deleteOrbit(first_orbit_);
@@ -773,7 +773,7 @@ bool QVFStudy::readIsoclines(QString basename)
         return false;
     }
     
-    current_isocline_.push_back(new_isocline);
+    isocline_vector_.push_back(new_isocline);
     return true;
 }
 
