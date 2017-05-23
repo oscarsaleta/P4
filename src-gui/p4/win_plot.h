@@ -24,7 +24,6 @@
 #include "win_main.h"
 #include "win_sphere.h"
 #include "win_view.h"
-#include "win_isoclines.h"
 
 #include <QAction>
 #include <QBoxLayout>
