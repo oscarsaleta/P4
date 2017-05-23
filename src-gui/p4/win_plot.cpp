@@ -94,7 +94,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     toolBar1->addAction(actGCF_);
 
     actCurve_ = new QAction("&Curve", this);
-    actCurve_->setShortcut(Qt::ALT + Qt::Key_C); // NOTE: conflict?
+    actCurve_->setShortcut(Qt::ALT + Qt::Key_C);
     connect(actCurve_, SIGNAL(triggered()), this, SLOT(onBtnCurve()));
     toolBar1->addAction(actCurve_);
 

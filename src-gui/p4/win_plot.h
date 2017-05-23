@@ -81,7 +81,7 @@ class QPlotWnd : public QMainWindow
 
     int numZooms_;
     int lastZoomIdentifier_;
-    QZoomWnd **zoomWindows_;
+    QZoomWnd **zoomWindows_; // TODO: fer vector
 
   public slots:
     void signalEvaluating(void);
