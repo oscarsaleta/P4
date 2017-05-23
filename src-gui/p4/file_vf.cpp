@@ -567,8 +567,8 @@ QString QInputVF::getPrepareIsoclinesFileName(void) const
 // -----------------------------------------------------------------------
 void QInputVF::getDataFromDlg()
 {
-    if (findDlg_!=nullptr)
-    findDlg_->getDataFromDlg();
+    if (findDlg_ != nullptr)
+        findDlg_->getDataFromDlg();
 }
 
 // -----------------------------------------------------------------------
@@ -867,7 +867,7 @@ QString QInputVF::convertMapleUserParameterLabels(QString src)
 QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
 {
     QString t, p, newlabel;
-    int i,k;
+    int i, k;
     QString s = src;
     for (k = 0; k < numparams_; k++) {
         p = parlabel_[k];
@@ -919,25 +919,6 @@ QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
     return s;
 }*/
 
-// -----------------------------------------------------------------------
-//                          BOOLEANSTRING
-// -----------------------------------------------------------------------
-//
-// returns string representations "true" and "false" for booleans true and false
-QString QInputVF::booleanString(int value) const
-{
-    if (value == 0) {
-        /*if (symbolicpackage_ == PACKAGE_REDUCE)
-            return "NIL";
-        else*/
-        return "false";
-    } else {
-        /*if (symbolicpackage_ == PACKAGE_REDUCE)
-            return "'t";
-        else*/
-        return "true";
-    }
-}
 
 #ifdef Q_OS_WIN
 extern QByteArray Win_GetShortPathName(QByteArray f);
@@ -1479,7 +1460,7 @@ void QInputVF::evaluateCurveTable()
     QProcess *proc;
 
     evaluatinggcf_ = false;
-    evaluatingCurve_ = true;
+    evaluatingCurve_ = false;
     evaluatingIsoclines_ = false;
 
     // possible clean up after last Curve evaluation
@@ -1573,7 +1554,7 @@ void QInputVF::evaluateIsoclinesTable()
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
-    evaluatingIsoclines_ = true;
+    evaluatingIsoclines_ = false;
     // possible clean up after last Curve evaluation
     if (evalProcess_ != nullptr) {
         delete evalProcess_;
@@ -2829,7 +2810,7 @@ bool QInputVF::evaluateIsoclines()
         outputWindow_->raise();
     }
 
-    QProcess *proc; //FIXME: QProcess::start: Process is already running
+    QProcess *proc;
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
@@ -2958,7 +2939,7 @@ bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isoclines_.back().c;
+        f = g_VFResults.current_isocline_.back().c;
 
         QString mainmaple;
         QString user_platform;
@@ -3034,7 +3015,7 @@ bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isoclines_.back().r2;
+        f = g_VFResults.current_isocline_.back().r2;
 
         QString mainmaple;
         QString user_platform;
