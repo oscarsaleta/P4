@@ -83,7 +83,6 @@ QVFStudy::QVFStudy()
     curve_C_ = nullptr;
     curve_points_ = nullptr;
 
-
     // initialize limit cycles & orbits
     first_lim_cycle_ = nullptr;
     first_orbit_ = nullptr;
@@ -274,8 +273,6 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
     }
 }
 
-
-
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteDegenerate
 // -----------------------------------------------------------------------
@@ -313,7 +310,6 @@ void QVFStudy::deleteSeparatrices(sep *p)
     }
 }
 
-
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteBlowup
 // -----------------------------------------------------------------------
@@ -341,7 +337,6 @@ void QVFStudy::deleteLimitCycle(orbits *p)
 {
     deleteOrbit(p); // limit cycle is implemented as orbit.
 }
-
 
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteOrbit
@@ -772,7 +767,7 @@ bool QVFStudy::readIsoclines(QString basename)
     } else {
         return false;
     }
-    
+
     isocline_vector_.push_back(new_isocline);
     return true;
 }

@@ -922,7 +922,6 @@ QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
     return s;
 }*/
 
-
 #ifdef Q_OS_WIN
 extern QByteArray Win_GetShortPathName(QByteArray f);
 #endif

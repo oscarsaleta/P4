@@ -206,8 +206,7 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_curve(QWinSphere *spherewnd, P4ORBIT sep, int color,
-                int dashes)
+void draw_curve(QWinSphere *spherewnd, P4ORBIT sep, int color, int dashes)
 {
     double pcoord[3];
 

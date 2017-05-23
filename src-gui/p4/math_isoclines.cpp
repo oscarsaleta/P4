@@ -200,8 +200,7 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color,
-                    int dashes)
+void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color, int dashes)
 {
     double pcoord[3];
 

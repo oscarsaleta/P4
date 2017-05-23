@@ -43,8 +43,7 @@ bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points);
-void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color,
-                    int dashes);
+void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color, int dashes);
 void deleteLastIsocline(QWinSphere *sp);
 
 #endif // MATH_ISOCLINES_H
