@@ -29,7 +29,7 @@
 #include <QMessageBox>
 
 QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     mainSphere_ = sp;
     plotwnd_ = plt;
@@ -57,8 +57,8 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     btnEvaluate_ = new QPushButton("&Evaluate", this);
     btnPlot_ = new QPushButton("&Plot", this);
-    btnDelLast_ = new QPushButton("&Delete Last Orbit", this);
-    btnDelAll_ = new QPushButton("Delete &All Orbits", this);
+    btnDelLast_ = new QPushButton("&Delete Last Isocline", this);
+    btnDelAll_ = new QPushButton("Delete &All Isoclines", this);
 
 #ifdef TOOLTIPS
     edt_value_->setToolTip("Value of isoclines to plot.");
@@ -66,6 +66,20 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     btnPlot_->setToolTip("Plot isocline.");
     btnDelLast_->setToolTip("Delete last isocline drawn");
     btnDelAll_->setToolTip("Delete all isoclines (separatrices remain)");
+    QString ttip;
+    ttip = QString::fromStdString("Number of points. Must be between " +
+                                  std::to_string(MIN_CURVEPOINTS) + " and " +
+                                  std::to_string(MAX_CURVEPOINTS));
+    edt_points_->setToolTip(ttip);
+    ttip = QString::fromStdString("Required precision. Must be between " +
+                                  std::to_string(MIN_CURVEPRECIS) + " and " +
+                                  std::to_string(MAX_CURVEPRECIS));
+    edt_precis_->setToolTip(ttip);
+    ttip = QString::fromStdString("Maximum amount of memory (in kilobytes) "
+                                  "spent on plotting GCF.\nMust be between " +
+                                  std::to_string(MIN_CURVEMEMORY) + " and " +
+                                  std::to_string(MAX_CURVEMEMORY));
+    edt_memory_->setToolTip(ttip);
 #endif
 
     // layout
@@ -117,7 +131,7 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (!g_VFResults.current_isoclines_.empty()) {
+    if (!g_VFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -146,6 +160,14 @@ void QIsoclinesDlg::onBtnEvaluate(void)
             return;
         }
     }
+    if ((g_ThisVF->xdot_ == "0" || g_ThisVF->xdot_.isEmpty()) &&
+        (g_ThisVF->ydot_ == "0" || g_ThisVF->ydot_.isEmpty())) {
+        QMessageBox::information(this, "P4", "Check that the vector field is "
+                                             "correctly introduced.\nIf you "
+                                             "used an input file, make sure "
+                                             "you pressed\nthe Load button.");
+        return;
+    }
     g_ThisVF->isoclines_ = "(" + g_ThisVF->xdot_ + "-(" + edt_value_->text() +
                            "))*(" + g_ThisVF->ydot_ + "-(" +
                            edt_value_->text() + "))";
@@ -158,7 +180,6 @@ void QIsoclinesDlg::onBtnEvaluate(void)
     plotwnd_->getDlgData();
 }
 
-// TODO:
 void QIsoclinesDlg::onBtnPlot(void)
 {
     bool dashes, result;
@@ -208,7 +229,6 @@ void QIsoclinesDlg::onBtnPlot(void)
                                           "Please check the input field!\n");
         return;
     }
-
     // THIRD: evaluate isoclines with given parameters {dashes, points, memory}.
 
     evaluating_points_ = points;
@@ -234,38 +254,37 @@ void QIsoclinesDlg::onBtnPlot(void)
     btnDelLast_->setEnabled(true);
 }
 
-void QIsoclinesDlg::onBtnDelAll(void) { /*
-     plotwnd_->getDlgData();
+void QIsoclinesDlg::onBtnDelAll(void)
+{
+    plotwnd_->getDlgData();
 
-     btnForwards_->setEnabled(false);
-     btnBackwards_->setEnabled(false);
-     btnContinue_->setEnabled(false);
-     btnDelAll_->setEnabled(false);
-     btnDelLast_->setEnabled(false);
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+    btnDelAll_->setEnabled(false);
+    btnDelLast_->setEnabled(false);
 
-     g_VFResults.deleteOrbit(g_VFResults.first_orbit_);
-     g_VFResults.first_orbit_ = nullptr;
-     g_VFResults.current_orbit_ = nullptr;
+    g_VFResults.isocline_vector_.clear();
 
-     mainSphere_->refresh();*/}
+    mainSphere_->refresh();
+}
 
-void QIsoclinesDlg::onBtnDelLast(void) { /*
-     plotwnd_->getDlgData();
+void QIsoclinesDlg::onBtnDelLast(void)
+{
+    plotwnd_->getDlgData();
 
-     mainSphere_->prepareDrawing();
-     deleteLastOrbit(mainSphere_);
-     mainSphere_->finishDrawing();
+    deleteLastIsocline(mainSphere_);
 
-     orbitStarted_ = false;
-     orbitSelected_ = false;
-     btnForwards_->setEnabled(false);
-     btnBackwards_->setEnabled(false);
-     btnContinue_->setEnabled(false);
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
 
-     if (g_VFResults.first_orbit_ == nullptr) {
-         btnDelAll_->setEnabled(false);
-         btnDelLast_->setEnabled(false);
-     }*/}
+    /*if (!g_VFResults.isocline_vector_.empty())
+        g_VFResults.isocline_vector_.pop_back();*/
+
+    if (g_VFResults.isocline_vector_.empty()) {
+        btnDelAll_->setEnabled(false);
+        btnDelLast_->setEnabled(false);
+    }
+}
 
 void QIsoclinesDlg::reset(void)
 {
@@ -286,7 +305,7 @@ void QIsoclinesDlg::reset(void)
     btnPlot_->setEnabled(false);
 
     // if (g_VFResults.first_isoclines_ != nullptr) {
-    if (!g_VFResults.current_isoclines_.empty()) {
+    if (!g_VFResults.isocline_vector_.empty()) {
         btnDelLast_->setEnabled(true);
         btnDelAll_->setEnabled(true);
     }
