@@ -235,7 +235,7 @@
 #define CLIMIT MAGENTA2 // limit cycles
 #define CSING GREEN     // curve of singularities
 #define CCURV CYAN
-#define CISOC PINK4
+#define CISOC PINK1
 
 // IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
 // printing.
