@@ -62,12 +62,23 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dashes_->setToolTip(
         "Connect points of the curve with small line segments");
     edt_points_->setToolTip("Number of points");
-    edt_precis_->setToolTip("Required precision");
-    edt_memory_->setToolTip(
-        "Maximum amount of memory (in kilobytes) spent on plotting the curve");
     btn_evaluate_->setToolTip("Evaluate singular points of plynomial curve");
     btn_plot_->setToolTip("Plot curve (using symbolic manipulator)");
     btn_delete_->setToolTip("Delete all curves");
+    QString ttip;
+    ttip = QString::fromStdString("Number of points. Must be between " +
+                                  std::to_string(MIN_CURVEPOINTS) + " and " +
+                                  std::to_string(MAX_CURVEPOINTS));
+    edt_points_->setToolTip(ttip);
+    ttip = QString::fromStdString("Required precision. Must be between " +
+                                  std::to_string(MIN_CURVEPRECIS) + " and " +
+                                  std::to_string(MAX_CURVEPRECIS));
+    edt_precis_->setToolTip(ttip);
+    ttip = QString::fromStdString("Maximum amount of memory (in kilobytes) "
+                                  "spent on plotting GCF.\nMust be between " +
+                                  std::to_string(MIN_CURVEMEMORY) + " and " +
+                                  std::to_string(MAX_CURVEMEMORY));
+    edt_memory_->setToolTip(ttip);
 #endif
 
     // layout
