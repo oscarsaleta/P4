@@ -124,50 +124,12 @@ struct isoclines {
     P4POLYNOM2 r2, u1, u2, v1, v2;
     P4POLYNOM3 c;
     P4ORBIT points;
+    int color;
 
     isoclines()
         : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
           c(nullptr), points(nullptr){};
 };
-
-/*struct isoclines {
-    struct isoc_curves curves[2];
-    struct isoclines *next_isocline;
-
-    isoclines() : next_isocline(nullptr){};
-};*/
-
-/*struct isoclines {
-    double value;
-
-    P4POLYNOM2 r2[2];
-    P4POLYNOM2 u1[2];
-    P4POLYNOM2 u2[2];
-    P4POLYNOM2 v1[2];
-    P4POLYNOM2 v2[2];
-    P4POLYNOM3 c[2];
-    P4ORBIT points[2];
-
-    struct isoclines *next_isocline;
-
-    isoclines() : next_isocline(nullptr)
-    {
-        r2[0] = nullptr;
-        r2[1] = nullptr;
-        u1[0] = nullptr;
-        u1[1] = nullptr;
-        u2[0] = nullptr;
-        u2[1] = nullptr;
-        v1[0] = nullptr;
-        v1[1] = nullptr;
-        v2[0] = nullptr;
-        v2[1] = nullptr;
-        c[0] = nullptr;
-        c[1] = nullptr;
-        points[1] = nullptr;
-        points[2] = nullptr;
-    };
-};*/
 
 // -----------------------------------------------------------------------
 //						Blow up structure
@@ -432,8 +394,7 @@ class QVFStudy : public QObject
     P4ORBIT curve_points_;
 
     // isoclines
-    // isoclines *first_isoclines_;
-    std::vector<isoclines> current_isocline_;
+    std::vector<isoclines> isocline_vector_;
 
     // limit cycles
 
