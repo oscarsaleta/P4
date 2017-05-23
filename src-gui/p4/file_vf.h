@@ -135,7 +135,20 @@ class QInputVF : public QObject
     // void prepareReduceVectorField(QTextStream *);
     void prepareMapleParameters(QTextStream *);
     void prepareMapleVectorField(QTextStream *);
-    QString booleanString(int value) const;
+    inline QString booleanString(int value) const
+    {
+        if (value == 0) {
+            /*if (symbolicpackage_ == PACKAGE_REDUCE)
+                return "NIL";
+            else*/
+            return "false";
+        } else {
+            /*if (symbolicpackage_ == PACKAGE_REDUCE)
+                return "'t";
+            else*/
+            return "true";
+        }
+    }
     QString convertMapleUserParameterLabels(QString);
     QString convertMapleUserParametersLabelsToValues(QString);
     // QString convertReduceUserParameterLabels(QString);
@@ -171,8 +184,8 @@ class QInputVF : public QObject
     void prepareIsoclinesFile(QTextStream *);
     void prepareMapleIsoclines(QTextStream *);
     bool prepareIsoclines(P4POLYNOM2 f, double, double, int, int);
-    bool prepareIsoclines_LyapunovCyl(double,double,int,int);
-    bool prepareIsoclines_LyapunovR2(int,int);
+    bool prepareIsoclines_LyapunovCyl(double, double, int, int);
+    bool prepareIsoclines_LyapunovR2(int, int);
     bool evaluateIsoclines();
 
     void createProcessWindow();
