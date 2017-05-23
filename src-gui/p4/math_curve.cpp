@@ -34,7 +34,7 @@ static int s_CurveDashes = 0;
 static bool s_CurveError = false;
 
 // non-static global variables
-orbits_points *g_last_curve_point = nullptr;
+P4ORBIT g_last_curve_point = nullptr;
 
 // static functions
 static void insert_curve_point(double x0, double y0, double z0, int dashes);
@@ -206,7 +206,7 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_curve(QWinSphere *spherewnd, struct orbits_points *sep, int color,
+void draw_curve(QWinSphere *spherewnd, P4ORBIT sep, int color,
                 int dashes)
 {
     double pcoord[3];

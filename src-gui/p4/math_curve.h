@@ -37,13 +37,13 @@
 #define EVAL_CURVE_CYL4 11
 #define EVAL_CURVE_FINISHLYAPUNOV 12
 
-extern orbits_points *g_last_curve_point;
+extern P4ORBIT g_last_curve_point;
 
 bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points);
 bool evalCurveContinue(int precision, int points);
 bool evalCurveFinish(void);
 bool runTaskCurve(int task, int precision, int points);
-void draw_curve(QWinSphere *spherewnd, orbits_points *sep, int color,
+void draw_curve(QWinSphere *spherewnd, P4ORBIT sep, int color,
                 int dashes);
 
 #endif // MATH_CURVE_H
