@@ -29,6 +29,8 @@
 #include <iostream>
 #include <locale.h>
 
+#include <QFile>
+
 QVFStudy g_VFResults;
 
 /*
@@ -81,9 +83,6 @@ QVFStudy::QVFStudy()
     curve_C_ = nullptr;
     curve_points_ = nullptr;
 
-    // initialize isoclines
-    // first_isoclines_ = nullptr;
-    // current_isoclines_ = nullptr;
 
     // initialize limit cycles & orbits
     first_lim_cycle_ = nullptr;
@@ -211,6 +210,9 @@ void QVFStudy::deleteVF()
     curve_C_ = nullptr;
     curve_points_ = nullptr;
 
+    // Delete isoclines:
+    current_isocline_.clear();
+
     // Delete all orbits
     deleteOrbit(first_orbit_);
     first_orbit_ = nullptr;
@@ -272,50 +274,7 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
     }
 }
 
-// -----------------------------------------------------------------------
-//                          QVFStudy::DeleteNode
-// -----------------------------------------------------------------------
-void QVFStudy::deleteNode(node *p)
-{
-    node *q;
 
-    while (p != nullptr) {
-        q = p;
-        p = p->next_node;
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//                      QVFStudy::DeleteStrongFocus
-// -----------------------------------------------------------------------
-void QVFStudy::deleteStrongFocus(strong_focus *p)
-{
-    strong_focus *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_sf;
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//                          QVFStudy::DeleteWeakFocus
-// -----------------------------------------------------------------------
-void QVFStudy::deleteWeakFocus(weak_focus *p)
-{
-    weak_focus *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_wf;
-        delete q;
-        q = nullptr;
-    }
-}
 
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteDegenerate
@@ -354,20 +313,6 @@ void QVFStudy::deleteSeparatrices(sep *p)
     }
 }
 
-// -----------------------------------------------------------------------
-//                      QVFStudy::DeleteTransformations
-// -----------------------------------------------------------------------
-void QVFStudy::deleteTransformations(transformations *t)
-{
-    transformations *u;
-
-    while (t != nullptr) {
-        u = t;
-        t = t->next_trans;
-        delete u;
-        u = nullptr;
-    }
-}
 
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteBlowup
@@ -397,21 +342,6 @@ void QVFStudy::deleteLimitCycle(orbits *p)
     deleteOrbit(p); // limit cycle is implemented as orbit.
 }
 
-// -----------------------------------------------------------------------
-//                  QVFStudy::DeleteOrbitPoint
-// -----------------------------------------------------------------------
-void QVFStudy::deleteOrbitPoint(P4ORBIT p)
-{
-    P4ORBIT q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_point;
-
-        delete q;
-        q = nullptr;
-    }
-}
 
 // -----------------------------------------------------------------------
 //                      QVFStudy::DeleteOrbit
@@ -842,18 +772,9 @@ bool QVFStudy::readIsoclines(QString basename)
     } else {
         return false;
     }
-    //if (new_isocline != nullptr) {
-        /*if (first_isoclines_ == nullptr) {
-            first_isoclines_ = new_isocline;
-            current_isoclines_ = new_isocline;
-        } else {
-            current_isoclines_->next_isocline = new_isocline;
-            current_isoclines_ = new_isocline;
-        }*/
-        current_isoclines_.push_back(new_isocline);
-        return true;
-    //}
-    //return false;
+    
+    current_isocline_.push_back(new_isocline);
+    return true;
 }
 
 // -----------------------------------------------------------------------

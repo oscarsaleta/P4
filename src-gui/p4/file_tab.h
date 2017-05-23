@@ -432,8 +432,8 @@ class QVFStudy : public QObject
     P4ORBIT curve_points_;
 
     // isoclines
-    //isoclines *first_isoclines_;
-    std::vector<isoclines> current_isoclines_;
+    // isoclines *first_isoclines_;
+    std::vector<isoclines> current_isocline_;
 
     // limit cycles
 
@@ -501,16 +501,67 @@ class QVFStudy : public QObject
 
     void deleteSaddle(saddle *);
     void deleteSemiElementary(semi_elementary *);
-    void deleteNode(node *);
-    void deleteStrongFocus(strong_focus *);
-    void deleteWeakFocus(weak_focus *);
+    inline void deleteNode(node *p)
+    {
+        node *q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_node;
+            delete q;
+            q = nullptr;
+        }
+    }
+    inline void deleteStrongFocus(strong_focus *p)
+    {
+        strong_focus *q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_sf;
+            delete q;
+            q = nullptr;
+        }
+    }
+    inline void deleteWeakFocus(weak_focus *p)
+    {
+        weak_focus *q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_wf;
+            delete q;
+            q = nullptr;
+        }
+    }
     void deleteDegenerate(degenerate *);
     void deleteSeparatrices(sep *);
-    void deleteTransformations(transformations *);
+    inline void deleteTransformations(transformations *t)
+    {
+        transformations *u;
+
+        while (t != nullptr) {
+            u = t;
+            t = t->next_trans;
+            delete u;
+            u = nullptr;
+        }
+    }
     void deleteBlowup(blow_up_points *b);
 
     void deleteLimitCycle(orbits *);
-    void deleteOrbitPoint(P4ORBIT p);
+    inline void deleteOrbitPoint(P4ORBIT p)
+    {
+        P4ORBIT q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_point;
+
+            delete q;
+            q = nullptr;
+        }
+    }
     void deleteOrbit(orbits *);
 
     // reading of the Maple/Reduce results
