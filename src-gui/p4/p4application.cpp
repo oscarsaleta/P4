@@ -93,14 +93,6 @@ void QP4Application::signalEvaluated(int exitCode)
     }
 }
 
-void QP4Application::signalGcfEvaluated(int exitCode)
-{
-    g_ThisVF->evaluated_ = true;
-    g_ThisVF->evaluating_ = false;
-
-    g_ThisVF->finishEvaluation(exitCode);
-}
-
 void QP4Application::signalCurveEvaluated(int exitCode)
 {
     g_ThisVF->evaluated_ = true;
