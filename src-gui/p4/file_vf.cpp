@@ -115,7 +115,10 @@ QInputVF::~QInputVF()
     removeFile(getfilename_curvetable());
     removeFile(getfilename_curve());
     removeFile(getPrepareCurveFileName());
-    // TODO: will have to remove isoclines files too
+    // remove isoclines files too
+    removeFile(getfilename_isoclinestable());
+    removeFile(getfilename_isoclines());
+    removeFile(getPrepareIsoclinesFileName());
 }
 
 // -----------------------------------------------------------------------
@@ -1504,12 +1507,12 @@ void QInputVF::evaluateCurveTable()
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
         } else {
             proc = new QProcess(this);
             proc->setWorkingDirectory(QDir::currentPath());
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                     SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1594,11 +1597,11 @@ void QInputVF::evaluateIsoclinesTable()
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
         } else {
             proc = new QProcess(this);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                     SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -2053,11 +2056,11 @@ bool QInputVF::evaluateGcf(void)
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
         } else {
             proc = new QProcess(this);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                     SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -2088,7 +2091,7 @@ bool QInputVF::evaluateGcf(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            g_p4app->signalGcfEvaluated(-1);
+            g_p4app->signalCurveEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
             return false;
         } else {
@@ -2125,11 +2128,11 @@ bool QInputVF::evaluateGcf(void)
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalGcfEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
     } else {
         proc = new QProcess(this);
         connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalGcfEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -2153,7 +2156,7 @@ bool QInputVF::evaluateGcf(void)
         evalProcess_ = nullptr;
         evalFile_ = "";
         evalFile2_ = "";
-        g_p4app->signalGcfEvaluated(-1);
+        g_p4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2939,7 +2942,7 @@ bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isocline_.back().c;
+        f = g_VFResults.isocline_vector_.back().c;
 
         QString mainmaple;
         QString user_platform;
@@ -3015,7 +3018,7 @@ bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
     int i;
 
     for (int j = 0; j < 2; j++) {
-        f = g_VFResults.current_isocline_.back().r2;
+        f = g_VFResults.isocline_vector_.back().r2;
 
         QString mainmaple;
         QString user_platform;
