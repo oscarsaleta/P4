@@ -237,7 +237,7 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes)
 
 static bool read_gcf(void (*chart)(double, double, double *))
 {
-    //int t;
+    // int t;
     int k;
     FILE *fp;
     double x, y;
@@ -320,21 +320,21 @@ static bool read_gcf(void (*chart)(double, double, double *))
             c = getc(fp);
         }
     } else {*/
-        k = 0;
-        while (1) {
-            d = 0;
-            while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
-                k++;
-                chart(x, y, pcoord);
-                insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
-                // d=1;
-                d = s_GcfDashes;
-            }
-            for (c = getc(fp); isspace(c);)
-                c = getc(fp);
-            if (c != ',')
-                break;
+    k = 0;
+    while (1) {
+        d = 0;
+        while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
+            k++;
+            chart(x, y, pcoord);
+            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
+            // d=1;
+            d = s_GcfDashes;
         }
+        for (c = getc(fp); isspace(c);)
+            c = getc(fp);
+        if (c != ',')
+            break;
+    }
     //}
 
     fclose(fp);

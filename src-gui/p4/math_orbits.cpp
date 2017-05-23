@@ -117,8 +117,8 @@ bool startOrbit(QWinSphere *sphere, double x, double y, bool R)
 //                      DRAWORBIT
 // -----------------------------------------------------------------------
 
-void drawOrbit(QWinSphere *spherewnd, double *pcoord,
-               orbits_points *points, int color)
+void drawOrbit(QWinSphere *spherewnd, double *pcoord, orbits_points *points,
+               int color)
 {
     double pcoord1[3];
 
@@ -296,9 +296,8 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
 }
 
 orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
-                                      double step, int dir, int color,
-                                      int points_to_int,
-                                      orbits_points **orbit)
+                               double step, int dir, int color,
+                               int points_to_int, orbits_points **orbit)
 {
     int i, d, h;
     int dashes;

@@ -251,7 +251,7 @@ void QStartDlg::onHelp(void)
 void QStartDlg::onPlot(void)
 {
     // show plot window
-    
+
     /*if (findWindow_ != nullptr) {
         findWindow_->onBtnLoad();
         findWindow_->getDataFromDlg();
