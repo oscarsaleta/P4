@@ -74,15 +74,6 @@ QVFStudy::QVFStudy()
     gcf_C_ = nullptr;
     gcf_points_ = nullptr;
 
-    // initialize curve
-    curve_ = nullptr;
-    curve_U1_ = nullptr;
-    curve_U2_ = nullptr;
-    curve_V1_ = nullptr;
-    curve_V2_ = nullptr;
-    curve_C_ = nullptr;
-    curve_points_ = nullptr;
-
     // initialize limit cycles & orbits
     first_lim_cycle_ = nullptr;
     first_orbit_ = nullptr;
@@ -193,21 +184,7 @@ void QVFStudy::deleteVF()
     gcf_points_ = nullptr;
 
     // Delete curve:
-    delete_term2(curve_);
-    delete_term2(curve_U1_);
-    delete_term2(curve_U2_);
-    delete_term2(curve_V1_);
-    delete_term2(curve_V2_);
-    delete_term3(curve_C_);
-    deleteOrbitPoint(curve_points_);
-
-    curve_ = nullptr;
-    curve_U1_ = nullptr;
-    curve_U2_ = nullptr;
-    curve_V1_ = nullptr;
-    curve_V2_ = nullptr;
-    curve_C_ = nullptr;
-    curve_points_ = nullptr;
+    curve_vector_.clear();
 
     // Delete isoclines:
     isocline_vector_.clear();
@@ -622,6 +599,7 @@ bool QVFStudy::readCurve(QString basename)
         return false;
     }
 
+    curves new_curve;
     if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
 
@@ -629,63 +607,59 @@ bool QVFStudy::readCurve(QString basename)
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_ = new term2;
-        curve_->next_term2 = nullptr;
+        new_curve.r2 = new term2;
+        new_curve.r2->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_, N))
+        if (!readTerm2(fp, new_curve.r2, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U1_ = new term2;
-        curve_U1_->next_term2 = nullptr;
+        new_curve.u1 = new term2;
+        new_curve.u1->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U1_, N))
+        if (!readTerm2(fp, new_curve.u1, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U2_ = new term2;
-        curve_U2_->next_term2 = nullptr;
+        new_curve.u2 = new term2;
+        new_curve.u2->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U2_, N))
+        if (!readTerm2(fp, new_curve.u2, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_V1_ = new term2;
-        curve_V1_->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V1_, N))
+        new_curve.v1 = new term2;
+        new_curve.v1->next_term2 = nullptr;
+        if (!readTerm2(fp, new_curve.v1, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        curve_V2_ = new term2;
-        curve_V2_->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V2_, N))
+        new_curve.v2 = new term2;
+        new_curve.v2->next_term2 = nullptr;
+        if (!readTerm2(fp, new_curve.v2, N))
             return false;
 
         if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            curve_C_ = new term3;
-            curve_C_->next_term3 = nullptr;
-            if (!readTerm3(fp, curve_C_, N))
+            new_curve.c = new term3;
+            new_curve.c->next_term3 = nullptr;
+            if (!readTerm3(fp, new_curve.c, N))
                 return false;
         }
     } else {
-        curve_ = nullptr;
-        curve_U1_ = nullptr;
-        curve_U2_ = nullptr;
-        curve_V1_ = nullptr;
-        curve_V2_ = nullptr;
-        curve_C_ = nullptr;
+        return false; 
     }
 
+    curve_vector_.push_back(new_curve);
     return true;
 }
 

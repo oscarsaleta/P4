@@ -105,19 +105,13 @@ struct orbits {
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    P4POLYNOM2 r2;
-    P4POLYNOM2 u1;
-    P4POLYNOM2 u2;
-    P4POLYNOM2 v1;
-    P4POLYNOM2 v2;
+    P4POLYNOM2 r2,u1,u2,v1,v2;
     P4POLYNOM3 c;
     P4ORBIT points;
 
-    struct curves *next_curve;
-
     curves()
         : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
-          c(nullptr), points(nullptr), next_curve(nullptr){};
+          c(nullptr), points(nullptr){};
 };
 
 struct isoclines {
@@ -385,14 +379,16 @@ class QVFStudy : public QObject
 
     // one curve to plot (for now, maybe later will be a vector)
     // TODO: change everything for a struct curves
-    P4POLYNOM2 curve_;
+    /*P4POLYNOM2 curve_;
     P4POLYNOM2 curve_U1_;
     P4POLYNOM2 curve_U2_;
     P4POLYNOM2 curve_V1_;
     P4POLYNOM2 curve_V2_;
     P4POLYNOM3 curve_C_;
-    P4ORBIT curve_points_;
+    P4ORBIT curve_points_;*/
 
+    // curves
+    std::vector<curves> curve_vector_;
     // isoclines
     std::vector<isoclines> isocline_vector_;
 
