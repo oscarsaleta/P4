@@ -156,11 +156,6 @@ bool runTask(int task, int points, int prec)
         return false;
 }
 
-void rplane_plsphere0(double x, double y, double *pcoord)
-{
-    R2_to_plsphere(x * cos(y), x * sin(y), pcoord);
-}
-
 static bool readTaskResults(int task) // , int points, int prec, int memory )
 {
     bool value;
@@ -242,7 +237,7 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes)
 
 static bool read_gcf(void (*chart)(double, double, double *))
 {
-    int t;
+    // int t;
     int k;
     FILE *fp;
     double x, y;
@@ -253,7 +248,7 @@ static bool read_gcf(void (*chart)(double, double, double *))
     if (fp == nullptr)
         return false;
 
-    if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
+    /*if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
         // search the x-label, and check for error.
 
         FILE *fp2;
@@ -324,23 +319,23 @@ static bool read_gcf(void (*chart)(double, double, double *))
             getc(fp);
             c = getc(fp);
         }
-    } else {
-        k = 0;
-        while (1) {
-            d = 0;
-            while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
-                k++;
-                chart(x, y, pcoord);
-                insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
-                // d=1;
-                d = s_GcfDashes;
-            }
-            for (c = getc(fp); isspace(c);)
-                c = getc(fp);
-            if (c != ',')
-                break;
+    } else {*/
+    k = 0;
+    while (1) {
+        d = 0;
+        while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
+            k++;
+            chart(x, y, pcoord);
+            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
+            // d=1;
+            d = s_GcfDashes;
         }
+        for (c = getc(fp); isspace(c);)
+            c = getc(fp);
+        if (c != ',')
+            break;
     }
+    //}
 
     fclose(fp);
     return true;

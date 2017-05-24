@@ -56,11 +56,21 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
         "Plot individual points of the curve of singularities");
     btn_dashes_->setToolTip("Connect points of the curve of singularities with "
                             "small line segments");
-    edt_points_->setToolTip("Number of points");
-    edt_precis_->setToolTip("Required precision");
-    edt_memory_->setToolTip(
-        "Maximum amount of memory (in kilobytes) spent on plotting GCF");
     btn_evaluate_->setToolTip("Start evaluation (using symbolic manipulator)");
+    QString ttip;
+    ttip = QString::fromStdString("Number of points. Must be between " +
+                                  std::to_string(MIN_GCFPOINTS) + " and " +
+                                  std::to_string(MAX_GCFPOINTS));
+    edt_points_->setToolTip(ttip);
+    ttip = QString::fromStdString("Required precision. Must be between " +
+                                  std::to_string(MIN_GCFPRECIS) + " and " +
+                                  std::to_string(MAX_GCFPRECIS));
+    edt_precis_->setToolTip(ttip);
+    ttip = QString::fromStdString("Maximum amount of memory (in kilobytes) "
+                                  "spent on plotting GCF.\nMust be between " +
+                                  std::to_string(MIN_GCFMEMORY) + " and " +
+                                  std::to_string(MAX_GCFMEMORY));
+    edt_memory_->setToolTip(ttip);
 #endif
 
     // layout

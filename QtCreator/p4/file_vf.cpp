@@ -111,6 +111,14 @@ QInputVF::~QInputVF()
         delete outputWindow_;
         outputWindow_ = nullptr;
     }
+    // remove curve auxiliary files
+    removeFile(getfilename_curvetable());
+    removeFile(getfilename_curve());
+    removeFile(getPrepareCurveFileName());
+    // remove isoclines files too
+    removeFile(getfilename_isoclinestable());
+    removeFile(getfilename_isoclines());
+    removeFile(getPrepareIsoclinesFileName());
 }
 
 // -----------------------------------------------------------------------
@@ -508,38 +516,62 @@ QString QInputVF::getfilename_vectable(void) const
 {
     return getbarefilename().append("_vec.tab");
 }
-QString QInputVF::getfilename_curvetable(void) const
-{
-    return getbarefilename().append("_veccurve.tab");
-}
 QString QInputVF::getfilename_gcf(void) const
 {
     return getbarefilename().append("_gcf.tab");
+}
+// only used in case of reduce: contains reduce output, no gcf data and is
+// deleted immediately.
+/*QString QInputVF::getfilename_gcfresults(void) const
+{
+    return getbarefilename().append("_gcf.res");
+}*/
+/*QString QInputVF::getreducefilename(void) const
+{
+    return getbarefilename().append(".red");
+}*/
+QString QInputVF::getmaplefilename(void) const
+{
+    return getbarefilename().append(".txt");
+}
+QString QInputVF::getrunfilename(void) const
+{
+    return getbarefilename().append(".run");
+}
+// curve filenames
+QString QInputVF::getfilename_curvetable(void) const
+{
+    return getbarefilename().append("_veccurve.tab");
 }
 QString QInputVF::getfilename_curve(void) const
 {
     return getbarefilename().append("_curve.tab");
 }
-QString QInputVF::getfilename_gcfresults(void) const
-{
-    return getbarefilename().append("_gcf.res");
-} // only used in case of reduce: contains reduce output, no gcf data and is
-  // deleted immediately.
-QString QInputVF::getreducefilename(void) const
-{
-    return getbarefilename().append(".red");
-}
-QString QInputVF::getmaplefilename(void) const
-{
-    return getbarefilename().append(".txt");
-}
 QString QInputVF::getPrepareCurveFileName(void) const
 {
     return getbarefilename().append("_curve_prep.txt");
 }
-QString QInputVF::getrunfilename(void) const
+// isoclines filenames
+QString QInputVF::getfilename_isoclinestable(void) const
 {
-    return getbarefilename().append(".run");
+    return getbarefilename().append("_vecisoclines.tab");
+}
+QString QInputVF::getfilename_isoclines(void) const
+{
+    return getbarefilename().append("_isoclines.tab");
+}
+QString QInputVF::getPrepareIsoclinesFileName(void) const
+{
+    return getbarefilename().append("_isoclines_prep.txt");
+}
+
+// -----------------------------------------------------------------------
+//                          GETDATAFROMDLG
+// -----------------------------------------------------------------------
+void QInputVF::getDataFromDlg()
+{
+    if (findDlg_ != nullptr)
+        findDlg_->getDataFromDlg();
 }
 
 // -----------------------------------------------------------------------
@@ -738,6 +770,34 @@ void QInputVF::prepareMapleCurve(QTextStream *fp)
 }
 
 // -----------------------------------------------------------------------
+//                      PREPAREMAPLEISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::prepareMapleIsoclines(QTextStream *fp)
+{
+    QString myisoclines;
+    QString lbl;
+    QString val;
+    int k;
+
+    myisoclines = convertMapleUserParameterLabels(isoclines_);
+    *fp << "user_isoclines := " << myisoclines << ":\n";
+
+    for (k = 0; k < numparams_; k++) {
+        lbl = convertMapleUserParameterLabels(parlabel_[k]);
+        val = convertMapleUserParameterLabels(parvalue_[k]);
+
+        if (lbl.length() == 0)
+            continue;
+
+        if (!numeric_) {
+            *fp << lbl << " := " << val << ":\n";
+        } else {
+            *fp << lbl << " := evalf( " << val << " ):\n";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
 //                          CONVERTMAPLEUSERPARAMETERLABELS
 // -----------------------------------------------------------------------
 //
@@ -807,6 +867,30 @@ QString QInputVF::convertMapleUserParameterLabels(QString src)
     return s;
 }
 
+QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
+{
+    QString t, p, newlabel;
+    int i, k;
+    QString s = src;
+    for (k = 0; k < numparams_; k++) {
+        p = parlabel_[k];
+        newlabel = parvalue_[k];
+        if (p.length() == 0)
+            continue;
+        t = "";
+        while (1) {
+            i = indexOfWordInString(&s, &p);
+            if (i == -1)
+                break;
+            t += s.left(i);
+            t += newlabel;
+            s = s.mid(i + p.length());
+        }
+        s = t + s;
+    }
+    return s;
+}
+
 /*QString QInputVF::convertReduceUserParameterLabels(QString src)
 {
     QString s;
@@ -837,26 +921,6 @@ QString QInputVF::convertMapleUserParameterLabels(QString src)
 
     return s;
 }*/
-
-// -----------------------------------------------------------------------
-//                          BOOLEANSTRING
-// -----------------------------------------------------------------------
-//
-// returns string representations "true" and "false" for booleans true and false
-QString QInputVF::booleanString(int value) const
-{
-    if (value == 0) {
-        /*if (symbolicpackage_ == PACKAGE_REDUCE)
-            return "NIL";
-        else*/
-        return "false";
-    } else {
-        /*if (symbolicpackage_ == PACKAGE_REDUCE)
-            return "'t";
-        else*/
-        return "true";
-    }
-}
 
 #ifdef Q_OS_WIN
 extern QByteArray Win_GetShortPathName(QByteArray f);
@@ -1152,6 +1216,89 @@ void QInputVF::prepareCurveFile(QTextStream *fp)
 }
 
 // -----------------------------------------------------------------------
+//                          PREPAREFILE ISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::prepareIsoclinesFile(QTextStream *fp)
+{
+    QString name_isoclinestab;
+    QString s;
+
+    QString mainmaple;
+    QString user_bindir;
+    QString user_tmpdir;
+    QString user_platform;
+    QString user_removecmd;
+    QString user_simplify;
+    QString user_simplifycmd;
+    QString user_sumtablepath;
+    QString user_exeprefix;
+
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_bindir;
+    QByteArray ba_user_tmpdir;
+    QByteArray ba_name_isoclinestab;
+
+    user_exeprefix = "";
+
+    mainmaple = getP4MaplePath();
+    user_bindir = getP4BinPath();
+    user_tmpdir = getP4TempPath();
+    user_sumtablepath = getP4SumTablePath();
+
+    mainmaple += QDir::separator();
+    if (user_bindir != "")
+        user_bindir += QDir::separator();
+    if (user_tmpdir != "")
+        user_tmpdir += QDir::separator();
+    user_platform = USERPLATFORM;
+#ifdef Q_OS_WIN
+    user_removecmd = "cmd /c del";
+    user_exeprefix = "cmd /c ";
+#else
+    user_removecmd = "rm";
+    user_exeprefix = "";
+#endif
+    mainmaple += MAINMAPLEFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    ba_user_bindir = maplepathformat(user_bindir);
+    ba_user_tmpdir = maplepathformat(user_tmpdir);
+
+    if (numeric_)
+        user_simplify = "false";
+    else
+        user_simplify = "true";
+
+    user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
+
+    *fp << "restart;\n";
+    *fp << "read( \"" << ba_mainmaple << "\" );\n";
+    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    *fp << "user_platform := \"" << user_platform << "\":\n";
+    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    *fp << "user_simplify := " << user_simplify << ":\n";
+    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+
+    name_isoclinestab = getfilename_isoclinestable();
+    removeFile(name_isoclinestab);
+    ba_name_isoclinestab = maplepathformat(name_isoclinestab);
+    *fp << "isoclines_table := \"" << ba_name_isoclinestab << "\":\n";
+
+    prepareMapleIsoclines(fp);
+    prepareMapleParameters(fp);
+
+    *fp << "try prepareIsoclines() catch:\n"
+           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+           "lastexception[2] );\n"
+           "finally: closeallfiles();\n"
+           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+           "try:\n";
+}
+
+// -----------------------------------------------------------------------
 //                          EVALUATE
 // -----------------------------------------------------------------------
 void QInputVF::evaluate(void)
@@ -1166,6 +1313,8 @@ void QInputVF::evaluate(void)
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
+    evaluatingIsoclines_ = false;
+
     // possible clean up after last GCF evaluation
     if (evalProcess_ != nullptr) {
         delete evalProcess_;
@@ -1253,13 +1402,15 @@ void QInputVF::evaluate(void)
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (outputWindow_ == nullptr)
+        if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
                                  "-----------------------------------------"
                                  "\n\n");
             terminateProcessButton_->setEnabled(true);
+            outputWindow_->show();
+            outputWindow_->raise();
         }
 
         proc = new QProcess(this);
@@ -1304,7 +1455,7 @@ void QInputVF::evaluate(void)
 // -----------------------------------------------------------------------
 //                          EVALUATE CURVE
 // -----------------------------------------------------------------------
-void QInputVF::evaluateCurveTable(void)
+void QInputVF::evaluateCurveTable()
 {
     QString filedotmpl;
     QString s, e;
@@ -1312,6 +1463,8 @@ void QInputVF::evaluateCurveTable(void)
 
     evaluatinggcf_ = false;
     evaluatingCurve_ = false;
+    evaluatingIsoclines_ = false;
+
     // possible clean up after last Curve evaluation
     if (evalProcess_ != nullptr) {
         delete evalProcess_;
@@ -1342,9 +1495,117 @@ void QInputVF::evaluateCurveTable(void)
                                  "-----------------------------------------"
                                  "\n\n");
             terminateProcessButton_->setEnabled(true);
+            outputWindow_->show();
+            outputWindow_->raise();
         }
 
-        proc = new QProcess(this);
+        // proc = new QProcess(this);
+
+        // QProcess *proc;
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
+            proc = evalProcess_;
+            disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalCurveEvaluated(int)));
+        } else {
+            proc = new QProcess(this);
+            proc->setWorkingDirectory(QDir::currentPath());
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalCurveEvaluated(int)));
+            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                    SLOT(catchProcessError(QProcess::ProcessError)));
+            connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                    SLOT(readProcessStdout()));
+        }
+
+        processfailed_ = false;
+        QString pa = "External Command: ";
+        pa += getMapleExe();
+        pa += " ";
+        pa += filedotmpl;
+        processText_->append(pa);
+        proc->start(getMapleExe(), QStringList(filedotmpl),
+                    QIODevice::ReadWrite);
+
+        if (proc->state() != QProcess::Running &&
+            proc->state() != QProcess::Starting) {
+            processfailed_ = true;
+            delete proc;
+            proc = nullptr;
+            evalProcess_ = nullptr;
+            evalFile_ = "";
+            evalFile2_ = "";
+            g_p4app->signalEvaluated(-1);
+            terminateProcessButton_->setEnabled(false);
+        } else {
+            evalProcess_ = proc;
+            evalFile_ = filedotmpl;
+            evalFile2_ = "";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
+//                          EVALUATE ISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::evaluateIsoclinesTable()
+{
+    QString filedotmpl;
+    QString s, e;
+    // QProcess *proc;
+
+    evaluatinggcf_ = false;
+    evaluatingCurve_ = false;
+    evaluatingIsoclines_ = false;
+    // possible clean up after last Curve evaluation
+    if (evalProcess_ != nullptr) {
+        delete evalProcess_;
+        evalProcess_ = nullptr;
+    }
+
+    prepareIsoclines();
+    filedotmpl = getPrepareIsoclinesFileName();
+
+    s = getMapleExe();
+    if (s.isNull()) {
+        s = "";
+    } else {
+        s = s.append(" ");
+        if (filedotmpl.contains(' ')) {
+            s = s.append("\"");
+            s = s.append(filedotmpl);
+            s = s.append("\"");
+        } else
+            s = s.append(filedotmpl);
+
+        /* Here a window for displaying the output text of the Maple process
+         * is created */
+        if (outputWindow_ == nullptr || processText_ == nullptr)
+            createProcessWindow();
+        else {
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
+            terminateProcessButton_->setEnabled(true);
+            outputWindow_->show();
+            outputWindow_->raise();
+        }
+
+        QProcess *proc;
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
+            proc = evalProcess_;
+            disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalCurveEvaluated(int)));
+        } else {
+            proc = new QProcess(this);
+            connect(proc, SIGNAL(finished(int)), g_p4app,
+                    SLOT(signalCurveEvaluated(int)));
+            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                    SLOT(catchProcessError(QProcess::ProcessError)));
+            connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                    SLOT(readProcessStdout()));
+        }
 
         proc->setWorkingDirectory(QDir::currentPath());
 
@@ -1378,7 +1639,6 @@ void QInputVF::evaluateCurveTable(void)
             evalFile2_ = "";
         }
     }
-    //}
 }
 
 // -----------------------------------------------------------------------
@@ -1425,37 +1685,41 @@ void QInputVF::finishEvaluation(int exitCode)
     if (terminateProcessButton_ != nullptr)
         terminateProcessButton_->setEnabled(false);
 
-    //    if ( evalProcess_ != nullptr ) {
-    if (processText_ != nullptr) {
-        QString buf;
-        buf = "\n--------------------------------------------------------------"
-              "-----------------\n";
-        processText_->append(buf);
-        if (evalProcess_ != nullptr) {
-            if (evalProcess_->state() == QProcess::Running) {
-                evalProcess_->terminate();
-                QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
-                buf = "Kill signal sent to process.\n";
-            } else {
-                if (!processfailed_)
-                    buf.sprintf("The process finished normally (%d)\n",
-                                evalProcess_->exitCode());
-                else {
-                    buf.sprintf("The process stopped abnormally (%d : ",
-                                evalProcess_->exitCode());
-                    buf += processError_;
-                    buf += ")\n";
+    if (evalProcess_ != nullptr) {
+        if (processText_ != nullptr) {
+            outputWindow_->show();
+            outputWindow_->raise();
+            QString buf;
+            buf = "\n----------------------------------------------------------"
+                  "----"
+                  "-----------------\n";
+            processText_->append(buf);
+            if (evalProcess_ != nullptr) {
+                if (evalProcess_->state() == QProcess::Running) {
+                    evalProcess_->terminate();
+                    QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
+                    buf = "Kill signal sent to process.\n";
+                } else {
+                    if (!processfailed_)
+                        buf.sprintf("The process finished normally (%d)\n",
+                                    evalProcess_->exitCode());
+                    else {
+                        buf.sprintf("The process stopped abnormally (%d : ",
+                                    evalProcess_->exitCode());
+                        buf += processError_;
+                        buf += ")\n";
+                    }
                 }
+            } else {
+                if (processfailed_)
+                    buf =
+                        "The following error occured: " + processError_ + "\n";
+                else
+                    buf = "";
             }
-        } else {
-            if (processfailed_)
-                buf = "The following error occured: " + processError_ + "\n";
-            else
-                buf = "";
+            processText_->append(buf);
         }
-        processText_->append(buf);
     }
-    //    }
     /*if (processText_ != nullptr) {
         //      processText_->hide();
         if (processText_->isActiveWindow()) {
@@ -1468,12 +1732,12 @@ void QInputVF::finishEvaluation(int exitCode)
         }
     }*/
 
-    if (evaluatinggcf_) {
+    if (evaluatinggcf_)
         finishGcfEvaluation();
-    }
-    if (evaluatingCurve_) {
+    if (evaluatingCurve_)
         finishCurveEvaluation();
-    }
+    if (evaluatingIsoclines_)
+        finishIsoclinesEvaluation();
 }
 
 // -----------------------------------------------------------------------
@@ -1499,12 +1763,20 @@ void QInputVF::finishCurveEvaluation(void)
     }
 }
 
+void QInputVF::finishIsoclinesEvaluation()
+{
+    evaluatingIsoclines_ = false;
+    if (isoclinesDlg_ != nullptr) {
+        isoclinesDlg_->finishIsoclinesEvaluation();
+    }
+}
+
 // -----------------------------------------------------------------------
 //                          PREPARE
 // -----------------------------------------------------------------------
 void QInputVF::prepare(void)
 {
-    QString filedotred;
+    // QString filedotred;
     QString filedotmpl;
     QFile *fptr;
     QTextStream *fp;
@@ -1564,6 +1836,35 @@ void QInputVF::prepareCurve(void)
     if (fptr->open(QIODevice::WriteOnly)) {
         fp = new QTextStream(fptr);
         prepareCurveFile(fp);
+        fp->flush();
+        delete fp;
+        fp = nullptr;
+        fptr->close();
+        delete fptr;
+        fptr = nullptr;
+    } else {
+        delete fptr;
+        fptr = nullptr;
+
+        // cannot open?
+    }
+}
+
+// -----------------------------------------------------------------------
+//                          PREPARE ISOCLINES
+// -----------------------------------------------------------------------
+void QInputVF::prepareIsoclines(void)
+{
+    QString filedotmpl;
+    QFile *fptr;
+    QTextStream *fp;
+
+    filedotmpl = getPrepareIsoclinesFileName();
+
+    fptr = new QFile(filedotmpl);
+    if (fptr->open(QIODevice::WriteOnly)) {
+        fp = new QTextStream(fptr);
+        prepareIsoclinesFile(fp);
         fp->flush();
         delete fp;
         fp = nullptr;
@@ -1684,6 +1985,7 @@ void QInputVF::createProcessWindow(void)
     QHBoxLayout *hLayout = new QHBoxLayout();
     hLayout->setSpacing(6);
 
+    hLayout->addStretch();
     terminateProcessButton_ = new QPushButton("Terminate");
     terminateProcessButton_->setFont(*(g_p4app->boldFont_));
     terminateProcessButton_->setToolTip(
@@ -1753,11 +2055,11 @@ bool QInputVF::evaluateGcf(void)
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
         } else {
             proc = new QProcess(this);
             connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalGcfEvaluated(int)));
+                    SLOT(signalCurveEvaluated(int)));
             connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                     SLOT(catchProcessError(QProcess::ProcessError)));
             connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1788,7 +2090,7 @@ bool QInputVF::evaluateGcf(void)
             evalProcess_ = nullptr;
             evalFile_ = "";
             evalFile2_ = "";
-            g_p4app->signalGcfEvaluated(-1);
+            g_p4app->signalCurveEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
             return false;
         } else {
@@ -1816,6 +2118,8 @@ bool QInputVF::evaluateGcf(void)
         processText_->append("\n\n------------------------------------------"
                              "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
+        outputWindow_->show();
+        outputWindow_->raise();
     }
 
     QProcess *proc;
@@ -1823,11 +2127,11 @@ bool QInputVF::evaluateGcf(void)
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalGcfEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
     } else {
         proc = new QProcess(this);
         connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalGcfEvaluated(int)));
+                SLOT(signalCurveEvaluated(int)));
         connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
                 SLOT(catchProcessError(QProcess::ProcessError)));
         connect(proc, SIGNAL(readyReadStandardOutput()), this,
@@ -1851,7 +2155,7 @@ bool QInputVF::evaluateGcf(void)
         evalProcess_ = nullptr;
         evalFile_ = "";
         evalFile2_ = "";
-        g_p4app->signalGcfEvaluated(-1);
+        g_p4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -1872,7 +2176,7 @@ bool QInputVF::evaluateGcf(void)
 // Prepare files in case of calculating GCF in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
 
-bool QInputVF::prepareGcf(struct term2 *f, double y1, double y2, int precision,
+bool QInputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
                           int numpoints)
 {
     FILE *fp;
@@ -2216,6 +2520,8 @@ bool QInputVF::evaluateCurve(void)
         processText_->append("\n\n------------------------------------------"
                              "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
+        outputWindow_->show();
+        outputWindow_->raise();
     }
 
     QProcess *proc;
@@ -2270,8 +2576,8 @@ bool QInputVF::evaluateCurve(void)
 //
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool QInputVF::prepareCurve(struct term2 *f, double y1, double y2,
-                            int precision, int numpoints)
+bool QInputVF::prepareCurve(P4POLYNOM2 f, double y1, double y2, int precision,
+                            int numpoints)
 {
     FILE *fp;
     int i;
@@ -2346,7 +2652,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
     P4POLYNOM3 f;
     int i;
 
-    f = g_VFResults.curve_C_;
+    f = g_VFResults.curve_vector_.back().c;
 
     QString mainmaple;
     QString user_platform;
@@ -2421,7 +2727,7 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
     P4POLYNOM2 f;
     int i;
 
-    f = g_VFResults.curve_;
+    f = g_VFResults.curve_vector_.back().r2;
 
     QString mainmaple;
     QString user_platform;
@@ -2475,5 +2781,295 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
 
     fclose(fp);
 
+    return true;
+}
+// -----------------------------------------------------------------------
+//          EVALUATEISOCLINES
+// -----------------------------------------------------------------------
+bool QInputVF::evaluateIsoclines()
+{
+    QString filedotmpl;
+    QString s;
+
+    filedotmpl = getmaplefilename();
+
+    s = getMapleExe();
+    s = s.append(" ");
+    if (filedotmpl.contains(' ')) {
+        s = s.append("\"");
+        s = s.append(filedotmpl);
+        s = s.append("\"");
+    } else
+        s = s.append(filedotmpl);
+
+    if (processText_ == nullptr)
+        createProcessWindow();
+    else {
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
+        terminateProcessButton_->setEnabled(true);
+        outputWindow_->show();
+        outputWindow_->raise();
+    }
+
+    QProcess *proc;
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
+        proc = evalProcess_;
+        disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
+        connect(proc, SIGNAL(finished(int)), g_p4app,
+                SLOT(signalCurveEvaluated(int)));
+    } else {
+        proc = new QProcess(this);
+        connect(proc, SIGNAL(finished(int)), g_p4app,
+                SLOT(signalCurveEvaluated(int)));
+        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
+                SLOT(catchProcessError(QProcess::ProcessError)));
+        connect(proc, SIGNAL(readyReadStandardOutput()), this,
+                SLOT(readProcessStdout()));
+    }
+
+    proc->setWorkingDirectory(QDir::currentPath());
+
+    processfailed_ = false;
+    QString pa = "External Command: ";
+    pa += getMapleExe();
+    pa += " ";
+    pa += filedotmpl;
+    processText_->append(pa);
+    proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
+    if (proc->state() != QProcess::Running &&
+        proc->state() != QProcess::Starting) {
+        processfailed_ = true;
+        delete proc;
+        proc = nullptr;
+        evalProcess_ = nullptr;
+        evalFile_ = "";
+        evalFile2_ = "";
+        g_p4app->signalCurveEvaluated(-1);
+        terminateProcessButton_->setEnabled(false);
+        return false;
+    } else {
+        evalProcess_ = proc;
+        evalFile_ = filedotmpl;
+        evalFile2_ = "";
+        evaluatingIsoclines_ = true;
+
+        return true;
+    }
+}
+
+// -----------------------------------------------------------------------
+//              PREPAREISOCLINES
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating isoclines in plane/U1/U2 charts.
+// This is only called in case of Poincare-compactification (weights p=q=1)
+bool QInputVF::prepareIsoclines(P4POLYNOM2 f, double y1, double y2,
+                                int precision, int numpoints)
+{
+    FILE *fp;
+    int i;
+    char buf[100];
+
+    QString mainmaple;
+    QString user_platform;
+    QString user_file;
+    QString filedotmpl;
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_file;
+
+    filedotmpl = getmaplefilename();
+
+    fp = fopen(QFile::encodeName(filedotmpl), "w");
+    if (fp == nullptr)
+        return false;
+
+    mainmaple = getP4MaplePath();
+    mainmaple += QDir::separator();
+
+    user_platform = USERPLATFORM;
+    mainmaple += MAINMAPLEGCFFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    user_file = getfilename_isoclines();
+    removeFile(user_file);
+    ba_user_file = maplepathformat(user_file);
+
+    fprintf(fp, "restart;\n");
+    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+    fprintf(fp, "user_numpoints := %d:\n", numpoints);
+    fprintf(fp, "Digits := %d:\n", precision);
+    fprintf(fp, "user_x1 := %g:\n", (float)(-1.0));
+    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+    fprintf(fp, "user_y1 := %g:\n", (float)y1);
+    fprintf(fp, "user_y2 := %g:\n", (float)y2);
+    fprintf(fp, "u := %s:\n", "x");
+    fprintf(fp, "v := %s:\n", "y");
+    fprintf(fp, "user_f := ");
+    for (i = 0; f != nullptr; i++) {
+        fprintf(fp, "%s",
+                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
+        f = f->next_term2;
+    }
+    if (i == 0)
+        fprintf(fp, "0:\n");
+    else
+        fprintf(fp, ":\n");
+
+    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
+
+    fclose(fp);
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//              PREPAREISOCLINES_LYAPUNOVCYL
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating a curve in charts near infinity.  This
+// is only called in case of Poincare-Lyapunov compactification (weights (p,q)
+// !=(1,1))
+bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
+                                            int precision, int numpoints)
+{
+    FILE *fp;
+    char buf[100];
+    P4POLYNOM3 f;
+    int i;
+
+    for (int j = 0; j < 2; j++) {
+        f = g_VFResults.isocline_vector_.back().c;
+
+        QString mainmaple;
+        QString user_platform;
+        QString user_file;
+        QString filedotmpl;
+        QByteArray ba_mainmaple;
+        QByteArray ba_user_file;
+
+        filedotmpl = getmaplefilename();
+
+        fp = fopen(QFile::encodeName(filedotmpl), "w");
+        if (fp == nullptr)
+            return false;
+
+        mainmaple = getP4MaplePath();
+        mainmaple += QDir::separator();
+
+        user_platform = USERPLATFORM;
+        mainmaple += MAINMAPLEGCFFILE;
+
+        ba_mainmaple = maplepathformat(mainmaple);
+        user_file = getfilename_isoclines();
+        removeFile(user_file);
+        ba_user_file = maplepathformat(user_file);
+
+        fprintf(fp, "restart;\n");
+        fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+        fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+        fprintf(fp, "user_numpoints := %d:\n", numpoints);
+        fprintf(fp, "Digits := %d:\n", precision);
+        fprintf(fp, "user_x1 := %g:\n", (float)0.0);
+        fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+        fprintf(fp, "user_y1 := %g:\n", (float)theta1);
+        fprintf(fp, "user_y2 := %g:\n", (float)theta2);
+        fprintf(fp, "u := %s:\n", "cos(y)");
+        fprintf(fp, "v := %s:\n", "sin(y)");
+        fprintf(fp, "user_f := ");
+
+        for (i = 0; f != nullptr; i++) {
+            fprintf(fp, "%s",
+                    printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V"));
+            f = f->next_term3;
+        }
+        if (i == 0)
+            fprintf(fp, "0:\n");
+        else
+            fprintf(fp, ":\n");
+
+        fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                    "`quit`(0); else `quit(1)` end if: end try:\n");
+
+        fclose(fp);
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//              PREPAREISOCLINES_LYAPUNOVR2
+// -----------------------------------------------------------------------
+//
+// Prepare files in case of calculating an isocline in charts near infinity.
+// This is only called in case of Poincare-Lyapunov compactification
+// (weights (p,q) !=(1,1))
+//
+// same as preparegcf, except for the "u := " and "v := " assignments,
+// and the fact that one always refers to the same function g_VFResults.gcf_,
+// and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
+bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
+{
+    FILE *fp;
+    char buf[100];
+    P4POLYNOM2 f;
+    int i;
+
+    for (int j = 0; j < 2; j++) {
+        f = g_VFResults.isocline_vector_.back().r2;
+
+        QString mainmaple;
+        QString user_platform;
+        QString user_file;
+        QString filedotmpl;
+        QByteArray ba_mainmaple;
+        QByteArray ba_user_file;
+
+        filedotmpl = getmaplefilename();
+
+        fp = fopen(QFile::encodeName(filedotmpl), "w");
+        if (fp == nullptr)
+            return false;
+
+        mainmaple = getP4MaplePath();
+        mainmaple += QDir::separator();
+
+        user_platform = USERPLATFORM;
+        mainmaple = mainmaple.append(MAINMAPLEGCFFILE);
+
+        ba_mainmaple = maplepathformat(mainmaple);
+        user_file = getfilename_isoclines();
+        removeFile(user_file);
+        ba_user_file = maplepathformat(user_file);
+
+        fprintf(fp, "restart;\n");
+        fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
+        fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
+        fprintf(fp, "user_numpoints := %d:\n", numpoints);
+        fprintf(fp, "Digits := %d:\n", precision);
+        fprintf(fp, "user_x1 := %g:\n", (float)0.0);
+        fprintf(fp, "user_x2 := %g:\n", (float)1.0);
+        fprintf(fp, "user_y1 := %g:\n", (float)0.0);
+        fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
+        fprintf(fp, "u := %s:\n", "x*cos(y)");
+        fprintf(fp, "v := %s:\n", "x*sin(y)");
+        fprintf(fp, "user_f := ");
+
+        for (i = 0; f != nullptr; i++) {
+            fprintf(fp, "%s",
+                    printterm2(buf, f, (i == 0) ? true : false, "U", "V"));
+            f = f->next_term2;
+        }
+        if (i == 0)
+            fprintf(fp, "0:\n");
+        else
+            fprintf(fp, ":\n");
+
+        fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
+                    "`quit`(0); else `quit(1)` end if: end try:\n");
+
+        fclose(fp);
+    }
     return true;
 }

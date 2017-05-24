@@ -29,6 +29,8 @@
 #include <iostream>
 #include <locale.h>
 
+#include <QFile>
+
 QVFStudy g_VFResults;
 
 /*
@@ -42,7 +44,6 @@ QVFStudy g_VFResults;
 QVFStudy::QVFStudy()
 {
     // initialize vector field structures:
-
     f_vec_field_[0] = nullptr;
     f_vec_field_[1] = nullptr;
     vec_field_U1_[0] = nullptr;
@@ -57,7 +58,6 @@ QVFStudy::QVFStudy()
     vec_field_C_[1] = nullptr;
 
     // initialize singular points structures:
-
     first_saddle_point_ = nullptr;
     first_se_point_ = nullptr;
     first_node_point_ = nullptr;
@@ -66,7 +66,6 @@ QVFStudy::QVFStudy()
     first_de_point_ = nullptr;
 
     // initialize GCF:
-
     gcf_ = nullptr;
     gcf_U1_ = nullptr;
     gcf_U2_ = nullptr;
@@ -76,13 +75,11 @@ QVFStudy::QVFStudy()
     gcf_points_ = nullptr;
 
     // initialize limit cycles & orbits
-
     first_lim_cycle_ = nullptr;
     first_orbit_ = nullptr;
     current_orbit_ = nullptr;
 
     // initialize others
-
     xmin_ = -1.0;
     xmax_ = 1.0;
     ymin_ = -1.0;
@@ -94,7 +91,6 @@ QVFStudy::QVFStudy()
     g_VFResults.dir_vec_field_ = 1;
 
     // initialize parameters
-
     // number of orbits in the limit cycle window
     config_lc_value_ = DEFAULT_LCORBITS;
     // number of points in the limit cycle window
@@ -188,21 +184,10 @@ void QVFStudy::deleteVF()
     gcf_points_ = nullptr;
 
     // Delete curve:
-    delete_term2(curve_);
-    delete_term2(curve_U1_);
-    delete_term2(curve_U2_);
-    delete_term2(curve_V1_);
-    delete_term2(curve_V2_);
-    delete_term3(curve_C_);
-    deleteOrbitPoint(curve_points_);
+    curve_vector_.clear();
 
-    curve_ = nullptr;
-    curve_U1_ = nullptr;
-    curve_U2_ = nullptr;
-    curve_V1_ = nullptr;
-    curve_V2_ = nullptr;
-    curve_C_ = nullptr;
-    curve_points_ = nullptr;
+    // Delete isoclines:
+    isocline_vector_.clear();
 
     // Delete all orbits
     deleteOrbit(first_orbit_);
@@ -266,51 +251,6 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
 }
 
 // -----------------------------------------------------------------------
-//                          QVFStudy::DeleteNode
-// -----------------------------------------------------------------------
-void QVFStudy::deleteNode(node *p)
-{
-    node *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_node;
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//                      QVFStudy::DeleteStrongFocus
-// -----------------------------------------------------------------------
-void QVFStudy::deleteStrongFocus(strong_focus *p)
-{
-    strong_focus *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_sf;
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//                          QVFStudy::DeleteWeakFocus
-// -----------------------------------------------------------------------
-void QVFStudy::deleteWeakFocus(weak_focus *p)
-{
-    weak_focus *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_wf;
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
 //                      QVFStudy::DeleteDegenerate
 // -----------------------------------------------------------------------
 void QVFStudy::deleteDegenerate(degenerate *p)
@@ -348,21 +288,6 @@ void QVFStudy::deleteSeparatrices(sep *p)
 }
 
 // -----------------------------------------------------------------------
-//                      QVFStudy::DeleteTransformations
-// -----------------------------------------------------------------------
-void QVFStudy::deleteTransformations(transformations *t)
-{
-    transformations *u;
-
-    while (t != nullptr) {
-        u = t;
-        t = t->next_trans;
-        delete u;
-        u = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
 //                      QVFStudy::DeleteBlowup
 // -----------------------------------------------------------------------
 void QVFStudy::deleteBlowup(blow_up_points *b)
@@ -388,22 +313,6 @@ void QVFStudy::deleteBlowup(blow_up_points *b)
 void QVFStudy::deleteLimitCycle(orbits *p)
 {
     deleteOrbit(p); // limit cycle is implemented as orbit.
-}
-
-// -----------------------------------------------------------------------
-//                  QVFStudy::DeleteOrbitPoint
-// -----------------------------------------------------------------------
-void QVFStudy::deleteOrbitPoint(P4ORBIT p)
-{
-    P4ORBIT q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_point;
-
-        delete q;
-        q = nullptr;
-    }
 }
 
 // -----------------------------------------------------------------------
@@ -689,11 +598,8 @@ bool QVFStudy::readCurve(QString basename)
         dump(basename, "Cannot open file " + basename + "_veccurve.tab");
         return false;
     }
-    /*if (fp == nullptr) {
-        dump(basename, "Cannot open file " + basename + "_veccurve.tab");
-        return false;
-    }*/
 
+    curves new_curve;
     if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
 
@@ -701,63 +607,142 @@ bool QVFStudy::readCurve(QString basename)
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_ = new term2;
-        curve_->next_term2 = nullptr;
+        new_curve.r2 = new term2;
+        new_curve.r2->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_, N))
+        if (!readTerm2(fp, new_curve.r2, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U1_ = new term2;
-        curve_U1_->next_term2 = nullptr;
+        new_curve.u1 = new term2;
+        new_curve.u1->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U1_, N))
+        if (!readTerm2(fp, new_curve.u1, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_U2_ = new term2;
-        curve_U2_->next_term2 = nullptr;
+        new_curve.u2 = new term2;
+        new_curve.u2->next_term2 = nullptr;
 
-        if (!readTerm2(fp, curve_U2_, N))
+        if (!readTerm2(fp, new_curve.u2, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
 
-        curve_V1_ = new term2;
-        curve_V1_->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V1_, N))
+        new_curve.v1 = new term2;
+        new_curve.v1->next_term2 = nullptr;
+        if (!readTerm2(fp, new_curve.v1, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1)
             return false;
-        curve_V2_ = new term2;
-        curve_V2_->next_term2 = nullptr;
-        if (!readTerm2(fp, curve_V2_, N))
+        new_curve.v2 = new term2;
+        new_curve.v2->next_term2 = nullptr;
+        if (!readTerm2(fp, new_curve.v2, N))
             return false;
 
         if (p_ != 1 || q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1)
                 return false;
 
-            curve_C_ = new term3;
-            curve_C_->next_term3 = nullptr;
-            if (!readTerm3(fp, curve_C_, N))
+            new_curve.c = new term3;
+            new_curve.c->next_term3 = nullptr;
+            if (!readTerm3(fp, new_curve.c, N))
                 return false;
         }
     } else {
-        curve_ = nullptr;
-        curve_U1_ = nullptr;
-        curve_U2_ = nullptr;
-        curve_V1_ = nullptr;
-        curve_V2_ = nullptr;
-        curve_C_ = nullptr;
+        return false; 
     }
 
+    curve_vector_.push_back(new_curve);
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//                      QVFStudy::ReadIsoclines
+// -----------------------------------------------------------------------
+bool QVFStudy::readIsoclines(QString basename)
+{
+    int N, degree_curve;
+    FILE *fp = nullptr;
+    setlocale(LC_ALL, "C");
+
+    fp = fopen(QFile::encodeName(basename + "_vecisoclines.tab"), "rt");
+    if (fp == nullptr) {
+        dump(basename, "Cannot open file " + basename + "_vecisoclines.tab");
+        return false;
+    }
+
+    isoclines new_isocline;
+    if (fscanf(fp, "%d", &degree_curve) != 1)
+        return false;
+
+    if (degree_curve > 0) {
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        // prepare a new isocline and link it to the list
+
+        new_isocline.r2 = new term2;
+        new_isocline.r2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline.r2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline.u1 = new term2;
+        new_isocline.u1->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline.u1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline.u2 = new term2;
+        new_isocline.u2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline.u2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline.v1 = new term2;
+        new_isocline.v1->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline.v1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+        new_isocline.v2 = new term2;
+        new_isocline.v2->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline.v2, N))
+            return false;
+
+        if (p_ != 1 || q_ != 1) {
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            new_isocline.c = new term3;
+            new_isocline.c->next_term3 = nullptr;
+            if (!readTerm3(fp, new_isocline.c, N))
+                return false;
+        } else {
+            new_isocline.c = nullptr;
+        }
+    } else {
+        return false;
+    }
+
+    isocline_vector_.push_back(new_isocline);
     return true;
 }
 

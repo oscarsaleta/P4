@@ -47,7 +47,6 @@ class QP4Application : public QApplication
   public slots:
     void signalEvaluating(void);
     void signalEvaluated(int);
-    void signalGcfEvaluated(int);
     void signalCurveEvaluated(int);
     void signalChanged(void);
     void signalLoaded(void);

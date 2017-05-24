@@ -70,8 +70,13 @@ void set_current_step(double curstep)
     g_VFResults.config_currentstep_ = curstep;
 
     if (g_p4stardlg != nullptr)
-        if (g_p4stardlg->Plot_Window != nullptr)
-            if (g_p4stardlg->Plot_Window->intParamsWindow_ != nullptr)
-                g_p4stardlg->Plot_Window->intParamsWindow_->setCurrentStep(
+        if (g_p4stardlg->plotWindow_ != nullptr)
+            if (g_p4stardlg->plotWindow_->intParamsWindow_ != nullptr)
+                g_p4stardlg->plotWindow_->intParamsWindow_->setCurrentStep(
                     curstep);
+}
+
+void rplane_plsphere0(double x, double y, double *pcoord)
+{
+    R2_to_plsphere(x * cos(y), x * sin(y), pcoord);
 }

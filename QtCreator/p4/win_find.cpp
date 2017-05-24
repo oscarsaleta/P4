@@ -284,6 +284,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
 
     vfWindow_ = nullptr;
     paramsWindow_ = nullptr;
+    g_ThisVF->findDlg_ = this;
 
 #ifdef AUTO_OPEN_VFWINDOW
     onBtnVf();

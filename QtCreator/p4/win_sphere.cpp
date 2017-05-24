@@ -23,6 +23,7 @@
 #include "math_curve.h"
 #include "math_findpoint.h"
 #include "math_gcf.h"
+#include "math_isoclines.h"
 #include "math_limitcycles.h"
 #include "math_orbits.h"
 #include "math_p4.h"
@@ -44,6 +45,7 @@
 static QPixmap *s_p4pixmap = nullptr;
 static double s_p4pixmap_dpm = 0;
 
+// TODO: canviar per vector de spheres
 int QWinSphere::sm_numSpheres = 0;
 QWinSphere **QWinSphere::sm_SphereList = nullptr;
 
@@ -710,6 +712,7 @@ void QWinSphere::paintEvent(QPaintEvent *p)
         plotSeparatrices();
         plotGcf();
         plotCurve();
+        drawIsoclines();
         drawOrbits(this);
         drawLimitCycles(this);
         plotPoints();
@@ -1486,7 +1489,20 @@ void QWinSphere::plotGcf(void)
 
 void QWinSphere::plotCurve(void)
 {
-    draw_curve(this, g_VFResults.curve_points_, CCURV, 1);
+    std::vector<curves>::const_iterator it;
+    for (it = g_VFResults.curve_vector_.begin();
+         it != g_VFResults.curve_vector_.end(); it++) {
+        draw_curve(this, it->points, CCURV, 1);
+    }
+}
+
+void QWinSphere::drawIsoclines(void)
+{
+    std::vector<isoclines>::const_iterator it;
+    for (it = g_VFResults.isocline_vector_.begin();
+         it != g_VFResults.isocline_vector_.end(); it++) {
+        draw_isoclines(this, it->points, it->color, 1);
+    }
 }
 
 // -----------------------------------------------------------------------
@@ -1498,8 +1514,7 @@ P4POLYLINES *QWinSphere::produceEllipse(double cx, double cy, double a,
                                         double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output is
-    // stored
-    // in a list of points that is dynamically allocated.
+    // stored in a list of points that is dynamically allocated.
 
     double theta, t1, t2, e, R, x, y, c, prevx, prevy;
     bool d;
@@ -2131,11 +2146,31 @@ void QWinSphere::printGcf(void)
 void QWinSphere::printCurve(void)
 {
     QString comment;
+    std::vector<curves>::const_iterator it;
+    int i;
+    for (it = g_VFResults.curve_vector_.begin(), i = 0;
+         it != g_VFResults.curve_vector_.end(); it++, i++) {
+        if (it->points != nullptr) {
+            comment.sprintf("Printing curve %d:", i);
+            print_comment(comment);
+            draw_curve(this, it->points, CCURV, 1);
+        }
+    }
+}
 
-    if (g_VFResults.curve_points_ != nullptr) {
-        comment = "Printing Greatest common factor:";
-        print_comment(comment);
-        draw_curve(this, g_VFResults.curve_points_, CCURV, 1);
+void QWinSphere::printIsoclines(void)
+{
+    QString comment;
+
+    std::vector<isoclines>::const_iterator it;
+    int i;
+    for (it = g_VFResults.isocline_vector_.begin(), i = 0;
+         it != g_VFResults.isocline_vector_.end(); it++, i++) {
+        if (it->points != nullptr) {
+            comment.sprintf("Printing isocline %d:", i);
+            print_comment(comment);
+            draw_isoclines(this, it->points, CISOC, 1);
+        }
     }
 }
 

@@ -42,9 +42,10 @@ class QCurveDlg : public QWidget
     QWinSphere *mainSphere_;
     QPlotWnd *plotwnd_;
 
-    QPushButton *btn_evaluate_;
-    QPushButton *btn_plot_;
-    QPushButton *btn_delete_;
+    QPushButton *btnEvaluate_;
+    QPushButton *btnPlot_;
+    QPushButton *btnDelLast_;
+    QPushButton *btnDelAll_;
 
     QRadioButton *btn_dots_;
     QRadioButton *btn_dashes_;
@@ -60,9 +61,10 @@ class QCurveDlg : public QWidget
     int evaluating_precision_;
 
   public slots:
-    void onbtn_evaluate(void);
-    void onbtn_plot(void);
-    void onbtn_delete(void);
+    void onBtnEvaluate(void);
+    void onBtnPlot(void);
+    void onBtnDelAll(void);
+    void onBtnDelLast(void);
 };
 
 #endif /* WIN_CURVE_H */

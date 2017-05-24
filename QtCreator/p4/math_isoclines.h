@@ -17,32 +17,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_GCF_H
-#define MATH_GCF_H
+#ifndef MATH_ISOCLINES_H
+#define MATH_ISOCLINES_H
 
 #include "file_tab.h"
 #include "win_sphere.h"
 
-#define EVAL_GCF_NONE 0
-#define EVAL_GCF_R2 1
-#define EVAL_GCF_U1 2
-#define EVAL_GCF_U2 3
-#define EVAL_GCF_V1 4
-#define EVAL_GCF_V2 5
-#define EVAL_GCF_FINISHPOINCARE 6
-#define EVAL_GCF_LYP_R2 7
-#define EVAL_GCF_CYL1 8
-#define EVAL_GCF_CYL2 9
-#define EVAL_GCF_CYL3 10
-#define EVAL_GCF_CYL4 11
-#define EVAL_GCF_FINISHLYAPUNOV 12
+#define EVAL_ISOCLINES_NONE 0
+#define EVAL_ISOCLINES_R2 1
+#define EVAL_ISOCLINES_U1 2
+#define EVAL_ISOCLINES_U2 3
+#define EVAL_ISOCLINES_V1 4
+#define EVAL_ISOCLINES_V2 5
+#define EVAL_ISOCLINES_FINISHPOINCARE 6
+#define EVAL_ISOCLINES_LYP_R2 7
+#define EVAL_ISOCLINES_CYL1 8
+#define EVAL_ISOCLINES_CYL2 9
+#define EVAL_ISOCLINES_CYL3 10
+#define EVAL_ISOCLINES_CYL4 11
+#define EVAL_ISOCLINES_FINISHLYAPUNOV 12
 
-extern orbits_points *g_last_gcf_point;
+extern P4ORBIT g_last_isoclines_point;
 
-bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis);
-bool evalGcfContinue(int points, int prec);
-bool evalGcfFinish(void);
-bool runTask(int task, int points, int prec);
-void draw_gcf(QWinSphere *spherewnd, orbits_points *sep, int color, int dashes);
+bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points);
+bool evalIsoclinesContinue(int precision, int points);
+bool evalIsoclinesFinish();
+bool runTaskIsoclines(int task, int precision, int points);
+void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color, int dashes);
+void deleteLastIsocline(QWinSphere *sp);
 
-#endif // MATH_GCF_H
+#endif // MATH_ISOCLINES_H

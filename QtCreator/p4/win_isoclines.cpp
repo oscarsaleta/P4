@@ -17,22 +17,24 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_curve.h"
+#include "win_isoclines.h"
 
 #include "custom.h"
 #include "file_vf.h"
-#include "math_curve.h"
+#include "math_gcf.h"
+#include "math_isoclines.h"
 #include "math_polynom.h"
 
 #include <QButtonGroup>
 #include <QMessageBox>
 
-QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
+QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
       plotwnd_(plt)
 {
-    edt_curve_ = new QLineEdit("", this);
-    QLabel *lbl0 = new QLabel("Curve: ", this);
+    edt_value_ = new QLineEdit("", this);
+    QLabel *lbl0 = new QLabel("&Value = ", this);
+    lbl0->setBuddy(edt_value_);
 
     QButtonGroup *btngrp = new QButtonGroup(this);
     btn_dots_ = new QRadioButton("Dots", this);
@@ -50,19 +52,17 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_memory_ = new QLineEdit("", this);
     QLabel *lbl4 = new QLabel("Max. Memory: ", this);
 
-    btnEvaluate_ = new QPushButton("Evaluate", this);
+    btnEvaluate_ = new QPushButton("&Evaluate", this);
     btnPlot_ = new QPushButton("&Plot", this);
-    btnDelLast_ = new QPushButton("&Delete Last Curve", this);
-    btnDelAll_ = new QPushButton("Delete &All Curves", this);
+    btnDelLast_ = new QPushButton("&Delete Last Isocline", this);
+    btnDelAll_ = new QPushButton("Delete &All Isoclines", this);
 
 #ifdef TOOLTIPS
-    btn_dots_->setToolTip("Plot individual points of the curve");
-    btn_dashes_->setToolTip(
-        "Connect points of the curve with small line segments");
-    edt_points_->setToolTip("Number of points");
-    btnEvaluate_->setToolTip("Evaluate singular points of plynomial curve");
-    btnPlot_->setToolTip("Plot curve (using symbolic manipulator)");
-    btnDelAll_->setToolTip("Delete all curves");
+    edt_value_->setToolTip("Value of isoclines to plot.");
+    btnEvaluate_->setToolTip("Evaluate isoclines at the selected value.");
+    btnPlot_->setToolTip("Plot isocline.");
+    btnDelLast_->setToolTip("Delete last isocline drawn");
+    btnDelAll_->setToolTip("Delete all isoclines (separatrices remain)");
     QString ttip;
     ttip = QString::fromStdString("Number of points. Must be between " +
                                   std::to_string(MIN_CURVEPOINTS) + " and " +
@@ -89,7 +89,7 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
 
     QGridLayout *layout1 = new QGridLayout();
     layout1->addWidget(lbl0, 0, 0);
-    layout1->addWidget(edt_curve_, 0, 1);
+    layout1->addWidget(edt_value_, 0, 1);
     layout1->addWidget(lbl2, 1, 0);
     layout1->addWidget(edt_points_, 1, 1);
     layout1->addWidget(lbl3, 2, 0);
@@ -116,73 +116,68 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     setLayout(mainLayout_);
 
     // connections
-
     QObject::connect(btnEvaluate_, SIGNAL(clicked()), this,
                      SLOT(onBtnEvaluate()));
     QObject::connect(btnPlot_, SIGNAL(clicked()), this, SLOT(onBtnPlot()));
-    QObject::connect(btnDelLast_, SIGNAL(clicked()), this, SLOT(onBtnDelLast()));
     QObject::connect(btnDelAll_, SIGNAL(clicked()), this, SLOT(onBtnDelAll()));
+    QObject::connect(btnDelLast_, SIGNAL(clicked()), this,
+                     SLOT(onBtnDelLast()));
 
     // finishing
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (g_VFResults.curve_vector_.empty()) {
+    if (!g_VFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
 
-    setP4WindowTitle(this, "Curve plot");
+    setP4WindowTitle(this, "Plot Isoclines");
 }
 
-void QCurveDlg::reset()
+void QIsoclinesDlg::onBtnEvaluate(void)
 {
-    QString buf;
-
-    edt_curve_->setText("");
-
-    buf.sprintf("%d", DEFAULT_CURVEPOINTS);
-    edt_points_->setText(buf);
-
-    buf.sprintf("%d", DEFAULT_CURVEMEMORY);
-    edt_memory_->setText(buf);
-
-    buf.sprintf("%d", DEFAULT_CURVEPRECIS);
-    edt_precis_->setText(buf);
-
-    btnEvaluate_->setEnabled(true);
-    btnPlot_->setEnabled(false);
-
-    if (!g_VFResults.curve_vector_.empty()) {
-        btnDelAll_->setEnabled(true);
-        btnDelLast_->setEnabled(true);
+    bool ok;
+    if (edt_value_->text().isNull() && edt_value_->text().isEmpty()) {
+        QMessageBox::information(
+            this, "P4",
+            "The value field has to be filled with a valid number.");
+        return;
+    } else {
+        QString val = edt_value_->text();
+        g_ThisVF->getDataFromDlg();
+        val = g_ThisVF->convertMapleUserParametersLabelsToValues(val);
+        val.toDouble(&ok);
+        if (!ok) {
+            QMessageBox::information(
+                this, "P4",
+                "The value field has to be filled with a valid number.\n" +
+                    val);
+            return;
+        }
     }
-
-    if (g_VFResults.config_dashes_)
-        btn_dashes_->toggle();
-    else
-        btn_dots_->toggle();
-}
-
-void QCurveDlg::onBtnEvaluate()
-{
-    if (edt_curve_->text().isNull() || edt_curve_->text().isEmpty()) {
-        QMessageBox::information(this, "P4",
-                                 "The curve field has to be filled\n"
-                                 "with the equation of a curve.\n");
+    if ((g_ThisVF->xdot_ == "0" || g_ThisVF->xdot_.isEmpty()) &&
+        (g_ThisVF->ydot_ == "0" || g_ThisVF->ydot_.isEmpty())) {
+        QMessageBox::information(this, "P4", "Check that the vector field is "
+                                             "correctly introduced.\nIf you "
+                                             "used an input file, make sure "
+                                             "you pressed\nthe Load button.");
         return;
     }
-    g_ThisVF->curve_ = edt_curve_->text().trimmed();
+    g_ThisVF->isoclines_ =
+        "(" + g_ThisVF->xdot_ + "-(" + edt_value_->text().trimmed() + "))*(" +
+        g_ThisVF->ydot_ + "-(" + edt_value_->text().trimmed() + "))";
 
-    // FIRST: create filename_veccurve.tab for transforming the curve QString to
-    // a list of P4POLYNOM2
-    g_ThisVF->curveDlg_ = this;
-    g_ThisVF->evaluateCurveTable();
+    // FIRST: create filename_vecisoclines.tab for transforming the isoclines
+    // QString to a list of P4POLYNOM2
+    g_ThisVF->isoclinesDlg_ = this;
+    g_ThisVF->evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
+    plotwnd_->getDlgData();
 }
 
-void QCurveDlg::onBtnPlot()
+void QIsoclinesDlg::onBtnPlot(void)
 {
     bool dashes, result;
     int points, precis, memory;
@@ -226,13 +221,12 @@ void QCurveDlg::onBtnPlot()
     }
 
     // SECOND: read the resulting file and store the list
-    if (!g_VFResults.readCurve(g_ThisVF->getbarefilename())) {
-        QMessageBox::critical(this, "P4", "Cannot read curve.\n"
+    if (!g_VFResults.readIsoclines(g_ThisVF->getbarefilename())) {
+        QMessageBox::critical(this, "P4", "Cannot read isoclines.\n"
                                           "Please check the input field!\n");
         return;
     }
-
-    // THIRD: evaluate curve with given parameters {dashes, points, memory}.
+    // THIRD: evaluate isoclines with given parameters {dashes, points, memory}.
 
     evaluating_points_ = points;
     evaluating_memory_ = memory;
@@ -240,14 +234,16 @@ void QCurveDlg::onBtnPlot()
 
     btnPlot_->setEnabled(false);
 
-    g_ThisVF->curveDlg_ = this;
-    result = evalCurveStart(mainSphere_, dashes, precis, points);
+    g_ThisVF->isoclinesDlg_ = this;
+
+    result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btnPlot_->setEnabled(true);
-        QMessageBox::critical(this, "P4", "An error occured while plotting the "
-                                          "curve.\nThe singular locus may not "
-                                          "be visible, or may be partially "
-                                          "visible.");
+        QMessageBox::critical(this, "P4",
+                              "An error occured while plotting the "
+                              "isoclines.\nThe singular locus may not "
+                              "be visible, or may be partially "
+                              "visible.");
         return;
     }
 
@@ -255,7 +251,7 @@ void QCurveDlg::onBtnPlot()
     btnDelLast_->setEnabled(true);
 }
 
-void QCurveDlg::onBtnDelAll()
+void QIsoclinesDlg::onBtnDelAll(void)
 {
     plotwnd_->getDlgData();
 
@@ -264,43 +260,74 @@ void QCurveDlg::onBtnDelAll()
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    g_VFResults.curve_vector_.clear();
+    g_VFResults.isocline_vector_.clear();
 
     mainSphere_->refresh();
 }
 
-void QCurveDlg::onBtnDelLast()
+void QIsoclinesDlg::onBtnDelLast(void)
 {
     plotwnd_->getDlgData();
 
-    deleteLastCurve(mainSphere_);
+    deleteLastIsocline(mainSphere_);
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
-    
-    if (g_VFResults.curve_vector_.empty()) {
+
+    if (g_VFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
 }
 
-void QCurveDlg::finishCurveEvaluation()
+void QIsoclinesDlg::reset(void)
+{
+    QString buf;
+
+    edt_value_->setText("");
+
+    buf.sprintf("%d", DEFAULT_CURVEPOINTS);
+    edt_points_->setText(buf);
+
+    buf.sprintf("%d", DEFAULT_CURVEMEMORY);
+    edt_memory_->setText(buf);
+
+    buf.sprintf("%d", DEFAULT_CURVEPRECIS);
+    edt_precis_->setText(buf);
+
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+
+    // if (g_VFResults.first_isoclines_ != nullptr) {
+    if (!g_VFResults.isocline_vector_.empty()) {
+        btnDelLast_->setEnabled(true);
+        btnDelAll_->setEnabled(true);
+    }
+
+    if (g_VFResults.config_dashes_)
+        btn_dashes_->toggle();
+    else
+        btn_dots_->toggle();
+}
+
+void QIsoclinesDlg::finishIsoclinesEvaluation()
 {
     bool result;
 
     if (btnPlot_->isEnabled() == true)
         return; // not busy??
 
-    result = evalCurveContinue(evaluating_precision_, evaluating_points_);
+    result = evalIsoclinesContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
         btnPlot_->setEnabled(false);
-        result = evalCurveFinish(); // return false in case an error occured
+        result = evalIsoclinesFinish(); // return false in case an error occured
         if (!result) {
-            QMessageBox::critical(this, "P4", "An error occured while plotting "
-                                              "the curve.\nThe singular locus "
-                                              "may not be visible, or may "
-                                              "be partially visible.");
+            QMessageBox::critical(this, "P4",
+                                  "An error occured while plotting "
+                                  "the isoclines.\nThe singular locus "
+                                  "may not be visible, or may "
+                                  "be partially visible.");
         }
     }
 }

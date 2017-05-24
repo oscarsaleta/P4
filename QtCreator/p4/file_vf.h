@@ -22,7 +22,9 @@
 
 #include "custom.h"
 #include "win_curve.h"
+#include "win_find.h"
 #include "win_gcf.h"
+#include "win_isoclines.h"
 
 #include <QObject>
 #include <QProcess>
@@ -69,6 +71,7 @@ class QInputVF : public QObject
     QString ydot_;
     QString gcf_;
     QString curve_;
+    QString isoclines_;
     QString evalFile_;
     QString evalFile2_;
 
@@ -88,32 +91,43 @@ class QInputVF : public QObject
     bool cleared_;       // initial state, when records are clear
     bool evaluatinggcf_; // true when evaluation is of GCF kind
     bool evaluatingCurve_;
+    bool evaluatingIsoclines_;
     bool processfailed_;   // true when process failed;
     QString processError_; // only relevant when processfailed=true
+
+    QFindDlg *findDlg_;
     QGcfDlg *gcfDlg_;
     QCurveDlg *curveDlg_;
+    QIsoclinesDlg *isoclinesDlg_;
 
-    QString getfilename(void) const;            // filename.inp
-    QString getbarefilename(void) const;        // filename
-    QString getfilename_finresults(void) const; // filename_fin.res
-    QString getfilename_infresults(void) const; // filename_inf.res
-    QString getfilename_fintable(void) const;   // filename_fin.tab
-    QString getfilename_inftable(void) const;   // filename_inf.tab
-    QString getfilename_vectable(void) const;   // filename_vec.tab
-    QString getfilename_curvetable(void) const; // filename_veccurve.tab
-    QString getfilename_gcf(void) const; // filename_gcf.tab (temporary file)
-    QString getfilename_gcfresults(void)
-        const; // filename_gcf.res (temporary file, only used in case of reduce)
-    QString getfilename_curve(void) const; // filename_curve.tab (tmp file)
-    QString getreducefilename(void) const; // filename.red
-    QString getmaplefilename(void) const;  // filename.txt
-    QString getPrepareCurveFileName(void) const; // filename_curve_prep.txt
-    QString getrunfilename(void) const;          // filename.run
+    QString getfilename() const;            // filename.inp
+    QString getbarefilename() const;        // filename
+    QString getfilename_finresults() const; // filename_fin.res
+    QString getfilename_infresults() const; // filename_inf.res
+    QString getfilename_fintable() const;   // filename_fin.tab
+    QString getfilename_inftable() const;   // filename_inf.tab
+    QString getfilename_vectable() const;   // filename_vec.tab
+    QString getfilename_gcf() const;        // filename_gcf.tab (temporary file)
+    // QString getfilename_gcfresults() const; // filename_gcf.res (temp file,
+    // only for reduce)
+    QString getreducefilename() const; // filename.red
+    QString getmaplefilename() const;  // filename.txt
+    QString getrunfilename() const;    // filename.run
+    // curve filenames
+    QString getfilename_curvetable() const;  // filename_veccurve.tab
+    QString getfilename_curve() const;       // filename_curve.tab (tmp file)
+    QString getPrepareCurveFileName() const; // filename_curve_prep.txt
+    // isoclines filenames
+    QString getfilename_isoclinestable() const; // filename_vecisocline.tab
+    QString getfilename_isoclines() const; // filename_isocline.tab (tmp file)
+    QString getPrepareIsoclinesFileName() const; // filename_isocline_prep.txt
 
-    bool load(void);
-    bool save(void);
-    void reset(void);
-    bool checkevaluated(void);
+    void getDataFromDlg();
+
+    bool load();
+    bool save();
+    void reset();
+    bool checkevaluated();
 
     static bool fileExists(QString);
 
@@ -121,39 +135,70 @@ class QInputVF : public QObject
     // void prepareReduceVectorField(QTextStream *);
     void prepareMapleParameters(QTextStream *);
     void prepareMapleVectorField(QTextStream *);
-    void prepareMapleCurve(QTextStream *);
-    QString booleanString(int value) const;
+    inline QString booleanString(int value) const
+    {
+        if (value == 0) {
+            /*if (symbolicpackage_ == PACKAGE_REDUCE)
+                return "NIL";
+            else*/
+            return "false";
+        } else {
+            /*if (symbolicpackage_ == PACKAGE_REDUCE)
+                return "'t";
+            else*/
+            return "true";
+        }
+    }
     QString convertMapleUserParameterLabels(QString);
+    QString convertMapleUserParametersLabelsToValues(QString);
     // QString convertReduceUserParameterLabels(QString);
 
     void prepareFile(QTextStream *); // used by Prepare()
-    void prepareCurveFile(QTextStream *);
 
-    void prepare(void);
-    void prepareCurve(void);
-    void evaluate(void);
-    void evaluateCurveTable(void);
+    void prepare();
+    void evaluate();
 
-    bool prepareGcf(struct term2 *f, double, double, int, int);
+    bool prepareGcf(P4POLYNOM2 f, double, double, int, int);
     bool prepareGcf_LyapunovCyl(double, double, int, int);
     bool prepareGcf_LyapunovR2(int, int);
-    bool evaluateGcf(void);
+    bool evaluateGcf();
 
-    bool prepareCurve(struct term2 *f, double, double, int, int);
+    /* curve functions */
+    // called from win_curve.cpp evaluate button
+    void evaluateCurveTable();
+    // called from evaluateCurveTable
+    void prepareCurve();
+    // called from prepareCurve
+    void prepareCurveFile(QTextStream *);
+    // called from prepareCurveFile
+    void prepareMapleCurve(QTextStream *);
+    // the following are called from math_curve.cpp
+    bool prepareCurve(P4POLYNOM2 f, double, double, int, int);
     bool prepareCurve_LyapunovCyl(double, double, int, int);
     bool prepareCurve_LyapunovR2(int, int);
-    bool evaluateCurve(void);
+    bool evaluateCurve();
 
-    void createProcessWindow(void);
+    /* isoclines functions */
+    void evaluateIsoclinesTable();
+    void prepareIsoclines();
+    void prepareIsoclinesFile(QTextStream *);
+    void prepareMapleIsoclines(QTextStream *);
+    bool prepareIsoclines(P4POLYNOM2 f, double, double, int, int);
+    bool prepareIsoclines_LyapunovCyl(double, double, int, int);
+    bool prepareIsoclines_LyapunovR2(int, int);
+    bool evaluateIsoclines();
+
+    void createProcessWindow();
 
   public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);
-    void readProcessStdout(void);
-    void onTerminateButton(void);
-    void onClearButton(void);
-    void finishGcfEvaluation(void);
-    void finishCurveEvaluation(void);
+    void readProcessStdout();
+    void onTerminateButton();
+    void onClearButton();
+    void finishGcfEvaluation();
+    void finishCurveEvaluation();
+    void finishIsoclinesEvaluation();
 };
 
 extern QInputVF *g_ThisVF;

@@ -38,6 +38,7 @@
 double eval_lc_poincare(double *pp, double, double, double);
 double eval_lc_lyapunov(double *pp, double, double, double);
 void set_current_step(double);
+void rplane_plsphere0(double x, double y, double *pcoord);
 
 bool less_poincare(double *, double *);
 bool less_lyapunov(double *, double *);

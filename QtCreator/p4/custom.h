@@ -158,8 +158,8 @@
 #define MIN_GCFMEMORY 64
 #define MAX_GCFMEMORY 512000
 
-// Curve window
-#define DEFAULT_CURVEPOINTS 40 // 40 horizontal and vertical points
+// Curve and isoclines window
+#define DEFAULT_CURVEPOINTS 400 // 40 horizontal and vertical points
 #define MIN_CURVEPOINTS 1
 #define MAX_CURVEPOINTS 32767
 #define DEFAULT_CURVEPRECIS 12 // 12 digits precision
@@ -235,6 +235,7 @@
 #define CLIMIT MAGENTA2 // limit cycles
 #define CSING GREEN     // curve of singularities
 #define CCURV CYAN
+#define CISOC PINK1
 
 // IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
 // printing.

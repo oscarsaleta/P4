@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QString>
 #include <QTextEdit>
+#include <boost/shared_ptr.hpp>
 
 // -----------------------------------------------------------------------
 //						General polynomial expressions
@@ -75,8 +76,7 @@ struct orbits_points {
     int color; // color of seperatrice
 
     double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
-                      // or
-                      // on the poincare-lyapunov sphere
+                      // or on the poincare-lyapunov sphere
                       // -> p=(0,x,y) or p=(1,r,theta)
     int dashes;
     int dir;  // if we have a line of sing at infinity and have to change
@@ -97,7 +97,32 @@ struct orbits {
     P4ORBIT current_f_orbits; // orbit
     struct orbits *next_orbit;
 
-    orbits() : next_orbit(nullptr){};
+    orbits()
+        : f_orbits(nullptr), current_f_orbits(nullptr), next_orbit(nullptr){};
+};
+
+// -----------------------------------------------------------------------
+//                      Curves and isoclines
+// -----------------------------------------------------------------------
+struct curves {
+    P4POLYNOM2 r2,u1,u2,v1,v2;
+    P4POLYNOM3 c;
+    P4ORBIT points;
+
+    curves()
+        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
+          c(nullptr), points(nullptr){};
+};
+
+struct isoclines {
+    P4POLYNOM2 r2, u1, u2, v1, v2;
+    P4POLYNOM3 c;
+    P4ORBIT points;
+    int color;
+
+    isoclines()
+        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
+          c(nullptr), points(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -350,18 +375,22 @@ class QVFStudy : public QObject
     P4POLYNOM2 gcf_V1_;
     P4POLYNOM2 gcf_V2_;
     P4POLYNOM3 gcf_C_;
-
-    orbits_points *gcf_points_;
+    P4ORBIT gcf_points_;
 
     // one curve to plot (for now, maybe later will be a vector)
-    P4POLYNOM2 curve_;
+    // TODO: change everything for a struct curves
+    /*P4POLYNOM2 curve_;
     P4POLYNOM2 curve_U1_;
     P4POLYNOM2 curve_U2_;
     P4POLYNOM2 curve_V1_;
     P4POLYNOM2 curve_V2_;
     P4POLYNOM3 curve_C_;
+    P4ORBIT curve_points_;*/
 
-    orbits_points *curve_points_;
+    // curves
+    std::vector<curves> curve_vector_;
+    // isoclines
+    std::vector<isoclines> isocline_vector_;
 
     // limit cycles
 
@@ -429,16 +458,67 @@ class QVFStudy : public QObject
 
     void deleteSaddle(saddle *);
     void deleteSemiElementary(semi_elementary *);
-    void deleteNode(node *);
-    void deleteStrongFocus(strong_focus *);
-    void deleteWeakFocus(weak_focus *);
+    inline void deleteNode(node *p)
+    {
+        node *q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_node;
+            delete q;
+            q = nullptr;
+        }
+    }
+    inline void deleteStrongFocus(strong_focus *p)
+    {
+        strong_focus *q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_sf;
+            delete q;
+            q = nullptr;
+        }
+    }
+    inline void deleteWeakFocus(weak_focus *p)
+    {
+        weak_focus *q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_wf;
+            delete q;
+            q = nullptr;
+        }
+    }
     void deleteDegenerate(degenerate *);
     void deleteSeparatrices(sep *);
-    void deleteTransformations(transformations *);
+    inline void deleteTransformations(transformations *t)
+    {
+        transformations *u;
+
+        while (t != nullptr) {
+            u = t;
+            t = t->next_trans;
+            delete u;
+            u = nullptr;
+        }
+    }
     void deleteBlowup(blow_up_points *b);
 
     void deleteLimitCycle(orbits *);
-    void deleteOrbitPoint(P4ORBIT p);
+    inline void deleteOrbitPoint(P4ORBIT p)
+    {
+        P4ORBIT q;
+
+        while (p != nullptr) {
+            q = p;
+            p = p->next_point;
+
+            delete q;
+            q = nullptr;
+        }
+    }
     void deleteOrbit(orbits *);
 
     // reading of the Maple/Reduce results
@@ -446,6 +526,7 @@ class QVFStudy : public QObject
     bool readTables(QString basename);
     bool readGCF(FILE *fp);
     bool readCurve(QString basename);
+    bool readIsoclines(QString basename);
     bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
     bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
     bool readPoints(FILE *fp);
