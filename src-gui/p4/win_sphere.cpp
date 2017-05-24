@@ -1489,7 +1489,11 @@ void QWinSphere::plotGcf(void)
 
 void QWinSphere::plotCurve(void)
 {
-    draw_curve(this, g_VFResults.curve_points_, CCURV, 1);
+    std::vector<curves>::const_iterator it;
+    for (it = g_VFResults.curve_vector_.begin();
+         it != g_VFResults.curve_vector_.end(); it++) {
+        draw_curve(this, it->points, CCURV, 1);
+    }
 }
 
 void QWinSphere::drawIsoclines(void)
@@ -2142,11 +2146,15 @@ void QWinSphere::printGcf(void)
 void QWinSphere::printCurve(void)
 {
     QString comment;
-
-    if (g_VFResults.curve_points_ != nullptr) {
-        comment = "Printing curve:";
-        print_comment(comment);
-        draw_curve(this, g_VFResults.curve_points_, CCURV, 1);
+    std::vector<curves>::const_iterator it;
+    int i;
+    for (it = g_VFResults.curve_vector_.begin(), i = 0;
+         it != g_VFResults.curve_vector_.end(); it++, i++) {
+        if (it->points != nullptr) {
+            comment.sprintf("Printing curve %d:", i);
+            print_comment(comment);
+            draw_curve(this, it->points, CCURV, 1);
+        }
     }
 }
 
