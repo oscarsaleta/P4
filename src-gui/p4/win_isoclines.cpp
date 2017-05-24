@@ -29,11 +29,9 @@
 #include <QMessageBox>
 
 QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
+      plotwnd_(plt)
 {
-    mainSphere_ = sp;
-    plotwnd_ = plt;
-
     edt_value_ = new QLineEdit("", this);
     QLabel *lbl0 = new QLabel("&Value = ", this);
     lbl0->setBuddy(edt_value_);
@@ -43,7 +41,6 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dashes_ = new QRadioButton("Dashes", this);
     btngrp->addButton(btn_dots_);
     btngrp->addButton(btn_dashes_);
-
     QLabel *lbl1 = new QLabel("Appearance: ", this);
 
     edt_points_ = new QLineEdit("", this);
@@ -168,9 +165,9 @@ void QIsoclinesDlg::onBtnEvaluate(void)
                                              "you pressed\nthe Load button.");
         return;
     }
-    g_ThisVF->isoclines_ = "(" + g_ThisVF->xdot_ + "-(" + edt_value_->text() +
-                           "))*(" + g_ThisVF->ydot_ + "-(" +
-                           edt_value_->text() + "))";
+    g_ThisVF->isoclines_ =
+        "(" + g_ThisVF->xdot_ + "-(" + edt_value_->text().trimmed() + "))*(" +
+        g_ThisVF->ydot_ + "-(" + edt_value_->text().trimmed() + "))";
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
@@ -276,9 +273,6 @@ void QIsoclinesDlg::onBtnDelLast(void)
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
-
-    /*if (!g_VFResults.isocline_vector_.empty())
-        g_VFResults.isocline_vector_.pop_back();*/
 
     if (g_VFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
