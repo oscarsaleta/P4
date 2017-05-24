@@ -44,5 +44,6 @@ bool evalCurveContinue(int precision, int points);
 bool evalCurveFinish(void);
 bool runTaskCurve(int task, int precision, int points);
 void draw_curve(QWinSphere *spherewnd, P4ORBIT sep, int color, int dashes);
+void deleteLastCurve(QWinSphere *);
 
 #endif // MATH_CURVE_H
