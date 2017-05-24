@@ -2652,7 +2652,7 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
     P4POLYNOM3 f;
     int i;
 
-    f = g_VFResults.curve_C_;
+    f = g_VFResults.curve_vector_.back().c;
 
     QString mainmaple;
     QString user_platform;
@@ -2727,7 +2727,7 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
     P4POLYNOM2 f;
     int i;
 
-    f = g_VFResults.curve_;
+    f = g_VFResults.curve_vector_.back().r2;
 
     QString mainmaple;
     QString user_platform;
