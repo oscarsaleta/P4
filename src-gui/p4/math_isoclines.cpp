@@ -270,10 +270,7 @@ void deleteLastIsocline(QWinSphere *sp)
     if (g_VFResults.isocline_vector_.empty())
         return;
 
-    sp->prepareDrawing();
-    draw_isoclines(sp, g_VFResults.isocline_vector_.back().points,
-                   sp->spherebgcolor_, 1);
-    sp->finishDrawing();
-
     g_VFResults.isocline_vector_.pop_back();
+    
+    sp->refresh();
 }
