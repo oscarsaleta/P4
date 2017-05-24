@@ -39,7 +39,6 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dashes_ = new QRadioButton("Dashes", this);
     btngrp->addButton(btn_dots_);
     btngrp->addButton(btn_dashes_);
-
     QLabel *lbl1 = new QLabel("Appearance: ", this);
 
     edt_points_ = new QLineEdit("", this);
@@ -51,20 +50,19 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_memory_ = new QLineEdit("", this);
     QLabel *lbl4 = new QLabel("Max. Memory: ", this);
 
-    btn_evaluate_ = new QPushButton("Evaluate", this);
-    btn_plot_ = new QPushButton("Plot", this);
-    btn_plot_->setEnabled(false);
-    btn_delete_ = new QPushButton("Reset", this);
-    btn_delete_->setEnabled(false);
+    btnEvaluate_ = new QPushButton("Evaluate", this);
+    btnPlot_ = new QPushButton("&Plot", this);
+    btnDelLast_ = new QPushButton("&Delete Last Curve", this);
+    btnDelAll_ = new QPushButton("Delete &All Curves", this);
 
 #ifdef TOOLTIPS
     btn_dots_->setToolTip("Plot individual points of the curve");
     btn_dashes_->setToolTip(
         "Connect points of the curve with small line segments");
     edt_points_->setToolTip("Number of points");
-    btn_evaluate_->setToolTip("Evaluate singular points of plynomial curve");
-    btn_plot_->setToolTip("Plot curve (using symbolic manipulator)");
-    btn_delete_->setToolTip("Delete all curves");
+    btnEvaluate_->setToolTip("Evaluate singular points of plynomial curve");
+    btnPlot_->setToolTip("Plot curve (using symbolic manipulator)");
+    btnDelAll_->setToolTip("Delete all curves");
     QString ttip;
     ttip = QString::fromStdString("Number of points. Must be between " +
                                   std::to_string(MIN_CURVEPOINTS) + " and " +
@@ -84,49 +82,61 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
     // layout
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->addWidget(lbl1);
-    layout1->addWidget(btn_dots_);
-    layout1->addWidget(btn_dashes_);
+    QHBoxLayout *layout0 = new QHBoxLayout();
+    layout0->addWidget(lbl1);
+    layout0->addWidget(btn_dots_);
+    layout0->addWidget(btn_dashes_);
 
-    QGridLayout *lay00 = new QGridLayout();
-    lay00->addWidget(lbl0, 0, 0);
-    lay00->addWidget(edt_curve_, 0, 1);
-    lay00->addWidget(lbl2, 1, 0);
-    lay00->addWidget(edt_points_, 1, 1);
-    lay00->addWidget(lbl3, 2, 0);
-    lay00->addWidget(edt_precis_, 2, 1);
-    lay00->addWidget(lbl4, 3, 0);
-    lay00->addWidget(edt_memory_, 3, 1);
+    QGridLayout *layout1 = new QGridLayout();
+    layout1->addWidget(lbl0, 0, 0);
+    layout1->addWidget(edt_curve_, 0, 1);
+    layout1->addWidget(lbl2, 1, 0);
+    layout1->addWidget(edt_points_, 1, 1);
+    layout1->addWidget(lbl3, 2, 0);
+    layout1->addWidget(edt_precis_, 2, 1);
+    layout1->addWidget(lbl4, 3, 0);
+    layout1->addWidget(edt_memory_, 3, 1);
 
     QHBoxLayout *layout2 = new QHBoxLayout();
+    layout2->addWidget(btnEvaluate_);
     layout2->addStretch(0);
-    layout2->addWidget(btn_evaluate_);
-    layout2->addWidget(btn_plot_);
-    layout2->addWidget(btn_delete_);
-    layout2->addStretch(0);
+    layout2->addWidget(btnDelLast_);
 
+    QHBoxLayout *layout3 = new QHBoxLayout();
+    layout3->addWidget(btnPlot_);
+    layout3->addStretch(0);
+    layout3->addWidget(btnDelAll_);
+
+    mainLayout_->addLayout(layout0);
     mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(lay00);
     mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_);
 
     // connections
 
-    QObject::connect(btn_evaluate_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_evaluate()));
-    QObject::connect(btn_plot_, SIGNAL(clicked()), this, SLOT(onbtn_plot()));
-    QObject::connect(btn_delete_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_delete()));
+    QObject::connect(btnEvaluate_, SIGNAL(clicked()), this,
+                     SLOT(onBtnEvaluate()));
+    QObject::connect(btnPlot_, SIGNAL(clicked()), this, SLOT(onBtnPlot()));
+    QObject::connect(btnDelLast_, SIGNAL(clicked()), this, SLOT(onBtnDelLast()));
+    QObject::connect(btnDelAll_, SIGNAL(clicked()), this, SLOT(onBtnDelAll()));
 
     // finishing
+
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+
+    if (g_VFResults.curve_vector_.empty()) {
+        btnDelAll_->setEnabled(false);
+        btnDelLast_->setEnabled(false);
+    }
 
     setP4WindowTitle(this, "Curve plot");
 }
 
-void QCurveDlg::reset(void)
+void QCurveDlg::reset()
 {
     QString buf;
 
@@ -141,12 +151,13 @@ void QCurveDlg::reset(void)
     buf.sprintf("%d", DEFAULT_CURVEPRECIS);
     edt_precis_->setText(buf);
 
-    btn_evaluate_->setEnabled(true);
-    btn_plot_->setEnabled(false);
-    if (g_VFResults.curve_ != nullptr)
-        btn_delete_->setEnabled(false);
-    else
-        btn_delete_->setEnabled(true);
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+
+    if (!g_VFResults.curve_vector_.empty()) {
+        btnDelAll_->setEnabled(true);
+        btnDelLast_->setEnabled(true);
+    }
 
     if (g_VFResults.config_dashes_)
         btn_dashes_->toggle();
@@ -154,7 +165,7 @@ void QCurveDlg::reset(void)
         btn_dots_->toggle();
 }
 
-void QCurveDlg::onbtn_evaluate(void)
+void QCurveDlg::onBtnEvaluate()
 {
     if (edt_curve_->text().isNull() || edt_curve_->text().isEmpty()) {
         QMessageBox::information(this, "P4",
@@ -168,10 +179,10 @@ void QCurveDlg::onbtn_evaluate(void)
     // a list of P4POLYNOM2
     g_ThisVF->curveDlg_ = this;
     g_ThisVF->evaluateCurveTable();
-    btn_plot_->setEnabled(true);
+    btnPlot_->setEnabled(true);
 }
 
-void QCurveDlg::onbtn_plot(void)
+void QCurveDlg::onBtnPlot()
 {
     bool dashes, result;
     int points, precis, memory;
@@ -227,12 +238,12 @@ void QCurveDlg::onbtn_plot(void)
     evaluating_memory_ = memory;
     evaluating_precision_ = precis;
 
-    btn_plot_->setEnabled(false);
+    btnPlot_->setEnabled(false);
 
     g_ThisVF->curveDlg_ = this;
     result = evalCurveStart(mainSphere_, dashes, precis, points);
     if (!result) {
-        btn_plot_->setEnabled(true);
+        btnPlot_->setEnabled(true);
         QMessageBox::critical(this, "P4", "An error occured while plotting the "
                                           "curve.\nThe singular locus may not "
                                           "be visible, or may be partially "
@@ -240,43 +251,50 @@ void QCurveDlg::onbtn_plot(void)
         return;
     }
 
-    btn_delete_->setEnabled(true);
+    btnDelAll_->setEnabled(true);
+    btnDelLast_->setEnabled(true);
 }
 
-void QCurveDlg::onbtn_delete(void)
+void QCurveDlg::onBtnDelAll()
 {
-    delete_term2(g_VFResults.curve_);
-    delete_term2(g_VFResults.curve_U1_);
-    delete_term2(g_VFResults.curve_U2_);
-    delete_term2(g_VFResults.curve_V1_);
-    delete_term2(g_VFResults.curve_V2_);
-    delete_term3(g_VFResults.curve_C_);
-    g_VFResults.deleteOrbitPoint(g_VFResults.curve_points_);
+    plotwnd_->getDlgData();
 
-    g_VFResults.curve_ = nullptr;
-    g_VFResults.curve_U1_ = nullptr;
-    g_VFResults.curve_U2_ = nullptr;
-    g_VFResults.curve_V1_ = nullptr;
-    g_VFResults.curve_V2_ = nullptr;
-    g_VFResults.curve_C_ = nullptr;
-    g_VFResults.curve_points_ = nullptr;
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+    btnDelAll_->setEnabled(false);
+    btnDelLast_->setEnabled(false);
+
+    g_VFResults.curve_vector_.clear();
 
     mainSphere_->refresh();
-    btn_delete_->setEnabled(false);
-    btn_plot_->setEnabled(false);
 }
 
-void QCurveDlg::finishCurveEvaluation(void)
+void QCurveDlg::onBtnDelLast()
+{
+    plotwnd_->getDlgData();
+
+    deleteLastCurve(mainSphere_);
+
+    btnEvaluate_->setEnabled(true);
+    btnPlot_->setEnabled(false);
+    
+    if (g_VFResults.curve_vector_.empty()) {
+        btnDelAll_->setEnabled(false);
+        btnDelLast_->setEnabled(false);
+    }
+}
+
+void QCurveDlg::finishCurveEvaluation()
 {
     bool result;
 
-    if (btn_plot_->isEnabled() == true)
+    if (btnPlot_->isEnabled() == true)
         return; // not busy??
 
     result = evalCurveContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
-        btn_plot_->setEnabled(false);
+        btnPlot_->setEnabled(false);
         result = evalCurveFinish(); // return false in case an error occured
         if (!result) {
             QMessageBox::critical(this, "P4", "An error occured while plotting "
