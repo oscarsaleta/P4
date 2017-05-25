@@ -58,7 +58,9 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     btnDelAll_ = new QPushButton("Delete &All Isoclines", this);
 
 #ifdef TOOLTIPS
-    edt_value_->setToolTip("Value of isoclines to plot.");
+    edt_value_->setToolTip("Value of isoclines to plot.\nCan be 0 for 0-slope "
+                           "isoclines, and \"inf\"\n(without quotes, case "
+                           "insensitive) for\ninfinite-slope isoclines.");
     btnEvaluate_->setToolTip("Evaluate isoclines at the selected value.");
     btnPlot_->setToolTip("Plot isocline.");
     btnDelLast_->setToolTip("Delete last isocline drawn");
@@ -152,8 +154,9 @@ void QIsoclinesDlg::onBtnEvaluate(void)
         if (!ok) {
             QMessageBox::information(
                 this, "P4",
-                "The value field has to be filled with a valid number.\n" +
-                    val);
+                "The value field has to be filled with a valid number.\n(P4 "
+                "does not parse mathematical expressions, so\nmake sure to "
+                "enter a value and not a string of\noperations)");
             return;
         }
     }
@@ -165,9 +168,15 @@ void QIsoclinesDlg::onBtnEvaluate(void)
                                              "you pressed\nthe Load button.");
         return;
     }
-    g_ThisVF->isoclines_ =
-        "(" + g_ThisVF->xdot_ + "-(" + edt_value_->text().trimmed() + "))*(" +
-        g_ThisVF->ydot_ + "-(" + edt_value_->text().trimmed() + "))";
+    if (edt_value_->text().trimmed() == "0") {
+        g_ThisVF->isoclines_ = g_ThisVF->ydot_;
+    } else if (edt_value_->text().trimmed().toLower() == "inf") {
+        g_ThisVF->isoclines_ = g_ThisVF->xdot_;
+    } else {
+        g_ThisVF->isoclines_ = "(" + g_ThisVF->ydot_ + ")-(" +
+                               edt_value_->text().trimmed() + ")*(" +
+                               g_ThisVF->xdot_ + ")";
+    }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
