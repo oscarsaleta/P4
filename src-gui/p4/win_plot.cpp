@@ -212,6 +212,9 @@ QPlotWnd::~QPlotWnd()
     delete curveWindow_;
     curveWindow_ = nullptr;
     g_ThisVF->curveDlg_ = nullptr;
+    delete isoclinesWindow_;
+    isoclinesWindow_ = nullptr;
+    g_ThisVF->isoclinesDlg_ = nullptr;
 }
 
 void QPlotWnd::adjustHeight(void)
