@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QString>
 #include <QTextEdit>
-#include <boost/shared_ptr.hpp>
 
 // -----------------------------------------------------------------------
 //						General polynomial expressions
