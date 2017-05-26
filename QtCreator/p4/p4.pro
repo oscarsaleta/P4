@@ -68,7 +68,9 @@ SOURCES += win_view.cpp \
     win_zoom.cpp \
     p4application.cpp \
     win_event.cpp \
-    win_separatrice.cpp
+    win_separatrice.cpp \
+    win_isoclines.cpp \
+    math_isoclines.cpp
 
 HEADERS += win_view.h \
     win_vf.h \
@@ -115,5 +117,8 @@ HEADERS += win_view.h \
     print_points.h \
     print_bitmap.h \
     print_postscript.h \
-    print_xfig.h
+    print_xfig.h \
+    win_isoclines.h \
+    math_isoclines.h
+
 RC_FILE = p4.rc
