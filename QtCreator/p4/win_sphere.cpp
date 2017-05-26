@@ -2169,7 +2169,7 @@ void QWinSphere::printIsoclines(void)
         if (it->points != nullptr) {
             comment.sprintf("Printing isocline %d:", i);
             print_comment(comment);
-            draw_isoclines(this, it->points, CISOC, 1);
+            draw_isoclines(this, it->points, it->color, 1);
         }
     }
 }
@@ -2622,6 +2622,7 @@ void QWinSphere::print(void)
     printSeparatrices();
     printGcf();
     printCurve();
+    printIsoclines();
     printLimitCycles();
     printPoints();
 }
