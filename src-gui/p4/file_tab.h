@@ -376,16 +376,6 @@ class QVFStudy : public QObject
     P4POLYNOM3 gcf_C_;
     P4ORBIT gcf_points_;
 
-    // one curve to plot (for now, maybe later will be a vector)
-    // TODO: change everything for a struct curves
-    /*P4POLYNOM2 curve_;
-    P4POLYNOM2 curve_U1_;
-    P4POLYNOM2 curve_U2_;
-    P4POLYNOM2 curve_V1_;
-    P4POLYNOM2 curve_V2_;
-    P4POLYNOM3 curve_C_;
-    P4ORBIT curve_points_;*/
-
     // curves
     std::vector<curves> curve_vector_;
     // isoclines
