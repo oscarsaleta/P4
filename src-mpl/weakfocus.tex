@@ -173,16 +173,16 @@ lyapunov := proc( f, z, w )
     linfo := preparelyapunovfile( infile, f, z, w );
     wl := linfo[1];
     writef( "Determining lyapunov constants ...\n" );
-    writef( cat( user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
-        user_platform, " \"", user_sumtablepath, "\"" ) );
+    #writef( cat( user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
+    #    user_platform, " \"", user_sumtablepath, "\"" ) );
     aux:=ssystem( cat( user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
         user_platform, " \"", user_sumtablepath, "\"" ) );
-    writef(aux[2]);
+    #writef(aux[2]);
     result := readlyapunovresult( outfile, wl );
-    aux:=ssystem( cat( user_removecmd, " \"", infile, "\"" ) );
-    writef(aux[2]);
-    aux:=ssystem( cat( user_removecmd, " \"", outfile, "\"" )  );
-    writef(aux[2]);
+    #aux:=ssystem( cat( user_removecmd, " \"", infile, "\"" ) );
+    #writef(aux[2]);
+    #aux:=ssystem( cat( user_removecmd, " \"", outfile, "\"" )  );
+    #writef(aux[2]);
     [ op(result), linfo[2], linfo[3] ];
 end:
 
