@@ -114,6 +114,11 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
 
     circleAtInfinity_ = nullptr;
     plCircle_ = nullptr;
+
+    paintedXMin_ = 0;
+    paintedXMax_ = w_;
+    paintedYMin_ = 0;
+    paintedYMax_ = h_;
 }
 
 /*
