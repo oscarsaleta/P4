@@ -638,25 +638,25 @@ void QInputVF::prepareMapleParameters(QTextStream *fp)
 {
     QString s;
 
-    *fp << "user_numeric:=" << booleanString(numeric_) << ":\n";
-    *fp << "epsilon:=" << epsilon_ << ":\n";
-    *fp << "test_sep:=" << booleanString(testsep_) << ":\n";
-    s.sprintf("user_precision:=%d:\n", precision_);
+    *fp << "user_numeric := " << booleanString(numeric_) << ":\n";
+    *fp << "epsilon := " << epsilon_ << ":\n";
+    *fp << "test_sep := " << booleanString(testsep_) << ":\n";
+    s.sprintf("user_precision := %d:\n", precision_);
     *fp << s;
-    s.sprintf("user_precision0:=%d:\n", precision0_);
+    s.sprintf("user_precision0 := %d:\n", precision0_);
     *fp << s;
-    s.sprintf("taylor_level:=%d:\n", taylorlevel_);
+    s.sprintf("taylor_level := %d:\n", taylorlevel_);
     *fp << s;
-    s.sprintf("numeric_level:=%d:\n", numericlevel_);
+    s.sprintf("numeric_level := %d:\n", numericlevel_);
     *fp << s;
-    s.sprintf("max_level:=%d:\n", maxlevel_);
+    s.sprintf("max_level := %d:\n", maxlevel_);
     *fp << s;
-    s.sprintf("weakness_level:=%d:\n", weakness_);
+    s.sprintf("weakness_level := %d:\n", weakness_);
     *fp << s;
 
     if (typeofstudy_ == TYPEOFSTUDY_ONE) {
-        *fp << "user_p:=1:\n";
-        *fp << "user_q:=1:\n";
+        *fp << "user_p := 1:\n";
+        *fp << "user_q := 1:\n";
 
         s = x0_.toLatin1();
         *fp << "x0 := " << x0_ << ":\n";
@@ -670,9 +670,9 @@ void QInputVF::prepareMapleParameters(QTextStream *fp)
         s.sprintf("y_max := y0+(%f):\n", (float)(Y_MAX));
         *fp << s;
     } else {
-        s.sprintf("user_p:=%d:\n", p_);
+        s.sprintf("user_p := %d:\n", p_);
         *fp << s;
-        s.sprintf("user_q:=%d:\n", q_);
+        s.sprintf("user_q := %d:\n", q_);
         *fp << s;
     }
 }
