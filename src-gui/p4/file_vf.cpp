@@ -342,6 +342,23 @@ bool QInputVF::checkevaluated(void)
             return false;
     }
 
+    if (fi != nullptr) {
+        delete fi;
+        fi = nullptr;
+    }
+    if (fifin != nullptr) {
+        delete fifin;
+        fifin = nullptr;
+    }
+    if (fiinf != nullptr) {
+        delete fiinf;
+        fiinf = nullptr;
+    }
+    if (fivec != nullptr) {
+        delete fivec;
+        fivec = nullptr;
+    }
+
     return true;
 }
 
