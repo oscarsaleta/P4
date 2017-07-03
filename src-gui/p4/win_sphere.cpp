@@ -90,6 +90,10 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
     w_ = width();
     h_ = height();
     idealh_ = w_;
+
+    selectingX_=0;
+    selectingY_=0;
+    selectingPointRadius_=0;
     selectingPointStep_ = 0;
 
     horPixelsPerMM_ = ((double)w_) / ((double)widthMM());
