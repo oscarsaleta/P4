@@ -27,16 +27,20 @@ SOURCES = lyapunov_mpf.cpp lypcoeff_mpf.cpp polynom_mpf.cpp \
 HEADERS = lyapunov_mpf.h ../version.h
 
 unix:LIBS += -lgmp -lmpfr
+macx: {
+    LIBS += -L"/usr/local/lib" -lgmp -L"/usr/local/lib" -lmpfr
+    INCLUDEPATH += /usr/local/include
+}
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../mpir/dll/x64/release/ -lmpir
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../mpir/dll/x64/debug/ -lmpir
 
-INCLUDEPATH += $$PWD/../../mpir/dll/x64/Release
-DEPENDPATH += $$PWD/../../mpir/dll/x64/Release
+win32:INCLUDEPATH += $$PWD/../../mpir/dll/x64/Release
+win32:DEPENDPATH += $$PWD/../../mpir/dll/x64/Release
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../mpfr/dll/x64/release/ -lmpfr
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../mpfr/dll/x64/debug/ -lmpfr
 
-INCLUDEPATH += $$PWD/../../mpfr/dll/x64/Release
-DEPENDPATH += $$PWD/../../mpfr/dll/x64/Release
+win32:INCLUDEPATH += $$PWD/../../mpfr/dll/x64/Release
+win32:DEPENDPATH += $$PWD/../../mpfr/dll/x64/Release

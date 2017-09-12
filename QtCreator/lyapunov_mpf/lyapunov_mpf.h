@@ -20,6 +20,10 @@
 #ifndef LYAPUNOV_MPF_H
 #define LYAPUNOV_MPF_H
 
+#ifdef __APPLE__
+#include <stddef.h>
+#endif
+
 #ifdef _WIN32
 #include "../../mpir/dll/x64/Release/gmp.h"
 #include "../../mpfr/dll/x64/Release/mpfr.h"
