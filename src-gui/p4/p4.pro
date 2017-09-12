@@ -21,6 +21,7 @@ include(../../P4.pri)
 QT += gui
 QT += widgets
 QT += printsupport
+
 CONFIG += qt
 CONFIG += static
 CONFIG += c++11
