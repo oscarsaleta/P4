@@ -16,13 +16,14 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-include(../../P4.pri)
 #
 # MPLSTRIP PROJECT FILE.  Use qmake to build makefile
 #
+
+include(../../P4.pri)
 DESTDIR = .
 
-CONFIG  = console
+CONFIG  += console
 SOURCES = mplstrip.cpp
 HEADERS = $$PROJECT_ROOT/src-gui/version.h
 
