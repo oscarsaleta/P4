@@ -84,7 +84,6 @@ struct term2 *vec_field[2] = {nullptr, nullptr}; // vec_field={P(x,y),Q(x,y)}
 int main(int argc, char *argv[])
 {
     char buf[256];
-    bool isfirst;
     double vec_slope[NUMBER];
     double sep_slope[NUMBER];
     double diff_slope[NUMBER];
@@ -130,6 +129,7 @@ int main(int argc, char *argv[])
     ok = relative_error_test(vec_slope, sep_slope, diff_slope, dist);
 
 #ifdef LOGACTIVITY
+    bool isfirst;
     printf("Separatrice test:\n");
     printf("  Vector field:\n");
     printf("\tx'= ");
