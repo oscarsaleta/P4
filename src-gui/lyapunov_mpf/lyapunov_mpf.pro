@@ -32,6 +32,7 @@ HEADERS = lyapunov_mpf.h ../version.h
 
 unix:LIBS += -lgmp -lmpfr
 macx {
+    CONFIG -= app_bundle
     LIBS += -L"/usr/local/lib" -lgmp -L"/usr/local/lib/" -lmpfr
     INCLUDEPATH += "/usr/local/include"
 }

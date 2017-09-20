@@ -29,6 +29,10 @@ CONFIG += c++11
 CONFIG += fwhopr
 CONFIG -= console
 
+macx {
+    CONFIG -= app_bundle
+}
+
 DESTDIR = $$BUILD_DIR/p4/
 
 SOURCES += win_view.cpp \
