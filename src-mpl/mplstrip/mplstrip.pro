@@ -24,6 +24,9 @@ include(../../P4.pri)
 DESTDIR = .
 
 CONFIG  += console
+macx {
+    CONFIG -= app_bundle
+}
 SOURCES = mplstrip.cpp
 HEADERS = $$PROJECT_ROOT/src-gui/version.h
 
