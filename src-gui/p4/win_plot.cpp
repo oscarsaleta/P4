@@ -442,7 +442,7 @@ void QPlotWnd::closeZoomWindow(int id)
 
     numZooms_--;
     if (numZooms_ == 0) {
-        delete zoomWindows_; // free( zoomWindows_ );
+        delete zoomWindows_;
         zoomWindows_ = nullptr;
     }
 }
@@ -465,7 +465,7 @@ void QPlotWnd::customEvent(QEvent *_e)
         data1 = (double *)(e->data());
 
         openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
-        delete data1; // free( data1 );
+        delete data1;
         data1 = nullptr;
         return;
     }
@@ -474,7 +474,7 @@ void QPlotWnd::customEvent(QEvent *_e)
         int *data2;
         data2 = (int *)(e->data());
         closeZoomWindow(*data2);
-        delete data2; // free( data2 );
+        delete data2;
         data2 = nullptr;
         return;
     }
@@ -482,7 +482,7 @@ void QPlotWnd::customEvent(QEvent *_e)
     if (e->type() == TYPE_ORBIT_EVENT) {
         oet = (int *)(e->data());
         orbitsWindow_->orbitEvent(*oet);
-        delete oet; // free(oet);
+        delete oet;
         oet = nullptr;
         return;
     }
@@ -491,8 +491,8 @@ void QPlotWnd::customEvent(QEvent *_e)
         p = (struct DOUBLEPOINT *)(e->data());
         x = p->x;
         y = p->y;
-        void *win = *((void **)(p + 1));
-        delete p; // free( p );
+        //void *win = *((void **)(p + 1));
+        delete p;
         p = nullptr;
 
         // mouse clicked in position (x,y)  (world coordinates)
@@ -502,8 +502,9 @@ void QPlotWnd::customEvent(QEvent *_e)
 
             orbitsWindow_->show();
             orbitsWindow_->setInitialPoint(ucoord[0], ucoord[1]);
-            if (win != nullptr) {
-                ((QWidget *)win)->activateWindow();
+            if (orbitsWindow_ != nullptr) {
+                //((QWidget *)win)->activateWindow();
+                orbitsWindow_->raise();
             }
         }
         return;
@@ -517,7 +518,7 @@ void QPlotWnd::customEvent(QEvent *_e)
         x1 = p->x;
         y1 = p->y;
         p--;
-        delete p; // free( p );
+        delete p;
         p = nullptr;
 
         MATHFUNC(viewcoord_to_sphere)(x0, y0, pcoord);
@@ -543,7 +544,7 @@ void QPlotWnd::customEvent(QEvent *_e)
     if (e->type() == TYPE_SEP_EVENT) {
         oet = (int *)(e->data());
         sepWindow_->sepEvent(*oet);
-        delete oet; // free(oet);
+        delete oet;
         oet = nullptr;
         return;
     }
