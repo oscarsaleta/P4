@@ -56,7 +56,7 @@ function install_home {
     mv p4 $HOME/
     installdir=$HOME/p4
     ln -s $installdir/sumtables $installdir/sum_tables
-    printf "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):\nP4_DIR=$installdir\nPATH=$installdir/bin:\$PATH\nexport P4_DIR PATH\n\nIn case you don't know which shell you're using, open a terminal and execute this command:\n\techo .\$(echo \$0)rc\nAnd edit that file."
+    printf "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):\n\tP4_DIR=$installdir \n\tPATH=$installdir/bin:\$PATH\nexport P4_DIR PATH \n\nIn case you don't know which shell you're using, open a terminal and execute this command:\n\techo .\$(echo \$0)rc\nAnd edit that file."
 }
 
 function install_root {
@@ -65,24 +65,22 @@ function install_root {
     installdir=/usr/local/p4
     sudo ln -s $installdir/sumtables $installdir/sum_tables
     sudo ln -s $installdir/bin/p4 /usr/local/bin/p4
-    printf "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc):\nP4_DIR=$installdir\nexport P4_DIR\nIn case you don't know which shell you're using, open a terminal and execute this command:\n\techo .\$(echo \$0)rc\nAnd edit that file."
+    printf "Compilation and installation is finished. Now, it is advisable that you add the following lines to the end of the configuration file of your preferred shell (probably $HOME/.${SHELL:5}rc): \n\tP4_DIR=$installdir \n\texport P4_DIR \n\nIn case you don't know which shell you're using, open a terminal and execute this command:\n\techo .\$(echo \$0)rc\nAnd edit that file."
 }
 
 function mpfr_test {
-    printf -- "- Looking for multiprecision library... "
+    echo "- Looking for multiprecision library..."
     printf "#include <mpfr.h>\nint main(void) {\nreturn 0;\n}" > testmpfr.cpp
     if [ "$platform" == 'linux' ]; then
         if (! g++ testmpfr.cpp 1>/dev/null 2>&1); then
             echo "$mpfr_error"
             rm testmpfr.cpp
-            rm a.out
             exit 1
         fi
     elif [ "$platform" == 'darwin' ]; then
         if (! clang testmpfr.cpp 1>/dev/null 2>&1); then
             echo "$mpfr_error"
             rm testmpfr.cpp
-            rm a.out
             exit 1
         fi
     fi
@@ -93,20 +91,20 @@ function mpfr_test {
 
 
 # Error messages
+maple_error="\n[Error] Maple was not found in the system.\n\tIt is needed by P4 to perform many computations, so P4 will not really work without it."
 if [ "$platform" == 'linux' ]; then
-    qt5_error="[Error] Some Qt5 modules were not found in the system.\n\tInstall them using the proper method for your distribution, e.g.:\n\t\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base"
-    pkgconfig_error="[Error] The command pkg-config is required in order to check for other needed packages.\n\tInstall it using the proper method for your distribution, e.g.:\n\t\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig\n\t\t- Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config"
-    compiler_error="[Error] GCC is required to compile P4, and some libraries were not found in the system.\n\tInstall them using the proper method for your distribution, e.g.:\n\t\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S gcc"
-    ldconfig_error="[Error] Cannot execute command ldconfig, make sure it is available and you have permission to use this command."
-    mpfr_error="[Error] Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:\n\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr"
-    qmake_error="[Error] $QMAKE is not a valid command for building a Qt application.\n\tPossible causes are that Qt5 is not properly installed:\n\t- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\tor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system)."
-    maple_error="[Error] "
+    qt5_error="\n[Error] Some Qt5 modules were not found in the system.\n\tInstall them using the proper method for your distribution, e.g.:\n\t\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install qt5-default qt5-qmake\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n"
+    pkgconfig_error="\n[Error] The command pkg-config is required in order to check for other needed packages.\n\tInstall it using the proper method for your distribution, e.g.:\n\t\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install pkg-config\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install pkgconfig\n\t\t- Arch-based (Archlinux/Angergos): sudo pacman -S pkg-config\n"
+    compiler_error="\n[Error] GCC is required to compile P4, and some libraries were not found in the system.\n\tInstall them using the proper method for your distribution, e.g.:\n\t\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S gcc\n"
+    ldconfig_error="\n[Error] Cannot execute command ldconfig, make sure it is available and you have permission to use this command.\n"
+    mpfr_error="\n[Error] Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:\n\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr\n"
+    qmake_error="\n[Error] $QMAKE is not a valid command for building a Qt application.\n\tPossible causes are that Qt5 is not properly installed:\n\t- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\tor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system).\n"
 elif [ "$platform" == 'darwin' ]; then
-    qt5_error="[Error] Some Qt5 modules were not found in the system.\n\tInstall or compile Qt following instructions from http://doc.qt.io/qt-5/osx.html."
-    pkgconfig_error="[Error] pkg-config is needed in order to check for other packages.\n\tInstall it using this command in a terminal: brew install pkg-config."
-    compiler_error="[Error] Clang is required to compile P4, and it was not found in the system.\n\tInstall Xcode and then install the command-line tools using: xcode-select --install in a terminal."
-    mpfr_error="[Error] Multiprecision mpfr library was not found in the system. You can install it using this command in a terminal: brew install mpfr"
-    qmake_error="[Error] $QMAKE is not a valid command for building a Qt application.\n\tA possible cause is that Qt is not properly installed: in this case, install Qt following the instructions of http://doc.qt.io/qt-5/osx.html.\n\tAnother cause can be that the binary was not found. In this case, run the script as:\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system)."
+    qt5_error="\n[Error] Some Qt5 modules were not found in the system.\n\tInstall or compile Qt following instructions from http://doc.qt.io/qt-5/osx.html.\n"
+    pkgconfig_error="\n[Error] pkg-config is needed in order to check for other packages.\n\tInstall it using this command in a terminal: brew install pkg-config.\n"
+    compiler_error="\n[Error] Clang is required to compile P4, and it was not found in the system.\n\tInstall Xcode and then install the command-line tools using: xcode-select --install in a terminal.\n"
+    mpfr_error="\n[Error] Multiprecision mpfr library was not found in the system. You can install it using this command in a terminal: brew install mpfr\n"
+    qmake_error="\n[Error] $QMAKE is not a valid command for building a Qt application.\n\tA possible cause is that Qt is not properly installed: in this case, install Qt following the instructions of http://doc.qt.io/qt-5/osx.html.\n\tAnother cause can be that the binary was not found. In this case, run the script as:\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system).\n"
 fi
 
 
@@ -265,7 +263,7 @@ printf -- "- Looking for Maple... "
 if (command -v maple >/dev/null 2>&1); then
     echo "[Success]"
 else
-    echo "[Error]"
+    printf "$maple_error"
 fi
 
 echo "[Done]"
@@ -285,7 +283,7 @@ rm -rf build p4
 echo "== Executing qmake..."
 if (! $QMAKE $compile_debug -r P4.pro >$OUT 2>$ERR); then
     echo "- qmake error" # TODO: check if this looks ugly
-    printf "\n$qmake_error"
+    printf "$qmake_error"
     exit 1
 fi
 # Use multicore make for faster compilation
