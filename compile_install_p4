@@ -199,7 +199,6 @@ if [ $uninstalled = true ]; then
         fi
     fi
 fi
-echo "[Done]"
 
 # After uninstalling, check if we want to continue
 if [ $only_uninstall = true ]; then
@@ -209,7 +208,7 @@ fi
 # Check for dependencies
 printf "\n=== Checking for dependencies...\n"
 # qmake
-printf -- "- Looking for qmake... "
+echo "- Looking for qmake... "
 if (command -v qmake >/dev/null 2>&1); then
     echo "[Success]"
 else
@@ -219,10 +218,10 @@ fi
 
 if [[ "$platform" == 'linux' ]]; then
     # Qt modules
-    printf -- "- Looking for pkg-config... "
+    echo "- Looking for pkg-config... "
     if (command -v pkg-config >/dev/null 2>&1); then
         echo "[Success]"
-        printf -- "- Looking for Qt5 modules... "
+        echo "- Looking for Qt5 modules... "
         if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
             echo "[Success]"
         else
@@ -234,10 +233,10 @@ if [[ "$platform" == 'linux' ]]; then
         exit 1
     fi
     # compiler libraries
-    printf -- "- Looking for ldconfig... "
+    echo "- Looking for ldconfig... "
     if (command -v ldconfig >/dev/null 2>&1); then
         echo "[Success]"
-        printf -- "- Looking for compiler libraries... "
+        echo "- Looking for compiler libraries... "
         if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
             echo "[Success]"
         else
@@ -259,14 +258,13 @@ fi
 mpfr_test
 
 # maple
-printf -- "- Looking for Maple... "
+echo "- Looking for Maple... "
 if (command -v maple >/dev/null 2>&1); then
     echo "[Success]"
 else
     printf "$maple_error"
 fi
 
-echo "[Done]"
 
 
 # Compile
@@ -327,7 +325,6 @@ else
         exit 1
     fi
 fi
-echo "[Done]"
 
 # make install (generate p4 directory in project root)
 printf "\n=== Generating P4 directory tree... "
@@ -336,7 +333,6 @@ if (make install >$OUT 2>$ERR); then
 else
     echo "[Error] Check make log"
 fi
-echo "[Done]"
 
 
 # Install
