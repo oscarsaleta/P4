@@ -35,6 +35,8 @@ macx {
     CONFIG -= app_bundle
     LIBS += -L"/usr/local/lib" -lgmp -L"/usr/local/lib/" -lmpfr
     INCLUDEPATH += "/usr/local/include"
+    QMAKE_LFLAGS += -L/usr/local/opt/qt/lib
+    QMAKE_CXXFLAGS += -I/usr/local/opt/qt/include
 }
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpir/dll/x64/release/ -lmpir

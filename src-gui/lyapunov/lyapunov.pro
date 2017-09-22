@@ -26,6 +26,8 @@ DESTDIR = $$BUILD_DIR/lyapunov/
 CONFIG +=  console c++11
 macx {
     CONFIG -= app_bundle
+    QMAKE_LFLAGS += -L/usr/local/opt/qt/lib
+    QMAKE_CXXFLAGS += -I/usr/local/opt/qt/include
 }
 SOURCES =  lyapunov.cpp lypcoeff.cpp polynom.cpp \
            checktbl.cpp createtbl.cpp readvf.cpp

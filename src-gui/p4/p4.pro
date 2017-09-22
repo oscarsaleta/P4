@@ -31,6 +31,8 @@ CONFIG -= console
 
 macx {
     CONFIG -= app_bundle
+    QMAKE_LFLAGS += -L/usr/local/opt/qt/lib
+    QMAKE_CXXFLAGS += -I/usr/local/opt/qt/include
 }
 
 DESTDIR = $$BUILD_DIR/p4/
