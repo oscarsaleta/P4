@@ -81,7 +81,11 @@ function mpfr_test {
         if (! clang testmpfr.cpp 1>/dev/null 2>&1); then
             echo "$mpfr_error"
             rm testmpfr.cpp
-            exit 1
+            if [[ "$1" == 'retry' ]]; then
+                exit 1
+            else
+                install_mpfr
+            fi
         fi
     fi
     echo "[Success]"
@@ -90,15 +94,33 @@ function mpfr_test {
 }
 
 if [[ "$platform" == 'darwin' ]]; then
-    function qt_install {
-        printf -- "\n\t- This script can automatically install Qt in your system using Brew. Do you want to install Qt using Homebrew? [Y/n] "
+    function install_brew {
+        if (! command -v brew >/dev/null 2>&1); then
+            `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+        fi
+    }
+
+    function install_qt {
+        printf -- "\n\t- This script can automatically install Qt in your system using Homebrew. Do you want to proceed? [Y/n] "
         read input_variable
         if (echo "$input_variable" | grep -iq "^n"); then
             printf -- "\t- Not installing Qt, this script will abort now."
             exit 1
         else 
-            $(/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)")
-            $(brew install qt)
+            install_brew  
+            `brew install qt`
+        fi
+    }
+
+    function install_mpfr {
+        printf -- "\n\t- This script can automatically install the MPFR library using Homebrew. Do you want to proceed? [Y/n]"
+        read input_variable
+        if (echo "$input_variable" | grep -iq "^n"); then
+            printf -- "\t- Not installing MPFR, this script will abort now."
+            exit 1
+        else
+            install_brew
+            `brew install mpfr`
         fi
     }
 fi
@@ -140,7 +162,7 @@ fi
 
 
 # Title
-if [ $only_uninstall = false ]; then
+if [[ $only_uninstall = false ]]; then
     print_title 'install'
     # Welcome screen
     printf "\nWelcome to the P4 compilation and installation script.\n\nOptional arguments:\n\t--verbose: more verbose output (in order to see possible errors during compilation)\n\t--uninstall: to uninstall P4\n\t--debug: to compile with debugging symbols\nThese options can be used together in any given order.\n\nDo you want to continue with the execution of the script? [Y/n] "
@@ -203,7 +225,7 @@ fi
 if [[ $uninstalled = false ]]; then
     echo "- No older P4 version removed."
 fi
-if [ $uninstalled = true ]; then
+if [[ $uninstalled = true ]]; then
     if [[ -d $HOME/.config/P4 ]]; then
         printf "= Do you want to remove P4 configuration? [y/N] "
         read input_variable
@@ -215,7 +237,7 @@ fi
 
 
 # After uninstalling, check if we want to continue
-if [ $only_uninstall = true ]; then
+if [[ $only_uninstall = true ]]; then
     exit 0
 fi
 
@@ -230,7 +252,7 @@ else
     if [[ "$platform" == 'linux' ]]; then
         exit 1
     elif [[ "$platform" == 'darwin' ]]; then
-        qt_install
+        install_qt
     fi
 fi
 
