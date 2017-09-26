@@ -79,18 +79,19 @@ function mpfr_test {
     printf "#include <mpfr.h>\nint main(void) {\nreturn 0;\n}" > testmpfr.cpp
     if [ "$platform" == 'linux' ]; then
         if (! g++ testmpfr.cpp 1>/dev/null 2>&1); then
-            echo "$mpfr_error"
+            printf "$mpfr_error"
             rm testmpfr.cpp
             exit 1
         fi
     elif [ "$platform" == 'darwin' ]; then
         if (! clang testmpfr.cpp 1>/dev/null 2>&1); then
-            echo "$mpfr_error"
+            printf "$mpfr_error"
             rm testmpfr.cpp
             if [[ "$1" == 'retry' ]]; then
                 exit 1
             else
                 install_mpfr
+                mpfr_test 'retry'
             fi
         fi
     fi
@@ -119,7 +120,7 @@ if [[ "$platform" == 'darwin' ]]; then
     }
 
     function install_mpfr {
-        printf -- "\n\t- This script can automatically install the MPFR library using Homebrew. Do you want to proceed? [Y/n]"
+        printf -- "\n\t- This script can automatically install the MPFR library using Homebrew. Do you want to proceed? [Y/n] "
         read_variable
         if (echo "$input_variable" | grep -iq "^n"); then
             printf -- "\t- Not installing MPFR, this script will abort now."
@@ -141,7 +142,7 @@ if [ "$platform" == 'linux' ]; then
     mpfr_error="\n[Error] Multiprecision mpfr library was not found in the system. Install it using the proper method for your distribution, e.g.:\n\t- Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libmpfr-dev\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install mpfr-devel\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S mpfr\n"
     qmake_error="\n[Error] $QMAKE is not a valid command for building a Qt application.\n\tPossible causes are that Qt5 is not properly installed:\n\t- Debian-based (Debian/Ubuntu/Mint): sudo apt install qt5-default qt5-qmake\n\t\t- Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install qt5*-devel --allowerasing\n\t\t- Arch-based (Archlinux/Antergos): sudo pacman -S qt5-base\n\tor that your Linux distribution uses a different name for the qmake executable (e.g. in Fedora-based distributions, it is called qmake-qt5). In this case, run\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system).\n"
 elif [ "$platform" == 'darwin' ]; then
-    qt5_error="\n[Error] Some Qt5 modules were not found in the system.\n\tInstall or compile Qt following instructions from http://doc.qt.io/qt-5/osx.html.\n"
+    qt5_error="\n[Error] Some Qt5 modules were not found in the system.\n"
     pkgconfig_error="\n[Error] pkg-config is needed in order to check for other packages.\n\tInstall it using this command in a terminal: brew install pkg-config.\n"
     compiler_error="\n[Error] Clang is required to compile P4, and it was not found in the system.\n\tInstall Xcode and then install the command-line tools using: xcode-select --install in a terminal.\n"
     mpfr_error="\n[Error] Multiprecision mpfr library was not found in the system. You can install it using this command in a terminal: brew install mpfr\n"
