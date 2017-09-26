@@ -96,7 +96,7 @@ function mpfr_test {
 if [[ "$platform" == 'darwin' ]]; then
     function install_brew {
         if (! command -v brew >/dev/null 2>&1); then
-            open -a Terminal macOS_install_homebrew.sh
+            sh macOS-install-tools/homebrew.sh
         fi
     }
 
@@ -108,7 +108,7 @@ if [[ "$platform" == 'darwin' ]]; then
             exit 1
         else
             install_brew
-            brew install qt
+            sh macOS-install-tools/qt.sh
         fi
     }
 
@@ -120,7 +120,7 @@ if [[ "$platform" == 'darwin' ]]; then
             exit 1
         else
             install_brew
-            brew install mpfr
+            sh macOS-install-tools/mpfr.sh
         fi
     }
 fi
