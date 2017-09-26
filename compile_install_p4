@@ -101,6 +101,7 @@ if [[ "$platform" == 'darwin' ]]; then
             $(brew install qt)
         fi
     }
+fi
 
 # Error messages
 maple_error="\n[Error] Maple was not found in the system.\n\tIt is needed by P4 to perform many computations, so P4 will not really work without it."
