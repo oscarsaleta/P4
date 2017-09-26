@@ -34,14 +34,21 @@ Check [release page][latest_release] to see more detailed instructions and downl
 ### Linux
 
 0. Check [dependencies](#dependencies "Dependencies section"),
-1. `git clone https://github.com/oscarsaleta/P4.git && cd P4`,
-2. `./compile_install_linux` and follow the instructions,
+1. `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
+2. `./compile_install_p4` and follow the instructions,
 3. Done!
 
 ### Windows
 
 1. Download *P4setup.exe* from [here][latest_release],
 2. Execute installer and follow the instructions,
+3. Done!
+
+### macOS
+
+0. Check [dependencies](#dependencies "Dependencies section"),
+1. `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
+2. `./compile_install_p4` and follow the instructions,
 3. Done!
 
 ## Files
@@ -64,7 +71,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 ### Linux
 
-* **Installation with `compile_install_linux` or compilation from source using `qmake`:**
+* **Installation with `compile_install_p4` or compilation from source using `qmake`:**
     - Git: must have to work with *git projects*:
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install git`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install git`
@@ -106,15 +113,22 @@ Check [release page][latest_release] to see more detailed instructions and downl
 	- C++ compiler: Microsoft Visual C++ (tested with version 14.0).
         + Download from [Visual Studio Community](https://www.visualstudio.com/vs/cplusplus/#downloads "Visual Studio Community C++ download").
 
+### macOS
+
+* **Installation with `compile_install_p4`**:
+    - *Comand line developer tools*: this adds necessary programs such as `git` and `clang` to the system.
+        + Run in terminal: `xcode-select --install`
+
+
 ## Manually build P4 from source
 
-### Automatic build and install for Linux using `compile_install_linux`
+### Automatic build and install for Linux using `compile_install_p4`
 
 This is the easiest way in Linux to get a working P4 application.
 
 * Clone this repository: `git clone https://github.com/oscarsaleta/P4.git`.
 * Change directory into the repository folder: `cd P4`.
-* Execute the script and follow the instructions: `./compile_install_linux`. This will check for dependencies, compile, and install P4 in your computer (if requirements are met).
+* Execute the script and follow the instructions: `./compile_install_p4`. This will check for dependencies, compile, and install P4 in your computer (if requirements are met).
 * If you want the **latest version** of P4 (which is not as tested as the stable release), checkout the _release candidate_ branch: `git checkout release_candidate` and then run the script from the previous step.
 
 ### Build using `qmake`
