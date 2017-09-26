@@ -97,7 +97,7 @@ if [[ "$platform" == 'darwin' ]]; then
     function install_brew {
         if (! command -v brew >/dev/null 2>&1); then
             set -x
-            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 
+            `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
             set +x
         fi
     }
