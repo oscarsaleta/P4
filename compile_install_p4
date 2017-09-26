@@ -91,9 +91,9 @@ function mpfr_test {
 
 if [[ "$platform" == 'darwin' ]]; then
     function qt_install {
-        printf -- "- This script can automatically install Qt in your system using Brew. Do you want to install Qt using Homebrew? [Y/n] "
+        printf -- "\n\t- This script can automatically install Qt in your system using Brew. Do you want to install Qt using Homebrew? [Y/n] "
         read input_variable
-        if (echo "$input_variable" | grep -iq "^y"); then
+        if (echo "$input_variable" | grep -iq "^n"); then
             printf -- "\t- Not installing Qt, this script will abort now."
             exit 1
         else 
