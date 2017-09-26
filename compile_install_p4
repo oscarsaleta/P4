@@ -50,6 +50,12 @@ function print_title {
     fi
 }
 
+function read_variable {
+    while read -t 0 notused; do
+        read input
+    done
+    read input_variable
+}
 
 function install_home {
     printf "== Installing P4 in $HOME/p4...\n"
@@ -102,7 +108,7 @@ if [[ "$platform" == 'darwin' ]]; then
 
     function install_qt {
         printf -- "\n\t- This script can automatically install Qt in your system using Homebrew. Do you want to proceed? [Y/n] "
-        read input_variable
+        read_variable
         if (echo "$input_variable" | grep -iq "^n"); then
             printf -- "\t- Not installing Qt, this script will abort now."
             exit 1
@@ -114,7 +120,7 @@ if [[ "$platform" == 'darwin' ]]; then
 
     function install_mpfr {
         printf -- "\n\t- This script can automatically install the MPFR library using Homebrew. Do you want to proceed? [Y/n]"
-        read input_variable
+        read_variable
         if (echo "$input_variable" | grep -iq "^n"); then
             printf -- "\t- Not installing MPFR, this script will abort now."
             exit 1
@@ -166,7 +172,7 @@ if [[ $only_uninstall = false ]]; then
     print_title 'install'
     # Welcome screen
     printf "\nWelcome to the P4 compilation and installation script.\n\nOptional arguments:\n\t--verbose: more verbose output (in order to see possible errors during compilation)\n\t--uninstall: to uninstall P4\n\t--debug: to compile with debugging symbols\nThese options can be used together in any given order.\n\nDo you want to continue with the execution of the script? [Y/n] "
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^n"); then
         printf "\n=== Finished\n\n"
         exit 0
@@ -174,7 +180,7 @@ if [[ $only_uninstall = false ]]; then
 else
     print_title 'uninstall'
     printf "\nWelcome to the P4 uninstaller script.\n\nYou are about to uninstall P4 from your system. You will be asked for confirmation before completely removing P4.\n\nContinue with the execution of the script? [Y/n] "
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^n"); then
         printf "\n=== Finished\n\n"
         exit 0
@@ -189,7 +195,7 @@ installed_root=false
 if [[ -d $HOME/p4 ]]; then
     installed_home=true
     printf -- "- P4 installation found in $HOME/p4. Do you want to remove it? [Y/n] "
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^n"); then
         echo "- Not removing P4 in $HOME/p4"
     else
@@ -206,7 +212,7 @@ fi
 if [[ -d /usr/local/p4 ]]; then
     installed_root=true
     printf -- "- P4 installation found in /usr/local/p4. Do you want to remove it? [Y/n] "
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^n"); then
         echo "- Not removing P4 in /usr/local/p4"
     else
@@ -228,7 +234,7 @@ fi
 if [[ $uninstalled = true ]]; then
     if [[ -d $HOME/.config/P4 ]]; then
         printf "= Do you want to remove P4 configuration? [y/N] "
-        read input_variable
+        read_variable
         if (echo "$input_variable" | grep -iq "^y"); then
             rm -rf $HOME/.config/P4
         fi
@@ -344,7 +350,7 @@ fi
 echo "== Compiling Maple code... "
 if [[ -f src-mpl/p4.m ]]; then
     printf -- "- Do you want to recompile Maple scripts from src-mpl? If your Maple version is Maple 2015, this is not necessary. [y/N] "
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^y"); then
         printf -- "- Recompiling Maple scripts..."
         cd src-mpl
@@ -382,20 +388,20 @@ fi
 printf "\n=== Installing P4 in your system...\n"
 if [[ $installed_root = true ]]; then
     printf -- "- Do you want to install P4 in $HOME/p4? [y/N]"
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^y"); then
         install_home
     fi
 elif [[ $installed_home = true ]]; then
     printf -- "- Do you want to install P4 in /usr/local/p4? [y/N]"
-    read input_variable
+    read_variable
     if (echo "$input_variable" | grep -iq "^y"); then
         install_root
     fi
 else
     while : ; do
         printf -- "- Where do you want to install P4 in your system?\n\t0: /usr/local/p4\n\t1: $HOME/p4\n\t2: cancel\nSelection: "
-        read input_variable
+        read_variable
         if [[ "$input_variable" == '0' ]]; then
             install_root
             break
