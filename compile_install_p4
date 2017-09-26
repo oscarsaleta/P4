@@ -188,7 +188,7 @@ installed_home=false
 installed_root=false
 if [[ -d $HOME/p4 ]]; then
     installed_home=true
-    printf "- P4 installation found in $HOME/p4. Do you want to remove it? [Y/n] "
+    printf -- "- P4 installation found in $HOME/p4. Do you want to remove it? [Y/n] "
     read input_variable
     if (echo "$input_variable" | grep -iq "^n"); then
         echo "- Not removing P4 in $HOME/p4"
