@@ -89,6 +89,18 @@ function mpfr_test {
     rm a.out
 }
 
+if [[ "$platform" == 'darwin' ]]; then
+    function qt_install {
+        printf -- "- This script can automatically install Qt in your system using Brew. Do you want to install Qt using Homebrew? [Y/n] "
+        read input_variable
+        if (echo "$input_variable" | grep -iq "^y"); then
+            printf -- "\t- Not installing Qt, this script will abort now."
+            exit 1
+        else 
+            $(/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)")
+            $(brew install qt)
+        fi
+    }
 
 # Error messages
 maple_error="\n[Error] Maple was not found in the system.\n\tIt is needed by P4 to perform many computations, so P4 will not really work without it."
@@ -214,7 +226,11 @@ if (command -v qmake >/dev/null 2>&1); then
     echo "[Success]"
 else
     printf "$qmake_error"
-    exit 1
+    if [[ "$platform" == 'linux' ]]; then
+        exit 1
+    elif [[ "$platform" == 'darwin' ]]; then
+        qt_install
+    fi
 fi
 
 if [[ "$platform" == 'linux' ]]; then
