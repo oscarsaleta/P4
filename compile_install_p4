@@ -96,7 +96,9 @@ function mpfr_test {
 if [[ "$platform" == 'darwin' ]]; then
     function install_brew {
         if (! command -v brew >/dev/null 2>&1); then
-            `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+            set -x
+            /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 
+            set +x
         fi
     }
 
@@ -106,9 +108,11 @@ if [[ "$platform" == 'darwin' ]]; then
         if (echo "$input_variable" | grep -iq "^n"); then
             printf -- "\t- Not installing Qt, this script will abort now."
             exit 1
-        else 
-            install_brew  
-            `brew install qt`
+        else
+            set -x
+            install_brew
+            brew install qt
+            set +x
         fi
     }
 
@@ -119,8 +123,10 @@ if [[ "$platform" == 'darwin' ]]; then
             printf -- "\t- Not installing MPFR, this script will abort now."
             exit 1
         else
+            set -x
             install_brew
-            `brew install mpfr`
+            brew install mpfr
+            set +x
         fi
     }
 fi
