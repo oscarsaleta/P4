@@ -170,8 +170,8 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
             if (++t == g_VFResults.config_lc_value_) {
                 t = 0;
                 if (stop_search_limit()) {
-                    okf1 = false;
-                    okb1 = false;
+                    okf1 = 0;
+                    okb1 = 0;
                     break;
                 }
             }
@@ -195,14 +195,14 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
             }
             if (okf1 && okb1 && MATHFUNC(less2)(pf1, p1) &&
                 MATHFUNC(less2)(p2, pb1)) {
-                okf1 = false;
-                okb1 = false;
+                okf1 = 0;
+                okb1 = 0;
                 break;
             }
             if (okf1 && okb1 && MATHFUNC(less2)(p2, pf1) &&
                 MATHFUNC(less2)(pb1, p1)) {
-                okf1 = false;
-                okb1 = false;
+                okf1 = 0;
+                okb1 = 0;
                 break;
             }
 
@@ -210,8 +210,8 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
             y0 += h2;
 
             if (less(x1, y1, x0, y0)) {
-                okf1 = false;
-                okb1 = false;
+                okf1 = 0;
+                okb1 = 0;
                 break;
             }
             write_to_limit_window(x0, y0);
