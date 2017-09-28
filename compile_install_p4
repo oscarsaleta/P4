@@ -149,7 +149,7 @@ elif [ "$platform" == 'darwin' ]; then
     pkgconfig_error="\n[Error] pkg-config is needed in order to check for other packages.\n\tInstall it using this command in a terminal: brew install pkg-config.\n"
     compiler_error="\n[Error] Clang is required to compile P4, and it was not found in the system.\n\tInstall Xcode and then install the command-line tools using: xcode-select --install in a terminal.\n"
     mpfr_error="\n[Error] Multiprecision mpfr library was not found in the system. You can install it using this command in a terminal: brew install mpfr\n"
-    qmake_error="\n[Error] $QMAKE is not a valid command for building a Qt application.\n\tA possible cause is that Qt is not properly installed: in this case, install Qt following the instructions of http://doc.qt.io/qt-5/osx.html.\n\tAnother cause can be that the binary was not found. In this case, run the script as:\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system).\n"
+    qmake_error="\n[Error] $QMAKE is not a valid command for building a Qt application.\n\tA possible cause is that Qt is not properly installed: in this case, install Qt\n\tfollowing the instructions of http://doc.qt.io/qt-5/osx.html or using the Homebrew package manager.\n\tAnother cause can be that the binary was not found. In this case, run the script as:\n\t\tenv QMAKE=/path/to/qmake ./compile_install_p4 --verbose\n\t(where /path/to/qmake should be replaced by the actual path of qmake in your system).\n"
 fi
 
 

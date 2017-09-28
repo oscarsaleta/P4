@@ -33,9 +33,9 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 ### Linux
 
-0. Check [dependencies](#dependencies "Dependencies section"),
-1. `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
-2. `./compile_install_p4` and follow the instructions,
+0. Check [dependencies](#dependencies "Dependencies section"), every item must be satisfied
+1. Clone the repository: `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
+2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
 
 ### Windows
@@ -46,9 +46,9 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 ### macOS
 
-0. Check [dependencies](#dependencies "Dependencies section"),
-1. `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
-2. `./compile_install_p4` and follow the instructions,
+0. Check [dependencies](#macOS-1 "Dependencies section"), every item must be satisfied. The installation script will try to solve some of the dependencies but it is much easier if you manually install them following the instructions in [dependencies](#macOS-1 "Dependencies section").
+1. Clone the repository `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
+2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
 
 ## Files
@@ -117,19 +117,26 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 * **Installation with `compile_install_p4`**:
     - *Comand line developer tools*: this adds necessary programs such as `git` and `clang` to the system.
-        + Run in terminal: `xcode-select --install`
+        + To install, run `xcode-select --install` in Terminal
+    - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index_ca.html "Homebrew official website"))
+        + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+    - Qt and qmake: installed using Homebrew
+        + Run in terminal `brew install qt`
+        + Follow the instructions (_IMPORTANT: modify the path as the installer suggests so the system will be able to find qmake_)
+    - MPFR library: installed using Homebrew
+        + Run in terminal `brew install mpfr`
 
 
-## Manually build P4 from source
+## Manually build P4 from source in UNIX systems
 
 ### Automatic build and install for Linux using `compile_install_p4`
 
-This is the easiest way in Linux to get a working P4 application.
+This is the easiest way in Linux and macOS to get a working P4 application.
 
 * Clone this repository: `git clone https://github.com/oscarsaleta/P4.git`.
 * Change directory into the repository folder: `cd P4`.
+    - If you want the **latest version** of P4 (which is not as tested as the stable release), checkout the _release candidate_ branch: `git checkout release_candidate`.
 * Execute the script and follow the instructions: `./compile_install_p4`. This will check for dependencies, compile, and install P4 in your computer (if requirements are met).
-* If you want the **latest version** of P4 (which is not as tested as the stable release), checkout the _release candidate_ branch: `git checkout release_candidate` and then run the script from the previous step.
 
 ### Build using `qmake`
 
