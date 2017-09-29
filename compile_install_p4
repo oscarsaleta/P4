@@ -344,7 +344,7 @@ elif [[ "$platform" == 'darwin' ]]; then
     CPUCNT=$(sysctl -a | grep ^machdep.cpu.thread_count: | sed 's/^.*: //')
 fi
 echo "== Compiling C++ code... "
-printf -- "- Will use $CPUCNT jobs for make. This will take a moment... "
+echo "- Will use $CPUCNT jobs for make. This will take a moment..."
 if (make -j$CPUCNT >$OUT); then
     echo "[Success]"
 else
@@ -356,7 +356,7 @@ if [[ -f src-mpl/p4.m ]]; then
     printf -- "- Do you want to recompile Maple scripts from src-mpl? If your Maple version is Maple 2015, this is not necessary. [y/N] "
     read_variable
     if (echo "$input_variable" | grep -iq "^y"); then
-        printf -- "- Recompiling Maple scripts..."
+        echo "- Recompiling Maple scripts..."
         cd src-mpl
         make -f MakeTexMaple clean >$OUT 2>$ERR #TODO: check makefile for mac compatibility
         cd ..
@@ -368,7 +368,7 @@ if [[ -f src-mpl/p4.m ]]; then
         fi
     fi
 else
-    printf -- "- Compiling Maple scripts... "
+    echo "- Compiling Maple scripts... "
     if (make -C src-mpl p4.m >$OUT 2>$ERR); then
         echo "[Success]"
     else
@@ -379,7 +379,7 @@ fi
 
 
 # make install (generate p4 directory in project root)
-printf "\n=== Generating P4 directory tree... "
+printf "\n=== Generating P4 directory tree... \n"
 if (make install >$OUT 2>$ERR); then
     echo "[Success]"
 else
