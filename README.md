@@ -51,19 +51,6 @@ Check [release page][latest_release] to see more detailed instructions and downl
 2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
 
-## Files
-
-* **binaries**: some development scripts that help creating binaries for Linux and Windows (this directory doesn't actually contain any binaries, you can find those [here][latest_release]).
-* **help**: Help files in *.html* format and supporting images.
-* **mpir**: *(relevant to Windows only)* copy of [MPIR repository](https://github.com/wbhart/mpir "MPIR GitHub repository"), a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
-* **mpfr**: *(relevant to Windows only)* copy of [MPFR repository](https://github.com/BrianGladman/mpfr "MPFR GitHub repository"), the GNU MPFR library, for multiprecision floating point computations.
-* **QtCreator**: files and projects for building P4 using Qt Creator.
-* **src-gui**:
-    * **lyapunov**: C++ code for numerical computation of Lyapunov constants
-    * **lyapunov_mpf**: C++ code for numerical computation of Lyapunov constants (multiprecision version)
-    * **p4**: C++/Qt source code for the GUI of P4,
-    * **separatrice**: C++ code for numerical computation of separatrices
-* **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
 
 ## Dependencies
 
@@ -115,16 +102,24 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 ### macOS
 
+* **Installation of pre-compiled binaries**:
+    - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index_ca.html "Homebrew official website"))
+        + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+    - Qt and qmake: installed using Homebrew
+        + Run in terminal `brew install qt`
+        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
 * **Installation with `compile_install_p4`**:
+    - Xcode: macOS suite for software development. Install from the App Store, then open it and accept the Terms of Use.
     - *Comand line developer tools*: this adds necessary programs such as `git` and `clang` to the system.
         + To install, run `xcode-select --install` in Terminal
     - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index_ca.html "Homebrew official website"))
         + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - Qt and qmake: installed using Homebrew
         + Run in terminal `brew install qt`
-        + Follow the instructions (_IMPORTANT: modify the path as the installer suggests so the system will be able to find qmake_)
+        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
     - MPFR library: installed using Homebrew
         + Run in terminal `brew install mpfr`
+    - _You will need to open a new terminal if you updated the PATH for the changes to take effect_
 
 
 ## Manually build P4 from source in UNIX systems
@@ -160,6 +155,22 @@ Check [here](QtCreator/README.md#manually-build-p4-from-source-using-qt-creator 
 ## Binary tree
 
 Check [here][binary_tree] for instructions of how to create a correct file tree for P4 to work after each of its parts has been compiled.
+
+
+## Files
+
+* **binaries**: some development scripts that help creating binaries for Linux and Windows (this directory doesn't actually contain any binaries, you can find those [here][latest_release]).
+* **help**: Help files in *.html* format and supporting images.
+* **mpir**: *(relevant to Windows only)* copy of [MPIR repository](https://github.com/wbhart/mpir "MPIR GitHub repository"), a fork of GMP (GNU Multiprecision library), for multiprecision integer computations.
+* **mpfr**: *(relevant to Windows only)* copy of [MPFR repository](https://github.com/BrianGladman/mpfr "MPFR GitHub repository"), the GNU MPFR library, for multiprecision floating point computations.
+* **QtCreator**: files and projects for building P4 using Qt Creator.
+* **src-gui**:
+    * **lyapunov**: C++ code for numerical computation of Lyapunov constants
+    * **lyapunov_mpf**: C++ code for numerical computation of Lyapunov constants (multiprecision version)
+    * **p4**: C++/Qt source code for the GUI of P4,
+    * **separatrice**: C++ code for numerical computation of separatrices
+* **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
+
 
 ## Contributors
 
