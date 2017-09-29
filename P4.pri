@@ -18,8 +18,3 @@
 
 PROJECT_ROOT=$$PWD
 BUILD_DIR=$$PROJECT_ROOT/build
-mac {
-    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
-    QMAKE_LFLAGS_SONAME += -Wl,-install_name,@rpath/
-    QMAKE_RPATHDIR += /usr/local/Qt-5.9.1/lib
-}
