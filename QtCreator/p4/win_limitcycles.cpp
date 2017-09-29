@@ -196,6 +196,11 @@ void QLimitCyclesDlg::onbtn_start(void)
     selected_x0_ = bufx.toDouble();
     selected_y0_ = bufy.toDouble();
 
+    if (selected_x0_ == 0)
+        selected_x0_ += g_VFResults.config_hmi_;
+    if (selected_y0_ == 0)
+        selected_y0_ += g_VFResults.config_hmi_;
+
     bufx = edt_x1_->text();
     bufy = edt_y1_->text();
 

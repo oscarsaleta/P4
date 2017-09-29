@@ -181,7 +181,7 @@ void deleteLastOrbit(QWinSphere *spherewnd)
         g_VFResults.current_orbit_->next_orbit = nullptr;
     }
     g_VFResults.deleteOrbitPoint(orbit2->f_orbits);
-    delete orbit2; // free( orbit2 );
+    delete orbit2;
     orbit2 = nullptr;
 }
 
@@ -305,7 +305,7 @@ orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
     double pcoord2[3], h_min, h_max;
     orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
 
-    hhi = (double)dir * step;
+    hhi = dir * step;
     h_min = g_VFResults.config_hmi_;
     h_max = g_VFResults.config_hma_;
     copy_x_into_y(pcoord, pcoord2);

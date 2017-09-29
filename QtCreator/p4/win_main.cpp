@@ -510,7 +510,6 @@ void QStartDlg::onViewFinite()
 
     if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
         // mark: data invalid according to vf information
-
         viewFiniteWindow_->setFont(*(g_p4app->courierFont_));
         return;
     }
@@ -524,6 +523,7 @@ void QStartDlg::onViewInfinite()
         findWindow_->getDataFromDlg();
 
     fname = g_ThisVF->getfilename_infresults();
+
     if (g_ThisVF->fileExists(fname) == false) {
         if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
             g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
@@ -534,7 +534,6 @@ void QStartDlg::onViewInfinite()
         QMessageBox::critical(this, "P4", "Cannot open the result "
                                           "file.\nPlease re-evaluate, or check "
                                           "filename.\n");
-
         return;
     }
 
@@ -545,7 +544,6 @@ void QStartDlg::onViewInfinite()
     if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
         g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         // mark: data invalid according to vf information
-
         viewInfiniteWindow_->setFont(*(g_p4app->courierFont_));
         return;
     }

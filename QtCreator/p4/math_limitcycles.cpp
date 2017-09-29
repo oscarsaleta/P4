@@ -98,7 +98,7 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
                 fabs(hhi2) <= h_min) {
                 copy_x_into_y(p2, pp);
             } else {
-                for (;;) {
+                while (1) {
                     hhi2 = hhi / 2.0;
                     MATHFUNC(integrate_sphere_orbit)
                     (p1[0], p1[1], p1[2], pp, &hhi2, &dashes, &d, h_min,
@@ -166,12 +166,12 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
     found = 1;
     while (found) {
         found = 0; // assume not found
-        for (;;) {
+        while (1) {
             if (++t == g_VFResults.config_lc_value_) {
                 t = 0;
                 if (stop_search_limit()) {
-                    okf1 = false;
-                    okb1 = false;
+                    okf1 = 0;
+                    okb1 = 0;
                     break;
                 }
             }
@@ -195,14 +195,14 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
             }
             if (okf1 && okb1 && MATHFUNC(less2)(pf1, p1) &&
                 MATHFUNC(less2)(p2, pb1)) {
-                okf1 = false;
-                okb1 = false;
+                okf1 = 0;
+                okb1 = 0;
                 break;
             }
             if (okf1 && okb1 && MATHFUNC(less2)(p2, pf1) &&
                 MATHFUNC(less2)(pb1, p1)) {
-                okf1 = false;
-                okb1 = false;
+                okf1 = 0;
+                okb1 = 0;
                 break;
             }
 
@@ -210,14 +210,14 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
             y0 += h2;
 
             if (less(x1, y1, x0, y0)) {
-                okf1 = false;
-                okb1 = false;
+                okf1 = 0;
+                okb1 = 0;
                 break;
             }
             write_to_limit_window(x0, y0);
         }
         if (okf1 || okb1) {
-            for (;;) {
+            while (1) {
                 x = x0;
                 y = y0;
                 //              write_to_limit_window(x0,y0);
@@ -232,7 +232,7 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
 
                 if (okf1) {
                     MATHFUNC(sphere_to_R2)(pf1[0], pf1[1], pf1[2], rf1);
-                    for (;;) {
+                    while (1) {
                         x = x + h1;
                         y = y + h2;
                         if (less(rf1[0], rf1[1], x, y))
@@ -276,7 +276,7 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
                     }
                 } else {
                     MATHFUNC(sphere_to_R2)(pb1[0], pb1[1], pb1[2], rb1);
-                    for (;;) {
+                    while (1) {
                         x = x + h1;
                         y = y + h2;
                         if (less(rb1[0], rb1[1], x, y))
@@ -363,7 +363,7 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
         (*plot_p)(spherewnd, p2, CLIMIT);
-    for (;;) {
+    while (1) {
         copy_x_into_y(p2, p1);
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
@@ -389,7 +389,7 @@ void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
     copy_x_into_y(p2, p1);
     MATHFUNC(integrate_sphere_orbit)
     (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    for (;;) {
+    while (1) {
         copy_x_into_y(p2, p1);
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);

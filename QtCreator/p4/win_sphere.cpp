@@ -90,6 +90,10 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
     w_ = width();
     h_ = height();
     idealh_ = w_;
+
+    selectingX_=0;
+    selectingY_=0;
+    selectingPointRadius_=0;
     selectingPointStep_ = 0;
 
     horPixelsPerMM_ = ((double)w_) / ((double)widthMM());
@@ -114,6 +118,11 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
 
     circleAtInfinity_ = nullptr;
     plCircle_ = nullptr;
+
+    paintedXMin_ = 0;
+    paintedXMax_ = w_;
+    paintedYMin_ = 0;
+    paintedYMax_ = h_;
 }
 
 /*
@@ -1033,12 +1042,10 @@ void QWinSphere::mousePressEvent(QMouseEvent *e)
         // However, when the limit cycle window is open, select the first
         // and second point of a transverse section.
 
-        struct DOUBLEPOINT *data1 =
-            new DOUBLEPOINT; //(struct DOUBLEPOINT *)malloc(sizeof(struct
-                             // DOUBLEPOINT) + sizeof(void *));
+        struct DOUBLEPOINT *data1 = new DOUBLEPOINT;
         data1->x = coWorldX(e->x());
         data1->y = coWorldY(e->y());
-        *((void **)(data1 + 1)) = this;
+        //*((void **)(data1 + 1)) = this;
 
         double pcoord[3];
         if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
