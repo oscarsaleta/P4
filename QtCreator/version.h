@@ -30,4 +30,4 @@
 *************************************************************************/
 
 #define VERSION         "5.0.0"
-#define VERSIONDATE     "May, 2017"
+#define VERSIONDATE     "October, 2017"
