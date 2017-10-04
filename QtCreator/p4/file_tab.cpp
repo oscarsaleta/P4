@@ -1878,8 +1878,9 @@ bool QVFStudy::readNodePoint(FILE *fp)
         point->x0 = last->x0;
         point->y0 = 0.0;
         point->chart = (last->chart == CHART_U1) ? CHART_V1 : CHART_V2;
+        // TODO: check this operation for precedence
         point->stable =
-            last->stable * (g_VFResults.dir_vec_field_ == -1) ? -1 : 1;
+            (last->stable * (g_VFResults.dir_vec_field_ == -1)) ? -1 : 1;
     }
 
     return true;
