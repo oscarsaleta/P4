@@ -18,28 +18,37 @@
 
 #!/bin/bash
 
-VERSION="$(awk '/VERSION.*".*"/{print $NF}' ~/git/P4/QtCreator/version.h | awk -F'"' '$0=$2')"
+GITP4ROOT="C:\Users\oscar\Documents\git\P4"
+
+QTVER="5.9.1"
+MSVCVER="2017_64"
+VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC"
+
+VERSION="$(awk '/VERSION.*".*"/{print $NF}' ../../QtCreator/version.h | awk -F'"' '$0=$2')"
 DIR=p4_windows_$VERSION/p4
 DIRWIN="p4_windows_$VERSION\p4"
+
 rm -r $DIR
 
 mkdir -p $DIR/bin $DIR/help $DIR/sum_tables $DIR/sumtables
 chmod 777 $DIR/sumtables
 
+BUILDDIRNAME="Desktop_Qt_5_9_1_MSVC2017_64bit"
+
 cp ../../src-mpl/p4*m $DIR/bin/
-cp ../../QtCreator/build-p4-Windows-Release/release/p4.exe $DIR/bin/
-cp ../../QtCreator/build-lyapunov-Windows-Release/release/lyapunov.exe $DIR/bin/
-cp ../../QtCreator/build-lyapunov_mpf-Windows-Release/release/lyapunov_mpf.exe $DIR/bin/
+cp ../../QtCreator/build-p4-$BUILDDIRNAME-Release/release/p4.exe $DIR/bin/
+cp ../../QtCreator/build-lyapunov-$BUILDDIRNAME-Release/release/lyapunov.exe $DIR/bin/
+cp ../../QtCreator/build-lyapunov_mpf-$BUILDDIRNAME-Release/release/lyapunov_mpf.exe $DIR/bin/
 cp ../../mpfr/dll/x64/Release/mpfr.dll $DIR/bin/
 cp ../../mpir/dll/x64/Release/mpir.dll $DIR/bin/
-cp ../../QtCreator/build-separatrice-Windows-Release/separatrice.exe $DIR/bin/
+cp ../../QtCreator/build-separatrice-$BUILDDIRNAME-Release/separatrice.exe $DIR/bin/
 cp ../../help/*.* $DIR/help/
 cp -r ../../help/screenshots/ $DIR/help/
 cp ../../help/p4_flag.png $DIR/bin/portrait.png
 cp ../../help/newp4icon.ico $DIR/bin/p4smallicon.ico
 
 # solve dlls
-"C:\Qt\5.7\msvc2015_64\bin\windeployqt.exe" $DIR/bin/p4.exe
+"C:\Qt\\"$QTVER"\msvc"$MSVCVER"\bin\windeployqt.exe" $DIR/bin/p4.exe
 
 # create setup script
 SCRIPTNAME=inno_script.iss
@@ -66,8 +75,8 @@ echo 'AppSupportURL={#MyAppURL}' >> $SCRIPTNAME
 echo 'AppUpdatesURL={#MyAppURL}' >> $SCRIPTNAME
 echo 'DefaultDirName={pf}\{#MyAppName}' >> $SCRIPTNAME
 echo 'DisableProgramGroupPage=yes' >> $SCRIPTNAME
-echo 'LicenseFile=C:\Users\Oscar\git\P4\LICENSE' >> $SCRIPTNAME
-echo ';InfoBeforeFile=C:\Users\Oscar\git\P4\README.md' >> $SCRIPTNAME
+echo 'LicenseFile='$GITP4ROOT'\LICENSE' >> $SCRIPTNAME
+echo ';InfoBeforeFile='$GITP4ROOT'\README.md' >> $SCRIPTNAME
 echo 'OutputBaseFilename=P4setup_v'$VERSION >> $SCRIPTNAME
 echo 'SetupIconFile='$DIRWIN'\bin\p4smallicon.ico' >> $SCRIPTNAME
 echo 'UninstallDisplayIcon={app}\bin\p4smallicon.ico' >> $SCRIPTNAME
@@ -118,4 +127,4 @@ echo '[Run]' >> $SCRIPTNAME
 echo 'Filename: "{tmp}\vcredist_x64.exe"; Parameters: "/quiet /install /norestart"; WorkingDir: "{tmp}"; StatusMsg: "Installing Microsoft Visual C++ 2015 Redistributable (x64)..."' >> $SCRIPTNAME
 echo 'Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{userdocs}\P4"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '\''&'\'', '\''&&'\'')}}"; Flags: nowait postinstall skipifsilent' >> $SCRIPTNAME
 
-iscc.exe $SCRIPTNAME
+"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" $SCRIPTNAME
