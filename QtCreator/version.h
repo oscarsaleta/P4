@@ -29,5 +29,5 @@
 
 *************************************************************************/
 
-#define VERSION         "5.0.0"
+#define VERSION         "6.0.0"
 #define VERSIONDATE     "October, 2017"
