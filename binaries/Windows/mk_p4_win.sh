@@ -23,6 +23,7 @@ GITP4ROOT="C:\Users\oscar\Documents\git\P4"
 QTVER="5.9.1"
 MSVCVER="2017_64"
 VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC"
+export VCINSTALLDIR
 
 VERSION="$(awk '/VERSION.*".*"/{print $NF}' ../../QtCreator/version.h | awk -F'"' '$0=$2')"
 DIR=p4_windows_$VERSION/p4
