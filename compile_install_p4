@@ -99,7 +99,6 @@ function install_home {
     echo "  execute this command:"
     echo "    echo .\$(echo \$0)rc"
     echo "  And edit that file."
-    echo ""
 }
 
 function install_root {
@@ -118,7 +117,6 @@ function install_root {
     echo "  execute this command:"
     echo "    echo .\$(echo \$0)rc"
     echo "  And edit that file."
-    echo ""
 }
 
 function mpfr_test {
@@ -555,6 +553,7 @@ if (make install >${OUT}); then
     echo "${green}[Success]${normal}"
 else
     echo "${bold}${red}[Error]${normal} Check make error messages"
+    exit 1
 fi
 
 
@@ -563,7 +562,7 @@ fi
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Installing P4 in your system...${normal}"
 if [[ ${installed_root} = true ]]; then
-    read_variable 'no' '- Do you want to install P4 in ${HOME}/p4?'
+    read_variable 'no' "- Do you want to install P4 in ${HOME}/p4?"
     if (echo "${input_variable}" | grep -iq "^y"); then
         install_home
     fi
