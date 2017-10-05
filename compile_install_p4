@@ -22,11 +22,13 @@ set -e
 
 clear
 
+# Color codes
 bold=$(tput bold)
 normal=$(tput sgr0)
 green=$(tput setaf 2)
 red=$(tput setaf 1)
 cyan=$(tput setaf 6)
+magenta=$(tput setaf 5)
 
 # Check OS
 platform='unknown'
@@ -89,9 +91,10 @@ function install_home {
     mv p4 ${HOME}/
     installdir=${HOME}/p4
     ln -s ${installdir}/sumtables ${installdir}/sum_tables
-    echo "- Compilation and installation is finished. Now, it is advisable that you"
-    echo "  add the following lines to the end of the configuration file of your"
-    echo "  preferred shell (probably ${HOME}/.${SHELL:5}rc):"
+    echo "- Compilation and installation is finished."
+    echo "${bold}${magenta}"
+    echo "[IMPORTANT]${normal} Add the following lines to the configuration"
+    echo "file of your preferred shell (probably ${HOME}/.${SHELL:5}rc):"
     echo "    ${bold}${cyan}P4_DIR=${installdir}"
     echo "    PATH=${installdir}/bin:\$PATH"
     echo "    export P4_DIR PATH${normal}"
@@ -108,9 +111,10 @@ function install_root {
     installdir=/usr/local/p4
     sudo ln -s ${installdir}/sumtables ${installdir}/sum_tables
     sudo ln -s ${installdir}/bin/p4 /usr/local/bin/p4
-    echo "- Compilation and installation is finished. Now, it is advisable that you"
-    echo "  add the following lines to the end of the configuration file of your"
-    echo "  preferred shell (probably ${HOME}/.${SHELL:5}rc):"
+    echo "- Compilation and installation is finished."
+    echo "${bold}${magenta}"
+    echo "[IMPORTANT]${normal} Add the following lines to the configuration"
+    echo "file of your preferred shell (probably ${HOME}/.${SHELL:5}rc):"
     echo "    ${bold}${cyan}P4_DIR=${installdir}"
     echo "    export P4_DIR${normal}"
     echo "- In case you don't know which shell you're using, open a terminal and"
