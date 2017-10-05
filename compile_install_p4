@@ -22,6 +22,8 @@ set -e
 
 clear
 
+bold=$(tput bold)
+normal=$(tput sgr0)
 
 # Check OS
 platform='unknown'
@@ -44,23 +46,23 @@ fi
 # Functions
 function print_title {
     if [[ "$1" == 'install' ]]; then
-        echo ""
+        echo "$bold"
         echo "    ______    ___     _              _           _  _"
         echo "    | ___ \  /   |   (_)            | |         | || |"
         echo "    | |_/ / / /| |    _  _ __   ___ | |_   __ _ | || |  ___  _ __"
         echo "    |  __/ / /_| |   | || '_ \ / __|| __| / _\` || || | / _ \| '__|"
         echo "    | |    \___  |   | || | | |\__ \| |_ | (_| || || ||  __/| |"
         echo "    \_|        |_/   |_||_| |_||___/ \__| \__,_||_||_| \___||_|"
-        echo ""
+        echo "$normal"
     elif [[ "$1" == 'uninstall' ]]; then
-        echo ""
+        echo "$bold"
         echo "    ______    ___                   _              _           _  _"
         echo "    | ___ \  /   |                 (_)            | |         | || |"
         echo "    | |_/ / / /| |    _   _  _ __   _  _ __   ___ | |_   __ _ | || |  ___  _ __"
         echo "    |  __/ / /_| |   | | | || '_ \ | || '_ \ / __|| __| / _\` || || | / _ \| '__|"
         echo "    | |    \___  |   | |_| || | | || || | | |\__ \| |_ | (_| || || ||  __/| |"
         echo "    \_|        |_/    \__,_||_| |_||_||_| |_||___/ \__| \__,_||_||_| \___||_|"
-        echo ""
+        echo "$normal"
     fi
 }
 
@@ -87,9 +89,9 @@ function install_home {
     echo "- Compilation and installation is finished. Now, it is advisable that you"
     echo "  add the following lines to the end of the configuration file of your"
     echo "  preferred shell (probably $HOME/.${SHELL:5}rc):"
-    echo "    P4_DIR=$installdir"
+    echo "    $boldP4_DIR=$installdir"
     echo "    PATH=$installdir/bin:\$PATH"
-    echo "    export P4_DIR PATH"
+    echo "    export P4_DIR PATH$normal"
     echo "- In case you don't know which shell you're using, open a terminal and"
     echo "  execute this command:"
     echo "    echo .\$(echo \$0)rc"
@@ -107,8 +109,8 @@ function install_root {
     echo "- Compilation and installation is finished. Now, it is advisable that you"
     echo "  add the following lines to the end of the configuration file of your"
     echo "  preferred shell (probably $HOME/.${SHELL:5}rc):"
-    echo "    P4_DIR=$installdir"
-    echo "    export P4_DIR"
+    echo "    $boldP4_DIR=$installdir"
+    echo "    export P4_DIR$normal"
     echo "- In case you don't know which shell you're using, open a terminal and"
     echo "  execute this command:"
     echo "    echo .\$(echo \$0)rc"
@@ -189,14 +191,14 @@ fi
 # Error messages
 
 function error_maple {
-    echo "[Error] The Maple command line 'maple' was not found in the system path."
+    echo "$bold[Error]$normal The Maple command line 'maple' was not found in the system path."
     echo "It is needed by P4 to perform many computations, so P4 will not really"
     echo "work without it. Make sure you specify the correct path in the P4 settings."
     echo ""
 }
 
 function error_mpfr {
-    echo "[Error] Multiprecision mpfr library was not found in the system."
+    echo "$bold[Error]$normal Multiprecision mpfr library was not found in the system."
     if [[ "$platform" == 'linux' ]]; then
         echo "Install it using the proper method for your distribution, e.g.:"
         echo "    - Debian-based: sudo apt-get install libmpfr-dev"
@@ -209,7 +211,7 @@ function error_mpfr {
 }
 
 function error_qmake {
-echo "[Error] Error during execution of $QMAKE."
+echo "$bold[Error]$normal Error during execution of $QMAKE."
     if [[ "$platform" == 'linux' ]]; then
         echo "A possible cause is that Qt5 is not properly installed:"
         echo "    - Debian-based: sudo apt install qt5-default qt5-qmake"
@@ -239,14 +241,14 @@ echo "[Error] Error during execution of $QMAKE."
 
 function error_compiler {
     if [[ "$platform" == 'linux' ]]; then
-        echo "[Error] GCC is required to compile P4, and some libraries were not found"
+        echo "$bold[Error]$normal GCC is required to compile P4, and some libraries were not found"
         echo "in the system."
         echo "Install them using the proper method for your distribution, e.g.:"
         echo "    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install gcc g++"
         echo "    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf group install 'Development Tools'"
         echo "    - Arch-based (Archlinux/Antergos): sudo pacman -S gcc"
     elif [[ "$platform" == 'darwin' ]]; then
-        echo "[Error] Clang is required to compile P4, and it was not found in the system."
+        echo "$bold[Error]$normal Clang is required to compile P4, and it was not found in the system."
         echo "Install Xcode from the App Store, execute it to agree with the Terms of Use,"
         echo "and then install the command-line tools running the following in a terminal:"
         echo "    xcode-select --install"
@@ -255,7 +257,7 @@ function error_compiler {
 
 if [[ "$platform" == 'linux' ]]; then
     function error_qtmodules {
-        echo "[Error] Some Qt5 modules were not found in the system."
+        echo "$bold[Error]$normal Some Qt5 modules were not found in the system."
         echo "Install them using the proper method for your distribution, e.g.:"
         echo "    - Debian-based: sudo apt install qt5-default qt5-qmake"
         echo "    - Fedora-based: sudo dnf install qt5*-devel --allowerasing"
@@ -264,7 +266,7 @@ if [[ "$platform" == 'linux' ]]; then
     }
 
     function error_pkgconfig {
-        echo "[Error] The command pkg-config is required in order to check for other"
+        echo "$bold[Error]$normal The command pkg-config is required in order to check for other"
         echo "needed packages."
         echo "Install it using the proper method for your distribution, e.g.:"
         echo "    - Debian-based: sudo apt-get install pkg-config"
@@ -274,7 +276,7 @@ if [[ "$platform" == 'linux' ]]; then
     }
 
     function error_ldconfig {
-        echo "[Error] Cannot execute command ldconfig, make sure it is available and you"
+        echo "$bold[Error]$normal Cannot execute command ldconfig, make sure it is available and you"
         echo "have permission to use this command."
         echo ""
     }
@@ -308,16 +310,16 @@ if [[ $only_uninstall = false ]]; then
     echo "Welcome to the P4 compilation and installation script."
     echo ""
     echo "Optional arguments:"
-    echo "    --verbose: verbose output in compilation"
-    echo "    --uninstall: to uninstall an existing version of P4"
-    echo "    --debug: to compile with debugging symbols"
+    echo "    $bold--verbose:$normal verbose output in compilation"
+    echo "    $bold--uninstall:$normal to uninstall an existing version of P4"
+    echo "    $bold--debug:$normal to compile with debugging symbols"
     echo "These options can be used together in any given order."
     echo ""
     read_variable 'yes' 'Continue with the execution of the script?'
     if (echo "$input_variable" | grep -iq "^n"); then
-        echo ""
+        echo "$bold"
         echo "=== Finished"
-        echo ""
+        echo "$normal"
         exit 0
     fi
 else
@@ -338,7 +340,7 @@ fi
 
 # Uninstalling
 echo ""
-echo "=== Checking for older P4 versions..."
+echo "$bold=== Checking for older P4 versions...$normal"
 uninstalled=false
 installed_home=false
 installed_root=false
@@ -396,7 +398,7 @@ fi
 
 # Check for dependencies
 echo ""
-echo "=== Checking for dependencies..."
+echo "$bold=== Checking for dependencies...$normal"
 # qmake
 echo "- Looking for qmake... "
 if (command -v qmake >/dev/null 2>&1); then
@@ -463,8 +465,6 @@ fi
 
 
 # Compile
-echo ""
-echo "=== Compiling P4..."
 
 if [[ $verbose = false ]]; then
     OUT=/dev/null
@@ -472,14 +472,16 @@ else
     OUT=/dev/stdout
 fi
 
-echo "== Cleaning old builds..."
+echo ""
+echo "$bold=== Cleaning old builds...$normal"
 if (make distclean >$OUT); then
     echo "[Success]"
 else
-    echo "[Error] Check make error messages"
+    echo "$bold[Error]$normal Check make error messages"
 fi
 
-echo "== Executing qmake..."
+echo ""
+echo "$bold=== Executing qmake...$normal"
 if (! $QMAKE $compile_debug -r P4.pro >$OUT); then
     error_qmake
     exit 1
@@ -494,16 +496,18 @@ elif [[ "$platform" == 'darwin' ]]; then
     CPUCNT=$(sysctl -a | grep ^machdep.cpu.thread_count: | sed 's/^.*: //')
 fi
 
-echo "== Compiling C++ code... "
+echo ""
+echo "$bold=== Compiling C++ code...$normal"
 echo "- Will use $CPUCNT jobs for make. This will take a moment..."
 if (make -j$CPUCNT >$OUT); then
     echo "[Success]"
 else
-    echo "[Error] Check compiler error messages"
+    echo "$bold[Error]$normal Check compiler error messages"
     exit 1
 fi
 
-echo "== Compiling Maple code... "
+echo ""
+echo "$bold=== Compiling Maple code...$normal"
 if [[ -f src-mpl/p4.m ]]; then
     echo "- Do you want to recompile Maple scripts from src-mpl?"
     read_variable 'no' '  If your Maple version is Maple 2015, this is not necessary.'
@@ -515,16 +519,15 @@ if [[ -f src-mpl/p4.m ]]; then
         if (make -C src-mpl p4.m >$OUT); then
             echo "[Success]"
         else
-            echo "[Error] Check compiler error messages"
+            echo "$bold[Error]$normal Check compiler error messages"
             exit 1
         fi
     fi
 else
-    echo "- Compiling Maple scripts... "
     if (make -C src-mpl p4.m >$OUT); then
         echo "[Success]"
     else
-        echo "[Error] Check compiler error messages"
+        echo "$bold[Error]$normal Check compiler error messages"
         exit 1
     fi
 fi
@@ -532,18 +535,18 @@ fi
 
 # make install (generate p4 directory in project root)
 echo ""
-echo "=== Generating P4 directory tree... "
+echo "$bold=== Generating P4 directory tree...$normal"
 if (make install >$OUT); then
     echo "[Success]"
 else
-    echo "[Error] Check make error messages"
+    echo "$bold[Error]$normal Check make error messages"
 fi
 
 
 
 # Install
 echo ""
-echo "=== Installing P4 in your system..."
+echo "$bold=== Installing P4 in your system...$normal"
 if [[ $installed_root = true ]]; then
     read_variable 'no' '- Do you want to install P4 in $HOME/p4?'
     if (echo "$input_variable" | grep -iq "^y"); then
@@ -576,5 +579,6 @@ else
         fi
     done
 fi
-echo ""
+echo "$bold"
 echo "=== Finished."
+echo "$normal"
