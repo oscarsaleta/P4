@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 -->
 
-# P4 (Polynomial Planar Phase Portraits)
+# P4 (Polynomial Planar Phase Portraits) version 6.0.0
 
 ## Description
 
@@ -93,9 +93,9 @@ Check [release page][latest_release] to see more detailed instructions and downl
 * **Installation using `P4setup.exe`**:
 	- Dependencies are taken care of.
 * **Compilation from source using Qt Creator:**
-	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested).
+	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but it has not been tested).
         + Download from [Qt website](https://www.qt.io/ "Qt official website"),
-	- C++ compiler: Microsoft Visual C++ (tested with version 14.0).
+	- C++ compiler: Microsoft Visual C++ Compiler (tested with versions 14.0 and 15.0).
         + Download from [Visual Studio Community](https://www.visualstudio.com/vs/cplusplus/#downloads "Visual Studio Community C++ download").
 
 
@@ -124,7 +124,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
     - Xcode: macOS suite for software development. Install from the App Store, then open it and accept the Terms of Use.
     - *Comand line developer tools*: this adds necessary programs such as `git` and `clang` to the system.
         + To install, run `xcode-select --install` in Terminal
-    - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index_ca.html "Homebrew official website"))
+    - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index.html "Homebrew official website"))
         + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - Qt and qmake: installed using Homebrew
         + Run in terminal `brew install qt`
@@ -142,7 +142,7 @@ This is the easiest way in Linux and macOS to get a working P4 application.
 
 * Clone this repository: `git clone https://github.com/oscarsaleta/P4.git`.
 * Change directory into the repository folder: `cd P4`.
-    - If you want the **latest version** of P4 (which is not as tested as the stable release), checkout the _release candidate_ branch: `git checkout release_candidate`.
+    - If you want the **newest unstable version** of P4 (which is not as tested as the stable release), checkout the _release candidate_ branch: `git checkout release_candidate`.
 * Execute the script and follow the instructions: `./compile_install_p4`. This will check for dependencies, compile, and install P4 in your computer (if requirements are met).
 
 ### Build using `qmake`
@@ -155,10 +155,10 @@ Qt's `qmake` makes it easy to compile the whole project with two commands.
     - The `make` command also compiles **mplstrip**, which is a C++ program used to generate Maple scripts inside *src-mpl*.
 * **If your Maple version is NOT 2015**: go into *src-mpl* and execute:
     - `make -f MakeTexMaple clean`
-    - `make p4.m`. 
+    - `make -f MakeTexMaple all`
     This will generate **p4gcf.m** and **p4.m**, two Maple scripts needed by P4.
 * From the root directory of the project, run `make install` to generate a *p4* folder with the layout explained [here][binary_tree]. This directory can be placed anywhere in the system and P4 can be executed using `/path/to/p4/bin/p4`.
-* It is advisable that you set the environment variable `P4_DIR=/path/to/p4` to the correct path of the P4 directory.
+* It is advisable that you set the environment variable `P4_DIR=/path/to/p4` to the correct path of the P4 directory in your shell configuration script (_.bashrc_, _.zshrc_, etc.).
 
 ### Build using Qt Creator
 
