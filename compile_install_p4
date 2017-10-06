@@ -377,6 +377,8 @@ echo "${bold}${cyan}===${normal}${bold} Checking for older P4 versions...${norma
 uninstalled=false
 installed_home=false
 installed_root=false
+
+# remove p4 from usr/local
 if [[ -d ${HOME}/p4 ]]; then
     installed_home=true
     read_variable 'yes' "- P4 installation found in ${HOME}/p4. Do you want to remove it?"
@@ -393,6 +395,8 @@ if [[ -d ${HOME}/p4 ]]; then
         fi
     fi
 fi
+
+# remove p4 from home
 if [[ -d /usr/local/p4 ]]; then
     installed_root=true
     read_variable 'yes' '- P4 installation found in /usr/local/p4. Do you want to remove it?'
@@ -414,6 +418,8 @@ fi
 if [[ ${uninstalled} = false ]]; then
     echo "- No older P4 version removed."
 fi
+
+# remove configuration
 if [[ ${uninstalled} = true ]]; then
     if [[ -d ${HOME}/.config/P4 ]]; then
         read_variable 'no' '- Do you want to remove P4 configuration?'
@@ -439,7 +445,7 @@ fi
 # Check for dependencies
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Checking for dependencies...${normal}"
-# qmake
+# qmake check
 echo "- Looking for qmake... "
 if (command -v ${QMAKE} >/dev/null 2>&1); then
     echo "${green}[Success]${normal}"
@@ -453,11 +459,12 @@ else
 fi
 
 if [[ "${platform}" == 'linux' ]]; then
-    # Qt modules
+    # pkconfig check
     echo "- Looking for pkg-config... "
     if (command -v pkg-config >/dev/null 2>&1); then
         echo "${green}[Success]${normal}"
         echo "- Looking for Qt5 modules... "
+        # Qt modules check
         if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
             echo "${green}[Success]${normal}"
         else
@@ -468,11 +475,12 @@ if [[ "${platform}" == 'linux' ]]; then
         error_pkgconfig
         exit 1
     fi
-    # compiler libraries
     echo "- Looking for ldconfig..."
+    # ldconfig check
     if (command -v ldconfig >/dev/null 2>&1); then
         echo "${green}[Success]${normal}"
         echo "- Looking for compiler libraries..."
+        # gcc libraries check
         if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
             echo "${green}[Success]${normal}"
         else
@@ -481,6 +489,7 @@ if [[ "${platform}" == 'linux' ]]; then
         fi
     else
         echo "[Warning] ldconfig could not be executed, trying as super user..."
+        # gcc libraries check
         if (sudo ldconfig -p | grep libstdc++ >/dev/null && sudo ldconfig -p | grep libgcc_s >/dev/null && sudo ldconfig -p | grep libc >/dev/null); then
             echo "${green}[Success]${normal}"
         else
@@ -490,10 +499,10 @@ if [[ "${platform}" == 'linux' ]]; then
     fi
 fi
 
-# multiprecision
+# mpfr check
 mpfr_test
 
-# maple
+# maple check
 echo "- Looking for Maple..."
 if (command -v maple >/dev/null 2>&1); then
     echo "${green}[Success]${normal}"
@@ -516,14 +525,15 @@ else
 fi
 
 
-# Compile
-
+# set output pipe
 if [[ ${verbose} = false ]]; then
     OUT=/dev/null
 else
     OUT=/dev/stdout
 fi
 
+
+# make distclean?
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Cleaning old builds...${normal}"
 if [[ -f "Makefile" ]]; then
@@ -541,6 +551,8 @@ else
     echo "- Nothing to clean"
 fi
 
+
+# qmake
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Executing qmake...${normal}"
 if (! ${QMAKE} ${compile_debug} -r P4.pro >${OUT}); then
@@ -550,6 +562,7 @@ else
     echo "${green}[Success]${normal}"
 fi
 
+
 # Use multicore make for faster compilation
 if [[ "${platform}" == 'linux' ]]; then
     CPUCNT=$(grep -c ^processor /proc/cpuinfo)
@@ -557,6 +570,8 @@ elif [[ "${platform}" == 'darwin' ]]; then
     CPUCNT=$(sysctl -a | grep ^machdep.cpu.thread_count: | sed 's/^.*: //')
 fi
 
+
+# Compile C++ code
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Compiling C++ code...${normal}"
 echo "- Will use ${CPUCNT} jobs for make. This will take a moment..."
@@ -567,6 +582,8 @@ else
     exit 1
 fi
 
+
+# Compile Maple scripts
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Compiling Maple code...${normal}"
 if [[ -f src-mpl/p4.m ]]; then
@@ -615,7 +632,6 @@ else
     echo "${bold}${red}[Error]${normal} Check make error messages"
     exit 1
 fi
-
 
 
 # Install
