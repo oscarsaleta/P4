@@ -34,7 +34,7 @@ bins.files = \
             $$PROJECT_ROOT/help/p4smallicon.png \
             $$PROJECT_ROOT/help/portrait.png
 bins.commands = \
-            (cp $$BUILD_DIR/p4/p4 $$BUILD_DIR/lyapunov/lyapunov $$BUILD_DIR/lyapunov_mpf/lyapunov_mpf $$BUILD_DIR/separatrice/separatrice $$INSTALL_DIR/bin)
+            (cp $$BUILD_DIR/p4/p4 $$BUILD_DIR/lyapunov/lyapunov $$BUILD_DIR/lyapunov_mpf/lyapunov_mpf $$BUILD_DIR/separatrice/separatrice $$PROJECT_ROOT/src-mpl/p4.m $$PROJECT_ROOT/src-mpl/p4gcf.m $$INSTALL_DIR/bin)
 
 helps.path = $$INSTALL_DIR/help
 helps.files = \
