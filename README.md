@@ -27,36 +27,20 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 ![Main window](help/screenshots/p4_main_window.png)|![Plot window](help/screenshots/p4_plot_poincare.png)
 :-------------------------------------------------:|:---------------------------------------------------:
 
-## Installation
+## Linux
+
+### Installation
 
 Check [release page][latest_release] to see more detailed instructions and download links.
 
-### Linux
-
-0. Check [dependencies](#dependencies "Dependencies section"), every item must be satisfied
+0. Check [dependencies](#dependencies-1 "Dependencies section"), every item must be satisfied
 1. Clone the repository: `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
 2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
 
-### Windows
-
-1. Download *P4setup.exe* from [here][latest_release],
-2. Execute installer and follow the instructions,
-3. Done!
-
-### macOS
-
-0. Check [dependencies](#macos-1 "Dependencies section"), every item must be satisfied. The installation script will try to solve some of the dependencies but it is much easier if you manually install them following the instructions in [dependencies](#macos-1 "Dependencies section").
-1. Clone the repository `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
-2. Execute the installation script `./compile_install_p4` and follow the instructions,
-3. Done!
-
-
-## Dependencies
-
 **Maple must be installed in the computer in order to use P4.**
 
-### Linux
+### Dependencies
 
 * **Installation with `compile_install_p4` or compilation from source using `qmake`:**
     - Git: must have to work with *git projects*:
@@ -90,7 +74,20 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install qt-creator`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S qtcreator`
 
-### Windows
+
+## Windows
+
+### Installation
+
+Check [release page][latest_release] to see more detailed instructions and download links.
+
+1. Download *P4_windows-setup_\*.exe* from [here][latest_release],
+2. Execute installer and follow the instructions,
+3. Done!
+
+### Dependencies
+
+**Maple must be installed in the computer in order to use P4.**
 
 * **Installation using `P4setup.exe`**:
 	- Dependencies are taken care of.
@@ -100,7 +97,19 @@ Check [release page][latest_release] to see more detailed instructions and downl
 	- C++ compiler: Microsoft Visual C++ (tested with version 14.0).
         + Download from [Visual Studio Community](https://www.visualstudio.com/vs/cplusplus/#downloads "Visual Studio Community C++ download").
 
-### macOS
+
+## macOS
+
+### Installation
+
+0. Check [dependencies](#dependencies-2 "Dependencies section"), every item must be satisfied. The installation script will try to solve some of the dependencies but it is much easier if you manually install them following the instructions.
+1. Clone the repository `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
+2. Execute the installation script `./compile_install_p4` and follow the instructions,
+3. Done!
+
+### Dependencies
+
+**Maple must be installed in the computer in order to use P4.**
 
 * **Installation of pre-compiled binaries**:
     - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index_ca.html "Homebrew official website"))
