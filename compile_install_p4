@@ -502,6 +502,7 @@ mpfr_test
 echo "- Looking for Maple..."
 if (command -v maple >/dev/null 2>&1); then
     echo "${green}[Success]${normal}"
+    maple_error_present=false
 else
     error_maple
     echo "- You can continue with the installation if your Maple version is 2015."
