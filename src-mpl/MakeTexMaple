@@ -84,4 +84,4 @@ writelog.m:	writelog.tex
 
 .PHONY: clean
 clean:
-	rm *.mpl *.m
+	rm -f *.mpl *.m
