@@ -198,14 +198,36 @@ fi
 function error_maple {
     echo "${bold}${red}[Error]${normal} The Maple command line 'maple' was not found in the system path."
     echo "It is needed by P4 to perform many computations, so P4 will not really"
-    echo "work without it. Make sure you specify the correct path in the P4 settings."
+    echo "work without it."
+    echo ""
     echo "To add Maple to the system path, modify ${HOME}/.${SHELL:5}rc adding something like:"
     if [[ ${platform} == 'linux' ]]; then
         echo "    PATH='/path/to/your/Maple/installation/':\$PATH"
+        echo "Where you need to put the actual path where your Maple installation can be found."
     elif [[ ${platform} == 'darwin' ]]; then
         echo "    PATH='/Applications/your maple version/':\$PATH"
+        echo "Where you need to substitute 'your maple version' by the actual name of the directory"
+        echo "of the Maple installation."
     fi
     echo ""
+}
+
+function error_p4m {
+    echo "${bold}${red}[Error]${normal} Could not find the precompiled Maple scripts, and the maple command"
+    echo "cannot be run because Maple is either not installed or not found in the path."
+    echo "This means we cannot recompile the Maple scripts, so the installation will now abort."
+    echo ""
+    echo "- If you downloaded this repository using git, refresh it running the following in a"
+    echo "  terminal:"
+    echo "    git stash; git checkout master; git pull"
+    echo ""
+    if [[ "${platform}" == 'linux' ]]; then
+        echo "- If you downloaded the .tar.gz archive, go to https://github.com/oscarsaleta/P4/releases/latest"
+    elif [[ "${platform}" == 'darwin' ]]; then
+        echo "- If you downloaded the .zip archive, go to https://github.com/oscarsaleta/P4/releases/latest"
+    fi
+    echo "  and download the latest version from there to try again."
+    echo ""    
 }
 
 function error_mpfr {
@@ -476,10 +498,12 @@ else
     echo "- You can continue with the installation if your Maple version is 2015."
     echo "  Otherwise, do not continue, because the necessary Maple scripts will not"
     echo "  be generated, and P4 will not be able to work."
+    echo ""
     read_variable 'no' '- Do you have Maple 2015 installed?'
     if (echo "${input_variable}" | grep -iq "^y"); then
         echo "- Continuing with execution. Remember to tell P4 where to find Maple 2015 after"
         echo "  the installation."
+        maple_error_present=true
     else
         echo "- Aborting execution... Install Maple or add it to the path and try again."
         exit 1
@@ -541,28 +565,38 @@ fi
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Compiling Maple code...${normal}"
 if [[ -f src-mpl/p4.m ]]; then
-    echo "- Do you want to recompile Maple scripts from src-mpl?"
-    read_variable 'no' '  If your Maple version is Maple 2015, this is not necessary.'
-    if (echo "${input_variable}" | grep -iq "^y"); then
-        echo "- Recompiling Maple scripts..."
-        cd src-mpl
-        make -f MakeTexMaple clean >${OUT}
-        cd ..
-        if (make -C src-mpl p4.m >${OUT}); then
-            echo "${green}[Success]${normal}"
+    echo "- Found precompiled Maple 2015 scripts."
+    if [[ ${maple_error_present} = false ]]; then
+        echo "- Do you want to recompile Maple scripts from src-mpl?"
+        read_variable 'no' '  If your Maple version is Maple 2015, this is not necessary.'
+        if (echo "${input_variable}" | grep -iq "^y"); then
+            echo "- Recompiling Maple scripts..."
+            cd src-mpl
+            make -f MakeTexMaple clean >${OUT}
+            cd ..
+            if (make -C src-mpl p4.m >${OUT}); then
+                echo "${green}[Success]${normal}"
+            else
+                echo "${bold}${red}[Error]${normal} Check compiler error messages"
+                exit 1
+            fi
+        else
+            echo "- Not recompiling Maple scripts."
+        fi
+    fi
+else
+    if [[ ${maple_error_present} = true ]]; then
+        error_p4m
+        exit 1
+    else
+        if (make -C src-mpl -f MakeTexMaple clean >${OUT}); then
+            if (make -C src-mpl -f MakeTexMaple all >${OUT}); then
+                echo "${green}[Success]${normal}"
+            fi
         else
             echo "${bold}${red}[Error]${normal} Check compiler error messages"
             exit 1
         fi
-    else
-        echo "- Not recompiling Maple scripts."
-    fi
-else
-    if (make -C src-mpl p4.m >${OUT}); then
-        echo "${green}[Success]${normal}"
-    else
-        echo "${bold}${red}[Error]${normal} Check compiler error messages"
-        exit 1
     fi
 fi
 
