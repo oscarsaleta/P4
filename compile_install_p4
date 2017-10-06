@@ -415,17 +415,12 @@ if [[ ${uninstalled} = false ]]; then
     echo "- No older P4 version removed."
 fi
 if [[ ${uninstalled} = true ]]; then
-    if [[ "${platform}" == 'linux' ]]; then
-        if [[ -d ${HOME}/.config/P4 ]]; then
-            read_variable 'no' '- Do you want to remove P4 configuration?'
-            if (echo "${input_variable}" | grep -iq "^y"); then
+    if [[ -d ${HOME}/.config/P4 ]]; then
+        read_variable 'no' '- Do you want to remove P4 configuration?'
+        if (echo "${input_variable}" | grep -iq "^y"); then
+            if [[ "${platform}" == 'linux' ]]; then
                 rm -rf ${HOME}/.config/P4
-            fi
-        fi
-    elif [[ "${platform}" == 'darwin' ]]; then
-        if [[ -f ${HOME}/Library/Preferences/p4.plist ]]; then
-            read_variable 'no' '- Do you want to remove P4 configuration?'
-            if (echo "${input_variable}" | grep -iq "^y"); then
+            elif [[ "${platform}" == 'darwin' ]]; then
                 rm -f ${HOME}/Library/p4.plist
             fi
         fi
