@@ -38,9 +38,10 @@ Check [release page][latest_release] to see more detailed instructions and downl
 2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
 
-**Maple must be installed in the computer in order to use P4.**
 
 ### Dependencies
+
+**Maple must be installed in the computer in order to use P4.**
 
 * **Installation with `compile_install_p4` or compilation from source using `qmake`:**
     - Git: must have to work with *git projects*:
