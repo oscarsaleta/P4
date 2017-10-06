@@ -76,7 +76,7 @@ function read_variable {
         printf -- "$2 [Y/n] "
     elif [[ "$1" == 'no' ]]; then
         printf -- "$2 [y/N] "
-    elif [[ "$1" == 'both' ]]; then
+    elif [[ "$1" == 'yesno' ]]; then
         printf -- "$2 [y/n] "
     fi
     while read -t 0 notused; do
