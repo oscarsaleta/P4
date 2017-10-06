@@ -199,6 +199,12 @@ function error_maple {
     echo "${bold}${red}[Error]${normal} The Maple command line 'maple' was not found in the system path."
     echo "It is needed by P4 to perform many computations, so P4 will not really"
     echo "work without it. Make sure you specify the correct path in the P4 settings."
+    echo "To add Maple to the system path, modify ${HOME}/.${SHELL:5}rc adding something like:"
+    if [[ ${platform} == 'linux' ]]; then
+        echo "    PATH='/path/to/your/Maple/installation/':\$PATH"
+    elif [[ ${platform} == 'darwin' ]]; then
+        echo "    PATH='/Applications/your maple version/':\$PATH"
+    fi
     echo ""
 }
 
@@ -351,7 +357,7 @@ installed_home=false
 installed_root=false
 if [[ -d ${HOME}/p4 ]]; then
     installed_home=true
-    read_variable 'yes' '- P4 installation found in ${HOME}/p4. Do you want to remove it?'
+    read_variable 'yes' "- P4 installation found in ${HOME}/p4. Do you want to remove it?"
     if (echo "${input_variable}" | grep -iq "^n"); then
         echo "- Not removing P4 in ${HOME}/p4."
     else
@@ -467,6 +473,17 @@ if (command -v maple >/dev/null 2>&1); then
     echo "${green}[Success]${normal}"
 else
     error_maple
+    echo "- You can continue with the installation if your Maple version is 2015."
+    echo "  Otherwise, do not continue, because the necessary Maple scripts will not"
+    echo "  be generated, and P4 will not be able to work."
+    read_variable 'no' '- Do you have Maple 2015 installed?'
+    if (echo "${input_variable}" | grep -iq "^y"); then
+        echo "- Continuing with execution. Remember to tell P4 where to find Maple 2015 after"
+        echo "  the installation."
+    else
+        echo "- Aborting execution... Install Maple or add it to the path and try again."
+        exit 1
+    fi
 fi
 
 
