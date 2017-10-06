@@ -33,7 +33,7 @@ P4 is a software that is able to draw the planar phase portrait for any polynomi
 
 Check [release page][latest_release] to see more detailed instructions and download links.
 
-0. Check [dependencies](#dependencies-1 "Dependencies section"), every item must be satisfied
+0. Check [dependencies](#dependencies "Dependencies section"), every item must be satisfied
 1. Clone the repository: `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
 2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
@@ -104,7 +104,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 Check [release page][latest_release] to see more detailed instructions and download links.
 
-0. Check [dependencies](#dependencies-3 "Dependencies section"), every item must be satisfied. The installation script will try to solve some of the dependencies but it is much easier if you manually install them following the instructions.
+0. Check [dependencies](#dependencies-2 "Dependencies section"), every item must be satisfied. The installation script will try to solve some of the dependencies but it is much easier if you manually install them following the instructions.
 1. Clone the repository `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
 2. Execute the installation script `./compile_install_p4` and follow the instructions,
 3. Done!
