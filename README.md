@@ -102,6 +102,8 @@ Check [release page][latest_release] to see more detailed instructions and downl
 
 ### Installation
 
+Check [release page][latest_release] to see more detailed instructions and download links.
+
 0. Check [dependencies](#dependencies-2 "Dependencies section"), every item must be satisfied. The installation script will try to solve some of the dependencies but it is much easier if you manually install them following the instructions.
 1. Clone the repository `git clone https://github.com/oscarsaleta/P4.git P4-git && cd P4-git`,
 2. Execute the installation script `./compile_install_p4` and follow the instructions,
