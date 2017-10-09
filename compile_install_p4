@@ -202,10 +202,10 @@ function error_maple {
     echo ""
     echo "To add Maple to the system path, modify ${HOME}/.${SHELL:5}rc adding something like:"
     if [[ ${platform} == 'linux' ]]; then
-        echo "    PATH='/path/to/your/Maple/installation/':\$PATH"
+        echo "    export PATH='/path/to/your/Maple/installation/':\$PATH"
         echo "Where you need to put the actual path where your Maple installation can be found."
     elif [[ ${platform} == 'darwin' ]]; then
-        echo "    PATH='/Applications/your maple version/':\$PATH"
+        echo "    export PATH='/Applications/your maple version/':\$PATH"
         echo "Where you need to substitute 'your maple version' by the actual name of the directory"
         echo "of the Maple installation."
     fi
