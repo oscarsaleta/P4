@@ -196,8 +196,14 @@ Check [here][binary_tree] for instructions of how to create a correct file tree 
 
 - I installed P4 using precompiled binaries, but the program doesn't work.
     + Precompiled binaries often work only in systems equivalent to those in which the compilation was performed (due to missing libraries or mismatching software versions). This is why in Linux and macOS it is recommended to use the _compile\_install\_p4_, which compiles P4 to adapt to the system characteristics.
-- I installed P4 and it executes, but when i press _Evaluate_ the output says _Error, could not open \`/path/to/p4/bin/p4.m\` for reading.
-    + a
+- I installed P4 and it executes, but when I press _Evaluate_ the output window shows _External Command: /some/maple/command untitled.txt_ and does nothing.
+    + This means that `/some/maple/command` is not a recognised command in your system.
+        * Linux and macOS: Check that you have Maple installed and that `maple` is a valid command in the terminal (see [linux][linux_install] or [macOS][macos_install] instructions).
+        * Linux, Windows and macOS: go to _About P4... > Main Settings_ and check that the _Maple Executable_ field points to the right Maple installation directory or has the correct `maple` command.
+- I installed P4 and it executes, but when I press _Evaluate_ the output says _Error, could not open \`/path/to/p4/bin/p4.m\` for reading.
+    + Check that `/path/to/p4` in the Maple output is the correct path for your P4 installation.
+        * If the path is correct: check that the files _p4.m_ and _p4gcf.m_ exist in the P4 installation directory. If they don't, then you need to reinstall P4 because something went wrong and the installation did not complete properly.
+        * If the path is wrong: check that you defined correctly the `P4_DIR` environment variable in _.bashrc_ (or _.zhsrc_, or any other shell configuration file you use). Also, within P4, go to _About P4... > Main Settings_ and check that the _Base installation Path_ and the _Sumtable Path_ fields point correctly to your P4 installation directory.
 
 ## Contributors
 
