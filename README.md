@@ -200,11 +200,16 @@ Check [here][binary_tree] for instructions of how to create a correct file tree 
     + This means that `/some/maple/command` is not a recognised command in your system.
         * Linux and macOS: Check that you have Maple installed and that `maple` is a valid command in the terminal (see [Linux][linux_install] or [macOS][macos_install] instructions).
         * Linux, Windows and macOS: go to _About P4... > Main Settings_ and check that the _Maple Executable_ field points to the right Maple installation directory or has the correct `maple` command.
-- I installed P4 and it executes, but when I press _Evaluate_ the output says "_Error, could not open \`/path/to/p4/bin/p4.m\` for reading_".
+- I installed P4 and it executes, but when I press _Evaluate_ the output says "_Error, could not open \`/path/to/p4/bin/p4.m\` for reading_" (or similar).
     + Check that `/path/to/p4` in the Maple output is the correct path for your P4 installation.
         * If the path is correct: check that the files _p4.m_ and _p4gcf.m_ exist in the P4 installation directory. If they don't, then you need to reinstall P4 because something went wrong and the installation did not complete properly.
         * If the path is wrong: check that you defined correctly the `P4_DIR` environment variable in _.bashrc_ (or _.zhsrc_, or any other shell configuration file you use). Also, within P4, go to _About P4... > Main Settings_ and check that the _Base installation Path_ and the _Sumtable Path_ fields point correctly to your P4 installation directory.
+- I installed P4 and it executes, but when I press _Evaluate_ the output says "_Error, at offset 17729 in `/usr/local/p4/bin/p4.m`, unexpected DAG type: 0,122,(z)_" (or similar) and then does nothing.
+    + This is a known bug that still has not been solved. We suspect it has to do with older Maple versions not being fully compatible with P4. P4 has been tested with Maple 17, 18 and 2015 (and recently 2017 thanks to a commited user), but older Maple versions could cause incompatibilities.
+    + Our advice is to either acquire a newer Maple version, or use an older P4 version where this
+    issue does not appear (as of now, the latest P4 version without this problem is v3.3.3).
 
+    
 ## Contributors
 
 - J.C. Artés (Universitat Autònoma de Barcelona)
