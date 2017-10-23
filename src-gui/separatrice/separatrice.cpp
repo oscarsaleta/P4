@@ -63,7 +63,7 @@ void find_slopes(double *, double *, double *, double *, double);
 void read_term2(FILE *, struct term2 *, int);
 void read_term1(FILE *, struct term1 *, int);
 double read_sep(const char *);
-int relative_error_test(double *, double *, double *, double *);
+int relative_error_test(/*double *, double *, */double * /*, double * */);
 
 #ifdef LOGACTIVITY
 char *printterm1(char *, struct term1 *, bool, char *);
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     find_slopes(vec_slope, sep_slope, diff_slope, dist,
                 epsilon + epsilon / 2.0);
 
-    ok = relative_error_test(vec_slope, sep_slope, diff_slope, dist);
+    ok = relative_error_test(/*vec_slope, sep_slope, */diff_slope/*, dist*/);
 
 #ifdef LOGACTIVITY
     char buf[256];
@@ -210,14 +210,14 @@ int main(int argc, char *argv[])
 //                      RELATIVE_ERROR_TEST
 // --------------------------------------------------------------------------
 
-int relative_error_test(double *vec_slope, double *sep_slope,
-                        double *diff_slope, double *dist)
+int relative_error_test(/*double *vec_slope, double *sep_slope,*/
+                        double *diff_slope/*, double *dist*/)
 {
-    double a, b;
+    double a/*, b*/;
     int i, ok;
 
     a = MAX_ERROR;
-    b = MIN_ERROR;
+    //b = MIN_ERROR;
     ok = 1;
 
     for (i = 0; i < NUMBER; ++i) {

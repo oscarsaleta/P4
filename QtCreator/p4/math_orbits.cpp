@@ -332,7 +332,7 @@ orbits_points *integrate_orbit(QWinSphere *spherewnd, double pcoord[3],
         last_orbit->dashes = dashes * g_VFResults.config_dashes_;
         last_orbit->dir = d * h;
         last_orbit->next_point = nullptr;
-        if (dashes * g_VFResults.config_dashes_)
+        if (dashes && g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
             (*plot_p)(spherewnd, pcoord, color);
