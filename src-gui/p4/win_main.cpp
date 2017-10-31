@@ -32,12 +32,8 @@
 #include <QSettings>
 #include <QTextBrowser>
 
-static void makeButtonPixmaps(const QPalette &);
 
 QStartDlg *g_p4stardlg = nullptr;
-
-QPixmap *g_Pixmap_TriangleUp = nullptr;
-QPixmap *g_Pixmap_TriangleDown = nullptr;
 
 QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 {
@@ -53,15 +49,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
         setWindowIcon(*g_p4smallicon);
 
     btn_quit_ = new QPushButton("&Quit", this);
-    makeButtonPixmaps(btn_quit_->palette());
-    btn_find_ = new QPushButton("", this);
-
-#ifdef AUTO_OPEN_FINDWINDOW
-    btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
-#else
-    btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
-#endif
-    btn_find_->setFixedSize(btn_find_->sizeHint());
     btn_view_ = new QPushButton("Vie&w", this);
     btn_plot_ = new QPushButton("&Plot", this);
     btn_help_ = new QPushButton("&Help", this);
@@ -82,7 +69,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
 #ifdef TOOLTIPS
     btn_quit_->setToolTip("Quit P4");
-    btn_find_->setToolTip("Unfolds/hides the \"Find Singular Points\" window");
     btn_view_->setToolTip(
         "View results of the symbolic manipulator after evaluation");
     btn_plot_->setToolTip("Draw singular points, orbits and separatrices");
@@ -103,7 +89,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     buttons->addWidget(btn_view_);
     buttons->addWidget(btn_plot_);
     buttons->addWidget(btn_help_);
-    buttons->addWidget(btn_find_);
 
     mainLayout_->addLayout(buttons);
 
@@ -134,7 +119,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     btn_view_->setMenu(viewMenu_);
 
     QObject::connect(btn_quit_, SIGNAL(clicked()), this, SLOT(onQuit()));
-    QObject::connect(btn_find_, SIGNAL(clicked()), this, SLOT(onFind()));
     QObject::connect(btn_plot_, SIGNAL(clicked()), this, SLOT(onPlot()));
     QObject::connect(btn_help_, SIGNAL(clicked()), this, SLOT(onHelp()));
     QObject::connect(btn_about_, SIGNAL(clicked()), this, SLOT(onAbout()));
@@ -157,34 +141,23 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     viewInfiniteWindow_ = nullptr;
     viewFiniteWindow_ = nullptr;
     plotWindow_ = nullptr;
-#ifdef AUTO_OPEN_FINDWINDOW
-    onFind();
-#else
-    if (autofilename.length() != 0)
-        onFind();
-#endif
-
-    setP4WindowTitle(this, cap);
-}
-
-void QStartDlg::onFind(void)
-{
+    
     // show find dialog
-
     if (findWindow_ == nullptr) {
         findWindow_ = new QFindDlg(this);
         findWindow_->show();
         findWindow_->raise();
         mainLayout_->addWidget(findWindow_);
-        btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
     } else {
         delete findWindow_;
         findWindow_ = nullptr;
-        btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
         // connect(findWindow_, &QFindDlg::saveStateSignal, this,
         //        &QStartDlg::saveSettings);
     }
+
+    setP4WindowTitle(this, cap);
 }
+
 
 void QStartDlg::onHelp(void)
 {
@@ -655,38 +628,6 @@ void QStartDlg::customEvent(QEvent *e)
     }
 }
 
-void makeButtonPixmaps(const QPalette &qcg)
-{
-    QPainter *p;
-    QPolygon up(3);
-    QPolygon down(3);
-
-    g_Pixmap_TriangleUp = new QPixmap(16, 16);
-    g_Pixmap_TriangleDown = new QPixmap(16, 16);
-
-    down.setPoints(3, 4, 4, 12, 4, 8, 10);
-    up.setPoints(3, 4, 10, 12, 10, 8, 4);
-
-    p = new QPainter();
-    p->begin(g_Pixmap_TriangleUp);
-    p->setBackground(qcg.color(QPalette::Normal, QPalette::Button));
-    p->eraseRect(0, 0, 16, 16);
-    p->setPen(qcg.color(QPalette::Normal, QPalette::ButtonText));
-    p->setBrush(qcg.color(QPalette::Normal, QPalette::ButtonText));
-    p->drawPolygon(up);
-    p->end();
-
-    p->begin(g_Pixmap_TriangleDown);
-    p->setBackground(qcg.color(QPalette::Normal, QPalette::Button));
-    p->eraseRect(0, 0, 16, 16);
-    p->setPen(qcg.color(QPalette::Normal, QPalette::ButtonText));
-    p->setBrush(qcg.color(QPalette::Normal, QPalette::ButtonText));
-    p->drawPolygon(down);
-    p->end();
-
-    delete p;
-    p = nullptr;
-}
 
 /*void QStartDlg::saveSettings()
 {
