@@ -26,19 +26,13 @@
 #include "win_find.h"
 
 QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
-#ifdef DOCK_VFWINDOW
     : QWidget(finddlg)
-#else
-    : QWidget()
-#endif
 {
     parent_ = finddlg;
 //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-#ifdef DOCK_VFWINDOW
     QLabel *p4title = new QLabel("Specify the vector field:", this);
     p4title->setFont(*(g_p4app->titleFont_));
-#endif
 
     edt_xprime_ = new QLineEdit(g_ThisVF->xdot_, this);
     QLabel *xlabel = new QLabel("&x' = ", this);
@@ -77,9 +71,7 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-#ifdef DOCK_VFWINDOW
     mainLayout_->addWidget(p4title);
-#endif
 
     QHBoxLayout *layout1 = new QHBoxLayout();
     layout1->addWidget(xlabel);
@@ -142,9 +134,6 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
     QObject::connect(spin_numparams_, SIGNAL(valueChanged(int)), this,
                      SLOT(numParamsChanged(int)));
 
-#ifndef DOCK_VFWINDOW
-    setP4WindowTitle(this, "Vector Field");
-#endif
 }
 
 void QVectorFieldDlg::numParamsChanged(int val)

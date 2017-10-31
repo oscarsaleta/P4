@@ -46,20 +46,14 @@ QFindDlg::~QFindDlg()
     }
 }
 
-QFindDlg::QFindDlg(QStartDlg *startdlg)
-#ifdef DOCK_FINDWINDOW
-    : QWidget(startdlg)
-#else
-    : QWidget()
-#endif
+QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
+
 {
     parent_ = startdlg;
-//  setFont( QFont( FONTSTYLE, FONTSIZE ) );
+    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-#ifdef DOCK_FINDWINDOW
     QLabel *p4title = new QLabel("Find and Examine Singular Points", this);
     p4title->setFont(*(g_p4app->titleFont_));
-#endif
 
     // QLabel *symlabel = new QLabel("Symbolic package: ", this);
     // symlabel->setFont(*(g_p4app->boldFont_));
@@ -125,19 +119,13 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
                           "optionally process it");
 #endif
 
-// layout
+    // layout
 
-#ifdef DOCK_PARAMSWINDOW
     superLayout_ = new QBoxLayout(QBoxLayout::LeftToRight, this);
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
-#else
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
-#endif
 
-#ifdef DOCK_FINDWINDOW
     mainLayout_->addSpacing(8);
     mainLayout_->addWidget(p4title);
-#endif
 
     QHBoxLayout *symLayout = new QHBoxLayout();
     // symLayout->addWidget(symlabel);
@@ -194,15 +182,11 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     mainLayout_->addLayout(layout2);
     mainLayout_->addLayout(layout3);
 
-//   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
+    //   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
-#ifdef DOCK_PARAMSWINDOW
     mainLayout_->addStretch(0);
     superLayout_->addLayout(mainLayout_);
     setLayout(superLayout_);
-#else
-    setLayout(mainLayout_);
-#endif
 
     // connections
 
@@ -370,11 +354,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     if (g_ThisVF->evaluating_)
         btn_eval_->setEnabled(false);
 
-#ifndef DOCK_FINDWINDOW
-    setP4WindowTitle(this, "Find");
-#endif
-
-    //readSettings();
+    // readSettings();
 }
 
 void QFindDlg::onBtnParams()
@@ -382,19 +362,11 @@ void QFindDlg::onBtnParams()
     if (paramsWindow_ == nullptr) {
         paramsWindow_ = new QParamsDlg(this);
         paramsWindow_->show();
-#ifdef DOCK_PARAMSWINDOW
         superLayout_->addWidget(paramsWindow_, 0, Qt::AlignTop);
-#else
-        paramsWindow_->raise();
-#endif
+
     } else {
-#ifdef DOCK_PARAMSWINDOW
         delete paramsWindow_;
         paramsWindow_ = nullptr;
-#else
-        paramsWindow_->show();
-        paramsWindow_->raise();
-#endif
     }
 }
 
@@ -404,20 +376,12 @@ void QFindDlg::onBtnVf()
 
     if (vfWindow_ == nullptr) {
         vfWindow_ = new QVectorFieldDlg(this);
-#ifdef DOCK_VFWINDOW
         vfWindow_->show();
         mainLayout_->addWidget(vfWindow_);
-#else
-        vfWindow_->raise();
-#endif
+
     } else {
-#ifdef DOCK_VFWINDOW
         delete vfWindow_;
         vfWindow_ = nullptr;
-#else
-        vfWindow_->show();
-        vfWindow_->raise();
-#endif
     }
 }
 
@@ -564,5 +528,3 @@ void QFindDlg::updateDlgData()
 void QFindDlg::signalEvaluating() { btn_eval_->setEnabled(false); }
 
 void QFindDlg::signalEvaluated() { btn_eval_->setEnabled(true); }
-
-
