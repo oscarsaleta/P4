@@ -274,7 +274,7 @@ QString getDefaultP4BinPath(void)
 //
 // Under Windows, use registry
 //
-// Under Linux, return the batch file name "cmaple".
+// Under Linux, return the batch file name "maple".
 
 QString getDefaultMapleInstallation(void)
 {
