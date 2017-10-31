@@ -56,8 +56,6 @@ class QFindDlg : public QWidget
     QRadioButton *btn_one_;
     QRadioButton *btn_yes_;
     QRadioButton *btn_no_;
-    QPushButton *btn_params_;
-    QPushButton *btn_vf_;
     QPushButton *btn_load_;
     QPushButton *btn_save_;
     QPushButton *btn_eval_;
@@ -79,8 +77,6 @@ class QFindDlg : public QWidget
     void signalEvaluating();
     void signalEvaluated();
 
-    void onBtnParams();
-    void onBtnVf();
     void onBtnLoad();
     void onBtnSave();
     void onBtnEval();
