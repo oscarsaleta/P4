@@ -42,14 +42,14 @@ static QString s_Settings_p4path;
 static QString s_Settings_sumtablepath;
 static QString s_Settings_temppath;
 static QString s_Settings_mapleexe;
-static QString s_Settings_reduceexe;
+//static QString s_Settings_reduceexe;
 static bool s_Settings_changed;
 
 QString getP4Path(void) { return s_Settings_p4path; }
 QString getP4TempPath(void) { return s_Settings_temppath; }
 QString getP4SumTablePath(void) { return s_Settings_sumtablepath; }
 QString getMapleExe(void) { return s_Settings_mapleexe; }
-QString getReduceExe(void) { return s_Settings_reduceexe; }
+//QString getReduceExe(void) { return s_Settings_reduceexe; }
 
 void setMathManipulator(QString s)
 {
@@ -91,13 +91,13 @@ void setMapleExe(QString s)
     }
 }
 
-void setReduceExe(QString s)
+/*void setReduceExe(QString s)
 {
     if (s_Settings_reduceexe != s) {
         s_Settings_reduceexe = s;
         s_Settings_changed = true;
     }
-}
+}*/
 
 QString getP4MaplePath(void)
 {
@@ -123,7 +123,7 @@ int getMathPackage(void)
     //    return PACKAGE_REDUCE;
 }
 
-void setMathPackage(int pck)
+/*void setMathPackage(int pck)
 {
     if (getMathPackage() != pck) {
         if (pck == PACKAGE_MAPLE)
@@ -131,7 +131,7 @@ void setMathPackage(int pck)
         else
             setMathManipulator("Reduce");
     }
-}
+}*/
 
 QString getP4HelpPath(void)
 {
@@ -157,7 +157,7 @@ QString getP4BinPath(void)
     return g;
 }
 
-QString getP4ReducePath(void)
+/*QString getP4ReducePath(void)
 {
     QString f, g;
 
@@ -169,7 +169,7 @@ QString getP4ReducePath(void)
     }
 
     return g;
-}
+}*/
 
 // ------------------------------------------------------------------------------------------
 
@@ -178,8 +178,7 @@ bool readP4Settings(void)
     QSettings *p4settings;
     bool _ok;
 
-    p4settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope,
-                               "P4", "P4");
+    p4settings = new QSettings();
 
     s_Settings_changed = false;
 
@@ -191,16 +190,16 @@ bool readP4Settings(void)
         s_Settings_sumtablepath = p4settings->value("/SumtablePath").toString();
         s_Settings_temppath = p4settings->value("/TempPath").toString();
         s_Settings_mapleexe = p4settings->value("/MapleExe").toString();
-#ifndef Q_OS_WIN
-        s_Settings_reduceexe = p4settings->value("/ReduceExe").toString();
-        s_Settings_mathmanipulator = p4settings->value("/Math").toString();
-#else
+//#ifndef Q_OS_WIN
+        //s_Settings_reduceexe = p4settings->value("/ReduceExe").toString();
+        //s_Settings_mathmanipulator = p4settings->value("/Math").toString();
+//#else
         s_Settings_mathmanipulator = "Maple";
-#endif
+//#endif
         if (s_Settings_p4path == "" || (s_Settings_mapleexe == ""
-#ifndef Q_OS_WIN
+/*#ifndef Q_OS_WIN
                                         && s_Settings_reduceexe == ""
-#endif
+#endif*/
                                         )) {
             _ok = false;
         }
@@ -214,7 +213,7 @@ bool readP4Settings(void)
         s_Settings_sumtablepath = getDefaultP4SumTablePath();
         s_Settings_temppath = getDefaultP4TempPath();
         s_Settings_mapleexe = getDefaultMapleInstallation();
-        s_Settings_reduceexe = getDefaultReduceInstallation();
+        //s_Settings_reduceexe = getDefaultReduceInstallation();
         s_Settings_mathmanipulator = getDefaultMathManipulator();
         s_Settings_changed = true;
         return false;
@@ -230,8 +229,7 @@ void saveP4Settings(void)
     if (s_Settings_changed == false)
         return;
 
-    p4settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope,
-                               "P4", "P4");
+    p4settings = new QSettings();
 
     p4settings->setValue("/Version", g_p4Version);
     p4settings->setValue("/BuildDate", g_p4VersionDate);
@@ -241,7 +239,7 @@ void saveP4Settings(void)
     p4settings->setValue("/MapleExe", getMapleExe());
 #ifndef Q_OS_WIN
     p4settings->setValue("/Math", getMathManipulator());
-    p4settings->setValue("/ReduceExe", getReduceExe());
+    //p4settings->setValue("/ReduceExe", getReduceExe());
 #endif
 
     delete p4settings;
