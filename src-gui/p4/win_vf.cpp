@@ -143,7 +143,7 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
                      SLOT(numParamsChanged(int)));
 
 #ifndef DOCK_VFWINDOW
-    SetP4WindowTitle(this, "Vector Field");
+    setP4WindowTitle(this, "Vector Field");
 #endif
 }
 

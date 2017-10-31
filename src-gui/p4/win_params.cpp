@@ -249,7 +249,7 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
 
     updateDlgData();
 #ifndef DOCK_PARAMSWINDOW
-    SetP4WindowTitle(this, "Parameters");
+    setP4WindowTitle(this, "Parameters");
 #endif
 }
 
