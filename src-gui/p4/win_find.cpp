@@ -260,24 +260,22 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
     //                 SLOT(btn_reduce_toggled(bool)));
 
     /* set evaluate as text in the run button if evaluate option is selected */
-    QObject::connect(btn_actionrun_, &QRadioButton::toggled, this,
-                     [=](bool on) {
-                         if (on) {
-                             g_action_OnlyPrepareFile = false;
-                             btn_eval_->setText("&Evaluate");
-                         }
-                     });
+    connect(btn_actionrun_, &QRadioButton::toggled, this, [=](bool on) {
+        if (on) {
+            g_action_OnlyPrepareFile = false;
+            btn_eval_->setText("&Evaluate");
+        }
+    });
 
     /* set prepare as text in the run button if prepare option is selected */
-    QObject::connect(btn_actionprep_, &QRadioButton::toggled, this,
-                     [=](bool on) {
-                         if (on) {
-                             g_action_OnlyPrepareFile = true;
-                             btn_eval_->setText("Pr&epare");
-                         }
-                     });
+    connect(btn_actionprep_, &QRadioButton::toggled, this, [=](bool on) {
+        if (on) {
+            g_action_OnlyPrepareFile = true;
+            btn_eval_->setText("Pr&epare");
+        }
+    });
 
-    QObject::connect(btn_all_, &QRadioButton::toggled, this, [=](bool on) {
+    connect(btn_all_, &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
                 g_ThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
@@ -292,7 +290,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_one_, &QRadioButton::toggled, this, [=](bool on) {
+    connect(btn_one_, &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
                 g_ThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
@@ -307,7 +305,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_fin_, &QRadioButton::toggled, this, [=](bool on) {
+    connect(btn_fin_, &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
                 g_ThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
@@ -322,7 +320,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_inf_, &QRadioButton::toggled, this, [=](bool on) {
+    connect(btn_inf_, &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             if (g_ThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
                 g_ThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
@@ -337,26 +335,22 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_yes_, &QRadioButton::toggled, this, [=](bool on) {
+    connect(btn_yes_, &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             g_action_SaveAll = true;
         }
     });
-    QObject::connect(btn_no_, &QRadioButton::toggled, this, [=](bool on) {
+    connect(btn_no_, &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             g_action_SaveAll = false;
         }
     });
 
-    QObject::connect(btn_params_, &QPushButton::clicked, this,
-                     &QFindDlg::onBtnParams);
-    QObject::connect(btn_vf_, &QPushButton::clicked, this, &QFindDlg::onBtnVf);
-    QObject::connect(btn_load_, &QPushButton::clicked, this,
-                     &QFindDlg::onBtnLoad);
-    QObject::connect(btn_save_, &QPushButton::clicked, this,
-                     &QFindDlg::onBtnSave);
-    QObject::connect(btn_eval_, &QPushButton::clicked, this,
-                     &QFindDlg::onBtnEval);
+    connect(btn_params_, &QPushButton::clicked, this, &QFindDlg::onBtnParams);
+    connect(btn_vf_, &QPushButton::clicked, this, &QFindDlg::onBtnVf);
+    connect(btn_load_, &QPushButton::clicked, this, &QFindDlg::onBtnLoad);
+    connect(btn_save_, &QPushButton::clicked, this, &QFindDlg::onBtnSave);
+    connect(btn_eval_, &QPushButton::clicked, this, &QFindDlg::onBtnEval);
     // QObject::connect(g_ThisVF, SIGNAL(onSave()), this, SLOT(onSaveState()));
 
     // finishing
@@ -377,10 +371,10 @@ QFindDlg::QFindDlg(QStartDlg *startdlg)
         btn_eval_->setEnabled(false);
 
 #ifndef DOCK_FINDWINDOW
-    SetP4WindowTitle(this, "Find");
+    setP4WindowTitle(this, "Find");
 #endif
 
-    readSettings();
+    //readSettings();
 }
 
 void QFindDlg::onBtnParams()
@@ -468,6 +462,7 @@ void QFindDlg::onBtnSave()
             this, "P4", "Unable to save the input vector field.\n"
                         "Please check permissions on the write location.\n");
     }
+    // emit saveStateSignal();
 }
 
 void QFindDlg::onBtnEval()
@@ -570,14 +565,4 @@ void QFindDlg::signalEvaluating() { btn_eval_->setEnabled(false); }
 
 void QFindDlg::signalEvaluated() { btn_eval_->setEnabled(true); }
 
-void QFindDlg::saveSettings()
-{
-    QString settingsName = g_ThisVF->getbarefilename().append(".conf");
-    QSettings settings(settingsName, QSettings::NativeFormat);
-}
 
-void QFindDlg::readSettings()
-{
-    QString settingsName = g_ThisVF->getbarefilename().append(".conf");
-    QSettings settings(settingsName, QSettings::NativeFormat);
-}

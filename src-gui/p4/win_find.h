@@ -65,8 +65,11 @@ class QFindDlg : public QWidget
     QVectorFieldDlg *vfWindow_;
     QParamsDlg *paramsWindow_;
 
-    void saveSettings();
-    void readSettings();
+    //void saveSettings();
+    //void readSettings();
+
+  signals:
+    void saveStateSignal();
 
   public slots:
     // void btn_maple_toggled(bool);
