@@ -195,7 +195,6 @@ class QInputVF : public QObject
     void catchProcessError(QProcess::ProcessError);
     void readProcessStdout();
     void onTerminateButton();
-    void onClearButton();
     void finishGcfEvaluation();
     void finishCurveEvaluation();
     void finishIsoclinesEvaluation();
