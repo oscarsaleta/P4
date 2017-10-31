@@ -23,6 +23,7 @@
 #include <QBoxLayout>
 #include <QCloseEvent>
 #include <QLineEdit>
+#include <QMainWindow>
 #include <QMenu>
 #include <QPalette>
 #include <QPushButton>
@@ -75,6 +76,9 @@ class QStartDlg : public QWidget
 
     void customEvent(QEvent *e);
 
+    void saveSettings();
+    void readSettings();
+
   public slots:
     // following slots are called by QT when a button is pressed or a file name
     // is changed:
@@ -97,6 +101,7 @@ class QStartDlg : public QWidget
     QPushButton *btn_plot_;
     QPushButton *btn_help_;
     QPushButton *btn_about_;
+    QPushButton *btn_browse_;
     QLineEdit *edt_name_;
     QMenu *viewMenu_;
 
