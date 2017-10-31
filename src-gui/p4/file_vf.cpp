@@ -1434,12 +1434,12 @@ void QInputVF::evaluate(void)
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalEvaluated(int)));
-        connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), this,
-                SLOT(catchProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(readProcessStdout()));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalEvaluated);
+        connect(proc, &QProcess::errorOccurred, this,
+                &QInputVF::catchProcessError);
+        connect(proc, &QProcess::readyReadStandardOutput, this,
+                &QInputVF::readProcessStdout);
 
         processfailed_ = false;
         QString pa = "External Command: ";
@@ -1522,17 +1522,19 @@ void QInputVF::evaluateCurveTable()
         if (evalProcess_ != nullptr) { // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-            connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalCurveEvaluated(int)));
+            connect(proc,
+                    static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                    g_p4app, &QP4Application::signalCurveEvaluated);
         } else {
             proc = new QProcess(this);
             proc->setWorkingDirectory(QDir::currentPath());
-            connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalCurveEvaluated(int)));
-            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                    SLOT(catchProcessError(QProcess::ProcessError)));
-            connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                    SLOT(readProcessStdout()));
+            connect(proc,
+                    static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                    g_p4app, &QP4Application::signalCurveEvaluated);
+            connect(proc, &QProcess::errorOccurred, g_p4app,
+                    &QP4Application::catchProcessError);
+            connect(proc, &QProcess::readyReadStandardOutput, this,
+                    &QInputVF::readProcessStdout);
         }
 
         processfailed_ = false;
@@ -1612,24 +1614,21 @@ void QInputVF::evaluateIsoclinesTable()
         if (evalProcess_ != nullptr) { // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-            connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalCurveEvaluated(int)));
+            connect(proc,
+                    static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                    g_p4app, &QP4Application::signalCurveEvaluated);
         } else {
             proc = new QProcess(this);
-            connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalCurveEvaluated(int)));
-            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                    SLOT(catchProcessError(QProcess::ProcessError)));
-            connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                    SLOT(readProcessStdout()));
+            connect(proc,
+                    static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                    g_p4app, &QP4Application::signalCurveEvaluated);
+            connect(proc, &QProcess::errorOccurred, g_p4app,
+                    &QP4Application::catchProcessError);
+            connect(proc, &QProcess::readyReadStandardOutput, this,
+                    &QInputVF::readProcessStdout);
         }
 
         proc->setWorkingDirectory(QDir::currentPath());
-
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                SLOT(catchProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(readProcessStdout()));
 
         processfailed_ = false;
         QString pa = "External Command: ";
@@ -1936,15 +1935,6 @@ void QInputVF::readProcessStdout(void)
 }
 
 // -----------------------------------------------------------------------
-//              ONCLEARBUTTON
-// -----------------------------------------------------------------------
-void QInputVF::onClearButton(void)
-{
-    if (processText_ != nullptr)
-        processText_->clear();
-}
-
-// -----------------------------------------------------------------------
 //              ONTERMINATEBUTTON
 // -----------------------------------------------------------------------
 void QInputVF::onTerminateButton(void)
@@ -2022,10 +2012,12 @@ void QInputVF::createProcessWindow(void)
 
     outputWindow_->show();
 
-    QObject::connect(terminateProcessButton_, SIGNAL(clicked()), this,
-                     SLOT(onTerminateButton()));
-    QObject::connect(clearProcessButton_, SIGNAL(clicked()), this,
-                     SLOT(onClearButton()));
+    QObject::connect(terminateProcessButton_, &QPushButton::clicked, this,
+                     &QInputVF::onTerminateButton);
+    QObject::connect(clearProcessButton_, &QPushButton::clicked, this, [=]() {
+        if (processText_ != nullptr)
+            processText_->clear();
+    });
 }
 
 // -----------------------------------------------------------------------
@@ -2143,16 +2135,16 @@ bool QInputVF::evaluateGcf(void)
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalCurveEvaluated(int)));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalCurveEvaluated);
     } else {
         proc = new QProcess(this);
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalCurveEvaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                SLOT(catchProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(readProcessStdout()));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalCurveEvaluated);
+        connect(proc, &QProcess::errorOccurred, g_p4app,
+                &QP4Application::catchProcessError);
+        connect(proc, &QProcess::readyReadStandardOutput, this,
+                &QInputVF::readProcessStdout);
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -2545,16 +2537,16 @@ bool QInputVF::evaluateCurve(void)
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalCurveEvaluated(int)));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalCurveEvaluated);
     } else {
         proc = new QProcess(this);
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalCurveEvaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                SLOT(catchProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(readProcessStdout()));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalCurveEvaluated);
+        connect(proc, &QProcess::error, g_p4app,
+                &QP4Application::catchProcessError);
+        connect(proc, &QProcess::readyReadStandardOutput, this,
+                &QInputVF::readProcessStdout;
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -2833,16 +2825,16 @@ bool QInputVF::evaluateIsoclines()
     if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalCurveEvaluated(int)));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalCurveEvaluated);
     } else {
         proc = new QProcess(this);
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(signalCurveEvaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                SLOT(catchProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(readProcessStdout()));
+        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &QP4Application::signalCurveEvaluated);
+        connect(proc, &QProcess::error, g_p4app,
+                &QP4Application::catchProcessError);
+        connect(proc, &QProcess::readyReadStandardOutput, this,
+                &QInputVF::readProcessStdout);
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
