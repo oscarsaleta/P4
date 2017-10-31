@@ -237,11 +237,6 @@ void QIntParamsDlg::btn_dashes_toggled(bool dummy)
     changed_ = true;
 }
 
-/*void QIntParamsDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
-{
-    first->setChecked(on);
-}*/
-
 bool QIntParamsDlg::readFloatField(QLineEdit *edt, double *presult,
                                    double defvalue, double minvalue,
                                    double maxvalue)
@@ -348,17 +343,13 @@ void QIntParamsDlg::updateDlgData(void)
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
         btn_org_->toggle();
-    // exclusiveToggle(true, btn_org_, btn_red_, nullptr);
     else
         btn_red_->toggle();
-    // exclusiveToggle(true, btn_red_, btn_org_, nullptr);
 
     if (g_VFResults.config_dashes_)
         btn_dashes_->toggle();
-    // exclusiveToggle(true, btn_dashes_, btn_dots_, nullptr);
     else
         btn_dots_->toggle();
-    // exclusiveToggle(true, btn_dots_, btn_dashes_, nullptr);
 
     buf.sprintf("%g", (float)(g_VFResults.config_step_));
     edt_stepsize_->setText(buf);

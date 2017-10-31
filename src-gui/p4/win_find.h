@@ -39,7 +39,6 @@ class QFindDlg : public QWidget
     QFindDlg(QStartDlg *startwindow);
     ~QFindDlg();
     void getDataFromDlg(void);
-    void exclusiveToggle(bool, QRadioButton *, ...);
 
   private:
     QStartDlg *parent_;
@@ -67,8 +66,8 @@ class QFindDlg : public QWidget
     QParamsDlg *paramsWindow_;
 
   public slots:
-    void btn_maple_toggled(bool);
-    void btn_reduce_toggled(bool);
+    //void btn_maple_toggled(bool);
+    //void btn_reduce_toggled(bool);
     void btn_actionrun_toggled(bool);
     void btn_actionprep_toggled(bool);
     void btn_all_toggled(bool);

@@ -316,7 +316,7 @@ void QFindDlg::btn_no_toggled(bool on)
     }
 }
 
-void QFindDlg::btn_maple_toggled(bool on)
+/*void QFindDlg::btn_maple_toggled(bool on)
 {
     if (on) {
         if (g_ThisVF->symbolicpackage_ != PACKAGE_MAPLE) {
@@ -324,9 +324,9 @@ void QFindDlg::btn_maple_toggled(bool on)
             setMathPackage(PACKAGE_MAPLE);
         }
     }
-}
+}*/
 
-void QFindDlg::btn_reduce_toggled(bool on)
+/*void QFindDlg::btn_reduce_toggled(bool on)
 {
     if (on) {
         if (g_ThisVF->symbolicpackage_ != PACKAGE_REDUCE) {
@@ -334,7 +334,7 @@ void QFindDlg::btn_reduce_toggled(bool on)
             setMathPackage(PACKAGE_REDUCE);
         }
     }
-}
+}*/
 
 void QFindDlg::btn_actionrun_toggled(bool on)
 {
@@ -418,11 +418,6 @@ void QFindDlg::btn_one_toggled(bool on)
             }
         }
     }
-}
-
-void QFindDlg::exclusiveToggle(bool on, QRadioButton *first, ...)
-{
-    first->setChecked(on);
 }
 
 void QFindDlg::onBtnParams(void)
@@ -587,16 +582,16 @@ void QFindDlg::updateDlgData(void)
 {
     switch (g_ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
-        exclusiveToggle(true, btn_all_);
+        btn_all_->toggle();
         break;
     case TYPEOFSTUDY_FIN:
-        exclusiveToggle(true, btn_fin_);
+        btn_fin_->toggle();
         break;
     case TYPEOFSTUDY_INF:
-        exclusiveToggle(true, btn_inf_);
+        btn_inf_->toggle();
         break;
     case TYPEOFSTUDY_ONE:
-        exclusiveToggle(true, btn_one_);
+        btn_one_->toggle();
         break;
     }
 
