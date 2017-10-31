@@ -2543,10 +2543,10 @@ bool QInputVF::evaluateCurve(void)
         proc = new QProcess(this);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
-        connect(proc, &QProcess::error, g_p4app,
+        connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
         connect(proc, &QProcess::readyReadStandardOutput, this,
-                &QInputVF::readProcessStdout;
+                &QInputVF::readProcessStdout);
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -2831,7 +2831,7 @@ bool QInputVF::evaluateIsoclines()
         proc = new QProcess(this);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
-        connect(proc, &QProcess::error, g_p4app,
+        connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
