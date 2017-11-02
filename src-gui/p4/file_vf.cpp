@@ -453,6 +453,8 @@ bool QInputVF::save(void)
     fclose(fp);
     changed_ = false;
     return true;
+
+    emit saveSignal();
 }
 
 QString QInputVF::getbarefilename(void) const
