@@ -174,15 +174,6 @@
 #define TITLEFONTSIZE +2    // 2 points larger than system font
 #define LEGENDFONTSIZE (-1) // 1 smaller than system font
 
-// Docking
-
-// uncomment resp. comment following lines to enable resp. disable docking
-// feature:
-
-#define DOCK_FINDWINDOW
-#define DOCK_PARAMSWINDOW
-#define DOCK_VFWINDOW
-
 // uncomment resp. comment if you want to open automatically resp. do not do
 // this:
 

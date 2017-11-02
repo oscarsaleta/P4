@@ -291,11 +291,11 @@ static orbits_points *integrate_sep(QWinSphere *spherewnd, double pcoord[3],
 
         copy_x_into_y(pcoord, last_orbit->pcoord);
         last_orbit->color = color;
-        last_orbit->dashes = dashes * g_VFResults.config_dashes_;
+        last_orbit->dashes = dashes && g_VFResults.config_dashes_;
         last_orbit->dir = d * h;
         last_orbit->type = type;
         last_orbit->next_point = nullptr;
-        if (dashes * g_VFResults.config_dashes_)
+        if (dashes && g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
             (*plot_p)(spherewnd, pcoord, color);
@@ -560,7 +560,7 @@ orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
 
         copy_x_into_y(pcoord, last_orbit->pcoord);
         last_orbit->color = color;
-        last_orbit->dashes = dashes * g_VFResults.config_dashes_;
+        last_orbit->dashes = dashes && g_VFResults.config_dashes_;
         last_orbit->dir = dir;
         last_orbit->type = type;
         if (last_orbit->dashes)
@@ -757,7 +757,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
         }
         copy_x_into_y(pcoord, last_orbit->pcoord);
         last_orbit->color = color;
-        last_orbit->dashes = dashes * g_VFResults.config_dashes_;
+        last_orbit->dashes = dashes && g_VFResults.config_dashes_;
         last_orbit->dir = dir;
         last_orbit->type = type;
         if (last_orbit->dashes)

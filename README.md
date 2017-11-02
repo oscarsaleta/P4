@@ -24,6 +24,8 @@
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
+Check the installation instructions for [Linux][linux_install], [Windows][windows_install] and [macOS][macOS_install], and also check out the [FAQ][faq].
+
 ![Main window](help/screenshots/p4_main_window.png)|![Plot window](help/screenshots/p4_plot_poincare.png)
 :-------------------------------------------------:|:---------------------------------------------------:
 
@@ -42,6 +44,9 @@ Check [release page][latest_release] to see more detailed instructions and downl
 ### Dependencies
 
 **Maple must be installed in the computer in order to use P4.**
+- Make sure you can execute Maple by typing `maple` in the command line. This means that the directory where Maple is installed must be in the path.
+    + Modify your shell configuration file (_.bashrc_, _.zshrc_, etc): `export PATH="/path/to/Maple/bin:$PATH"`, where `/path/to/Maple/` must be replaced by the path to the Maple installation in your system.
+    + Source the configuration file or open a new terminal to apply the changes.
 
 * **Installation with `compile_install_p4` or compilation from source using `qmake`:**
     - Git: must have to work with *git projects*:
@@ -113,6 +118,9 @@ Check [release page][latest_release] to see more detailed instructions and downl
 ### Dependencies
 
 **Maple must be installed in the computer in order to use P4.**
+- Make sure you can execute Maple by typing `maple` in Terminal:
+    + Edit your shell configuration file (_.bashrc_, _.zshrc_, etc) with the following line: `export PATH="/Library/Frameworks/Maple.framework/Versions/XXX/bin:$PATH"`, where `XXX` should be replaced by your installed Maple version.
+    + Restart the Terminal for the changes to be effective.
 
 * **Installation of pre-compiled binaries**:
     - Homebrew: package manager for macOS that will help us install Qt and MPFR (see [Homebrew website](https://brew.sh/index_ca.html "Homebrew official website"))
@@ -184,6 +192,24 @@ Check [here][binary_tree] for instructions of how to create a correct file tree 
 * **src-mpl**: Maple scripts that drive the computations of P4 (finding singular points, algebraic computation of Lyapunov constants, blow-ups, etc.).
 
 
+## FAQ
+
+- I installed P4 using precompiled binaries, but the program doesn't work.
+    + Precompiled binaries often work only in systems equivalent to those in which the compilation was performed (due to missing libraries or mismatching software versions). This is why in Linux and macOS it is recommended to use the _compile\_install\_p4_, which compiles P4 to adapt to the system characteristics.
+- I installed P4 and it executes, but when I press _Evaluate_ the output window shows "_External Command: /some/maple/command untitled.txt_" and does nothing.
+    + This means that `/some/maple/command` is not a recognised command in your system.
+        * Linux and macOS: Check that you have Maple installed and that `maple` is a valid command in the terminal (see [Linux][linux_install] or [macOS][macos_install] instructions).
+        * Linux, Windows and macOS: go to _About P4... > Main Settings_ and check that the _Maple Executable_ field points to the right Maple installation directory or has the correct `maple` command.
+- I installed P4 and it executes, but when I press _Evaluate_ the output says "_Error, could not open \`/path/to/p4/bin/p4.m\` for reading_" (or similar).
+    + Check that `/path/to/p4` in the Maple output is the correct path for your P4 installation.
+        * If the path is correct: check that the files _p4.m_ and _p4gcf.m_ exist in the P4 installation directory. If they don't, then you need to reinstall P4 because something went wrong and the installation did not complete properly.
+        * If the path is wrong: check that you defined correctly the `P4_DIR` environment variable in _.bashrc_ (or _.zhsrc_, or any other shell configuration file you use). Also, within P4, go to _About P4... > Main Settings_ and check that the _Base installation Path_ and the _Sumtable Path_ fields point correctly to your P4 installation directory.
+- I installed P4 and it executes, but when I press _Evaluate_ the output says "_Error, at offset 17729 in `/usr/local/p4/bin/p4.m`, unexpected DAG type: 0,122,(z)_" (or similar) and then does nothing.
+    + This is a known bug that still has not been solved. We suspect it has to do with older Maple versions not being fully compatible with P4. P4 has been tested with Maple 17, 18 and 2015 (and recently 2017 thanks to a commited user), but older Maple versions could cause incompatibilities.
+    + Our advice is to either acquire a newer Maple version, or use an older P4 version where this
+    issue does not appear (as of now, the latest P4 version without this problem is v3.3.3).
+
+    
 ## Contributors
 
 - J.C. Artés (Universitat Autònoma de Barcelona)
@@ -197,3 +223,7 @@ Check [here][binary_tree] for instructions of how to create a correct file tree 
 
 [latest_release]: https://github.com/oscarsaleta/P4/releases/latest "Latest P4 release"
 [binary_tree]: QtCreator/README.md#binary-tree "Binary tree section"
+[linux_install]: #linux
+[windows_install]: #windows
+[macos_install]: #macos
+[faq]: #faq

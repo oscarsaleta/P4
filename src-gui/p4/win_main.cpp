@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 #include <QTextBrowser>
 
 static void makeButtonPixmaps(const QPalette &);
@@ -52,7 +53,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
         setWindowIcon(*g_p4smallicon);
 
     btn_quit_ = new QPushButton("&Quit", this);
-#ifdef DOCK_FINDWINDOW
     makeButtonPixmaps(btn_quit_->palette());
     btn_find_ = new QPushButton("", this);
 
@@ -62,9 +62,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
 #endif
     btn_find_->setFixedSize(btn_find_->sizeHint());
-#else
-    btn_find_ = new QPushButton("&Find", this);
-#endif
     btn_view_ = new QPushButton("Vie&w", this);
     btn_plot_ = new QPushButton("&Plot", this);
     btn_help_ = new QPushButton("&Help", this);
@@ -81,22 +78,18 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
 
-    QPushButton *btn_browse = new QPushButton("&Browse", this);
+    btn_browse_ = new QPushButton("&Browse", this);
 
 #ifdef TOOLTIPS
     btn_quit_->setToolTip("Quit P4");
-#ifdef DOCK_FINDWINDOW
     btn_find_->setToolTip("Unfolds/hides the \"Find Singular Points\" window");
-#else
-    btn_find_->setToolTip("Opens/closes the \"Find Singular Points\" window");
-#endif
     btn_view_->setToolTip(
         "View results of the symbolic manipulator after evaluation");
     btn_plot_->setToolTip("Draw singular points, orbits and separatrices");
     btn_help_->setToolTip("Shows extensive help on the use of P4");
     edt_name_->setToolTip("Enter the filename of the vector field here.\n"
                           "You do not need to add the extension (.inp).\n");
-    btn_browse->setToolTip("Search for vector field files on your system");
+    btn_browse_->setToolTip("Search for vector field files on your system");
     btn_about_->setToolTip("Displays information about the program P4, its "
                            "version and main settings");
 #endif
@@ -106,25 +99,18 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
     QHBoxLayout *buttons = new QHBoxLayout();
-#ifdef DOCK_FINDWINDOW
     buttons->addWidget(btn_quit_);
     buttons->addWidget(btn_view_);
     buttons->addWidget(btn_plot_);
     buttons->addWidget(btn_help_);
     buttons->addWidget(btn_find_);
-#else
-    buttons->addWidget(btn_quit_);
-    buttons->addWidget(btn_find_);
-    buttons->addWidget(btn_view_);
-    buttons->addWidget(btn_plot_);
-    buttons->addWidget(btn_help_);
-#endif
+
     mainLayout_->addLayout(buttons);
 
     QHBoxLayout *names = new QHBoxLayout();
     names->addWidget(p4name);
     names->addWidget(edt_name_);
-    names->addWidget(btn_browse);
+    names->addWidget(btn_browse_);
     names->addWidget(btn_about_);
     mainLayout_->addLayout(names);
 
@@ -152,7 +138,7 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     QObject::connect(btn_plot_, SIGNAL(clicked()), this, SLOT(onPlot()));
     QObject::connect(btn_help_, SIGNAL(clicked()), this, SLOT(onHelp()));
     QObject::connect(btn_about_, SIGNAL(clicked()), this, SLOT(onAbout()));
-    QObject::connect(btn_browse, SIGNAL(clicked()), this, SLOT(onBrowse()));
+    QObject::connect(btn_browse_, SIGNAL(clicked()), this, SLOT(onBrowse()));
     QObject::connect(edt_name_, SIGNAL(textChanged(const QString &)), this,
                      SLOT(onFilenameChange(const QString &)));
 
@@ -189,20 +175,14 @@ void QStartDlg::onFind(void)
         findWindow_ = new QFindDlg(this);
         findWindow_->show();
         findWindow_->raise();
-#ifdef DOCK_FINDWINDOW
         mainLayout_->addWidget(findWindow_);
         btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
-#endif
     } else {
-#ifdef DOCK_FINDWINDOW
         delete findWindow_;
         findWindow_ = nullptr;
         btn_find_->setIcon(QIcon(*g_Pixmap_TriangleDown));
-#else
-        findWindow_->show();
-        findWindow_->raise();
-        btn_find_->setIcon(QIcon(*g_Pixmap_TriangleUp));
-#endif
+        // connect(findWindow_, &QFindDlg::saveStateSignal, this,
+        //        &QStartDlg::saveSettings);
     }
 }
 
@@ -707,3 +687,19 @@ void makeButtonPixmaps(const QPalette &qcg)
     delete p;
     p = nullptr;
 }
+
+/*void QStartDlg::saveSettings()
+{
+    QString settingsName = g_ThisVF->getbarefilename().append(".conf");
+    QSettings settings(settingsName, QSettings::NativeFormat);
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("state", saveState());
+}*/
+
+/*void QStartDlg::readSettings()
+{
+    QString settingsName = g_ThisVF->getbarefilename().append(".conf");
+    QSettings settings(settingsName, QSettings::NativeFormat);
+    restoreGeometry();
+    restoreState()
+}*/

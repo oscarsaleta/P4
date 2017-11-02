@@ -29,12 +29,7 @@
 
 QParamsDlg::~QParamsDlg() { getDataFromDlg(); }
 
-QParamsDlg::QParamsDlg(QFindDlg *finddlg)
-#ifdef DOCK_PARAMSWINDOW
-    : QWidget(finddlg)
-#else
-    : QWidget()
-#endif
+QParamsDlg::QParamsDlg(QFindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -248,9 +243,6 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
     // finishing
 
     updateDlgData();
-#ifndef DOCK_PARAMSWINDOW
-    SetP4WindowTitle(this, "Parameters");
-#endif
 }
 
 void QParamsDlg::onLevelChange(int value)
