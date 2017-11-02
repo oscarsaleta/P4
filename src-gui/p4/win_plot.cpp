@@ -65,68 +65,68 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
     actClose_ = new QAction("Clos&e", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(actClose_, SIGNAL(triggered()), this, SLOT(onBtnClose()));
+    connect(actClose_, &QAction::triggered, this, &QPlotWnd::onBtnClose);
     toolBar1->addAction(actClose_);
 
     actRefresh_ = new QAction("&Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(actRefresh_, SIGNAL(triggered()), this, SLOT(onBtnRefresh()));
+    connect(actRefresh_, &QAction::triggered, this, &QPlotWnd::onBtnRefresh);
     toolBar1->addAction(actRefresh_);
 
     actLegend_ = new QAction("&Legend", this);
     actLegend_->setShortcut(Qt::ALT + Qt::Key_L);
-    connect(actLegend_, SIGNAL(triggered()), this, SLOT(onBtnLegend()));
+    connect(actLegend_, &QAction::triggered, this, &QPlotWnd::onBtnLegend);
     toolBar1->addAction(actLegend_);
 
     actOrbits_ = new QAction("&Orbits", this);
     actOrbits_->setShortcut(Qt::ALT + Qt::Key_O);
-    connect(actOrbits_, SIGNAL(triggered()), this, SLOT(onBtnOrbits()));
+    connect(actOrbits_, &QAction::triggered, this, &QPlotWnd::onBtnOrbits);
     toolBar1->addAction(actOrbits_);
 
     actIntParams_ = new QAction("&Integration Parameters", this);
     actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(actIntParams_, SIGNAL(triggered()), this, SLOT(onBtnIntParams()));
+    connect(actIntParams_, &QAction::triggered, this, &QPlotWnd::onBtnIntParams);
     toolBar1->addAction(actIntParams_);
 
     actGCF_ = new QAction("&GCF", this);
     actGCF_->setShortcut(Qt::ALT + Qt::Key_G);
-    connect(actGCF_, SIGNAL(triggered()), this, SLOT(onBtnGCF()));
+    connect(actGCF_, &QAction::triggered, this, &QPlotWnd::onBtnGCF);
     toolBar1->addAction(actGCF_);
 
     actCurve_ = new QAction("&Curves", this);
     actCurve_->setShortcut(Qt::ALT + Qt::Key_C);
-    connect(actCurve_, SIGNAL(triggered()), this, SLOT(onBtnCurve()));
+    connect(actCurve_, &QAction::triggered, this, &QPlotWnd::onBtnCurve);
     toolBar1->addAction(actCurve_);
 
     actPlotSep_ = new QAction("Plot &Separatrice", this);
     actPlotSep_->setShortcut(Qt::ALT + Qt::Key_S);
-    connect(actPlotSep_, SIGNAL(triggered()), this, SLOT(onBtnPlotSep()));
+    connect(actPlotSep_, &QAction::triggered, this, &QPlotWnd::onBtnPlotSep);
     toolBar2->addAction(actPlotSep_);
 
     actPlotAllSeps_ = new QAction("Plot All Separa&trices", this);
     actPlotAllSeps_->setShortcut(Qt::ALT + Qt::Key_T);
-    connect(actPlotAllSeps_, SIGNAL(triggered()), this,
-            SLOT(onBtnPlotAllSeps()));
+    connect(actPlotAllSeps_, &QAction::triggered, this,
+            &QPlotWnd::onBtnPlotAllSeps);
     toolBar2->addAction(actPlotAllSeps_);
 
     actLimitCycles_ = new QAction("Limit C&ycles", this);
     actLimitCycles_->setShortcut(Qt::ALT + Qt::Key_Y);
-    connect(actLimitCycles_, SIGNAL(triggered()), this,
-            SLOT(onBtnLimitCycles()));
+    connect(actLimitCycles_, &QAction::triggered, this,
+            &QPlotWnd::onBtnLimitCycles);
     toolBar2->addAction(actLimitCycles_);
 
     actIsoclines_ = new QAction("Isoclines", this);
-    connect(actIsoclines_, SIGNAL(triggered()), this, SLOT(onBtnIsoclines()));
+    connect(actIsoclines_, &QAction::triggered, this, &QPlotWnd::onBtnIsoclines);
     toolBar2->addAction(actIsoclines_);
 
     actView_ = new QAction("&View", this);
     actView_->setShortcut(Qt::ALT + Qt::Key_V);
-    connect(actView_, SIGNAL(triggered()), this, SLOT(onBtnView()));
+    connect(actView_, &QAction::triggered, this, &QPlotWnd::onBtnView);
     toolBar2->addAction(actView_);
 
     actPrint_ = new QAction("&Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(actPrint_, SIGNAL(triggered()), this, SLOT(onBtnPrint()));
+    connect(actPrint_, &QAction::triggered, this, &QPlotWnd::onBtnPrint);
     toolBar2->addAction(actPrint_);
 
     addToolBar(Qt::TopToolBarArea, toolBar1);

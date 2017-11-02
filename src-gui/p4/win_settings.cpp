@@ -186,16 +186,18 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
 
     setLayout(mainLayout_);
 
-    QObject::connect(btn_base_, SIGNAL(clicked()), this, SLOT(onBrowseBase()));
-    QObject::connect(btn_sum_, SIGNAL(clicked()), this, SLOT(onBrowseSum()));
-    QObject::connect(btn_temp_, SIGNAL(clicked()), this, SLOT(onBrowseTemp()));
-    QObject::connect(btn_maple_, SIGNAL(clicked()), this,
-                     SLOT(onBrowseMaple()));
-    // QObject::connect(btn_red, SIGNAL(clicked()), this,
-    // SLOT(OnBrowseReduce()));
-    QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_reset_, SIGNAL(clicked()), this, SLOT(onReset()));
-    QObject::connect(btn_cancel_, SIGNAL(clicked()), this, SLOT(onCancel()));
+    connect(btn_base_, &QPushButton::clicked, this,
+            &QSettingsDlg::onBrowseBase);
+    connect(btn_sum_, &QPushButton::clicked, this, &QSettingsDlg::onBrowseSum);
+    connect(btn_temp_, &QPushButton::clicked, this,
+            &QSettingsDlg::onBrowseTemp);
+    connect(btn_maple_, &QPushButton::clicked, this,
+            &QSettingsDlg::onBrowseMaple);
+    // connect(btn_red, &QPushButton::clicked, this,
+    // &QSettingsDlg::OnBrowseReduce);
+    connect(btn_ok_, &QPushButton::clicked, this, &QSettingsDlg::onOk);
+    connect(btn_reset_, &QPushButton::clicked, this, &QSettingsDlg::onReset);
+    connect(btn_cancel_, &QPushButton::clicked, this, &QSettingsDlg::onCancel);
 
     //#ifdef Q_OS_WIN
     //    edt_red->setEnabled(false);
@@ -302,8 +304,8 @@ void QSettingsDlg::onBrowseSum(void)
 
 void QSettingsDlg::onBrowseBase(void)
 {
-    browseForExistingPathOrFile(edt_base_, "Select P4 base installation path:",
-                                false);
+    browseForExistingPathOrFile(edt_base_,
+                                "Select P4 base installation path:", false);
 }
 
 void QSettingsDlg::browseForExistingPathOrFile(QLineEdit *edt, QString caption,

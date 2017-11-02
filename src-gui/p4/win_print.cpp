@@ -101,16 +101,16 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     mainLayout_->addLayout(buttons);
 
 #ifdef USE_SYSTEM_PRINTER
-    QObject::connect(btn_default_, SIGNAL(clicked()), this,
-                     SLOT(onDefaultPrinter()));
+    connect(btn_default_, &QPushButton::clicked, this,
+            &QPrintDlg::onDefaultPrinter);
 #endif
-    QObject::connect(btn_epsimage_, SIGNAL(clicked()), this,
-                     SLOT(onEpsImagePrinter()));
-    QObject::connect(btn_xfigimage_, SIGNAL(clicked()), this,
-                     SLOT(onXfigImagePrinter()));
-    QObject::connect(btn_jpeg_, SIGNAL(clicked()), this,
-                     SLOT(onJpegImagePrinter()));
-    QObject::connect(btn_cancel_, SIGNAL(clicked()), this, SLOT(onCancel()));
+    connect(btn_epsimage_, &QPushButton::clicked, this,
+            &QPrintDlg::onEpsImagePrinter);
+    connect(btn_xfigimage_, &QPushButton::clicked, this,
+            &QPrintDlg::onXfigImagePrinter);
+    connect(btn_jpeg_, &QPushButton::clicked, this,
+            &QPrintDlg::onJpegImagePrinter);
+    connect(btn_cancel_, &QPushButton::clicked, this, &QPrintDlg::onCancel);
 
     mainLayout_->addSpacing(2);
     mainLayout_->addWidget(btn_blackwhite_);

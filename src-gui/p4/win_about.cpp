@@ -96,9 +96,9 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // connections
 
-    QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_settings_, SIGNAL(clicked()), this,
-                     SLOT(onSettings()));
+    connect(btn_ok_, &QPushButton::clicked, this, &QP4AboutDlg::onOk);
+    connect(btn_settings_, &QPushButton::clicked, this,
+                     &QP4AboutDlg::onSettings);
 
     btn_ok_->setFocus();
 

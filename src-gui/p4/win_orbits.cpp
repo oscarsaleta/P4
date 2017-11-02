@@ -93,16 +93,15 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    QObject::connect(btnSelect_, SIGNAL(clicked()), this, SLOT(onBtnSelect()));
-    QObject::connect(btnForwards_, SIGNAL(clicked()), this,
-                     SLOT(onBtnForwards()));
-    QObject::connect(btnBackwards_, SIGNAL(clicked()), this,
-                     SLOT(onBtnBackwards()));
-    QObject::connect(btnContinue_, SIGNAL(clicked()), this,
-                     SLOT(onBtnContinue()));
-    QObject::connect(btnDelAll_, SIGNAL(clicked()), this, SLOT(onBtnDelAll()));
-    QObject::connect(btnDelLast_, SIGNAL(clicked()), this,
-                     SLOT(onBtnDelLast()));
+    connect(btnSelect_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnSelect);
+    connect(btnForwards_, &QPushButton::clicked, this,
+            &QOrbitsDlg::onBtnForwards);
+    connect(btnBackwards_, &QPushButton::clicked, this,
+            &QOrbitsDlg::onBtnBackwards);
+    connect(btnContinue_, &QPushButton::clicked, this,
+            &QOrbitsDlg::onBtnContinue);
+    connect(btnDelAll_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnDelAll);
+    connect(btnDelLast_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnDelLast);
 
     // finishing
 
