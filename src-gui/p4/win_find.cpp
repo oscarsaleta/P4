@@ -81,9 +81,6 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     btn_yes_ = new QRadioButton("Yes", this);
     btn_no_ = new QRadioButton("No", this);
 
-    btn_params_ = new QPushButton("P&arameters", this);
-    btn_vf_ = new QPushButton("&Vector Field", this);
-
     btn_load_ = new QPushButton("&Load", this);
     btn_save_ = new QPushButton("&Save", this);
 
@@ -111,8 +108,6 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
         "The View/Finite and View/Infinite windows will display more details");
     btn_no_->setToolTip(
         "The View/Finite and View/Infinite windows will display no details");
-    btn_params_->setToolTip("Opens/closes the parameters window");
-    btn_vf_->setToolTip("Opens/closes the vector field window");
     btn_load_->setToolTip("Load the vector field & parameters from disc");
     btn_save_->setToolTip("Save the vector field & parameters to disc");
     btn_eval_->setToolTip("Prepare a file for the symbolic manipulator, and "
@@ -160,27 +155,13 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     layout0->addWidget(btn_no_);
     layout0->addStretch(0);
 
-    QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->addStretch(0);
-    layout1->addWidget(btn_params_);
-    layout1->addWidget(btn_vf_);
-    layout1->addStretch(0);
-
-    QHBoxLayout *layout2 = new QHBoxLayout();
-    layout2->addStretch(0);
-    layout2->addWidget(btn_load_);
-    layout2->addWidget(btn_save_);
-    layout2->addStretch(0);
-
-    QHBoxLayout *layout3 = new QHBoxLayout();
-    layout3->addStretch(0);
-    layout3->addWidget(btn_eval_);
-    layout3->addStretch(0);
+    QGridLayout *layout1 = new QGridLayout();
+    layout1->addWidget(btn_load_,0,0);
+    layout1->addWidget(btn_save_,0,1);
+    layout1->addWidget(btn_eval_,1,0,1,2);
 
     mainLayout_->addLayout(layout0);
     mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout3);
 
     //   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -330,8 +311,6 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
         }
     });
 
-    connect(btn_params_, &QPushButton::clicked, this, &QFindDlg::onBtnParams);
-    connect(btn_vf_, &QPushButton::clicked, this, &QFindDlg::onBtnVf);
     connect(btn_load_, &QPushButton::clicked, this, &QFindDlg::onBtnLoad);
     connect(btn_save_, &QPushButton::clicked, this, &QFindDlg::onBtnSave);
     connect(btn_eval_, &QPushButton::clicked, this, &QFindDlg::onBtnEval);
@@ -343,37 +322,7 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     paramsWindow_ = nullptr;
     g_ThisVF->findDlg_ = this;
 
-#ifdef AUTO_OPEN_VFWINDOW
-    onBtnVf();
-#endif
-
-#ifdef AUTO_OPEN_PARAMSWINDOW
-    onBtnParams();
-#endif
-
-    if (g_ThisVF->evaluating_)
-        btn_eval_->setEnabled(false);
-
-    // readSettings();
-}
-
-void QFindDlg::onBtnParams()
-{
-    if (paramsWindow_ == nullptr) {
-        paramsWindow_ = new QParamsDlg(this);
-        paramsWindow_->show();
-        superLayout_->addWidget(paramsWindow_, 0, Qt::AlignTop);
-
-    } else {
-        delete paramsWindow_;
-        paramsWindow_ = nullptr;
-    }
-}
-
-void QFindDlg::onBtnVf()
-{
-    // show find dialog
-
+    // show vector field dialog
     if (vfWindow_ == nullptr) {
         vfWindow_ = new QVectorFieldDlg(this);
         vfWindow_->show();
@@ -383,7 +332,23 @@ void QFindDlg::onBtnVf()
         delete vfWindow_;
         vfWindow_ = nullptr;
     }
+    // show params dialog
+    if (paramsWindow_ == nullptr) {
+        paramsWindow_ = new QParamsDlg(this);
+        paramsWindow_->show();
+        superLayout_->addWidget(paramsWindow_, 0, Qt::AlignTop);
+
+    } else {
+        delete paramsWindow_;
+        paramsWindow_ = nullptr;
+    }
+
+    if (g_ThisVF->evaluating_)
+        btn_eval_->setEnabled(false);
+
+    // readSettings();
 }
+
 
 void QFindDlg::onBtnLoad()
 {

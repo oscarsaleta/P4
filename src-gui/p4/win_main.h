@@ -87,7 +87,6 @@ class QStartDlg : public QWidget
     void onViewFinite();
     void onViewInfinite();
     void onHelp();
-    void onFind();
     void onBrowse();
     void onAbout();
     void onFilenameChange(const QString &);

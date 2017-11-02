@@ -25,6 +25,8 @@
 #include "p4application.h"
 #include "win_find.h"
 
+#include <QFormLayout>
+
 QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
     : QWidget(finddlg)
 {
@@ -73,18 +75,11 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
     mainLayout_->addWidget(p4title);
 
-    QHBoxLayout *layout1 = new QHBoxLayout();
-    layout1->addWidget(xlabel);
-    layout1->addWidget(edt_xprime_);
-
-    QHBoxLayout *layout2 = new QHBoxLayout();
-    layout2->addWidget(ylabel);
-    layout2->addWidget(edt_yprime_);
-
-    QHBoxLayout *layout22 = new QHBoxLayout();
-    layout22->addWidget(glabel);
-    layout22->addWidget(edt_gcf_);
-
+    QFormLayout *formLayout = new QFormLayout();
+    formLayout->addRow(xlabel,edt_xprime_);
+    formLayout->addRow(ylabel,edt_yprime_);
+    formLayout->addRow(glabel,edt_gcf_);
+    
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->addWidget(plabel);
     layout3->addWidget(spin_numparams_);
@@ -92,13 +87,10 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
     paramLayout_ = new QHBoxLayout();
 
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout22);
+    mainLayout_->addLayout(formLayout);
     mainLayout_->addLayout(layout3);
     mainLayout_->addLayout(paramLayout_);
 
-    mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_);
 
     sb_params_ = nullptr;
