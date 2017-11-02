@@ -118,12 +118,13 @@ QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     setLayout(mainLayout_);
 
     // connections
-    QObject::connect(btnEvaluate_, SIGNAL(clicked()), this,
-                     SLOT(onBtnEvaluate()));
-    QObject::connect(btnPlot_, SIGNAL(clicked()), this, SLOT(onBtnPlot()));
-    QObject::connect(btnDelAll_, SIGNAL(clicked()), this, SLOT(onBtnDelAll()));
-    QObject::connect(btnDelLast_, SIGNAL(clicked()), this,
-                     SLOT(onBtnDelLast()));
+    connect(btnEvaluate_, &QPushButton::clicked, this,
+            &QIsoclinesDlg::onBtnEvaluate);
+    connect(btnPlot_, &QPushButton::clicked, this, &QIsoclinesDlg::onBtnPlot);
+    connect(btnDelAll_, &QPushButton::clicked, this,
+            &QIsoclinesDlg::onBtnDelAll);
+    connect(btnDelLast_, &QPushButton::clicked, this,
+            &QIsoclinesDlg::onBtnDelLast);
 
     // finishing
 

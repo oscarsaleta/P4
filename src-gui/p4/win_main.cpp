@@ -32,7 +32,6 @@
 #include <QSettings>
 #include <QTextBrowser>
 
-
 QStartDlg *g_p4stardlg = nullptr;
 
 QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
@@ -108,23 +107,23 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     QAction *ActFin = new QAction("Fini&te", this);
     ActFin->setShortcut(Qt::ALT + Qt::Key_T);
-    connect(ActFin, SIGNAL(triggered()), this, SLOT(onViewFinite()));
+    connect(ActFin, &QAction::triggered, this, &QStartDlg::onViewFinite);
     viewMenu_->addAction(ActFin);
 
     QAction *ActInf = new QAction("&Infinite", this);
     ActInf->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(ActInf, SIGNAL(triggered()), this, SLOT(onViewInfinite()));
+    connect(ActInf, &QAction::triggered, this, &QStartDlg::onViewInfinite);
     viewMenu_->addAction(ActInf);
 
     btn_view_->setMenu(viewMenu_);
 
-    QObject::connect(btn_quit_, SIGNAL(clicked()), this, SLOT(onQuit()));
-    QObject::connect(btn_plot_, SIGNAL(clicked()), this, SLOT(onPlot()));
-    QObject::connect(btn_help_, SIGNAL(clicked()), this, SLOT(onHelp()));
-    QObject::connect(btn_about_, SIGNAL(clicked()), this, SLOT(onAbout()));
-    QObject::connect(btn_browse_, SIGNAL(clicked()), this, SLOT(onBrowse()));
-    QObject::connect(edt_name_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFilenameChange(const QString &)));
+    connect(btn_quit_, &QPushButton::clicked, this, &QStartDlg::onQuit);
+    connect(btn_plot_, &QPushButton::clicked, this, &QStartDlg::onPlot);
+    connect(btn_help_, &QPushButton::clicked, this, &QStartDlg::onHelp);
+    connect(btn_about_, &QPushButton::clicked, this, &QStartDlg::onAbout);
+    connect(btn_browse_, &QPushButton::clicked, this, &QStartDlg::onBrowse);
+    connect(edt_name_, &QLineEdit::textChanged, this,
+            &QStartDlg::onFilenameChange);
 
     // setting focus
 
@@ -141,7 +140,7 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     viewInfiniteWindow_ = nullptr;
     viewFiniteWindow_ = nullptr;
     plotWindow_ = nullptr;
-    
+
     // show find dialog
     if (findWindow_ == nullptr) {
         findWindow_ = new QFindDlg(this);
@@ -157,7 +156,6 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     setP4WindowTitle(this, cap);
 }
-
 
 void QStartDlg::onHelp(void)
 {
@@ -627,7 +625,6 @@ void QStartDlg::customEvent(QEvent *e)
         QWidget::customEvent(e);
     }
 }
-
 
 /*void QStartDlg::saveSettings()
 {

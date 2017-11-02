@@ -152,30 +152,22 @@ QViewDlg::QViewDlg(QWidget *parent)
 
     // connections
 
-    QObject::connect(btn_sphere_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_sphere_toggled()));
-    QObject::connect(btn_plane_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_plane_toggled()));
-    QObject::connect(btn_U1_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_U1_toggled()));
-    QObject::connect(btn_U2_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_U2_toggled()));
-    QObject::connect(btn_V1_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_V1_toggled()));
-    QObject::connect(btn_V2_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_V2_toggled()));
-    QObject::connect(btn_square_, SIGNAL(clicked()), this,
-                     SLOT(btn_square_clicked()));
-    QObject::connect(edt_projection_, SIGNAL(textChanged(const QString &)),
-                     this, SLOT(onFieldChange(const QString &)));
-    QObject::connect(edt_x0_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    QObject::connect(edt_x1_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    QObject::connect(edt_y0_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    QObject::connect(edt_y1_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
+    connect(btn_sphere_, &QRadioButton::toggled, this,
+            &QViewDlg::btn_sphere_toggled);
+    connect(btn_plane_, &QRadioButton::toggled, this,
+            &QViewDlg::btn_plane_toggled);
+    connect(btn_U1_, &QRadioButton::toggled, this, &QViewDlg::btn_U1_toggled);
+    connect(btn_U2_, &QRadioButton::toggled, this, &QViewDlg::btn_U2_toggled);
+    connect(btn_V1_, &QRadioButton::toggled, this, &QViewDlg::btn_V1_toggled);
+    connect(btn_V2_, &QRadioButton::toggled, this, &QViewDlg::btn_V2_toggled);
+    connect(btn_square_, &QPushButton::clicked, this,
+            &QViewDlg::btn_square_clicked);
+    connect(edt_projection_, &QLineEdit::textChanged, this,
+            &QViewDlg::onFieldChange);
+    connect(edt_x0_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
+    connect(edt_x1_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
+    connect(edt_y0_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
+    connect(edt_y1_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
 
     // finishing
 

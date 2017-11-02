@@ -91,9 +91,9 @@ QWinSphere::QWinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
     h_ = height();
     idealh_ = w_;
 
-    selectingX_=0;
-    selectingY_=0;
-    selectingPointRadius_=0;
+    selectingX_ = 0;
+    selectingY_ = 0;
+    selectingPointRadius_ = 0;
     selectingPointStep_ = 0;
 
     horPixelsPerMM_ = ((double)w_) / ((double)widthMM());
@@ -659,8 +659,8 @@ void QWinSphere::adjustToNewSize(void)
             refreshTimeout_->stop();
         else {
             refreshTimeout_ = new QTimer();
-            connect(refreshTimeout_, SIGNAL(timeout()), this,
-                    SLOT(refreshAfterResize()));
+            connect(refreshTimeout_, &QTimer::timeout, this,
+                    &QWinSphere::refreshAfterResize);
         }
         refreshTimeout_->start(500);
     }
@@ -1200,8 +1200,8 @@ void QWinSphere::selectNearestSingularity(QPoint winpos)
         selectingY_ = py;
 
         selectingTimer_ = new QTimer();
-        connect(selectingTimer_, SIGNAL(timeout()), this,
-                SLOT(updatePointSelection()));
+        connect(selectingTimer_, &QTimer::timeout, this,
+                &QWinSphere::updatePointSelection);
         selectingTimer_->start(SELECTINGPOINTSPEED);
         msgBar_->showMessage("Search nearest critical point: Found");
 

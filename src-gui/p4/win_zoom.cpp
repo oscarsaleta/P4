@@ -50,17 +50,17 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
 
     actClose_ = new QAction("Close", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(actClose_, SIGNAL(triggered()), this, SLOT(onBtnClose()));
+    connect(actClose_, &QAction::triggered, this, &QZoomWnd::onBtnClose);
     toolBar1->addAction(actClose_);
 
     actRefresh_ = new QAction("Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(actRefresh_, SIGNAL(triggered()), this, SLOT(onBtnRefresh()));
+    connect(actRefresh_, &QAction::triggered, this, &QZoomWnd::onBtnRefresh);
     toolBar1->addAction(actRefresh_);
 
     actPrint_ = new QAction("Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(actPrint_, SIGNAL(triggered()), this, SLOT(onBtnPrint()));
+    connect(actPrint_, &QAction::triggered, this, &QZoomWnd::onBtnPrint);
     toolBar1->addAction(actPrint_);
 
 #ifdef TOOLTIPS

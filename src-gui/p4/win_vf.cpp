@@ -27,11 +27,10 @@
 
 #include <QFormLayout>
 
-QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
-    : QWidget(finddlg)
+QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
-//  setFont( QFont( FONTSTYLE, FONTSIZE ) );
+    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *p4title = new QLabel("Specify the vector field:", this);
     p4title->setFont(*(g_p4app->titleFont_));
@@ -76,10 +75,10 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
     mainLayout_->addWidget(p4title);
 
     QFormLayout *formLayout = new QFormLayout();
-    formLayout->addRow(xlabel,edt_xprime_);
-    formLayout->addRow(ylabel,edt_yprime_);
-    formLayout->addRow(glabel,edt_gcf_);
-    
+    formLayout->addRow(xlabel, edt_xprime_);
+    formLayout->addRow(ylabel, edt_yprime_);
+    formLayout->addRow(glabel, edt_gcf_);
+
     QHBoxLayout *layout3 = new QHBoxLayout();
     layout3->addWidget(plabel);
     layout3->addWidget(spin_numparams_);
@@ -109,10 +108,10 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
         paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
-            QObject::connect(sb_params_, SIGNAL(valueChanged(int)), params_,
-                             SLOT(paramsSliderChanged(int)));
-            QObject::connect(sb_params_, SIGNAL(sliderMoved(int)), params_,
-                             SLOT(paramsSliderChanged(int)));
+            connect(sb_params_, &QScrollBar::valueChanged, params_,
+                    &QVFParams::paramsSliderChanged);
+            connect(sb_params_, &QScrollBar::sliderMoved, params_,
+                    &QVFParams::paramsSliderChanged);
         }
         params_->show();
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
@@ -123,9 +122,9 @@ QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg)
 
     // connections
 
-    QObject::connect(spin_numparams_, SIGNAL(valueChanged(int)), this,
-                     SLOT(numParamsChanged(int)));
-
+    connect(spin_numparams_,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+            &QVectorFieldDlg::numParamsChanged);
 }
 
 void QVectorFieldDlg::numParamsChanged(int val)
@@ -158,10 +157,10 @@ void QVectorFieldDlg::numParamsChanged(int val)
             paramLayout_->addWidget(params_);
             if (val > MAXNUMPARAMSSHOWN) {
                 paramLayout_->addWidget(sb_params_);
-                QObject::connect(sb_params_, SIGNAL(valueChanged(int)), params_,
-                                 SLOT(paramsSliderChanged(int)));
-                QObject::connect(sb_params_, SIGNAL(sliderMoved(int)), params_,
-                                 SLOT(paramsSliderChanged(int)));
+                connect(sb_params_, &QScrollBar::valueChanged, params_,
+                        &QVFParams::paramsSliderChanged);
+                connect(sb_params_, &QScrollBar::sliderMoved, params_,
+                        &QVFParams::paramsSliderChanged);
             }
             params_->show();
             if (val > MAXNUMPARAMSSHOWN)
@@ -241,10 +240,10 @@ void QVectorFieldDlg::updateDlgData(void)
         paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
-            QObject::connect(sb_params_, SIGNAL(valueChanged(int)), params_,
-                             SLOT(paramsSliderChanged(int)));
-            QObject::connect(sb_params_, SIGNAL(sliderMoved(int)), params_,
-                             SLOT(paramsSliderChanged(int)));
+            connect(sb_params_, &QScrollBar::valueChanged, params_,
+                    &QVFParams::paramsSliderChanged);
+            connect(sb_params_, &QScrollBar::sliderMoved, params_,
+                    &QVFParams::paramsSliderChanged);
         }
         params_->show();
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)

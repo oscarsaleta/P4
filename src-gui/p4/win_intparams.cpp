@@ -172,27 +172,35 @@ QIntParamsDlg::QIntParamsDlg()
 
     // connections
 
-    QObject::connect(btn_org_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_org_toggled(bool)));
-    QObject::connect(btn_red_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_red_toggled(bool)));
-    QObject::connect(btn_dots_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dots_toggled(bool)));
-    QObject::connect(btn_dashes_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_dashes_toggled(bool)));
-    QObject::connect(edt_stepsize_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    // QObject::connect( edt_curstep,        SIGNAL(textChanged(const QString
-    // &)), this, SLOT(onFieldChange(const QString &)) );
-    QObject::connect(edt_maxstep_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    QObject::connect(edt_minstep_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    QObject::connect(edt_tolerance_, SIGNAL(textChanged(const QString &)), this,
-                     SLOT(onFieldChange(const QString &)));
-    QObject::connect(spin_numpoints_, SIGNAL(valueChanged(int)), this,
-                     SLOT(onFieldChange(int)));
-    QObject::connect(btn_reset_, SIGNAL(clicked()), this, SLOT(on_btn_reset()));
+    connect(btn_org_, &QRadioButton::toggled, this,
+            &QIntParamsDlg::btn_org_toggled);
+    connect(btn_red_, &QRadioButton::toggled, this,
+            &QIntParamsDlg::btn_red_toggled);
+    connect(btn_dots_, &QRadioButton::toggled, this,
+            &QIntParamsDlg::btn_dots_toggled);
+    connect(btn_dashes_, &QRadioButton::toggled, this,
+            &QIntParamsDlg::btn_dashes_toggled);
+    connect(edt_stepsize_, &QLineEdit::textChanged, this,
+            static_cast<void (QIntParamsDlg::*)(const QString &)>(
+                &QIntParamsDlg::onFieldChange));
+    // connect(edt_curstep, &QLineEdit::textChanged, this,
+    //        static_cast<void (QIntParamsDlg::*)(const QString &)>(
+    //            &QIntParamsDlg::onFieldChange));
+    connect(edt_maxstep_, &QLineEdit::textChanged, this,
+            static_cast<void (QIntParamsDlg::*)(const QString &)>(
+                &QIntParamsDlg::onFieldChange));
+    connect(edt_minstep_, &QLineEdit::textChanged, this,
+            static_cast<void (QIntParamsDlg::*)(const QString &)>(
+                &QIntParamsDlg::onFieldChange));
+    connect(edt_tolerance_, &QLineEdit::textChanged, this,
+            static_cast<void (QIntParamsDlg::*)(const QString &)>(
+                &QIntParamsDlg::onFieldChange));
+    connect(spin_numpoints_,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+            static_cast<void (QIntParamsDlg::*)(int)>(
+                &QIntParamsDlg::onFieldChange));
+    connect(btn_reset_, &QPushButton::clicked, this,
+            &QIntParamsDlg::on_btn_reset);
 
     // finishing
 
