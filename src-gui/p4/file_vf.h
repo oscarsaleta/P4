@@ -192,6 +192,7 @@ class QInputVF : public QObject
 
   signals:
     void saveSignal();
+    void loadSignal();
 
   public slots:
     void finishEvaluation(int);

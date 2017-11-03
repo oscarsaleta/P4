@@ -76,9 +76,6 @@ class QStartDlg : public QWidget
 
     void customEvent(QEvent *e);
 
-    void saveSettings();
-    void readSettings();
-
   public slots:
     // following slots are called by QT when a button is pressed or a file name
     // is changed:
@@ -91,6 +88,8 @@ class QStartDlg : public QWidget
     void onAbout();
     void onFilenameChange(const QString &);
     QWidget *showText(QWidget *win, QString caption, QString fname);
+    void onSaveSignal();
+    void onLoadSignal();
 
   private:
     QBoxLayout *mainLayout_;

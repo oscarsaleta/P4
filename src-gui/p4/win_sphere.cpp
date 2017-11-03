@@ -279,13 +279,13 @@ void QWinSphere::setupPlot(void)
     while (circleAtInfinity_ != nullptr) {
         t = circleAtInfinity_;
         circleAtInfinity_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     while (plCircle_ != nullptr) {
         t = plCircle_;
         plCircle_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
 
@@ -364,13 +364,13 @@ QWinSphere::~QWinSphere()
     while (circleAtInfinity_ != nullptr) {
         t = circleAtInfinity_;
         circleAtInfinity_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     while (plCircle_ != nullptr) {
         t = plCircle_;
         plCircle_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
 
@@ -593,13 +593,13 @@ void QWinSphere::adjustToNewSize(void)
     while (circleAtInfinity_ != nullptr) {
         t = circleAtInfinity_;
         circleAtInfinity_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     while (plCircle_ != nullptr) {
         t = plCircle_;
         plCircle_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {

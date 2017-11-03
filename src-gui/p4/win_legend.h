@@ -31,8 +31,12 @@ class QLegendWnd : public QWidget
   public:
     QLegendWnd();
     void paintEvent(QPaintEvent *);
-    void calculateGeometry(void);
+    void calculateGeometry();
+    void loadState();
 
+  public slots:
+    void onSaveSignal();
+    
   private:
     QBoxLayout *mainLayout_;
 

@@ -124,6 +124,8 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     connect(btn_browse_, &QPushButton::clicked, this, &QStartDlg::onBrowse);
     connect(edt_name_, &QLineEdit::textChanged, this,
             &QStartDlg::onFilenameChange);
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &QStartDlg::onSaveSignal);
+    connect(g_ThisVF, &QInputVF::loadSignal, this, &QStartDlg::onLoadSignal);
 
     // setting focus
 
@@ -157,7 +159,28 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     setP4WindowTitle(this, cap);
 }
 
-void QStartDlg::onHelp(void)
+void QStartDlg::onSaveSignal() {
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);
+    if (plotWindow_!=nullptr)
+        settings.setValue("QStartDlg/plotWindow",true);
+    else
+        settings.setValue("QStartDlg/plotWindow",false);
+
+}
+
+void QStartDlg::onLoadSignal() {
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);    
+    if (settings.value("QStartDlg/plotWindow").toBool()) {
+        if (plotWindow_!=nullptr)
+            plotWindow_->show();
+        else {
+            onPlot();
+            plotWindow_->onLoadSignal();
+        }
+    }
+}
+
+void QStartDlg::onHelp()
 {
     // display help
     QTextBrowser *hlp;
@@ -199,7 +222,7 @@ void QStartDlg::onHelp(void)
     helpWindow_ = hlp;
 }
 
-void QStartDlg::onPlot(void)
+void QStartDlg::onPlot()
 {
     // show plot window
 
@@ -238,7 +261,7 @@ void QStartDlg::onPlot(void)
     plotWindow_->adjustHeight();
 }
 
-void QStartDlg::onQuit(void)
+void QStartDlg::onQuit()
 {
     if (plotWindow_ != nullptr) {
         delete plotWindow_;
@@ -274,7 +297,7 @@ void QStartDlg::onFilenameChange(const QString &fname)
     g_ThisVF->filename_ = fname;
 }
 
-void QStartDlg::signalEvaluating(void)
+void QStartDlg::signalEvaluating()
 {
     // disable view button, disable plot button:
 
@@ -293,7 +316,7 @@ void QStartDlg::signalEvaluating(void)
         plotWindow_->signalEvaluating();
 }
 
-void QStartDlg::signalEvaluated(void)
+void QStartDlg::signalEvaluated()
 {
     // enable view button, disable plot button:
 
@@ -383,17 +406,17 @@ void QStartDlg::signalEvaluated(void)
         signalChanged();
 }
 
-void QStartDlg::signalSaved(void)
+void QStartDlg::signalSaved()
 {
     //
 }
 
-void QStartDlg::signalLoaded(void)
+void QStartDlg::signalLoaded()
 {
     //
 }
 
-void QStartDlg::signalChanged(void)
+void QStartDlg::signalChanged()
 {
     if (viewFiniteWindow_ != nullptr) {
         viewFiniteWindow_->setFont(*(g_p4app->courierFont_));
@@ -407,7 +430,7 @@ void QStartDlg::signalChanged(void)
     }
 }
 
-void QStartDlg::onBrowse(void)
+void QStartDlg::onBrowse()
 {
     QString result;
 
@@ -421,7 +444,7 @@ void QStartDlg::onBrowse(void)
     }
 }
 
-void QStartDlg::onAbout(void)
+void QStartDlg::onAbout()
 {
     QP4AboutDlg *pdlg;
     pdlg = new QP4AboutDlg(this, 0);

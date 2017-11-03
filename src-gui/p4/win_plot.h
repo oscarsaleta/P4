@@ -84,32 +84,35 @@ class QPlotWnd : public QMainWindow
     QZoomWnd **zoomWindows_; // TODO: fer vector
 
   public slots:
-    void signalEvaluating(void);
-    void signalEvaluated(void);
-    void signalChanged(void);
+    void signalEvaluating();
+    void signalEvaluated();
+    void signalChanged();
 
-    void onBtnClose(void);
-    void onBtnRefresh(void);
-    void onBtnLegend(void);
-    void onBtnOrbits(void);
-    void onBtnIntParams(void);
-    void onBtnView(void);
-    void onBtnGCF(void);
-    void onBtnCurve(void);
-    void onBtnIsoclines(void);
-    void onBtnPlotSep(void);
-    void onBtnPlotAllSeps(void);
-    void onBtnLimitCycles(void);
-    void onBtnPrint(void);
-    bool close(void);
+    void onBtnClose();
+    void onBtnRefresh();
+    void onBtnLegend();
+    void onBtnOrbits();
+    void onBtnIntParams();
+    void onBtnView();
+    void onBtnGCF();
+    void onBtnCurve();
+    void onBtnIsoclines();
+    void onBtnPlotSep();
+    void onBtnPlotAllSeps();
+    void onBtnLimitCycles();
+    void onBtnPrint();
+    bool close();
 
     void openZoomWindow(double, double, double, double);
     void closeZoomWindow(int id);
-    void configure(void);
+    void configure();
     void customEvent(QEvent *e);
     void hideEvent(QHideEvent *h);
-    void getDlgData(void);
-    void adjustHeight(void);
+    void getDlgData();
+    void adjustHeight();
+
+    void onSaveSignal();
+    void onLoadSignal();
 };
 
 #endif /* WIN_PLOT_H */

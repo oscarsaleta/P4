@@ -30,6 +30,8 @@
 #include <QDir>
 #include <QFileInfo>
 
+#include <iostream>
+
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
@@ -164,6 +166,9 @@ void QInputVF::reset(void)
 // -----------------------------------------------------------------------
 bool QInputVF::load(void)
 {
+    emit loadSignal();
+    std::cerr << "Emited load signal" << std::endl;
+
     FILE *fp;
     QString fname;
     char scanbuf[2560];
@@ -367,6 +372,9 @@ bool QInputVF::checkevaluated(void)
 // -----------------------------------------------------------------------
 bool QInputVF::save(void)
 {
+    emit saveSignal();
+    std::cerr << "Sent save signal" << std::endl;
+
     FILE *fp;
     int i;
     QString fname;
@@ -453,8 +461,6 @@ bool QInputVF::save(void)
     fclose(fp);
     changed_ = false;
     return true;
-
-    emit saveSignal();
 }
 
 QString QInputVF::getbarefilename(void) const

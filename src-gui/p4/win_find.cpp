@@ -350,6 +350,10 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     // readSettings();
 }
 
+void QFindDlg::onSaveSignal() {
+    //QSettings settings(g_ThisVF->getbarefilename().append(".conf"), QSettings::NativeFormat);
+    //settings.setValue("QFindDlg/state",saveState());
+}
 
 void QFindDlg::onBtnLoad()
 {

@@ -37,6 +37,7 @@
 
 #include <QPrintDialog>
 #include <QToolBar>
+#include <QSettings>
 
 QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
@@ -135,6 +136,10 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(Qt::TopToolBarArea, toolBar2);
 
+
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &QPlotWnd::onSaveSignal);
+    connect(g_ThisVF, &QInputVF::loadSignal, this, &QPlotWnd::onLoadSignal);
+
 #ifdef TOOLTIPS
 
     actClose_->setToolTip(
@@ -217,6 +222,31 @@ QPlotWnd::~QPlotWnd()
     delete isoclinesWindow_;
     isoclinesWindow_ = nullptr;
     g_ThisVF->isoclinesDlg_ = nullptr;
+}
+
+void QPlotWnd::onSaveSignal() {
+    QString fname = g_ThisVF->getbarefilename().append(".conf");
+    QSettings settings(fname, QSettings::NativeFormat);
+    settings.setValue("QFindDlg/size",size());
+    settings.setValue("QFindDlg/pos",pos());
+    if (legendWindow_!=nullptr)
+        settings.setValue("QFindDlg/legendWindow",true);
+    else
+        settings.setValue("QFindDlg/legendWindow",false);
+        
+}
+//TODO: fer que s'obri la finestra de plot al donarli a load i abans de carregar aquesta configuració (a win_main?)
+void QPlotWnd::onLoadSignal() {
+    QString fname = g_ThisVF->getbarefilename().append(".conf");
+    QSettings settings(fname,QSettings::NativeFormat);
+    resize(settings.value("QFindDlg/size").toSize());
+    move(settings.value("QFindDlg/pos").toPoint());
+    
+    if (settings.value("QFindDlg/legendWindow").toBool()) {
+        legendWindow_->show();
+        legendWindow_->loadState();
+    }
+
 }
 
 void QPlotWnd::adjustHeight(void)
