@@ -59,7 +59,9 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     //    setPalette(palette);
 
     toolBar1 = new QToolBar("PlotBar1", this);
+    toolBar1->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);
     toolBar2 = new QToolBar("PlotBar2", this);
+    toolBar2->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);    
     toolBar1->setMovable(false);
     toolBar2->setMovable(false);
 
