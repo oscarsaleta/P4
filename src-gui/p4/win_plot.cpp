@@ -39,6 +39,8 @@
 #include <QToolBar>
 #include <QSettings>
 
+#include <iostream>
+
 QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
     QToolBar *toolBar1;
@@ -241,8 +243,10 @@ void QPlotWnd::onLoadSignal() {
     numZooms_ = settings.value("QPlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
         zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,sizeof(QZoomWnd *) * (numZooms_ + 1));
-        for (int i = 0; i < numZooms_; i++) {
-            settings.beginGroup(QString("QZoomWnd").append(i));
+        for (int i = 1; i <= numZooms_; i++) {
+            QString zoomName = QString("QZoomWnd").append(i);
+            settings.beginGroup(zoomName);
+            std::cerr << zoomName.toStdString() << std::endl;
             int currentZoomId = settings.value("id").toInt();
             double currentZoomX1 = settings.value("x1").toDouble();
             double currentZoomX2 = settings.value("x2").toDouble();
