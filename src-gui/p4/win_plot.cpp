@@ -230,12 +230,6 @@ void QPlotWnd::onSaveSignal() {
     settings.setValue("QPlotWnd/size",size());
     settings.setValue("QPlotWnd/pos",pos());
     settings.setValue("QPlotWnd/numZooms",numZooms_);
-    if (numZooms_ != 0) {
-        for (int i = 0; i < numZooms_; i++) {
-            QString valuename = QString("QPlotDlg/zoomid").append(i);
-            settings.setValue(valuename,true);
-        }
-    }
 }
 
 void QPlotWnd::onLoadSignal() {
@@ -243,10 +237,24 @@ void QPlotWnd::onLoadSignal() {
     QSettings settings(fname,QSettings::NativeFormat);
     resize(settings.value("QPlotWnd/size").toSize());
     move(settings.value("QPlotWnd/pos").toPoint());
-    int numZooms = settings.value("QPlotWnd/numZooms").toInt();
-    if (numZooms != 0) {
-        for (int i = 0; i < numZooms; i++) {
-            //TODO: crear zoom windows i cridar el load després d'haverles creat
+
+    numZooms_ = settings.value("QPlotWnd/numZooms").toInt();
+    if (numZooms_ != 0) {
+        zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,sizeof(QZoomWnd *) * (numZooms_ + 1));
+        for (int i = 0; i < numZooms_; i++) {
+            settings.beginGroup(QString("QZoomWnd").append(i));
+            int currentZoomId = settings.value("id").toInt();
+            double currentZoomX1 = settings.value("x1").toDouble();
+            double currentZoomX2 = settings.value("x2").toDouble();
+            double currentZoomY1 = settings.value("y1").toDouble();
+            double currentZoomY2 = settings.value("y2").toDouble();
+            zoomWindows_[i] = new QZoomWnd(this, currentZoomId, currentZoomX1,currentZoomY1, currentZoomX2, currentZoomY2);
+            zoomWindows_[i]->show();
+            zoomWindows_[i]->raise();
+            zoomWindows_[i]->adjustHeight();
+            zoomWindows_[i]->resize(settings.value("size").toSize());
+            zoomWindows_[i]->move(settings.value("pos").toPoint());
+            settings.endGroup();
         }
     }
     

@@ -66,7 +66,6 @@ class QZoomWnd : public QMainWindow
     void adjustHeight();
 
     void onSaveSignal();
-    void onLoadSignal();
 };
 
 #endif /* WIN_ZOOM_H */

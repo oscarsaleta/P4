@@ -31,6 +31,7 @@
 #include <QPrintDialog>
 #include <QToolBar>
 #include <QSettings>
+#include <iostream>
 
 QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
                    double y2)
@@ -70,7 +71,6 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     toolBar1->addAction(actPrint_);
 
     connect(g_ThisVF, &QInputVF::saveSignal, this, &QZoomWnd::onSaveSignal);
-    connect(g_ThisVF, &QInputVF::loadSignal, this, &QZoomWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
     actClose_->setToolTip(
@@ -101,13 +101,20 @@ QZoomWnd::~QZoomWnd()
 }
 
 void QZoomWnd::onSaveSignal()
-{
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"));
-    settings.setValue("QZoomWnd/id",zoomid_);
-    settings.setValue("QZoomWnd/x1",x1_);
-    settings.setValue("QZoomWnd/y1",y1_);
-    settings.setValue("QZoomWnd/x2",x2_);
-    settings.setValue("QZoomWnd/y2",y2_);
+{ //TODO: aixo no es guarda
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);
+    settings.beginGroup(QString("QZoomWnd").append(zoomid_));
+    settings.setValue("id",zoomid_);
+    settings.setValue("x1",x1_);
+    settings.setValue("y1",y1_);
+    settings.setValue("x2",x2_);
+    settings.setValue("y2",y2_);
+    
+    settings.setValue("size",size());
+    settings.setValue("pos",pos());
+    settings.endGroup();
+
+    std::cerr << "zoom window reacts to save signal" << std::endl;
 
 }
 
