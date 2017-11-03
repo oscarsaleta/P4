@@ -23,10 +23,8 @@
 #include "main.h"
 #include "p4application.h"
 #include "plot_points.h"
-#include "file_vf.h"
 
 #include <QPainter>
-#include <QSettings>
 
 // -----------------------------------------------------------------------
 //                          Define Colors in RGB
@@ -87,20 +85,6 @@ QLegendWnd::QLegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
     setMinimumSize(w, h);
     setMaximumSize(w, h);
     setP4WindowTitle(this, "P4 Legend");
-
-    connect(g_ThisVF,&QInputVF::saveSignal,this,&QLegendWnd::onSaveSignal);
-}
-
-void QLegendWnd::onSaveSignal() {
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"), QSettings::NativeFormat);
-    settings.setValue("QLegendWnd/size",size());
-    settings.setValue("QLegendWnd/pos",pos());
-}
-
-void QLegendWnd::loadState() {
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"), QSettings::NativeFormat);
-    resize(settings.value("QLegendWnd/size").toSize());
-    move(settings.value("QLegendWnd/pos").toPoint());
 }
 
 void QLegendWnd::paintEvent(QPaintEvent *p)

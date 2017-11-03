@@ -34,9 +34,6 @@ class QLegendWnd : public QWidget
     void calculateGeometry();
     void loadState();
 
-  public slots:
-    void onSaveSignal();
-    
   private:
     QBoxLayout *mainLayout_;
 
