@@ -25,10 +25,12 @@
 #include "plot_tools.h"
 #include "win_event.h"
 #include "win_print.h"
+#include "file_vf.h"
 
 #include <QDesktopWidget>
 #include <QPrintDialog>
 #include <QToolBar>
+#include <QSettings>
 
 QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
                    double y2)
@@ -37,6 +39,10 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     QToolBar *toolBar1;
     parent_ = main;
     zoomid_ = id;
+    x1_ = x1;
+    x2_ = x2;
+    y1_ = y1;
+    y2_ = y2;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
@@ -63,6 +69,9 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     connect(actPrint_, &QAction::triggered, this, &QZoomWnd::onBtnPrint);
     toolBar1->addAction(actPrint_);
 
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &QZoomWnd::onSaveSignal);
+    connect(g_ThisVF, &QInputVF::loadSignal, this, &QZoomWnd::onLoadSignal);
+
 #ifdef TOOLTIPS
     actClose_->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
@@ -73,7 +82,7 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = new QWinSphere(this, statusBar(), true, x1, y1, x2, y2);
+    sphere_ = new QWinSphere(this, statusBar(), true, x1_, y1_, x2_, y2_);
     sphere_->show();
     setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
@@ -89,6 +98,17 @@ QZoomWnd::~QZoomWnd()
 {
     delete sphere_;
     sphere_ = nullptr;
+}
+
+void QZoomWnd::onSaveSignal()
+{
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"));
+    settings.setValue("QZoomWnd/id",zoomid_);
+    settings.setValue("QZoomWnd/x1",x1_);
+    settings.setValue("QZoomWnd/y1",y1_);
+    settings.setValue("QZoomWnd/x2",x2_);
+    settings.setValue("QZoomWnd/y2",y2_);
+
 }
 
 void QZoomWnd::signalChanged(void)

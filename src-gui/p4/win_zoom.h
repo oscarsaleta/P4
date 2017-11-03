@@ -45,23 +45,28 @@ class QZoomWnd : public QMainWindow
     QAction *actClose_;
     QAction *actRefresh_;
     QAction *actPrint_;
+    double x1_,x2_,y1_,y2_;
 
     QWinSphere *sphere_; // main sphere
 
   public slots:
-    void signalEvaluating(void);
-    void signalEvaluated(void);
-    void signalChanged(void);
+  //TODO: maybe change these 3 to actual signals?
+    void signalEvaluating();
+    void signalEvaluated();
+    void signalChanged();
 
-    void onBtnClose(void);
-    void onBtnRefresh(void);
-    void onBtnPrint(void);
-    bool close(void);
+    void onBtnClose();
+    void onBtnRefresh();
+    void onBtnPrint();
+    bool close();
 
-    void configure(void);
+    void configure();
     void customEvent(QEvent *e);
     void hideEvent(QHideEvent *h);
-    void adjustHeight(void);
+    void adjustHeight();
+
+    void onSaveSignal();
+    void onLoadSignal();
 };
 
 #endif /* WIN_ZOOM_H */

@@ -227,25 +227,29 @@ QPlotWnd::~QPlotWnd()
 void QPlotWnd::onSaveSignal() {
     QString fname = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
-    settings.setValue("QFindDlg/size",size());
-    settings.setValue("QFindDlg/pos",pos());
-    if (legendWindow_!=nullptr)
-        settings.setValue("QFindDlg/legendWindow",true);
-    else
-        settings.setValue("QFindDlg/legendWindow",false);
-        
+    settings.setValue("QPlotWnd/size",size());
+    settings.setValue("QPlotWnd/pos",pos());
+    settings.setValue("QPlotWnd/numZooms",numZooms_);
+    if (numZooms_ != 0) {
+        for (int i = 0; i < numZooms_; i++) {
+            QString valuename = QString("QPlotDlg/zoomid").append(i);
+            settings.setValue(valuename,true);
+        }
+    }
 }
-//TODO: fer que s'obri la finestra de plot al donarli a load i abans de carregar aquesta configuració (a win_main?)
+
 void QPlotWnd::onLoadSignal() {
     QString fname = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(fname,QSettings::NativeFormat);
-    resize(settings.value("QFindDlg/size").toSize());
-    move(settings.value("QFindDlg/pos").toPoint());
-    
-    if (settings.value("QFindDlg/legendWindow").toBool()) {
-        legendWindow_->show();
-        legendWindow_->loadState();
+    resize(settings.value("QPlotWnd/size").toSize());
+    move(settings.value("QPlotWnd/pos").toPoint());
+    int numZooms = settings.value("QPlotWnd/numZooms").toInt();
+    if (numZooms != 0) {
+        for (int i = 0; i < numZooms; i++) {
+            //TODO: crear zoom windows i cridar el load després d'haverles creat
+        }
     }
+    
 
 }
 
