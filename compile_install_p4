@@ -287,6 +287,16 @@ function error_compiler {
     fi
 }
 
+function error_boost {
+    if [[ "${platform}" == 'linux' ]]; then
+        echo "${bold}${red}[Error]${normal} Boost libraries are needed for some dynamic properties of P4 to work."
+        echo "Install them using the proper method for your distribution, e.g.:"
+        echo "    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libboost-dev"
+        echo "    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install boost-devel"
+        echo "    - Arch-based (Archlinux/Antergos): sudo pacman -S boost"
+    fi
+}
+
 if [[ "${platform}" == 'linux' ]]; then
     function error_qtmodules {
         echo "${bold}${red}[Error]${normal} Some Qt5 modules were not found in the system."
@@ -312,6 +322,7 @@ if [[ "${platform}" == 'linux' ]]; then
         echo "have permission to use this command."
         echo ""
     }
+
 fi
 
 
@@ -479,21 +490,38 @@ if [[ "${platform}" == 'linux' ]]; then
     # ldconfig check
     if (command -v ldconfig >/dev/null 2>&1); then
         echo "${green}[Success]${normal}"
-        echo "- Looking for compiler libraries..."
         # gcc libraries check
+        echo "- Looking for compiler libraries..."
         if (ldconfig -p | grep libstdc++ >/dev/null && ldconfig -p | grep libgcc_s >/dev/null && ldconfig -p | grep libc >/dev/null); then
             echo "${green}[Success]${normal}"
         else
             error_compiler
             exit 1
         fi
+        # boost libs check
+        echo "- Looking for Boost libraries..."
+        if (ldconfig -p | grep libboost >/dev/null); then
+            echo "${green}[Success]${normal}"
+        else
+            error_boost
+            exit 1
+        fi
     else
         echo "[Warning] ldconfig could not be executed, trying as super user..."
         # gcc libraries check
+        echo "- Looking for compiler libraries..."
         if (sudo ldconfig -p | grep libstdc++ >/dev/null && sudo ldconfig -p | grep libgcc_s >/dev/null && sudo ldconfig -p | grep libc >/dev/null); then
             echo "${green}[Success]${normal}"
         else
             error_ldconfig
+            exit 1
+        fi
+        echo "- Looking for Boost libraries..."
+        # boost libs check
+        if (sudo ldconfig -p | grep libboost >/dev/null); then
+            echo "${green}[Success]${normal}"
+        else
+            error_boost
             exit 1
         fi
     fi
