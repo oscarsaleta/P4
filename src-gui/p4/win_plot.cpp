@@ -39,8 +39,6 @@
 #include <QToolBar>
 #include <QSettings>
 
-#include <iostream>
-
 QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
     QToolBar *toolBar1;
@@ -55,7 +53,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
-    zoomWindows_ = nullptr;
+    //zoomWindows_ = nullptr;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
@@ -193,6 +191,9 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
 QPlotWnd::~QPlotWnd()
 {
+    zoomWindows_.clear();
+    numZooms_=0;
+    /*
     if (numZooms_ != 0) {
         for (int i = 0; i < numZooms_; i++) {
             delete zoomWindows_[i];
@@ -201,7 +202,7 @@ QPlotWnd::~QPlotWnd()
         delete zoomWindows_;
         zoomWindows_ = nullptr;
         numZooms_ = 0;
-    }
+    }*/
 
     delete legendWindow_;
     legendWindow_ = nullptr;
@@ -242,22 +243,22 @@ void QPlotWnd::onLoadSignal() {
 
     numZooms_ = settings.value("QPlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
-        zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,sizeof(QZoomWnd *) * (numZooms_ + 1));
+        //zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,sizeof(QZoomWnd *) * (numZooms_ + 1));
         for (int i = 1; i <= numZooms_; i++) {
             QString zoomName = QString("QZoomWnd").append(i);
             settings.beginGroup(zoomName);
-            std::cerr << zoomName.toStdString() << std::endl;
             int currentZoomId = settings.value("id").toInt();
             double currentZoomX1 = settings.value("x1").toDouble();
             double currentZoomX2 = settings.value("x2").toDouble();
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
-            zoomWindows_[i] = new QZoomWnd(this, currentZoomId, currentZoomX1,currentZoomY1, currentZoomX2, currentZoomY2);
-            zoomWindows_[i]->show();
-            zoomWindows_[i]->raise();
-            zoomWindows_[i]->adjustHeight();
-            zoomWindows_[i]->resize(settings.value("size").toSize());
-            zoomWindows_[i]->move(settings.value("pos").toPoint());
+            QZoomWnd *thiszoom = new QZoomWnd(this, currentZoomId, currentZoomX1,currentZoomY1, currentZoomX2, currentZoomY2);
+            thiszoom->show();
+            thiszoom->raise();
+            thiszoom->adjustHeight();
+            thiszoom->resize(settings.value("size").toSize());
+            thiszoom->move(settings.value("pos").toPoint());
+            zoomWindows_.push_back(boost::shared_ptr<QZoomWnd>(thiszoom));
             settings.endGroup();
         }
     }
@@ -278,8 +279,9 @@ void QPlotWnd::signalChanged(void)
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalChanged();
-    for (int i = 0; i < numZooms_; i++)
-        zoomWindows_[i]->signalChanged();
+    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++)
+        (*it)->signalChanged();
 }
 
 void QPlotWnd::signalEvaluating(void)
@@ -287,8 +289,9 @@ void QPlotWnd::signalEvaluating(void)
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalEvaluating();
-    for (int i = 0; i < numZooms_; i++)
-        zoomWindows_[i]->signalEvaluating();
+    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++)
+        (*it)->signalEvaluating();
 }
 
 void QPlotWnd::signalEvaluated(void)
@@ -296,8 +299,9 @@ void QPlotWnd::signalEvaluated(void)
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
-    for (int i = 0; i < numZooms_; i++)
-        zoomWindows_[i]->signalEvaluated();
+    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++)
+        (*it)->signalEvaluated();
 }
 
 void QPlotWnd::onBtnClose(void)
@@ -462,37 +466,25 @@ void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     if (x1 == x2 || y1 == y2)
         return;
 
-    zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,
-                                        sizeof(QZoomWnd *) * (numZooms_ + 1));
-    zoomWindows_[numZooms_] =
-        new QZoomWnd(this, ++lastZoomIdentifier_, x1, y1, x2, y2);
-    zoomWindows_[numZooms_]->show();
-    zoomWindows_[numZooms_]->raise();
-    zoomWindows_[numZooms_]->adjustHeight();
+    QZoomWnd *newZoom = new QZoomWnd(this, ++lastZoomIdentifier_, x1, y1, x2, y2);
+    newZoom->show();
+    newZoom->raise();
+    newZoom->adjustHeight();
+    zoomWindows_.push_back(boost::shared_ptr<QZoomWnd>(newZoom));
     numZooms_++;
 }
 
 void QPlotWnd::closeZoomWindow(int id)
 {
-    int i;
-    for (i = 0; i < numZooms_ - 1; i++) {
-        if (zoomWindows_[i]->zoomid_ == id)
-            break;
+    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++) {
+        if ((*it)->zoomid_ == id) {
+            zoomWindows_.erase(it);
+            numZooms_--;
+            return;
+        }
     }
-    if (i == numZooms_)
-        return; // error: zoom window not found???
-
-    delete zoomWindows_[i];
-    zoomWindows_[i] = nullptr;
-    if (i != numZooms_ - 1)
-        memmove(zoomWindows_ + i, zoomWindows_ + i + 1,
-                sizeof(QZoomWnd *) * (numZooms_ - 1 - i));
-
-    numZooms_--;
-    if (numZooms_ == 0) {
-        delete zoomWindows_;
-        zoomWindows_ = nullptr;
-    }
+    return; //error, zoom window not found
 }
 
 void QPlotWnd::customEvent(QEvent *_e)

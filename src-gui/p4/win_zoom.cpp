@@ -31,7 +31,6 @@
 #include <QPrintDialog>
 #include <QToolBar>
 #include <QSettings>
-#include <iostream>
 
 QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
                    double y2)
@@ -101,7 +100,7 @@ QZoomWnd::~QZoomWnd()
 }
 
 void QZoomWnd::onSaveSignal()
-{ //TODO: aixo no es guarda
+{
     QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);
     settings.beginGroup(QString("QZoomWnd").append(zoomid_));
     settings.setValue("id",zoomid_);
@@ -113,9 +112,6 @@ void QZoomWnd::onSaveSignal()
     settings.setValue("size",size());
     settings.setValue("pos",pos());
     settings.endGroup();
-
-    std::cerr << "zoom window reacts to save signal" << std::endl;
-
 }
 
 void QZoomWnd::signalChanged(void)

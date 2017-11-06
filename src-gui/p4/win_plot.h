@@ -31,6 +31,8 @@
 #include <QHideEvent>
 #include <QMainWindow>
 
+#include <boost/shared_ptr.hpp>
+
 /* Forward-declarations to solve cross-include problems */
 class QGcfDlg;         // in win_gcf.h
 class QCurveDlg;       // in win_curve.h
@@ -81,7 +83,7 @@ class QPlotWnd : public QMainWindow
 
     int numZooms_;
     int lastZoomIdentifier_;
-    QZoomWnd **zoomWindows_; // TODO: fer vector
+    std::vector<boost::shared_ptr<QZoomWnd>> zoomWindows_; // TODO: fer vector
 
   public slots:
     void signalEvaluating();
