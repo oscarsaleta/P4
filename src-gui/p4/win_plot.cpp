@@ -36,8 +36,8 @@
 #include "win_zoom.h"
 
 #include <QPrintDialog>
-#include <QToolBar>
 #include <QSettings>
+#include <QToolBar>
 
 QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
@@ -53,16 +53,15 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
-    //zoomWindows_ = nullptr;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
     //    setPalette(palette);
 
     toolBar1 = new QToolBar("PlotBar1", this);
-    toolBar1->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);
+    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2 = new QToolBar("PlotBar2", this);
-    toolBar2->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Preferred);    
+    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
     toolBar2->setMovable(false);
 
@@ -88,7 +87,8 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
     actIntParams_ = new QAction("&Integration Parameters", this);
     actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(actIntParams_, &QAction::triggered, this, &QPlotWnd::onBtnIntParams);
+    connect(actIntParams_, &QAction::triggered, this,
+            &QPlotWnd::onBtnIntParams);
     toolBar1->addAction(actIntParams_);
 
     actGCF_ = new QAction("&GCF", this);
@@ -119,7 +119,8 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     toolBar2->addAction(actLimitCycles_);
 
     actIsoclines_ = new QAction("Isoclines", this);
-    connect(actIsoclines_, &QAction::triggered, this, &QPlotWnd::onBtnIsoclines);
+    connect(actIsoclines_, &QAction::triggered, this,
+            &QPlotWnd::onBtnIsoclines);
     toolBar2->addAction(actIsoclines_);
 
     actView_ = new QAction("&View", this);
@@ -135,7 +136,6 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     addToolBar(Qt::TopToolBarArea, toolBar1);
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(Qt::TopToolBarArea, toolBar2);
-
 
     connect(g_ThisVF, &QInputVF::saveSignal, this, &QPlotWnd::onSaveSignal);
     connect(g_ThisVF, &QInputVF::loadSignal, this, &QPlotWnd::onLoadSignal);
@@ -192,7 +192,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 QPlotWnd::~QPlotWnd()
 {
     zoomWindows_.clear();
-    numZooms_=0;
+    numZooms_ = 0;
 
     delete legendWindow_;
     legendWindow_ = nullptr;
@@ -217,17 +217,19 @@ QPlotWnd::~QPlotWnd()
     g_ThisVF->isoclinesDlg_ = nullptr;
 }
 
-void QPlotWnd::onSaveSignal() {
+void QPlotWnd::onSaveSignal()
+{
     QString fname = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
-    settings.setValue("QPlotWnd/size",size());
-    settings.setValue("QPlotWnd/pos",pos());
-    settings.setValue("QPlotWnd/numZooms",numZooms_);
+    settings.setValue("QPlotWnd/size", size());
+    settings.setValue("QPlotWnd/pos", pos());
+    settings.setValue("QPlotWnd/numZooms", numZooms_);
 }
 
-void QPlotWnd::onLoadSignal() {
+void QPlotWnd::onLoadSignal()
+{
     QString fname = g_ThisVF->getbarefilename().append(".conf");
-    QSettings settings(fname,QSettings::NativeFormat);
+    QSettings settings(fname, QSettings::NativeFormat);
     resize(settings.value("QPlotWnd/size").toSize());
     move(settings.value("QPlotWnd/pos").toPoint());
 
@@ -241,7 +243,9 @@ void QPlotWnd::onLoadSignal() {
             double currentZoomX2 = settings.value("x2").toDouble();
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
-            QZoomWnd *thiszoom = new QZoomWnd(this, currentZoomId, currentZoomX1,currentZoomY1, currentZoomX2, currentZoomY2);
+            QZoomWnd *thiszoom =
+                new QZoomWnd(this, currentZoomId, currentZoomX1, currentZoomY1,
+                             currentZoomX2, currentZoomY2);
             thiszoom->show();
             thiszoom->raise();
             thiszoom->adjustHeight();
@@ -251,8 +255,6 @@ void QPlotWnd::onLoadSignal() {
             settings.endGroup();
         }
     }
-    
-
 }
 
 void QPlotWnd::adjustHeight(void)
@@ -455,7 +457,8 @@ void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     if (x1 == x2 || y1 == y2)
         return;
 
-    QZoomWnd *newZoom = new QZoomWnd(this, ++lastZoomIdentifier_, x1, y1, x2, y2);
+    QZoomWnd *newZoom =
+        new QZoomWnd(this, ++lastZoomIdentifier_, x1, y1, x2, y2);
     newZoom->show();
     newZoom->raise();
     newZoom->adjustHeight();
@@ -473,7 +476,7 @@ void QPlotWnd::closeZoomWindow(int id)
             return;
         }
     }
-    return; //error, zoom window not found
+    return; // error, zoom window not found
 }
 
 void QPlotWnd::customEvent(QEvent *_e)
@@ -520,7 +523,7 @@ void QPlotWnd::customEvent(QEvent *_e)
         p = (struct DOUBLEPOINT *)(e->data());
         x = p->x;
         y = p->y;
-        //void *win = *((void **)(p + 1));
+        // void *win = *((void **)(p + 1));
         delete p;
         p = nullptr;
 
