@@ -159,25 +159,98 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
     setP4WindowTitle(this, cap);
 }
 
-void QStartDlg::onSaveSignal() {
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);
-    if (plotWindow_!=nullptr)
-        settings.setValue("QStartDlg/plotWindow",true);
-    else
-        settings.setValue("QStartDlg/plotWindow",false);
+void QStartDlg::onSaveSignal()
+{
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
+                       QSettings::NativeFormat);
+    settings.beginGroup("QStartDlg");
 
+    settings.setValue("pos", pos());
+    settings.setValue("size", size());
+
+    if (viewInfiniteWindow_ != nullptr) {
+        settings.setValue("viewInfiniteWindow", true);
+        settings.setValue("viewInfiniteWindow-pos", viewInfiniteWindow_->pos());
+        settings.setValue("viewInfiniteWindow-size",
+                          viewInfiniteWindow_->size());
+    }
+    if (viewFiniteWindow_ != nullptr) {
+        settings.setValue("viewFiniteWindow", true);
+        settings.setValue("viewFiniteWindow-pos", viewFiniteWindow_->pos());
+        settings.setValue("viewFiniteWindow-size", viewFiniteWindow_->size());
+    }
+    if (plotWindow_ != nullptr)
+        settings.setValue("plotWindow", true);
+    else
+        settings.setValue("plotWindow", false);
+    if (g_ThisVF != nullptr) {
+        if (g_ThisVF->outputWindow_ != nullptr) {
+            settings.setValue("outputWindow", true);
+            settings.setValue("outputWindow-size",
+                              g_ThisVF->outputWindow_->size());
+            settings.setValue("outputWindow-pos",
+                              g_ThisVF->outputWindow_->pos());
+        }
+        if (g_ThisVF->processText_ != nullptr) {
+            settings.setValue("processText", true);
+            settings.setValue("processText-contents",
+                              g_ThisVF->processText_->toPlainText());
+        }
+    }
+    settings.endGroup();
 }
 
-void QStartDlg::onLoadSignal() {
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);    
-    if (settings.value("QStartDlg/plotWindow").toBool()) {
-        if (plotWindow_!=nullptr)
+void QStartDlg::onLoadSignal()
+{
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
+                       QSettings::NativeFormat);
+    settings.beginGroup("QStartDlg");
+    resize(settings.value("size").toSize());
+    move(settings.value("pos").toPoint());
+    if (settings.value("plotWindow").toBool()) {
+        if (plotWindow_ != nullptr)
             plotWindow_->show();
         else {
             onPlot();
             plotWindow_->onLoadSignal();
         }
     }
+    if (settings.value("viewInfiniteWindow").toBool()) {
+        if (viewInfiniteWindow_ != nullptr) {
+            delete viewInfiniteWindow_;
+            viewInfiniteWindow_ = nullptr;
+        }
+        onViewInfinite();
+        viewInfiniteWindow_->resize(
+            settings.value("viewInfiniteWindow-size").toSize());
+        viewInfiniteWindow_->move(
+            settings.value("viewInfiniteWindow-pos").toPoint());
+    }
+    if (settings.value("viewFiniteWindow").toBool()) {
+        if (viewFiniteWindow_ != nullptr) {
+            delete viewFiniteWindow_;
+            viewFiniteWindow_ = nullptr;
+        }
+        onViewFinite();
+        viewFiniteWindow_->resize(
+            settings.value("viewFiniteWindow-size").toSize());
+        viewFiniteWindow_->move(
+            settings.value("viewFiniteWindow-pos").toPoint());
+    }
+    if (settings.value("outputWindow").toBool() &&
+        settings.value("processText").toBool()) {
+        if (g_ThisVF != nullptr) {
+            g_ThisVF->createProcessWindow();
+            g_ThisVF->terminateProcessButton_->setDisabled(true);
+            g_ThisVF->outputWindow_->resize(
+                settings.value("outputWindow-size").toSize());
+            g_ThisVF->outputWindow_->move(
+                settings.value("outputWindow-pos").toPoint());
+            g_ThisVF->processText_->setPlainText(
+                settings.value("processText-contents").toString());
+        }
+    }
+    settings.endGroup();
 }
 
 void QStartDlg::onHelp()
