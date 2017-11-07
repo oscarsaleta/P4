@@ -29,6 +29,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
+#include <QSettings>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -369,6 +370,9 @@ bool QInputVF::checkevaluated(void)
 // -----------------------------------------------------------------------
 bool QInputVF::save(void)
 {
+    QSettings settings(getbarefilename().append(".conf"),
+                       QSettings::NativeFormat);
+    settings.clear();
     emit saveSignal();
 
     FILE *fp;
