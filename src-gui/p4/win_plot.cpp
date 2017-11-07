@@ -193,16 +193,6 @@ QPlotWnd::~QPlotWnd()
 {
     zoomWindows_.clear();
     numZooms_=0;
-    /*
-    if (numZooms_ != 0) {
-        for (int i = 0; i < numZooms_; i++) {
-            delete zoomWindows_[i];
-            zoomWindows_[i] = nullptr;
-        }
-        delete zoomWindows_;
-        zoomWindows_ = nullptr;
-        numZooms_ = 0;
-    }*/
 
     delete legendWindow_;
     legendWindow_ = nullptr;
@@ -243,7 +233,6 @@ void QPlotWnd::onLoadSignal() {
 
     numZooms_ = settings.value("QPlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
-        //zoomWindows_ = (QZoomWnd **)realloc(zoomWindows_,sizeof(QZoomWnd *) * (numZooms_ + 1));
         for (int i = 1; i <= numZooms_; i++) {
             QString zoomName = QString("QZoomWnd").append(i);
             settings.beginGroup(zoomName);
