@@ -53,6 +53,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
+    flagAllSepsPlotted_ = false;
 
     //    QPalette palette;
     //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
@@ -224,6 +225,7 @@ void QPlotWnd::onSaveSignal()
     settings.setValue("QPlotWnd/size", size());
     settings.setValue("QPlotWnd/pos", pos());
     settings.setValue("QPlotWnd/numZooms", numZooms_);
+    settings.setValue("QPlotWnd/allSeps",flagAllSepsPlotted_);
 }
 
 void QPlotWnd::onLoadSignal()
@@ -254,6 +256,10 @@ void QPlotWnd::onLoadSignal()
             zoomWindows_.push_back(boost::shared_ptr<QZoomWnd>(thiszoom));
             settings.endGroup();
         }
+    }
+
+    if (settings.value("QPlotWnd/allSeps").toBool()) {
+        onBtnPlotAllSeps(); 
     }
 }
 
@@ -373,6 +379,7 @@ void QPlotWnd::onBtnPlotAllSeps(void)
     sphere_->prepareDrawing();
     plot_all_sep(sphere_);
     sphere_->finishDrawing();
+    flagAllSepsPlotted_ = true;
 }
 
 void QPlotWnd::onBtnLimitCycles(void)

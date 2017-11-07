@@ -84,6 +84,8 @@ class QPlotWnd : public QMainWindow
     int numZooms_;
     int lastZoomIdentifier_;
     std::vector<boost::shared_ptr<QZoomWnd>> zoomWindows_;
+
+    bool flagAllSepsPlotted_;
     
   public slots:
     void signalEvaluating();
