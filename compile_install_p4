@@ -288,13 +288,16 @@ function error_compiler {
 }
 
 function error_boost {
+    echo "${bold}${red}[Error]${normal} Boost libraries are needed for some dynamic properties of P4 to work."
     if [[ "${platform}" == 'linux' ]]; then
-        echo "${bold}${red}[Error]${normal} Boost libraries are needed for some dynamic properties of P4 to work."
         echo "Install them using the proper method for your distribution, e.g.:"
         echo "    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libboost-dev"
         echo "    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install boost-devel"
         echo "    - Arch-based (Archlinux/Antergos): sudo pacman -S boost"
+    elif [[ "{platform}" == 'darwin' ]]; then
+        echo "You can install it using this command in a terminal: brew install boost"
     fi
+    echo ""
 }
 
 if [[ "${platform}" == 'linux' ]]; then
@@ -524,6 +527,13 @@ if [[ "${platform}" == 'linux' ]]; then
             error_boost
             exit 1
         fi
+    fi
+elif [[ ${platform} == 'darwin' ]]; then
+    echo "- Looking for Boost libraries..."
+    if (ls /usr/local/include | grep libboost >/dev/null); then
+        echo "${green}[Success]${normal}"
+    else
+        error_boost
     fi
 fi
 
