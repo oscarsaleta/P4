@@ -80,7 +80,7 @@ static void xfig_print_box(int x, int y, int color)
     y /= s_XFigResolution;
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = g_printColorTable[bgColours::CFOREGROUND];
 
     /*
         object type     2   (=polyline)
@@ -122,7 +122,7 @@ static void xfig_print_diamond(int x, int y, int color)
         xfig_line_finish();
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = g_printColorTable[bgColours::CFOREGROUND];
 
     x *= 1200;
     x /= s_XFigResolution;
@@ -152,7 +152,7 @@ static void xfig_print_triangle(int x, int y, int color)
         xfig_line_finish();
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = g_printColorTable[bgColours::CFOREGROUND];
 
     x *= 1200;
     x /= s_XFigResolution;
@@ -185,7 +185,7 @@ static void xfig_print_cross(int x, int y, int color)
         xfig_line_finish();
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = g_printColorTable[bgColours::CFOREGROUND];
 
     x *= 1200;
     x /= s_XFigResolution;
@@ -231,7 +231,7 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
     color = g_printColorTable[color];
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = g_printColorTable[bgColours::CFOREGROUND];
 
     x0 = (int)_x0;
     y0 = (int)_y0;
@@ -432,7 +432,7 @@ static void xfig_print_point(double _x0, double _y0, int color)
     color = g_printColorTable[color];
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = g_printColorTable[bgColours::CFOREGROUND];
 
     x0 = (int)_x0;
     y0 = (int)_y0;

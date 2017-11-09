@@ -20,17 +20,17 @@
 #include "win_zoom.h"
 
 #include "custom.h"
+#include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
 #include "plot_tools.h"
 #include "win_event.h"
 #include "win_print.h"
-#include "file_vf.h"
 
 #include <QDesktopWidget>
 #include <QPrintDialog>
-#include <QToolBar>
 #include <QSettings>
+#include <QToolBar>
 
 QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
                    double y2)
@@ -45,7 +45,8 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     y2_ = y2;
 
     //    QPalette palette;
-    //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
+    //    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND)
+    //    );
     //    setPalette(palette);
 
     if (g_p4smallicon != nullptr)
@@ -101,16 +102,17 @@ QZoomWnd::~QZoomWnd()
 
 void QZoomWnd::onSaveSignal()
 {
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),QSettings::NativeFormat);
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
+                       QSettings::NativeFormat);
     settings.beginGroup(QString("QZoomWnd").append(zoomid_));
-    settings.setValue("id",zoomid_);
-    settings.setValue("x1",x1_);
-    settings.setValue("y1",y1_);
-    settings.setValue("x2",x2_);
-    settings.setValue("y2",y2_);
-    
-    settings.setValue("size",size());
-    settings.setValue("pos",pos());
+    settings.setValue("id", zoomid_);
+    settings.setValue("x1", x1_);
+    settings.setValue("y1", y1_);
+    settings.setValue("x2", x2_);
+    settings.setValue("y2", y2_);
+
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
     settings.endGroup();
 }
 

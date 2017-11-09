@@ -94,7 +94,7 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
 
     paint.setFont(*(g_p4app->legendFont_));
 
-    paint.setPen(QPen(QXFIGCOLOR(CFOREGROUND)));
+    paint.setPen(QPen(QXFIGCOLOR(bgColours::CFOREGROUND)));
     paint.drawText(hmargin1_, vmargin1_, "Non-Degenerate:");
     paint.drawText(hmargin4_, vmargin1_, "Semi-hyperbolic:");
     paint.drawText(hmargin1_, vmargin3_, "Separatrices:");
@@ -187,7 +187,7 @@ void QLegendWnd::paintEvent(QPaintEvent *p)
                    hmargin1_ + sepwidth_ - 1,
                    vmargin4_ + 3 * interline_ - xheight_);
 
-    paint.setPen(QPen(QXFIGCOLOR(CORBIT)));
+    paint.setPen(QPen(QXFIGCOLOR(bgColours::CORBIT)));
     paint.drawLine(hmargin4_, vmargin25_ + interline_ - xheight_,
                    hmargin4_ + orbitwidth_ - 1,
                    vmargin25_ + interline_ - xheight_);
@@ -248,7 +248,7 @@ void QLegendWnd::calculateGeometry(void)
     QFontMetrics fm(*(g_p4app->legendFont_));
 
     QPalette palette;
-    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND));
+    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND));
     setPalette(palette);
 
     hmargin1_ = fm.maxWidth();

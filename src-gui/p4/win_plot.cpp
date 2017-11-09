@@ -56,7 +56,7 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     flagAllSepsPlotted_ = false;
 
     //    QPalette palette;
-    //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
+    //    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND) );
     //    setPalette(palette);
 
     toolBar1 = new QToolBar("PlotBar1", this);
