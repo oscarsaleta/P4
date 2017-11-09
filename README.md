@@ -73,6 +73,10 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libmpfr-dev`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install mpfr-devel`
         + Arch-based (Archlinux/Angergos): `sudo pacman -S gmp mpfr`
+    - Boost libraries (version 1.62.0 used in development, should work with older versions too):
+        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libboost-dev`
+        + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install boost-devel`
+        + Arch-based (Archlinux/Angergos): `sudo pacman -S boost`
 * **Compilation from source using Qt Creator:**
     - Dependencies itemized above,
 	- Qt Creator IDE:
@@ -102,6 +106,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Download from [Qt website](https://www.qt.io/ "Qt official website"),
 	- C++ compiler: Microsoft Visual C++ Compiler (tested with versions 14.0 and 15.0).
         + Download from [Visual Studio Community](https://www.visualstudio.com/vs/cplusplus/#downloads "Visual Studio Community C++ download").
+    - Boost libraries: download and install from [Boost website](http://www.boost.org/ "Boost official website").
 
 
 ## macOS
@@ -139,6 +144,8 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
     - MPFR library: installed using Homebrew
         + Run in terminal `brew install mpfr`
+    - Boost libraries (development uses version 1.62.0):
+        + Run in terminal `brew install boost`
     - _You will need to open a new terminal if you updated the PATH for the changes to take effect_
 
 
