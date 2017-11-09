@@ -33,15 +33,14 @@
 #include <QTextBrowser>
 
 QStartDlg *g_p4stardlg = nullptr;
+// initialise background colors
+int bgColours::CBACKGROUND = BLACK;
+int bgColours::CFOREGROUND = WHITE;
+int bgColours::CORBIT = YELLOW;
 
 QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 {
     // general initialization
-
-    // initialise background colors
-    bgColours::CBACKGROUND = BLACK;
-    bgColours::CFOREGROUND = WHITE;
-    bgColours::CORBIT = YELLOW;
 
     QString cap;
     cap = "Planar Polynomial Phase Portraits";
