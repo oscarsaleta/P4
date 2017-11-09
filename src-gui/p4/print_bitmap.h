@@ -24,8 +24,7 @@
 
 #include <QPainter>
 
-extern int g_printColorTable[NUMXFIGCOLORS];
-
+int printColorTable(int color);
 void prepareP4Printing(int w, int h, bool isblackwhite, QPainter *p4paint,
                        int linewidth, int symbolwidth);
 void finishP4Printing(void);
