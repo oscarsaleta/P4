@@ -38,6 +38,11 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 {
     // general initialization
 
+    // initialise background colors
+    bgColours::CBACKGROUND = BLACK;
+    bgColours::CFOREGROUND = WHITE;
+    bgColours::CORBIT = YELLOW;
+
     QString cap;
     cap = "Planar Polynomial Phase Portraits";
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
