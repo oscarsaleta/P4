@@ -189,11 +189,15 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     // lay00->addWidget(btn_red, 4, 2);
 
     QHBoxLayout *bgbuttons = new QHBoxLayout();
-    bgbuttons->addStretch(0);
     bgbuttons->addWidget(lbl_bgcolor_);
+    bgbuttons->addStretch(0);
     bgbuttons->addWidget(btn_bgblack_);
     bgbuttons->addWidget(btn_bgwhite_);
-    bgbuttons->addStretch(0);
+
+    if (bgColours::CBACKGROUND == BLACK)
+        btn_bgblack_->toggle();
+    else
+        btn_bgwhite_->toggle();
 
     mainLayout_->addLayout(lay00);
     mainLayout_->addSpacing(3);

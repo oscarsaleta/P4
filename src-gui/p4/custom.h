@@ -197,6 +197,11 @@ namespace bgColours
 extern int CFOREGROUND; // foreground color
 extern int CBACKGROUND; // background color
 extern int CORBIT;      // orbits (use GREEN1 when background is white)
+// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
+// printing.
+// For example, when printing, BLACK can be reversed with WHITE, so that the
+// BLACK background on screen is not printed black.
+extern bool PRINT_REVERSE_BLACK_AND_WHITE; 
 }
 
 #define CSADDLE_NODE MAGENTA                   // saddle-node
@@ -223,16 +228,6 @@ extern int CORBIT;      // orbits (use GREEN1 when background is white)
 #define CCURV CYAN
 #define CISOC PINK1
 
-// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
-// printing.
-// For example, when printing, BLACK can be reversed with WHITE, so that the
-// BLACK
-// background on screen is not printed black.
-
-// comment following line if you want an EXACT screen copy (with black
-// background)
-
-#define PRINT_REVERSE_BLACK_AND_WHITE
 
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 
