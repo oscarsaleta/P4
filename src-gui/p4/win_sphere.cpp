@@ -2202,7 +2202,7 @@ void QWinSphere::printPoincareSphere(void)
     while (p != nullptr) {
         q = p;
         p = p->next;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
@@ -2230,7 +2230,7 @@ void QWinSphere::printPoincareLyapunovSphere(void)
     while (p != nullptr) {
         q = p;
         p = p->next;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 
@@ -2252,7 +2252,7 @@ void QWinSphere::printPoincareLyapunovSphere(void)
     while (p != nullptr) {
         q = p;
         p = p->next;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
@@ -2522,7 +2522,7 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
         staticPainter_->translate(tx, ty);
         if (iszoom_ || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p = QPen(QXFIGCOLOR(g_printColorTable[bgColours::CFOREGROUND]), (int)lw);
+            QPen p = QPen(QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)), (int)lw);
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
         }
