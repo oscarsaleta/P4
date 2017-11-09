@@ -201,7 +201,7 @@ extern int CORBIT;      // orbits (use GREEN1 when background is white)
 // printing.
 // For example, when printing, BLACK can be reversed with WHITE, so that the
 // BLACK background on screen is not printed black.
-extern bool PRINT_REVERSE_BLACK_AND_WHITE; 
+extern bool PRINT_WHITE_BG; 
 }
 
 #define CSADDLE_NODE MAGENTA                   // saddle-node
