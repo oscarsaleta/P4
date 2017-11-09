@@ -37,7 +37,7 @@ QStartDlg *g_p4stardlg = nullptr;
 int bgColours::CBACKGROUND = BLACK;
 int bgColours::CFOREGROUND = WHITE;
 int bgColours::CORBIT = YELLOW;
-bool bgColours::PRINT_REVERSE_BLACK_AND_WHITE = true;
+bool bgColours::PRINT_WHITE_BG = true;
 
 QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 {
