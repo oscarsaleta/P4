@@ -23,8 +23,10 @@
 #include <QBoxLayout>
 #include <QCheckBox>
 #include <QDialog>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QWidget>
 
 class QPrintDlg : public QDialog
@@ -39,6 +41,11 @@ class QPrintDlg : public QDialog
     QPushButton *btn_jpeg_;
     QBoxLayout *mainLayout_;
     QCheckBox *btn_blackwhite_;
+
+    QLabel *lbl_bgcolor_;
+    QRadioButton *btn_whitebg_;
+    QRadioButton *btn_blackbg_;
+
     QLineEdit *edt_resolution_;
     QLineEdit *edt_linewidth_;
     QLineEdit *edt_symbolsize_;
