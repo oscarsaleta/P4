@@ -22,7 +22,7 @@
 #include "custom.h"
 #include "main.h"
 
-#include <QLabel>
+#include <QButtonGroup>
 
 /*
     The Print Window is a modal dialog box!
@@ -62,6 +62,19 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     btn_blackwhite_ = new QCheckBox("&Black&&White printing", this);
     btn_blackwhite_->setChecked(sm_LastBlackWhite);
 
+    lbl_bgcolor_ = new QLabel("Print background colour:", this);
+    btn_whitebg_ = new QRadioButton("&White", this);
+    btn_blackbg_ = new QRadioButton("B&lack", this);
+
+    QButtonGroup *bgcolors = new QButtonGroup(this);
+    bgcolors->addButton(btn_whitebg_);
+    bgcolors->addButton(btn_blackbg_);
+
+    if (bgColours::PRINT_WHITE_BG)
+        btn_whitebg_->toggle();
+    else
+        btn_blackbg_->toggle();
+
 #ifdef TOOLTIPS
 #ifdef USE_SYSTEM_PRINTER
     btn_default_->setToolTip("Print through default printing mechanism.\nIn "
@@ -74,11 +87,18 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     btn_jpeg_->setToolTip("Produce a .JPG image file");
     btn_cancel_->setToolTip("Cancel printing");
     btn_blackwhite_->setToolTip(
-        "If checked, produce a black&white image, rather than a color image");
+        "If checked, produce a black&white image, rather than a colour image");
+    lbl_bgcolor_->setToolTip(
+        "Select the background colour to use for printing, "
+        "regardless of plot background colour configuration in "
+        "main settings");
+    btn_whitebg_->setToolTip("Use white background for printing");
+    btn_blackbg_->setToolTip("Use black background for printing");
     edt_resolution_->setToolTip(
         "Choose a resolution. Images of 15cm wide are produced."
         "The number of horizontal pixels is hence 15*resolution/2.54.\n"
-        "This number affects the quality, but not the phsyical dimensions of "
+        "This number affects the quality, but not the phsyical "
+        "dimensions of "
         "picture.");
     edt_linewidth_->setToolTip(
         "The width of lines (orbits, separatrices, ...) in millimeters");
@@ -111,9 +131,22 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     connect(btn_jpeg_, &QPushButton::clicked, this,
             &QPrintDlg::onJpegImagePrinter);
     connect(btn_cancel_, &QPushButton::clicked, this, &QPrintDlg::onCancel);
+    connect(btn_whitebg_, &QRadioButton::toggled, this,
+            [=]() { bgColours::PRINT_WHITE_BG = true; });
+    connect(btn_blackbg_, &QRadioButton::toggled, this,
+            [=]() { bgColours::PRINT_WHITE_BG = false; });
 
     mainLayout_->addSpacing(2);
     mainLayout_->addWidget(btn_blackwhite_);
+    mainLayout_->addSpacing(2);
+
+    QHBoxLayout *printColourLayout = new QHBoxLayout();
+    printColourLayout->addWidget(lbl_bgcolor_);
+    printColourLayout->addStretch(0);
+    printColourLayout->addWidget(btn_whitebg_);
+    printColourLayout->addWidget(btn_blackbg_);
+
+    mainLayout_->addLayout(printColourLayout);
     mainLayout_->addSpacing(2);
 
     QHBoxLayout *l1 = new QHBoxLayout();
@@ -155,6 +188,7 @@ bool QPrintDlg::readDialog(void)
     bool result;
 
     sm_LastBlackWhite = btn_blackwhite_->isChecked();
+
     result =
         readFloatField(edt_resolution_, &res, DEFAULT_RESOLUTION, 72, 4800);
     sm_LastResolution = (int)res;

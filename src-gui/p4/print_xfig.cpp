@@ -80,7 +80,7 @@ static void xfig_print_box(int x, int y, int color)
     y /= s_XFigResolution;
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = printColorTable(bgColours::CFOREGROUND);
 
     /*
         object type     2   (=polyline)
@@ -89,7 +89,7 @@ static void xfig_print_box(int x, int y, int color)
         thickness       1   (in 1/80 of an inch)
         pencolor        color
         fillcolor       color
-        depth           -1  (precedence over other objects !!!)
+        depth           0  (precedence over other objects !!!)
         penstyle        0   (unused in XFIG 3.1)
         areafill        46  (45 degree cross hatch)
         styleval        0.0 (only relevant for dashed lines)
@@ -102,7 +102,7 @@ static void xfig_print_box(int x, int y, int color)
     */
 
     QString s;
-    s.sprintf("2 2 0 1 %d %d -1 0 46 0.0 0 0 0 0 0 5\n", color, color);
+    s.sprintf("2 2 0 1 %d %d 0 0 46 0.0 0 0 0 0 0 5\n", color, color);
     s_XFigStream << s;
     s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x + s_XFigSymbolWidth / 2,
               y - s_XFigSymbolWidth / 2, x + s_XFigSymbolWidth / 2,
@@ -122,7 +122,7 @@ static void xfig_print_diamond(int x, int y, int color)
         xfig_line_finish();
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
     x /= s_XFigResolution;
@@ -152,7 +152,7 @@ static void xfig_print_triangle(int x, int y, int color)
         xfig_line_finish();
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
     x /= s_XFigResolution;
@@ -185,7 +185,7 @@ static void xfig_print_cross(int x, int y, int color)
         xfig_line_finish();
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
     x /= s_XFigResolution;
@@ -228,10 +228,10 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
     if (s_XFigFile == nullptr)
         return;
 
-    color = g_printColorTable[color];
+    color = printColorTable(color);
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = printColorTable(bgColours::CFOREGROUND);
 
     x0 = (int)_x0;
     y0 = (int)_y0;
@@ -281,7 +281,7 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
             thickness       ... (in 1/80 of an inch)
             pencolor        color
             fillcolor       color
-            depth           0   (no precedence over other objects)
+            depth           50   (no precedence over other objects)
             penstyle        0   (unused in XFIG 3.1)
             areafill        -1  (45 degree cross hatch)  USE 20 INSTEAD (FULL
            SATURATION OF THE COLOR)
@@ -311,9 +311,9 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
         }
 
         QString s;
-        s.sprintf("1 1 %d %d %d %d 0 0 -1 %g 1 0.0 %d %d %d %d %d %d %d %d\n",
-                  linestyle, s_XFigLineWidth / 2, g_printColorTable[color],
-                  g_printColorTable[color], (float)styleval, (int)x0, (int)y0,
+        s.sprintf("1 1 %d %d %d %d 50 0 -1 %g 1 0.0 %d %d %d %d %d %d %d %d\n",
+                  linestyle, s_XFigLineWidth / 2, printColorTable(color),
+                  printColorTable(color), (float)styleval, (int)x0, (int)y0,
                   (int)a, (int)b, (int)x0, (int)y0, ((int)x0) + ((int)a),
                   (int)y0);
         s_XFigStream << s;
@@ -378,7 +378,7 @@ static void xfig_line_finish(void)
         thickness       thickness   (in 1/80 of an inch)
         pencolor        color
         fillcolor       7   (=white)
-        depth           0   (no precedence over other objects)
+        depth           50   (no precedence over other objects)
         penstyle        0   (unused in XFIG 3.1)
         areafill        -1  (no fill)
         styleval        0.0 (only relevant for dashed lines)
@@ -392,7 +392,7 @@ static void xfig_line_finish(void)
 
     if (s_XFigFile != nullptr) {
         QString s;
-        s.sprintf("2 1 0 %d %d  7 0 0 -1 0.0 0 1 -1 0 0 %d\n   ",
+        s.sprintf("2 1 0 %d %d 7 50 0 -1 0.0 0 1 -1 0 0 %d\n   ",
                   s_XFigLineWidth / 2, s_xfig_line_color,
                   s_xfig_line_numpoints);
         s_XFigStream << s;
@@ -429,10 +429,10 @@ static void xfig_print_point(double _x0, double _y0, int color)
     if (s_XFigFile == nullptr)
         return;
 
-    color = g_printColorTable[color];
+    color = printColorTable(color);
 
     if (s_XFigBlackWhitePrint)
-        color = g_printColorTable[CFOREGROUND];
+        color = printColorTable(bgColours::CFOREGROUND);
 
     x0 = (int)_x0;
     y0 = (int)_y0;
@@ -451,7 +451,7 @@ static void xfig_print_point(double _x0, double _y0, int color)
         thickness       1   (in 1/80 of an inch)
         pencolor        color
         fillcolor       color
-        depth           0   (no precedence over other objects)
+        depth           50  (no precedence over other objects)
         penstyle        0   (unused in XFIG 3.1)
         areafill        46  (45 degree cross hatch)  USE 20 INSTEAD (FULL
        SATURATION OF THE COLOR)
@@ -469,7 +469,7 @@ static void xfig_print_point(double _x0, double _y0, int color)
     */
 
     QString s;
-    s.sprintf("1 3 0 1 %d %d 0 0 46 0.0 1 0.0 %d %d %d %d %d %d %d %d\n", color,
+    s.sprintf("1 3 0 1 %d %d 50 0 46 0.0 1 0.0 %d %d %d %d %d %d %d %d\n", color,
               color, x0, y0, s_XFigRealLineWidth / 2, s_XFigRealLineWidth / 2,
               x0, y0, x0 + s_XFigRealLineWidth, y0);
     s_XFigStream << s;
@@ -477,71 +477,71 @@ static void xfig_print_point(double _x0, double _y0, int color)
 
 static void xfig_print_saddle(double x, double y)
 {
-    xfig_print_box((int)x, (int)y, g_printColorTable[CSADDLE]);
+    xfig_print_box((int)x, (int)y, printColorTable(CSADDLE));
 }
 
 static void xfig_print_stablenode(double x, double y)
 {
-    xfig_print_box((int)x, (int)y, g_printColorTable[CNODE_S]);
+    xfig_print_box((int)x, (int)y, printColorTable(CNODE_S));
 }
 static void xfig_print_unstablenode(double x, double y)
 {
-    xfig_print_box((int)x, (int)y, g_printColorTable[CNODE_U]);
+    xfig_print_box((int)x, (int)y, printColorTable(CNODE_U));
 }
 
 static void xfig_print_stableweakfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, g_printColorTable[CWEAK_FOCUS_S]);
+    xfig_print_diamond((int)x, (int)y, printColorTable(CWEAK_FOCUS_S));
 }
 
 static void xfig_print_unstableweakfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, g_printColorTable[CWEAK_FOCUS_U]);
+    xfig_print_diamond((int)x, (int)y, printColorTable(CWEAK_FOCUS_U));
 }
 
 static void xfig_print_weakfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, g_printColorTable[CWEAK_FOCUS]);
+    xfig_print_diamond((int)x, (int)y, printColorTable(CWEAK_FOCUS));
 }
 
 static void xfig_print_center(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, g_printColorTable[CCENTER]);
+    xfig_print_diamond((int)x, (int)y, printColorTable(CCENTER));
 }
 
 static void xfig_print_stablestrongfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, g_printColorTable[CSTRONG_FOCUS_S]);
+    xfig_print_diamond((int)x, (int)y, printColorTable(CSTRONG_FOCUS_S));
 }
 
 static void xfig_print_unstablestrongfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, g_printColorTable[CSTRONG_FOCUS_U]);
+    xfig_print_diamond((int)x, (int)y, printColorTable(CSTRONG_FOCUS_U));
 }
 
 static void xfig_print_sesaddle(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, g_printColorTable[CSADDLE]);
+    xfig_print_triangle((int)x, (int)y, printColorTable(CSADDLE));
 }
 
 static void xfig_print_sesaddlenode(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, g_printColorTable[CSADDLE_NODE]);
+    xfig_print_triangle((int)x, (int)y, printColorTable(CSADDLE_NODE));
 }
 
 static void xfig_print_sestablenode(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, g_printColorTable[CNODE_S]);
+    xfig_print_triangle((int)x, (int)y, printColorTable(CNODE_S));
 }
 
 static void xfig_print_seunstablenode(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, g_printColorTable[CNODE_U]);
+    xfig_print_triangle((int)x, (int)y, printColorTable(CNODE_U));
 }
 
 static void xfig_print_degen(double x, double y)
 {
-    xfig_print_cross((int)x, (int)y, g_printColorTable[CDEGEN]);
+    xfig_print_cross((int)x, (int)y, printColorTable(CDEGEN));
 }
 
 // ---------------------------------------------------------------------------------------
@@ -636,7 +636,31 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                "Inches\n"   // use inches (XFIG makes rounding errors with
                             // centimeters)
                "1200 2\n";  // unused in XFIG???
-
+        if (!bgColours::PRINT_WHITE_BG) {
+            /*
+                object type     2   (=polyline)
+                subtype         2   (=box)
+                linestyle       0   (=solid)
+                thickness       1   (in 1/80 of an inch)
+                pencolor        0   (=black)
+                fillcolor       7   (=white)
+                depth           999 (below other objects)
+                penstyle        -1  (unused in XFIG 3.1)
+                areafill        0   (pencolor fill)
+                styleval        0.0 (only relevant for dashed lines)
+                joinstyle       0   (=miter)
+                capstyle        0   (=butt)
+                radius          0   (no rounded box)
+                forwardarrow    0   (no arrow)
+                backwardarrow   0   (no arrow)
+                npoints         5   (=5 points)
+            */
+            QString s;
+            s.sprintf("2 2 0 1 0 7 999 -1 0 0.0000000 0 0 0 0 0 5\n"
+                      "    %d %d %d %d %d %d %d %d %d %d\n",
+                      0, 0, s_XFigW, 0, s_XFigW, s_XFigH, 0, s_XFigH, 0, 0);
+            s_XFigStream << s;
+        }
         if (g_VFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
             /*
                 object type     2   (=polyline)
@@ -645,7 +669,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                 thickness       1   (in 1/80 of an inch)
                 pencolor        0   (=black)
                 fillcolor       7   (=white)
-                depth           0   (no precedence over other objects)
+                depth           998 (below all objects except background)
                 penstyle        0   (unused in XFIG 3.1)
                 areafill        -1  (no fill)
                 styleval        0.0 (only relevant for dashed lines)
@@ -657,7 +681,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                 npoints         5   (=5 points)
             */
             QString s;
-            s.sprintf("2 2 0 1 0 7 0 0 -1 0.0000000 0 0 0 0 0 5\n"
+            s.sprintf("2 2 0 1 0 7 998 0 -1 0.0000000 0 0 0 0 0 5\n"
                       "    %d %d %d %d %d %d %d %d %d %d\n",
                       0, 0, s_XFigW, 0, s_XFigW, s_XFigH, 0, s_XFigH, 0, 0);
             s_XFigStream << s;

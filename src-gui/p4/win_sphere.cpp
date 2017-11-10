@@ -272,20 +272,20 @@ void QWinSphere::setupPlot(void)
     struct P4POLYLINES *t;
     QPalette palette;
 
-    spherebgcolor_ = CBACKGROUND;
+    spherebgcolor_ = bgColours::CBACKGROUND;
     palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_));
     setPalette(palette);
 
     while (circleAtInfinity_ != nullptr) {
         t = circleAtInfinity_;
         circleAtInfinity_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     while (plCircle_ != nullptr) {
         t = plCircle_;
         plCircle_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
 
@@ -364,13 +364,13 @@ QWinSphere::~QWinSphere()
     while (circleAtInfinity_ != nullptr) {
         t = circleAtInfinity_;
         circleAtInfinity_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     while (plCircle_ != nullptr) {
         t = plCircle_;
         plCircle_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
 
@@ -593,13 +593,13 @@ void QWinSphere::adjustToNewSize(void)
     while (circleAtInfinity_ != nullptr) {
         t = circleAtInfinity_;
         circleAtInfinity_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     while (plCircle_ != nullptr) {
         t = plCircle_;
         plCircle_ = t->next;
-        delete t; // free( t );
+        delete t;
         t = nullptr;
     }
     if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -618,7 +618,7 @@ void QWinSphere::adjustToNewSize(void)
 
         QPainter paint(painterCache_);
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(CBACKGROUND)));
+                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
         if (g_VFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
@@ -696,7 +696,7 @@ void QWinSphere::paintEvent(QPaintEvent *p)
 
         QPainter paint(painterCache_);
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(CBACKGROUND)));
+                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
         if (g_VFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
@@ -2202,7 +2202,7 @@ void QWinSphere::printPoincareSphere(void)
     while (p != nullptr) {
         q = p;
         p = p->next;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
@@ -2230,7 +2230,7 @@ void QWinSphere::printPoincareLyapunovSphere(void)
     while (p != nullptr) {
         q = p;
         p = p->next;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 
@@ -2252,7 +2252,7 @@ void QWinSphere::printPoincareLyapunovSphere(void)
     while (p != nullptr) {
         q = p;
         p = p->next;
-        delete q; // free( q );
+        delete q;
         q = nullptr;
     }
 }
@@ -2522,7 +2522,7 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
         staticPainter_->translate(tx, ty);
         if (iszoom_ || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p = QPen(QXFIGCOLOR(g_printColorTable[CFOREGROUND]), (int)lw);
+            QPen p = QPen(QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)), (int)lw);
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
         }
@@ -2681,7 +2681,7 @@ void QWinSphere::signalEvaluating(void)
     /*
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
-       CBACKGROUND) );
+       bgColours::CBACKGROUND) );
         setPalette(palette);
     */
 }

@@ -190,6 +190,10 @@ class QInputVF : public QObject
 
     void createProcessWindow();
 
+  signals:
+    void saveSignal();
+    void loadSignal();
+
   public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);

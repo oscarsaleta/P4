@@ -192,22 +192,30 @@
 // Choose one of the constants defined in COLOR.H
 
 // Color of singular points:
+namespace bgColours
+{
+extern int CFOREGROUND; // foreground color
+extern int CBACKGROUND; // background color
+extern int CORBIT;      // orbits (use GREEN1 when background is white)
+// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
+// printing.
+// For example, when printing, BLACK can be reversed with WHITE, so that the
+// BLACK background on screen is not printed black.
+extern bool PRINT_WHITE_BG; 
+}
 
-#define CFOREGROUND WHITE
-#define CBACKGROUND BLACK
-
-#define CSADDLE_NODE MAGENTA        // saddle-node
-#define CSADDLE GREEN2              // saddle
-#define CNODE_S BLUE                // stable node
-#define CNODE_U RED                 // unstable node
-#define CWEAK_FOCUS CFOREGROUND     // weak focus
-#define CWEAK_FOCUS_S BLUE2         // stable weak focus
-#define CWEAK_FOCUS_U RED2          // unstable weak focus
-#define CSTRONG_FOCUS_S BLUE        // stable strong focus
-#define CSTRONG_FOCUS_U RED         // unstable strong focus
-#define CCENTER GREEN2              // center
-#define CDEGEN CFOREGROUND          // degenerated
-#define CLINEATINFINITY CFOREGROUND // color of poincare sphere
+#define CSADDLE_NODE MAGENTA                   // saddle-node
+#define CSADDLE GREEN2                         // saddle
+#define CNODE_S BLUE                           // stable node
+#define CNODE_U RED                            // unstable node
+#define CWEAK_FOCUS bgColours::CFOREGROUND     // weak focus
+#define CWEAK_FOCUS_S BLUE2                    // stable weak focus
+#define CWEAK_FOCUS_U RED2                     // unstable weak focus
+#define CSTRONG_FOCUS_S BLUE                   // stable strong focus
+#define CSTRONG_FOCUS_U RED                    // unstable strong focus
+#define CCENTER GREEN2                         // center
+#define CDEGEN bgColours::CFOREGROUND          // degenerated
+#define CLINEATINFINITY bgColours::CFOREGROUND // color of poincare sphere
 
 #define CSTABLE BLUE        // stable separatrice
 #define CUNSTABLE RED       // unstable separatrice
@@ -215,22 +223,11 @@
 #define CCENT_UNSTABLE RED1 // center-unstable separatrice
 
 #define CW_SEP GOLD     // selected separatrice
-#define CORBIT YELLOW   // orbits (use GREEN1 when background is white)
 #define CLIMIT MAGENTA2 // limit cycles
 #define CSING GREEN     // curve of singularities
 #define CCURV CYAN
 #define CISOC PINK1
 
-// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
-// printing.
-// For example, when printing, BLACK can be reversed with WHITE, so that the
-// BLACK
-// background on screen is not printed black.
-
-// comment following line if you want an EXACT screen copy (with black
-// background)
-
-#define PRINT_REVERSE_BLACK_AND_WHITE
 
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 

@@ -314,7 +314,8 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     connect(btn_load_, &QPushButton::clicked, this, &QFindDlg::onBtnLoad);
     connect(btn_save_, &QPushButton::clicked, this, &QFindDlg::onBtnSave);
     connect(btn_eval_, &QPushButton::clicked, this, &QFindDlg::onBtnEval);
-    // QObject::connect(g_ThisVF, SIGNAL(onSave()), this, SLOT(onSaveState()));
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &QFindDlg::onSaveSignal);
+    // TODO: implement onSaveSignal slot
 
     // finishing
 
@@ -349,6 +350,10 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     // readSettings();
 }
 
+void QFindDlg::onSaveSignal() {
+    //QSettings settings(g_ThisVF->getbarefilename().append(".conf"), QSettings::NativeFormat);
+    //settings.setValue("QFindDlg/state",saveState());
+}
 
 void QFindDlg::onBtnLoad()
 {
@@ -391,7 +396,6 @@ void QFindDlg::onBtnSave()
             this, "P4", "Unable to save the input vector field.\n"
                         "Please check permissions on the write location.\n");
     }
-    // emit saveStateSignal();
 }
 
 void QFindDlg::onBtnEval()
