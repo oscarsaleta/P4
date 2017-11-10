@@ -24,6 +24,7 @@
 #include "main.h"
 #include "p4settings.h"
 
+#include <QButtonGroup>
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -108,6 +109,14 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     // btn_red->setEnabled(false);
     // lbl_red->setBuddy(edt_red);
 
+    lbl_bgcolor_ = new QLabel("Plot background color", this);
+    btn_bgblack_ = new QRadioButton("Black", this);
+    btn_bgwhite_ = new QRadioButton("White", this);
+
+    QButtonGroup *bgcolors = new QButtonGroup(this);
+    bgcolors->addButton(btn_bgblack_);
+    bgcolors->addButton(btn_bgwhite_);
+
     btn_ok_ = new QPushButton("&Ok", this);
     btn_reset_ = new QPushButton("&Reset", this);
     btn_cancel_ = new QPushButton("&Cancel", this);
@@ -179,23 +188,49 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     // lay00->addWidget(edt_red, 4, 1);
     // lay00->addWidget(btn_red, 4, 2);
 
+    QHBoxLayout *bgbuttons = new QHBoxLayout();
+    bgbuttons->addWidget(lbl_bgcolor_);
+    bgbuttons->addStretch(0);
+    bgbuttons->addWidget(btn_bgblack_);
+    bgbuttons->addWidget(btn_bgwhite_);
+
+    if (bgColours::CBACKGROUND == BLACK)
+        btn_bgblack_->toggle();
+    else
+        btn_bgwhite_->toggle();
+
     mainLayout_->addLayout(lay00);
+    mainLayout_->addSpacing(3);
+    mainLayout_->addLayout(bgbuttons);
     mainLayout_->addSpacing(3);
     // mainLayout_->addSpacing(4);
     mainLayout_->addLayout(buttons);
 
     setLayout(mainLayout_);
 
-    QObject::connect(btn_base_, SIGNAL(clicked()), this, SLOT(onBrowseBase()));
-    QObject::connect(btn_sum_, SIGNAL(clicked()), this, SLOT(onBrowseSum()));
-    QObject::connect(btn_temp_, SIGNAL(clicked()), this, SLOT(onBrowseTemp()));
-    QObject::connect(btn_maple_, SIGNAL(clicked()), this,
-                     SLOT(onBrowseMaple()));
-    // QObject::connect(btn_red, SIGNAL(clicked()), this,
-    // SLOT(OnBrowseReduce()));
-    QObject::connect(btn_ok_, SIGNAL(clicked()), this, SLOT(onOk()));
-    QObject::connect(btn_reset_, SIGNAL(clicked()), this, SLOT(onReset()));
-    QObject::connect(btn_cancel_, SIGNAL(clicked()), this, SLOT(onCancel()));
+    connect(btn_base_, &QPushButton::clicked, this,
+            &QSettingsDlg::onBrowseBase);
+    connect(btn_sum_, &QPushButton::clicked, this, &QSettingsDlg::onBrowseSum);
+    connect(btn_temp_, &QPushButton::clicked, this,
+            &QSettingsDlg::onBrowseTemp);
+    connect(btn_maple_, &QPushButton::clicked, this,
+            &QSettingsDlg::onBrowseMaple);
+    // connect(btn_red, &QPushButton::clicked, this,
+    // &QSettingsDlg::OnBrowseReduce);
+    connect(btn_ok_, &QPushButton::clicked, this, &QSettingsDlg::onOk);
+    connect(btn_reset_, &QPushButton::clicked, this, &QSettingsDlg::onReset);
+    connect(btn_cancel_, &QPushButton::clicked, this, &QSettingsDlg::onCancel);
+
+    connect(btn_bgblack_, &QRadioButton::toggled, this, [=]() {
+        bgColours::CFOREGROUND = WHITE;
+        bgColours::CBACKGROUND = BLACK;
+        bgColours::CORBIT = YELLOW;
+    });
+    connect(btn_bgwhite_, &QRadioButton::toggled, this, [=]() {
+        bgColours::CFOREGROUND = BLACK;
+        bgColours::CBACKGROUND = WHITE;
+        bgColours::CORBIT = GREEN1;
+    });
 
     //#ifdef Q_OS_WIN
     //    edt_red->setEnabled(false);
@@ -302,8 +337,8 @@ void QSettingsDlg::onBrowseSum(void)
 
 void QSettingsDlg::onBrowseBase(void)
 {
-    browseForExistingPathOrFile(edt_base_, "Select P4 base installation path:",
-                                false);
+    browseForExistingPathOrFile(edt_base_,
+                                "Select P4 base installation path:", false);
 }
 
 void QSettingsDlg::browseForExistingPathOrFile(QLineEdit *edt, QString caption,

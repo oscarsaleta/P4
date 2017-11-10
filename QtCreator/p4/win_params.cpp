@@ -29,12 +29,7 @@
 
 QParamsDlg::~QParamsDlg() { getDataFromDlg(); }
 
-QParamsDlg::QParamsDlg(QFindDlg *finddlg)
-#ifdef DOCK_PARAMSWINDOW
-    : QWidget(finddlg)
-#else
-    : QWidget()
-#endif
+QParamsDlg::QParamsDlg(QFindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -234,23 +229,21 @@ QParamsDlg::QParamsDlg(QFindDlg *finddlg)
 
     // connections
 
-    QObject::connect(btn_alg_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_alg_toggled(bool)));
-    QObject::connect(btn_num_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_num_toggled(bool)));
-    QObject::connect(spin_level_, SIGNAL(valueChanged(int)), this,
-                     SLOT(onLevelChange(int)));
-    QObject::connect(btn_sepno_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_sepno_toggled(bool)));
-    QObject::connect(btn_sepyes_, SIGNAL(toggled(bool)), this,
-                     SLOT(btn_sepyes_toggled(bool)));
+    connect(btn_alg_, &QRadioButton::toggled, this,
+            &QParamsDlg::btn_alg_toggled);
+    connect(btn_num_, &QRadioButton::toggled, this,
+            &QParamsDlg::btn_num_toggled);
+    connect(spin_level_,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+            &QParamsDlg::onLevelChange);
+    connect(btn_sepno_, &QRadioButton::toggled, this,
+            &QParamsDlg::btn_sepno_toggled);
+    connect(btn_sepyes_, &QRadioButton::toggled, this,
+            &QParamsDlg::btn_sepyes_toggled);
 
     // finishing
 
     updateDlgData();
-#ifndef DOCK_PARAMSWINDOW
-    SetP4WindowTitle(this, "Parameters");
-#endif
 }
 
 void QParamsDlg::onLevelChange(int value)

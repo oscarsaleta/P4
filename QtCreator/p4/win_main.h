@@ -23,6 +23,7 @@
 #include <QBoxLayout>
 #include <QCloseEvent>
 #include <QLineEdit>
+#include <QMainWindow>
 #include <QMenu>
 #include <QPalette>
 #include <QPushButton>
@@ -83,11 +84,12 @@ class QStartDlg : public QWidget
     void onViewFinite();
     void onViewInfinite();
     void onHelp();
-    void onFind();
     void onBrowse();
     void onAbout();
     void onFilenameChange(const QString &);
     QWidget *showText(QWidget *win, QString caption, QString fname);
+    void onSaveSignal();
+    void onLoadSignal();
 
   private:
     QBoxLayout *mainLayout_;
@@ -97,6 +99,7 @@ class QStartDlg : public QWidget
     QPushButton *btn_plot_;
     QPushButton *btn_help_;
     QPushButton *btn_about_;
+    QPushButton *btn_browse_;
     QLineEdit *edt_name_;
     QMenu *viewMenu_;
 

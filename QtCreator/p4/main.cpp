@@ -133,6 +133,9 @@ int main(int argc, char *argv[])
         g_cmdLine_Filename = DEFAULTFILENAME;
 
     g_p4app = new QP4Application(argc, argv);
+    g_p4app->setOrganizationName("P4");
+    g_p4app->setOrganizationDomain("gsd.uab.cat");
+    g_p4app->setApplicationName("P4");
 
     g_p4app->addLibraryPath(g_p4app->applicationDirPath());
 

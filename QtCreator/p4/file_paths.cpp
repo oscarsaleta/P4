@@ -151,11 +151,11 @@ QString getDefaultP4SumTablePath(void)
 
 QString getDefaultMathManipulator(void)
 {
-#ifdef Q_OS_WIN
+//#ifdef Q_OS_WIN
     return "Maple";
-#else
-    return "Reduce";
-#endif
+//#else
+//    return "Reduce";
+//#endif
 }
 
 // -----------------------------------------------------------------------
@@ -185,7 +185,7 @@ QString getDefaultP4HelpPath(void)
 //                          GETDEFAULTP4REDUCEPATH
 // -----------------------------------------------------------------------
 
-QString getDefaultP4ReducePath(void)
+/*QString getDefaultP4ReducePath(void)
 {
     QString f;
     QString g;
@@ -198,7 +198,7 @@ QString getDefaultP4ReducePath(void)
     }
 
     return g;
-}
+}*/
 
 // -----------------------------------------------------------------------
 //                          GETDEFAULTP4MAPLEPATH
@@ -255,7 +255,7 @@ QString getDefaultP4BinPath(void)
 //
 // Under Linux, return the batch file name "reduce".
 
-QString getDefaultReduceInstallation(void)
+/*QString getDefaultReduceInstallation(void)
 {
 #ifdef Q_OS_WIN
     QString r;
@@ -263,7 +263,7 @@ QString getDefaultReduceInstallation(void)
 #else
     return "reduce";
 #endif
-}
+}*/
 
 // -----------------------------------------------------------------------
 //                          GETDEFAULTMAPLEINSTALLATION
@@ -274,7 +274,7 @@ QString getDefaultReduceInstallation(void)
 //
 // Under Windows, use registry
 //
-// Under Linux, return the batch file name "cmaple".
+// Under Linux, return the batch file name "maple".
 
 QString getDefaultMapleInstallation(void)
 {
@@ -330,7 +330,7 @@ QString getDefaultMapleInstallation(void)
     }
     return "cmaple";
 #else
-    return "cmaple";
+    return "maple";
 #endif
 }
 

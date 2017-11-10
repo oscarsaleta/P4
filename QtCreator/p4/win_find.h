@@ -38,8 +38,7 @@ class QFindDlg : public QWidget
   public:
     QFindDlg(QStartDlg *startwindow);
     ~QFindDlg();
-    void getDataFromDlg(void);
-    void exclusiveToggle(bool, QRadioButton *, ...);
+    void getDataFromDlg();
 
   private:
     QStartDlg *parent_;
@@ -57,8 +56,6 @@ class QFindDlg : public QWidget
     QRadioButton *btn_one_;
     QRadioButton *btn_yes_;
     QRadioButton *btn_no_;
-    QPushButton *btn_params_;
-    QPushButton *btn_vf_;
     QPushButton *btn_load_;
     QPushButton *btn_save_;
     QPushButton *btn_eval_;
@@ -66,27 +63,22 @@ class QFindDlg : public QWidget
     QVectorFieldDlg *vfWindow_;
     QParamsDlg *paramsWindow_;
 
+    //void saveSettings();
+    //void readSettings();
+
   public slots:
-    void btn_maple_toggled(bool);
-    void btn_reduce_toggled(bool);
-    void btn_actionrun_toggled(bool);
-    void btn_actionprep_toggled(bool);
-    void btn_all_toggled(bool);
-    void btn_fin_toggled(bool);
-    void btn_inf_toggled(bool);
-    void btn_one_toggled(bool);
-    void btn_yes_toggled(bool);
-    void btn_no_toggled(bool);
-    void updateDlgData(void);
+    // void btn_maple_toggled(bool);
+    // void btn_reduce_toggled(bool);
+    void updateDlgData();
 
-    void signalEvaluating(void);
-    void signalEvaluated(void);
+    void signalEvaluating();
+    void signalEvaluated();
 
-    void onBtnParams(void);
-    void onBtnVf(void);
-    void onBtnLoad(void);
-    void onBtnSave(void);
-    void onBtnEval(void);
+    void onBtnLoad();
+    void onBtnSave();
+    void onBtnEval();
+
+    void onSaveSignal();
 };
 
 #endif /* WIN_FIND_H */

@@ -1137,7 +1137,7 @@ void change_epsilon_saddle(QWinSphere *spherewnd, double epsilon)
     g_VFResults.selected_saddle_point_->epsilon = epsilon;
     separatrice = g_VFResults.selected_saddle_point_->separatrices;
     while (separatrice != nullptr) {
-        draw_selected_sep(spherewnd, separatrice->first_sep_point, CBACKGROUND);
+        draw_selected_sep(spherewnd, separatrice->first_sep_point, bgColours::CBACKGROUND);
         g_VFResults.deleteOrbitPoint(separatrice->first_sep_point);
         separatrice->last_sep_point = nullptr;
         separatrice->first_sep_point = nullptr;
@@ -1152,7 +1152,7 @@ void change_epsilon_se(QWinSphere *spherewnd, double epsilon)
     g_VFResults.selected_se_point_->epsilon = epsilon;
     separatrice = g_VFResults.selected_se_point_->separatrices;
     while (separatrice != nullptr) {
-        draw_selected_sep(spherewnd, separatrice->first_sep_point, CBACKGROUND);
+        draw_selected_sep(spherewnd, separatrice->first_sep_point, bgColours::CBACKGROUND);
         g_VFResults.deleteOrbitPoint(separatrice->first_sep_point);
         separatrice->last_sep_point = nullptr;
         separatrice->first_sep_point = nullptr;
@@ -1167,7 +1167,7 @@ void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
     g_VFResults.selected_de_point_->epsilon = epsilon;
     separatrice = g_VFResults.selected_de_point_->blow_up;
     while (separatrice != nullptr) {
-        draw_selected_sep(spherewnd, separatrice->first_sep_point, CBACKGROUND);
+        draw_selected_sep(spherewnd, separatrice->first_sep_point, bgColours::CBACKGROUND);
         g_VFResults.deleteOrbitPoint(separatrice->first_sep_point);
         separatrice->last_sep_point = nullptr;
         separatrice->first_sep_point = nullptr;

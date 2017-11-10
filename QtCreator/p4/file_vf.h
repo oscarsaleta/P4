@@ -190,12 +190,15 @@ class QInputVF : public QObject
 
     void createProcessWindow();
 
+  signals:
+    void saveSignal();
+    void loadSignal();
+
   public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);
     void readProcessStdout();
     void onTerminateButton();
-    void onClearButton();
     void finishGcfEvaluation();
     void finishCurveEvaluation();
     void finishIsoclinesEvaluation();
