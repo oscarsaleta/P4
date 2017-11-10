@@ -18,13 +18,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 -->
 
-# P4 (Polynomial Planar Phase Portraits) version 6.0.0
+# P4 (Polynomial Planar Phase Portraits) version 7.0.0
 
 ## Description
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
 
-Check the installation instructions for [Linux][linux_install], [Windows][windows_install] and [macOS][macOS_install], and also check out the [FAQ][faq].
+Check the installation instructions for [Linux][linux_install], [Windows][windows_install] and [macOS][macOS_install], and also check out the [FAQ][faq] or [open an issue](https://github.com/oscarsaleta/P4/issues/new "new P4 issue") if you have any problems with the software.
 
 ![Main window](help/screenshots/p4_main_window.png)|![Plot window](help/screenshots/p4_plot_poincare.png)
 :-------------------------------------------------:|:---------------------------------------------------:
@@ -213,8 +213,10 @@ Check [here][binary_tree] for instructions of how to create a correct file tree 
         * If the path is wrong: check that you defined correctly the `P4_DIR` environment variable in _.bashrc_ (or _.zhsrc_, or any other shell configuration file you use). Also, within P4, go to _About P4... > Main Settings_ and check that the _Base installation Path_ and the _Sumtable Path_ fields point correctly to your P4 installation directory.
 - I installed P4 and it executes, but when I press _Evaluate_ the output says "_Error, at offset 17729 in `/usr/local/p4/bin/p4.m`, unexpected DAG type: 0,122,(z)_" (or similar) and then does nothing.
     + This is a known bug that still has not been solved. We suspect it has to do with older Maple versions not being fully compatible with P4. P4 has been tested with Maple 17, 18 and 2015 (and recently 2017 thanks to a commited user), but older Maple versions could cause incompatibilities.
-    + Our advice is to either acquire a newer Maple version, or use an older P4 version where this
-    issue does not appear (as of now, the latest P4 version without this problem is v3.3.3).
+    + Our advice is to either acquire a newer Maple version, or use an older P4 version where this issue does not appear (as of now, the latest P4 version without this problem is v3.3.3).
+- Where are my files and images saved?
+    + It depends on the OS: for Linux and Mac, the files are stored in the current working directory of the Terminal that executed P4. For Windows, the files are all saved to _C:\Users\currentUser\Documents\P4_ or the equivalent Documents directory.
+    + The name of the files depends on the name inputted in the field _Name_ on top of the P4 application. Be careful, because if you use the same name for printing two different vector fields, the oldest will be replaced.
 
     
 ## Contributors
