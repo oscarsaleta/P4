@@ -530,10 +530,11 @@ if [[ "${platform}" == 'linux' ]]; then
     fi
 elif [[ ${platform} == 'darwin' ]]; then
     echo "- Looking for Boost libraries..."
-    if (ls /usr/local/include | grep libboost >/dev/null); then
+    if (ls /usr/local/include | grep boost >/dev/null); then
         echo "${green}[Success]${normal}"
     else
         error_boost
+        exit 1
     fi
 fi
 
