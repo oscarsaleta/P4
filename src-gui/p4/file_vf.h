@@ -41,6 +41,13 @@
 #define PACKAGE_MAPLE 1
 #define PACKAGE_REDUCE 0
 
+/* Check Qt version for compatibility with QProcess::errorOccurred */
+#if QT_VERSION_MAJOR == 5
+#if QT_VERSION_MINOR < 6
+    #define QT_QPROCESS_OLD
+#endif
+#endif
+
 class QInputVF : public QObject
 {
     Q_OBJECT
