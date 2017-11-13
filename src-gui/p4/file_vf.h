@@ -47,6 +47,7 @@
     #define QT_QPROCESS_OLD
 #endif
 
+
 class QInputVF : public QObject
 {
     Q_OBJECT
