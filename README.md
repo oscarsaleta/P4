@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 -->
 
-# P4 (Polynomial Planar Phase Portraits) version 7.0.0
+# P4 (Polynomial Planar Phase Portraits) version 7.0.1
 
 ## Description
 
