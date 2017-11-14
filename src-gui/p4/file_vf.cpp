@@ -1436,8 +1436,14 @@ void QInputVF::evaluate(void)
 
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalEvaluated);
+        connect(proc, &QProcess::readyReadStandardOutput, this,
+                &QInputVF::readProcessStdout);
+#ifdef QT_QPROCESS_OLD
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), this, &QInputVF::catchProcessError);
+#else
         connect(proc, &QProcess::errorOccurred, this,
                 &QInputVF::catchProcessError);
+#endif
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
 
@@ -1531,8 +1537,15 @@ void QInputVF::evaluateCurveTable()
             connect(proc,
                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                     g_p4app, &QP4Application::signalCurveEvaluated);
+            connect(proc, &QProcess::readyReadStandardOutput, this,
+                    &QInputVF::readProcessStdout);
+#ifdef QT_QPROCESS_OLD
+            connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
+                    &QP4Application::catchProcessError);
+#else
             connect(proc, &QProcess::errorOccurred, g_p4app,
                     &QP4Application::catchProcessError);
+#endif
             connect(proc, &QProcess::readyReadStandardOutput, this,
                     &QInputVF::readProcessStdout);
         }
@@ -1622,8 +1635,15 @@ void QInputVF::evaluateIsoclinesTable()
             connect(proc,
                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                     g_p4app, &QP4Application::signalCurveEvaluated);
+            connect(proc, &QProcess::readyReadStandardOutput, this,
+                    &QInputVF::readProcessStdout);
+#ifdef QT_QPROCESS_OLD
+            connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
+                    &QP4Application::catchProcessError);
+#else
             connect(proc, &QProcess::errorOccurred, g_p4app,
                     &QP4Application::catchProcessError);
+#endif
             connect(proc, &QProcess::readyReadStandardOutput, this,
                     &QInputVF::readProcessStdout);
         }
@@ -2141,8 +2161,13 @@ bool QInputVF::evaluateGcf(void)
         proc = new QProcess(this);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
+#ifdef QT_QPROCESS_OLD
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
+                &QP4Application::catchProcessError);
+#else
         connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
+#endif
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
     }
@@ -2543,8 +2568,13 @@ bool QInputVF::evaluateCurve(void)
         proc = new QProcess(this);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
+#ifdef QT_QPROCESS_OLD
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
+                &QP4Application::catchProcessError);
+#else
         connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
+#endif
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
     }
@@ -2831,8 +2861,13 @@ bool QInputVF::evaluateIsoclines()
         proc = new QProcess(this);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
+#ifdef QT_QPROCESS_OLD
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
+                &QP4Application::catchProcessError);
+#else
         connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
+#endif
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
     }
