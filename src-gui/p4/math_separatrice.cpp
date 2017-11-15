@@ -1112,7 +1112,7 @@ void draw_sep(QWinSphere *spherewnd, orbits_points *sep)
                 (*plot_l)(spherewnd, sep->pcoord, pcoord, sep->color);
             else
                 (*plot_p)(spherewnd, sep->pcoord, sep->color);
-            g_VFResults.separatrice_vector_.append(*sep); 
+            g_VFResults.separatrice_vector_.push_back(*sep); 
             copy_x_into_y(sep->pcoord, pcoord);
         } while ((sep = sep->next_point) != nullptr);
     }
