@@ -202,6 +202,12 @@ void QStartDlg::onSaveSignal()
                               g_ThisVF->processText_->toPlainText());
         }
     }
+    if (!g_VFResults.orbits_vector_.empty()) {
+        settings.setValue("orbits",g_VFResults.orbits_vector_);
+    }
+    if (!g_VFResults.separatrices_vector_.empty()) {
+        settings.setValue("separatrices",g_VFResults.separatrices_vector_);
+    }
     settings.endGroup();
 }
 
