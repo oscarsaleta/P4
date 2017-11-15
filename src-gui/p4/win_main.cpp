@@ -261,6 +261,13 @@ void QStartDlg::onLoadSignal()
                 settings.value("processText-contents").toString());
         }
     }
+    if (settings.value("orbits",nullptr) == nullptr) {
+        if (!g_VFResults.orbits_vector_.empty()) {
+            g_VFResults.orbits_vector_.clear();
+        }
+    } else {
+        g_VFResults.orbits_vector_ = settings.value("orbits"); // FIXME: això no funcionarà
+    }
     settings.endGroup();
 }
 
