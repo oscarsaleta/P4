@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QString>
 #include <QTextEdit>
+#include <QVector>
 
 // -----------------------------------------------------------------------
 //						General polynomial expressions
@@ -380,6 +381,8 @@ class QVFStudy : public QObject
     std::vector<curves> curve_vector_;
     // isoclines
     std::vector<isoclines> isocline_vector_;
+    // TODO: vector for orbits
+    QVector<orbits_points> orbits_vector_;
 
     // limit cycles
 
