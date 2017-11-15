@@ -133,9 +133,12 @@ void drawOrbit(QWinSphere *spherewnd, double *pcoord, orbits_points *points,
         } else {
             (*plot_p)(spherewnd, points->pcoord, color);
         }
-
         copy_x_into_y(points->pcoord, pcoord1);
 
+        // TODO: copy orbit points as a vector into a vector (of vectors)
+        // make the orbits a structure inside QWinSphere ?
+        g_VFResults.orbits_vector_.append(*points);
+        
         points = points->next_point;
     }
 }
