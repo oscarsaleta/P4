@@ -191,6 +191,9 @@ class QWinSphere : public QWidget
 
     QStatusBar *msgBar_;
     int printMethod_;
+
+    // TODO: vector for storing orbits
+    
 };
 
 #endif /* WIN_SPHERE_H */
