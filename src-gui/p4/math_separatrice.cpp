@@ -1106,14 +1106,16 @@ void draw_sep(QWinSphere *spherewnd, orbits_points *sep)
 {
     double pcoord[3];
 
-    if (sep)
+    if (sep) {
         do {
             if (sep->dashes)
                 (*plot_l)(spherewnd, sep->pcoord, pcoord, sep->color);
             else
                 (*plot_p)(spherewnd, sep->pcoord, sep->color);
+            g_VFResults.separatrice_vector_.append(*sep); 
             copy_x_into_y(sep->pcoord, pcoord);
         } while ((sep = sep->next_point) != nullptr);
+    }
 }
 
 void draw_selected_sep(QWinSphere *spherewnd, orbits_points *sep, int color)
