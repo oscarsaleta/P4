@@ -383,6 +383,7 @@ class QVFStudy : public QObject
     std::vector<isoclines> isocline_vector_;
     // TODO: vector for orbits (hem de poder incloude pcoord, fem struct?)
     QVector<orbits_points> orbits_vector_;
+    QVector<orbits_points> separatrice_vector_;
 
     // limit cycles
 
