@@ -127,7 +127,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - Qt and qmake: installed using Homebrew
         + Run in terminal `brew install qt`
-        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
+        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_): `echo 'export PATH="/usr/local/opt/qt/bin:$PATH"' >> ~/.bashrc`
 * **Installation with `compile_install_p4`**:
     - Xcode: macOS suite for software development. Install from the App Store, then open it and accept the Terms of Use.
     - *Comand line developer tools*: this adds necessary programs such as `git` and `clang` to the system.
@@ -136,7 +136,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - Qt and qmake: installed using Homebrew
         + Run in terminal `brew install qt`
-        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
+        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_): `echo 'export PATH="/usr/local/opt/qt/bin:$PATH"' >> ~/.bashrc`
     - MPFR library: installed using Homebrew
         + Run in terminal `brew install mpfr`
     - _You will need to open a new terminal if you updated the PATH for the changes to take effect_
