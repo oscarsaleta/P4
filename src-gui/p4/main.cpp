@@ -40,7 +40,6 @@
     TO DO LIST:
     -----------
 
-    -   windows: create installer
     -   poincare-lyapunov printing: improve dotted line when printing
     -   system printer support
 
