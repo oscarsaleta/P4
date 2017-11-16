@@ -105,7 +105,7 @@ struct orbits {
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    P4POLYNOM2 r2,u1,u2,v1,v2;
+    P4POLYNOM2 r2, u1, u2, v1, v2;
     P4POLYNOM3 c;
     P4ORBIT points;
 
@@ -382,8 +382,8 @@ class QVFStudy : public QObject
     // isoclines
     std::vector<isoclines> isocline_vector_;
     // TODO: vector for orbits (hem de poder incloude pcoord, fem struct?)
-    QVector<orbits_points> orbits_vector_;
-    QVector<orbits_points> separatrice_vector_;
+    QVector<double[3]> orbits_vector_;
+    QVector<double[3]> separatrices_vector_;
 
     // limit cycles
 
