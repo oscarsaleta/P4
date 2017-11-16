@@ -137,7 +137,7 @@ void drawOrbit(QWinSphere *spherewnd, double *pcoord, orbits_points *points,
 
         // TODO: copy orbit points as a vector into a vector (of vectors)
         // make the orbits a structure inside QWinSphere ?
-        g_VFResults.orbits_vector_.append(*points);
+        g_VFResults.orbits_vector_.append(points->pcoord);
         
         points = points->next_point;
     }
