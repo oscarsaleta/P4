@@ -35,8 +35,6 @@
 
 #include <QMessageBox>
 
-Q_DECLARE_METATYPE(QVector<orbits_points>)
-
 /*
     ----------------------------------------------------------------------------
     TO DO LIST:
