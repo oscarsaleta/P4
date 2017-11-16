@@ -382,8 +382,8 @@ class QVFStudy : public QObject
     // isoclines
     std::vector<isoclines> isocline_vector_;
     // TODO: vector for orbits (hem de poder incloude pcoord, fem struct?)
-    QVector<double[3]> orbits_vector_;
-    QVector<double[3]> separatrices_vector_;
+    QVector<orbits_points> orbits_vector_;
+    QVector<orbits_points> separatrices_vector_;
 
     // limit cycles
 
