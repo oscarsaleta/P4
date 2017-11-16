@@ -35,7 +35,7 @@
 
 #include <QMessageBox>
 
-Q_DECLARE_METATYPE(QVector<double[3]>)
+Q_DECLARE_METATYPE(QVector<orbits_points>)
 
 /*
     ----------------------------------------------------------------------------
@@ -117,8 +117,8 @@ void handleCommandLineArgument(char *arg)
 
 int main(int argc, char *argv[])
 {
-    qRegisterMetaTypeStreamOperators<QVector<double[3]>>(
-        "QVector<double[3]>");
+    qRegisterMetaTypeStreamOperators<QVector<orbits_points>>(
+        "QVector<orbits_points>");
 
     int returnvalue;
     int v, i;
