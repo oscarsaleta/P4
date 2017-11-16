@@ -35,6 +35,8 @@
 
 #include <QMessageBox>
 
+Q_DECLARE_METATYPE(QVector<double[3]>)
+
 /*
     ----------------------------------------------------------------------------
     TO DO LIST:
@@ -115,6 +117,9 @@ void handleCommandLineArgument(char *arg)
 
 int main(int argc, char *argv[])
 {
+    qRegisterMetaTypeStreamOperators<QVector<double[3]>>(
+        "QVector<double[3]>");
+
     int returnvalue;
     int v, i;
 
