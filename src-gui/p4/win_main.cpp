@@ -49,8 +49,7 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     // define controls
 
-    if (g_p4smallicon != nullptr)
-        setWindowIcon(*g_p4smallicon);
+    if (g_p4smallicon != nullptr) setWindowIcon(*g_p4smallicon);
 
     btn_quit_ = new QPushButton("&Quit", this);
     btn_view_ = new QPushButton("Vie&w", this);
@@ -77,11 +76,13 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
         "View results of the symbolic manipulator after evaluation");
     btn_plot_->setToolTip("Draw singular points, orbits and separatrices");
     btn_help_->setToolTip("Shows extensive help on the use of P4");
-    edt_name_->setToolTip("Enter the filename of the vector field here.\n"
-                          "You do not need to add the extension (.inp).\n");
+    edt_name_->setToolTip(
+        "Enter the filename of the vector field here.\n"
+        "You do not need to add the extension (.inp).\n");
     btn_browse_->setToolTip("Search for vector field files on your system");
-    btn_about_->setToolTip("Displays information about the program P4, its "
-                           "version and main settings");
+    btn_about_->setToolTip(
+        "Displays information about the program P4, its "
+        "version and main settings");
 #endif
 
     // define placement of controls
@@ -264,12 +265,13 @@ void QStartDlg::onLoadSignal()
                 settings.value("processText-contents").toString());
         }
     }
-    if (settings.value("orbits",nullptr) == nullptr) {
+    if (settings.value("orbits", 0) == QVariant(0)) {
         if (!g_VFResults.orbits_vector_.empty()) {
             g_VFResults.orbits_vector_.clear();
         }
     } else {
-        g_VFResults.orbits_vector_ = settings.value("orbits"); // FIXME: això no funcionarà
+        g_VFResults.orbits_vector_ =
+            settings.value("orbits");  // FIXME: això no funcionarà
     }
     settings.endGroup();
 }
@@ -308,8 +310,7 @@ void QStartDlg::onHelp()
 
     hlp->setSource(QUrl::fromLocalFile(helpname));
     hlp->resize(640, 480);
-    if (g_p4smallicon != nullptr)
-        hlp->setWindowIcon(*g_p4smallicon);
+    if (g_p4smallicon != nullptr) hlp->setWindowIcon(*g_p4smallicon);
 
     setP4WindowTitle(hlp, "P4 Help");
     hlp->show();
@@ -327,9 +328,9 @@ void QStartDlg::onPlot()
         findWindow_->getDataFromDlg();
     }*/
 
-    g_VFResults.deleteVF(); // delete any previous result object
+    g_VFResults.deleteVF();  // delete any previous result object
     if (!g_VFResults.readTables(
-            g_ThisVF->getbarefilename())) // read maple/reduce results
+            g_ThisVF->getbarefilename()))  // read maple/reduce results
     {
         delete plotWindow_;
         plotWindow_ = nullptr;
@@ -351,7 +352,7 @@ void QStartDlg::onPlot()
         plotWindow_ = new QPlotWnd(this);
     }
 
-    plotWindow_->configure(); // configure plot window
+    plotWindow_->configure();  // configure plot window
     plotWindow_->show();
     plotWindow_->raise();
     plotWindow_->adjustHeight();
@@ -408,8 +409,7 @@ void QStartDlg::signalEvaluating()
 
     // Transfer signal to plotWindow_:
 
-    if (plotWindow_ != nullptr)
-        plotWindow_->signalEvaluating();
+    if (plotWindow_ != nullptr) plotWindow_->signalEvaluating();
 }
 
 void QStartDlg::signalEvaluated()
@@ -424,8 +424,7 @@ void QStartDlg::signalEvaluated()
     if (viewFiniteWindow_ != nullptr) {
         QString fname;
 
-        if (findWindow_ != nullptr)
-            findWindow_->getDataFromDlg();
+        if (findWindow_ != nullptr) findWindow_->getDataFromDlg();
 
         fname = g_ThisVF->getfilename_finresults();
 
@@ -447,8 +446,7 @@ void QStartDlg::signalEvaluated()
     if (viewInfiniteWindow_ != nullptr) {
         QString fname;
 
-        if (findWindow_ != nullptr)
-            findWindow_->getDataFromDlg();
+        if (findWindow_ != nullptr) findWindow_->getDataFromDlg();
 
         fname = g_ThisVF->getfilename_infresults();
         if (g_ThisVF->fileExists(fname)) {
@@ -481,9 +479,9 @@ void QStartDlg::signalEvaluated()
     // Transfer signal to plotWindow_:
 
     if (plotWindow_ != nullptr) {
-        g_VFResults.deleteVF(); // delete any previous result object
+        g_VFResults.deleteVF();  // delete any previous result object
         if (!g_VFResults.readTables(
-                g_ThisVF->getbarefilename())) // read maple/reduce results
+                g_ThisVF->getbarefilename()))  // read maple/reduce results
         {
             QMessageBox::critical(
                 this, "P4",
@@ -498,8 +496,7 @@ void QStartDlg::signalEvaluated()
     // case, the flag g_ThisVF->changed_ is set, so the newly evaluated context
     // is immediately marked as "old".
 
-    if (g_ThisVF->changed_)
-        signalChanged();
+    if (g_ThisVF->changed_) signalChanged();
 }
 
 void QStartDlg::signalSaved()
@@ -555,8 +552,7 @@ void QStartDlg::onViewFinite()
 
     QString fname;
 
-    if (findWindow_ != nullptr)
-        findWindow_->getDataFromDlg();
+    if (findWindow_ != nullptr) findWindow_->getDataFromDlg();
 
     fname = g_ThisVF->getfilename_finresults();
 
@@ -590,8 +586,7 @@ void QStartDlg::onViewInfinite()
 {
     QString fname;
 
-    if (findWindow_ != nullptr)
-        findWindow_->getDataFromDlg();
+    if (findWindow_ != nullptr) findWindow_->getDataFromDlg();
 
     fname = g_ThisVF->getfilename_infresults();
 
@@ -632,8 +627,7 @@ QWidget *QStartDlg::showText(QWidget *win, QString caption, QString fname)
     else
         result->clear();
 
-    if (g_p4smallicon != nullptr)
-        result->setWindowIcon(*g_p4smallicon);
+    if (g_p4smallicon != nullptr) result->setWindowIcon(*g_p4smallicon);
 
     QFile f(fname);
     if (!f.open(QIODevice::ReadOnly)) {
@@ -688,8 +682,7 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
         return;
     }
 
-    if (findWindow_ != nullptr)
-        findWindow_->getDataFromDlg();
+    if (findWindow_ != nullptr) findWindow_->getDataFromDlg();
 
     if (g_ThisVF->changed_ == false) {
         ce->accept();
@@ -722,29 +715,29 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
 void QStartDlg::customEvent(QEvent *e)
 {
     switch ((int)(e->type())) {
-    case TYPE_SIGNAL_EVALUATING:
-        signalEvaluating();
-        break;
-    case TYPE_SIGNAL_EVALUATED:
-        signalEvaluated();
-        break;
-    case TYPE_SIGNAL_CHANGED:
-        signalChanged();
-        break;
-    case TYPE_SIGNAL_LOADED:
-        signalLoaded();
-        break;
-    case TYPE_SIGNAL_SAVED:
-        signalSaved();
-        break;
-    case TYPE_CLOSE_PLOTWINDOW:
-        if (plotWindow_ != nullptr) {
-            delete plotWindow_;
-            plotWindow_ = nullptr;
-        }
-        break;
-    default:
-        QWidget::customEvent(e);
+        case TYPE_SIGNAL_EVALUATING:
+            signalEvaluating();
+            break;
+        case TYPE_SIGNAL_EVALUATED:
+            signalEvaluated();
+            break;
+        case TYPE_SIGNAL_CHANGED:
+            signalChanged();
+            break;
+        case TYPE_SIGNAL_LOADED:
+            signalLoaded();
+            break;
+        case TYPE_SIGNAL_SAVED:
+            signalSaved();
+            break;
+        case TYPE_CLOSE_PLOTWINDOW:
+            if (plotWindow_ != nullptr) {
+                delete plotWindow_;
+                plotWindow_ = nullptr;
+            }
+            break;
+        default:
+            QWidget::customEvent(e);
     }
 }
 
