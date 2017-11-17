@@ -41,6 +41,8 @@
 
 QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
+    setContextMenuPolicy(Qt::NoContextMenu);
+    
     QToolBar *toolBar1;
     QToolBar *toolBar2;
     parent_ = main;

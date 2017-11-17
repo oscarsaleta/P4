@@ -89,6 +89,24 @@ struct orbits_points {
 
 typedef struct orbits_points *P4ORBIT;
 
+Q_DECLARE_METATYPE(QVector<orbits_points>)
+
+QDataStream& operator<<(QDataStream& out, orbits_points& v) {
+    out << v.color << v.pcoord[0] << v.pcoord[1] << v.pcoord[2] << v.dashes << v.dir << v.type;
+    return out;
+}
+
+QDataStream& operator>>(QDataStream& in, orbits_points& v) {
+    in >> v.color;
+    in >> v.pcoord[0];
+    in >> v.pcoord[1];
+    in >> v.pcoord[2];
+    in >> v.dashes;
+    in >> v.dir;
+    in >> v.type;
+    return in;
+}
+
 struct orbits {
     double pcoord[3]; // startpoint
     int color;
@@ -104,7 +122,7 @@ struct orbits {
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    P4POLYNOM2 r2,u1,u2,v1,v2;
+    P4POLYNOM2 r2, u1, u2, v1, v2;
     P4POLYNOM3 c;
     P4ORBIT points;
 
@@ -381,8 +399,8 @@ class QVFStudy : public QObject
     // isoclines
     std::vector<isoclines> isocline_vector_;
     // TODO: vector for orbits (hem de poder incloude pcoord, fem struct?)
-    std::vector<orbits_points> orbits_vector_;
-    std::vector<orbits_points> separatrice_vector_;
+    QVector<orbits_points> orbits_vector_;
+    QVector<orbits_points> separatrices_vector_;
 
     // limit cycles
 
