@@ -25,17 +25,17 @@
 #include <QTextEdit>
 
 // -----------------------------------------------------------------------
-//						General polynomial expressions
+//                      General polynomial expressions
 // -----------------------------------------------------------------------
 
 // Linked list of univariate terms a*x^i
 
 struct term1 {
-    int exp;
-    double coeff;
-    struct term1 *next_term1;
+  int exp;
+  double coeff;
+  struct term1 *next_term1;
 
-    term1() : next_term1(nullptr){};
+  term1() : next_term1(nullptr){};
 };
 
 typedef struct term1 *P4POLYNOM1;
@@ -43,12 +43,12 @@ typedef struct term1 *P4POLYNOM1;
 // Linked list of terms a*x^i*y^j
 
 struct term2 {
-    int exp_x;
-    int exp_y;
-    double coeff;
-    struct term2 *next_term2;
+  int exp_x;
+  int exp_y;
+  double coeff;
+  struct term2 *next_term2;
 
-    term2() : next_term2(nullptr){};
+  term2() : next_term2(nullptr){};
 };
 
 // Linked list of terms a*r^i*cos(theta)^j*sin(theta)^k
@@ -56,241 +56,262 @@ struct term2 {
 typedef struct term2 *P4POLYNOM2;
 
 struct term3 {
-    int exp_r;
-    int exp_Co;
-    int exp_Si;
-    double coeff;
-    struct term3 *next_term3;
+  int exp_r;
+  int exp_Co;
+  int exp_Si;
+  double coeff;
+  struct term3 *next_term3;
 
-    term3() : next_term3(nullptr){};
+  term3() : next_term3(nullptr){};
 };
 
 typedef struct term3 *P4POLYNOM3;
 
 // -----------------------------------------------------------------------
-//								Orbits
+//                              Orbits
 // -----------------------------------------------------------------------
 
 struct orbits_points {
-    int color; // color of seperatrice
+  int color;  // color of seperatrice
 
-    double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
-                      // or on the poincare-lyapunov sphere
-                      // -> p=(0,x,y) or p=(1,r,theta)
-    int dashes;
-    int dir;  // if we have a line of sing at infinity and have to change
-    int type; // the direction if we integrate the orbit of separatrice
-              // and sometimes the type
+  double pcoord[3];  // point on the poincare sphere -> p=(X,Y,Z)
+                     // or on the poincare-lyapunov sphere
+                     // -> p=(0,x,y) or p=(1,r,theta)
+  int dashes;
+  int dir;   // if we have a line of sing at infinity and have to change
+  int type;  // the direction if we integrate the orbit of separatrice
+             // and sometimes the type
 
-    struct orbits_points *next_point;
+  struct orbits_points *next_point;
 
-    orbits_points() : next_point(nullptr){};
+  orbits_points() : next_point(nullptr){};
 };
 
 typedef struct orbits_points *P4ORBIT;
 
 Q_DECLARE_METATYPE(QVector<orbits_points>)
 
-QDataStream& operator<<(QDataStream& out, orbits_points& v) {
-    out << v.color << v.pcoord[0] << v.pcoord[1] << v.pcoord[2] << v.dashes << v.dir << v.type;
-    return out;
+QDataStream &operator<<(QDataStream &out, QVector<orbits_points> &v) {
+  if (!v.empty()) {
+    out << v.last().color << v.last().pcoord[0] << v.last().pcoord[1]
+        << v.last().pcoord[2] << v.last().dashes << v.last().dir
+        << v.last().type;
+  }
+  return out;
 }
 
-QDataStream& operator>>(QDataStream& in, orbits_points& v) {
-    in >> v.color;
-    in >> v.pcoord[0];
-    in >> v.pcoord[1];
-    in >> v.pcoord[2];
-    in >> v.dashes;
-    in >> v.dir;
-    in >> v.type;
-    return in;
+QDataStream &operator>>(QDataStream &in, QVector<orbits_points> &v) {
+  orbits_points orbit;
+  in >> orbit.color;
+  in >> orbit.pcoord[0];
+  in >> orbit.pcoord[1];
+  in >> orbit.pcoord[2];
+  in >> orbit.dashes;
+  in >> orbit.dir;
+  in >> orbit.type;
+  v.append(orbit);
+  return in;
 }
 
 struct orbits {
-    double pcoord[3]; // startpoint
-    int color;
-    P4ORBIT f_orbits;         // orbit
-    P4ORBIT current_f_orbits; // orbit
-    struct orbits *next_orbit;
+  double pcoord[3];  // startpoint
+  int color;
+  P4ORBIT f_orbits;          // orbit
+  P4ORBIT current_f_orbits;  // orbit
+  struct orbits *next_orbit;
 
-    orbits()
-        : f_orbits(nullptr), current_f_orbits(nullptr), next_orbit(nullptr){};
+  orbits()
+      : f_orbits(nullptr), current_f_orbits(nullptr), next_orbit(nullptr){};
 };
 
 // -----------------------------------------------------------------------
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    P4POLYNOM2 r2, u1, u2, v1, v2;
-    P4POLYNOM3 c;
-    P4ORBIT points;
+  P4POLYNOM2 r2, u1, u2, v1, v2;
+  P4POLYNOM3 c;
+  P4ORBIT points;
 
-    curves()
-        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
-          c(nullptr), points(nullptr){};
+  curves()
+      : r2(nullptr),
+        u1(nullptr),
+        u2(nullptr),
+        v1(nullptr),
+        v2(nullptr),
+        c(nullptr),
+        points(nullptr){};
 };
 
 struct isoclines {
-    P4POLYNOM2 r2, u1, u2, v1, v2;
-    P4POLYNOM3 c;
-    P4ORBIT points;
-    int color;
+  P4POLYNOM2 r2, u1, u2, v1, v2;
+  P4POLYNOM3 c;
+  P4ORBIT points;
+  int color;
 
-    isoclines()
-        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
-          c(nullptr), points(nullptr){};
+  isoclines()
+      : r2(nullptr),
+        u1(nullptr),
+        u2(nullptr),
+        v1(nullptr),
+        v2(nullptr),
+        c(nullptr),
+        points(nullptr){};
 };
 
 // -----------------------------------------------------------------------
-//						Blow up structure
+//                      Blow up structure
 // -----------------------------------------------------------------------
 
 struct transformations {
-    double x0, y0;              // translation point
-    int c1, c2, d1, d2, d3, d4; // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
-    int d;                      // X/x^d
-    struct transformations *next_trans;
+  double x0, y0;               // translation point
+  int c1, c2, d1, d2, d3, d4;  // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
+  int d;                       // X/x^d
+  struct transformations *next_trans;
 
-    transformations() : next_trans(nullptr){};
+  transformations() : next_trans(nullptr){};
 };
 
 struct blow_up_points {
-    int n; // number of transformations
-    struct transformations *trans;
-    double x0, y0;                 // last point that is not degenerate
-    double a11, a12, a21, a22;     // transformation matrix
-    struct term2 *vector_field[2]; // vector field
-    struct term1 *sep;             // sep (t,g(t))
-    int type;                      // type of seperatrice (STYPE_STABLE, ...)
-    int blow_up_vec_field; // if true then use the blow up vector field if
-    // the modulus of the last point of the separatrices is less
-    // than 1
-    double point[2]; // end point sep in blow up chart
+  int n;  // number of transformations
+  struct transformations *trans;
+  double x0, y0;                  // last point that is not degenerate
+  double a11, a12, a21, a22;      // transformation matrix
+  struct term2 *vector_field[2];  // vector field
+  struct term1 *sep;              // sep (t,g(t))
+  int type;                       // type of seperatrice (STYPE_STABLE, ...)
+  int blow_up_vec_field;  // if true then use the blow up vector field if
+  // the modulus of the last point of the separatrices is less
+  // than 1
+  double point[2];  // end point sep in blow up chart
 
-    struct orbits_points *first_sep_point;
-    struct orbits_points *last_sep_point;
-    struct blow_up_points *next_blow_up_point;
+  struct orbits_points *first_sep_point;
+  struct orbits_points *last_sep_point;
+  struct blow_up_points *next_blow_up_point;
 
-    blow_up_points()
-        : trans(nullptr), sep(nullptr), first_sep_point(nullptr),
-          last_sep_point(nullptr), next_blow_up_point(nullptr){};
+  blow_up_points()
+      : trans(nullptr),
+        sep(nullptr),
+        first_sep_point(nullptr),
+        last_sep_point(nullptr),
+        next_blow_up_point(nullptr){};
 };
 
 struct sep {
-    struct orbits_points *first_sep_point;
-    struct orbits_points *last_sep_point;
-    int type; // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
-    int direction;
-    int d;
-    bool notadummy; // false if separatrice is a copy of a structure (obtained
-                    // through a symmetry)
-    struct term1 *separatrice; // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
-    struct sep *next_sep;
+  struct orbits_points *first_sep_point;
+  struct orbits_points *last_sep_point;
+  int type;  // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
+  int direction;
+  int d;
+  bool notadummy;  // false if separatrice is a copy of a structure (obtained
+                   // through a symmetry)
+  struct term1 *separatrice;  // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
+  struct sep *next_sep;
 
-    sep()
-        : first_sep_point(nullptr), last_sep_point(nullptr),
-          separatrice(nullptr), next_sep(nullptr){};
+  sep()
+      : first_sep_point(nullptr),
+        last_sep_point(nullptr),
+        separatrice(nullptr),
+        next_sep(nullptr){};
 };
 
 // -----------------------------------------------------------------------
-//							Singularities
+//                          Singularities
 // -----------------------------------------------------------------------
 
-struct genericsingularity // part of the structure that is the same for all
-                          // types
+struct genericsingularity  // part of the structure that is the same for all
+                           // types
 {
-    double x0;
-    double y0;
-    struct genericsingularity *next;
-    int chart;
+  double x0;
+  double y0;
+  struct genericsingularity *next;
+  int chart;
 
-    genericsingularity() : next(nullptr){};
+  genericsingularity() : next(nullptr){};
 };
 
 struct saddle {
-    double x0;
-    double y0;
-    struct saddle *next_saddle;
-    int chart;
+  double x0;
+  double y0;
+  struct saddle *next_saddle;
+  int chart;
 
-    double epsilon;
-    bool notadummy;
+  double epsilon;
+  bool notadummy;
 
-    struct sep *separatrices;
-    struct term2 *vector_field[2]; // vector field {xdot,ydot}
-    double a11, a12, a21, a22;     // transformation matrix
+  struct sep *separatrices;
+  struct term2 *vector_field[2];  // vector field {xdot,ydot}
+  double a11, a12, a21, a22;      // transformation matrix
 
-    saddle() : next_saddle(nullptr), separatrices(nullptr){};
+  saddle() : next_saddle(nullptr), separatrices(nullptr){};
 };
 
 struct semi_elementary {
-    double x0;
-    double y0;
-    struct semi_elementary *next_se;
-    int chart;
+  double x0;
+  double y0;
+  struct semi_elementary *next_se;
+  int chart;
 
-    double epsilon;
-    bool notadummy;
+  double epsilon;
+  bool notadummy;
 
-    struct sep *separatrices;      // center sep (t,f(t)), sep (g(t),t)
-    struct term2 *vector_field[2]; // vector field
-    double a11, a12, a21, a22;     // transformation matrix
+  struct sep *separatrices;       // center sep (t,f(t)), sep (g(t),t)
+  struct term2 *vector_field[2];  // vector field
+  double a11, a12, a21, a22;      // transformation matrix
 
-    int type; // type of semi-elementary point
+  int type;  // type of semi-elementary point
 
-    semi_elementary() : next_se(nullptr), separatrices(nullptr){};
+  semi_elementary() : next_se(nullptr), separatrices(nullptr){};
 };
 
 struct degenerate {
-    double x0;
-    double y0;
-    struct degenerate *next_de;
-    int chart;
+  double x0;
+  double y0;
+  struct degenerate *next_de;
+  int chart;
 
-    double epsilon;
-    bool notadummy;
+  double epsilon;
+  bool notadummy;
 
-    struct blow_up_points *blow_up;
+  struct blow_up_points *blow_up;
 
-    degenerate() : next_de(nullptr), blow_up(nullptr){};
+  degenerate() : next_de(nullptr), blow_up(nullptr){};
 };
 
 struct node {
-    double x0;
-    double y0;
-    struct node *next_node;
-    int chart;
+  double x0;
+  double y0;
+  struct node *next_node;
+  int chart;
 
-    int stable;
+  int stable;
 
-    node() : next_node(nullptr){};
+  node() : next_node(nullptr){};
 };
 
 struct strong_focus {
-    double x0;
-    double y0;
-    struct strong_focus *next_sf;
-    int chart;
+  double x0;
+  double y0;
+  struct strong_focus *next_sf;
+  int chart;
 
-    int stable;
+  int stable;
 
-    strong_focus() : next_sf(nullptr){};
+  strong_focus() : next_sf(nullptr){};
 };
 
 struct weak_focus {
-    double x0;
-    double y0;
-    struct weak_focus *next_wf;
-    int chart;
+  double x0;
+  double y0;
+  struct weak_focus *next_wf;
+  int chart;
 
-    int type;
+  int type;
 
-    weak_focus() : next_wf(nullptr){};
+  weak_focus() : next_wf(nullptr){};
 };
 
 // -----------------------------------------------------------------------
-//							Some definitions
+//                          Some definitions
 // -----------------------------------------------------------------------
 
 #define CHART_R2 0
@@ -306,7 +327,7 @@ struct weak_focus {
 #define SEMI_HYPERBOLIC 5
 #define NON_ELEMENTARY 6
 
-#define STYPE_UNSTABLE (1) // separatrice type
+#define STYPE_UNSTABLE (1)  // separatrice type
 #define STYPE_STABLE (-1)
 #define STYPE_CENUNSTABLE 2
 #define STYPE_CENSTABLE (-2)
@@ -327,240 +348,234 @@ struct weak_focus {
 #define OT_ORBIT STYPE_ORBIT
 
 enum TYPEOFVIEWS {
-    TYPEOFVIEW_PLANE = 0,
-    TYPEOFVIEW_SPHERE = 1,
-    TYPEOFVIEW_U1 = 2,
-    TYPEOFVIEW_U2 = 3,
-    TYPEOFVIEW_V1 = 4,
-    TYPEOFVIEW_V2 = 5
+  TYPEOFVIEW_PLANE = 0,
+  TYPEOFVIEW_SPHERE = 1,
+  TYPEOFVIEW_U1 = 2,
+  TYPEOFVIEW_U2 = 3,
+  TYPEOFVIEW_V1 = 4,
+  TYPEOFVIEW_V2 = 5
 };
 
 // -----------------------------------------------------------------------
-//							Results class
+//                          Results class
 // -----------------------------------------------------------------------
-class QVFStudy : public QObject
-{
-  public:
-    // Constructor and destructor
-    QVFStudy();  // constructor
-    ~QVFStudy(); // destructor
+class QVFStudy : public QObject {
+ public:
+  // Constructor and destructor
+  QVFStudy();   // constructor
+  ~QVFStudy();  // destructor
 
-    // general information
+  // general information
 
-    int typeofstudy_;
-    TYPEOFVIEWS typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    int p_;
-    int q_;
-    bool plweights_; // true if p<>1 or q<>1; false if p=q=1
+  int typeofstudy_;
+  TYPEOFVIEWS typeofview_;  // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+  int p_;
+  int q_;
+  bool plweights_;  // true if p<>1 or q<>1; false if p=q=1
 
-    double double_p_;         // shortcuts: = (double)p
-    double double_q_;         // = (double)q
-    double double_p_plus_q_;  // = (double)(p+q)
-    double double_p_minus_1_; // = (double)(p-1)
-    double double_q_minus_1_; // = (double)(q-1)
-    double double_q_minus_p_; // = (double)(q-p)
+  double double_p_;          // shortcuts: = (double)p
+  double double_q_;          // = (double)q
+  double double_p_plus_q_;   // = (double)(p+q)
+  double double_p_minus_1_;  // = (double)(p-1)
+  double double_q_minus_1_;  // = (double)(q-1)
+  double double_q_minus_p_;  // = (double)(q-p)
 
-    double xmin_, xmax_, ymin_, ymax_; // in case of local study
-    bool singinf_;
-    int dir_vec_field_;
+  double xmin_, xmax_, ymin_, ymax_;  // in case of local study
+  bool singinf_;
+  int dir_vec_field_;
 
-    QString lasterror_;
+  QString lasterror_;
 
-    // vector field in various charts
+  // vector field in various charts
 
-    P4POLYNOM2 f_vec_field_[2];
-    P4POLYNOM2 vec_field_U1_[2];
-    P4POLYNOM2 vec_field_U2_[2];
-    P4POLYNOM2 vec_field_V1_[2];
-    P4POLYNOM2 vec_field_V2_[2];
-    P4POLYNOM3 vec_field_C_[2];
+  P4POLYNOM2 f_vec_field_[2];
+  P4POLYNOM2 vec_field_U1_[2];
+  P4POLYNOM2 vec_field_U2_[2];
+  P4POLYNOM2 vec_field_V1_[2];
+  P4POLYNOM2 vec_field_V2_[2];
+  P4POLYNOM3 vec_field_C_[2];
 
-    // singular points and their properties:
+  // singular points and their properties:
 
-    saddle *first_saddle_point_;
-    semi_elementary *first_se_point_;
-    node *first_node_point_;
-    strong_focus *first_sf_point_;
-    weak_focus *first_wf_point_;
-    degenerate *first_de_point_;
+  saddle *first_saddle_point_;
+  semi_elementary *first_se_point_;
+  node *first_node_point_;
+  strong_focus *first_sf_point_;
+  weak_focus *first_wf_point_;
+  degenerate *first_de_point_;
 
-    // Greatest common factor if present:
+  // Greatest common factor if present:
 
-    P4POLYNOM2 gcf_;
-    P4POLYNOM2 gcf_U1_;
-    P4POLYNOM2 gcf_U2_;
-    P4POLYNOM2 gcf_V1_;
-    P4POLYNOM2 gcf_V2_;
-    P4POLYNOM3 gcf_C_;
-    P4ORBIT gcf_points_;
+  P4POLYNOM2 gcf_;
+  P4POLYNOM2 gcf_U1_;
+  P4POLYNOM2 gcf_U2_;
+  P4POLYNOM2 gcf_V1_;
+  P4POLYNOM2 gcf_V2_;
+  P4POLYNOM3 gcf_C_;
+  P4ORBIT gcf_points_;
 
-    // curves
-    std::vector<curves> curve_vector_;
-    // isoclines
-    std::vector<isoclines> isocline_vector_;
-    // TODO: vector for orbits (hem de poder incloude pcoord, fem struct?)
-    QVector<orbits_points> orbits_vector_;
-    QVector<orbits_points> separatrices_vector_;
+  // curves
+  std::vector<curves> curve_vector_;
+  // isoclines
+  std::vector<isoclines> isocline_vector_;
+  // TODO: vector for orbits (hem de poder incloude pcoord, fem struct?)
+  QVector<orbits_points> orbits_vector_;
+  QVector<orbits_points> separatrices_vector_;
 
-    // limit cycles
+  // limit cycles
 
-    orbits *first_lim_cycle_;
-    orbits *first_orbit_;
+  orbits *first_lim_cycle_;
+  orbits *first_orbit_;
 
-    // ------ Configuration
+  // ------ Configuration
 
-    int config_lc_value_;
-    double config_hma_;
-    double config_hmi_;
-    double config_step_;
-    double config_currentstep_;
-    double config_tolerance_;
-    double config_projection_;
-    int config_intpoints_;
-    int config_lc_numpoints_;
-    bool config_dashes_;
-    bool config_kindvf_; // true for original VF, false for reduced
+  int config_lc_value_;
+  double config_hma_;
+  double config_hmi_;
+  double config_step_;
+  double config_currentstep_;
+  double config_tolerance_;
+  double config_projection_;
+  int config_intpoints_;
+  int config_lc_numpoints_;
+  bool config_dashes_;
+  bool config_kindvf_;  // true for original VF, false for reduced
 
-    // run-time when plotting
+  // run-time when plotting
 
-    orbits *current_orbit_;
-    orbits *current_lim_cycle_;
+  orbits *current_orbit_;
+  orbits *current_lim_cycle_;
 
-    double selected_ucoord_[2];
-    saddle *selected_saddle_point_;
-    semi_elementary *selected_se_point_;
-    degenerate *selected_de_point_;
-    sep *selected_sep_;
-    blow_up_points *selected_de_sep_;
+  double selected_ucoord_[2];
+  saddle *selected_saddle_point_;
+  semi_elementary *selected_se_point_;
+  degenerate *selected_de_point_;
+  sep *selected_sep_;
+  blow_up_points *selected_de_sep_;
 
-    // coordinate transformation routines, set up when starting the plot
+  // coordinate transformation routines, set up when starting the plot
 
-    void (*viewcoord_to_sphere)(double, double, double *);
-    bool (*sphere_to_viewcoordpair)(double *, double *, double *, double *,
-                                    double *, double *);
+  void (*viewcoord_to_sphere)(double, double, double *);
+  bool (*sphere_to_viewcoordpair)(double *, double *, double *, double *,
+                                  double *, double *);
 
-    void (*finite_to_viewcoord)(double, double, double *);
-    void (*sphere_to_viewcoord)(double, double, double, double *);
-    bool (*is_valid_viewcoord)(double, double, double *);
-    void (*integrate_sphere_sep)(double, double, double, double *, double *,
-                                 int *, int *, int *, int *, double, double);
-    void (*U1_to_sphere)(double, double, double *);
-    void (*U2_to_sphere)(double, double, double *);
-    void (*V1_to_sphere)(double, double, double *);
-    void (*V2_to_sphere)(double, double, double *);
+  void (*finite_to_viewcoord)(double, double, double *);
+  void (*sphere_to_viewcoord)(double, double, double, double *);
+  bool (*is_valid_viewcoord)(double, double, double *);
+  void (*integrate_sphere_sep)(double, double, double, double *, double *,
+                               int *, int *, int *, int *, double, double);
+  void (*U1_to_sphere)(double, double, double *);
+  void (*U2_to_sphere)(double, double, double *);
+  void (*V1_to_sphere)(double, double, double *);
+  void (*V2_to_sphere)(double, double, double *);
 
-    void (*sphere_to_U1)(double, double, double, double *);
-    void (*sphere_to_U2)(double, double, double, double *);
-    void (*sphere_to_V1)(double, double, double, double *);
-    void (*sphere_to_V2)(double, double, double, double *);
+  void (*sphere_to_U1)(double, double, double, double *);
+  void (*sphere_to_U2)(double, double, double, double *);
+  void (*sphere_to_V1)(double, double, double, double *);
+  void (*sphere_to_V2)(double, double, double, double *);
 
-    void (*sphere_to_R2)(double, double, double, double *);
-    void (*R2_to_sphere)(double, double, double *);
-    void (*integrate_sphere_orbit)(double, double, double, double *, double *,
-                                   int *, int *, double, double);
-    double (*eval_lc)(double *, double, double, double);
-    bool (*less2)(double *, double *);
-    int (*change_dir)(double *);
+  void (*sphere_to_R2)(double, double, double, double *);
+  void (*R2_to_sphere)(double, double, double *);
+  void (*integrate_sphere_orbit)(double, double, double, double *, double *,
+                                 int *, int *, double, double);
+  double (*eval_lc)(double *, double, double, double);
+  bool (*less2)(double *, double *);
+  int (*change_dir)(double *);
 
-    // initialization and destruction of structures
+  // initialization and destruction of structures
 
-    void deleteVF(void);
+  void deleteVF(void);
 
-    void deleteSaddle(saddle *);
-    void deleteSemiElementary(semi_elementary *);
-    inline void deleteNode(node *p)
-    {
-        node *q;
+  void deleteSaddle(saddle *);
+  void deleteSemiElementary(semi_elementary *);
+  inline void deleteNode(node *p) {
+    node *q;
 
-        while (p != nullptr) {
-            q = p;
-            p = p->next_node;
-            delete q;
-            q = nullptr;
-        }
+    while (p != nullptr) {
+      q = p;
+      p = p->next_node;
+      delete q;
+      q = nullptr;
     }
-    inline void deleteStrongFocus(strong_focus *p)
-    {
-        strong_focus *q;
+  }
+  inline void deleteStrongFocus(strong_focus *p) {
+    strong_focus *q;
 
-        while (p != nullptr) {
-            q = p;
-            p = p->next_sf;
-            delete q;
-            q = nullptr;
-        }
+    while (p != nullptr) {
+      q = p;
+      p = p->next_sf;
+      delete q;
+      q = nullptr;
     }
-    inline void deleteWeakFocus(weak_focus *p)
-    {
-        weak_focus *q;
+  }
+  inline void deleteWeakFocus(weak_focus *p) {
+    weak_focus *q;
 
-        while (p != nullptr) {
-            q = p;
-            p = p->next_wf;
-            delete q;
-            q = nullptr;
-        }
+    while (p != nullptr) {
+      q = p;
+      p = p->next_wf;
+      delete q;
+      q = nullptr;
     }
-    void deleteDegenerate(degenerate *);
-    void deleteSeparatrices(sep *);
-    inline void deleteTransformations(transformations *t)
-    {
-        transformations *u;
+  }
+  void deleteDegenerate(degenerate *);
+  void deleteSeparatrices(sep *);
+  inline void deleteTransformations(transformations *t) {
+    transformations *u;
 
-        while (t != nullptr) {
-            u = t;
-            t = t->next_trans;
-            delete u;
-            u = nullptr;
-        }
+    while (t != nullptr) {
+      u = t;
+      t = t->next_trans;
+      delete u;
+      u = nullptr;
     }
-    void deleteBlowup(blow_up_points *b);
+  }
+  void deleteBlowup(blow_up_points *b);
 
-    void deleteLimitCycle(orbits *);
-    inline void deleteOrbitPoint(P4ORBIT p)
-    {
-        P4ORBIT q;
+  void deleteLimitCycle(orbits *);
+  inline void deleteOrbitPoint(P4ORBIT p) {
+    P4ORBIT q;
 
-        while (p != nullptr) {
-            q = p;
-            p = p->next_point;
+    while (p != nullptr) {
+      q = p;
+      p = p->next_point;
 
-            delete q;
-            q = nullptr;
-        }
+      delete q;
+      q = nullptr;
     }
-    void deleteOrbit(orbits *);
+  }
+  void deleteOrbit(orbits *);
 
-    // reading of the Maple/Reduce results
+  // reading of the Maple/Reduce results
 
-    bool readTables(QString basename);
-    bool readGCF(FILE *fp);
-    bool readCurve(QString basename);
-    bool readIsoclines(QString basename);
-    bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
-    bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
-    bool readPoints(FILE *fp);
-    bool readTerm1(FILE *fp, P4POLYNOM1 p, int N);
-    bool readTerm2(FILE *fp, P4POLYNOM2 p, int N);
-    bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
+  bool readTables(QString basename);
+  bool readGCF(FILE *fp);
+  bool readCurve(QString basename);
+  bool readIsoclines(QString basename);
+  bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
+  bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
+  bool readPoints(FILE *fp);
+  bool readTerm1(FILE *fp, P4POLYNOM1 p, int N);
+  bool readTerm2(FILE *fp, P4POLYNOM2 p, int N);
+  bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
 
-    bool readSaddlePoint(FILE *fp);
-    bool readSemiElementaryPoint(FILE *fp);
-    bool readStrongFocusPoint(FILE *fp);
-    bool readWeakFocusPoint(FILE *fp);
-    bool readDegeneratePoint(FILE *fp);
-    bool readNodePoint(FILE *fp);
-    bool readBlowupPoints(FILE *fp, blow_up_points *b, int n);
-    bool readTransformations(FILE *fp, transformations *trans, int n);
+  bool readSaddlePoint(FILE *fp);
+  bool readSemiElementaryPoint(FILE *fp);
+  bool readStrongFocusPoint(FILE *fp);
+  bool readWeakFocusPoint(FILE *fp);
+  bool readDegeneratePoint(FILE *fp);
+  bool readNodePoint(FILE *fp);
+  bool readBlowupPoints(FILE *fp, blow_up_points *b, int n);
+  bool readTransformations(FILE *fp, transformations *trans, int n);
 
-    void setupCoordinateTransformations(void); // see math_p4.cpp
+  void setupCoordinateTransformations(void);  // see math_p4.cpp
 
-    void dump(QString basename, QString info = "");
+  void dump(QString basename, QString info = "");
 
-  private:
-    void dumpSeparatrices(QTextEdit *m, sep *separ, int margin);
-    void dumpSingularities(QTextEdit *m, genericsingularity *p,
-                           const char *type, bool longversion);
+ private:
+  void dumpSeparatrices(QTextEdit *m, sep *separ, int margin);
+  void dumpSingularities(QTextEdit *m, genericsingularity *p, const char *type,
+                         bool longversion);
 };
 
 #define DUMP(x) m->append(s.sprintf x);
