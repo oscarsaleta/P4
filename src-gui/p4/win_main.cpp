@@ -265,14 +265,14 @@ void QStartDlg::onLoadSignal()
                 settings.value("processText-contents").toString());
         }
     }
-    if (settings.value("orbits", 0) == QVariant::isNull()) {
+    if (settings.value("orbits", 0).isNull()) {
         if (!g_VFResults.orbits_vector_.empty()) {
             g_VFResults.orbits_vector_.clear();
         }
     } else {
         // FIXME: això no funcionarà
         g_VFResults.orbits_vector_ =
-            settings.value<QVector<orbits_points>>("orbits");
+            settings.value<(QVector<orbits_points>)>("orbits");
     }
     settings.endGroup();
 }
