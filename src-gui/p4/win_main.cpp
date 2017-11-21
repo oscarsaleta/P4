@@ -213,7 +213,7 @@ void QStartDlg::onLoadSignal()
                        QSettings::NativeFormat);
     settings.beginGroup("QStartDlg");
     // check if there is configuration in this file
-    if (settings.exists("size")) {
+    if (settings.contains("size")) {
         resize(settings.value("size").toSize());
         move(settings.value("pos").toPoint());
         if (settings.value("plotWindow").toBool()) {
