@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 
     g_p4printer = new QPrinter(QPrinter::PrinterResolution);
     g_p4smallicon = new QPixmap();
-    if (g_p4smallicon->load(getP4BinPath() + "/p4smallicon.png") == false) {
+    if (g_p4smallicon->load(getP4BinPath() + "/p4smallicon.ico") == false) {
         delete g_p4smallicon;
         g_p4smallicon = nullptr;
     }
