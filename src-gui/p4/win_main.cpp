@@ -77,11 +77,13 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
         "View results of the symbolic manipulator after evaluation");
     btn_plot_->setToolTip("Draw singular points, orbits and separatrices");
     btn_help_->setToolTip("Shows extensive help on the use of P4");
-    edt_name_->setToolTip("Enter the filename of the vector field here.\n"
-                          "You do not need to add the extension (.inp).\n");
+    edt_name_->setToolTip(
+        "Enter the filename of the vector field here.\n"
+        "You do not need to add the extension (.inp).\n");
     btn_browse_->setToolTip("Search for vector field files on your system");
-    btn_about_->setToolTip("Displays information about the program P4, its "
-                           "version and main settings");
+    btn_about_->setToolTip(
+        "Displays information about the program P4, its "
+        "version and main settings");
 #endif
 
     // define placement of controls
@@ -210,49 +212,52 @@ void QStartDlg::onLoadSignal()
     QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
     settings.beginGroup("QStartDlg");
-    resize(settings.value("size").toSize());
-    move(settings.value("pos").toPoint());
-    if (settings.value("plotWindow").toBool()) {
-        if (plotWindow_ != nullptr)
-            plotWindow_->show();
-        else {
-            onPlot();
-            plotWindow_->onLoadSignal();
+    // check if there is configuration in this file
+    if (settings.exists("size")) {
+        resize(settings.value("size").toSize());
+        move(settings.value("pos").toPoint());
+        if (settings.value("plotWindow").toBool()) {
+            if (plotWindow_ != nullptr)
+                plotWindow_->show();
+            else {
+                onPlot();
+                plotWindow_->onLoadSignal();
+            }
         }
-    }
-    if (settings.value("viewInfiniteWindow").toBool()) {
-        if (viewInfiniteWindow_ != nullptr) {
-            delete viewInfiniteWindow_;
-            viewInfiniteWindow_ = nullptr;
+        if (settings.value("viewInfiniteWindow").toBool()) {
+            if (viewInfiniteWindow_ != nullptr) {
+                delete viewInfiniteWindow_;
+                viewInfiniteWindow_ = nullptr;
+            }
+            onViewInfinite();
+            viewInfiniteWindow_->resize(
+                settings.value("viewInfiniteWindow-size").toSize());
+            viewInfiniteWindow_->move(
+                settings.value("viewInfiniteWindow-pos").toPoint());
         }
-        onViewInfinite();
-        viewInfiniteWindow_->resize(
-            settings.value("viewInfiniteWindow-size").toSize());
-        viewInfiniteWindow_->move(
-            settings.value("viewInfiniteWindow-pos").toPoint());
-    }
-    if (settings.value("viewFiniteWindow").toBool()) {
-        if (viewFiniteWindow_ != nullptr) {
-            delete viewFiniteWindow_;
-            viewFiniteWindow_ = nullptr;
+        if (settings.value("viewFiniteWindow").toBool()) {
+            if (viewFiniteWindow_ != nullptr) {
+                delete viewFiniteWindow_;
+                viewFiniteWindow_ = nullptr;
+            }
+            onViewFinite();
+            viewFiniteWindow_->resize(
+                settings.value("viewFiniteWindow-size").toSize());
+            viewFiniteWindow_->move(
+                settings.value("viewFiniteWindow-pos").toPoint());
         }
-        onViewFinite();
-        viewFiniteWindow_->resize(
-            settings.value("viewFiniteWindow-size").toSize());
-        viewFiniteWindow_->move(
-            settings.value("viewFiniteWindow-pos").toPoint());
-    }
-    if (settings.value("outputWindow").toBool() &&
-        settings.value("processText").toBool()) {
-        if (g_ThisVF != nullptr) {
-            g_ThisVF->createProcessWindow();
-            g_ThisVF->terminateProcessButton_->setDisabled(true);
-            g_ThisVF->outputWindow_->resize(
-                settings.value("outputWindow-size").toSize());
-            g_ThisVF->outputWindow_->move(
-                settings.value("outputWindow-pos").toPoint());
-            g_ThisVF->processText_->setPlainText(
-                settings.value("processText-contents").toString());
+        if (settings.value("outputWindow").toBool() &&
+            settings.value("processText").toBool()) {
+            if (g_ThisVF != nullptr) {
+                g_ThisVF->createProcessWindow();
+                g_ThisVF->terminateProcessButton_->setDisabled(true);
+                g_ThisVF->outputWindow_->resize(
+                    settings.value("outputWindow-size").toSize());
+                g_ThisVF->outputWindow_->move(
+                    settings.value("outputWindow-pos").toPoint());
+                g_ThisVF->processText_->setPlainText(
+                    settings.value("processText-contents").toString());
+            }
         }
     }
     settings.endGroup();
@@ -266,9 +271,10 @@ void QStartDlg::onHelp()
 
     helpname = getP4HelpPath();
     if (helpname.isNull()) {
-        QMessageBox::critical(this, "P4", "Cannot determine P4 install "
-                                          "location!\nPlease re-check "
-                                          "installation.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot determine P4 install "
+                              "location!\nPlease re-check "
+                              "installation.\n");
         return;
     }
 
@@ -276,9 +282,10 @@ void QStartDlg::onHelp()
     helpname += P4HELPFILE;
 
     if (QFile(helpname).exists() == false) {
-        QMessageBox::critical(this, "P4", "Cannot find P4 help files in "
-                                          "install location!\nPlease re-check "
-                                          "installation.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot find P4 help files in "
+                              "install location!\nPlease re-check "
+                              "installation.\n");
         return;
     }
 
@@ -309,9 +316,9 @@ void QStartDlg::onPlot()
         findWindow_->getDataFromDlg();
     }*/
 
-    g_VFResults.deleteVF(); // delete any previous result object
+    g_VFResults.deleteVF();  // delete any previous result object
     if (!g_VFResults.readTables(
-            g_ThisVF->getbarefilename())) // read maple/reduce results
+            g_ThisVF->getbarefilename()))  // read maple/reduce results
     {
         delete plotWindow_;
         plotWindow_ = nullptr;
@@ -333,7 +340,7 @@ void QStartDlg::onPlot()
         plotWindow_ = new QPlotWnd(this);
     }
 
-    plotWindow_->configure(); // configure plot window
+    plotWindow_->configure();  // configure plot window
     plotWindow_->show();
     plotWindow_->raise();
     plotWindow_->adjustHeight();
@@ -463,9 +470,9 @@ void QStartDlg::signalEvaluated()
     // Transfer signal to plotWindow_:
 
     if (plotWindow_ != nullptr) {
-        g_VFResults.deleteVF(); // delete any previous result object
+        g_VFResults.deleteVF();  // delete any previous result object
         if (!g_VFResults.readTables(
-                g_ThisVF->getbarefilename())) // read maple/reduce results
+                g_ThisVF->getbarefilename()))  // read maple/reduce results
         {
             QMessageBox::critical(
                 this, "P4",
@@ -549,9 +556,10 @@ void QStartDlg::onViewFinite()
                 "A study at the finite region was not requested!\n");
             return;
         }
-        QMessageBox::critical(this, "P4", "Cannot open the result "
-                                          "file.\nPlease re-evaluate, or check "
-                                          "filename.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot open the result "
+                              "file.\nPlease re-evaluate, or check "
+                              "filename.\n");
         return;
     }
 
@@ -583,9 +591,10 @@ void QStartDlg::onViewInfinite()
                                   "A study at infinity was not requested!\n");
             return;
         }
-        QMessageBox::critical(this, "P4", "Cannot open the result "
-                                          "file.\nPlease re-evaluate, or check "
-                                          "filename.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot open the result "
+                              "file.\nPlease re-evaluate, or check "
+                              "filename.\n");
         return;
     }
 
@@ -676,10 +685,11 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
         return;
     }
 
-    result = QMessageBox::information(
-        this, "P4", "The vector field has been changed since "
-                    "the last save.",
-        "&Save Now", "&Cancel", "&Leave Anyway", 0, 1);
+    result =
+        QMessageBox::information(this, "P4",
+                                 "The vector field has been changed since "
+                                 "the last save.",
+                                 "&Save Now", "&Cancel", "&Leave Anyway", 0, 1);
 
     if (result == 2)
         ce->accept();
@@ -701,29 +711,29 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
 void QStartDlg::customEvent(QEvent *e)
 {
     switch ((int)(e->type())) {
-    case TYPE_SIGNAL_EVALUATING:
-        signalEvaluating();
-        break;
-    case TYPE_SIGNAL_EVALUATED:
-        signalEvaluated();
-        break;
-    case TYPE_SIGNAL_CHANGED:
-        signalChanged();
-        break;
-    case TYPE_SIGNAL_LOADED:
-        signalLoaded();
-        break;
-    case TYPE_SIGNAL_SAVED:
-        signalSaved();
-        break;
-    case TYPE_CLOSE_PLOTWINDOW:
-        if (plotWindow_ != nullptr) {
-            delete plotWindow_;
-            plotWindow_ = nullptr;
-        }
-        break;
-    default:
-        QWidget::customEvent(e);
+        case TYPE_SIGNAL_EVALUATING:
+            signalEvaluating();
+            break;
+        case TYPE_SIGNAL_EVALUATED:
+            signalEvaluated();
+            break;
+        case TYPE_SIGNAL_CHANGED:
+            signalChanged();
+            break;
+        case TYPE_SIGNAL_LOADED:
+            signalLoaded();
+            break;
+        case TYPE_SIGNAL_SAVED:
+            signalSaved();
+            break;
+        case TYPE_CLOSE_PLOTWINDOW:
+            if (plotWindow_ != nullptr) {
+                delete plotWindow_;
+                plotWindow_ = nullptr;
+            }
+            break;
+        default:
+            QWidget::customEvent(e);
     }
 }
 
