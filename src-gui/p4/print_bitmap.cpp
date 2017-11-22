@@ -24,6 +24,9 @@
 #include "plot_tools.h"
 #include "print_points.h"
 
+#include <QBrush>
+#include <QPainter>
+
 static bool s_P4PrintBlackWhite = true;
 
 static QPainter *s_P4PrintPainter = nullptr;
@@ -35,25 +38,27 @@ static int s_LastP4PrintY0 = 0;
 static int s_LastP4Printcolor = 0;
 
 // ---------------------------------------------------------------------------------------
-int printColorTable(int color) {
-    int colorTable[NUMXFIGCOLORS] = {WHITE, // black --> white when printing
-            BLUE,   GREEN,  CYAN,   RED,   MAGENTA,
-            BLACK, // yellow --> black when printing
-            BLACK, // white --> black when printing
-            BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1,  GREEN2,   GREEN3,   CYAN1,
-            CYAN2,  CYAN3,  RED1,   RED2,  RED3,    MAGENTA1, MAGENTA2, MAGENTA3,
-            BROWN1, BROWN2, BROWN3, PINK1, PINK2,   PINK3,    PINK4,    GOLD};
-    int colorTableReverse[NUMXFIGCOLORS] = {BLACK,  BLUE,   GREEN,  CYAN,  RED,    MAGENTA,  YELLOW,   WHITE,
-            BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1, GREEN2,   GREEN3,   CYAN1,
-            CYAN2,  CYAN3,  RED1,   RED2,  RED3,   MAGENTA1, MAGENTA2, MAGENTA3,
-            BROWN1, BROWN2, BROWN3, PINK1, PINK2,  PINK3,    PINK4,    GOLD};
+int printColorTable(int color)
+{
+    int colorTable[NUMXFIGCOLORS] = {
+        WHITE, // black --> white when printing
+        BLUE,   GREEN,  CYAN,   RED,   MAGENTA,
+        BLACK, // yellow --> black when printing
+        BLACK, // white --> black when printing
+        BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1,  GREEN2,   GREEN3,   CYAN1,
+        CYAN2,  CYAN3,  RED1,   RED2,  RED3,    MAGENTA1, MAGENTA2, MAGENTA3,
+        BROWN1, BROWN2, BROWN3, PINK1, PINK2,   PINK3,    PINK4,    GOLD};
+    int colorTableReverse[NUMXFIGCOLORS] = {
+        BLACK,  BLUE,   GREEN,  CYAN,  RED,    MAGENTA,  YELLOW,   WHITE,
+        BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1, GREEN2,   GREEN3,   CYAN1,
+        CYAN2,  CYAN3,  RED1,   RED2,  RED3,   MAGENTA1, MAGENTA2, MAGENTA3,
+        BROWN1, BROWN2, BROWN3, PINK1, PINK2,  PINK3,    PINK4,    GOLD};
 
     if (bgColours::PRINT_WHITE_BG)
         return colorTable[color];
     else
         return colorTableReverse[color];
 }
-
 
 static void P4Print_comment(QString s)
 {

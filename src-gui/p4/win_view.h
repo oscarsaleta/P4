@@ -20,16 +20,15 @@
 #ifndef WIN_VIEW_H
 #define WIN_VIEW_H
 
-#include "win_find.h"
-
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QSpinBox>
-#include <QString>
 #include <QWidget>
+
+class QBoxLayout;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
+class QSpinBox;
+class QString;
 
 class QViewDlg : public QWidget
 {

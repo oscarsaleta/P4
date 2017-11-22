@@ -20,14 +20,15 @@
 #ifndef WIN_SEPARATRICES_H
 #define WIN_SEPARATRICES_H
 
-#include "win_plot.h"
-#include "win_sphere.h"
-
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QWidget>
+
+class QWinSphere;
+class QPlotWnd;
+
+class QPushButton;
+class QLineEdit;
+class QLabel;
+class QBoxLayout;
 
 extern QString g_CurrentSingularityInfo[];
 extern double g_CurrentSeparatriceEpsilon;

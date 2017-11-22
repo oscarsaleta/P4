@@ -20,8 +20,12 @@
 #ifndef MATH_SEPARATRICE_H
 #define MATH_SEPARATRICE_H
 
-#include "file_tab.h"
-#include "win_sphere.h"
+class QWinSphere;
+struct orbits_points;
+struct transformations;
+struct sep;
+struct term2;
+struct term3;
 
 extern void (*change_epsilon)(QWinSphere *, double);
 extern void (*start_plot_sep)(QWinSphere *);

@@ -20,11 +20,18 @@
 #include "win_intparams.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSpinBox>
 
 QIntParamsDlg::~QIntParamsDlg() { getDataFromDlg(); }
 

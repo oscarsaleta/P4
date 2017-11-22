@@ -20,11 +20,18 @@
 #include "win_gcf.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
+#include "main.h"
 #include "math_gcf.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRadioButton>
 
 QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)

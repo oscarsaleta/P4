@@ -21,17 +21,10 @@
 #define FILE_VF_H
 
 #include "custom.h"
-#include "win_curve.h"
-#include "win_find.h"
-#include "win_gcf.h"
-#include "win_isoclines.h"
 
 #include <QObject>
 #include <QProcess>
-#include <QPushButton>
 #include <QString>
-#include <QTextEdit>
-#include <QTextStream>
 
 #define TYPEOFSTUDY_ALL 0
 #define TYPEOFSTUDY_FIN 1
@@ -43,8 +36,19 @@
 
 /* Check Qt version for compatibility with QProcess::errorOccurred */
 #if QT_VERSION_MINOR < 6
-    #define QT_QPROCESS_OLD
+#define QT_QPROCESS_OLD
 #endif
+
+class QPushButton;
+class QTextEdit;
+class QTextStream;
+
+class QCurveDlg;
+class QFindDlg;
+class QGcfDlg;
+class QIsoclinesDlg;
+
+struct term2;
 
 class QInputVF : public QObject
 {
@@ -163,7 +167,7 @@ class QInputVF : public QObject
     void prepare();
     void evaluate();
 
-    bool prepareGcf(P4POLYNOM2 f, double, double, int, int);
+    bool prepareGcf(term2 *f, double, double, int, int);
     bool prepareGcf_LyapunovCyl(double, double, int, int);
     bool prepareGcf_LyapunovR2(int, int);
     bool evaluateGcf();
@@ -178,7 +182,7 @@ class QInputVF : public QObject
     // called from prepareCurveFile
     void prepareMapleCurve(QTextStream *);
     // the following are called from math_curve.cpp
-    bool prepareCurve(P4POLYNOM2 f, double, double, int, int);
+    bool prepareCurve(term2 *f, double, double, int, int);
     bool prepareCurve_LyapunovCyl(double, double, int, int);
     bool prepareCurve_LyapunovR2(int, int);
     bool evaluateCurve();
@@ -188,7 +192,7 @@ class QInputVF : public QObject
     void prepareIsoclines();
     void prepareIsoclinesFile(QTextStream *);
     void prepareMapleIsoclines(QTextStream *);
-    bool prepareIsoclines(P4POLYNOM2 f, double, double, int, int);
+    bool prepareIsoclines(term2 *f, double, double, int, int);
     bool prepareIsoclines_LyapunovCyl(double, double, int, int);
     bool prepareIsoclines_LyapunovR2(int, int);
     bool evaluateIsoclines();

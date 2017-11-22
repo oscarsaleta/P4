@@ -20,7 +20,9 @@
 #include "print_xfig.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
+#include "main.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"
 #include "print_points.h"
@@ -469,9 +471,9 @@ static void xfig_print_point(double _x0, double _y0, int color)
     */
 
     QString s;
-    s.sprintf("1 3 0 1 %d %d 50 0 46 0.0 1 0.0 %d %d %d %d %d %d %d %d\n", color,
-              color, x0, y0, s_XFigRealLineWidth / 2, s_XFigRealLineWidth / 2,
-              x0, y0, x0 + s_XFigRealLineWidth, y0);
+    s.sprintf("1 3 0 1 %d %d 50 0 46 0.0 1 0.0 %d %d %d %d %d %d %d %d\n",
+              color, color, x0, y0, s_XFigRealLineWidth / 2,
+              s_XFigRealLineWidth / 2, x0, y0, x0 + s_XFigRealLineWidth, y0);
     s_XFigStream << s;
 }
 

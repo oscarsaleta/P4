@@ -20,13 +20,22 @@
 #include "win_isoclines.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
+#include "main.h"
 #include "math_gcf.h"
 #include "math_isoclines.h"
 #include "math_polynom.h"
+#include "win_plot.h"
+#include "win_sphere.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRadioButton>
 
 QIsoclinesDlg::QIsoclinesDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),

@@ -20,10 +20,14 @@
 #include "math_gcf.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
+#include "win_sphere.h"
+
+#include <QFile>
 
 #include <cmath>
 
@@ -46,7 +50,8 @@ bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
 {
     if (g_VFResults.gcf_points_ != nullptr) {
         sp->prepareDrawing();
-        draw_gcf(sp, g_VFResults.gcf_points_, bgColours::CBACKGROUND, s_GcfDashes);
+        draw_gcf(sp, g_VFResults.gcf_points_, bgColours::CBACKGROUND,
+                 s_GcfDashes);
         sp->finishDrawing();
         g_VFResults.deleteOrbitPoint(g_VFResults.gcf_points_);
         g_VFResults.gcf_points_ = nullptr;

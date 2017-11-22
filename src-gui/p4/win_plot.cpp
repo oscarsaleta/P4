@@ -20,6 +20,7 @@
 #include "win_plot.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
 #include "main.h"
 #include "math_separatrice.h"
@@ -29,20 +30,27 @@
 #include "win_event.h"
 #include "win_gcf.h"
 #include "win_intparams.h"
+#include "win_isoclines.h"
+#include "win_legend.h"
 #include "win_limitcycles.h"
+#include "win_main.h"
 #include "win_orbits.h"
 #include "win_print.h"
 #include "win_separatrice.h"
+#include "win_sphere.h"
+#include "win_view.h"
 #include "win_zoom.h"
 
 #include <QPrintDialog>
+#include <QPrinter>
 #include <QSettings>
+#include <QStatusBar>
 #include <QToolBar>
 
 QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    
+
     QToolBar *toolBar1;
     QToolBar *toolBar2;
     parent_ = main;
@@ -58,7 +66,8 @@ QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
     flagAllSepsPlotted_ = false;
 
     //    QPalette palette;
-    //    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND) );
+    //    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND)
+    //    );
     //    setPalette(palette);
 
     toolBar1 = new QToolBar("PlotBar1", this);
@@ -227,7 +236,7 @@ void QPlotWnd::onSaveSignal()
     settings.setValue("QPlotWnd/size", size());
     settings.setValue("QPlotWnd/pos", pos());
     settings.setValue("QPlotWnd/numZooms", numZooms_);
-    settings.setValue("QPlotWnd/allSeps",flagAllSepsPlotted_);
+    settings.setValue("QPlotWnd/allSeps", flagAllSepsPlotted_);
 }
 
 void QPlotWnd::onLoadSignal()
@@ -261,7 +270,7 @@ void QPlotWnd::onLoadSignal()
     }
 
     if (settings.value("QPlotWnd/allSeps").toBool()) {
-        onBtnPlotAllSeps(); 
+        onBtnPlotAllSeps();
     }
 }
 

@@ -20,14 +20,15 @@
 #ifndef WIN_ZOOM_H
 #define WIN_ZOOM_H
 
-#include "win_plot.h"
-#include "win_sphere.h"
-
-#include <QAction>
-#include <QBoxLayout>
-#include <QEvent>
-#include <QHideEvent>
 #include <QMainWindow>
+
+class QPlotWnd;
+class QWinSphere;
+
+class QAction;
+class QBoxLayout;
+class QEvent;
+class QHideEvent;
 
 class QZoomWnd : public QMainWindow
 {
@@ -45,12 +46,12 @@ class QZoomWnd : public QMainWindow
     QAction *actClose_;
     QAction *actRefresh_;
     QAction *actPrint_;
-    double x1_,x2_,y1_,y2_;
+    double x1_, x2_, y1_, y2_;
 
     QWinSphere *sphere_; // main sphere
 
   public slots:
-  //TODO: maybe change these 3 to actual signals?
+    // TODO: maybe change these 3 to actual signals?
     void signalEvaluating();
     void signalEvaluated();
     void signalChanged();

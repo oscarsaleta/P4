@@ -25,7 +25,13 @@
 #include "p4application.h"
 #include "win_find.h"
 
+#include <QBoxLayout>
 #include <QFormLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QScrollBar>
+#include <QSpinBox>
 
 QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg) : QWidget(finddlg)
 {
@@ -261,9 +267,9 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
     dataInvalid_ = false;
     sb_params_ = sb;
     currentNumParams_ = g_ThisVF->numparams_;
-    currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
-                              ? currentNumParams_
-                              : MAXNUMPARAMSSHOWN;
+    currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN) ?
+                              currentNumParams_ :
+                              MAXNUMPARAMSSHOWN;
     currentPageIndex_ = 0;
 
     for (i = 0; i < currentShownParams_; i++) {

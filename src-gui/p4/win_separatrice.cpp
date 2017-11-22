@@ -20,7 +20,15 @@
 #include "win_separatrice.h"
 
 #include "custom.h"
+#include "main.h"
 #include "math_separatrice.h"
+#include "win_plot.h"
+#include "win_sphere.h"
+
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
 QString g_CurrentSingularityInfo[4] = {"", "", "", ""};
 double g_CurrentSeparatriceEpsilon = 0;

@@ -21,18 +21,20 @@
 #define WIN_VF_H
 
 #include "custom.h"
-#include "win_find.h"
 
-#include <QBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QScrollBar>
-#include <QSpinBox>
+#include <QString>
 #include <QWidget>
 
+class QFindDlg;
 class QVFParams; // declare them first because both classes defined in
                  // this file need each other
+
+class QBoxLayout;
+class QHBoxLayout;
+class QLabel;
+class QLineEdit;
+class QScrollBar;
+class QSpinBox;
 
 class QVectorFieldDlg : public QWidget
 {

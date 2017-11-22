@@ -20,13 +20,14 @@
 #ifndef WIN_ORBITS_H
 #define WIN_ORBITS_H
 
-#include "win_plot.h"
-#include "win_sphere.h"
-
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QWidget>
+
+class QWinSphere;
+class QPlotWnd;
+
+class QPushButton;
+class QLineEdit;
+class QBoxLayout;
 
 class QOrbitsDlg : public QWidget
 {

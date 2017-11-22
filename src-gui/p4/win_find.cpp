@@ -24,12 +24,17 @@
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"
+#include "win_main.h"
 #include "win_params.h"
 #include "win_vf.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QSettings>
 
 QFindDlg::~QFindDlg()
@@ -156,9 +161,9 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     layout0->addStretch(0);
 
     QGridLayout *layout1 = new QGridLayout();
-    layout1->addWidget(btn_load_,0,0);
-    layout1->addWidget(btn_save_,0,1);
-    layout1->addWidget(btn_eval_,1,0,1,2);
+    layout1->addWidget(btn_load_, 0, 0);
+    layout1->addWidget(btn_save_, 0, 1);
+    layout1->addWidget(btn_eval_, 1, 0, 1, 2);
 
     mainLayout_->addLayout(layout0);
     mainLayout_->addLayout(layout1);
@@ -350,9 +355,11 @@ QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
     // readSettings();
 }
 
-void QFindDlg::onSaveSignal() {
-    //QSettings settings(g_ThisVF->getbarefilename().append(".conf"), QSettings::NativeFormat);
-    //settings.setValue("QFindDlg/state",saveState());
+void QFindDlg::onSaveSignal()
+{
+    // QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
+    // QSettings::NativeFormat);
+    // settings.setValue("QFindDlg/state",saveState());
 }
 
 void QFindDlg::onBtnLoad()

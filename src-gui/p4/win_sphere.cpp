@@ -20,6 +20,7 @@
 #include "win_sphere.h"
 
 #include "file_vf.h"
+#include "main.h"
 #include "math_curve.h"
 #include "math_findpoint.h"
 #include "math_gcf.h"
@@ -36,9 +37,16 @@
 #include "print_postscript.h"
 #include "print_xfig.h"
 #include "win_event.h"
+#include "win_main.h"
 #include "win_print.h"
 
+#include <QKeyEvent>
 #include <QMessageBox>
+#include <QPrinter>
+#include <QResizeEvent>
+#include <QStatusBar>
+#include <QTimer>
+ #include <QPainter>
 
 #include <cmath>
 
@@ -989,10 +997,9 @@ int QWinSphere::coWinY(double y)
     if (iwy >= h_)
         iwy = h_ - 1;
 
-    return (reverseYAxis_)
-               ? iwy
-               : h_ - 1 -
-                     iwy; // on screen: vertical axis orientation is reversed
+    return (reverseYAxis_) ?
+               iwy :
+               h_ - 1 - iwy; // on screen: vertical axis orientation is reversed
 }
 
 void QWinSphere::mousePressEvent(QMouseEvent *e)
@@ -2522,7 +2529,8 @@ void QWinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
         staticPainter_->translate(tx, ty);
         if (iszoom_ || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p = QPen(QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)), (int)lw);
+            QPen p = QPen(QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)),
+                          (int)lw);
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
         }

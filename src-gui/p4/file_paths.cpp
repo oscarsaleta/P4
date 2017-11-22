@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QSettings>
+#include <QString>
 
 QByteArray Win_GetLongPathName(QByteArray);
 QByteArray Win_GetShortPathName(QByteArray);
@@ -151,11 +152,11 @@ QString getDefaultP4SumTablePath(void)
 
 QString getDefaultMathManipulator(void)
 {
-//#ifdef Q_OS_WIN
+    //#ifdef Q_OS_WIN
     return "Maple";
-//#else
-//    return "Reduce";
-//#endif
+    //#else
+    //    return "Reduce";
+    //#endif
 }
 
 // -----------------------------------------------------------------------

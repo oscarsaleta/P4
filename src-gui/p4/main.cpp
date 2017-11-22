@@ -25,6 +25,8 @@
 #include "file_vf.h"
 #include "p4application.h"
 #include "p4settings.h"
+#include "win_find.h"
+#include "win_main.h"
 #include "win_settings.h"
 
 #ifdef HAVE_CONFIG_H
@@ -34,6 +36,8 @@
 #endif
 
 #include <QMessageBox>
+#include <QPixmap>
+#include <QPrinter>
 
 /*
     ----------------------------------------------------------------------------

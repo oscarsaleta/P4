@@ -20,14 +20,15 @@
 #ifndef WIN_SETTINGS_H
 #define WIN_SETTINGS_H
 
-#include <QBoxLayout>
 #include <QDialog>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QString>
-#include <QWidget>
-#include <QRadioButton>
+
+class QBoxLayout;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
+class QString;
+class QWidget;
 
 class QSettingsDlg : public QDialog
 {
@@ -49,7 +50,7 @@ class QSettingsDlg : public QDialog
     QLabel *lbl_maple_;
     QLineEdit *edt_maple_;
     QPushButton *btn_maple_;
-    
+
     // QLabel *lbl_red;
     // QLineEdit *edt_red;
     // QPushButton *btn_red;
@@ -61,8 +62,7 @@ class QSettingsDlg : public QDialog
     QPushButton *btn_ok_;
     QPushButton *btn_reset_;
     QPushButton *btn_cancel_;
-    
-    
+
     QBoxLayout *mainLayout_;
 
   public:

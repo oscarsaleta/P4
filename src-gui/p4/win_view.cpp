@@ -26,7 +26,12 @@
 #include "math_p4.h"
 #include "p4application.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
 
 QViewDlg::~QViewDlg() { getDataFromDlg(); }
 

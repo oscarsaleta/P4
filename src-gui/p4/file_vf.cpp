@@ -20,16 +20,27 @@
 #include "file_vf.h"
 
 #include "file_paths.h"
+#include "file_tab.h"
 #include "main.h"
 #include "math_p4.h"
 #include "math_polynom.h"
 #include "p4application.h"
 #include "p4settings.h"
+#include "win_curve.h"
+#include "win_find.h"
+#include "win_gcf.h"
+#include "win_isoclines.h"
 
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QSettings>
+#include <QTextEdit>
+#include <QTextStream>
+#include <QTimer>
+#include <QVBoxLayout>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -916,36 +927,36 @@ QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
     return s;
 }
 
-    /*QString QInputVF::convertReduceUserParameterLabels(QString src)
-    {
-        QString s;
-        QString t;
-        QString p, newlabel;
-        int i, k;
+/*QString QInputVF::convertReduceUserParameterLabels(QString src)
+{
+    QString s;
+    QString t;
+    QString p, newlabel;
+    int i, k;
 
-        s = src;
-        for (k = 0; k < numparams_; k++) {
-            p = parlabel_[k];
-            newlabel = p + "_";
+    s = src;
+    for (k = 0; k < numparams_; k++) {
+        p = parlabel_[k];
+        newlabel = p + "_";
 
-            if (p.length() == 0)
-                continue;
+        if (p.length() == 0)
+            continue;
 
-            t = "";
-            while (1) {
-                i = indexOfWordInString(&s, &p);
-                if (i == -1)
-                    break;
+        t = "";
+        while (1) {
+            i = indexOfWordInString(&s, &p);
+            if (i == -1)
+                break;
 
-                t += s.left(i);
-                t += newlabel;
-                s = s.mid(i + p.length());
-            }
-            s = t + s;
+            t += s.left(i);
+            t += newlabel;
+            s = s.mid(i + p.length());
         }
+        s = t + s;
+    }
 
-        return s;
-    }*/
+    return s;
+}*/
 
 #ifdef Q_OS_WIN
 extern QByteArray Win_GetShortPathName(QByteArray f);
@@ -1447,9 +1458,8 @@ void QInputVF::evaluate(void)
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 this, &QInputVF::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, this,
@@ -2170,9 +2180,8 @@ bool QInputVF::evaluateGcf(void)
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2579,9 +2588,8 @@ bool QInputVF::evaluateCurve(void)
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2874,9 +2882,8 @@ bool QInputVF::evaluateIsoclines()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,

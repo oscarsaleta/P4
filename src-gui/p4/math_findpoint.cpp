@@ -20,9 +20,11 @@
 #include "math_findpoint.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "math_p4.h"
 #include "math_separatrice.h"
 #include "win_separatrice.h"
+#include "win_sphere.h"
 
 #include <cmath>
 

@@ -20,11 +20,13 @@
 #include "math_limitcycles.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "math_charts.h"
 #include "math_orbits.h"
 #include "math_p4.h"
 #include "plot_tools.h"
 #include "win_limitcycles.h"
+#include "win_sphere.h"
 
 #include <cmath>
 

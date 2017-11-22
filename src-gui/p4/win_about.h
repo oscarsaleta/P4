@@ -20,10 +20,12 @@
 #ifndef WIN_ABOUT_H
 #define WIN_ABOUT_H
 
-#include <QBoxLayout>
 #include <QDialog>
 #include <QPixmap>
-#include <QPushButton>
+
+class QBoxLayout;
+class QPushButton;
+class QWidget;
 
 class QP4AboutDlg : public QDialog
 {

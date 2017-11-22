@@ -21,7 +21,12 @@
 
 #include "custom.h"
 #include "file_vf.h"
+#include "main.h"
 #include "win_event.h"
+#include "win_find.h"
+#include "win_main.h"
+
+#include <QFont>
 
 QP4Application *g_p4app = nullptr;
 

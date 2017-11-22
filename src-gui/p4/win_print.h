@@ -20,14 +20,15 @@
 #ifndef WIN_PRINT_H
 #define WIN_PRINT_H
 
-#include <QBoxLayout>
-#include <QCheckBox>
 #include <QDialog>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QWidget>
+
+class QBoxLayout;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
+class QWidget;
 
 class QPrintDlg : public QDialog
 {

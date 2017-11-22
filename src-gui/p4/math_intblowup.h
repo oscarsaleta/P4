@@ -20,8 +20,9 @@
 #ifndef MATH_INTBLOWUP_H
 #define MATH_INTBLOWUP_H
 
-#include "file_tab.h"
-#include "win_sphere.h"
+class QWinSphere;
+struct orbits_points;
+struct blow_up_points;
 
 void eval_blow_vec_field(double *y, double *f);
 orbits_points *integrate_blow_up(QWinSphere *spherewnd, double *pcoord2,

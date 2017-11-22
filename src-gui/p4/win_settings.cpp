@@ -24,9 +24,14 @@
 #include "main.h"
 #include "p4settings.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
 #include <QFileDialog>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRadioButton>
 
 /*
     The Settings Window is a modal dialog box!

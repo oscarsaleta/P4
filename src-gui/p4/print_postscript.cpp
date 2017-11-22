@@ -20,7 +20,9 @@
 #include "print_postscript.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "file_vf.h"
+#include "main.h"
 #include "math_p4.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"
@@ -37,8 +39,8 @@ static QTextStream s_PSFileStream;
 static int s_PSW = 0;
 static int s_PSH = 0;
 
-
-static void ps_print_line(double x0, double y0, double x1, double y1, int color);
+static void ps_print_line(double x0, double y0, double x1, double y1,
+                          int color);
 // ---------------------------------------------------------------------------------------
 
 static void ps_print_comment(QString s)
@@ -162,8 +164,8 @@ static void ps_print_stablestrongfocus(double x, double y)
                       printColorTable(bgColours::CFOREGROUND), (float)x,
                       (float)y);
         else
-            s.sprintf("col%d %f %f diamond\n",
-                      printColorTable(CSTRONG_FOCUS_S), (float)x, (float)y);
+            s.sprintf("col%d %f %f diamond\n", printColorTable(CSTRONG_FOCUS_S),
+                      (float)x, (float)y);
         s_PSFileStream << s;
     }
 }
@@ -177,8 +179,8 @@ static void ps_print_unstablestrongfocus(double x, double y)
                       printColorTable(bgColours::CFOREGROUND), (float)x,
                       (float)y);
         else
-            s.sprintf("col%d %f %f diamond\n",
-                      printColorTable(CSTRONG_FOCUS_U), (float)x, (float)y);
+            s.sprintf("col%d %f %f diamond\n", printColorTable(CSTRONG_FOCUS_U),
+                      (float)x, (float)y);
         s_PSFileStream << s;
     }
 }
@@ -272,7 +274,8 @@ static void ps_print_elips(double x0, double y0, double a, double b, int color,
     QString s;
 
     // we do not use the precompiled form of the ellipse printing.  Here, it
-    // is not necessary, since the PS command for drawing ellipses works just fine.
+    // is not necessary, since the PS command for drawing ellipses works just
+    // fine.
 
     if (s_PSFile != nullptr) {
         if (dotted)
@@ -286,7 +289,7 @@ static void ps_print_elips(double x0, double y0, double a, double b, int color,
         s_PSFileStream << s;
         s_PSFileStream << "newpath\n";
 
-        if (x0-a>=0 && x0+a<s_PSW && y0-b>=0 && y0+b<s_PSH) {
+        if (x0 - a >= 0 && x0 + a < s_PSW && y0 - b >= 0 && y0 + b < s_PSH) {
             // full elipse visible
             s.sprintf("%f %f moveto\n", (float)(x0 + a), (float)y0);
             s_PSFileStream << s;
@@ -308,7 +311,8 @@ static void ps_print_elips(double x0, double y0, double a, double b, int color,
             }
         } else {
             while (ellipse != nullptr) {
-                ps_print_line(ellipse->x1,ellipse->y1,ellipse->x2,ellipse->y2,color);
+                ps_print_line(ellipse->x1, ellipse->y1, ellipse->x2,
+                              ellipse->y2, color);
                 ellipse = ellipse->next;
             }
         }
@@ -328,8 +332,7 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
                       printColorTable(bgColours::CFOREGROUND));
         } else {
             s.sprintf("%f %f moveto\n%f %f lineto col%d stroke\n", (float)x0,
-                      (float)y0, (float)x1, (float)y1,
-                      printColorTable(color));
+                      (float)y0, (float)x1, (float)y1, printColorTable(color));
         }
         s_PSFileStream << s;
     }
@@ -564,17 +567,17 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
         s_PSFileStream << s;
 
         if (!bgColours::PRINT_WHITE_BG) {
-          s.sprintf("%% Fill background with black rectangle:\n"
-            "newpath\n"
-            "0 0 moveto\n"
-            "%d 0 lineto\n"
-            "%d %d lineto\n"
-            "0 %d lineto\n"
-            "closepath\n"
-            "col0\n"
-            "fill\n",
-            w,w,h,h);
-          s_PSFileStream << s;
+            s.sprintf("%% Fill background with black rectangle:\n"
+                      "newpath\n"
+                      "0 0 moveto\n"
+                      "%d 0 lineto\n"
+                      "%d %d lineto\n"
+                      "0 %d lineto\n"
+                      "closepath\n"
+                      "col0\n"
+                      "fill\n",
+                      w, w, h, h);
+            s_PSFileStream << s;
         }
 
         if (iszoom || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {

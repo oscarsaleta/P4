@@ -20,9 +20,6 @@
 #ifndef MATH_ISOCLINES_H
 #define MATH_ISOCLINES_H
 
-#include "file_tab.h"
-#include "win_sphere.h"
-
 #define EVAL_ISOCLINES_NONE 0
 #define EVAL_ISOCLINES_R2 1
 #define EVAL_ISOCLINES_U1 2
@@ -37,13 +34,16 @@
 #define EVAL_ISOCLINES_CYL4 11
 #define EVAL_ISOCLINES_FINISHLYAPUNOV 12
 
-extern P4ORBIT g_last_isoclines_point;
+class QWinSphere;
+struct orbits_points;
+
+extern orbits_points *g_last_isoclines_point;
 
 bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points);
-void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color, int dashes);
+void draw_isoclines(QWinSphere *spherewnd, orbits_points *isoc, int color, int dashes);
 void deleteLastIsocline(QWinSphere *sp);
 
 #endif // MATH_ISOCLINES_H

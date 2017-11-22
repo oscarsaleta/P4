@@ -22,10 +22,11 @@
 
 #include <QObject>
 #include <QString>
-#include <QTextEdit>
+
+class QTextEdit;
 
 // -----------------------------------------------------------------------
-//						General polynomial expressions
+//                      General polynomial expressions
 // -----------------------------------------------------------------------
 
 // Linked list of univariate terms a*x^i
@@ -68,7 +69,7 @@ struct term3 {
 typedef struct term3 *P4POLYNOM3;
 
 // -----------------------------------------------------------------------
-//								Orbits
+//                              Orbits
 // -----------------------------------------------------------------------
 
 struct orbits_points {
@@ -104,7 +105,7 @@ struct orbits {
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    P4POLYNOM2 r2,u1,u2,v1,v2;
+    P4POLYNOM2 r2, u1, u2, v1, v2;
     P4POLYNOM3 c;
     P4ORBIT points;
 
@@ -125,7 +126,7 @@ struct isoclines {
 };
 
 // -----------------------------------------------------------------------
-//						Blow up structure
+//                      Blow up structure
 // -----------------------------------------------------------------------
 
 struct transformations {
@@ -176,8 +177,22 @@ struct sep {
 };
 
 // -----------------------------------------------------------------------
-//							Singularities
+//                          Singularities
 // -----------------------------------------------------------------------
+
+// (taken from P5 source code) ----------
+// in a piecewise system, singularities may coincide along the bifurcation
+// lines.  In that case, we mark the singularity in a different way.
+// Of course, on screen it need only be marked once and not several times.
+
+#define POSITION_VIRTUAL 0         // virtual singularity
+#define POSITION_STANDALONE 1      // stand-alone singularity
+#define POSITION_COINCIDING_MAIN 2 // singularity coincides and will be drawn
+#define POSITION_COINCIDING_VIRTUAL                                            \
+    3 // is a virtual singularity, but coincides with a real one so do not plot
+      // at all
+#define POSITION_COINCIDING 4 // singularity coincides, but is already drawn
+// --------------------------------------
 
 struct genericsingularity // part of the structure that is the same for all
                           // types
@@ -186,6 +201,7 @@ struct genericsingularity // part of the structure that is the same for all
     double y0;
     struct genericsingularity *next;
     int chart;
+    int position; // POSITION_ constants
 
     genericsingularity() : next(nullptr){};
 };
@@ -195,6 +211,7 @@ struct saddle {
     double y0;
     struct saddle *next_saddle;
     int chart;
+    int position; // POSITION_ constants
 
     double epsilon;
     bool notadummy;
@@ -211,6 +228,7 @@ struct semi_elementary {
     double y0;
     struct semi_elementary *next_se;
     int chart;
+    int position; // POSITION_ constants
 
     double epsilon;
     bool notadummy;
@@ -229,6 +247,7 @@ struct degenerate {
     double y0;
     struct degenerate *next_de;
     int chart;
+    int position; // POSITION_ constants
 
     double epsilon;
     bool notadummy;
@@ -243,6 +262,7 @@ struct node {
     double y0;
     struct node *next_node;
     int chart;
+    int position; // POSITION_ constants
 
     int stable;
 
@@ -254,6 +274,7 @@ struct strong_focus {
     double y0;
     struct strong_focus *next_sf;
     int chart;
+    int position; // POSITION_ constants
 
     int stable;
 
@@ -265,6 +286,7 @@ struct weak_focus {
     double y0;
     struct weak_focus *next_wf;
     int chart;
+    int position; // POSITION_ constants
 
     int type;
 
@@ -272,7 +294,7 @@ struct weak_focus {
 };
 
 // -----------------------------------------------------------------------
-//							Some definitions
+//                          Some definitions
 // -----------------------------------------------------------------------
 
 #define CHART_R2 0
@@ -314,12 +336,39 @@ enum TYPEOFVIEWS {
     TYPEOFVIEW_U1 = 2,
     TYPEOFVIEW_U2 = 3,
     TYPEOFVIEW_V1 = 4,
-    TYPEOFVIEW_V2 = 5
+    TYPEOFVIEW_V2 = 5,
+    TYPEOFVIEW_U1U2 = 6,
+    TYPEOFVIEW_V1V2 = 7
 };
 
 // -----------------------------------------------------------------------
-//							Results class
+//                          Results class
 // -----------------------------------------------------------------------
+
+// (taken from P5 source code) -----------------------
+class QVFStudy;
+
+struct VFREGIONRESULT {
+    int vfindex; // which vector field
+    int *signs;
+};
+
+struct CURVEREGIONRESULT {
+    int curveindex; // which curve are we talking about
+    int *signs;
+};
+
+struct CURVERESULT {
+    P4POLYNOM2 sep;
+    P4POLYNOM2 sep_U1;
+    P4POLYNOM2 sep_U2;
+    P4POLYNOM2 sep_V1;
+    P4POLYNOM2 sep_V2;
+    P4POLYNOM3 sep_C;
+    struct orbits_points *sep_points;
+};
+// ---------------------------------------------------
+
 class QVFStudy : public QObject
 {
   public:
@@ -327,10 +376,17 @@ class QVFStudy : public QObject
     QVFStudy();  // constructor
     ~QVFStudy(); // destructor
 
+    // (taken from P5)
+    QVFStudy **vf_;
+    QVFStudy *vfK_; // shortcut for vf[K]. Must be updated whenever K changes
+    int K_;         // K will be throughout the current vector field selected
+    CURVERESULT *curves_result_;
+    // ---------------
+
     // general information
 
     int typeofstudy_;
-    TYPEOFVIEWS typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    int typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
     int p_;
     int q_;
     bool plweights_; // true if p<>1 or q<>1; false if p=q=1

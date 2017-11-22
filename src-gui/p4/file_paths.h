@@ -20,7 +20,7 @@
 #ifndef EXTERN_METHODS_H
 #define EXTERN_METHODS_H
 
-#include <QString>
+class QString;
 
 // Methods implemented in file_paths.cpp
 

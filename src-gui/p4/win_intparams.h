@@ -20,16 +20,17 @@
 #ifndef WIN_INTPARAMS_H
 #define WIN_INTPARAMS_H
 
-#include "win_find.h"
-
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QSpinBox>
-#include <QString>
 #include <QWidget>
+
+ class QFindDlg;
+
+ class QBoxLayout;
+ class QPushButton;
+ class QRadioButton;
+ class QLineEdit;
+ class QLabel;
+ class QSpinBox;
+ class QString;
 
 class QIntParamsDlg : public QWidget
 {
