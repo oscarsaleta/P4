@@ -20,7 +20,7 @@
 #ifndef P4SETTINGS_H
 #define P4SETTINGS_H
 
-#include <QString>
+class QString;
 
 void setP4Path(QString s);
 QString getP4Path(void);

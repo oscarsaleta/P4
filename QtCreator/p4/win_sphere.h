@@ -20,23 +20,29 @@
 #ifndef WIN_SPHERE_H
 #define WIN_SPHERE_H
 
-#include "file_tab.h"
-#include "main.h"
-
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QPaintEvent>
-#include <QPainter>
-#include <QPixmap>
 #include <QPoint>
-#include <QResizeEvent>
-#include <QStatusBar>
 #include <QString>
-#include <QTimer>
 #include <QWidget>
 
 #define SELECTINGPOINTSTEPS 5
 #define SELECTINGPOINTSPEED 150
+
+class QKeyEvent;
+class QMouseEvent;
+class QPainter;
+class QPaintEvent;
+class QPixmap;
+class QResizeEvent;
+class QStatusBar;
+class QTimer;
+
+struct saddle;
+struct node;
+struct semi_elementary;
+struct weak_focus;
+struct strong_focus;
+struct degenerate;
+struct P4POLYLINES;
 
 class QWinSphere : public QWidget
 {
@@ -89,15 +95,15 @@ class QWinSphere : public QWidget
 
     void signalEvaluating(void);
     void signalChanged(void);
-    void plotPoint(struct saddle *);
-    void plotPoint(struct node *);
-    void plotPoint(struct semi_elementary *);
-    void plotPoint(struct weak_focus *);
-    void plotPoint(struct strong_focus *);
-    void plotPoint(struct degenerate *);
-    void plotPointSeparatrices(struct semi_elementary *p);
-    void plotPointSeparatrices(struct saddle *p);
-    void plotPointSeparatrices(struct degenerate *p);
+    void plotPoint(saddle *);
+    void plotPoint(node *);
+    void plotPoint(semi_elementary *);
+    void plotPoint(weak_focus *);
+    void plotPoint(strong_focus *);
+    void plotPoint(degenerate *);
+    void plotPointSeparatrices(semi_elementary *p);
+    void plotPointSeparatrices(saddle *p);
+    void plotPointSeparatrices(degenerate *p);
     void plotPoints(void);
     void plotSeparatrices(void);
     void plotGcf(void);
@@ -108,15 +114,15 @@ class QWinSphere : public QWidget
     void plotLineAtInfinity(void);
     void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
-    void printPoint(struct saddle *);
-    void printPoint(struct node *);
-    void printPoint(struct semi_elementary *);
-    void printPoint(struct weak_focus *);
-    void printPoint(struct strong_focus *);
-    void printPoint(struct degenerate *);
-    void printPointSeparatrices(struct semi_elementary *p);
-    void printPointSeparatrices(struct saddle *p);
-    void printPointSeparatrices(struct degenerate *p);
+    void printPoint(saddle *);
+    void printPoint(node *);
+    void printPoint(semi_elementary *);
+    void printPoint(weak_focus *);
+    void printPoint(strong_focus *);
+    void printPoint(degenerate *);
+    void printPointSeparatrices(semi_elementary *p);
+    void printPointSeparatrices(saddle *p);
+    void printPointSeparatrices(degenerate *p);
     void printPoints(void);
     void printSeparatrices(void);
     void printGcf(void);
@@ -126,8 +132,8 @@ class QWinSphere : public QWidget
     void printPoincareLyapunovSphere(void);
     void printLineAtInfinity(void);
 
-    struct P4POLYLINES *produceEllipse(double cx, double cy, double a, double b,
-                                       bool dotted, double resa, double resb);
+    P4POLYLINES *produceEllipse(double cx, double cy, double a, double b,
+                                bool dotted, double resa, double resb);
 
     void selectNearestSingularity(QPoint winpos);
 

@@ -23,7 +23,10 @@
 #include "p4settings.h"
 #include "win_settings.h"
 
+#include <QBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
 
 QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
@@ -98,7 +101,7 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     connect(btn_ok_, &QPushButton::clicked, this, &QP4AboutDlg::onOk);
     connect(btn_settings_, &QPushButton::clicked, this,
-                     &QP4AboutDlg::onSettings);
+            &QP4AboutDlg::onSettings);
 
     btn_ok_->setFocus();
 

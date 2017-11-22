@@ -19,6 +19,7 @@
 
 #include "math_intblowup.h"
 
+#include "file_tab.h"
 #include "math_charts.h"
 #include "math_numerics.h"
 #include "math_p4.h"
@@ -158,9 +159,9 @@ orbits_points *integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
         last_orbit->color = color;
         last_orbit->dashes = dashes * g_VFResults.config_dashes_;
         last_orbit->dir = ((g_VFResults.plweights_ == false) &&
-                           (chart == CHART_V1 || chart == CHART_V2))
-                              ? g_VFResults.dir_vec_field_ * dir
-                              : dir;
+                           (chart == CHART_V1 || chart == CHART_V2)) ?
+                              g_VFResults.dir_vec_field_ * dir :
+                              dir;
         last_orbit->type = type;
         last_orbit->next_point = nullptr;
         if (last_orbit->dashes)

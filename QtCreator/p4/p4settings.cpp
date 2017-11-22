@@ -21,6 +21,7 @@
 
 #include "file_paths.h"
 #include "file_vf.h"
+#include "main.h"
 
 #include <QDir>
 #include <QSettings>
@@ -42,14 +43,14 @@ static QString s_Settings_p4path;
 static QString s_Settings_sumtablepath;
 static QString s_Settings_temppath;
 static QString s_Settings_mapleexe;
-//static QString s_Settings_reduceexe;
+// static QString s_Settings_reduceexe;
 static bool s_Settings_changed;
 
 QString getP4Path(void) { return s_Settings_p4path; }
 QString getP4TempPath(void) { return s_Settings_temppath; }
 QString getP4SumTablePath(void) { return s_Settings_sumtablepath; }
 QString getMapleExe(void) { return s_Settings_mapleexe; }
-//QString getReduceExe(void) { return s_Settings_reduceexe; }
+// QString getReduceExe(void) { return s_Settings_reduceexe; }
 
 void setMathManipulator(QString s)
 {
@@ -190,17 +191,19 @@ bool readP4Settings(void)
         s_Settings_sumtablepath = p4settings->value("/SumtablePath").toString();
         s_Settings_temppath = p4settings->value("/TempPath").toString();
         s_Settings_mapleexe = p4settings->value("/MapleExe").toString();
-//#ifndef Q_OS_WIN
-        //s_Settings_reduceexe = p4settings->value("/ReduceExe").toString();
-        //s_Settings_mathmanipulator = p4settings->value("/Math").toString();
-//#else
+        //#ifndef Q_OS_WIN
+        // s_Settings_reduceexe = p4settings->value("/ReduceExe").toString();
+        // s_Settings_mathmanipulator = p4settings->value("/Math").toString();
+        //#else
         s_Settings_mathmanipulator = "Maple";
-//#endif
-        if (s_Settings_p4path == "" || (s_Settings_mapleexe == ""
-/*#ifndef Q_OS_WIN
-                                        && s_Settings_reduceexe == ""
-#endif*/
-                                        )) {
+        //#endif
+        if (s_Settings_p4path == "" ||
+            (s_Settings_mapleexe == ""
+             /*#ifndef Q_OS_WIN
+                                                     && s_Settings_reduceexe ==
+             ""
+             #endif*/
+             )) {
             _ok = false;
         }
     }
@@ -213,7 +216,7 @@ bool readP4Settings(void)
         s_Settings_sumtablepath = getDefaultP4SumTablePath();
         s_Settings_temppath = getDefaultP4TempPath();
         s_Settings_mapleexe = getDefaultMapleInstallation();
-        //s_Settings_reduceexe = getDefaultReduceInstallation();
+        // s_Settings_reduceexe = getDefaultReduceInstallation();
         s_Settings_mathmanipulator = getDefaultMathManipulator();
         s_Settings_changed = true;
         return false;
@@ -239,7 +242,7 @@ void saveP4Settings(void)
     p4settings->setValue("/MapleExe", getMapleExe());
 #ifndef Q_OS_WIN
     p4settings->setValue("/Math", getMathManipulator());
-    //p4settings->setValue("/ReduceExe", getReduceExe());
+// p4settings->setValue("/ReduceExe", getReduceExe());
 #endif
 
     delete p4settings;

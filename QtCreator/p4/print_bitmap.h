@@ -20,9 +20,7 @@
 #ifndef PRINT_BITMAP_H
 #define PRINT_BITMAP_H
 
-#include "color.h"
-
-#include <QPainter>
+class QPainter;
 
 int printColorTable(int color);
 void prepareP4Printing(int w, int h, bool isblackwhite, QPainter *p4paint,

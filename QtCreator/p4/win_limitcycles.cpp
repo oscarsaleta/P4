@@ -20,12 +20,20 @@
 #include "win_limitcycles.h"
 
 #include "custom.h"
+#include "file_tab.h"
 #include "main.h"
 #include "math_limitcycles.h"
 #include "p4application.h"
+#include "win_plot.h"
+#include "win_sphere.h"
 
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QPushButton>
+#include <QSpinBox>
 
 #include <cmath>
 

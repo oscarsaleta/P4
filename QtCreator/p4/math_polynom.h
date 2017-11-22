@@ -20,19 +20,21 @@
 #ifndef MATH_POLYNOM_H
 #define MATH_POLYNOM_H
 
-#include "file_tab.h"
+struct term1;
+struct term2;
+struct term3;
 
-double eval_term1(P4POLYNOM1, double);
-double eval_term2(P4POLYNOM2, double *);
-double eval_term3(P4POLYNOM3, double *);
+double eval_term1(term1 *, double);
+double eval_term2(term2 *, double *);
+double eval_term3(term3 *, double *);
 
-void delete_term1(P4POLYNOM1 p);
-void delete_term2(P4POLYNOM2 p);
-void delete_term3(P4POLYNOM3 p);
+void delete_term1(term1 *p);
+void delete_term2(term2 *p);
+void delete_term3(term3 *p);
 
-const char *dumpPoly1(P4POLYNOM1 f, const char *x);
-const char *dumpPoly2(P4POLYNOM2 f, const char *x, const char *y);
-const char *dumpPoly3(P4POLYNOM3 f, const char *x, const char *y,
+const char *dumpPoly1(term1 *f, const char *x);
+const char *dumpPoly2(term2 *f, const char *x, const char *y);
+const char *dumpPoly3(term3 *f, const char *x, const char *y,
                       const char *z);
 
 char *printterm2(char *buf, term2 *f, bool isfirst, const char *x,

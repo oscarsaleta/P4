@@ -20,9 +20,8 @@
 #ifndef PRINT_POINTS_H
 #define PRINT_POINTS_H
 
-#include "main.h"
-
-#include <QString>
+class QString;
+struct P4POLYLINES;
 
 extern void (*print_saddle)(double, double);
 extern void (*print_stablenode)(double, double);

@@ -20,16 +20,15 @@
 #ifndef WIN_FIND_H
 #define WIN_FIND_H
 
-#include "win_main.h"
-
-#include <QBoxLayout>
-#include <QPushButton>
-#include <QRadioButton>
 #include <QWidget>
 
-/* Forward-declaration to solve cross-include problems */
-class QParamsDlg;      // in win_params.h
-class QVectorFieldDlg; // in win_vf.h
+class QParamsDlg;
+class QVectorFieldDlg;
+class QStartDlg;
+
+class QBoxLayout;
+class QPushButton;
+class QRadioButton;
 
 class QFindDlg : public QWidget
 {
@@ -63,8 +62,8 @@ class QFindDlg : public QWidget
     QVectorFieldDlg *vfWindow_;
     QParamsDlg *paramsWindow_;
 
-    //void saveSettings();
-    //void readSettings();
+    // void saveSettings();
+    // void readSettings();
 
   public slots:
     // void btn_maple_toggled(bool);

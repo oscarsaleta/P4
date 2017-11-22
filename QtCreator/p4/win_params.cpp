@@ -24,8 +24,14 @@
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"
+#include "win_find.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QLabel>
+#include <QLineEdit>
+#include <QRadioButton>
+#include <QSpinBox>
 
 QParamsDlg::~QParamsDlg() { getDataFromDlg(); }
 

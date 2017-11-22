@@ -24,6 +24,9 @@
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
+#include "win_sphere.h"
+
+#include <QFile>
 
 #include <cmath>
 

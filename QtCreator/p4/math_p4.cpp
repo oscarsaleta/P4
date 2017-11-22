@@ -19,6 +19,7 @@
 
 #include "math_p4.h"
 
+#include "file_tab.h"
 #include "math_charts.h"
 #include "win_intparams.h"
 #include "win_main.h"

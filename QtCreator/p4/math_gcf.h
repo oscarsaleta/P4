@@ -20,9 +20,6 @@
 #ifndef MATH_GCF_H
 #define MATH_GCF_H
 
-#include "file_tab.h"
-#include "win_sphere.h"
-
 #define EVAL_GCF_NONE 0
 #define EVAL_GCF_R2 1
 #define EVAL_GCF_U1 2
@@ -36,6 +33,9 @@
 #define EVAL_GCF_CYL3 10
 #define EVAL_GCF_CYL4 11
 #define EVAL_GCF_FINISHLYAPUNOV 12
+
+class QWinSphere;
+struct orbits_points;
 
 extern orbits_points *g_last_gcf_point;
 

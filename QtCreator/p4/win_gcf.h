@@ -20,14 +20,15 @@
 #ifndef WIN_GCF_H
 #define WIN_GCF_H
 
-#include "win_plot.h"
-#include "win_sphere.h"
-
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
 #include <QWidget>
+
+class QWinSphere;
+class QPlotWnd;
+
+class QPushButton;
+class QRadioButton;
+class QBoxLayout;
+class QLineEdit;
 
 class QGcfDlg : public QWidget
 {

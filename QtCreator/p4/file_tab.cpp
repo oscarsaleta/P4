@@ -18,6 +18,7 @@
 #include "file_tab.h"
 
 #include "file_vf.h"
+#include "main.h"
 #include "math_changedir.h"
 #include "math_charts.h"
 #include "math_orbits.h"
@@ -26,10 +27,12 @@
 #include "math_separatrice.h"
 #include "p4application.h"
 
-#include <iostream>
 #include <locale.h>
+#include <iostream>
 
 #include <QFile>
+#include <QTextEdit>
+#include <QTextStream>
 
 QVFStudy g_VFResults;
 
@@ -656,7 +659,7 @@ bool QVFStudy::readCurve(QString basename)
                 return false;
         }
     } else {
-        return false; 
+        return false;
     }
 
     curve_vector_.push_back(new_curve);

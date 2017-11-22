@@ -20,7 +20,7 @@
 #ifndef MATH_FINDPOINT_H
 #define MATH_FINDPOINT_H
 
-#include "win_sphere.h"
+class QWinSphere;
 
 int find_critical_point(QWinSphere *spherewnd, double x, double y);
 

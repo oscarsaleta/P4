@@ -20,14 +20,15 @@
 #ifndef WIN_ISOCLINES_H
 #define WIN_ISOCLINES_H
 
-#include "win_plot.h"
-#include "win_sphere.h"
-
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
 #include <QWidget>
+
+class QPlotWnd;
+class QWinSphere;
+
+class QPushButton;
+class QRadioButton;
+class QLineEdit;
+class QBoxLayout;
 
 class QIsoclinesDlg : public QWidget
 {

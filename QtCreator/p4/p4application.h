@@ -21,7 +21,6 @@
 #define P4APPLICATION_H
 
 #include <QApplication>
-#include <QFont>
 #include <QProcess>
 
 #ifdef Q_OS_WIN
@@ -29,6 +28,8 @@
 #else
 #define USERPLATFORM "LINUX"
 #endif
+
+class QFont;
 
 class QP4Application : public QApplication
 {

@@ -20,7 +20,16 @@
 #include "win_orbits.h"
 
 #include "custom.h"
+#include "file_tab.h"
+#include "main.h"
 #include "math_orbits.h"
+#include "win_plot.h"
+#include "win_sphere.h"
+
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
 QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
@@ -101,7 +110,8 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     connect(btnContinue_, &QPushButton::clicked, this,
             &QOrbitsDlg::onBtnContinue);
     connect(btnDelAll_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnDelAll);
-    connect(btnDelLast_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnDelLast);
+    connect(btnDelLast_, &QPushButton::clicked, this,
+            &QOrbitsDlg::onBtnDelLast);
 
     // finishing
 

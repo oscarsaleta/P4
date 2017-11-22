@@ -20,9 +20,10 @@
 #ifndef WIN_LEGEND_H
 #define WIN_LEGEND_H
 
-#include <QBoxLayout>
-#include <QPaintEvent>
 #include <QWidget>
+
+class QPaintEvent;
+class QBoxLayout;
 
 class QLegendWnd : public QWidget
 {

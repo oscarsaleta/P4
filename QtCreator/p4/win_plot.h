@@ -20,28 +20,27 @@
 #ifndef WIN_PLOT_H
 #define WIN_PLOT_H
 
-#include "win_legend.h"
-#include "win_main.h"
-#include "win_sphere.h"
-#include "win_view.h"
-
-#include <QAction>
-#include <QBoxLayout>
-#include <QEvent>
-#include <QHideEvent>
 #include <QMainWindow>
 
 #include <boost/shared_ptr.hpp>
 
-/* Forward-declarations to solve cross-include problems */
-class QGcfDlg;         // in win_gcf.h
-class QCurveDlg;       // in win_curve.h
-class QIsoclinesDlg;   // in win_isoclines.h
-class QIntParamsDlg;   // in win_params.h
-class QSepDlg;         // in win_separatrices.h
-class QOrbitsDlg;      // in win_orbits.h
-class QLimitCyclesDlg; // in win_limitcycles.h
-class QZoomWnd;        // in win_zoom.h
+class QCurveDlg;
+class QGcfDlg;
+class QIsoclinesDlg;
+class QIntParamsDlg;
+class QLegendWnd;
+class QLimitCyclesDlg;
+class QOrbitsDlg;
+class QSepDlg;
+class QStartDlg;
+class QViewDlg;
+class QWinSphere;
+class QZoomWnd;
+
+class QAction;
+class QBoxLayout;
+class QEvent;
+class QHideEvent;
 
 class QPlotWnd : public QMainWindow
 {
@@ -86,7 +85,7 @@ class QPlotWnd : public QMainWindow
     std::vector<boost::shared_ptr<QZoomWnd>> zoomWindows_;
 
     bool flagAllSepsPlotted_;
-    
+
   public slots:
     void signalEvaluating();
     void signalEvaluated();

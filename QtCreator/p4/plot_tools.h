@@ -20,7 +20,7 @@
 #ifndef PLOT_TOOLS_H
 #define PLOT_TOOLS_H
 
-#include "win_sphere.h"
+class QWinSphere;
 
 extern void (*plot_l)(QWinSphere *, double *, double *, int);
 extern void (*plot_p)(QWinSphere *, double *, int);

@@ -20,9 +20,11 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <QPixmap>
-#include <QPrinter>
 #include <QString>
+
+class QPixmap;
+class QPrinter;
+class QWidget;
 
 #define UNUSED(x)                                                              \
     (void)(x) //  to avoid warnings of unused variables in case we cannot avoid

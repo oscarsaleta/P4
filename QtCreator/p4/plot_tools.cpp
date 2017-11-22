@@ -19,7 +19,9 @@
 
 #include "plot_tools.h"
 
+#include "file_tab.h"
 #include "math_p4.h"
+#include "win_sphere.h"
 
 #include <cmath>
 

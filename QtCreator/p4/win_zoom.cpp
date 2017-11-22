@@ -25,11 +25,16 @@
 #include "p4application.h"
 #include "plot_tools.h"
 #include "win_event.h"
+#include "win_main.h"
+#include "win_plot.h"
 #include "win_print.h"
+#include "win_sphere.h"
 
 #include <QDesktopWidget>
 #include <QPrintDialog>
+#include <QPrinter>
 #include <QSettings>
+#include <QStatusBar>
 #include <QToolBar>
 
 QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,

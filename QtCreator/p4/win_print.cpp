@@ -22,7 +22,13 @@
 #include "custom.h"
 #include "main.h"
 
+#include <QBoxLayout>
 #include <QButtonGroup>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
 
 /*
     The Print Window is a modal dialog box!
