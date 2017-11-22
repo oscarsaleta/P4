@@ -381,6 +381,7 @@ class QVFStudy : public QObject
     QVFStudy *vfK_; // shortcut for vf[K]. Must be updated whenever K changes
     int K_;         // K will be throughout the current vector field selected
     CURVERESULT *curves_result_;
+    bool plotVirtualSingularities_;
     // ---------------
 
     // general information

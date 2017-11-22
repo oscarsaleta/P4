@@ -46,6 +46,10 @@ QVFStudy g_VFResults;
 // -----------------------------------------------------------------------
 QVFStudy::QVFStudy()
 {
+    K_ = 0;
+    vf_ = nullptr;
+    vfK_ = nullptr;
+
     // initialize vector field structures:
     f_vec_field_[0] = nullptr;
     f_vec_field_[1] = nullptr;
@@ -115,6 +119,8 @@ QVFStudy::QVFStudy()
     // line style (dashes or points)
     config_dashes_ = DEFAULT_LINESTYLE;
     config_kindvf_ = DEFAULT_INTCONFIG;
+
+    plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
 }
 
 // -----------------------------------------------------------------------

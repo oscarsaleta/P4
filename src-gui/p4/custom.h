@@ -74,6 +74,9 @@
 #define MAXQ 99
 #define DEFAULTQ 1
 
+// by default: plot also virtual singularities
+#define DEFAULTPLOTVIRTUALSINGULARITIES true
+
 // in case of the study of one singularity: define frame
 
 #define X_MIN -1
@@ -83,9 +86,8 @@
 
 // parameters in the plot window (including parameters for the Runge-Kutta 7/8
 // method)
-
-#define DEFAULT_INTCONFIG                                                      \
-    INTCONFIG_ORIGINAL       // in case of a GCF: integrate using original vf
+// in case of a GCF: integrate using original vf
+#define DEFAULT_INTCONFIG INTCONFIG_ORIGINAL
 #define INTCONFIG_ORIGINAL 1 // integrate using original VF
 #define INTCONFIG_REDUCED 0  // integrate using reduced VF when possible
 
@@ -201,7 +203,7 @@ extern int CORBIT;      // orbits (use GREEN1 when background is white)
 // printing.
 // For example, when printing, BLACK can be reversed with WHITE, so that the
 // BLACK background on screen is not printed black.
-extern bool PRINT_WHITE_BG; 
+extern bool PRINT_WHITE_BG;
 }
 
 #define CSADDLE_NODE MAGENTA                   // saddle-node
@@ -227,7 +229,6 @@ extern bool PRINT_WHITE_BG;
 #define CSING GREEN     // curve of singularities
 #define CCURV CYAN
 #define CISOC PINK1
-
 
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 
