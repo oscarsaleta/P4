@@ -42,14 +42,74 @@ QVFStudy g_VFResults;
 */
 
 // -----------------------------------------------------------------------
+//                              QPVFStudy CONSTRUCTOR
+// -----------------------------------------------------------------------
+QPVFStudy::QPVFStudy()
+{
+    K = 0;
+    vf = nullptr;
+    vfK = nullptr;
+
+    selected_ucoord_[0] = selected_ucoord_[1] = 0;
+    selected_saddle_point_ = nullptr;
+    selected_se_point_ = nullptr;
+    selected_de_point_ = nullptr;
+    selected_sep_ = nullptr;
+    selected_de_sep_ = nullptr;
+
+    xmin_ = -1.0;
+    xmax_ = 1.0;
+    ymin_ = -1.0;
+    ymax_ = 1.0;
+    p_ = 1;
+    q_ = 1;
+    plweights_ = false;
+    typeofstudy_ = TYPEOFSTUDY_ALL;
+    typeofview_ = TYPEOFVIEW_SPHERE;
+    double_p_ = p;
+    double_q_ = q;
+    double_p_plus_q_ = p + q;
+    double_p_minus_1_ = p - 1;
+    double_q_minus_1_ = q_1;
+    double_q_minus_p_ = q - p;
+    config_lc_value_ =
+        DEFAULT_LCORBITS; // number of orbits in the limit cycle window
+    config_lc_numpoints_ =
+        DEFAULT_LCPOINTS; // number of points in the limit cycle window
+    config_currentstep_ =
+        DEFAULT_STEPSIZE; // current step size (during integration)
+    config_dashes_ = DEFAULT_LINESTYLE; // line style (dashes or points)
+    config_kindvf_ = DEFAULT_INTCONFIG;
+
+    // initialize parameters
+
+    config_hma_ = DEFAULT_HMA;             // maximum step size
+    config_hmi_ = DEFAULT_HMI;             // minimum step size
+    config_branchhmi_ = DEFAULT_BRANCHHMI; // minimum step size near branches of
+                                           // separating curves
+    config_step_ = DEFAULT_STEPSIZE;       // step size
+    config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
+    config_intpoints_ = DEFAULT_INTPOINTS; // number of points to integrate
+
+    // initialize limit cycles & orbits
+
+    first_lim_cycle_ = nullptr;
+    first_orbit_ = nullptr;
+    current_orbit_ = nullptr;
+    current_lim_cycle_ = nullptr;
+
+    curves = NULL;
+
+    plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
+
+    SetupCoordinateTransformations();
+}
+
+// -----------------------------------------------------------------------
 //                              QVFStudy CONSTRUCTOR
 // -----------------------------------------------------------------------
 QVFStudy::QVFStudy()
 {
-    K_ = 0;
-    vf_ = nullptr;
-    vfK_ = nullptr;
-
     // initialize vector field structures:
     f_vec_field_[0] = nullptr;
     f_vec_field_[1] = nullptr;
@@ -260,6 +320,51 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
 }
 
 // -----------------------------------------------------------------------
+//                          QVFStudy::deleteNode
+// -----------------------------------------------------------------------
+void QVFStudy::deleteNode(node *p)
+{
+    node *q;
+
+    while (p != nullptr) {
+        q = p;
+        p = p->next_node;
+        delete q;
+        q = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
+//                          QVFStudy::deleteStrongFocus
+// -----------------------------------------------------------------------
+void QVFStudy::deleteStrongFocus(strong_focus *p)
+{
+    strong_focus *q;
+
+    while (p != nullptr) {
+        q = p;
+        p = p->next_sf;
+        delete q;
+        q = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
+//                          QVFStudy::deleteWeakFocus
+// -----------------------------------------------------------------------
+void QVFStudy::deleteWeakFocus(weak_focus *p)
+{
+    weak_focus *q;
+
+    while (p != nullptr) {
+        q = p;
+        p = p->next_wf;
+        delete q;
+        q = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
 //                      QVFStudy::DeleteDegenerate
 // -----------------------------------------------------------------------
 void QVFStudy::deleteDegenerate(degenerate *p)
@@ -297,6 +402,21 @@ void QVFStudy::deleteSeparatrices(sep *p)
 }
 
 // -----------------------------------------------------------------------
+//                          QVFStudy::deleteTransformations
+// -----------------------------------------------------------------------
+void QVFStudy::deleteTransformations(transformations *t)
+{
+    transformations *u;
+
+    while (t != nullptr) {
+        u = t;
+        t = t->next_trans;
+        delete u;
+        u = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
 //                      QVFStudy::DeleteBlowup
 // -----------------------------------------------------------------------
 void QVFStudy::deleteBlowup(blow_up_points *b)
@@ -313,6 +433,22 @@ void QVFStudy::deleteBlowup(blow_up_points *b)
         deleteOrbitPoint(c->first_sep_point);
         delete c;
         c = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
+//                      QVFStudy::deleteOrbitPoint
+// -----------------------------------------------------------------------
+void deleteOrbitPoint(P4ORBIT p)
+{
+    P4ORBIT q;
+
+    while (p != nullptr) {
+        q = p;
+        p = p->next_point;
+
+        delete q;
+        q = nullptr;
     }
 }
 
@@ -2357,7 +2493,7 @@ void QVFStudy::dump(QString basename, QString info)
     m->show();
 }
 
-void QVFStudy::setupCoordinateTransformations(void)
+void QPVFStudy::setupCoordinateTransformations(void)
 {
     if (!plweights_) {
         U1_to_sphere = U1_to_psphere;

@@ -99,6 +99,12 @@
 #define MIN_HMI 1.E-32    // minimum value for HMI
 #define MAX_HMI 10.0      // maximum value for HMI
 
+#define DEFAULT_BRANCHHMI                                                      \
+    1.E-3 // default value for BRANCHHMI (=minimum step size near branches of
+          // separating curves)
+#define MIN_BRANCHHMI 1.E-32 // minimum value for BRANCHHMI
+#define MAX_BRANCHHMI 10.0   // maximum value for BRANCHHMI
+
 #define DEFAULT_STEPSIZE 0.01 // default step size
                               // stepsize must be in between HMI and HMA
 
@@ -229,6 +235,8 @@ extern bool PRINT_WHITE_BG;
 #define CSING GREEN     // curve of singularities
 #define CCURV CYAN
 #define CISOC PINK1
+#define CSEPCURVE BROWN3
+#define CSHADEDCURVE BROWN1
 
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 

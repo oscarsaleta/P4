@@ -368,6 +368,106 @@ struct CURVERESULT {
     struct orbits_points *sep_points;
 };
 // ---------------------------------------------------
+class QPVFStudy : public QObject
+{
+public:
+    // Constructor and destructor
+    QPVFStudy();
+    ~QPVFStudy();
+
+    QVFStudy **vf_;
+    QVFStudy *vfK_; // shortcut for vf[K]. Must be updated whenever K changes
+    int K_;         // K will be throughout the current vector field selected
+
+    CURVERESULT *curves_result_;
+
+    int typeofstudy_;
+    int typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    bool plotVirtualSingularities_; // true or false
+    int p_;
+    int q_;
+    bool plweights_; // true if p<>1 or q<>1; false if p=q=1
+    doube config_projection_;
+
+    double double_p_;               // shortcuts: = (double)p
+    double double_q_;               // = (double)q
+    double double_p_plus_q_;        // = (double)(p+q)
+    double double_p_minus_1_;       // = (double)(p-1)
+    double double_q_minus_1_;       // = (double)(q-1)
+    double double_q_minus_p_;       // = (double)(q-p)
+    double xmin_, xmax_, ymin_, ymax_; // in case of local study
+
+    // limit cycles and orbits
+
+    struct orbits *first_lim_cycle_;
+    struct orbits *first_orbit_;
+
+    // run-time when plotting
+
+    struct orbits *current_orbit_;
+    struct orbits *current_lim_cycle_;
+
+    double selected_ucoord_[2];
+    struct saddle *selected_saddle_point_;
+    struct semi_elementary *selected_se_point_;
+    struct degenerate *selected_de_point_;
+    struct sep *selected_sep_;
+    struct blow_up_points *selected_de_sep_;
+    int selected_sep_vfindex_;
+
+    double config_currentstep_;
+    bool config_dashes_;
+    bool config_kindvf_; // true for original VF, false for reduced
+    int config_lc_value_;
+    int config_lc_numpoints_;
+    double config_hma_;
+    double config_hmi_;
+    double config_branchhmi_;
+    double config_step_;
+    double config_tolerance_;
+    int config_intpoints_;
+
+    // Methods
+    bool ReadTables(QString, bool, bool);
+    void ExaminePositionsOfSingularities(void);
+    bool ReadPiecewiseData(FILE *);
+    void Dump(QString basename);
+    void Reset(void);
+    void SetupCoordinateTransformations(void); // see math_p4.cpp
+    bool ReadSeparatingCurve(FILE *, CURVERESULT *);
+
+    void ResetCurveInfo(int);
+
+    // coordinate transformation routines, set up when starting the plot
+
+    void (*viewcoord_to_sphere)(double, double, double *);
+    bool (*sphere_to_viewcoordpair)(double *, double *, double *, double *,
+                                    double *, double *);
+
+    void (*finite_to_viewcoord)(double, double, double *);
+    void (*sphere_to_viewcoord)(double, double, double, double *);
+    bool (*is_valid_viewcoord)(double, double, double *);
+    void (*integrate_sphere_sep)(double, double, double, double *, double *,
+                                 int *, int *, int *, int *, double, double);
+    void (*U1_to_sphere)(double, double, double *);
+    void (*U2_to_sphere)(double, double, double *);
+    void (*V1_to_sphere)(double, double, double *);
+    void (*V2_to_sphere)(double, double, double *);
+
+    void (*sphere_to_U1)(double, double, double, double *);
+    void (*sphere_to_U2)(double, double, double, double *);
+    void (*sphere_to_V1)(double, double, double, double *);
+    void (*sphere_to_V2)(double, double, double, double *);
+
+    void (*sphere_to_R2)(double, double, double, double *);
+    void (*R2_to_sphere)(double, double, double *);
+    void (*integrate_sphere_orbit)(double, double, double, double *, double *,
+                                   int *, int *, double, double);
+    double (*eval_lc)(double *, double, double, double);
+    bool (*less2)(double *, double *);
+    int (*change_dir)(double *);
+}
+
 
 class QVFStudy : public QObject
 {
@@ -376,34 +476,12 @@ class QVFStudy : public QObject
     QVFStudy();  // constructor
     ~QVFStudy(); // destructor
 
-    // (taken from P5)
-    QVFStudy **vf_;
-    QVFStudy *vfK_; // shortcut for vf[K]. Must be updated whenever K changes
-    int K_;         // K will be throughout the current vector field selected
-    CURVERESULT *curves_result_;
-    bool plotVirtualSingularities_;
-    // ---------------
+    QPVFStudy *parent_;
 
     // general information
 
-    int typeofstudy_;
-    int typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    int p_;
-    int q_;
-    bool plweights_; // true if p<>1 or q<>1; false if p=q=1
-
-    double double_p_;         // shortcuts: = (double)p
-    double double_q_;         // = (double)q
-    double double_p_plus_q_;  // = (double)(p+q)
-    double double_p_minus_1_; // = (double)(p-1)
-    double double_q_minus_1_; // = (double)(q-1)
-    double double_q_minus_p_; // = (double)(q-p)
-
-    double xmin_, xmax_, ymin_, ymax_; // in case of local study
     bool singinf_;
     int dir_vec_field_;
-
-    QString lasterror_;
 
     // vector field in various charts
 
@@ -438,65 +516,6 @@ class QVFStudy : public QObject
     // isoclines
     std::vector<isoclines> isocline_vector_;
 
-    // limit cycles
-
-    orbits *first_lim_cycle_;
-    orbits *first_orbit_;
-
-    // ------ Configuration
-
-    int config_lc_value_;
-    double config_hma_;
-    double config_hmi_;
-    double config_step_;
-    double config_currentstep_;
-    double config_tolerance_;
-    double config_projection_;
-    int config_intpoints_;
-    int config_lc_numpoints_;
-    bool config_dashes_;
-    bool config_kindvf_; // true for original VF, false for reduced
-
-    // run-time when plotting
-
-    orbits *current_orbit_;
-    orbits *current_lim_cycle_;
-
-    double selected_ucoord_[2];
-    saddle *selected_saddle_point_;
-    semi_elementary *selected_se_point_;
-    degenerate *selected_de_point_;
-    sep *selected_sep_;
-    blow_up_points *selected_de_sep_;
-
-    // coordinate transformation routines, set up when starting the plot
-
-    void (*viewcoord_to_sphere)(double, double, double *);
-    bool (*sphere_to_viewcoordpair)(double *, double *, double *, double *,
-                                    double *, double *);
-
-    void (*finite_to_viewcoord)(double, double, double *);
-    void (*sphere_to_viewcoord)(double, double, double, double *);
-    bool (*is_valid_viewcoord)(double, double, double *);
-    void (*integrate_sphere_sep)(double, double, double, double *, double *,
-                                 int *, int *, int *, int *, double, double);
-    void (*U1_to_sphere)(double, double, double *);
-    void (*U2_to_sphere)(double, double, double *);
-    void (*V1_to_sphere)(double, double, double *);
-    void (*V2_to_sphere)(double, double, double *);
-
-    void (*sphere_to_U1)(double, double, double, double *);
-    void (*sphere_to_U2)(double, double, double, double *);
-    void (*sphere_to_V1)(double, double, double, double *);
-    void (*sphere_to_V2)(double, double, double, double *);
-
-    void (*sphere_to_R2)(double, double, double, double *);
-    void (*R2_to_sphere)(double, double, double *);
-    void (*integrate_sphere_orbit)(double, double, double, double *, double *,
-                                   int *, int *, double, double);
-    double (*eval_lc)(double *, double, double, double);
-    bool (*less2)(double *, double *);
-    int (*change_dir)(double *);
 
     // initialization and destruction of structures
 
@@ -504,68 +523,13 @@ class QVFStudy : public QObject
 
     void deleteSaddle(saddle *);
     void deleteSemiElementary(semi_elementary *);
-    inline void deleteNode(node *p)
-    {
-        node *q;
-
-        while (p != nullptr) {
-            q = p;
-            p = p->next_node;
-            delete q;
-            q = nullptr;
-        }
-    }
-    inline void deleteStrongFocus(strong_focus *p)
-    {
-        strong_focus *q;
-
-        while (p != nullptr) {
-            q = p;
-            p = p->next_sf;
-            delete q;
-            q = nullptr;
-        }
-    }
-    inline void deleteWeakFocus(weak_focus *p)
-    {
-        weak_focus *q;
-
-        while (p != nullptr) {
-            q = p;
-            p = p->next_wf;
-            delete q;
-            q = nullptr;
-        }
-    }
+    void deleteNode(node *p);
+    void deleteStrongFocus(strong_focus *p);
+    void deleteWeakFocus(weak_focus *p);
     void deleteDegenerate(degenerate *);
     void deleteSeparatrices(sep *);
-    inline void deleteTransformations(transformations *t)
-    {
-        transformations *u;
-
-        while (t != nullptr) {
-            u = t;
-            t = t->next_trans;
-            delete u;
-            u = nullptr;
-        }
-    }
+    void deleteTransformations(transformations *t);
     void deleteBlowup(blow_up_points *b);
-
-    void deleteLimitCycle(orbits *);
-    inline void deleteOrbitPoint(P4ORBIT p)
-    {
-        P4ORBIT q;
-
-        while (p != nullptr) {
-            q = p;
-            p = p->next_point;
-
-            delete q;
-            q = nullptr;
-        }
-    }
-    void deleteOrbit(orbits *);
 
     // reading of the Maple/Reduce results
 
@@ -576,9 +540,7 @@ class QVFStudy : public QObject
     bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
     bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
     bool readPoints(FILE *fp);
-    bool readTerm1(FILE *fp, P4POLYNOM1 p, int N);
-    bool readTerm2(FILE *fp, P4POLYNOM2 p, int N);
-    bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
+    
 
     bool readSaddlePoint(FILE *fp);
     bool readSemiElementaryPoint(FILE *fp);
@@ -598,6 +560,13 @@ class QVFStudy : public QObject
     void dumpSingularities(QTextEdit *m, genericsingularity *p,
                            const char *type, bool longversion);
 };
+
+void deleteLimitCycle(orbits *);
+void deleteOrbitPoint(P4ORBIT p);
+void deleteOrbit(orbits *);
+bool readTerm1(FILE *fp, P4POLYNOM1 p, int N);
+bool readTerm2(FILE *fp, P4POLYNOM2 p, int N);
+bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
 
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
