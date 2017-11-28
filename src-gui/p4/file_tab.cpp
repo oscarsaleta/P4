@@ -46,9 +46,9 @@ QVFStudy g_VFResults;
 // -----------------------------------------------------------------------
 QPVFStudy::QPVFStudy()
 {
-    K = 0;
-    vf = nullptr;
-    vfK = nullptr;
+    K_ = 0;
+    vf_ = nullptr;
+    vfK_ = nullptr;
 
     selected_ucoord_[0] = selected_ucoord_[1] = 0;
     selected_saddle_point_ = nullptr;
@@ -73,23 +73,24 @@ QPVFStudy::QPVFStudy()
     double_q_minus_1_ = q_1;
     double_q_minus_p_ = q - p;
     config_lc_value_ =
-        DEFAULT_LCORBITS; // number of orbits in the limit cycle window
+        DEFAULT_LCORBITS;  // number of orbits in the limit cycle window
     config_lc_numpoints_ =
-        DEFAULT_LCPOINTS; // number of points in the limit cycle window
+        DEFAULT_LCPOINTS;  // number of points in the limit cycle window
     config_currentstep_ =
-        DEFAULT_STEPSIZE; // current step size (during integration)
-    config_dashes_ = DEFAULT_LINESTYLE; // line style (dashes or points)
+        DEFAULT_STEPSIZE;  // current step size (during integration)
+    config_dashes_ = DEFAULT_LINESTYLE;  // line style (dashes or points)
     config_kindvf_ = DEFAULT_INTCONFIG;
 
     // initialize parameters
 
-    config_hma_ = DEFAULT_HMA;             // maximum step size
-    config_hmi_ = DEFAULT_HMI;             // minimum step size
-    config_branchhmi_ = DEFAULT_BRANCHHMI; // minimum step size near branches of
-                                           // separating curves
-    config_step_ = DEFAULT_STEPSIZE;       // step size
-    config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
-    config_intpoints_ = DEFAULT_INTPOINTS; // number of points to integrate
+    config_hma_ = DEFAULT_HMA;  // maximum step size
+    config_hmi_ = DEFAULT_HMI;  // minimum step size
+    config_branchhmi_ =
+        DEFAULT_BRANCHHMI;            // minimum step size near branches of
+                                      // separating curves
+    config_step_ = DEFAULT_STEPSIZE;  // step size
+    config_tolerance_ = DEFAULT_TOLERANCE;  // tolerance
+    config_intpoints_ = DEFAULT_INTPOINTS;  // number of points to integrate
 
     // initialize limit cycles & orbits
 
@@ -98,7 +99,7 @@ QPVFStudy::QPVFStudy()
     current_orbit_ = nullptr;
     current_lim_cycle_ = nullptr;
 
-    curves = NULL;
+    curves_result_ = nullptr;
 
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
 
@@ -110,6 +111,8 @@ QPVFStudy::QPVFStudy()
 // -----------------------------------------------------------------------
 QVFStudy::QVFStudy()
 {
+    parent_ = nullptr;
+
     // initialize vector field structures:
     f_vec_field_[0] = nullptr;
     f_vec_field_[1] = nullptr;
@@ -141,144 +144,484 @@ QVFStudy::QVFStudy()
     gcf_C_ = nullptr;
     gcf_points_ = nullptr;
 
-    // initialize limit cycles & orbits
-    first_lim_cycle_ = nullptr;
-    first_orbit_ = nullptr;
-    current_orbit_ = nullptr;
+    singinf = false;
+    dir_vec_field_ = 1;
+}
 
-    // initialize others
+// -----------------------------------------------------------------------
+//                      QPVFStudy DESTRUCTOR
+// -----------------------------------------------------------------------
+QPVFStudy::~QPVFStudy() { reset(); }
+
+// -----------------------------------------------------------------------
+//                      QVFStudy DESTRUCTOR
+// -----------------------------------------------------------------------
+QVFStudy::~QVFStudy() { reset(); }
+
+/*************************************************************************
+ *                      QPVFStudy METHODS
+ ************************************************************************/
+
+// -----------------------------------------------------------------------
+//                      QPVFStudy::reset
+// -----------------------------------------------------------------------
+QPVFStudy::reset()
+{
+    int i;
+    if (vf_ != nullptr) {
+        for (i = 0; i < g_ThisVF->numf; i++) {
+            delete vf_[i];
+            vf_[i] = nullptr;
+        }
+        delete vf_;
+        vf_ = nullptr;
+    }
+    vfK_ = nullptr;
+    K_ = 0;
+
     xmin_ = -1.0;
     xmax_ = 1.0;
     ymin_ = -1.0;
     ymax_ = 1.0;
     p_ = 1;
     q_ = 1;
+    plweights_ = false;
     typeofstudy_ = TYPEOFSTUDY_ALL;
-    singinf_ = false;
-    g_VFResults.dir_vec_field_ = 1;
-
-    // initialize parameters
-    // number of orbits in the limit cycle window
-    config_lc_value_ = DEFAULT_LCORBITS;
-    // number of points in the limit cycle window
-    config_lc_numpoints_ = DEFAULT_LCPOINTS;
-    // maximum step size
-    config_hma_ = DEFAULT_HMA;
-    // minimum step size
-    config_hmi_ = DEFAULT_HMI;
-    // step size
-    config_step_ = DEFAULT_STEPSIZE;
-    // current step size (during integration)
-    config_currentstep_ = DEFAULT_STEPSIZE;
-    // tolerance
-    config_tolerance_ = DEFAULT_TOLERANCE;
-    // projection in the case of Poincare sphere
+    typeofview_ = TYPEOFVIEW_SPHERE;
     config_projection_ = DEFAULT_PROJECTION;
-    // number of points to integrate
-    config_intpoints_ = DEFAULT_INTPOINTS;
-    // line style (dashes or points)
+    double_p_ = p;
+    double_q_ = q;
+    double_p_plus_q_ = p + q;
+    double_p_minus_1_ = p - 1;
+    double_q_minus_1_ = q - 1;
+    double_q_minus_p_ = q - p;
+    config_lc_value_ = DEFAULT_LCORBITS;
+    config_lc_numpoints_ = DEFAULT_LCPOINTS;
+    config_currentstep_ = DEFAULT_STEPSIZE;
     config_dashes_ = DEFAULT_LINESTYLE;
     config_kindvf_ = DEFAULT_INTCONFIG;
-
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
-}
 
-// -----------------------------------------------------------------------
-//                              QVFStudy DESTRUCTOR
-// -----------------------------------------------------------------------
-QVFStudy::~QVFStudy() { deleteVF(); }
-
-// -----------------------------------------------------------------------
-//                          QVFStudy::DeleteVF
-// -----------------------------------------------------------------------
-void QVFStudy::deleteVF()
-{
-    // Delete Vector Field
-    delete_term2(f_vec_field_[0]);
-    delete_term2(f_vec_field_[1]);
-    delete_term2(vec_field_U1_[0]);
-    delete_term2(vec_field_U1_[1]);
-    delete_term2(vec_field_U2_[0]);
-    delete_term2(vec_field_U2_[1]);
-    delete_term2(vec_field_V1_[0]);
-    delete_term2(vec_field_V1_[1]);
-    delete_term2(vec_field_V2_[0]);
-    delete_term2(vec_field_V2_[1]);
-    delete_term3(vec_field_C_[0]);
-    delete_term3(vec_field_C_[1]);
-
-    f_vec_field_[0] = nullptr;
-    f_vec_field_[1] = nullptr;
-    vec_field_U1_[0] = nullptr;
-    vec_field_U1_[1] = nullptr;
-    vec_field_U2_[0] = nullptr;
-    vec_field_U2_[1] = nullptr;
-    vec_field_V1_[0] = nullptr;
-    vec_field_V1_[1] = nullptr;
-    vec_field_V2_[0] = nullptr;
-    vec_field_V2_[1] = nullptr;
-    vec_field_C_[0] = nullptr;
-    vec_field_C_[1] = nullptr;
-
-    // Delete singular points
-    deleteSaddle(first_saddle_point_);
-    deleteSemiElementary(first_se_point_);
-    deleteNode(first_node_point_);
-    deleteDegenerate(first_de_point_);
-    deleteStrongFocus(first_sf_point_);
-    deleteWeakFocus(first_wf_point_);
-
-    first_saddle_point_ = nullptr;
-    first_se_point_ = nullptr;
-    first_node_point_ = nullptr;
-    first_sf_point_ = nullptr;
-    first_wf_point_ = nullptr;
-    first_de_point_ = nullptr;
-
-    // Delete GCF:
-    delete_term2(gcf_);
-    delete_term2(gcf_U1_);
-    delete_term2(gcf_U2_);
-    delete_term2(gcf_V1_);
-    delete_term2(gcf_V2_);
-    delete_term3(gcf_C_);
-    deleteOrbitPoint(gcf_points_);
-
-    gcf_ = nullptr;
-    gcf_U1_ = nullptr;
-    gcf_U2_ = nullptr;
-    gcf_V1_ = nullptr;
-    gcf_V2_ = nullptr;
-    gcf_C_ = nullptr;
-    gcf_points_ = nullptr;
-
-    // Delete curve:
-    curve_vector_.clear();
-
-    // Delete isoclines:
-    isocline_vector_.clear();
-
-    // Delete all orbits
+    // delete orbits
     deleteOrbit(first_orbit_);
     first_orbit_ = nullptr;
     current_orbit_ = nullptr;
 
-    // Delete limit cycles
+    // delete limit cycles
     deleteLimitCycle(first_lim_cycle_);
     first_lim_cycle_ = nullptr;
+    current_lim_cycle_ = nullptr;
+
+    selected_ucoord_[0] = selected_ucoord_[1] = 0;
+    selected_saddle_point_ = nullptr;
+    selected_se_point_ = nullptr;
+    selected_de_point_ = nullptr;
+    selected_sep_ = nullptr;
+    selected_de_sep_ = nullptr;
+
+    if (curves_result_ != nullptr) {
+        for (i = 0; i < g_ThisVF->numCurves; i++) resetCurveInfo[i];
+        delete curves_result_;
+        curves_result_ = nullptr;
+    }
+
+    config_hma = DEFAULT_HMA;
+    config_hmi_ = DEFAULT_HMI;
+    config_branchhmi_ = DEFAULT_BRANCHHMI;
+    config_step_ = DEFAULT_STEPSIZE;
+    config_tolerance_ = DEFAULT_TOLERANCE;
+    config_intpoints_ = DEFAULT_INTPOINTS;
+}
+
+// -----------------------------------------------------------------------
+//                      QPVFStudy::deleteOrbitPoint
+// -----------------------------------------------------------------------
+void QPVFStudy::deleteOrbitPoint(P4ORBIT p)
+{
+    P4ORBIT q;
+
+    while (p != nullptr) {
+        q = p;
+        p = p->next_point;
+
+        delete q;
+        q = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
+//                      QPVFStudy::deleteLimitCycle
+// -----------------------------------------------------------------------
+void QPVFStudy::deleteLimitCycle(orbits *p)
+{
+    deleteOrbit(p);  // limit cycle is implemented as orbit.
+}
+
+// -----------------------------------------------------------------------
+//                      QPVFStudy::deleteOrbit
+// -----------------------------------------------------------------------
+void QPVFStudy::deleteOrbit(orbits *p)
+{
+    orbits *q;
+
+    while (p != nullptr) {
+        q = p;
+        p = p->next_orbit;
+
+        deleteOrbitPoint(q->f_orbits);
+        delete q;
+        q = nullptr;
+    }
+}
+
+// -----------------------------------------------------------------------
+//                      QPVFStudy::readPieceWiseData
+// -----------------------------------------------------------------------
+bool QPVFStudy::readPieceWiseData(FILE *fp)
+{
+    int j, k, v;
+    if (g_ThisVF->numCurves == 0)
+        return true;
+    if (fscanf(fp, "%d\n", &v) != 1)
+        return false;
+    if (v != g_ThisVF->numVFRegions)
+        return false;
+
+    if (g_ThisVF->numVFRegions > 0) {
+        for (j = 0; j < g_ThisVF->numVFRegions; j++) {
+            if (fscanf(fp, "%d" & v) != 1 ||
+                v != g_ThisVF->vfRegions[j].vfIndex)
+                return false;
+            for (k = 0; k < g_ThisVF->numCurves; k++) {
+                if (fscanf(fp, "%d", &v) != 1 ||
+                    v != g_ThisVF->vfRegions[j].signs[k])
+                    return false;
+            }
+            fscanf(fp, "\n");
+        }
+    }
+
+    if (fscanf(fp, "%d\n", &v) != 1 || v != g_ThisVF->numCurveRegions)
+        return false;
+    if (g_ThisVF->numCurveRegions > 0) {
+        for (j = 0; j < g_ThisVF->numCurveRegions; j++) {
+            if (fscanf(fp, "%d", &v) != 1 ||
+                v != g_ThisVF->curveRegions[j].curveIndex)
+                return false;
+            for (k = 0; k < g_ThisVF->numCurves; k++) {
+                if (fscanf(fp, "%d", &v) != 1 ||
+                    v != g_ThisVF->curveRegions[j].signs[k])
+                    return false;
+            }
+            fscanf(fp, "\n");
+        }
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//                      QPVFStudy::readTables
+// -----------------------------------------------------------------------
+bool QPVFStudy::ReadTables(QString basename, bool evalpiecewisedata,
+                           bool onlytry)
+{
+    FILE *fpvec;
+    FILE *fpinf;
+    FILE *fpfin;
+    FILE *fpcurv;
+    int j, v;
+    int p, q, prec, numcurves, numvf;
+
+    setlocale(LC_ALL, "C");
+
+    if (evalpiecewisedata) {
+        /*
+            The curves result file contains:
+
+            - Identifier P5
+            - p, q, precision, numcurves
+            - For each curve:
+                . curve polynomial in (x,y) in finite chart
+                . curve polynomial in U1 chart
+                . curve polynomial in U2 chart
+                . curve polynomial in V1 chart
+                . curve polynomial in V2 chart
+                . (only when $(p,q)\not=(1,1)$: curve polynomial in cylindrical
+           coordinates . Plot data in 5 different charts.
+        */
+
+        if (curves_result_ == nullptr) {
+            // TODO: make this a std::vector
+            curves_result_ = (CURVERESULT *)malloc(sizeof(CURVERESULT) *
+                                                   (ThisVF->numcurves));
+            for (j = 0; j < ThisVF->numcurves; j++) {
+                curves_result_[j].sep = nullptr;
+                curves_result_[j].sep_U1 = nullptr;
+                curves_result_[j].sep_U2 = nullptr;
+                curves_result_[j].sep_V1 = nullptr;
+                curves_result_[j].sep_V2 = nullptr;
+                curves_result_[j].sep_C = nullptr;
+                curves_result_[j].sep_points = nullptr;
+            }
+        } else {
+            for (j = 0; j < ThisVF->numcurves; j++) {
+                ResetCurveInfo(j);
+            }
+        }
+
+        fpcurv = fopen(QFile::encodeName(basename + "_curves.tab"), "rt");
+        if (fpcurv == nullptr) {
+            free(curves);
+            curves = nullptr;
+            return false;
+        }
+        if (fscanf(fpcurv, "p5\n%d %d %d %d\n", &_p, &_q, &_prec,
+                   &_numcurves) != 4) {
+            free(curves);
+            curves = nullptr;
+            fclose(fpcurv);
+            return false;
+        }
+        if (_numcurves != ThisVF->numcurves || _p != ThisVF->p ||
+            _q != ThisVF->q) {
+            if (onlytry) {
+                free(curves);
+                curves = nullptr;
+                fclose(fpcurv);
+                return false;
+            }
+            free(curves);
+            curves = nullptr;
+            Reset();
+            fclose(fpcurv);
+            return false;
+        }
+        p = _p;
+        q = _q;
+
+        plweights = ((p == 1 && q == 1) ? false : true);
+        double_p = (double)p;
+        double_q = (double)q;
+        double_p_plus_q = (double)(p + q);
+        double_p_minus_1 = (double)(p - 1);
+        double_q_minus_1 = (double)(q - 1);
+        double_q_minus_p = (double)(q - p);
+
+        /*P5 Store precision _prec */
+
+        for (j = 0; j < ThisVF->numcurves; j++) {
+            if (!ReadSeparatingCurve(fpcurv, curves + j)) {
+                for (; j >= 0; j--) ResetCurveInfo(j);
+                free(curves);
+                curves = nullptr;
+                fclose(fpcurv);
+                return false;
+            }
+
+            if (!ReadCurvePoints(fpcurv, &(curves[j].sep_points), j)) {
+                for (; j >= 0; j--) ResetCurveInfo(j);
+                free(curves);
+                curves = nullptr;
+                fclose(fpcurv);
+                return false;
+            }
+        }
+
+        for (j = 0; j < ThisVF->numcurves; j++) ThisVF->ResampleCurve(j);
+
+        fclose(fpcurv);
+        //        Dump( basename );
+        return true;
+    }
+
+    Reset();  // initialize structures, delete previous vector field if any
+
+    fpvec = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
+    if (fpvec == nullptr)
+        return false;
+
+    if (fscanf(fpvec, "P5\n%d %d\n", &_numvf, &v) != 2) {
+        fclose(fpvec);
+        return false;
+    }
+    if (v != ThisVF->numcurves || _numvf != ThisVF->numvf) {
+        fclose(fpvec);
+        return false;
+    }
+
+    // allocate room for all vector fields
+
+    vf = (QVFStudy **)realloc(vf, sizeof(QVFStudy *) * ThisVF->numvf);
+    for (j = 0; j < ThisVF->numvf; j++) {
+        vf[j] = new QVFStudy();
+        vf[j]->parent = this;
+    }
+
+    if (fscanf(fpvec, "%d\n%d\n%d\n", &typeofstudy, &_p, &_q) != 3) {
+        Reset();
+        fclose(fpvec);
+        return false;
+    }
+
+    if (_p != ThisVF->p || _q != ThisVF->q) {
+        Reset();
+        fclose(fpvec);
+        return false;
+    }
+    p = _p;
+    q = _q;
+
+    plweights = ((p == 1 && q == 1) ? false : true);
+    double_p = (double)p;
+    double_q = (double)q;
+    double_p_plus_q = (double)(p + q);
+    double_p_minus_1 = (double)(p - 1);
+    double_q_minus_1 = (double)(q - 1);
+    double_q_minus_p = (double)(q - p);
+
+    if (typeofstudy == TYPEOFSTUDY_ONE) {
+        if (fscanf(fpvec, "%lf %lf %lf %lf", &xmin, &xmax, &ymin, &ymax) != 4) {
+            Reset();
+            fclose(fpvec);
+            return false;
+        }
+        p = q = 1;
+        typeofview = TYPEOFVIEW_PLANE;
+    } else
+        typeofview = TYPEOFVIEW_SPHERE;
+
+    // read the curves
+
+    for (j = 0; j < ThisVF->numcurves; j++) {
+        //        if( !ReadSeparatingCurve( fpvec, curves+j ) )
+        if (!ReadSeparatingCurve(fpvec, nullptr)) {
+            Reset();
+            fclose(fpvec);
+            return false;
+        }
+    }
+
+    if (!ReadPiecewiseData(fpvec)) {
+        Reset();
+        fclose(fpvec);
+        return false;
+    }
+
+    if (typeofstudy != TYPEOFSTUDY_INF) {
+        fpfin = fopen(QFile::encodeName(basename + "_fin.tab"), "rt");
+        if (fpfin == nullptr) {
+            fclose(fpvec);
+            Reset();
+            return false;
+        }
+    } else
+        fpfin = nullptr;
+
+    if (typeofstudy != TYPEOFSTUDY_ONE && typeofstudy != TYPEOFSTUDY_FIN) {
+        fpinf = fopen(QFile::encodeName(basename + "_inf.tab"), "rt");
+        if (fpinf == nullptr) {
+            fclose(fpvec);
+            if (fpfin != nullptr)
+                fclose(fpfin);
+            Reset();
+            return false;
+        }
+    } else
+        fpinf = nullptr;
+
+    for (j = 0; j < ThisVF->numvf; j++) {
+        if (!vf[j]->ReadTables(fpvec, fpfin, fpinf)) {
+            Reset();
+            if (fpinf != nullptr)
+                fclose(fpinf);
+            if (fpfin != nullptr)
+                fclose(fpfin);
+            fclose(fpvec);
+            return false;
+        }
+    }
+
+    if (fpinf != nullptr)
+        fclose(fpinf);
+    if (fpfin != nullptr)
+        fclose(fpfin);
+    fclose(fpvec);
+
+    ReadTables(basename, true, true);  // try to read the piecewise curve points
+                                       // as well if they are present on disk
+                                       //    Dump(basename);
+    ExaminePositionsOfSingularities();
+    return true;
+}
+
+/*************************************************************************
+ *                      QVFStudy METHODS
+ ************************************************************************/
+
+// -----------------------------------------------------------------------
+//                      QVFStudy::reset
+// -----------------------------------------------------------------------
+void QVFStudy::reset()
+{
+    parent_ = nullptr;
+
+    // delete vector field
+    delete_term2(f_vec_field_[0]);
+    f_vec_field_ = nullptr;
+    delete_term2(f_vec_field_[1]);
+    f_vec_field_ = nullptr;
+    delete_term2(vec_field_U1_[0]);
+    vec_field_U1_ = nullptr;
+    delete_term2(vec_field_U1_[1]);
+    vec_field_U1_ = nullptr;
+    delete_term2(vec_field_U2_[0]);
+    vec_field_U2_ = nullptr;
+    delete_term2(vec_field_U2_[1]);
+    vec_field_U2_ = nullptr;
+    delete_term2(vec_field_V1_[0]);
+    vec_field_V1_ = nullptr;
+    delete_term2(vec_field_V1_[1]);
+    vec_field_V1_ = nullptr;
+    delete_term2(vec_field_V2_[0]);
+    vec_field_V2_ = nullptr;
+    delete_term2(vec_field_V2_[1]);
+    vec_field_V2_ = nullptr;
+    delete_term2(vec_field_C_[0]);
+    vec_field_C_ = nullptr;
+    delete_term2(vec_field_C_[1]);
+    vec_field_C_ = nullptr;
+
+    // delete singular points
+    deleteSaddle(first_saddle_point_);
+    first_saddle_point_ = nullptr;
+    deleteSemiElementary(first_se_point_);
+    first_se_point_ = nullptr;
+    deleteNode(first_node_point_);
+    first_node_point_ = nullptr;
+    deleteDegenerate(first_de_point_);
+    first_de_point_ = nullptr;
+    deleteStrongFocus(first_sf_point_);
+    first_sf_point_ = nullptr;
+    deleteWeakFocus(first_wf_point_);
+    first_wf_point_ = nullptr;
+
+    // delete gcf
+    delete_term2(gcf);
+    gcf = nullptr;
+    delete_term2(gcf_U1_);
+    gcf_U1_ = nullptr;
+    delete_term2(gcf_U2_);
+    gcf_U2_ = nullptr;
+    delete_term2(gcf_V1_);
+    gcf_V1_ = nullptr;
+    delete_term2(gcf_V2_);
+    gcf_V2_ = nullptr;
+    delete_term2(gcf_C);
+    gcf_C = nullptr;
 
     // reset others
-    xmin_ = -1.0;
-    xmax_ = 1.0;
-    ymin_ = -1.0;
-    ymax_ = 1.0;
-    p_ = 1;
-    q_ = 1;
-    typeofstudy_ = TYPEOFSTUDY_ALL;
-    singinf_ = false;
-    g_VFResults.dir_vec_field_ = 1;
-
-    lasterror_ = "";
+    singinf = false;
+    dir_vec_field_ = 1;
 }
 
 // -----------------------------------------------------------------------
@@ -293,7 +636,7 @@ void QVFStudy::deleteSaddle(saddle *p)
         delete_term2(q->vector_field[0]);
         delete_term2(q->vector_field[1]);
         if (q->notadummy)
-            deleteSeparatrices(q->separatrices); // separatrices may be nullptr
+            deleteSeparatrices(q->separatrices);  // separatrices may be nullptr
         delete q;
         q = nullptr;
     }
@@ -313,7 +656,7 @@ void QVFStudy::deleteSemiElementary(semi_elementary *p)
         delete_term2(q->vector_field[0]);
         delete_term2(q->vector_field[1]);
         if (q->notadummy)
-            deleteSeparatrices(q->separatrices); // separatrices may be nullptr
+            deleteSeparatrices(q->separatrices);  // separatrices may be nullptr
         delete q;
         q = nullptr;
     }
@@ -437,47 +780,6 @@ void QVFStudy::deleteBlowup(blow_up_points *b)
 }
 
 // -----------------------------------------------------------------------
-//                      QVFStudy::deleteOrbitPoint
-// -----------------------------------------------------------------------
-void deleteOrbitPoint(P4ORBIT p)
-{
-    P4ORBIT q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_point;
-
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//                      QVFStudy::DeleteLimitCycle
-// -----------------------------------------------------------------------
-void QVFStudy::deleteLimitCycle(orbits *p)
-{
-    deleteOrbit(p); // limit cycle is implemented as orbit.
-}
-
-// -----------------------------------------------------------------------
-//                      QVFStudy::DeleteOrbit
-// -----------------------------------------------------------------------
-void QVFStudy::deleteOrbit(orbits *p)
-{
-    orbits *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_orbit;
-
-        deleteOrbitPoint(q->f_orbits);
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
 //                      QVFStudy::ReadTables
 // -----------------------------------------------------------------------
 //
@@ -493,7 +795,7 @@ bool QVFStudy::readTables(QString basename)
 
     setlocale(LC_ALL, "C");
 
-    deleteVF(); // initialize structures, delete previous vector field if any
+    deleteVF();  // initialize structures, delete previous vector field if any
     fp = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
     if (fp == nullptr) {
         dump(basename, "Cannot open file *_vec.tab");
@@ -583,8 +885,9 @@ bool QVFStudy::readTables(QString basename)
         singinf_ = 0;
     } else {
         if (fscanf(fp, "%d %d", &flag, &g_VFResults.dir_vec_field_) != 2) {
-            dump(basename, "Cannot read sing-at-infinity flag and directions "
-                           "flag in *_vec.tab");
+            dump(basename,
+                 "Cannot read sing-at-infinity flag and directions "
+                 "flag in *_vec.tab");
             deleteVF();
             fclose(fp);
             return false;
@@ -595,7 +898,6 @@ bool QVFStudy::readTables(QString basename)
     fclose(fp);
 
     if (typeofstudy_ != TYPEOFSTUDY_INF) {
-
         fp = fopen(QFile::encodeName(basename + "_fin.tab"), "rt");
         if (fp != nullptr) {
             if (!readPoints(fp)) {
@@ -958,52 +1260,52 @@ bool QVFStudy::readPoints(FILE *fp)
             return false;
         }
         switch (typ) {
-        case SADDLE:
-            if (!readSaddlePoint(fp)) {
+            case SADDLE:
+                if (!readSaddlePoint(fp)) {
+                    lasterror_ = QString("sing #") + QString::number(i) +
+                                 " = saddle : " + lasterror_;
+                    return false;
+                }
+                break;
+            case SEMI_HYPERBOLIC:
+                if (!readSemiElementaryPoint(fp)) {
+                    lasterror_ = QString("sing #") + QString::number(i) +
+                                 " = semi-el : " + lasterror_;
+                    return false;
+                }
+                break;
+            case NODE:
+                if (!readNodePoint(fp)) {
+                    lasterror_ = QString("sing #") + QString::number(i) +
+                                 " = node : " + lasterror_;
+                    return false;
+                }
+                break;
+            case STRONG_FOCUS:
+                if (!readStrongFocusPoint(fp)) {
+                    lasterror_ = QString("sing #") + QString::number(i) +
+                                 " = strongfocus : " + lasterror_;
+                    return false;
+                }
+                break;
+            case WEAK_FOCUS:
+                if (!readWeakFocusPoint(fp)) {
+                    lasterror_ = QString("sing #") + QString::number(i) +
+                                 " = weakfocus : " + lasterror_;
+                    return false;
+                }
+                break;
+            case NON_ELEMENTARY:
+                if (!readDegeneratePoint(fp)) {
+                    lasterror_ = QString("sing #") + QString::number(i) +
+                                 " = degen : " + lasterror_;
+                    return false;
+                }
+                break;
+            default:
                 lasterror_ = QString("sing #") + QString::number(i) +
-                             " = saddle : " + lasterror_;
+                             " type not exist (" + QString::number(typ) + ")";
                 return false;
-            }
-            break;
-        case SEMI_HYPERBOLIC:
-            if (!readSemiElementaryPoint(fp)) {
-                lasterror_ = QString("sing #") + QString::number(i) +
-                             " = semi-el : " + lasterror_;
-                return false;
-            }
-            break;
-        case NODE:
-            if (!readNodePoint(fp)) {
-                lasterror_ = QString("sing #") + QString::number(i) +
-                             " = node : " + lasterror_;
-                return false;
-            }
-            break;
-        case STRONG_FOCUS:
-            if (!readStrongFocusPoint(fp)) {
-                lasterror_ = QString("sing #") + QString::number(i) +
-                             " = strongfocus : " + lasterror_;
-                return false;
-            }
-            break;
-        case WEAK_FOCUS:
-            if (!readWeakFocusPoint(fp)) {
-                lasterror_ = QString("sing #") + QString::number(i) +
-                             " = weakfocus : " + lasterror_;
-                return false;
-            }
-            break;
-        case NON_ELEMENTARY:
-            if (!readDegeneratePoint(fp)) {
-                lasterror_ = QString("sing #") + QString::number(i) +
-                             " = degen : " + lasterror_;
-                return false;
-            }
-            break;
-        default:
-            lasterror_ = QString("sing #") + QString::number(i) +
-                         " type not exist (" + QString::number(typ) + ")";
-            return false;
         }
     }
 
@@ -1272,52 +1574,36 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
         return false;
 
     switch (point->type) {
-    case 1: // saddle-node
-        if (s && point->chart != CHART_R2 && !singinf_) {
-            // hyperbolic sep = line at infinity, not reported
-            // center sep in the wrong direction
-            // so no separatrices
-            point->separatrices = nullptr;
-        } else {
-            // in the finite region (always s=1), the first sep is the center
-            // sep, then the hyperbolic sep
-            // at infinity, we  have s=0, so the center sep is the line at
-            // infinity, not reported so only sep is
-            // then the hyperbolic sep.
-
-            point->separatrices = new sep;
-            sep1 = point->separatrices;
-
-            if (s)
-                sep1->type = OT_CENT_STABLE;
-            else
-                sep1->type = OT_UNSTABLE;
-
-            sep1->d = 0;
-            if (((p_ == 1) && (q_ == 1) &&
-                 ((point->chart == CHART_V1) || (point->chart == CHART_V2))) ||
-                (point->chart == CHART_R2 || singinf_)) {
-                sep1->direction = -1;
+        case 1:  // saddle-node
+            if (s && point->chart != CHART_R2 && !singinf_) {
+                // hyperbolic sep = line at infinity, not reported
+                // center sep in the wrong direction
+                // so no separatrices
+                point->separatrices = nullptr;
             } else {
-                sep1->direction = 1;
-            }
+                // in the finite region (always s=1), the first sep is the
+                // center sep, then the hyperbolic sep at infinity, we  have
+                // s=0, so the center sep is the line at infinity, not reported
+                // so only sep is then the hyperbolic sep.
 
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            sep1->notadummy = true;
-            sep1->separatrice = new term1;
-            readTerm1(fp, sep1->separatrice, N);
-            sep1->first_sep_point = nullptr;
-            sep1->last_sep_point = nullptr;
-            sep1->next_sep = nullptr;
-            if (point->chart == CHART_R2 || singinf_) {
-                // read second (hyperbolic) separatrix
+                point->separatrices = new sep;
+                sep1 = point->separatrices;
 
-                sep1->next_sep = new sep;
-                sep1 = sep1->next_sep;
-                sep1->type = OT_UNSTABLE;
-                sep1->d = 1;
-                sep1->direction = 1;
+                if (s)
+                    sep1->type = OT_CENT_STABLE;
+                else
+                    sep1->type = OT_UNSTABLE;
+
+                sep1->d = 0;
+                if (((p_ == 1) && (q_ == 1) &&
+                     ((point->chart == CHART_V1) ||
+                      (point->chart == CHART_V2))) ||
+                    (point->chart == CHART_R2 || singinf_)) {
+                    sep1->direction = -1;
+                } else {
+                    sep1->direction = 1;
+                }
+
                 if (fscanf(fp, "%d ", &N) != 1)
                     return false;
                 sep1->notadummy = true;
@@ -1325,121 +1611,39 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 readTerm1(fp, sep1->separatrice, N);
                 sep1->first_sep_point = nullptr;
                 sep1->last_sep_point = nullptr;
+                sep1->next_sep = nullptr;
+                if (point->chart == CHART_R2 || singinf_) {
+                    // read second (hyperbolic) separatrix
 
-                // it is two-sided, so make a copy in other direction
+                    sep1->next_sep = new sep;
+                    sep1 = sep1->next_sep;
+                    sep1->type = OT_UNSTABLE;
+                    sep1->d = 1;
+                    sep1->direction = 1;
+                    if (fscanf(fp, "%d ", &N) != 1)
+                        return false;
+                    sep1->notadummy = true;
+                    sep1->separatrice = new term1;
+                    readTerm1(fp, sep1->separatrice, N);
+                    sep1->first_sep_point = nullptr;
+                    sep1->last_sep_point = nullptr;
 
-                sep1->next_sep = new sep;
-                sep1->next_sep->type = OT_UNSTABLE;
-                sep1->next_sep->d = 1;
-                sep1->next_sep->direction = -1;
-                sep1->next_sep->notadummy = false;
-                sep1->next_sep->separatrice = sep1->separatrice;
-                sep1->next_sep->first_sep_point = nullptr;
-                sep1->next_sep->last_sep_point = nullptr;
-                sep1->next_sep->next_sep = nullptr;
+                    // it is two-sided, so make a copy in other direction
+
+                    sep1->next_sep = new sep;
+                    sep1->next_sep->type = OT_UNSTABLE;
+                    sep1->next_sep->d = 1;
+                    sep1->next_sep->direction = -1;
+                    sep1->next_sep->notadummy = false;
+                    sep1->next_sep->separatrice = sep1->separatrice;
+                    sep1->next_sep->first_sep_point = nullptr;
+                    sep1->next_sep->last_sep_point = nullptr;
+                    sep1->next_sep->next_sep = nullptr;
+                }
             }
-        }
-        break;
+            break;
 
-    case 2: // saddle-node
-        point->separatrices = new sep;
-        sep1 = point->separatrices;
-        if (s)
-            sep1->type = STYPE_CENUNSTABLE;
-        else
-            sep1->type = STYPE_STABLE;
-
-        sep1->d = 0;
-        if ((p_ == 1) && (q_ == 1) &&
-            ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
-            sep1->direction = -1;
-        else
-            sep1->direction = 1;
-
-        if (fscanf(fp, "%d ", &N) != 1)
-            return false;
-        sep1->notadummy = true;
-        sep1->separatrice = new term1;
-        readTerm1(fp, sep1->separatrice, N);
-        sep1->first_sep_point = nullptr;
-        sep1->last_sep_point = nullptr;
-        sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf_) {
-            sep1->next_sep = new sep;
-            sep1 = sep1->next_sep;
-            sep1->type = STYPE_STABLE;
-            sep1->d = 1;
-            sep1->direction = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            sep1->notadummy = true;
-            sep1->separatrice = new term1;
-            readTerm1(fp, sep1->separatrice, N);
-            sep1->first_sep_point = nullptr;
-            sep1->last_sep_point = nullptr;
-            sep1->next_sep = new sep;
-            sep1->next_sep->type = STYPE_STABLE;
-            sep1->next_sep->d = 1;
-            sep1->next_sep->direction = -1;
-            sep1->next_sep->notadummy = false;
-            sep1->next_sep->separatrice = sep1->separatrice;
-            sep1->next_sep->first_sep_point = nullptr;
-            sep1->next_sep->last_sep_point = nullptr;
-            sep1->next_sep->next_sep = nullptr;
-        }
-        break;
-
-    case 3: // saddle-node
-        point->separatrices = new sep;
-        sep1 = point->separatrices;
-        if (s)
-            sep1->type = STYPE_CENSTABLE;
-        else
-            sep1->type = STYPE_UNSTABLE;
-        sep1->d = 0;
-        if ((p_ == 1) && (q_ == 1) &&
-            ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
-            sep1->direction = -1;
-        else
-            sep1->direction = 1;
-
-        if (fscanf(fp, "%d ", &N) != 1)
-            return false;
-        sep1->notadummy = true;
-        sep1->separatrice = new term1;
-        readTerm1(fp, sep1->separatrice, N);
-        sep1->first_sep_point = nullptr;
-        sep1->last_sep_point = nullptr;
-        sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf_) {
-            sep1->next_sep = new sep;
-            sep1 = sep1->next_sep;
-            sep1->type = STYPE_UNSTABLE;
-            sep1->d = 1;
-            sep1->direction = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            sep1->notadummy = true;
-            sep1->separatrice = new term1;
-            readTerm1(fp, sep1->separatrice, N);
-            sep1->first_sep_point = nullptr;
-            sep1->last_sep_point = nullptr;
-            sep1->next_sep = new sep;
-            sep1->next_sep->type = STYPE_UNSTABLE;
-            sep1->next_sep->d = 1;
-            sep1->next_sep->direction = -1;
-            sep1->next_sep->notadummy = false;
-            sep1->next_sep->separatrice = sep1->separatrice;
-            sep1->next_sep->first_sep_point = nullptr;
-            sep1->next_sep->last_sep_point = nullptr;
-            sep1->next_sep->next_sep = nullptr;
-        }
-        break;
-
-    case 4: // saddle-node
-        if (s && (point->chart != CHART_R2) && !singinf_) {
-            point->separatrices = nullptr;
-        } else {
+        case 2:  // saddle-node
             point->separatrices = new sep;
             sep1 = point->separatrices;
             if (s)
@@ -1448,9 +1652,8 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1->type = STYPE_STABLE;
 
             sep1->d = 0;
-            if (((p_ == 1) && (q_ == 1) &&
-                 ((point->chart == CHART_V1) || (point->chart == CHART_V2))) ||
-                (point->chart == CHART_R2 || singinf_))
+            if ((p_ == 1) && (q_ == 1) &&
+                ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
                 sep1->direction = -1;
             else
                 sep1->direction = 1;
@@ -1486,156 +1689,256 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1->next_sep->last_sep_point = nullptr;
                 sep1->next_sep->next_sep = nullptr;
             }
-        }
-        break;
+            break;
 
-    case 6: // saddle
-        point->separatrices = new sep;
-        sep1 = point->separatrices;
-        if (s)
-            sep1->type = STYPE_CENUNSTABLE;
-        else
-            sep1->type = STYPE_STABLE;
-        sep1->d = 0;
-        if ((p_ == 1) && (q_ == 1) &&
-            ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
-            sep1->direction = -1;
-        else
-            sep1->direction = 1;
-        if (fscanf(fp, "%d ", &N) != 1)
-            return false;
-        sep1->notadummy = true;
-        sep1->separatrice = new term1;
-        readTerm1(fp, sep1->separatrice, N);
-        sep1->first_sep_point = nullptr;
-        sep1->last_sep_point = nullptr;
-        sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf_) {
-            sep1->next_sep = new sep;
-            sep1->next_sep->type = STYPE_CENUNSTABLE;
-            sep1->next_sep->d = 0;
-            sep1->next_sep->direction = -1;
-            sep1->next_sep->notadummy = false;
-            sep1->next_sep->separatrice = sep1->separatrice;
-            sep1->next_sep->first_sep_point = nullptr;
-            sep1->next_sep->last_sep_point = nullptr;
-            sep1->next_sep->next_sep = new sep;
-            sep1 = sep1->next_sep->next_sep;
-            sep1->type = STYPE_STABLE;
-            sep1->d = 1;
-            sep1->direction = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            sep1->notadummy = true;
-            sep1->separatrice = new term1;
-            readTerm1(fp, sep1->separatrice, N);
-            sep1->first_sep_point = nullptr;
-            sep1->last_sep_point = nullptr;
-            sep1->next_sep = new sep;
-            sep1->next_sep->type = STYPE_STABLE;
-            sep1->next_sep->d = 1;
-            sep1->next_sep->direction = -1;
-            sep1->next_sep->notadummy = false;
-            sep1->next_sep->separatrice = sep1->separatrice;
-            sep1->next_sep->first_sep_point = nullptr;
-            sep1->next_sep->last_sep_point = nullptr;
-            sep1->next_sep->next_sep = nullptr;
-        }
-        break;
-
-    case 7: // saddle
-        point->separatrices = new sep;
-        sep1 = point->separatrices;
-        if (s)
-            sep1->type = STYPE_CENSTABLE;
-        else
-            sep1->type = STYPE_UNSTABLE;
-        sep1->d = 0;
-        if ((p_ == 1) && (q_ == 1) &&
-            ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
-            sep1->direction = -1;
-        else
-            sep1->direction = 1;
-        if (fscanf(fp, "%d ", &N) != 1)
-            return false;
-        sep1->notadummy = true;
-        sep1->separatrice = new term1;
-        readTerm1(fp, sep1->separatrice, N);
-        sep1->first_sep_point = nullptr;
-        sep1->last_sep_point = nullptr;
-        sep1->next_sep = nullptr;
-        if (point->chart == CHART_R2 || singinf_) {
-            sep1->next_sep = new sep;
-            sep1->next_sep->type = STYPE_CENSTABLE;
-            sep1->next_sep->d = 0;
-            sep1->next_sep->direction = -1;
-            sep1->next_sep->notadummy = false;
-            sep1->next_sep->separatrice = sep1->separatrice;
-            sep1->next_sep->first_sep_point = nullptr;
-            sep1->next_sep->last_sep_point = nullptr;
-            sep1->next_sep->next_sep = new sep;
-            sep1 = sep1->next_sep->next_sep;
-            sep1->type = STYPE_UNSTABLE;
-            sep1->d = 1;
-            sep1->direction = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            sep1->notadummy = true;
-            sep1->separatrice = new term1;
-            readTerm1(fp, sep1->separatrice, N);
-            sep1->first_sep_point = nullptr;
-            sep1->last_sep_point = nullptr;
-            sep1->next_sep = new sep;
-            sep1->next_sep->type = STYPE_UNSTABLE;
-            sep1->next_sep->d = 1;
-            sep1->next_sep->direction = -1;
-            sep1->next_sep->notadummy = false;
-            sep1->next_sep->separatrice = sep1->separatrice;
-            sep1->next_sep->first_sep_point = nullptr;
-            sep1->next_sep->last_sep_point = nullptr;
-            sep1->next_sep->next_sep = nullptr;
-        }
-        break;
-
-    default:
-        point->separatrices = nullptr;
-
-        // change type of node if we have a gcf ?
-        y[0] = point->x0;
-        y[1] = point->y0;
-        ok = false;
-        switch (point->chart) {
-        case CHART_R2:
-            if (eval_term2(gcf_, y) < 0)
-                ok = true;
-            break;
-        case CHART_U1:
-            if (eval_term2(gcf_U1_, y) < 0)
-                ok = true;
-            break;
-        case CHART_V1:
-            if ((p_ == 1) && (q_ == 1))
-                y[0] = -y[0];
-            if (eval_term2(gcf_V1_, y) < 0)
-                ok = true;
-            break;
-        case CHART_U2:
-            if (eval_term2(gcf_U2_, y) < 0)
-                ok = true;
-            break;
-        case CHART_V2:
-            if ((p_ == 1) && (q_ == 1))
-                y[0] = -y[0];
-            if (eval_term2(gcf_V2_, y) < 0)
-                ok = true;
-            break;
-        }
-        if (ok) {
-            if (point->type == 5)
-                point->type = 8;
+        case 3:  // saddle-node
+            point->separatrices = new sep;
+            sep1 = point->separatrices;
+            if (s)
+                sep1->type = STYPE_CENSTABLE;
             else
-                point->type = 5;
-        }
+                sep1->type = STYPE_UNSTABLE;
+            sep1->d = 0;
+            if ((p_ == 1) && (q_ == 1) &&
+                ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
+                sep1->direction = -1;
+            else
+                sep1->direction = 1;
+
+            if (fscanf(fp, "%d ", &N) != 1)
+                return false;
+            sep1->notadummy = true;
+            sep1->separatrice = new term1;
+            readTerm1(fp, sep1->separatrice, N);
+            sep1->first_sep_point = nullptr;
+            sep1->last_sep_point = nullptr;
+            sep1->next_sep = nullptr;
+            if (point->chart == CHART_R2 || singinf_) {
+                sep1->next_sep = new sep;
+                sep1 = sep1->next_sep;
+                sep1->type = STYPE_UNSTABLE;
+                sep1->d = 1;
+                sep1->direction = 1;
+                if (fscanf(fp, "%d ", &N) != 1)
+                    return false;
+                sep1->notadummy = true;
+                sep1->separatrice = new term1;
+                readTerm1(fp, sep1->separatrice, N);
+                sep1->first_sep_point = nullptr;
+                sep1->last_sep_point = nullptr;
+                sep1->next_sep = new sep;
+                sep1->next_sep->type = STYPE_UNSTABLE;
+                sep1->next_sep->d = 1;
+                sep1->next_sep->direction = -1;
+                sep1->next_sep->notadummy = false;
+                sep1->next_sep->separatrice = sep1->separatrice;
+                sep1->next_sep->first_sep_point = nullptr;
+                sep1->next_sep->last_sep_point = nullptr;
+                sep1->next_sep->next_sep = nullptr;
+            }
+            break;
+
+        case 4:  // saddle-node
+            if (s && (point->chart != CHART_R2) && !singinf_) {
+                point->separatrices = nullptr;
+            } else {
+                point->separatrices = new sep;
+                sep1 = point->separatrices;
+                if (s)
+                    sep1->type = STYPE_CENUNSTABLE;
+                else
+                    sep1->type = STYPE_STABLE;
+
+                sep1->d = 0;
+                if (((p_ == 1) && (q_ == 1) &&
+                     ((point->chart == CHART_V1) ||
+                      (point->chart == CHART_V2))) ||
+                    (point->chart == CHART_R2 || singinf_))
+                    sep1->direction = -1;
+                else
+                    sep1->direction = 1;
+
+                if (fscanf(fp, "%d ", &N) != 1)
+                    return false;
+                sep1->notadummy = true;
+                sep1->separatrice = new term1;
+                readTerm1(fp, sep1->separatrice, N);
+                sep1->first_sep_point = nullptr;
+                sep1->last_sep_point = nullptr;
+                sep1->next_sep = nullptr;
+                if (point->chart == CHART_R2 || singinf_) {
+                    sep1->next_sep = new sep;
+                    sep1 = sep1->next_sep;
+                    sep1->type = STYPE_STABLE;
+                    sep1->d = 1;
+                    sep1->direction = 1;
+                    if (fscanf(fp, "%d ", &N) != 1)
+                        return false;
+                    sep1->notadummy = true;
+                    sep1->separatrice = new term1;
+                    readTerm1(fp, sep1->separatrice, N);
+                    sep1->first_sep_point = nullptr;
+                    sep1->last_sep_point = nullptr;
+                    sep1->next_sep = new sep;
+                    sep1->next_sep->type = STYPE_STABLE;
+                    sep1->next_sep->d = 1;
+                    sep1->next_sep->direction = -1;
+                    sep1->next_sep->notadummy = false;
+                    sep1->next_sep->separatrice = sep1->separatrice;
+                    sep1->next_sep->first_sep_point = nullptr;
+                    sep1->next_sep->last_sep_point = nullptr;
+                    sep1->next_sep->next_sep = nullptr;
+                }
+            }
+            break;
+
+        case 6:  // saddle
+            point->separatrices = new sep;
+            sep1 = point->separatrices;
+            if (s)
+                sep1->type = STYPE_CENUNSTABLE;
+            else
+                sep1->type = STYPE_STABLE;
+            sep1->d = 0;
+            if ((p_ == 1) && (q_ == 1) &&
+                ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
+                sep1->direction = -1;
+            else
+                sep1->direction = 1;
+            if (fscanf(fp, "%d ", &N) != 1)
+                return false;
+            sep1->notadummy = true;
+            sep1->separatrice = new term1;
+            readTerm1(fp, sep1->separatrice, N);
+            sep1->first_sep_point = nullptr;
+            sep1->last_sep_point = nullptr;
+            sep1->next_sep = nullptr;
+            if (point->chart == CHART_R2 || singinf_) {
+                sep1->next_sep = new sep;
+                sep1->next_sep->type = STYPE_CENUNSTABLE;
+                sep1->next_sep->d = 0;
+                sep1->next_sep->direction = -1;
+                sep1->next_sep->notadummy = false;
+                sep1->next_sep->separatrice = sep1->separatrice;
+                sep1->next_sep->first_sep_point = nullptr;
+                sep1->next_sep->last_sep_point = nullptr;
+                sep1->next_sep->next_sep = new sep;
+                sep1 = sep1->next_sep->next_sep;
+                sep1->type = STYPE_STABLE;
+                sep1->d = 1;
+                sep1->direction = 1;
+                if (fscanf(fp, "%d ", &N) != 1)
+                    return false;
+                sep1->notadummy = true;
+                sep1->separatrice = new term1;
+                readTerm1(fp, sep1->separatrice, N);
+                sep1->first_sep_point = nullptr;
+                sep1->last_sep_point = nullptr;
+                sep1->next_sep = new sep;
+                sep1->next_sep->type = STYPE_STABLE;
+                sep1->next_sep->d = 1;
+                sep1->next_sep->direction = -1;
+                sep1->next_sep->notadummy = false;
+                sep1->next_sep->separatrice = sep1->separatrice;
+                sep1->next_sep->first_sep_point = nullptr;
+                sep1->next_sep->last_sep_point = nullptr;
+                sep1->next_sep->next_sep = nullptr;
+            }
+            break;
+
+        case 7:  // saddle
+            point->separatrices = new sep;
+            sep1 = point->separatrices;
+            if (s)
+                sep1->type = STYPE_CENSTABLE;
+            else
+                sep1->type = STYPE_UNSTABLE;
+            sep1->d = 0;
+            if ((p_ == 1) && (q_ == 1) &&
+                ((point->chart == CHART_V1) || (point->chart == CHART_V2)))
+                sep1->direction = -1;
+            else
+                sep1->direction = 1;
+            if (fscanf(fp, "%d ", &N) != 1)
+                return false;
+            sep1->notadummy = true;
+            sep1->separatrice = new term1;
+            readTerm1(fp, sep1->separatrice, N);
+            sep1->first_sep_point = nullptr;
+            sep1->last_sep_point = nullptr;
+            sep1->next_sep = nullptr;
+            if (point->chart == CHART_R2 || singinf_) {
+                sep1->next_sep = new sep;
+                sep1->next_sep->type = STYPE_CENSTABLE;
+                sep1->next_sep->d = 0;
+                sep1->next_sep->direction = -1;
+                sep1->next_sep->notadummy = false;
+                sep1->next_sep->separatrice = sep1->separatrice;
+                sep1->next_sep->first_sep_point = nullptr;
+                sep1->next_sep->last_sep_point = nullptr;
+                sep1->next_sep->next_sep = new sep;
+                sep1 = sep1->next_sep->next_sep;
+                sep1->type = STYPE_UNSTABLE;
+                sep1->d = 1;
+                sep1->direction = 1;
+                if (fscanf(fp, "%d ", &N) != 1)
+                    return false;
+                sep1->notadummy = true;
+                sep1->separatrice = new term1;
+                readTerm1(fp, sep1->separatrice, N);
+                sep1->first_sep_point = nullptr;
+                sep1->last_sep_point = nullptr;
+                sep1->next_sep = new sep;
+                sep1->next_sep->type = STYPE_UNSTABLE;
+                sep1->next_sep->d = 1;
+                sep1->next_sep->direction = -1;
+                sep1->next_sep->notadummy = false;
+                sep1->next_sep->separatrice = sep1->separatrice;
+                sep1->next_sep->first_sep_point = nullptr;
+                sep1->next_sep->last_sep_point = nullptr;
+                sep1->next_sep->next_sep = nullptr;
+            }
+            break;
+
+        default:
+            point->separatrices = nullptr;
+
+            // change type of node if we have a gcf ?
+            y[0] = point->x0;
+            y[1] = point->y0;
+            ok = false;
+            switch (point->chart) {
+                case CHART_R2:
+                    if (eval_term2(gcf_, y) < 0)
+                        ok = true;
+                    break;
+                case CHART_U1:
+                    if (eval_term2(gcf_U1_, y) < 0)
+                        ok = true;
+                    break;
+                case CHART_V1:
+                    if ((p_ == 1) && (q_ == 1))
+                        y[0] = -y[0];
+                    if (eval_term2(gcf_V1_, y) < 0)
+                        ok = true;
+                    break;
+                case CHART_U2:
+                    if (eval_term2(gcf_U2_, y) < 0)
+                        ok = true;
+                    break;
+                case CHART_V2:
+                    if ((p_ == 1) && (q_ == 1))
+                        y[0] = -y[0];
+                    if (eval_term2(gcf_V2_, y) < 0)
+                        ok = true;
+                    break;
+            }
+            if (ok) {
+                if (point->type == 5)
+                    point->type = 8;
+                else
+                    point->type = 5;
+            }
     }
 
     if (fscanf(fp, "%lf ", &(point->epsilon)) != 1)
@@ -1652,26 +1955,26 @@ bool QVFStudy::readSemiElementaryPoint(FILE *fp)
             point->next_se->type = point->type;
         else
             switch (point->type) {
-            case 1:
-                point->next_se->type = 3;
-                break;
-            case 2:
-                point->next_se->type = 4;
-                break;
-            case 3:
-                point->next_se->type = 1;
-                break;
-            case 4:
-                point->next_se->type = 2;
-                break;
-            case 6:
-                point->next_se->type = 7;
-                break;
-            case 7:
-                point->next_se->type = 6;
-                break;
-            default:
-                point->next_se->type = point->type;
+                case 1:
+                    point->next_se->type = 3;
+                    break;
+                case 2:
+                    point->next_se->type = 4;
+                    break;
+                case 3:
+                    point->next_se->type = 1;
+                    break;
+                case 4:
+                    point->next_se->type = 2;
+                    break;
+                case 6:
+                    point->next_se->type = 7;
+                    break;
+                case 7:
+                    point->next_se->type = 6;
+                    break;
+                default:
+                    point->next_se->type = point->type;
             }
 
         point->next_se->chart =
@@ -1731,36 +2034,36 @@ bool QVFStudy::readStrongFocusPoint(FILE *fp)
     y[1] = point->y0;
 
     switch (point->chart) {
-    case CHART_R2:
-        if (eval_term2(gcf_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_R2:
+            if (eval_term2(gcf_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_U1:
-        if (eval_term2(gcf_U1_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_U1:
+            if (eval_term2(gcf_U1_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_V1:
-        if (p_ == 1 && q_ == 1)
-            y[0] = -y[0];
+        case CHART_V1:
+            if (p_ == 1 && q_ == 1)
+                y[0] = -y[0];
 
-        if (eval_term2(gcf_V1_, y) < 0)
-            point->stable *= -1;
-        break;
+            if (eval_term2(gcf_V1_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_U2:
-        if (eval_term2(gcf_U2_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_U2:
+            if (eval_term2(gcf_U2_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_V2:
-        if (p_ == 1 && q_ == 1)
-            y[0] = -y[0];
+        case CHART_V2:
+            if (p_ == 1 && q_ == 1)
+                y[0] = -y[0];
 
-        if (eval_term2(gcf_V2_, y) < 0)
-            point->stable *= -1;
-        break;
+            if (eval_term2(gcf_V2_, y) < 0)
+                point->stable *= -1;
+            break;
     }
 
     // line at infinity a line of singularities in poincare disc
@@ -1816,34 +2119,34 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
         y[1] = point->y0;
 
         switch (point->chart) {
-        case CHART_R2:
-            if (eval_term2(gcf_, y) < 0)
-                point->type *= -1;
-            break;
+            case CHART_R2:
+                if (eval_term2(gcf_, y) < 0)
+                    point->type *= -1;
+                break;
 
-        case CHART_U1:
-            if (eval_term2(gcf_U1_, y) < 0)
-                point->type *= -1;
-            break;
+            case CHART_U1:
+                if (eval_term2(gcf_U1_, y) < 0)
+                    point->type *= -1;
+                break;
 
-        case CHART_V1:
-            if ((p_ == 1) && (q_ == 1))
-                y[0] = -y[0];
-            if (eval_term2(gcf_V1_, y) < 0)
-                point->type *= -1;
-            break;
+            case CHART_V1:
+                if ((p_ == 1) && (q_ == 1))
+                    y[0] = -y[0];
+                if (eval_term2(gcf_V1_, y) < 0)
+                    point->type *= -1;
+                break;
 
-        case CHART_U2:
-            if (eval_term2(gcf_U2_, y) < 0)
-                point->type *= -1;
-            break;
+            case CHART_U2:
+                if (eval_term2(gcf_U2_, y) < 0)
+                    point->type *= -1;
+                break;
 
-        case CHART_V2:
-            if ((p_ == 1) && (q_ == 1))
-                y[0] = -y[0];
-            if (eval_term2(gcf_V2_, y) < 0)
-                point->type *= -1;
-            break;
+            case CHART_V2:
+                if ((p_ == 1) && (q_ == 1))
+                    y[0] = -y[0];
+                if (eval_term2(gcf_V2_, y) < 0)
+                    point->type *= -1;
+                break;
         }
     }
 
@@ -1856,15 +2159,15 @@ bool QVFStudy::readWeakFocusPoint(FILE *fp)
             point->next_wf->type = point->type;
         else
             switch (point->type) {
-            case STYPE_STABLE:
-                point->next_wf->type = STYPE_UNSTABLE;
-                break;
-            case STYPE_UNSTABLE:
-                point->next_wf->type = STYPE_STABLE;
-                break;
-            default:
-                point->next_wf->type = point->type;
-                break;
+                case STYPE_STABLE:
+                    point->next_wf->type = STYPE_UNSTABLE;
+                    break;
+                case STYPE_UNSTABLE:
+                    point->next_wf->type = STYPE_STABLE;
+                    break;
+                default:
+                    point->next_wf->type = point->type;
+                    break;
             }
 
         point->next_wf->chart =
@@ -1980,35 +2283,35 @@ bool QVFStudy::readNodePoint(FILE *fp)
     y[1] = point->y0;
 
     switch (point->chart) {
-    case CHART_R2:
-        if (eval_term2(gcf_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_R2:
+            if (eval_term2(gcf_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_U1:
-        if (eval_term2(gcf_U1_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_U1:
+            if (eval_term2(gcf_U1_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_V1:
-        if (p_ == 1 && q_ == 1)
-            y[0] = -y[0];
+        case CHART_V1:
+            if (p_ == 1 && q_ == 1)
+                y[0] = -y[0];
 
-        if (eval_term2(gcf_V1_, y) < 0)
-            point->stable *= -1;
-        break;
+            if (eval_term2(gcf_V1_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_U2:
-        if (eval_term2(gcf_U2_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_U2:
+            if (eval_term2(gcf_U2_, y) < 0)
+                point->stable *= -1;
+            break;
 
-    case CHART_V2:
-        if (p_ == 1 && q_ == 1)
-            y[0] = -y[0];
-        if (eval_term2(gcf_V2_, y) < 0)
-            point->stable *= -1;
-        break;
+        case CHART_V2:
+            if (p_ == 1 && q_ == 1)
+                y[0] = -y[0];
+            if (eval_term2(gcf_V2_, y) < 0)
+                point->stable *= -1;
+            break;
     }
 
     // if line at infinity a line of singularities in poincare disc:
@@ -2036,7 +2339,6 @@ bool QVFStudy::readNodePoint(FILE *fp)
 // -----------------------------------------------------------------------
 bool QVFStudy::readTransformations(FILE *fp, transformations *trans, int n)
 {
-
     int i;
 
     if (fscanf(fp, "%lf %lf %d %d %d %d %d %d %d", &(trans->x0), &(trans->y0),
@@ -2089,54 +2391,54 @@ bool QVFStudy::readBlowupPoints(FILE *fp, blow_up_points *b, int n)
         if (fscanf(fp, "%d ", &typ) != 1)
             return false;
         switch (typ) {
-        case 1:
-            b->type = STYPE_UNSTABLE;
-            break;
-        case 2:
-            b->type = STYPE_STABLE;
-            break;
-        case 3:
-            b->type = STYPE_UNSTABLE;
-            break;
-        case 4:
-            b->type = STYPE_STABLE;
-            break;
-        case 5:
-            b->type = STYPE_CENUNSTABLE;
-            break;
-        case 6:
-            b->type = STYPE_CENSTABLE;
-            break;
-        case 7:
-            b->type = STYPE_CENUNSTABLE;
-            break;
-        case 8:
-            b->type = STYPE_CENSTABLE;
-            break;
-        case 9:
-            b->type = STYPE_UNSTABLE;
-            break;
-        case 10:
-            b->type = STYPE_UNSTABLE;
-            break;
-        case 11:
-            b->type = STYPE_STABLE;
-            break;
-        case 12:
-            b->type = STYPE_STABLE;
-            break;
-        case 13:
-            b->type = STYPE_UNSTABLE;
-            break;
-        case 14:
-            b->type = STYPE_UNSTABLE;
-            break;
-        case 15:
-            b->type = STYPE_STABLE;
-            break;
-        case 16:
-            b->type = STYPE_STABLE;
-            break;
+            case 1:
+                b->type = STYPE_UNSTABLE;
+                break;
+            case 2:
+                b->type = STYPE_STABLE;
+                break;
+            case 3:
+                b->type = STYPE_UNSTABLE;
+                break;
+            case 4:
+                b->type = STYPE_STABLE;
+                break;
+            case 5:
+                b->type = STYPE_CENUNSTABLE;
+                break;
+            case 6:
+                b->type = STYPE_CENSTABLE;
+                break;
+            case 7:
+                b->type = STYPE_CENUNSTABLE;
+                break;
+            case 8:
+                b->type = STYPE_CENSTABLE;
+                break;
+            case 9:
+                b->type = STYPE_UNSTABLE;
+                break;
+            case 10:
+                b->type = STYPE_UNSTABLE;
+                break;
+            case 11:
+                b->type = STYPE_STABLE;
+                break;
+            case 12:
+                b->type = STYPE_STABLE;
+                break;
+            case 13:
+                b->type = STYPE_UNSTABLE;
+                break;
+            case 14:
+                b->type = STYPE_UNSTABLE;
+                break;
+            case 15:
+                b->type = STYPE_STABLE;
+                break;
+            case 16:
+                b->type = STYPE_STABLE;
+                break;
         }
         b->first_sep_point = nullptr;
         b->last_sep_point = nullptr;
@@ -2156,7 +2458,7 @@ void QVFStudy::dumpSeparatrices(QTextEdit *m, sep *separ, int margin)
     char smargin[80];
     const char *stype;
     strcpy(smargin, "                              ");
-    smargin[margin] = 0; // make number of spaces
+    smargin[margin] = 0;  // make number of spaces
 
     if (separ == nullptr) {
         DUMP(("%s/", smargin))
@@ -2165,21 +2467,21 @@ void QVFStudy::dumpSeparatrices(QTextEdit *m, sep *separ, int margin)
 
     while (separ != nullptr) {
         switch (separ->type) {
-        case STYPE_STABLE:
-            stype = "Stable         ";
-            break;
-        case STYPE_UNSTABLE:
-            stype = "unstable       ";
-            break;
-        case STYPE_CENSTABLE:
-            stype = "center-stable  ";
-            break;
-        case STYPE_CENUNSTABLE:
-            stype = "center-unstable";
-            break;
-        default:
-            stype = "???????????????";
-            break;
+            case STYPE_STABLE:
+                stype = "Stable         ";
+                break;
+            case STYPE_UNSTABLE:
+                stype = "unstable       ";
+                break;
+            case STYPE_CENSTABLE:
+                stype = "center-stable  ";
+                break;
+            case STYPE_CENUNSTABLE:
+                stype = "center-unstable";
+                break;
+            default:
+                stype = "???????????????";
+                break;
         }
 
         DUMP(("%sType=%s  Dir=%-2d  original=%d", smargin, stype,
@@ -2212,100 +2514,102 @@ void QVFStudy::dumpSingularities(QTextEdit *m, genericsingularity *p,
 
     while (p != nullptr) {
         switch (p->chart) {
-        case CHART_R2:
-            chart = "R2";
-            break;
-        case CHART_U1:
-            chart = "U1";
-            break;
-        case CHART_U2:
-            chart = "U2";
-            break;
-        case CHART_V1:
-            chart = "V1";
-            break;
-        case CHART_V2:
-            chart = "V2";
-            break;
-        default:
-            chart = "?";
-            break;
+            case CHART_R2:
+                chart = "R2";
+                break;
+            case CHART_U1:
+                chart = "U1";
+                break;
+            case CHART_U2:
+                chart = "U2";
+                break;
+            case CHART_V1:
+                chart = "V1";
+                break;
+            case CHART_V2:
+                chart = "V2";
+                break;
+            default:
+                chart = "?";
+                break;
         }
         DUMP(("%s (x0,y0)=(%g,%g)  Chart %s", type, (float)(p->x0),
               (float)(p->y0), chart))
         if (longversion) {
             switch (type[0] * type[1]) {
-            case 'S' * 'A':
-                // saddle
-                sa = (saddle *)p;
-                DUMP(("   Epsilon = %g  original=%d", (float)(sa->epsilon),
-                      sa->notadummy))
-                DUMP(("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
-                      (float)(sa->a11), (float)(sa->a12), (float)(sa->a21),
-                      (float)(sa->a22)))
-                DUMP(("   Vector Field:"))
-                DUMP(
-                    ("      x' = %s", dumpPoly2(sa->vector_field[0], "x", "y")))
-                DUMP(
-                    ("      y' = %s", dumpPoly2(sa->vector_field[1], "x", "y")))
-                DUMP(("   Separatrices:"))
-                dumpSeparatrices(m, sa->separatrices, 6);
-                break;
+                case 'S' * 'A':
+                    // saddle
+                    sa = (saddle *)p;
+                    DUMP(("   Epsilon = %g  original=%d", (float)(sa->epsilon),
+                          sa->notadummy))
+                    DUMP(("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
+                          (float)(sa->a11), (float)(sa->a12), (float)(sa->a21),
+                          (float)(sa->a22)))
+                    DUMP(("   Vector Field:"))
+                    DUMP(("      x' = %s",
+                          dumpPoly2(sa->vector_field[0], "x", "y")))
+                    DUMP(("      y' = %s",
+                          dumpPoly2(sa->vector_field[1], "x", "y")))
+                    DUMP(("   Separatrices:"))
+                    dumpSeparatrices(m, sa->separatrices, 6);
+                    break;
 
-            case 'D' * 'E':
-                // degenerate
-                de = (degenerate *)p;
-                DUMP(("   Epsilon = %g  original=%d", (float)(de->epsilon),
-                      de->notadummy))
-                break;
+                case 'D' * 'E':
+                    // degenerate
+                    de = (degenerate *)p;
+                    DUMP(("   Epsilon = %g  original=%d", (float)(de->epsilon),
+                          de->notadummy))
+                    break;
 
-            case 'S' * 'T':
-                // strong focus
-                sf = (strong_focus *)p;
-                if (sf->stable == -1)
-                    s = "(stable)";
-                else if (sf->stable == +1)
-                    s = "(unstable)";
-                else
-                    s = "( ??? )";
+                case 'S' * 'T':
+                    // strong focus
+                    sf = (strong_focus *)p;
+                    if (sf->stable == -1)
+                        s = "(stable)";
+                    else if (sf->stable == +1)
+                        s = "(unstable)";
+                    else
+                        s = "( ??? )";
 
-                ss = s.toLatin1();
-                DUMP(("    Stability = %d %s", sf->stable, (const char *)ss))
-                break;
-            case 'W' * 'E':
-                // weak focus
-                wf = (weak_focus *)p;
-                DUMP(("    Type = %d", wf->type))
-                break;
-            case 'N' * 'O':
-                // node
-                no = (node *)p;
-                if (no->stable == -1)
-                    s = "(stable)";
-                else if (no->stable == +1)
-                    s = "(unstable)";
-                else
-                    s = "( ??? )";
-                ss = s.toLatin1();
-                DUMP(("    Stability = %d %s", no->stable, (const char *)ss))
-                break;
-            case 'S' * 'E':
-                // semi-elementary
-                se = (semi_elementary *)p;
-                DUMP(("   Type    = %d", se->type))
-                DUMP(("   Epsilon = %g  original=%d", (float)(se->epsilon),
-                      se->notadummy))
-                DUMP(("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
-                      (float)(se->a11), (float)(se->a12), (float)(se->a21),
-                      (float)(se->a22)))
-                DUMP(("   Vector Field = "))
-                DUMP(
-                    ("      x' = %s", dumpPoly2(se->vector_field[0], "x", "y")))
-                DUMP(
-                    ("      y' = %s", dumpPoly2(se->vector_field[1], "x", "y")))
-                DUMP(("   Separatrices:"))
-                dumpSeparatrices(m, se->separatrices, 6);
-                break;
+                    ss = s.toLatin1();
+                    DUMP(
+                        ("    Stability = %d %s", sf->stable, (const char *)ss))
+                    break;
+                case 'W' * 'E':
+                    // weak focus
+                    wf = (weak_focus *)p;
+                    DUMP(("    Type = %d", wf->type))
+                    break;
+                case 'N' * 'O':
+                    // node
+                    no = (node *)p;
+                    if (no->stable == -1)
+                        s = "(stable)";
+                    else if (no->stable == +1)
+                        s = "(unstable)";
+                    else
+                        s = "( ??? )";
+                    ss = s.toLatin1();
+                    DUMP(
+                        ("    Stability = %d %s", no->stable, (const char *)ss))
+                    break;
+                case 'S' * 'E':
+                    // semi-elementary
+                    se = (semi_elementary *)p;
+                    DUMP(("   Type    = %d", se->type))
+                    DUMP(("   Epsilon = %g  original=%d", (float)(se->epsilon),
+                          se->notadummy))
+                    DUMP(("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
+                          (float)(se->a11), (float)(se->a12), (float)(se->a21),
+                          (float)(se->a22)))
+                    DUMP(("   Vector Field = "))
+                    DUMP(("      x' = %s",
+                          dumpPoly2(se->vector_field[0], "x", "y")))
+                    DUMP(("      y' = %s",
+                          dumpPoly2(se->vector_field[1], "x", "y")))
+                    DUMP(("   Separatrices:"))
+                    dumpSeparatrices(m, se->separatrices, 6);
+                    break;
             }
             DUMP((" "))
         }
@@ -2514,53 +2818,57 @@ void QPVFStudy::setupCoordinateTransformations(void)
         change_dir = change_dir_poincare;
 
         switch (typeofview_) {
-        case TYPEOFVIEW_SPHERE:
-            viewcoord_to_sphere = ucircle_psphere;
-            sphere_to_viewcoord = psphere_ucircle;
-            finite_to_viewcoord = finite_ucircle;
-            is_valid_viewcoord = isvalid_psphereviewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
+            case TYPEOFVIEW_SPHERE:
+                viewcoord_to_sphere = ucircle_psphere;
+                sphere_to_viewcoord = psphere_ucircle;
+                finite_to_viewcoord = finite_ucircle;
+                is_valid_viewcoord = isvalid_psphereviewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
 
-        case TYPEOFVIEW_PLANE:
-            viewcoord_to_sphere = R2_to_psphere;
-            sphere_to_viewcoord = psphere_to_R2;
-            finite_to_viewcoord = identitytrf_R2;
-            is_valid_viewcoord = isvalid_R2viewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
+            case TYPEOFVIEW_PLANE:
+                viewcoord_to_sphere = R2_to_psphere;
+                sphere_to_viewcoord = psphere_to_R2;
+                finite_to_viewcoord = identitytrf_R2;
+                is_valid_viewcoord = isvalid_R2viewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
 
-        case TYPEOFVIEW_U1:
-            viewcoord_to_sphere = xyrevU1_to_psphere;
-            sphere_to_viewcoord = psphere_to_xyrevU1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U1viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_U1:
+                viewcoord_to_sphere = xyrevU1_to_psphere;
+                sphere_to_viewcoord = psphere_to_xyrevU1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U1viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_U2:
-            viewcoord_to_sphere = U2_to_psphere;
-            sphere_to_viewcoord = psphere_to_U2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U2viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_U2:
+                viewcoord_to_sphere = U2_to_psphere;
+                sphere_to_viewcoord = psphere_to_U2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U2viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousy;
+                break;
 
-        case TYPEOFVIEW_V1:
-            viewcoord_to_sphere = xyrevV1_to_psphere;
-            sphere_to_viewcoord = psphere_to_xyrevV1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V1viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_V1:
+                viewcoord_to_sphere = xyrevV1_to_psphere;
+                sphere_to_viewcoord = psphere_to_xyrevV1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V1viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_V2:
-            viewcoord_to_sphere = V2_to_psphere;
-            sphere_to_viewcoord = psphere_to_V2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V2viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_V2:
+                viewcoord_to_sphere = V2_to_psphere;
+                sphere_to_viewcoord = psphere_to_V2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V2viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousy;
+                break;
         }
     } else {
         U1_to_sphere = U1_to_plsphere;
@@ -2581,51 +2889,55 @@ void QPVFStudy::setupCoordinateTransformations(void)
         change_dir = change_dir_lyapunov;
 
         switch (typeofview_) {
-        case TYPEOFVIEW_SPHERE:
-            viewcoord_to_sphere = annulus_plsphere;
-            sphere_to_viewcoord = plsphere_annulus;
-            finite_to_viewcoord = finite_annulus;
-            is_valid_viewcoord = isvalid_plsphereviewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
-        case TYPEOFVIEW_PLANE:
-            viewcoord_to_sphere = R2_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_R2;
-            finite_to_viewcoord = identitytrf_R2;
-            is_valid_viewcoord = isvalid_R2viewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
-        case TYPEOFVIEW_U1:
-            viewcoord_to_sphere = xyrevU1_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_xyrevU1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U1viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_SPHERE:
+                viewcoord_to_sphere = annulus_plsphere;
+                sphere_to_viewcoord = plsphere_annulus;
+                finite_to_viewcoord = finite_annulus;
+                is_valid_viewcoord = isvalid_plsphereviewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
+            case TYPEOFVIEW_PLANE:
+                viewcoord_to_sphere = R2_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_R2;
+                finite_to_viewcoord = identitytrf_R2;
+                is_valid_viewcoord = isvalid_R2viewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
+            case TYPEOFVIEW_U1:
+                viewcoord_to_sphere = xyrevU1_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_xyrevU1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U1viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_U2:
-            viewcoord_to_sphere = U2_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_U2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U2viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_U2:
+                viewcoord_to_sphere = U2_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_U2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U2viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousy;
+                break;
 
-        case TYPEOFVIEW_V1:
-            viewcoord_to_sphere = xyrevV1_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_xyrevV1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V1viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_V1:
+                viewcoord_to_sphere = xyrevV1_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_xyrevV1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V1viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_V2:
-            viewcoord_to_sphere = V2_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_V2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V2viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_V2:
+                viewcoord_to_sphere = V2_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_V2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V2viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousy;
+                break;
         }
     }
 }

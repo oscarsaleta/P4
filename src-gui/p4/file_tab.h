@@ -73,15 +73,15 @@ typedef struct term3 *P4POLYNOM3;
 // -----------------------------------------------------------------------
 
 struct orbits_points {
-    int color; // color of seperatrice
+    int color;  // color of seperatrice
 
-    double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
-                      // or on the poincare-lyapunov sphere
-                      // -> p=(0,x,y) or p=(1,r,theta)
+    double pcoord[3];  // point on the poincare sphere -> p=(X,Y,Z)
+                       // or on the poincare-lyapunov sphere
+                       // -> p=(0,x,y) or p=(1,r,theta)
     int dashes;
-    int dir;  // if we have a line of sing at infinity and have to change
-    int type; // the direction if we integrate the orbit of separatrice
-              // and sometimes the type
+    int dir;   // if we have a line of sing at infinity and have to change
+    int type;  // the direction if we integrate the orbit of separatrice
+               // and sometimes the type
 
     struct orbits_points *next_point;
 
@@ -91,10 +91,10 @@ struct orbits_points {
 typedef struct orbits_points *P4ORBIT;
 
 struct orbits {
-    double pcoord[3]; // startpoint
+    double pcoord[3];  // startpoint
     int color;
-    P4ORBIT f_orbits;         // orbit
-    P4ORBIT current_f_orbits; // orbit
+    P4ORBIT f_orbits;          // orbit
+    P4ORBIT current_f_orbits;  // orbit
     struct orbits *next_orbit;
 
     orbits()
@@ -110,8 +110,13 @@ struct curves {
     P4ORBIT points;
 
     curves()
-        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
-          c(nullptr), points(nullptr){};
+        : r2(nullptr),
+          u1(nullptr),
+          u2(nullptr),
+          v1(nullptr),
+          v2(nullptr),
+          c(nullptr),
+          points(nullptr){};
 };
 
 struct isoclines {
@@ -121,8 +126,13 @@ struct isoclines {
     int color;
 
     isoclines()
-        : r2(nullptr), u1(nullptr), u2(nullptr), v1(nullptr), v2(nullptr),
-          c(nullptr), points(nullptr){};
+        : r2(nullptr),
+          u1(nullptr),
+          u2(nullptr),
+          v1(nullptr),
+          v2(nullptr),
+          c(nullptr),
+          points(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -130,50 +140,55 @@ struct isoclines {
 // -----------------------------------------------------------------------
 
 struct transformations {
-    double x0, y0;              // translation point
-    int c1, c2, d1, d2, d3, d4; // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
-    int d;                      // X/x^d
+    double x0, y0;               // translation point
+    int c1, c2, d1, d2, d3, d4;  // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
+    int d;                       // X/x^d
     struct transformations *next_trans;
 
     transformations() : next_trans(nullptr){};
 };
 
 struct blow_up_points {
-    int n; // number of transformations
+    int n;  // number of transformations
     struct transformations *trans;
-    double x0, y0;                 // last point that is not degenerate
-    double a11, a12, a21, a22;     // transformation matrix
-    struct term2 *vector_field[2]; // vector field
-    struct term1 *sep;             // sep (t,g(t))
-    int type;                      // type of seperatrice (STYPE_STABLE, ...)
-    int blow_up_vec_field; // if true then use the blow up vector field if
+    double x0, y0;                  // last point that is not degenerate
+    double a11, a12, a21, a22;      // transformation matrix
+    struct term2 *vector_field[2];  // vector field
+    struct term1 *sep;              // sep (t,g(t))
+    int type;                       // type of seperatrice (STYPE_STABLE, ...)
+    int blow_up_vec_field;  // if true then use the blow up vector field if
     // the modulus of the last point of the separatrices is less
     // than 1
-    double point[2]; // end point sep in blow up chart
+    double point[2];  // end point sep in blow up chart
 
     struct orbits_points *first_sep_point;
     struct orbits_points *last_sep_point;
     struct blow_up_points *next_blow_up_point;
 
     blow_up_points()
-        : trans(nullptr), sep(nullptr), first_sep_point(nullptr),
-          last_sep_point(nullptr), next_blow_up_point(nullptr){};
+        : trans(nullptr),
+          sep(nullptr),
+          first_sep_point(nullptr),
+          last_sep_point(nullptr),
+          next_blow_up_point(nullptr){};
 };
 
 struct sep {
     struct orbits_points *first_sep_point;
     struct orbits_points *last_sep_point;
-    int type; // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
+    int type;  // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
     int direction;
     int d;
-    bool notadummy; // false if separatrice is a copy of a structure (obtained
-                    // through a symmetry)
-    struct term1 *separatrice; // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
+    bool notadummy;  // false if separatrice is a copy of a structure (obtained
+                     // through a symmetry)
+    struct term1 *separatrice;  // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
     struct sep *next_sep;
 
     sep()
-        : first_sep_point(nullptr), last_sep_point(nullptr),
-          separatrice(nullptr), next_sep(nullptr){};
+        : first_sep_point(nullptr),
+          last_sep_point(nullptr),
+          separatrice(nullptr),
+          next_sep(nullptr){};
 };
 
 // -----------------------------------------------------------------------
@@ -185,23 +200,23 @@ struct sep {
 // lines.  In that case, we mark the singularity in a different way.
 // Of course, on screen it need only be marked once and not several times.
 
-#define POSITION_VIRTUAL 0         // virtual singularity
-#define POSITION_STANDALONE 1      // stand-alone singularity
-#define POSITION_COINCIDING_MAIN 2 // singularity coincides and will be drawn
-#define POSITION_COINCIDING_VIRTUAL                                            \
-    3 // is a virtual singularity, but coincides with a real one so do not plot
-      // at all
-#define POSITION_COINCIDING 4 // singularity coincides, but is already drawn
+#define POSITION_VIRTUAL 0          // virtual singularity
+#define POSITION_STANDALONE 1       // stand-alone singularity
+#define POSITION_COINCIDING_MAIN 2  // singularity coincides and will be drawn
+#define POSITION_COINCIDING_VIRTUAL \
+    3  // is a virtual singularity, but coincides with a real one so do not plot
+       // at all
+#define POSITION_COINCIDING 4  // singularity coincides, but is already drawn
 // --------------------------------------
 
-struct genericsingularity // part of the structure that is the same for all
-                          // types
+struct genericsingularity  // part of the structure that is the same for all
+                           // types
 {
     double x0;
     double y0;
     struct genericsingularity *next;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     genericsingularity() : next(nullptr){};
 };
@@ -211,14 +226,14 @@ struct saddle {
     double y0;
     struct saddle *next_saddle;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     double epsilon;
     bool notadummy;
 
     struct sep *separatrices;
-    struct term2 *vector_field[2]; // vector field {xdot,ydot}
-    double a11, a12, a21, a22;     // transformation matrix
+    struct term2 *vector_field[2];  // vector field {xdot,ydot}
+    double a11, a12, a21, a22;      // transformation matrix
 
     saddle() : next_saddle(nullptr), separatrices(nullptr){};
 };
@@ -228,16 +243,16 @@ struct semi_elementary {
     double y0;
     struct semi_elementary *next_se;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     double epsilon;
     bool notadummy;
 
-    struct sep *separatrices;      // center sep (t,f(t)), sep (g(t),t)
-    struct term2 *vector_field[2]; // vector field
-    double a11, a12, a21, a22;     // transformation matrix
+    struct sep *separatrices;       // center sep (t,f(t)), sep (g(t),t)
+    struct term2 *vector_field[2];  // vector field
+    double a11, a12, a21, a22;      // transformation matrix
 
-    int type; // type of semi-elementary point
+    int type;  // type of semi-elementary point
 
     semi_elementary() : next_se(nullptr), separatrices(nullptr){};
 };
@@ -247,7 +262,7 @@ struct degenerate {
     double y0;
     struct degenerate *next_de;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     double epsilon;
     bool notadummy;
@@ -262,7 +277,7 @@ struct node {
     double y0;
     struct node *next_node;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     int stable;
 
@@ -274,7 +289,7 @@ struct strong_focus {
     double y0;
     struct strong_focus *next_sf;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     int stable;
 
@@ -286,7 +301,7 @@ struct weak_focus {
     double y0;
     struct weak_focus *next_wf;
     int chart;
-    int position; // POSITION_ constants
+    int position;  // POSITION_ constants
 
     int type;
 
@@ -310,7 +325,7 @@ struct weak_focus {
 #define SEMI_HYPERBOLIC 5
 #define NON_ELEMENTARY 6
 
-#define STYPE_UNSTABLE (1) // separatrice type
+#define STYPE_UNSTABLE (1)  // separatrice type
 #define STYPE_STABLE (-1)
 #define STYPE_CENUNSTABLE 2
 #define STYPE_CENSTABLE (-2)
@@ -349,12 +364,12 @@ enum TYPEOFVIEWS {
 class QVFStudy;
 
 struct VFREGIONRESULT {
-    int vfindex; // which vector field
+    int vfindex;  // which vector field
     int *signs;
 };
 
 struct CURVEREGIONRESULT {
-    int curveindex; // which curve are we talking about
+    int curveindex;  // which curve are we talking about
     int *signs;
 };
 
@@ -370,32 +385,32 @@ struct CURVERESULT {
 // ---------------------------------------------------
 class QPVFStudy : public QObject
 {
-public:
+   public:
     // Constructor and destructor
     QPVFStudy();
     ~QPVFStudy();
 
     QVFStudy **vf_;
-    QVFStudy *vfK_; // shortcut for vf[K]. Must be updated whenever K changes
-    int K_;         // K will be throughout the current vector field selected
+    QVFStudy *vfK_;  // shortcut for vf[K]. Must be updated whenever K changes
+    int K_;          // K will be throughout the current vector field selected
 
     CURVERESULT *curves_result_;
 
     int typeofstudy_;
-    int typeofview_; // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    bool plotVirtualSingularities_; // true or false
+    int typeofview_;                 // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    bool plotVirtualSingularities_;  // true or false
     int p_;
     int q_;
-    bool plweights_; // true if p<>1 or q<>1; false if p=q=1
+    bool plweights_;  // true if p<>1 or q<>1; false if p=q=1
     doube config_projection_;
 
-    double double_p_;               // shortcuts: = (double)p
-    double double_q_;               // = (double)q
-    double double_p_plus_q_;        // = (double)(p+q)
-    double double_p_minus_1_;       // = (double)(p-1)
-    double double_q_minus_1_;       // = (double)(q-1)
-    double double_q_minus_p_;       // = (double)(q-p)
-    double xmin_, xmax_, ymin_, ymax_; // in case of local study
+    double double_p_;                   // shortcuts: = (double)p
+    double double_q_;                   // = (double)q
+    double double_p_plus_q_;            // = (double)(p+q)
+    double double_p_minus_1_;           // = (double)(p-1)
+    double double_q_minus_1_;           // = (double)(q-1)
+    double double_q_minus_p_;           // = (double)(q-p)
+    double xmin_, xmax_, ymin_, ymax_;  // in case of local study
 
     // limit cycles and orbits
 
@@ -417,7 +432,7 @@ public:
 
     double config_currentstep_;
     bool config_dashes_;
-    bool config_kindvf_; // true for original VF, false for reduced
+    bool config_kindvf_;  // true for original VF, false for reduced
     int config_lc_value_;
     int config_lc_numpoints_;
     double config_hma_;
@@ -433,10 +448,14 @@ public:
     bool ReadPiecewiseData(FILE *);
     void Dump(QString basename);
     void Reset(void);
-    void SetupCoordinateTransformations(void); // see math_p4.cpp
+    void SetupCoordinateTransformations(void);  // see math_p4.cpp
     bool ReadSeparatingCurve(FILE *, CURVERESULT *);
 
     void ResetCurveInfo(int);
+
+    void deleteLimitCycle(orbits *);
+    void deleteOrbitPoint(P4ORBIT p);
+    void deleteOrbit(orbits *);
 
     // coordinate transformation routines, set up when starting the plot
 
@@ -468,13 +487,12 @@ public:
     int (*change_dir)(double *);
 }
 
-
 class QVFStudy : public QObject
 {
-  public:
+   public:
     // Constructor and destructor
-    QVFStudy();  // constructor
-    ~QVFStudy(); // destructor
+    QVFStudy();   // constructor
+    ~QVFStudy();  // destructor
 
     QPVFStudy *parent_;
 
@@ -516,7 +534,6 @@ class QVFStudy : public QObject
     // isoclines
     std::vector<isoclines> isocline_vector_;
 
-
     // initialization and destruction of structures
 
     void deleteVF(void);
@@ -540,7 +557,6 @@ class QVFStudy : public QObject
     bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
     bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
     bool readPoints(FILE *fp);
-    
 
     bool readSaddlePoint(FILE *fp);
     bool readSemiElementaryPoint(FILE *fp);
@@ -551,19 +567,16 @@ class QVFStudy : public QObject
     bool readBlowupPoints(FILE *fp, blow_up_points *b, int n);
     bool readTransformations(FILE *fp, transformations *trans, int n);
 
-    void setupCoordinateTransformations(void); // see math_p4.cpp
+    void setupCoordinateTransformations(void);  // see math_p4.cpp
 
     void dump(QString basename, QString info = "");
 
-  private:
+   private:
     void dumpSeparatrices(QTextEdit *m, sep *separ, int margin);
     void dumpSingularities(QTextEdit *m, genericsingularity *p,
                            const char *type, bool longversion);
 };
 
-void deleteLimitCycle(orbits *);
-void deleteOrbitPoint(P4ORBIT p);
-void deleteOrbit(orbits *);
 bool readTerm1(FILE *fp, P4POLYNOM1 p, int N);
 bool readTerm2(FILE *fp, P4POLYNOM2 p, int N);
 bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
