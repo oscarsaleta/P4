@@ -50,16 +50,7 @@ class QIsoclinesDlg;
 
 struct term2;
 
-namespace 
-struct vfRegion {
-    int vfIndex;
-    int *signs;
-}
 
-struct curveRegion {
-    int curveIndex;
-    int *signs;
-}
 
 class QInputVF : public QObject
 {
