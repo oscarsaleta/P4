@@ -30,7 +30,8 @@ class QTextEdit;
 // -----------------------------------------------------------------------
 
 // Linked list of univariate terms a*x^i
-
+namespace p4polynomials
+{
 struct term1 {
     int exp;
     double coeff;
@@ -39,7 +40,7 @@ struct term1 {
     term1() : next_term1(nullptr){};
 };
 
-typedef struct term1 *P4POLYNOM1;
+// typedef struct term1 *P4POLYNOM1;
 
 // Linked list of terms a*x^i*y^j
 
@@ -54,7 +55,7 @@ struct term2 {
 
 // Linked list of terms a*r^i*cos(theta)^j*sin(theta)^k
 
-typedef struct term2 *P4POLYNOM2;
+// typedef struct term2 *P4POLYNOM2;
 
 struct term3 {
     int exp_r;
@@ -66,12 +67,13 @@ struct term3 {
     term3() : next_term3(nullptr){};
 };
 
-typedef struct term3 *P4POLYNOM3;
-
+// typedef struct term3 *P4POLYNOM3;
+}
 // -----------------------------------------------------------------------
 //                              Orbits
 // -----------------------------------------------------------------------
-
+namespace p4orbits
+{
 struct orbits_points {
     int color;  // color of seperatrice
 
@@ -88,26 +90,27 @@ struct orbits_points {
     orbits_points() : next_point(nullptr){};
 };
 
-typedef struct orbits_points *P4ORBIT;
+// typedef struct orbits_points *P4ORBIT;
 
 struct orbits {
     double pcoord[3];  // startpoint
     int color;
-    P4ORBIT f_orbits;          // orbit
-    P4ORBIT current_f_orbits;  // orbit
+    orbits_points *f_orbits;          // orbit
+    orbits_points *current_f_orbits;  // orbit
     struct orbits *next_orbit;
 
     orbits()
         : f_orbits(nullptr), current_f_orbits(nullptr), next_orbit(nullptr){};
 };
+}
 
 // -----------------------------------------------------------------------
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    P4POLYNOM2 r2, u1, u2, v1, v2;
-    P4POLYNOM3 c;
-    P4ORBIT points;
+    p4polynomials::term2 *r2, *u1, *u2, *v1, *v2;
+    p4polynomials::term3 *c;
+    p4orbits::orbits_points *points;
 
     curves()
         : r2(nullptr),
@@ -120,9 +123,9 @@ struct curves {
 };
 
 struct isoclines {
-    P4POLYNOM2 r2, u1, u2, v1, v2;
-    P4POLYNOM3 c;
-    P4ORBIT points;
+    p4polynomials::term2 *r2, *u1, *u2, *v1, *v2;
+    p4polynomials::term3 *c;
+    p4orbits::orbits_points *points;
     int color;
 
     isoclines()
@@ -138,7 +141,8 @@ struct isoclines {
 // -----------------------------------------------------------------------
 //                      Blow up structure
 // -----------------------------------------------------------------------
-
+namespace p4blowup
+{
 struct transformations {
     double x0, y0;               // translation point
     int c1, c2, d1, d2, d3, d4;  // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
@@ -190,6 +194,7 @@ struct sep {
           separatrice(nullptr),
           next_sep(nullptr){};
 };
+}
 
 // -----------------------------------------------------------------------
 //                          Singularities
@@ -208,7 +213,8 @@ struct sep {
        // at all
 #define POSITION_COINCIDING 4  // singularity coincides, but is already drawn
 // --------------------------------------
-
+namespace p4singularities
+{
 struct genericsingularity  // part of the structure that is the same for all
                            // types
 {
@@ -307,7 +313,7 @@ struct weak_focus {
 
     weak_focus() : next_wf(nullptr){};
 };
-
+}
 // -----------------------------------------------------------------------
 //                          Some definitions
 // -----------------------------------------------------------------------
@@ -356,226 +362,30 @@ enum TYPEOFVIEWS {
     TYPEOFVIEW_V1V2 = 7
 };
 
-// -----------------------------------------------------------------------
-//                          Results class
-// -----------------------------------------------------------------------
-
-// (taken from P5 source code) -----------------------
-class QVFStudy;
-
-struct VFREGIONRESULT {
+namespace p4curveRegions
+{
+struct vfRegionResult {
     int vfindex;  // which vector field
     int *signs;
 };
 
-struct CURVEREGIONRESULT {
+struct curveRegionResult {
     int curveindex;  // which curve are we talking about
     int *signs;
 };
 
-struct CURVERESULT {
-    P4POLYNOM2 sep;
-    P4POLYNOM2 sep_U1;
-    P4POLYNOM2 sep_U2;
-    P4POLYNOM2 sep_V1;
-    P4POLYNOM2 sep_V2;
-    P4POLYNOM3 sep_C;
-    struct orbits_points *sep_points;
+struct curveResult {
+    p4polynomials::term2 *sep;
+    p4polynomials::term2 *sep_U1;
+    p4polynomials::term2 *sep_U2;
+    p4polynomials::term2 *sep_V1;
+    p4polynomials::term2 *sep_V2;
+    p4polynomials::term3 *sep_C;
+    p4orbits::orbits_points *sep_points;
+
+    curveResult() : sep_points(nullptr){};
 };
-// ---------------------------------------------------
-class QPVFStudy : public QObject
-{
-   public:
-    // Constructor and destructor
-    QPVFStudy();
-    ~QPVFStudy();
-
-    QVFStudy **vf_;
-    QVFStudy *vfK_;  // shortcut for vf[K]. Must be updated whenever K changes
-    int K_;          // K will be throughout the current vector field selected
-
-    CURVERESULT *curves_result_;
-
-    int typeofstudy_;
-    int typeofview_;                 // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    bool plotVirtualSingularities_;  // true or false
-    int p_;
-    int q_;
-    bool plweights_;  // true if p<>1 or q<>1; false if p=q=1
-    doube config_projection_;
-
-    double double_p_;                   // shortcuts: = (double)p
-    double double_q_;                   // = (double)q
-    double double_p_plus_q_;            // = (double)(p+q)
-    double double_p_minus_1_;           // = (double)(p-1)
-    double double_q_minus_1_;           // = (double)(q-1)
-    double double_q_minus_p_;           // = (double)(q-p)
-    double xmin_, xmax_, ymin_, ymax_;  // in case of local study
-
-    // limit cycles and orbits
-
-    struct orbits *first_lim_cycle_;
-    struct orbits *first_orbit_;
-
-    // run-time when plotting
-
-    struct orbits *current_orbit_;
-    struct orbits *current_lim_cycle_;
-
-    double selected_ucoord_[2];
-    struct saddle *selected_saddle_point_;
-    struct semi_elementary *selected_se_point_;
-    struct degenerate *selected_de_point_;
-    struct sep *selected_sep_;
-    struct blow_up_points *selected_de_sep_;
-    int selected_sep_vfindex_;
-
-    double config_currentstep_;
-    bool config_dashes_;
-    bool config_kindvf_;  // true for original VF, false for reduced
-    int config_lc_value_;
-    int config_lc_numpoints_;
-    double config_hma_;
-    double config_hmi_;
-    double config_branchhmi_;
-    double config_step_;
-    double config_tolerance_;
-    int config_intpoints_;
-
-    // Methods
-    bool ReadTables(QString, bool, bool);
-    void ExaminePositionsOfSingularities(void);
-    bool ReadPiecewiseData(FILE *);
-    void Dump(QString basename);
-    void Reset(void);
-    void SetupCoordinateTransformations(void);  // see math_p4.cpp
-    bool ReadSeparatingCurve(FILE *, CURVERESULT *);
-
-    void ResetCurveInfo(int);
-
-    void deleteLimitCycle(orbits *);
-    void deleteOrbitPoint(P4ORBIT p);
-    void deleteOrbit(orbits *);
-
-    // coordinate transformation routines, set up when starting the plot
-
-    void (*viewcoord_to_sphere)(double, double, double *);
-    bool (*sphere_to_viewcoordpair)(double *, double *, double *, double *,
-                                    double *, double *);
-
-    void (*finite_to_viewcoord)(double, double, double *);
-    void (*sphere_to_viewcoord)(double, double, double, double *);
-    bool (*is_valid_viewcoord)(double, double, double *);
-    void (*integrate_sphere_sep)(double, double, double, double *, double *,
-                                 int *, int *, int *, int *, double, double);
-    void (*U1_to_sphere)(double, double, double *);
-    void (*U2_to_sphere)(double, double, double *);
-    void (*V1_to_sphere)(double, double, double *);
-    void (*V2_to_sphere)(double, double, double *);
-
-    void (*sphere_to_U1)(double, double, double, double *);
-    void (*sphere_to_U2)(double, double, double, double *);
-    void (*sphere_to_V1)(double, double, double, double *);
-    void (*sphere_to_V2)(double, double, double, double *);
-
-    void (*sphere_to_R2)(double, double, double, double *);
-    void (*R2_to_sphere)(double, double, double *);
-    void (*integrate_sphere_orbit)(double, double, double, double *, double *,
-                                   int *, int *, double, double);
-    double (*eval_lc)(double *, double, double, double);
-    bool (*less2)(double *, double *);
-    int (*change_dir)(double *);
 }
-
-class QVFStudy : public QObject
-{
-   public:
-    // Constructor and destructor
-    QVFStudy();   // constructor
-    ~QVFStudy();  // destructor
-
-    QPVFStudy *parent_;
-
-    // general information
-
-    bool singinf_;
-    int dir_vec_field_;
-
-    // vector field in various charts
-
-    P4POLYNOM2 f_vec_field_[2];
-    P4POLYNOM2 vec_field_U1_[2];
-    P4POLYNOM2 vec_field_U2_[2];
-    P4POLYNOM2 vec_field_V1_[2];
-    P4POLYNOM2 vec_field_V2_[2];
-    P4POLYNOM3 vec_field_C_[2];
-
-    // singular points and their properties:
-
-    saddle *first_saddle_point_;
-    semi_elementary *first_se_point_;
-    node *first_node_point_;
-    strong_focus *first_sf_point_;
-    weak_focus *first_wf_point_;
-    degenerate *first_de_point_;
-
-    // Greatest common factor if present:
-
-    P4POLYNOM2 gcf_;
-    P4POLYNOM2 gcf_U1_;
-    P4POLYNOM2 gcf_U2_;
-    P4POLYNOM2 gcf_V1_;
-    P4POLYNOM2 gcf_V2_;
-    P4POLYNOM3 gcf_C_;
-    P4ORBIT gcf_points_;
-
-    // curves
-    std::vector<curves> curve_vector_;
-    // isoclines
-    std::vector<isoclines> isocline_vector_;
-
-    // initialization and destruction of structures
-
-    void deleteVF(void);
-
-    void deleteSaddle(saddle *);
-    void deleteSemiElementary(semi_elementary *);
-    void deleteNode(node *p);
-    void deleteStrongFocus(strong_focus *p);
-    void deleteWeakFocus(weak_focus *p);
-    void deleteDegenerate(degenerate *);
-    void deleteSeparatrices(sep *);
-    void deleteTransformations(transformations *t);
-    void deleteBlowup(blow_up_points *b);
-
-    // reading of the Maple/Reduce results
-
-    bool readTables(QString basename);
-    bool readGCF(FILE *fp);
-    bool readCurve(QString basename);
-    bool readIsoclines(QString basename);
-    bool readVectorField(FILE *fp, P4POLYNOM2 *vf);
-    bool readVectorFieldCylinder(FILE *fp, P4POLYNOM3 *vf);
-    bool readPoints(FILE *fp);
-
-    bool readSaddlePoint(FILE *fp);
-    bool readSemiElementaryPoint(FILE *fp);
-    bool readStrongFocusPoint(FILE *fp);
-    bool readWeakFocusPoint(FILE *fp);
-    bool readDegeneratePoint(FILE *fp);
-    bool readNodePoint(FILE *fp);
-    bool readBlowupPoints(FILE *fp, blow_up_points *b, int n);
-    bool readTransformations(FILE *fp, transformations *trans, int n);
-
-    void setupCoordinateTransformations(void);  // see math_p4.cpp
-
-    void dump(QString basename, QString info = "");
-
-   private:
-    void dumpSeparatrices(QTextEdit *m, sep *separ, int margin);
-    void dumpSingularities(QTextEdit *m, genericsingularity *p,
-                           const char *type, bool longversion);
-};
 
 bool readTerm1(FILE *fp, P4POLYNOM1 p, int N);
 bool readTerm2(FILE *fp, P4POLYNOM2 p, int N);
@@ -584,9 +394,6 @@ bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
 #define MATHFUNC(function) (*(g_VFResults.function))
-
-// (g_VFResults.p_,g_VFResults.q_) are lyapunov weights
-extern QVFStudy g_VFResults;
 
 #define LINESTYLE_DASHES 1
 #define LINESTYLE_POINTS 0

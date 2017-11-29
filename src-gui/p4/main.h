@@ -22,6 +22,8 @@
 
 #include <QString>
 
+class P4ParentStudy;
+
 class QPixmap;
 class QPrinter;
 class QWidget;
@@ -39,6 +41,9 @@ struct P4POLYLINES {
 
     P4POLYLINES() : next(nullptr){};
 };
+
+// (g_VFResults.p_,g_VFResults.q_) are lyapunov weights
+extern P4ParentStudy g_VFResults;
 
 // true when Limitcycles window is shown.
 // in that case, left mouse button action is redefined

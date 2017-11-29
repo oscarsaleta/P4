@@ -67,6 +67,11 @@ bool g_cmdLine_AutoEvaluate;
 bool g_cmdLine_AutoPlot;
 bool g_cmdLine_AutoExit;
 
+P4ParentStudy g_VFResults;
+
+// -----------------------------------------------------------------------
+//          Functions for handling command line options
+// -----------------------------------------------------------------------
 void handleCommandLineOption(char *arg)
 {
     while (*arg != 0) {
@@ -115,6 +120,10 @@ void handleCommandLineArgument(char *arg)
     return;
 }
 
+
+// -----------------------------------------------------------------------
+//          Main function
+// -----------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
     int returnvalue;

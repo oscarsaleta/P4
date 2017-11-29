@@ -50,6 +50,17 @@ class QIsoclinesDlg;
 
 struct term2;
 
+namespace 
+struct vfRegion {
+    int vfIndex;
+    int *signs;
+}
+
+struct curveRegion {
+    int curveIndex;
+    int *signs;
+}
+
 class QInputVF : public QObject
 {
     Q_OBJECT
@@ -76,7 +87,7 @@ class QInputVF : public QObject
     int p_;
     int q_;
 
-    QString xdot_;
+    std::vector<QString> xdot_; //TODO:....
     QString ydot_;
     QString gcf_;
     QString curve_;
@@ -93,6 +104,13 @@ class QInputVF : public QObject
     int numparams_;
     QString parlabel_[MAXNUMPARAMS];
     QString parvalue_[MAXNUMPARAMS];
+
+    // p5 modifications
+    int numVFRegions_;
+    int numCurveRegions_;
+    vfRegion *vfRegions;
+    curveRegion *curveRegions;
+    // --
 
     bool changed_;       // set when data needs to be saved
     bool evaluated_;     // set when data has been evaluated
