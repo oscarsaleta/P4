@@ -67,8 +67,8 @@ bool g_cmdLine_AutoEvaluate;
 bool g_cmdLine_AutoPlot;
 bool g_cmdLine_AutoExit;
 
-P4ParentStudy g_VFResults;
-P4InputVF *g_ThisVF;
+extern P4ParentStudy g_VFResults;
+extern P4InputVF *g_ThisVF;
 
 // -----------------------------------------------------------------------
 //          Functions for handling command line options
