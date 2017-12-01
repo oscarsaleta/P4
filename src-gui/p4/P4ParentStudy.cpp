@@ -252,7 +252,7 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
 // -----------------------------------------------------------------------
 //          P4ParentStudy::readTables
 // -----------------------------------------------------------------------
-bool P4ParentStudy::ReadTables(QString basename, bool evalpiecewisedata,
+bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
                                bool onlytry)
 {
     FILE *fpvec;
