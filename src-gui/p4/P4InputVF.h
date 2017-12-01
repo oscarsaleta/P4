@@ -1,7 +1,30 @@
+/*  This file is part of P4
+ *
+ *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
+ *
+ *  P4 is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef P4INPUTVF_H
 #define P4INPUTVF_H
 
+#include "custom.h"
 
+#include <QObject>
+#include <QProcess>
+#include <QString>
 
 #define TYPEOFSTUDY_ALL 0
 #define TYPEOFSTUDY_FIN 1
@@ -16,8 +39,16 @@
 #define QT_QPROCESS_OLD
 #endif
 
+// forward class and struct declarations
+class QWidget;
+class QProcess;
+class QTextEdit;
+class QPushButton;
+class QTextStream;
 
-namespace p4vfStudyRegions
+struct term2;
+
+namespace p4VFStudyRegions
 {
 struct vfRegion {
     int vfIndex;
@@ -30,37 +61,37 @@ struct curveRegion {
 }
 }
 
-class QInputVF : public QObject
+class P4InputVF : public QObject
 {
     Q_OBJECT
-  public:
-    QInputVF();
-    ~QInputVF();
+   public:
+    P4InputVF();
+    ~P4InputVF();
 
     QString filename_;
 
-    int symbolicpackage_; // 0 for reduce, 1 for maple
-    int typeofstudy_;     // 0, 1, 2, 3 = all, inf, fin, one
+    int symbolicpackage_;  // 0 for reduce, 1 for maple
+    int typeofstudy_;      // 0, 1, 2, 3 = all, inf, fin, one
 
-    bool numeric_;
-    int precision_;
-    int precision0_;
-    QString epsilon_;
-    bool testsep_;
-    int taylorlevel_;
-    int numericlevel_;
-    int maxlevel_;
-    int weakness_;
-    QString x0_;
-    QString y0_;
-    int p_;
-    int q_;
+    bool *numeric_;
+    int *precision_;
+    int *precision0_;
+    QString **epsilon_;
+    bool *testsep_;
+    int *taylorlevel_;
+    int *numericlevel_;
+    int *maxlevel_;
+    int *weakness_;
+    QString **x0_;
+    QString **y0_;
+    int *p_;
+    int *q_;
 
-    std::vector<QString> xdot_; //TODO:....
-    std::vector<QString> ydot_;
-    std::vector<QString> gcf_;
-    QString curve_;
-    QString isoclines_;
+    QString **xdot_;  // TODO: fer vector (tot)
+    QString **ydot_;
+    QString **gcf_;
+    QString **curve_;  // curve_ is the original, curves_ is P5
+    QString **isoclines_;
     QString evalFile_;
     QString evalFile2_;
 
@@ -73,57 +104,50 @@ class QInputVF : public QObject
     /* parameters list */
     int numparams_;
     QString parlabel_[MAXNUMPARAMS];
-    QString parvalue_[MAXNUMPARAMS];
+    QString ***parvalue_;
 
-    // p5 modifications
-    int numVFRegions_;
-    int numCurveRegions_;
-    std::vector<vfRegion> vfRegions; // TODO: are they vectors or just pointers?
-    curveRegion *curveRegions;
-    // --
-
-    bool changed_;       // set when data needs to be saved
-    bool evaluated_;     // set when data has been evaluated
-    bool evaluating_;    // set while evaluating
-    bool cleared_;       // initial state, when records are clear
-    bool evaluatinggcf_; // true when evaluation is of GCF kind
+    bool changed_;        // set when data needs to be saved
+    bool evaluated_;      // set when data has been evaluated
+    bool evaluating_;     // set while evaluating
+    bool cleared_;        // initial state, when records are clear
+    bool evaluatinggcf_;  // true when evaluation is of GCF kind
     bool evaluatingCurve_;
     bool evaluatingIsoclines_;
-    bool processfailed_;   // true when process failed;
-    QString processError_; // only relevant when processfailed=true
+    bool processfailed_;    // true when process failed;
+    QString processError_;  // only relevant when processfailed=true
 
     QFindDlg *findDlg_;
     QGcfDlg *gcfDlg_;
     QCurveDlg *curveDlg_;
     QIsoclinesDlg *isoclinesDlg_;
 
-    QString getfilename() const;            // filename.inp
-    QString getbarefilename() const;        // filename
-    QString getfilename_finresults() const; // filename_fin.res
-    QString getfilename_infresults() const; // filename_inf.res
-    QString getfilename_fintable() const;   // filename_fin.tab
-    QString getfilename_inftable() const;   // filename_inf.tab
-    QString getfilename_vectable() const;   // filename_vec.tab
-    QString getfilename_gcf() const;        // filename_gcf.tab (temporary file)
+    QString getfilename() const;             // filename.inp
+    QString getbarefilename() const;         // filename
+    QString getfilename_finresults() const;  // filename_fin.res
+    QString getfilename_infresults() const;  // filename_inf.res
+    QString getfilename_fintable() const;    // filename_fin.tab
+    QString getfilename_inftable() const;    // filename_inf.tab
+    QString getfilename_vectable() const;    // filename_vec.tab
+    QString getfilename_gcf() const;  // filename_gcf.tab (temporary file)
     // QString getfilename_gcfresults() const; // filename_gcf.res (temp file,
     // only for reduce)
-    QString getreducefilename() const; // filename.red
-    QString getmaplefilename() const;  // filename.txt
-    QString getrunfilename() const;    // filename.run
+    QString getreducefilename() const;  // filename.red
+    QString getmaplefilename() const;   // filename.txt
+    QString getrunfilename() const;     // filename.run
     // curve filenames
-    QString getfilename_curvetable() const;  // filename_veccurve.tab
-    QString getfilename_curve() const;       // filename_curve.tab (tmp file)
-    QString getPrepareCurveFileName() const; // filename_curve_prep.txt
+    QString getfilename_curvetable() const;   // filename_veccurve.tab
+    QString getfilename_curve() const;        // filename_curve.tab (tmp file)
+    QString getPrepareCurveFileName() const;  // filename_curve_prep.txt
     // isoclines filenames
-    QString getfilename_isoclinestable() const; // filename_vecisocline.tab
-    QString getfilename_isoclines() const; // filename_isocline.tab (tmp file)
-    QString getPrepareIsoclinesFileName() const; // filename_isocline_prep.txt
+    QString getfilename_isoclinestable() const;  // filename_vecisocline.tab
+    QString getfilename_isoclines() const;  // filename_isocline.tab (tmp file)
+    QString getPrepareIsoclinesFileName() const;  // filename_isocline_prep.txt
 
     void getDataFromDlg();
 
     bool load();
     bool save();
-    void reset();
+    void reset(int);
     bool checkevaluated();
 
     static bool fileExists(QString);
@@ -134,23 +158,16 @@ class QInputVF : public QObject
     void prepareMapleVectorField(QTextStream *);
     inline QString booleanString(int value) const
     {
-        if (value == 0) {
-            /*if (symbolicpackage_ == PACKAGE_REDUCE)
-                return "NIL";
-            else*/
+        if (value == 0)
             return "false";
-        } else {
-            /*if (symbolicpackage_ == PACKAGE_REDUCE)
-                return "'t";
-            else*/
+        else
             return "true";
-        }
     }
     QString convertMapleUserParameterLabels(QString);
     QString convertMapleUserParametersLabelsToValues(QString);
     // QString convertReduceUserParameterLabels(QString);
 
-    void prepareFile(QTextStream *); // used by Prepare()
+    void prepareFile(QTextStream *);  // used by Prepare()
 
     void prepare();
     void evaluate();
@@ -187,11 +204,77 @@ class QInputVF : public QObject
 
     void createProcessWindow();
 
-  signals:
+    // p5 modifications --------------------------------------------------------
+    int numVF_;
+    int numVFRegions_;
+    // TODO: are they vectors or just pointers?
+    p4VFStudyRegions::vfRegion *vfRegions;
+
+    int numCurves_;
+    int numCurveRegions_;
+    p4VFStudyRegions::curveRegion *curveRegions;
+    int numPointsCurve_;
+    QString **curves_;
+
+    int numSelected_;
+    int *selected_;
+
+    bool evaluatingPiecewiseConfig_;
+
+    void addVectorField();
+    void deleteVectorField();
+    void addSeparatingCurve();
+    void deleteSeparatingCurve();
+    void resampleCurve();
+
+    int getVFIndex_R2(const double *);
+    int getVFIndex_U1(const double *);
+    int getVFIndex_U2(const double *);
+    int getVFIndex_V1(const double *);
+    int getVFIndex_V2(const double *);
+    int getVFIndex_UU1(const double *);
+    int getVFIndex_UU2(const double *);
+    int getVFIndex_VV1(const double *);
+    int getVFIndex_VV2(const double *);
+    int getVFIndex_sphere(const double *);
+    int getVFIndex_psphere(const double *);
+    int getVFIndex_plsphere(const double *);
+    int getVFIndex_cyl(const double *);
+
+    void markVFRegion(int, const double *);
+    void unmarkVFRegion(int, const double *);
+    void markCurveRegion(int, const double *);
+    void unmarkCurveRegion(int, const double *);
+    void clearVFMarks();
+    void clearCurveMarks();
+    bool isCurvePointDrawn(int, const double *);
+    void resampleGcf(int);
+
+    bool hasCommonString(QString **);
+    bool hasCommonInt(int *);
+    bool hasCommonBool(bool *);
+    bool hasCommonParvalue(int);
+    QString commonString(QString **);
+    int commonInt(int *);
+    bool commonBool(bool *);
+    QString commonParvalue(int);
+    void setCommonString(QString **, QString);
+    void setCommonInt(int *, int);
+    void setCommonBool(bool *, bool);
+    void setCommonParvalue(int, QString);
+
+    QString getfilename_curveresults(void) const;  // filename_curves.res
+
+    void prepareMaplePiecewiseConfig(QTextStream *);
+    // P5 function, the original one is prepareMapleCurve (singular)
+    void prepareMapleCurves(QTextStream *);
+    // -------------------------------------------------------------------------
+
+   signals:
     void saveSignal();
     void loadSignal();
 
-  public slots:
+   public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);
     void readProcessStdout();
@@ -200,6 +283,5 @@ class QInputVF : public QObject
     void finishCurveEvaluation();
     void finishIsoclinesEvaluation();
 };
-
 
 #endif /* P4INPUTVF_H */

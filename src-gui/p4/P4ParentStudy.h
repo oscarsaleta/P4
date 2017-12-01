@@ -101,6 +101,7 @@ class P4ParentStudy : public QObject
 
     void resetCurveInfo(int);
 
+    void clearVFs();
 
     // coordinate transformation routines, set up when starting the plot
 

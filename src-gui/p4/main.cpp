@@ -47,7 +47,7 @@
     -   poincare-lyapunov printing: improve dotted line when printing
     -   system printer support
 
-    -----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 */
 
 QString g_p4Version;
@@ -55,9 +55,9 @@ QString g_p4VersionDate;
 QString g_p4Platform;
 
 bool g_action_OnlyPrepareFile =
-    false; // in the find menu (this is not saved in the .inp file)
+    false;  // in the find menu (this is not saved in the .inp file)
 bool g_action_SaveAll =
-    DEFAULTSAVEALL; // in the find menu (this is not saved in the .inp file)
+    DEFAULTSAVEALL;  // in the find menu (this is not saved in the .inp file)
 
 QPixmap *g_p4smallicon = nullptr;
 QPrinter *g_p4printer = nullptr;
@@ -68,6 +68,7 @@ bool g_cmdLine_AutoPlot;
 bool g_cmdLine_AutoExit;
 
 P4ParentStudy g_VFResults;
+P4InputVF *g_ThisVF;
 
 // -----------------------------------------------------------------------
 //          Functions for handling command line options
@@ -75,21 +76,21 @@ P4ParentStudy g_VFResults;
 void handleCommandLineOption(char *arg)
 {
     while (*arg != 0) {
-        if (*arg == 'e' || *arg == 'E') // auto-evaluate
+        if (*arg == 'e' || *arg == 'E')  // auto-evaluate
         {
             g_cmdLine_AutoEvaluate = true;
             arg++;
             continue;
         }
 
-        if (*arg == 'p' || *arg == 'P') // auto-plot
+        if (*arg == 'p' || *arg == 'P')  // auto-plot
         {
             g_cmdLine_AutoPlot = true;
             arg++;
             continue;
         }
 
-        if (*arg == 'x' || *arg == 'X') // auto-evaluate + exit
+        if (*arg == 'x' || *arg == 'X')  // auto-evaluate + exit
         {
             g_cmdLine_AutoEvaluate = true;
             g_cmdLine_AutoExit = true;
@@ -120,7 +121,6 @@ void handleCommandLineArgument(char *arg)
     return;
 }
 
-
 // -----------------------------------------------------------------------
 //          Main function
 // -----------------------------------------------------------------------
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     int v, i;
 
     g_p4Platform = "";
-    g_p4Version = VERSION; // initialize version string
+    g_p4Version = VERSION;  // initialize version string
     g_p4VersionDate = VERSIONDATE;
 
     g_cmdLine_Filename = "";
@@ -138,8 +138,7 @@ int main(int argc, char *argv[])
     g_cmdLine_AutoPlot = false;
     g_cmdLine_AutoExit = false;
 
-    for (i = 1; i < argc; i++)
-        handleCommandLineArgument(argv[i]);
+    for (i = 1; i < argc; i++) handleCommandLineArgument(argv[i]);
     if (g_cmdLine_AutoEvaluate && g_cmdLine_Filename.length() == 0)
         g_cmdLine_Filename = DEFAULTFILENAME;
 
