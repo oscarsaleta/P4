@@ -284,4 +284,6 @@ class P4InputVF : public QObject
     void finishIsoclinesEvaluation();
 };
 
+extern P4InputVF *g_ThisVF;
+
 #endif /* P4INPUTVF_H */
