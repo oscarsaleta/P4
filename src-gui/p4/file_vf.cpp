@@ -838,10 +838,8 @@ void QInputVF::prepareMapleIsoclines(QTextStream *fp)
 // -----------------------------------------------------------------------
 //
 //  If the user gives a vector field with user-parameters such as "alpha" or
-//  "b",
-//  we add a suffix to these qualifier names and change them to "alpha_" or
-//  "b_",
-//  in order to avoid mixing with internal variables.
+//  "b", we add a suffix to these qualifier names and change them to "alpha_" or
+//  "b_", in order to avoid mixing with internal variables.
 int indexOfWordInString(const QString *src, const QString *word, int start = 0)
 {
     int i, j;
@@ -851,20 +849,20 @@ int indexOfWordInString(const QString *src, const QString *word, int start = 0)
         // very beginning of string
         // (not depending of start)
 
-        start = i + 1; // do not find this substring next loop
+        start = i + 1;  // do not find this substring next loop
 
         // check if the substring is the beginning of a word:
         j = i;
         if (j > 0)
             if ((*src)[j - 1].isLetter() || (*src)[j - 1] == '_' ||
                 (*src)[j - 1].isDigit())
-                continue; // no: it is part of a bigger word, so continue...
+                continue;  // no: it is part of a bigger word, so continue...
 
         // check if the substring is the end of a word;
         j = i + word->length();
         if (j < src->length())
             if ((*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit())
-                continue; // no: it is part of a bigger word, so continue...
+                continue;  // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
         break;
@@ -927,36 +925,36 @@ QString QInputVF::convertMapleUserParametersLabelsToValues(QString src)
     return s;
 }
 
-/*QString QInputVF::convertReduceUserParameterLabels(QString src)
-{
-    QString s;
-    QString t;
-    QString p, newlabel;
-    int i, k;
+    /*QString QInputVF::convertReduceUserParameterLabels(QString src)
+    {
+        QString s;
+        QString t;
+        QString p, newlabel;
+        int i, k;
 
-    s = src;
-    for (k = 0; k < numparams_; k++) {
-        p = parlabel_[k];
-        newlabel = p + "_";
+        s = src;
+        for (k = 0; k < numparams_; k++) {
+            p = parlabel_[k];
+            newlabel = p + "_";
 
-        if (p.length() == 0)
-            continue;
+            if (p.length() == 0)
+                continue;
 
-        t = "";
-        while (1) {
-            i = indexOfWordInString(&s, &p);
-            if (i == -1)
-                break;
+            t = "";
+            while (1) {
+                i = indexOfWordInString(&s, &p);
+                if (i == -1)
+                    break;
 
-            t += s.left(i);
-            t += newlabel;
-            s = s.mid(i + p.length());
+                t += s.left(i);
+                t += newlabel;
+                s = s.mid(i + p.length());
+            }
+            s = t + s;
         }
-        s = t + s;
-    }
 
-    return s;
-}*/
+        return s;
+    }*/
 
 #ifdef Q_OS_WIN
 extern QByteArray Win_GetShortPathName(QByteArray f);
@@ -1441,9 +1439,10 @@ void QInputVF::evaluate(void)
         if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append("\n\n--------------------------------------"
-                                 "-----------------------------------------"
-                                 "\n\n");
+            processText_->append(
+                "\n\n--------------------------------------"
+                "-----------------------------------------"
+                "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
@@ -1458,8 +1457,9 @@ void QInputVF::evaluate(void)
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 this, &QInputVF::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, this,
@@ -1532,9 +1532,10 @@ void QInputVF::evaluateCurveTable()
         if (outputWindow_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append("\n\n--------------------------------------"
-                                 "-----------------------------------------"
-                                 "\n\n");
+            processText_->append(
+                "\n\n--------------------------------------"
+                "-----------------------------------------"
+                "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
@@ -1543,7 +1544,7 @@ void QInputVF::evaluateCurveTable()
         // proc = new QProcess(this);
 
         // QProcess *proc;
-        if (evalProcess_ != nullptr) { // re-use process of last GCF
+        if (evalProcess_ != nullptr) {  // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc,
@@ -1633,16 +1634,17 @@ void QInputVF::evaluateIsoclinesTable()
         if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append("\n\n--------------------------------------"
-                                 "-----------------------------------------"
-                                 "\n\n");
+            processText_->append(
+                "\n\n--------------------------------------"
+                "-----------------------------------------"
+                "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
         }
 
         QProcess *proc;
-        if (evalProcess_ != nullptr) { // re-use process of last GCF
+        if (evalProcess_ != nullptr) {  // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc,
@@ -1702,21 +1704,21 @@ void QInputVF::catchProcessError(QProcess::ProcessError prerr)
 {
     processfailed_ = true;
     switch (prerr) {
-    case QProcess::FailedToStart:
-        processError_ = "Failed to start";
-        break;
-    case QProcess::Crashed:
-        processError_ = "Crash";
-        break;
-    case QProcess::Timedout:
-        processError_ = "Time-out";
-        break;
-    case QProcess::WriteError:
-    case QProcess::ReadError:
-    case QProcess::UnknownError:
-    default:
-        processError_ = "Unknown error";
-        break;
+        case QProcess::FailedToStart:
+            processError_ = "Failed to start";
+            break;
+        case QProcess::Crashed:
+            processError_ = "Crash";
+            break;
+        case QProcess::Timedout:
+            processError_ = "Time-out";
+            break;
+        case QProcess::WriteError:
+        case QProcess::ReadError:
+        case QProcess::UnknownError:
+        default:
+            processError_ = "Unknown error";
+            break;
     }
 }
 
@@ -1744,9 +1746,10 @@ void QInputVF::finishEvaluation(int exitCode)
             outputWindow_->show();
             outputWindow_->raise();
             QString buf;
-            buf = "\n----------------------------------------------------------"
-                  "----"
-                  "-----------------\n";
+            buf =
+                "\n----------------------------------------------------------"
+                "----"
+                "-----------------\n";
             processText_->append(buf);
             if (evalProcess_ != nullptr) {
                 if (evalProcess_->state() == QProcess::Running) {
@@ -1958,7 +1961,7 @@ void QInputVF::readProcessStdout(void)
                 if (i == j + 1)
                     t = t.mid(j + 2);
                 else
-                    t = t.mid(j + 1); // treat CR+LF as one lineend
+                    t = t.mid(j + 1);  // treat CR+LF as one lineend
             } else {
                 line = t.left(i);
                 t = t.mid(i + 1);
@@ -1980,8 +1983,9 @@ void QInputVF::onTerminateButton(void)
     QString buf;
     if (evalProcess_ != nullptr) {
         if (evalProcess_->state() == QProcess::Running) {
-            buf = "\n----------------------------------------------------------"
-                  "---------------------\n";
+            buf =
+                "\n----------------------------------------------------------"
+                "---------------------\n";
             processText_->append(buf);
             evalProcess_->terminate();
             QTimer::singleShot(2000, evalProcess_, SLOT(kill()));
@@ -2147,7 +2151,7 @@ bool QInputVF::evaluateGcf(void)
             evaluatinggcf_ = true;
             return true;
         }
-    } else {*/ // MAPLE MAPLE MAPLE
+    } else {*/  // MAPLE MAPLE MAPLE
     filedotmpl = getmaplefilename();
 
     s = getMapleExe();
@@ -2162,15 +2166,16 @@ bool QInputVF::evaluateGcf(void)
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) { // re-use process of last GCF
+    if (evalProcess_ != nullptr) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2180,8 +2185,9 @@ bool QInputVF::evaluateGcf(void)
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2315,8 +2321,9 @@ bool QInputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
     /*}*/
@@ -2428,8 +2435,9 @@ bool QInputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
     /*}*/
@@ -2540,8 +2548,9 @@ bool QInputVF::prepareGcf_LyapunovR2(int precision, int numpoints)
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
     /*}*/
@@ -2570,15 +2579,16 @@ bool QInputVF::evaluateCurve(void)
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) { // re-use process of last GCF
+    if (evalProcess_ != nullptr) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2588,8 +2598,9 @@ bool QInputVF::evaluateCurve(void)
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2688,8 +2699,9 @@ bool QInputVF::prepareCurve(P4POLYNOM2 f, double y1, double y2, int precision,
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
 
@@ -2760,8 +2772,9 @@ bool QInputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
 
@@ -2835,8 +2848,9 @@ bool QInputVF::prepareCurve_LyapunovR2(int precision, int numpoints)
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
 
@@ -2864,15 +2878,16 @@ bool QInputVF::evaluateIsoclines()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) { // re-use process of last GCF
+    if (evalProcess_ != nullptr) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2882,8 +2897,9 @@ bool QInputVF::evaluateIsoclines()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2982,8 +2998,9 @@ bool QInputVF::prepareIsoclines(P4POLYNOM2 f, double y1, double y2,
     else
         fprintf(fp, ":\n");
 
-    fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+    fprintf(fp,
+            "try FindSingularities() finally: if returnvalue=0 then "
+            "`quit`(0); else `quit(1)` end if: end try:\n");
 
     fclose(fp);
 
@@ -3055,8 +3072,9 @@ bool QInputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
         else
             fprintf(fp, ":\n");
 
-        fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                    "`quit`(0); else `quit(1)` end if: end try:\n");
+        fprintf(fp,
+                "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
 
         fclose(fp);
     }
@@ -3131,8 +3149,9 @@ bool QInputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints)
         else
             fprintf(fp, ":\n");
 
-        fprintf(fp, "try FindSingularities() finally: if returnvalue=0 then "
-                    "`quit`(0); else `quit(1)` end if: end try:\n");
+        fprintf(fp,
+                "try FindSingularities() finally: if returnvalue=0 then "
+                "`quit`(0); else `quit(1)` end if: end try:\n");
 
         fclose(fp);
     }
