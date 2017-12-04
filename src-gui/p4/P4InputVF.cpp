@@ -976,7 +976,7 @@ QString P4InputVF::getfilename_gcf(void) const
 }
 // only used in case of reduce: contains reduce output, no gcf data and is
 // deleted immediately.
-/*QString QInputVF::getfilename_gcfresults(void) const
+/*QString P4InputVF::getfilename_gcfresults(void) const
 {
     return getbarefilename().append("_gcf.res");
 }*/
@@ -984,7 +984,7 @@ QString P4InputVF::getfilename_curveresults(void) const
 {
     return getbarefilename().append("_curves.tab");
 }
-/*QString QInputVF::getreducefilename(void) const
+/*QString P4InputVF::getreducefilename(void) const
 {
     return getbarefilename().append(".red");
 }*/
@@ -1343,7 +1343,7 @@ void P4InputVF::prepareMapleCurves(QTextStream *fp)
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleCurve (P4 version)
 // -----------------------------------------------------------------------
-void QInputVF::prepareMapleCurve(QTextStream *fp)
+void P4InputVF::prepareMapleCurve(QTextStream *fp)
 {
     QString mycurve;
     QString lbl;
@@ -1366,4 +1366,617 @@ void QInputVF::prepareMapleCurve(QTextStream *fp)
             *fp << lbl << " := evalf( " << val << " ):\n";
         }
     }
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::prepareMapleisoclines
+// -----------------------------------------------------------------------
+void P4InputVF::prepareMapleIsoclines(QTextStream *fp)
+{
+    QString myisoclines;
+    QString lbl;
+    QString val;
+    int k;
+
+    myisoclines = convertMapleUserParameterLabels(isoclines_);
+    *fp << "user_isoclines := " << myisoclines << ":\n";
+
+    for (k = 0; k < numparams_; k++) {
+        lbl = convertMapleUserParameterLabels(parlabel_[k]);
+        val = convertMapleUserParameterLabels(parvalue_[k]);
+
+        if (lbl.length() == 0)
+            continue;
+
+        if (!numeric_) {
+            *fp << lbl << " := " << val << ":\n";
+        } else {
+            *fp << lbl << " := evalf( " << val << " ):\n";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::prepareMaplePiecewiseConfig
+// -----------------------------------------------------------------------
+
+void P4InputVF::prepareMaplePiecewiseConfig(QTextStream *fp)
+{
+    int i, k;
+
+    *fp << "vfregions := [ ";
+    if (numVFRegions_ == 0)
+        *fp << "]:\n";
+    else {
+        for (i = 0; i < numVFRegions_; i++) {
+            *fp << "[" << vfregions[i].vfindex << ", [ ";
+            for (k = 0; k < numCurves_; k++) {
+                *fp << vfregions[i].signs[k];
+                if (k < numCurves_ - 1)
+                    *fp << ",";
+            }
+            if (i == numVFRegions_ - 1)
+                *fp << "] ] ]:\n";
+            else
+                *fp << "] ],\n    ";
+        }
+    }
+
+    *fp << "curveregions := [ ";
+    if (numCurveRegions_ == 0)
+        *fp << "]:\n";
+    else {
+        for (i = 0; i < numCurveRegions_; i++) {
+            *fp << "[" << curveRegions_[i].curveindex << ", [ ";
+            for (k = 0; k < numCurves_; k++) {
+                *fp << curveRegions_[i].signs[k];
+                if (k < numCurves_ - 1)
+                    *fp << ",";
+            }
+            if (i == numCurveRegions_ - 1)
+                *fp << "] ] ]:\n";
+            else
+                *fp << "] ],\n    ";
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
+//          indexOfWordInString
+// -----------------------------------------------------------------------
+//
+//  If the user gives a vector field with user-parameters such as "alpha" or
+//  "b", we add a suffix to these qualifier names and change them to "alpha_" or
+//  "b_", in order to avoid mixing with internal variables.
+static int indexOfWordInString(const QString *src, const QString *word,
+                               int start = 0)
+{
+    int i, j;
+
+    while ((i = src->indexOf(*word, start)) != -1) {
+        // we have found word as a substring.  The index i is an index from the
+        // very beginning of string (not depending of start)
+
+        start = i + 1;  // do not find this substring next loop
+
+        // check if the substring is the beginning of a word:
+        j = i;
+        if (j > 0)
+            if ((*src)[j - 1].isLetter() || (*src)[j - 1] == '_' ||
+                (*src)[j - 1].isDigit())
+                continue;  // no: it is part of a bigger word, so continue...
+
+        // check if the substring is the end of a word;
+        j = i + word->length();
+        if (j < src->length())
+            if ((*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit())
+                continue;  // no: it is part of a bigger word, so continue...
+
+        // ok: we have a word: stop looping.
+        break;
+    }
+    return i;
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::convertMapleUserParameterLabels
+// -----------------------------------------------------------------------
+QString P4InputVF::convertMapleUserParameterLabels(QString src)
+{
+    QString s;
+    QString t;
+    QString p, newlabel;
+    int i, k;
+
+    s = src;
+    for (k = 0; k < numparams_; k++) {
+        p = parlabel_[k];
+        newlabel = p + "_";
+
+        if (p.length() == 0)
+            continue;
+
+        t = "";
+        while (1) {
+            i = indexOfWordInString(&s, &p);
+            if (i == -1)
+                break;
+
+            t += s.left(i);
+            t += newlabel;
+            s = s.mid(i + p.length());
+        }
+        s = t + s;
+    }
+
+    return s;
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::convertMapleUserParametersLabelsToValues
+// -----------------------------------------------------------------------
+QString P4InputVF::convertMapleUserParametersLabelsToValues(QString src)
+{
+    QString t, p, newlabel;
+    int i, k;
+    QString s = src;
+    for (k = 0; k < numparams_; k++) {
+        p = parlabel_[k];
+        newlabel = parvalue_[k];
+        if (p.length() == 0)
+            continue;
+        t = "";
+        while (1) {
+            i = indexOfWordInString(&s, &p);
+            if (i == -1)
+                break;
+            t += s.left(i);
+            t += newlabel;
+            s = s.mid(i + p.length());
+        }
+        s = t + s;
+    }
+    return s;
+}
+
+    // -----------------------------------------------------------------------
+    //          P4InputVF::convertReduceUserParameterLabels
+    // -----------------------------------------------------------------------
+    /*QString P4InputVF::convertReduceUserParameterLabels(QString src)
+    {
+        QString s;
+        QString t;
+        QString p, newlabel;
+        int i, k;
+
+        s = src;
+        for (k = 0; k < numparams_; k++) {
+            p = parlabel_[k];
+            newlabel = p + "_";
+
+            if (p.length() == 0)
+                continue;
+
+            t = "";
+            while (1) {
+                i = indexOfWordInString(&s, &p);
+                if (i == -1)
+                    break;
+
+                t += s.left(i);
+                t += newlabel;
+                s = s.mid(i + p.length());
+            }
+            s = t + s;
+        }
+
+        return s;
+    }*/
+
+#ifdef Q_OS_WIN
+extern QByteArray Win_GetShortPathName(QByteArray f);
+#endif
+
+// -----------------------------------------------------------------------
+//          maplepathformat
+// -----------------------------------------------------------------------
+//
+// replace all backslashes \ by \\ (ANSI C format)
+//
+// Under windows, avoid spaces by using the short path form.
+
+QByteArray maplepathformat(const QString fname)
+{
+    QByteArray ba_fname;
+
+    ba_fname = QFile::encodeName(fname);
+#ifdef Q_OS_WIN
+    if (ba_fname.length() == 0) {
+        return ba_fname;
+    }
+    if (ba_fname[ba_fname.length() - 1] != '\\' &&
+        ba_fname[ba_fname.length() - 1] != '/') {
+        // last character is not a path separator
+
+        // no need to convert to short form
+        // (this is to avoid error: conversion to short forms does not work
+        // for files that possibly do not yet exist)
+
+        ba_fname.replace("\\", "\\\\");
+        return ba_fname;
+    }
+
+    ba_fname = Win_GetShortPathName(ba_fname);
+#endif
+    ba_fname.replace("\\", "\\\\");
+    return ba_fname;
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::prepareFile
+// -----------------------------------------------------------------------
+
+void P4InputVF::prepareFile(QTextStream *fp, bool prepareforcurves)
+{
+    QString bsaveall;
+    QString name_vectab;
+    QString name_inftab;
+    QString name_fintab;
+    QString name_infres;
+    QString name_finres;
+    QString name_curves;
+    QString mainreduce;
+    QString s;
+
+    QString mainmaple;
+    QString user_bindir;
+    QString user_tmpdir;
+    QString user_lypexe;
+    QString user_lypexe_mpf;
+    QString user_sepexe;
+    QString user_platform;
+    QString user_removecmd;
+    QString user_simplify;
+    QString user_simplifycmd;
+    QString user_sumtablepath;
+    QString user_exeprefix;
+
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_bindir;
+    QByteArray ba_user_tmpdir;
+    QByteArray ba_user_sumtablepath;
+    QByteArray ba_name_vectab;
+    QByteArray ba_name_fintab;
+    QByteArray ba_name_inftab;
+    QByteArray ba_name_finres;
+    QByteArray ba_name_infres;
+    QByteArray ba_name_curves;
+
+    user_exeprefix = "";
+
+    /*if( symbolicpackage == PACKAGE_REDUCE )
+    {
+        bsaveall = booleanString( action_SaveAll );
+        mainreduce = getP4ReducePath();
+        mainreduce += "/";
+        mainreduce += MAINREDUCEFILE;
+
+        name_vectab = getfilename_vectable();
+        name_fintab = getfilename_fintable();
+        name_inftab = getfilename_inftable();
+        name_finres = getfilename_finresults();
+        name_infres = getfilename_infresults();
+        name_curves = getfilename_curveresults();
+
+        if( prepareforcurves )
+            RemoveFile( name_curves );
+        else
+        {
+            RemoveFile( name_vectab );
+            RemoveFile( name_fintab );
+            RemoveFile( name_inftab );
+            RemoveFile( name_infres );
+            RemoveFile( name_finres );
+        }
+
+        s.sprintf( "all_crit_points:=%d$\n", typeofstudy );
+        s += "save_all:=" + bsaveall + "$\n";
+        s += "vec_table:=\"" + name_vectab + "\"$\n";
+        s += "finite_table:=\"" + name_fintab + "\"$\n";
+        s += "finite_res:=\"" + name_finres + "\"$\n";
+        s += "infinite_table:=\"" + name_inftab + "\"$\n";
+        s += "infinite_res:=\"" + name_infres + "\"$\n";
+
+        *fp << s;
+
+        PrepareReduceVectorField( fp );
+        PrepareReduceParameters( fp );
+        PrepareReduceCurves( fp );
+        PrepareReducePiecewiseConfig( fp );
+
+        s = "in \"" + mainreduce + "\"$\n";
+        *fp << s;
+    }
+    else
+    {*/
+    mainmaple = getP4MaplePath();
+    user_bindir = getP4BinPath();
+    user_tmpdir = getP4TempPath();
+    user_sumtablepath = getP4SumTablePath();
+
+    mainmaple += QDir::separator();
+    if (user_bindir != "")
+        user_bindir += QDir::separator();
+    if (user_tmpdir != "")
+        user_tmpdir += QDir::separator();
+    if (user_sumtablepath != "")
+        user_sumtablepath += QDir::separator();
+    user_platform = USERPLATFORM;
+#ifdef Q_WS_WIN
+    user_removecmd = "cmd /c del";
+    user_exeprefix = "cmd /c ";
+#else
+    user_removecmd = "rm";
+    user_exeprefix = "";
+#endif
+    mainmaple += MAINMAPLEFILE;
+#ifdef Q_WS_WIN
+    user_lypexe = "lyapunov.exe";
+    user_lypexe_mpf = "lyapunov_mpf.exe";
+    user_sepexe = "separatrice.exe";
+#else
+    user_lypexe = "lyapunov";
+    user_lypexe_mpf = "lyapunov_mpf";
+    user_sepexe = "separatrice";
+#endif
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    ba_user_bindir = maplepathformat(user_bindir);
+    ba_user_tmpdir = maplepathformat(user_tmpdir);
+    ba_user_sumtablepath = maplepathformat(user_sumtablepath);
+
+    if (numeric)
+        user_simplify = "false";
+    else
+        user_simplify = "true";
+
+    user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
+
+    *fp << "restart;\n";
+    *fp << "read( \"" << ba_mainmaple << "\" );\n";
+    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    *fp << "user_lypexe := \"" << user_lypexe << "\":\n";
+    *fp << "user_lypexe_mpf := \"" << user_lypexe_mpf << "\":\n";
+    *fp << "user_sepexe := \"" << user_sepexe << "\":\n";
+    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    *fp << "user_platform := \"" << user_platform << "\":\n";
+    *fp << "user_sumtablepath := \"" << ba_user_sumtablepath << "\":\n";
+    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    *fp << "user_simplify := " << user_simplify << ":\n";
+    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+
+    bsaveall = booleanString(action_SaveAll);
+
+    name_vectab = getfilename_vectable();
+    name_fintab = getfilename_fintable();
+    name_inftab = getfilename_inftable();
+    name_finres = getfilename_finresults();
+    name_infres = getfilename_infresults();
+    name_curves = getfilename_curveresults();
+
+    if (prepareforcurves) {
+        removeFile(name_curves);
+    } else {
+        removeFile(name_vectab);
+        removeFile(name_fintab);
+        removeFile(name_inftab);
+        removeFile(name_infres);
+        removeFile(name_finres);
+    }
+
+    ba_name_vectab = maplepathformat(name_vectab);
+    ba_name_fintab = maplepathformat(name_fintab);
+    ba_name_inftab = maplepathformat(name_inftab);
+    ba_name_finres = maplepathformat(name_finres);
+    ba_name_infres = maplepathformat(name_infres);
+    ba_name_curves = maplepathformat(name_curves);
+
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+    *fp << "save_all := " << bsaveall << ":\n";
+
+    *fp << "vec_table := \"" << ba_name_vectab << "\":\n";
+    *fp << "finite_table := \"" << ba_name_fintab << "\":\n";
+    *fp << "finite_res := \"" << ba_name_finres << "\":\n";
+    *fp << "infinite_table := \"" << ba_name_inftab << "\":\n";
+    *fp << "infinite_res := \"" << ba_name_infres << "\":\n";
+    *fp << "user_curvesfile := \"" << ba_name_curves << "\":\n";
+
+    prepareMapleVectorField(fp);
+    prepareMapleParameters(fp);
+    prepareMapleCurves(fp);
+    prepareMaplePiecewiseConfig(fp);
+
+    if (prepareforcurves) {
+        *fp << "user_precision := 8:\ntry FindAllCurves() catch:\n"
+               "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+               "lastexception[2] );\n"
+               "finally: closeallfiles();\n"
+               "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+               "try:\n";
+    } else {
+        *fp << "try p5main() catch:\n"
+               "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+               "lastexception[2] );\n"
+               "finally: closeallfiles();\n"
+               "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+               "try:\n";
+    }
+    //}
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::prepareCurveFile
+// -----------------------------------------------------------------------
+void P4InputVF::prepareCurveFile(QTextStream *fp)
+{
+    QString name_curvetab;
+    QString s;
+
+    QString mainmaple;
+    QString user_bindir;
+    QString user_tmpdir;
+    QString user_platform;
+    QString user_removecmd;
+    QString user_simplify;
+    QString user_simplifycmd;
+    QString user_sumtablepath;
+    QString user_exeprefix;
+
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_bindir;
+    QByteArray ba_user_tmpdir;
+    QByteArray ba_name_curvetab;
+
+    user_exeprefix = "";
+
+    mainmaple = getP4MaplePath();
+    user_bindir = getP4BinPath();
+    user_tmpdir = getP4TempPath();
+    user_sumtablepath = getP4SumTablePath();
+
+    mainmaple += QDir::separator();
+    if (user_bindir != "")
+        user_bindir += QDir::separator();
+    if (user_tmpdir != "")
+        user_tmpdir += QDir::separator();
+    user_platform = USERPLATFORM;
+#ifdef Q_OS_WIN
+    user_removecmd = "cmd /c del";
+    user_exeprefix = "cmd /c ";
+#else
+    user_removecmd = "rm";
+    user_exeprefix = "";
+#endif
+    mainmaple += MAINMAPLEFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    ba_user_bindir = maplepathformat(user_bindir);
+    ba_user_tmpdir = maplepathformat(user_tmpdir);
+
+    if (numeric_)
+        user_simplify = "false";
+    else
+        user_simplify = "true";
+
+    user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
+
+    *fp << "restart;\n";
+    *fp << "read( \"" << ba_mainmaple << "\" );\n";
+    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    *fp << "user_platform := \"" << user_platform << "\":\n";
+    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    *fp << "user_simplify := " << user_simplify << ":\n";
+    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+
+    name_curvetab = getfilename_curvetable();
+    removeFile(name_curvetab);
+    ba_name_curvetab = maplepathformat(name_curvetab);
+    *fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
+
+    prepareMapleCurve(fp);
+    prepareMapleParameters(fp);
+
+    *fp << "try prepareCurve() catch:\n"
+           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+           "lastexception[2] );\n"
+           "finally: closeallfiles();\n"
+           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+           "try:\n";
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::prepareIsoclinesFile
+// -----------------------------------------------------------------------
+void P4InputVF::prepareIsoclinesFile(QTextStream *fp)
+{
+    QString name_isoclinestab;
+    QString s;
+
+    QString mainmaple;
+    QString user_bindir;
+    QString user_tmpdir;
+    QString user_platform;
+    QString user_removecmd;
+    QString user_simplify;
+    QString user_simplifycmd;
+    QString user_sumtablepath;
+    QString user_exeprefix;
+
+    QByteArray ba_mainmaple;
+    QByteArray ba_user_bindir;
+    QByteArray ba_user_tmpdir;
+    QByteArray ba_name_isoclinestab;
+
+    user_exeprefix = "";
+
+    mainmaple = getP4MaplePath();
+    user_bindir = getP4BinPath();
+    user_tmpdir = getP4TempPath();
+    user_sumtablepath = getP4SumTablePath();
+
+    mainmaple += QDir::separator();
+    if (user_bindir != "")
+        user_bindir += QDir::separator();
+    if (user_tmpdir != "")
+        user_tmpdir += QDir::separator();
+    user_platform = USERPLATFORM;
+#ifdef Q_OS_WIN
+    user_removecmd = "cmd /c del";
+    user_exeprefix = "cmd /c ";
+#else
+    user_removecmd = "rm";
+    user_exeprefix = "";
+#endif
+    mainmaple += MAINMAPLEFILE;
+
+    ba_mainmaple = maplepathformat(mainmaple);
+    ba_user_bindir = maplepathformat(user_bindir);
+    ba_user_tmpdir = maplepathformat(user_tmpdir);
+
+    if (numeric_)
+        user_simplify = "false";
+    else
+        user_simplify = "true";
+
+    user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
+
+    *fp << "restart;\n";
+    *fp << "read( \"" << ba_mainmaple << "\" );\n";
+    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    *fp << "user_platform := \"" << user_platform << "\":\n";
+    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    *fp << "user_simplify := " << user_simplify << ":\n";
+    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+
+    name_isoclinestab = getfilename_isoclinestable();
+    removeFile(name_isoclinestab);
+    ba_name_isoclinestab = maplepathformat(name_isoclinestab);
+    *fp << "isoclines_table := \"" << ba_name_isoclinestab << "\":\n";
+
+    prepareMapleIsoclines(fp);
+    prepareMapleParameters(fp);
+
+    *fp << "try prepareIsoclines() catch:\n"
+           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+           "lastexception[2] );\n"
+           "finally: closeallfiles();\n"
+           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+           "try:\n";
 }
