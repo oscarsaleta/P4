@@ -172,9 +172,11 @@ class P4InputVF : public QObject
     void prepare();
     void evaluate();
 
-    bool prepareGcf(term2 *f, double, double, int, int);
-    bool prepareGcf_LyapunovCyl(double, double, int, int);
-    bool prepareGcf_LyapunovR2(int, int);
+    bool prepareGcf(term2 *f, double y1, double y2, int precision,
+                    int numpoints);
+    bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
+                                int numpoints, int index);
+    bool prepareGcf_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateGcf();
 
     /* curve functions */
@@ -187,9 +189,11 @@ class P4InputVF : public QObject
     // called from prepareCurveFile
     void prepareMapleCurve(QTextStream *);
     // the following are called from math_curve.cpp
-    bool prepareCurve(term2 *f, double, double, int, int);
-    bool prepareCurve_LyapunovCyl(double, double, int, int);
-    bool prepareCurve_LyapunovR2(int, int);
+    bool prepareCurve(term2 *f, double y1, double y2, int precision,
+                      int numpoints);
+    bool prepareCurve_LyapunovCyl(double theta1, double theta2, int precision,
+                                  int numpoints, int index);
+    bool prepareCurve_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateCurve();
 
     /* isoclines functions */
@@ -197,9 +201,11 @@ class P4InputVF : public QObject
     void prepareIsoclines();
     void prepareIsoclinesFile(QTextStream *);
     void prepareMapleIsoclines(QTextStream *);
-    bool prepareIsoclines(term2 *f, double, double, int, int);
-    bool prepareIsoclines_LyapunovCyl(double, double, int, int);
-    bool prepareIsoclines_LyapunovR2(int, int);
+    bool prepareIsoclines(term2 *f, double y1, double y2, int precision,
+                          int numpoints);
+    bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
+                                      int precision, int numpoints, int index);
+    bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
     void createProcessWindow();
