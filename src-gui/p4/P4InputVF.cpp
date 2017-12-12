@@ -110,13 +110,11 @@ P4InputVF::P4InputVF()
     gcf_ = nullptr;
 
     numVF_ = 0;
-    numCurves = 0;
+    numCurves_ = 0;
     numPointsCurve_ = nullptr;
     curves_ = nullptr;
     numVFRegions_ = 0;
     numCurveRegions_ = 0;
-    vfRegions_ = nullptr;
-    curveRegions_ = nullptr;
 
     numSelected_ = 0;
     selected_ = nullptr;
@@ -162,75 +160,51 @@ void P4InputVF::reset(int n)
     g_VFResults.vfK_ = nullptr;
     g_VFResults.K_ = 0;
 
-    /*
-        defaulttypeofview = TYPEOFVIEW_SPHERE;
-        defaultxmin = -1;
-        defaultxmax = 1;
-        defaultymin = -1;
-        defaultymax = 1;
-    */
-    symbolicpackage = getMathPackage();
-    typeofstudy = DEFAULTTYPE;
-    x0 = DEFAULTX0;
-    y0 = DEFAULTY0;
-    p = DEFAULTP;
-    q = DEFAULTQ;
+    // symbolicpackage_ = PACKAGE_MAPLE;//getMathPackage();
+    typeofstudy_ = DEFAULTTYPE;
+    x0_ = DEFAULTX0;
+    y0_ = DEFAULTY0;
+    p_ = DEFAULTP;
+    q_ = DEFAULTQ;
 
-    deleteBoolList(numeric);
-    deleteIntList(precision);
-    deleteQStringList(epsilon, numVF_);
-    deleteBoolList(testsep);
-    deleteIntList(taylorlevel);
-    deleteIntList(numericlevel);
-    deleteIntList(maxlevel);
-    deleteIntList(weakness);
+    // clear current vectors
+    numeric_.clear();
+    precision_.clear();
+    epsilon_.clear();
+    testsep_.clear();
+    taylorlevel_.clear();
+    numericlevel_.clear();
+    maxlevel_.clear();
+    weakness_.clear();
 
-    if (n > 0) {
-        numeric = makeNewBoolList(n, DEFAULTNUMERIC);
-        precision = makeNewIntList(n, DEFAULTPRECISION);
-        epsilon = makeNewQStringList(n, DEFAULTEPSILON);
-        testsep = makeNewBoolList(n, DEFAULTTESTSEP);
-        taylorlevel = makeNewIntList(n, DEFAULTLEVEL);
-        numericlevel = makeNewIntList(n, DEFAULTNUMLEVEL);
-        maxlevel = makeNewIntList(n, DEFAULTMAXLEVEL);
-        weakness = makeNewIntList(n, DEFAULTWEAKNESS);
-    } else {
-        numeric = nullptr;
-        precision = nullptr;
-        epsilon = nullptr;
-        testsep = nullptr;
-        taylorlevel = nullptr;
-        numericlevel = nullptr;
-        maxlevel = nullptr;
-        weakness = nullptr;
+    xdot_.clear();
+    ydot_.clear();
+    gcf_.clear();
+
+    // refill vectors with default values
+    for (i = 0; i < n; i++) {
+        numeric_.push_back(DEFAULTNUMERIC);
+        precision_.push_back(DEFAULTPRECISION);
+        epsilon_.push_back(QString(DEFAULTEPSILON));
+        testsep_.push_back(DEFAULTTESTSEP);
+        taylorlevel_.push_back(DEFAULTLEVEL);
+        numericlevel_.push_back(DEFAULTNUMLEVEL);
+        maxlevel_.push_back(DEFAULTMAXLEVEL);
+        weakness_.push_back(DEFAULTWEAKNESS);
+        xdot_.push_back(QString(DEFAULTXDOT));
+        ydot_.push_back(QString(DEFAULTYDOT));
+        gcf_.push_back(QString(DEFAULTGCF));
     }
-    deleteQStringList(xdot_, numVF_);
-    deleteQStringList(ydot_, numVF_);
-    deleteQStringList(gcf_, numVF_);
 
-    for (i = 0; i < numVF_; i++) deleteQStringList(parvalue_[i], MAXNUMPARAMS);
-    free(parvalue_);
+    parvalue_.clear();
+    parvalue_.swap(std::vector < std::vector<QString>());
 
-    deleteQStringList(curves_, numCurves_);
-    curves_ = nullptr;
-
-    g_VFResults.resetCurveInfo();
+    curves_.clear();
+    g_VFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
     numCurves_ = 0;
 
-    if (numPointsCurve_ != nullptr) {
-        free(numPointsCurve_);
-        numPointsCurve_ = nullptr;
-    }
+    numPointsCurve_.clear();
 
-    if (n > 0) {
-        xdot_ = makeNewQStringList(n, DEFAULTXDOT);
-        ydot_ = makeNewQStringList(n, DEFAULTYDOT);
-        gcf_ = makeNewQStringList(n, DEFAULTGCF);
-    } else {
-        xdot_ = nullptr;
-        ydot_ = nullptr;
-        gcf_ = nullptr;
-    }
     if (n > 0) {
         parvalue_ = (QString ***)malloc(sizeof(QString **) * n);
         for (i = 0; i < n; i++)
@@ -239,7 +213,7 @@ void P4InputVF::reset(int n)
         parvalue_ = nullptr;
 
     numparams_ = 0;
-    for (i = 0; i < MAXNUMPARAMS; i++) parlabel[i] = "";
+    for (i = 0; i < MAXNUMPARAMS; i++) parlabel_[i] = "";
 
     changed_ = false;
     evaluated_ = false;
@@ -247,31 +221,19 @@ void P4InputVF::reset(int n)
     evaluating_piecewiseconfig_ = false;
     cleared_ = true;
 
-    if (curveRegions_ != nullptr) {
-        for (i = 0; i < numCurveRegions_; i++)
-            deleteIntList(curveRegions_[i].signs);
-        free(curveRegions_);
-        curveRegions_ = nullptr;
-    }
+    curveRegions_.clear();
     numCurveRegions_ = 0;
 
-    if (vfRegions_ != nullptr) {
-        for (i = 0; i < numVFRegions_; i++) deleteIntList(vfRegions_[i].signs);
-        free(vfRegions_);
-        vfRegions_ = nullptr;
-    }
+    vfRegions_.clear();
     numVFRegions_ = 0;
 
     if (n > 0) {
         numSelected_ = 1;
-        selected_ = (int *)malloc(sizeof(int));
-        selected_[0] = 0;
+        selected_.push_back(0);
 
         if (n == 1) {
-            vfRegions_ = (p4VFStudyRegions::vfRegion *)malloc(
-                sizeof(p4VFStudyRegions::vfRegion));
-            vfRegions_->vfIndex = 0;
-            vfRegions_->signs = nullptr;
+            p4VFStudyRegions::vfRegion region(0, nullptr);
+            vfRegions_.push_back(region);
             numVFRegions_ = 1;
         }
     } else {
@@ -313,31 +275,62 @@ bool P4InputVF::load()
 
         fp = fopen(QFile::encodeName(fname), "rt");
 
+        int aux;
         if (fscanf(fp, "%d\n", &typeofstudy_) != 1 ||
-            fscanf(fp, "%d\n", flag_numeric) != 1 ||
-            fscanf(fp, "%d\n", precision_) != 1 ||
+            fscanf(fp, "%d\n", &flag_numeric) != 1 ||
+            fscanf(fp, "%d\n", &aux) != 1 ||
             fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
-            fscanf(fp, "%d\n", flag_testsep) != 1 ||
-            fscanf(fp, "%d\n", taylorlevel_) != 1 ||
-            fscanf(fp, "%d\n", numericlevel_) != 1 ||
-            fscanf(fp, "%d\n", maxlevel_) != 1 ||
-            fscanf(fp, "%d\n", weakness_) != 1) {
+            fscanf(fp, "%d\n", &flag_testsep) != 1) {
             reset(1);
             fclose(fp);
-            return false
+            return false;
         } else {
-            *numeric_ = ((flag_numeric == 0) ? false : true);
-            *(epsilon_[0]) = scanbuf != 1;
-            *testsep_ = ((flag_testsep == 0) ? false : true);
+            bool value;
+            value = ((flag_numeric == 0) ? false : true);
+            numeric_.push_back(value);
+            precision_.push_back(aux);
+            epsilon_.push_back(QString(scanbuf));
+            value = ((flag_testsep == 0) ? false : true);
+            testsep_.push_back(value);
+        }
+        if (fscanf(fp, "%d\n", &aux) != 1) {
+            reset(1);
+            fclose(fp);
+            return false;
+        } else {
+            taylorlevel_.push_back(aux);
+        }
+        if (fscanf(fp, "%d\n", &aux) != 1) {
+            reset(1);
+            fclose(fp);
+            return false;
+        } else {
+            numericlevel_.push_back(aux);
+        }
+        if (fscanf(fp, "%d\n", &aux) != 1) {
+            reset(1);
+            fclose(fp);
+            return false;
+        } else {
+            maxlevel_.push_back(aux);
+        }
+        if (fscanf(fp, "%d\n", &aux) != 1) {
+            reset(1);
+            fclose(fp);
+            return false;
+        } else {
+            weakness_.push_back(aux);
         }
 
         if (typeofstudy_ == TYPEOFSTUDY_ONE) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
+                reset(1);
                 fclose(fp);
                 return false;
             }
             x0_ = scanbuf;
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
+                reset(1);
                 fclose(fp);
                 return false;
             }
@@ -348,6 +341,7 @@ bool P4InputVF::load()
             x0_ = DEFAULTX0;
             y0_ = DEFAULTY0;
             if (fscanf(fp, "%d\n", &p_) != 1 || fscanf(fp, "%d\n", &q_) != 1) {
+                reset(1);
                 fclose(fp);
                 return false;
             }
@@ -358,32 +352,32 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        *(xdot_[0]) = scanbuf;
+        xdot_.push_back(QString(scanbuf));
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        *(ydot_[0]) = scanbuf;
+        ydot_.push_back(QString(scanbuf));
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        *(gcf_[0]) = scanbuf;
+        gcf_.push_back(QString(scanbuf));
 
-        if (*(xdot_[0]) == "(null)")
-            *(xdot_[0]) = "";
-        if (*(ydot_[0]) == "(null)")
-            *(ydot_[0]) = "";
-        if (*(gcf_[0]) == "(null)")
-            *(gcf_[0]) = "";
+        if (xdot_[0] == "(null)")
+            xdot_[0] = "";
+        if (ydot_[0] == "(null)")
+            ydot_[0] = "";
+        if (gcf_[0] == "(null)")
+            gcf_[0] = "";
         if (x0_ == "(null)")
             x0_ = "";
         if (y0_ == "(null)")
             y0_ = "";
-        if (*(epsilon_[0]) == "(null)")
-            *(epsilon_[0]) = "";
+        if (epsilon_[0] == "(null)")
+            epsilon_[0] = "";
 
         if (fscanf(fp, "%d\n", &numparams_) != 1) {
             reset(1);
@@ -396,7 +390,7 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            parlabel_[i] = scanbuf;
+            parlabel_.push_back(QString(scanbuf));
             while ((c = fgetc(fp)) == '\n')
                 ;
             ungetc(c, fp);
@@ -531,44 +525,29 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        if (numVFRegions_ > 0) {
-            vfRegions_ = (p4VFStudyRegions::vfRegion *)malloc(
-                sizeof(p4VFStudyRegions::vfRegion) * numVFRegions_);
-            for (i = 0; i < numVFRegions_; i++) {
-                if (numCurves_ == 0)
-                    vfRegions_[i].signs = nullptr;
-                else
-                    vfRegions_[i].signs =
-                        (int *)malloc(sizeof(int) * numCurves_);
+        for (i = 0; i < numVFRegions_; i++) {
+            // read index
+            int indx;
+            if (fscanf(fp, "%d", &indx) != 1 || indx < 0 || indx >= numVF_) {
+                reset(1);
+                fclose(fp);
+                return false;
             }
-            for (i = 0; i < numVFRegions_; i++) {
-                if (fscanf(fp, "%d", &(vfRegions_[i].vfIndex)) != 1) {
+            // read signs
+            std::vector<int> sgns;
+            int aux;
+            for (k = 0; k < numCurves_; k++) {
+                if (fscanf(fp, "%d", &aux) != 1 || (aux != 1 && aux != -1)) {
                     reset(1);
                     fclose(fp);
                     return false;
                 }
-                if (vfRegions_[i].vfIndex < 0 ||
-                    vfRegions_[i].vfIndex >= numVF_) {
-                    reset(1);
-                    fclose(fp);
-                    return false;
-                }
-                for (k = 0; k < numCurves_; k++) {
-                    if (fscanf(fp, "%d", &(vfRegions_[i].signs[k])) != 1) {
-                        reset(1);
-                        fclose(fp);
-                        return false;
-                    }
-                    if (vfRegions_[i].signs[k] != 1 &&
-                        vfRegions_[i].signs[k] != -1) {
-                        reset(1);
-                        fclose(fp);
-                        return false;
-                    }
-                }
+                sgns.push_back(aux);
             }
-        } else
-            vfRegions_ = nullptr;
+            // sgns could be an empty list
+            p4VFStudyRegions::vfRegion region(indx, sgns);
+            vfRegions_.push_back(region);
+        }
 
         if (fscanf(fp, "%d\n", &numCurveRegions_) != 1 ||
             numCurveRegions_ < 0) {
@@ -576,44 +555,31 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        if (numCurveRegions_ > 0) {
-            curveRegions_ = (p4VFStudyRegions::curveRegion *)malloc(
-                sizeof(p4VFStudyRegions::curveRegion) * numCurveRegions_);
-            for (i = 0; i < numCurveRegions_; i++) {
-                if (numCurves_ == 0)
-                    curveRegions_[i].signs = nullptr;
-                else
-                    curveRegions_[i].signs =
-                        (int *)malloc(sizeof(int) * numCurves_);
+        for (i = 0; i < numCurveRegions_; i++) {
+            // read index
+            int indx;
+            if (fscanf(fp, "%d", &indx) != 1 || indx < 0 ||
+                indx >= numCurves_) {
+                reset(1);
+                fclose(fp);
+                return false;
             }
-            for (i = 0; i < numCurveRegions_; i++) {
-                if (fscanf(fp, "%d", &(curveRegions_[i].curveIndex)) != 1) {
-                    reset(1);
-                    fclose(fp);
-                    return false;
-                }
-                if (curveRegions_[i].curveIndex < 0 ||
-                    curveRegions_[i].curveIndex >= numCurves_) {
-                    reset(1);
-                    fclose(fp);
-                    return false;
-                }
-                for (k = 0; k < numCurves_; k++) {
-                    if (fscanf(fp, "%d", &(curveRegions_[i].signs[k])) != 1) {
+            // read signs
+            std::vector<int> sgns;
+            int aux;
+            for (k = 0; k < numCurves_; k++) {
+                if (fscanf(fp, "%d", &aux) != 1 || aux > 1 || aux < -1))
+                    {
                         reset(1);
                         fclose(fp);
                         return false;
                     }
-                    if (curveRegions_[i].signs[k] > 1 ||
-                        curveRegions_[i].signs[k] < -1) {
-                        reset(1);
-                        fclose(fp);
-                        return false;
-                    }
-                }
+                sgns.push_back(aux);
             }
-        } else
-            curveRegions_ = nullptr;
+            // sgns could be an empty list
+            p4VFStudyRegions::curveRegion region(indx, sgns);
+            curveRegions_.push_back(region);
+        }
 
         for (k = 0; k < numVF_; k++) {
             if (fscanf(fp, "%d\n", flag_numeric) != 1 ||
@@ -1215,8 +1181,8 @@ void P4InputVF::prepareReduceVectorField( QTextStream * fp )
 
     for( k = 0; k < numparams; k++ )
     {
-        lbl = ConvertReduceUserParameterLabels( parlabel[k] );
-        val = ConvertReduceUserParameterLabels( parvalue[k] );
+        lbl = ConvertReduceUserParameterLabels( parlabel_[k] );
+        val = ConvertReduceUserParameterLabels( parvalue_[k] );
 
         if( lbl.length() == 0 )
             continue;
@@ -2020,15 +1986,15 @@ void P4InputVF::evaluate()
             delete fp;
             fptr->close();
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
         } else {
             delete fptr;
-            fptr = NULL;
+            fptr = nullptr;
 
             // cannot open???
         }
 
-        if (ProcessText == NULL)
+        if (ProcessText == nullptr)
             CreateProcessWindow();
         else {
             ProcessText->append(
@@ -2059,8 +2025,8 @@ void P4InputVF::evaluate()
             proc->state() != QProcess::Starting) {
             processfailed = true;
             delete proc;
-            proc = NULL;
-            EvalProcess = NULL;
+            proc = nullptr;
+            EvalProcess = nullptr;
             EvalFile = "";
             EvalFile2 = "";
             g_p4app->Signal_Evaluated(-1);
@@ -3835,12 +3801,12 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonString
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonString(QString **lst)
+bool P4InputVF::hasCommonString(std::vector<QString>)
 {
     int i, j, j0;
-    j0 = selected[0];
-    for (i = 1; i < numselected; i++) {
-        j = selected[i];
+    j0 = selected_[0];
+    for (i = 1; i < numSelected_; i++) {
+        j = selected_[i];
         if (lst[j0]->compare(*(lst[j])))
             return false;
     }
@@ -3853,9 +3819,9 @@ bool P4InputVF::hasCommonString(QString **lst)
 bool P4InputVF::hasCommonInt(int *lst)
 {
     int i, j, j0;
-    j0 = selected[0];
-    for (i = 1; i < numselected; i++) {
-        j = selected[i];
+    j0 = selected_[0];
+    for (i = 1; i < numSelected_; i++) {
+        j = selected_[i];
         if (lst[j] != lst[j0])
             return false;
     }
@@ -3868,9 +3834,9 @@ bool P4InputVF::hasCommonInt(int *lst)
 bool P4InputVF::hasCommonBool(bool *lst)
 {
     int i, j, j0;
-    j0 = selected[0];
-    for (i = 1; i < numselected; i++) {
-        j = selected[i];
+    j0 = selected_[0];
+    for (i = 1; i < numSelected_; i++) {
+        j = selected_[i];
         if (lst[j] != lst[j0])
             return false;
     }
@@ -3883,10 +3849,10 @@ bool P4InputVF::hasCommonBool(bool *lst)
 bool P4InputVF::hasCommonParvalue(int index)
 {
     int i, j, j0;
-    j0 = selected[0];
-    for (i = 1; i < numselected; i++) {
-        j = selected[i];
-        if (parvalue[j0][index]->compare(*(parvalue[j][index])))
+    j0 = selected_[0];
+    for (i = 1; i < numSelected_; i++) {
+        j = selected_[i];
+        if (parvalue_[j0][index]->compare(*(parvalue_[j][index])))
             return false;
     }
     return true;
@@ -3895,24 +3861,24 @@ bool P4InputVF::hasCommonParvalue(int index)
 // -----------------------------------------------------------------------
 //          P4InputVF::commonString
 // -----------------------------------------------------------------------
-QString P4InputVF::commonString(QString **lst) { return *(lst[selected[0]]); }
+QString P4InputVF::commonString(QString **lst) { return *(lst[selected_[0]]); }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::commonInt
 // -----------------------------------------------------------------------
-int P4InputVF::commonInt(int *lst) { return lst[selected[0]]; }
+int P4InputVF::commonInt(int *lst) { return lst[selected_[0]]; }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::commonBoolean
 // -----------------------------------------------------------------------
-bool P4InputVF::commonBoolean(bool *lst) { return lst[selected[0]]; }
+bool P4InputVF::commonBoolean(bool *lst) { return lst[selected_[0]]; }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::commonParvalue
 // -----------------------------------------------------------------------
 QString P4InputVF::commonParvalue(int index)
 {
-    return *(parvalue[selected[0]][index]);
+    return *(parvalue_[selected_[0]][index]);
 }
 
 // -----------------------------------------------------------------------
@@ -3921,8 +3887,8 @@ QString P4InputVF::commonParvalue(int index)
 void P4InputVF::setCommonString(QString **lst, QString val)
 {
     int i, j;
-    for (i = 0; i < numselected; i++) {
-        j = selected[i];
+    for (i = 0; i < numSelected_; i++) {
+        j = selected_[i];
         *(lst[j]) = val;
     }
 }
@@ -3933,8 +3899,8 @@ void P4InputVF::setCommonString(QString **lst, QString val)
 void P4InputVF::setCommonInt(int *lst, int val)
 {
     int i, j;
-    for (i = 0; i < numselected; i++) {
-        j = selected[i];
+    for (i = 0; i < numSelected_; i++) {
+        j = selected_[i];
         lst[j] = val;
     }
 }
@@ -3945,8 +3911,8 @@ void P4InputVF::setCommonInt(int *lst, int val)
 void P4InputVF::setCommonBool(bool *lst, bool val)
 {
     int i, j;
-    for (i = 0; i < numselected; i++) {
-        j = selected[i];
+    for (i = 0; i < numSelected_; i++) {
+        j = selected_[i];
         lst[j] = val;
     }
 }
@@ -3957,8 +3923,208 @@ void P4InputVF::setCommonBool(bool *lst, bool val)
 void P4InputVF::setCommonParvalue(int index, QString val)
 {
     int i, j;
-    for (i = 0; i < numselected; i++) {
-        j = selected[i];
-        *(parvalue[j][index]) = val;
+    for (i = 0; i < numSelected_; i++) {
+        j = selected_[i];
+        *(parvalue_[j][index]) = val;
+    }
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::addVectorField
+// -----------------------------------------------------------------------
+void P4InputVF::addVectorField()
+{
+    int i;
+
+    if (!VFResults.vf_.empty()) {
+        VFResults.clearVFs();
+        VFResults.vfK_ = nullptr;
+        VFResults.K_ = 0;
+    }
+
+    // TODO: treure reallocs i implementar-ho com vectors
+    // xdot = (QString **)realloc(xdot, sizeof(QString *) * (numVF_ + 1));
+    // ydot = (QString **)realloc(ydot, sizeof(QString *) * (numVF_ + 1));
+    // gcf = (QString **)realloc(gcf, sizeof(QString *) * (numVF_ + 1));
+    // epsilon = (QString **)realloc(epsilon, sizeof(QString *) * (numVF_ + 1));
+    // numeric = (bool *)realloc(numeric, sizeof(bool) * (numVF_ + 1));
+    // precision = (int *)realloc(precision, sizeof(int) * (numVF_ + 1));
+    // testsep = (bool *)realloc(testsep, sizeof(bool) * (numVF_ + 1));
+    // taylorlevel = (int *)realloc(taylorlevel, sizeof(int) * (numVF_ + 1));
+    // numericlevel = (int *)realloc(numericlevel, sizeof(int) * (numVF_ + 1));
+    // maxlevel = (int *)realloc(maxlevel, sizeof(int) * (numVF_ + 1));
+    // weakness = (int *)realloc(weakness, sizeof(int) * (numVF_ + 1));
+    parvalue = (QString ***)realloc(parvalue, sizeof(QString *) * (numVF_ + 1));
+
+    xdot_.push_back(QString(DEFAULTXDOT));
+    ydot_.push_back(QString(DEFAULTYDOT));
+    gcf_.push_back(QString(DEFAULTGCF));
+    epsilon_.push_back(QString(DEFAULTEPSILON));
+    numeric_.push_back(DEFAULTNUMERIC);
+    testsep_.push_back(DEFAULTTESTSEP);
+    precision_.push_back(DEFAULTPRECISION);
+    taylorlevel_.push_back(DEFAULTLEVEL);
+    numericlevel_.push_back(DEFAULTNUMLEVEL);
+    maxlevel_.push_back(DEFAULTMAXLEVEL);
+    weakness_.push_back(DEFAULTWEAKNESS);
+    parvalue[numVF_] = (QString **)malloc(sizeof(QString *) * MAXNUMPARAMS);
+    for (i = 0; i < MAXNUMPARAMS; i++) parvalue[numVF_][i] = new QString("");
+
+    if (hasCommonString(xdot_))
+        xdot[numVF_] = commonString(xdot);
+    if (hasCommonString(ydot))
+        *(ydot[numVF_]) = commonString(ydot);
+    if (hasCommonString(gcf))
+        *(gcf[numVF_]) = commonString(gcf);
+    if (hasCommonString(epsilon))
+        *(epsilon[numVF_]) = commonString(epsilon);
+    if (hasCommonBool(numeric))
+        numeric[numVF_] = commonBool(numeric);
+    if (hasCommonBool(testsep))
+        testsep[numVF_] = commonBool(testsep);
+    if (hasCommonInt(precision))
+        precision[numVF_] = commonInt(precision);
+    if (hasCommonInt(taylorlevel))
+        taylorlevel[numVF_] = commonInt(taylorlevel);
+    if (hasCommonInt(numericlevel))
+        numericlevel[numVF_] = commonInt(numericlevel);
+    if (hasCommonInt(maxlevel))
+        maxlevel[numVF_] = commonInt(maxlevel);
+    if (hasCommonInt(weakness))
+        weakness[numVF_] = commonInt(weakness);
+
+    for (i = 0; i < MAXNUMPARAMS; i++)
+        if (HasCommonParvalue(i))
+            *(parvalue[numVF_][i]) = CommonParvalue(i);
+
+    numvf++;
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::deleteVectorField
+// -----------------------------------------------------------------------
+void P4InputVF::deleteVectorField(int index)
+{
+    // first disconnect from other structures
+
+    int k, i;
+
+    if (!VFResults.vf_.empty()) {
+        VFResults.clearVFs();
+        VFResults.vfK_ = nullptr;
+        VFResults.K_ = 0;
+    }
+
+    for (k = 0; k < numVFRegions_; k++) {
+        if (vfRegions_[k].vfIndex == index) {
+            free(vfRegions_[k].signs);
+            if (k < numVFRegions_ - 1)
+                memmove(vfRegions_ + k, vfRegions_ + k + 1,
+                        sizeof(VFREGION) * (numVFRegions_ - k - 1));
+            numVFRegions_--;
+            k--;
+            if (numVFRegions_ == 0) {
+                free(vfRegions_);
+                vfRegions_ = NULL;
+            }
+        } else if (vfRegions_[k].vfIndex > index)
+            vfRegions_[k].vfIndex--;
+    }
+    for (k = 0; k < numSelected_; k++) {
+        if (selected[k] == index) {
+            if (k < numSelected_ - 1)
+                memmove(selected + k, selected + k + 1,
+                        sizeof(int) * (numSelected_ - k - 1));
+            numSelected_--;
+            k--;
+            if (numSelected_ == 0) {
+                numSelected_ = 1;
+                selected[0] = index;
+                if (selected[0] >= numvf - 1)
+                    selected[0] = numvf - 2;
+                if (selected[0] < 0)
+                    selected[0] = 0;
+                break;
+            }
+        } else if (selected[k] > index)
+            selected[k]--;
+    }
+
+    if (numvf == 1) {
+        // delete last one: replace by default startup values
+
+        *(xdot[0]) = DEFAULTXDOT;
+        *(ydot[0]) = DEFAULTYDOT;
+        *(gcf[0]) = DEFAULTGCF;
+        *(epsilon[0]) = DEFAULTEPSILON;
+        *numeric = DEFAULTNUMERIC;
+        *precision = DEFAULTPRECISION;
+        *testsep = DEFAULTTESTSEP;
+        *taylorlevel = DEFAULTLEVEL;
+        *numericlevel = DEFAULTNUMLEVEL;
+        *maxlevel = DEFAULTMAXLEVEL;
+        *weakness = DEFAULTWEAKNESS;
+        for (k = 0; k < MAXNUMPARAMS; k++) *(parvalue[0][k]) = "";
+
+        for (k = 0; k < MAXNUMPARAMS; k++) parlabel[k] = "";
+
+        numparams = 0;
+        p = DEFAULTP;
+        q = DEFAULTQ;
+        symbolicpackage = PACKAGE_MAPLE;
+        typeofstudy = DEFAULTTYPE;
+        x0 = DEFAULTX0;
+        y0 = DEFAULTY0;
+        /*
+                defaulttypeofview = TYPEOFVIEW_SPHERE;
+                defaultxmin = X_MIN;
+                defaultxmax = X_MAX;
+                defaultymin = Y_MIN;
+                defaultymax = Y_MAX;
+        */
+    } else {
+        delete xdot[index];
+        delete ydot[index];
+        delete gcf[index];
+        delete epsilon[index];
+        for (k = 0; k < MAXNUMPARAMS; k++) delete parvalue[index][k];
+        free(parvalue[index]);
+
+        if (index < numvf - 1) {
+            // do some memory moving
+
+            memmove(xdot + index, xdot + index + 1,
+                    sizeof(QString *) * (numvf - index - 1));
+            memmove(ydot + index, ydot + index + 1,
+                    sizeof(QString *) * (numvf - index - 1));
+            memmove(gcf + index, gcf + index + 1,
+                    sizeof(QString *) * (numvf - index - 1));
+            memmove(epsilon + index, epsilon + index + 1,
+                    sizeof(QString *) * (numvf - index - 1));
+            memmove(numeric + index, numeric + index + 1,
+                    sizeof(bool) * (numvf - index - 1));
+            memmove(testsep + index, testsep + index + 1,
+                    sizeof(bool) * (numvf - index - 1));
+            memmove(precision + index, precision + index + 1,
+                    sizeof(int) * (numvf - index - 1));
+            memmove(taylorlevel + index, taylorlevel + index + 1,
+                    sizeof(int) * (numvf - index - 1));
+            memmove(numericlevel + index, numericlevel + index + 1,
+                    sizeof(int) * (numvf - index - 1));
+            memmove(maxlevel + index, maxlevel + index + 1,
+                    sizeof(int) * (numvf - index - 1));
+            memmove(weakness + index, weakness + index + 1,
+                    sizeof(int) * (numvf - index - 1));
+            memmove(parvalue + index, parvalue + index + 1,
+                    sizeof(QString **) * (numvf - index - 1));
+        }
+        numvf--;
+    }
+
+    if (numvf == 1 && numvfregions == 0 && numcurves == 0) {
+        numvfregions = 1;
+        vfregions = (VFREGION *)malloc(sizeof(VFREGION));
+        vfregions->vfindex = 0;
+        vfregions->signs = NULL;
     }
 }
