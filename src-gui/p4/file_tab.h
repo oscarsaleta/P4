@@ -30,7 +30,7 @@ class QTextEdit;
 // -----------------------------------------------------------------------
 
 // Linked list of univariate terms a*x^i
-namespace p4polynomials
+namespace p4polynomials //TODO: usar aquestes structs com vectors 
 {
 struct term1 {
     int exp;
@@ -364,26 +364,51 @@ enum TYPEOFVIEWS {
 
 namespace p4curveRegions
 {
+// TODO: podria ser redundant amb p4VFStudyRegions::vfRegion
 struct vfRegionResult {
     int vfindex;  // which vector field
     int *signs;
 };
-
+// TODO: podria ser redundant amb p4VFStudyRegions::curveRegion
 struct curveRegionResult {
     int curveindex;  // which curve are we talking about
     int *signs;
 };
 
-struct curveResult {
-    p4polynomials::term2 *sep;
-    p4polynomials::term2 *sep_U1;
-    p4polynomials::term2 *sep_U2;
-    p4polynomials::term2 *sep_V1;
-    p4polynomials::term2 *sep_V2;
-    p4polynomials::term3 *sep_C;
-    p4orbits::orbits_points *sep_points;
+struct curveResult {  // TODO: arreglar aixo convertint a vectors
+    std::vector<p4polynomials::term2> sep;
+    std::vector<p4polynomials::term2> sep_U1;
+    std::vector<p4polynomials::term2> sep_U2;
+    std::vector<p4polynomials::term2> sep_V1;
+    std::vector<p4polynomials::term2> sep_V2;
+    std::vector<p4polynomials::term3> sep_C;
+    std::vector<p4orbits::orbits_points> sep_points;
 
-    curveResult() : sep_points(nullptr){};
+    curveResult(){};
+    curveResult(std::vector<p4polynomials::term2> _sep,
+                std::vector<p4polynomials::term2> _sep_U1,
+                std::vector<p4polynomials::term2> _sep_U2,
+                std::vector<p4polynomials::term2> _sep_V1,
+                std::vector<p4polynomials::term2> _sep_V2,
+                std::vector<p4polynomials::term3> _sep_C,
+                std::vector<p4orbits::orbits_points> _sep_points)
+        : sep(_sep),
+          sep_U1(_sep_U1),
+          sep_U2(_sep_U2),
+          sep_V1(_sep_V1),
+          sep_V2(_sep_V2),
+          sep_C(_sep_C),
+          sep_points(_sep_points){};
+    ~curveResult()
+    {
+        sep.clear();
+        sep_U1.clear();
+        sep_U2.clear();
+        sep_V1.clear();
+        sep_V2.clear();
+        sep_C.clear();
+        sep_points.clear();
+    }
 };
 }
 
