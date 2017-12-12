@@ -23,7 +23,7 @@
 #include "file_tab.h"
 
 #include <vector>
-#include <boost/shared_ptr>
+#include <memory>
 
 class P4VFStudy;
 
@@ -34,7 +34,7 @@ class P4ParentStudy : public QObject
     P4ParentStudy();
     ~P4ParentStudy();
 
-    std::vector<boost::shared_ptr<P4VFStudy>> vf_;
+    std::vector<std::shared_ptr<P4VFStudy>> vf_;
     P4VFStudy *vfK_;  // shortcut for vf[K]. Must be updated whenever K changes
     int K_;           // K will be throughout the current vector field selected
 
