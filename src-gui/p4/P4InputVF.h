@@ -22,6 +22,8 @@
 
 #include "custom.h"
 
+#include <memory>
+
 #include <QObject>
 #include <QProcess>
 #include <QString>
@@ -52,12 +54,16 @@ namespace p4VFStudyRegions
 {
 struct vfRegion {
     int vfIndex;
-    int *signs;
+    std::vector<int> signs;
+    vfRegion(int i, std::vector<int> s) : vfIndex(i), signs(s) {}
+    ~vfRegion() { signs.clear(); }
 }
 
 struct curveRegion {
     int curveIndex;
-    int *signs;
+    std::vector<int> signs;
+    curveRegion(int i, std::vector<int> s) : curveIndex(i), signs(s) {}
+    ~curveRegion() { signs.clear(); }
 }
 }
 
@@ -73,22 +79,22 @@ class P4InputVF : public QObject
     int symbolicpackage_;  // 0 for reduce, 1 for maple
     int typeofstudy_;      // 0, 1, 2, 3 = all, inf, fin, one
 
-    bool *numeric_;
-    int *precision_;
-    int *precision0_;
-    QString **epsilon_;
-    bool *testsep_;
-    int *taylorlevel_;
-    int *numericlevel_;
-    int *maxlevel_;
-    int *weakness_;
-    QString **x0_;
-    QString **y0_;
-    int *p_;
-    int *q_;
+    std::vector<bool> numeric_;
+    std::vector<int> precision_;
+    std::vector<int> precision0_;
+    std::vector<QString> epsilon_;
+    std::vector<bool> testsep_;
+    std::vector<int> taylorlevel_;
+    std::vector<int> numericlevel_;
+    std::vector<int> maxlevel_;
+    std::vector<int> weakness_;
+    QString x0_;
+    QString y0_;
+    int p_;
+    int q_;
 
-    QString **xdot_;  // TODO: fer vector (tot)
-    QString **ydot_;
+    std::vector<QString> xdot_;  // TODO: fer vector (tot)
+    std::vector<QString> ydot_;
     QString **gcf_;
     QString **curve_;  // curve_ is the original, curves_ is P5
     QString **isoclines_;
@@ -103,8 +109,8 @@ class P4InputVF : public QObject
 
     /* parameters list */
     int numparams_;
-    QString parlabel_[MAXNUMPARAMS];
-    QString ***parvalue_;
+    std::vector<QString> parlabel_;
+    std::vector<std::vector<QString>> parvalue_;
 
     bool changed_;        // set when data needs to be saved
     bool evaluated_;      // set when data has been evaluated
@@ -214,16 +220,16 @@ class P4InputVF : public QObject
     int numVF_;
     int numVFRegions_;
     // TODO: are they vectors or just pointers?
-    p4VFStudyRegions::vfRegion *vfRegions;
+    std::vector<p4VFStudyRegions::vfRegion> vfRegions;
 
     int numCurves_;
     int numCurveRegions_;
-    p4VFStudyRegions::curveRegion *curveRegions;
-    int numPointsCurve_;
-    QString **curves_;
+    std::vector<p4VFStudyRegions::curveRegion> curveRegions;
+    std::vector<int> numPointsCurve_;
+    std::vector<QString> curves_;
 
     int numSelected_;
-    int *selected_;
+    std::vector<int> selected_;
 
     bool evaluatingPiecewiseConfig_;
 
