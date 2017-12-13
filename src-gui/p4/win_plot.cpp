@@ -264,7 +264,7 @@ void QPlotWnd::onLoadSignal()
             thiszoom->adjustHeight();
             thiszoom->resize(settings.value("size").toSize());
             thiszoom->move(settings.value("pos").toPoint());
-            zoomWindows_.push_back(boost::shared_ptr<QZoomWnd>(thiszoom));
+            zoomWindows_.push_back(std::shared_ptr<QZoomWnd>(thiszoom));
             settings.endGroup();
         }
     }
@@ -287,7 +287,7 @@ void QPlotWnd::signalChanged(void)
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalChanged();
-    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
     for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++)
         (*it)->signalChanged();
 }
@@ -297,7 +297,7 @@ void QPlotWnd::signalEvaluating(void)
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalEvaluating();
-    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
     for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++)
         (*it)->signalEvaluating();
 }
@@ -307,7 +307,7 @@ void QPlotWnd::signalEvaluated(void)
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
-    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
     for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++)
         (*it)->signalEvaluated();
 }
@@ -480,13 +480,13 @@ void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     newZoom->show();
     newZoom->raise();
     newZoom->adjustHeight();
-    zoomWindows_.push_back(boost::shared_ptr<QZoomWnd>(newZoom));
+    zoomWindows_.push_back(std::shared_ptr<QZoomWnd>(newZoom));
     numZooms_++;
 }
 
 void QPlotWnd::closeZoomWindow(int id)
 {
-    std::vector<boost::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
     for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++) {
         if ((*it)->zoomid_ == id) {
             zoomWindows_.erase(it);

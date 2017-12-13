@@ -22,7 +22,7 @@
 
 #include <QMainWindow>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class QCurveDlg;
 class QGcfDlg;
@@ -82,7 +82,7 @@ class QPlotWnd : public QMainWindow
 
     int numZooms_;
     int lastZoomIdentifier_;
-    std::vector<boost::shared_ptr<QZoomWnd>> zoomWindows_;
+    std::vector<std::shared_ptr<QZoomWnd>> zoomWindows_;
 
     bool flagAllSepsPlotted_;
 
