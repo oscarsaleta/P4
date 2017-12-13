@@ -19,6 +19,9 @@
 
 #include "P4InputVF.h"
 
+#include <QFile>
+#include <QTextStream>
+
 P4InputVF *g_ThisVF = nullptr;
 
 /*
@@ -197,23 +200,23 @@ void P4InputVF::reset(int n)
     }
 
     parvalue_.clear();
-    parvalue_.swap(std::vector < std::vector<QString>());
+    parvalue_.swap(std::vector<std::vector<QString>>());
 
     curves_.clear();
-    g_VFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
+    g_VFResults.resetCurveInfo(); // TODO: mirar si he de canviar alguna cosa
     numCurves_ = 0;
 
     numPointsCurve_.clear();
 
     if (n > 0) {
-        parvalue_ = (QString ***)malloc(sizeof(QString **) * n);
-        for (i = 0; i < n; i++)
-            parvalue_[i] = makeNewQStringList(MAXNUMPARAMS, "");
-    } else
-        parvalue_ = nullptr;
+        for (i = 0; i < n; i++) {
+            parvalue_.push_back(std::vector<QString>());
+        }
+    }
 
     numparams_ = 0;
-    for (i = 0; i < MAXNUMPARAMS; i++) parlabel_[i] = "";
+    for (i = 0; i < MAXNUMPARAMS; i++)
+        parlabel_[i] = "";
 
     changed_ = false;
     evaluated_ = false;
@@ -254,7 +257,7 @@ bool P4InputVF::load()
     QString fname;
     char scanbuf[2560];
     int i, k, c;
-    int flag_numeric, flag_testsep;
+    int flag_numeric, flag_testsep, aux;
 
     fname = getfilename();
     if (fname.length() == 0)
@@ -269,13 +272,11 @@ bool P4InputVF::load()
     fscanf(fp, "%[^\n]\n", scanbuf);
     if (strcmp(scanbuf, "P5")) {
         // compatibility mode
-
         reset(1);
-        fclose(fp);
 
+        fclose(fp);
         fp = fopen(QFile::encodeName(fname), "rt");
 
-        int aux;
         if (fscanf(fp, "%d\n", &typeofstudy_) != 1 ||
             fscanf(fp, "%d\n", &flag_numeric) != 1 ||
             fscanf(fp, "%d\n", &aux) != 1 ||
@@ -390,7 +391,7 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            parlabel_.push_back(QString(scanbuf));
+            parlabel_[i] = scanbuf;
             while ((c = fgetc(fp)) == '\n')
                 ;
             ungetc(c, fp);
@@ -399,11 +400,11 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            *(parvalue_[0][i]) = scanbuf;
+            parvalue_[0].push_back(QString(scanbuf));
         }
-        for (; i < MAXNUMPARAMS; i++) {
-            parlabel_[i] = "";
-            *(parvalue_[0][i]) = "";
+        for (i = numparams_; i < MAXNUMPARAMS; i++) {
+            parlabel_[i] = QString();
+            parvalue_[0][i].push_back(QString());
         }
     } else {
         QString _x0;
@@ -447,18 +448,13 @@ bool P4InputVF::load()
             }
         }
 
-        if (fscanf(fp, "%d\n", &n) != 1) {
+        if (fscanf(fp, "%d\n", &n) != 1 || n <= 0) {
             reset(1);
             fclose(fp);
             return false;
         }
-        if (n <= 0) {
-            reset(1);
-            fclose(fp);
-            return false;
-        }
+
         reset(n);
-        numVF_ = n;
         x0_ = _x0;
         y0_ = _y0;
         p_ = _p;
@@ -467,45 +463,31 @@ bool P4InputVF::load()
 
         g_VFResults.resetCurveInfo();
 
-        if (fscanf(fp, "%d\n", &numCurves_) != 1) {
-            reset(1);
-            fclose(fp);
-            return false;
-        }
-        if (numCurves_ < 0) {
-            numCurves_ = 0;
+        if (fscanf(fp, "%d\n", &numCurves_) != 1 || numCurves_ < 0) {
             reset(1);
             fclose(fp);
             return false;
         }
 
         if (numCurves_ > 0) {
-            curves_ = (QString **)malloc(sizeof(QString *) * numCurves_);
-            numPointsCurve_ = (int *)malloc(sizeof(int) * numCurves_);
-            for (k = 0; k < numCurves_; k++) {
-                curves_[k] = new QString("");
-                numPointsCurve_[k] = DEFAULT_CURVEPOINTS;
-            }
+            int npoints;
             for (k = 0; k < numCurves_; k++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
-                    fscanf(fp, "%d\n", numPointsCurve_ + k) != 1) {
+                    fscanf(fp, "%d\n", &npoints) != 1) {
                     reset(1);
                     fclose(fp);
                     return false;
                 }
-                *(curves_[k]) = scanbuf;
+                curves_.push_back(QString(scanbuf));
+                numPointsCurve_.push_back(npoints);
             }
         } else {
-            curves_ = nullptr;
-            numPointsCurve_ = nullptr;
+            curves_.clear();
+            numPointsCurve_.clear();
         }
 
-        if (fscanf(fp, "%d\n", &numparams_) != 1) {
-            reset(1);
-            fclose(fp);
-            return false;
-        }
-        if (numparams_ < 0 || numparams_ > MAXNUMPARAMS) {
+        if (fscanf(fp, "%d\n", &numparams_) != 1 || numparams_ < 0 ||
+            numparams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
@@ -518,13 +500,15 @@ bool P4InputVF::load()
             }
             parlabel_[i] = scanbuf;
         }
-        for (; i < MAXNUMPARAMS; i++) parlabel_[i] = "";
+        for (i = numparams_; i < MAXNUMPARAMS; i++)
+            parlabel_[i] = QString();
 
         if (fscanf(fp, "%d\n", &numVFRegions_) != 1 || numVFRegions_ < 0) {
             reset(1);
             fclose(fp);
             return false;
         }
+        vfRegions_.clear();
         for (i = 0; i < numVFRegions_; i++) {
             // read index
             int indx;
@@ -555,6 +539,7 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
+        curveRegions_.clear();
         for (i = 0; i < numCurveRegions_; i++) {
             // read index
             int indx;
@@ -568,12 +553,11 @@ bool P4InputVF::load()
             std::vector<int> sgns;
             int aux;
             for (k = 0; k < numCurves_; k++) {
-                if (fscanf(fp, "%d", &aux) != 1 || aux > 1 || aux < -1))
-                    {
-                        reset(1);
-                        fclose(fp);
-                        return false;
-                    }
+                if (fscanf(fp, "%d", &aux) != 1 || aux > 1 || aux < -1) {
+                    reset(1);
+                    fclose(fp);
+                    return false;
+                }
                 sgns.push_back(aux);
             }
             // sgns could be an empty list
@@ -582,49 +566,78 @@ bool P4InputVF::load()
         }
 
         for (k = 0; k < numVF_; k++) {
-            if (fscanf(fp, "%d\n", flag_numeric) != 1 ||
-                fscanf(fp, "%d\n", precision_ + k) != 1 ||
+            if (fscanf(fp, "%d\n", &flag_numeric) != 1 ||
+                fscanf(fp, "%d\n", &aux) != 1 ||
                 fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
-                fscanf(fp, "%d\n", flag_testsep) != 1 ||
-                fscanf(fp, "%d\n", taylorlevel_ + k) != 1 ||
-                fscanf(fp, "%d\n", numericlevel_ + k) != 1 ||
-                fscanf(fp, "%d\n", maxlevel_ + k) != 1 ||
-                fscanf(fp, "%d\n", weakness_ + k) != 1) {
+                fscanf(fp, "%d\n", &flag_testsep) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
+            } else {
+                bool value;
+                value = ((flag_numeric == 0) ? false : true);
+                numeric_.push_back(value);
+                precision_.push_back(aux);
+                epsilon_.push_back(QString(scanbuf));
+                value = ((flag_testsep == 0) ? false : true);
+                testsep_.push_back(value);
             }
-            *(epsilon_[k]) = scanbuf;
-            numeric_[k] = ((flag_numeric == 0) ? false : true);
-            testsep_[k] = ((flag_testsep == 0) ? false : true);
+            if (fscanf(fp, "%d\n", &aux) != 1) {
+                reset(1);
+                fclose(fp);
+                return false;
+            } else {
+                taylorlevel_.push_back(aux);
+            }
+            if (fscanf(fp, "%d\n", &aux) != 1) {
+                reset(1);
+                fclose(fp);
+                return false;
+            } else {
+                numericlevel_.push_back(aux);
+            }
+            if (fscanf(fp, "%d\n", &aux) != 1) {
+                reset(1);
+                fclose(fp);
+                return false;
+            } else {
+                maxlevel_.push_back(aux);
+            }
+            if (fscanf(fp, "%d\n", &aux) != 1) {
+                reset(1);
+                fclose(fp);
+                return false;
+            } else {
+                weakness_.push_back(aux);
+            }
 
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            *(xdot_[k]) = scanbuf;
+            xdot_.push_back(QString(scanbuf));
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            *(ydot_[k]) = scanbuf;
+            ydot_.push_back(QString(scanbuf));
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            *(gcf_[k]) = scanbuf;
+            gcf_.push_back(QString(scanbuf));
 
-            if (*(xdot_[k]) == "(null)")
-                *(xdot_[k]) = "";
-            if (*(ydot_[k]) == "(null)")
-                *(ydot_[k]) = "";
-            if (*(gcf_[k]) == "(null)")
-                *(gcf_[k]) = "";
-            if (*(epsilon_[k]) == "(null)")
-                *(epsilon_[k]) = "";
+            if (xdot_[k] == "(null)")
+                xdot_[k] = "";
+            if (ydot_[k] == "(null)")
+                ydot_[k] = "";
+            if (gcf_[k] == "(null)")
+                gcf_[k] = "";
+            if (epsilon_[k] == "(null)")
+                epsilon_[k] = "";
 
             for (i = 0; i < numparams_; i++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
@@ -632,9 +645,10 @@ bool P4InputVF::load()
                     fclose(fp);
                     return false;
                 }
-                *(parvalue_[k][i]) = scanbuf;
+                parvalue_[k].push_back(QString(scanbuf));
             }
-            for (; i < MAXNUMPARAMS; i++) *(parvalue_[k][i]) = "";
+            for (i = numparams_; i < MAXNUMPARAMS; i++)
+                parvalue_[k].push_back(QString());
         }
     }
 
@@ -679,7 +693,7 @@ bool P4InputVF::checkevaluated()
     if (dtvec.secsTo(dt) > 0 || dtvec.daysTo(dt) > 0)
         return false;
 
-    if (typeofstudy != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != TYPEOFSTUDY_INF) {
         fifin = new QFileInfo(getbarefilename() + "_fin.tab");
         if (fifin->isFile() == false) {
             delete fifin;
@@ -693,7 +707,7 @@ bool P4InputVF::checkevaluated()
             return false;
     }
 
-    if (typeofstudy == TYPEOFSTUDY_INF || typeofstudy == TYPEOFSTUDY_ALL) {
+    if (typeofstudy_ == TYPEOFSTUDY_INF || typeofstudy_ == TYPEOFSTUDY_ALL) {
         fiinf = new QFileInfo(getbarefilename() + "_inf.tab");
         if (fiinf->isFile() == false) {
             delete fiinf;
@@ -732,125 +746,108 @@ bool P4InputVF::checkevaluated()
 // -----------------------------------------------------------------------
 bool P4InputVF::save()
 {
+    int i, k;
+
     QSettings settings(getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
     settings.clear();
     emit saveSignal();
 
-    FILE *fp;
-    int k, i;
-    QString fname;
-    QByteArray s;
-    fname = getfilename();
-    if (fname.length() == 0)
+    QString fname = getfilename();
+    if (fname.isEmpty())
         return false;
+    QFile file(QFile::encodeName(getfilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    fp = fopen(QFile::encodeName(fname), "wt");
-    if (fp == nullptr)
-        return false;
-
-    fprintf(fp, "P5\n");
-
-    fprintf(fp, "%d\n", typeofstudy_);
-    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
-        if (x0_.length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        s = x0_.toAscii();
-        fprintf(fp, "%s\n", (const char *)s);
-        if (y0_.length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        s = y0_.toAscii();
-        fprintf(fp, "%s\n", (const char *)s);
-    } else {
-        fprintf(fp, "%d\n", p_);
-        fprintf(fp, "%d\n", q_);
-    }
-    fprintf(fp, "%d\n", numVF_);
-    fprintf(fp, "%d\n", numCurves_);
-    for (k = 0; k < numCurves_; k++) {
-        if (curves_[k]->length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        else {
-            s = curves_[k]->toAscii();
-            fprintf(fp, "%s\n", (const char *)s);
-        }
-        fprintf(fp, "%d\n", numPointsCurve_[k]);
-    }
-
-    fprintf(fp, "%d\n", numparams_);
-    for (i = 0; i < numparams_; i++) {
-        if (parlabel_[i].length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        else {
-            s = parlabel_[i].toAscii();
-            fprintf(fp, "%s\n", (const char *)s);
-        }
-    }
-
-    fprintf(fp, "%d\n", numVFRegions_);
-    for (i = 0; i < numVFRegions_; i++) {
-        fprintf(fp, "%d", vfRegions_[i].vfIndex);
-        for (k = 0; k < numCurves_; k++)
-            fprintf(fp, " %d", vfRegions_[i].signs[k]);
-        fprintf(fp, "\n");
-    }
-
-    fprintf(fp, "%d\n", numCurveRegions_);
-    for (i = 0; i < numCurveRegions_; i++) {
-        fprintf(fp, "%d", curveregions[i].curveIndex);
-        for (k = 0; k < numCurves_; k++)
-            fprintf(fp, " %d", curveregions[i].signs[k]);
-        fprintf(fp, "\n");
-    }
-
-    for (k = 0; k < numVF_; k++) {
-        fprintf(fp, "%d\n", numeric_[k]);
-        fprintf(fp, "%d\n", precision_[k]);
-        if (epsilon_[k]->length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        else {
-            s = epsilon_[k]->toAscii();
-            fprintf(fp, "%s\n", (const char *)s);
+        out << "P5\n";
+        out << typeofstudy_ << "\n";
+        if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+            if (x0_.isEmpty())
+                out << "(null)\n";
+            else
+                out << x0_ << "\n";
+            if (y0_.isEmpty())
+                out << "(null)\n";
+            else
+                out << y0_ << "\n";
+        } else {
+            out << p_ << "\n";
+            out << q_ << "\n";
         }
 
-        fprintf(fp, "%d\n", testsep_[k]);
-        fprintf(fp, "%d\n", taylorlevel_[k]);
-        fprintf(fp, "%d\n", numericlevel_[k]);
-        fprintf(fp, "%d\n", maxlevel_[k]);
-        fprintf(fp, "%d\n", weakness_[k]);
-        if (xdot_[k]->length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        else {
-            s = xdot_[k]->toAscii();
-            fprintf(fp, "%s\n", (const char *)s);
+        out << numVF_ << "\n";
+        out << numCurves_ << "\n";
+        for (i = 0; i < numCurves_; i++) {
+            if (curves_[i].isEmpty())
+                out << "(null)\n";
+            else
+                out << curves_[i] << "\n";
+            out << numPointsCurve_[i] << "\n";
         }
 
-        if (ydot_[k]->length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        else {
-            s = ydot_[k]->toAscii();
-            fprintf(fp, "%s\n", (const char *)s);
-        }
-
-        if (gcf_[k]->length() == 0)
-            fprintf(fp, "%s\n", "(null)");
-        else {
-            s = gcf_[k]->toAscii();
-            fprintf(fp, "%s\n", (const char *)s);
-        }
-
+        out << numparams_ << "\n";
         for (i = 0; i < numparams_; i++) {
-            if (parvalue_[k][i]->length() == 0)
-                fprintf(fp, "%s\n", "(null)");
-            else {
-                s = parvalue_[k][i]->toAscii();
-                fprintf(fp, "%s\n", (const char *)s);
+            if (parlabel_[i].isEmpty())
+                out << "(null)\n";
+            else
+                out << parlabel_[i] << "\n";
+        }
+
+        out << numVFRegions_ << "\n";
+        for (i = 0; i < numVFRegions_; i++) {
+            out << vfRegions_[i].vfIndex;
+            for (k = 0; k < numCurves_; k++)
+                out << vfRegions_[i].signs[k];
+            out << "\n";
+        }
+
+        out << numCurveRegions_ << "\n";
+        for (i = 0; i < numCurveRegions_; i++) {
+            out << curveRegions_[i].curveIndex;
+            for (k = 0; k < numCurves_; k++)
+                out << curveRegions_[i].signs[k];
+            out << "\n";
+        }
+
+        for (i = 0; i < numVF_; i++) {
+            out << numeric_[i] << "\n";
+            out << precision_[i] << "\n";
+            if (epsilon_[i].isEmpty())
+                out << "(null)\n";
+            else
+                out << epsilon_[i] << "\n";
+            out << testsep_[i] << "\n";
+            out << taylorlevel_[i] << "\n";
+            out << numericlevel_[i] << "\n";
+            out << maxlevel_[i] << "\n";
+            out << weakness_[i] << "\n";
+            if (xdot_[i].isEmpty())
+                out << "(null)\n";
+            else
+                out << xdot_[i] << "\n";
+            if (ydot_[i].isEmpty())
+                out << "(null)\n";
+            else
+                out << ydot_[i] << "\n";
+            if (gcf_[i].isEmpty())
+                out << "(null)\n";
+            else
+                out << gcf_[i] << "\n";
+
+            for (k = 0; k < numparams_; k++) {
+                if (parvalue_[i][k].isEmpty())
+                    out << "(null)\n";
+                else
+                    out << parvalue_[i][k] << "\n";
             }
         }
+        out.flush();
+        file.close();
+        changed_ = false;
+        return true;
     }
-    fclose(fp);
-    changed_ = false;
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -994,7 +991,7 @@ QString P4InputVF::getPrepareIsoclinesFileName() const
 // -----------------------------------------------------------------------
 bool P4InputVF::fileExists(QString fname)
 {
-    QFile fp(fname);
+    QFile fp(QFile::encodeName(fname));
     if (fp.exists())
         return true;
     else
@@ -1002,212 +999,113 @@ bool P4InputVF::fileExists(QString fname)
 }
 
 // -----------------------------------------------------------------------
-//          P4InputVF::prepareReduceParameters
-// -----------------------------------------------------------------------
-/*void P4InputVF::prepareReduceParameters(QTextStream *fp)
-{
-    QString s;
-    int _testsep = (testsep == 0) ? 1 : 0; // inverse meaning in reduce???
-
-    s.sprintf("numeric:=%d$\n", numeric_);
-    *fp << s;
-    s.sprintf("user_precision:=%d$\n", precision);
-    *fp << s;
-    *fp << "epsilon:=" << epsilon_ << "$\n";
-    s.sprintf("test_sep:=%d$\n", _testsep);
-    *fp << s;
-    s.sprintf("taylor_level:=%d$\n", taylorlevel_);
-    *fp << s;
-    s.sprintf("numeric_level:=%d$\n", numericlevel_);
-    *fp << s;
-    s.sprintf("max_level:=%d$\n", maxlevel_);
-    *fp << s;
-    s.sprintf("weakness_level:=%d$\n", weakness);
-    *fp << s;
-
-    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
-        s.sprintf("p:=1$\nq:=1$\n");
-        *fp << s;
-        *fp << "x0:=" << x0_ << "$\n";
-        *fp << "y0:=" << y0_ << "$\n";
-        s.sprintf("x_min:=x0+(%f)$\n", (float)(X_MIN));
-        *fp << s;
-        s.sprintf("x_max:=x0+(%f)$\n", (float)(X_MAX));
-        *fp << s;
-        s.sprintf("y_min:=y0+(%f)$\n", (float)(Y_MIN));
-        *fp << s;
-        s.sprintf("y_max:=y0+(%f)$\n", (float)(Y_MAX));
-        *fp << s;
-    } else {
-        s.sprintf("p:=%d$\n", p);
-        *fp << s;
-        s.sprintf("q:=%d$\n", q);
-        *fp << s;
-    }
-}*/
-
-// -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleParameters
 // -----------------------------------------------------------------------
 
-void P4InputVF::prepareMapleParameters(QTextStream *fp)
+void P4InputVF::prepareMapleParameters(QTextStream &fp)
 {
     QString s;
     int i;
 
-    *fp << "user_numeric_pieces := [ ";
+    fp << "user_numeric_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << booleanString(numeric_[i]);
+        fp << booleanString(numeric_[i]);
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "epsilon_pieces := [ ";
+    fp << "epsilon_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << (*(epsilon_[i]));
+        fp << epsilon_[i];
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "test_sep_pieces := [ ";
+    fp << "test_sep_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << booleanString(testsep_[i]);
+        fp << booleanString(testsep_[i]);
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "user_precision_pieces := [ ";
+    fp << "user_precision_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << precision_[i];
+        fp << precision_[i];
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "taylor_level_pieces := [ ";
+    fp << "taylor_level_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << taylorlevel_[i];
+        fp << taylorlevel_[i];
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "numeric_level_pieces := [ ";
+    fp << "numeric_level_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << numericlevel_[i];
+        fp << numericlevel_[i];
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "max_level_pieces := [ ";
+    fp << "max_level_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << maxlevel_[i];
+        fp << maxlevel_[i];
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "weakness_level_pieces := [ ";
+    fp << "weakness_level_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        *fp << weakness_[i];
+        fp << weakness_[i];
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
     if (typeofstudy == TYPEOFSTUDY_ONE) {
-        *fp << "user_p := 1:\n";
-        *fp << "user_q := 1:\n";
+        fp << "user_p := 1:\n";
+        fp << "user_q := 1:\n";
 
-        s = x0.toAscii();
-        *fp << "x0 := " << x0_ << ":\n";
-        *fp << "y0 := " << y0_ << ":\n";
+        s = x0.toUtf8();
+        fp << "x0 := " << x0_ << ":\n";
+        fp << "y0 := " << y0_ << ":\n";
         s.sprintf("x_min := x0+(%f):\n", (float)(X_MIN));
-        *fp << s;
+        fp << s;
         s.sprintf("x_max := x0+(%f):\n", (float)(X_MAX));
-        *fp << s;
+        fp << s;
         s.sprintf("y_min := y0+(%f):\n", (float)(Y_MIN));
-        *fp << s;
+        fp << s;
         s.sprintf("y_max := y0+(%f):\n", (float)(Y_MAX));
-        *fp << s;
+        fp << s;
     } else {
         s.sprintf("user_p := %d:\n", p_);
-        *fp << s;
+        fp << s;
         s.sprintf("user_q := %d:\n", q_);
-        *fp << s;
+        fp << s;
     }
 }
-
-// -----------------------------------------------------------------------
-//          P4InputVF::prepareReduceCurves
-// -----------------------------------------------------------------------
-/*P5
-void P4InputVF::prepareReduceCurves( QTextStream * fp )
-{
-}
-*/
-
-// -----------------------------------------------------------------------
-//          P4InputVF::prepareReduceVectorField
-// -----------------------------------------------------------------------
-/*P5
-void P4InputVF::prepareReduceVectorField( QTextStream * fp )
-{
-    QString myxdot;
-    QString myydot;
-    QString mygcf;
-    QString lbl;
-    QString val;
-    int k;
-
-    myxdot = ConvertReduceUserParameterLabels( xdot );
-    myydot = ConvertReduceUserParameterLabels( ydot );
-    mygcf = ConvertReduceUserParameterLabels( gcf );
-
-    *fp << "f:={" << myxdot << "," << myydot << "}$\n";
-    *fp << "gcf:=" << mygcf << "$\n";
-
-    for( k = 0; k < numparams; k++ )
-    {
-        lbl = ConvertReduceUserParameterLabels( parlabel_[k] );
-        val = ConvertReduceUserParameterLabels( parvalue_[k] );
-
-        if( lbl.length() == 0 )
-            continue;
-
-        *fp << lbl << ":=" << val << "$\n";
-    }
-}
-*/
-
-// -----------------------------------------------------------------------
-//          P4InputVF::prepareReducePiecewiseConfig
-// -----------------------------------------------------------------------
-/*P5
-void P4InputVF::prepareReducePiecewiseConfig( QTextStream * fp )
-{
-
-    ???
-
-}
-*/
 
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleVectorField
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleVectorField(QTextStream *fp)
+void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 {
     QString myxdot;
     QString myydot;
@@ -1216,39 +1114,38 @@ void P4InputVF::prepareMapleVectorField(QTextStream *fp)
     QString val;
     int k, i;
 
-    *fp << "user_f_pieces := [ ";
+    fp << "user_f_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        myxdot =
-            convertMapleUserParameterLabels(*(xdot_[i]));  // TODO: corregir
+        myxdot = convertMapleUserParameterLabels(*(xdot_[i])); // FIXME
         myydot = convertMapleUserParameterLabels(*(ydot_[i]));
-        *fp << "[" << myxdot << "," << myydot << "]";
+        fp << "[" << myxdot << "," << myydot << "]";
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "user_gcf_pieces := [ ";
+    fp << "user_gcf_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
         mygcf = convertMapleUserParameterLabels(*(gcf_[i]));
-        *fp << mygcf;
+        fp << mygcf;
         if (i == numVF_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
 
-    *fp << "user_parameters := [ ";
+    fp << "user_parameters := [ ";
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-        *fp << lbl;
+        fp << lbl;
         if (k == numparams_ - 1)
-            *fp << " ]:\n";
+            fp << " ]:\n";
         else
-            *fp << ", ";
+            fp << ", ";
     }
     if (numparams_ == 0)
-        *fp << " ]:\n";
+        fp << " ]:\n";
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
@@ -1256,18 +1153,18 @@ void P4InputVF::prepareMapleVectorField(QTextStream *fp)
         if (lbl.length() == 0)
             continue;
 
-        *fp << lbl << "_pieces := [ ";
+        fp << lbl << "_pieces := [ ";
 
         for (i = 0; i < numVF_; i++) {
-            val = convertMapleUserParameterLabels(*(parvalue_[i][k]));
+            val = convertMapleUserParameterLabels(*(parvalue_[i][k])); // FIXME
             if (!numeric_[i])
-                *fp << val;
+                fp << val;
             else
-                *fp << "evalf(" << val << ")";
+                fp << "evalf(" << val << ")";
             if (i == numVF_ - 1)
-                *fp << " ]:\n";
+                fp << " ]:\n";
             else
-                *fp << ", ";
+                fp << ", ";
         }
     }
 }
@@ -1275,41 +1172,41 @@ void P4InputVF::prepareMapleVectorField(QTextStream *fp)
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleCurves (P5 version)
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleCurves(QTextStream *fp)
+void P4InputVF::prepareMapleCurves(QTextStream &fp)
 {
     int i;
     QString s;
 
-    *fp << "user_curves := [ ";
+    fp << "user_curves := [ ";
     if (numCurves_ > 0)
         for (i = 0; i < numCurves_; i++) {
             s = convertMapleUserParameterLabels(*(curves_[i]));
-            *fp << s;
+            fp << s;
             if (i == numCurves_ - 1)
-                *fp << " ]:\n";
+                fp << " ]:\n";
             else
-                *fp << ", ";
+                fp << ", ";
         }
     else
-        *fp << "]:\n";
+        fp << "]:\n";
 
-    *fp << "user_numpointscurves :=[ ";
+    fp << "user_numpointscurves :=[ ";
     if (numCurves_ > 0)
         for (i = 0; i < numCurves_; i++) {
-            *fp << numPointsCurve_[i];
+            fp << numPointsCurve_[i];
             if (i == numCurves_ - 1)
-                *fp << " ]:\n";
+                fp << " ]:\n";
             else
-                *fp << ", ";
+                fp << ", ";
         }
     else
-        *fp << "]:\n";
+        fp << "]:\n";
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleCurve (P4 version)
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleCurve(QTextStream *fp)
+void P4InputVF::prepareMapleCurve(QTextStream &fp) // FIXME
 {
     QString mycurve;
     QString lbl;
@@ -1317,7 +1214,7 @@ void P4InputVF::prepareMapleCurve(QTextStream *fp)
     int k;
 
     mycurve = convertMapleUserParameterLabels(curve_);
-    *fp << "user_curve := " << mycurve << ":\n";
+    fp << "user_curve := " << mycurve << ":\n";
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
@@ -1327,9 +1224,9 @@ void P4InputVF::prepareMapleCurve(QTextStream *fp)
             continue;
 
         if (!numeric_) {
-            *fp << lbl << " := " << val << ":\n";
+            fp << lbl << " := " << val << ":\n";
         } else {
-            *fp << lbl << " := evalf( " << val << " ):\n";
+            fp << lbl << " := evalf( " << val << " ):\n";
         }
     }
 }
@@ -1337,7 +1234,7 @@ void P4InputVF::prepareMapleCurve(QTextStream *fp)
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleisoclines
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleIsoclines(QTextStream *fp)
+void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
     QString myisoclines;
     QString lbl;
@@ -1345,7 +1242,7 @@ void P4InputVF::prepareMapleIsoclines(QTextStream *fp)
     int k;
 
     myisoclines = convertMapleUserParameterLabels(isoclines_);
-    *fp << "user_isoclines := " << myisoclines << ":\n";
+    fp << "user_isoclines := " << myisoclines << ":\n";
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
@@ -1355,9 +1252,9 @@ void P4InputVF::prepareMapleIsoclines(QTextStream *fp)
             continue;
 
         if (!numeric_) {
-            *fp << lbl << " := " << val << ":\n";
+            fp << lbl << " := " << val << ":\n";
         } else {
-            *fp << lbl << " := evalf( " << val << " ):\n";
+            fp << lbl << " := evalf( " << val << " ):\n";
         }
     }
 }
@@ -1366,43 +1263,43 @@ void P4InputVF::prepareMapleIsoclines(QTextStream *fp)
 //          P4InputVF::prepareMaplePiecewiseConfig
 // -----------------------------------------------------------------------
 
-void P4InputVF::prepareMaplePiecewiseConfig(QTextStream *fp)
+void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
 {
     int i, k;
 
-    *fp << "vfregions := [ ";
+    fp << "vfregions := [ ";
     if (numVFRegions_ == 0)
-        *fp << "]:\n";
+        fp << "]:\n";
     else {
         for (i = 0; i < numVFRegions_; i++) {
-            *fp << "[" << vfregions[i].vfindex << ", [ ";
+            fp << "[" << vfregions[i].vfindex << ", [ ";
             for (k = 0; k < numCurves_; k++) {
-                *fp << vfregions[i].signs[k];
+                fp << vfregions[i].signs[k];
                 if (k < numCurves_ - 1)
-                    *fp << ",";
+                    fp << ",";
             }
             if (i == numVFRegions_ - 1)
-                *fp << "] ] ]:\n";
+                fp << "] ] ]:\n";
             else
-                *fp << "] ],\n    ";
+                fp << "] ],\n    ";
         }
     }
 
-    *fp << "curveregions := [ ";
+    fp << "curveregions := [ ";
     if (numCurveRegions_ == 0)
-        *fp << "]:\n";
+        fp << "]:\n";
     else {
         for (i = 0; i < numCurveRegions_; i++) {
-            *fp << "[" << curveRegions_[i].curveindex << ", [ ";
+            fp << "[" << curveRegions_[i].curveindex << ", [ ";
             for (k = 0; k < numCurves_; k++) {
-                *fp << curveRegions_[i].signs[k];
+                fp << curveRegions_[i].signs[k];
                 if (k < numCurves_ - 1)
-                    *fp << ",";
+                    fp << ",";
             }
             if (i == numCurveRegions_ - 1)
-                *fp << "] ] ]:\n";
+                fp << "] ] ]:\n";
             else
-                *fp << "] ],\n    ";
+                fp << "] ],\n    ";
         }
     }
 }
@@ -1423,20 +1320,20 @@ static int indexOfWordInString(const QString *src, const QString *word,
         // we have found word as a substring.  The index i is an index from the
         // very beginning of string (not depending of start)
 
-        start = i + 1;  // do not find this substring next loop
+        start = i + 1; // do not find this substring next loop
 
         // check if the substring is the beginning of a word:
         j = i;
         if (j > 0)
             if ((*src)[j - 1].isLetter() || (*src)[j - 1] == '_' ||
                 (*src)[j - 1].isDigit())
-                continue;  // no: it is part of a bigger word, so continue...
+                continue; // no: it is part of a bigger word, so continue...
 
         // check if the substring is the end of a word;
         j = i + word->length();
         if (j < src->length())
             if ((*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit())
-                continue;  // no: it is part of a bigger word, so continue...
+                continue; // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
         break;
@@ -1505,40 +1402,6 @@ QString P4InputVF::convertMapleUserParametersLabelsToValues(QString src)
     return s;
 }
 
-    // -----------------------------------------------------------------------
-    //          P4InputVF::convertReduceUserParameterLabels
-    // -----------------------------------------------------------------------
-    /*QString P4InputVF::convertReduceUserParameterLabels(QString src)
-    {
-        QString s;
-        QString t;
-        QString p, newlabel;
-        int i, k;
-
-        s = src;
-        for (k = 0; k < numparams_; k++) {
-            p = parlabel_[k];
-            newlabel = p + "_";
-
-            if (p.length() == 0)
-                continue;
-
-            t = "";
-            while (1) {
-                i = indexOfWordInString(&s, &p);
-                if (i == -1)
-                    break;
-
-                t += s.left(i);
-                t += newlabel;
-                s = s.mid(i + p.length());
-            }
-            s = t + s;
-        }
-
-        return s;
-    }*/
-
 #ifdef Q_OS_WIN
 extern QByteArray Win_GetShortPathName(QByteArray f);
 #endif
@@ -1582,7 +1445,7 @@ QByteArray maplepathformat(const QString fname)
 //          P4InputVF::prepareFile
 // -----------------------------------------------------------------------
 
-void P4InputVF::prepareFile(QTextStream *fp, bool prepareforcurves)
+void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
 {
     QString bsaveall;
     QString name_vectab;
@@ -1620,51 +1483,6 @@ void P4InputVF::prepareFile(QTextStream *fp, bool prepareforcurves)
 
     user_exeprefix = "";
 
-    /*if( symbolicpackage == PACKAGE_REDUCE )
-    {
-        bsaveall = booleanString( action_SaveAll );
-        mainreduce = getP4ReducePath();
-        mainreduce += "/";
-        mainreduce += MAINREDUCEFILE;
-
-        name_vectab = getfilename_vectable();
-        name_fintab = getfilename_fintable();
-        name_inftab = getfilename_inftable();
-        name_finres = getfilename_finresults();
-        name_infres = getfilename_infresults();
-        name_curves = getfilename_curveresults();
-
-        if( prepareforcurves )
-            RemoveFile( name_curves );
-        else
-        {
-            RemoveFile( name_vectab );
-            RemoveFile( name_fintab );
-            RemoveFile( name_inftab );
-            RemoveFile( name_infres );
-            RemoveFile( name_finres );
-        }
-
-        s.sprintf( "all_crit_points:=%d$\n", typeofstudy );
-        s += "save_all:=" + bsaveall + "$\n";
-        s += "vec_table:=\"" + name_vectab + "\"$\n";
-        s += "finite_table:=\"" + name_fintab + "\"$\n";
-        s += "finite_res:=\"" + name_finres + "\"$\n";
-        s += "infinite_table:=\"" + name_inftab + "\"$\n";
-        s += "infinite_res:=\"" + name_infres + "\"$\n";
-
-        *fp << s;
-
-        PrepareReduceVectorField( fp );
-        PrepareReduceParameters( fp );
-        PrepareReduceCurves( fp );
-        PrepareReducePiecewiseConfig( fp );
-
-        s = "in \"" + mainreduce + "\"$\n";
-        *fp << s;
-    }
-    else
-    {*/
     mainmaple = getP4MaplePath();
     user_bindir = getP4BinPath();
     user_tmpdir = getP4TempPath();
@@ -1708,19 +1526,19 @@ void P4InputVF::prepareFile(QTextStream *fp, bool prepareforcurves)
 
     user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
 
-    *fp << "restart;\n";
-    *fp << "read( \"" << ba_mainmaple << "\" );\n";
-    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
-    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
-    *fp << "user_lypexe := \"" << user_lypexe << "\":\n";
-    *fp << "user_lypexe_mpf := \"" << user_lypexe_mpf << "\":\n";
-    *fp << "user_sepexe := \"" << user_sepexe << "\":\n";
-    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
-    *fp << "user_platform := \"" << user_platform << "\":\n";
-    *fp << "user_sumtablepath := \"" << ba_user_sumtablepath << "\":\n";
-    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
-    *fp << "user_simplify := " << user_simplify << ":\n";
-    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    fp << "restart;\n";
+    fp << "read( \"" << ba_mainmaple << "\" );\n";
+    fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    fp << "user_lypexe := \"" << user_lypexe << "\":\n";
+    fp << "user_lypexe_mpf := \"" << user_lypexe_mpf << "\":\n";
+    fp << "user_sepexe := \"" << user_sepexe << "\":\n";
+    fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    fp << "user_platform := \"" << user_platform << "\":\n";
+    fp << "user_sumtablepath := \"" << ba_user_sumtablepath << "\":\n";
+    fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    fp << "user_simplify := " << user_simplify << ":\n";
+    fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
 
     bsaveall = booleanString(action_SaveAll);
 
@@ -1748,15 +1566,15 @@ void P4InputVF::prepareFile(QTextStream *fp, bool prepareforcurves)
     ba_name_infres = maplepathformat(name_infres);
     ba_name_curves = maplepathformat(name_curves);
 
-    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
-    *fp << "save_all := " << bsaveall << ":\n";
+    fp << "all_crit_points := " << typeofstudy_ << ":\n";
+    fp << "save_all := " << bsaveall << ":\n";
 
-    *fp << "vec_table := \"" << ba_name_vectab << "\":\n";
-    *fp << "finite_table := \"" << ba_name_fintab << "\":\n";
-    *fp << "finite_res := \"" << ba_name_finres << "\":\n";
-    *fp << "infinite_table := \"" << ba_name_inftab << "\":\n";
-    *fp << "infinite_res := \"" << ba_name_infres << "\":\n";
-    *fp << "user_curvesfile := \"" << ba_name_curves << "\":\n";
+    fp << "vec_table := \"" << ba_name_vectab << "\":\n";
+    fp << "finite_table := \"" << ba_name_fintab << "\":\n";
+    fp << "finite_res := \"" << ba_name_finres << "\":\n";
+    fp << "infinite_table := \"" << ba_name_inftab << "\":\n";
+    fp << "infinite_res := \"" << ba_name_infres << "\":\n";
+    fp << "user_curvesfile := \"" << ba_name_curves << "\":\n";
 
     prepareMapleVectorField(fp);
     prepareMapleParameters(fp);
@@ -1764,27 +1582,26 @@ void P4InputVF::prepareFile(QTextStream *fp, bool prepareforcurves)
     prepareMaplePiecewiseConfig(fp);
 
     if (prepareforcurves) {
-        *fp << "user_precision := 8:\ntry FindAllCurves() catch:\n"
-               "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-               "lastexception[2] );\n"
-               "finally: closeallfiles();\n"
-               "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
-               "try:\n";
+        fp << "user_precision := 8:\ntry FindAllCurves() catch:\n"
+              "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+              "lastexception[2] );\n"
+              "finally: closeallfiles();\n"
+              "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+              "try:\n";
     } else {
-        *fp << "try p5main() catch:\n"
-               "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-               "lastexception[2] );\n"
-               "finally: closeallfiles();\n"
-               "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
-               "try:\n";
+        fp << "try p5main() catch:\n"
+              "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+              "lastexception[2] );\n"
+              "finally: closeallfiles();\n"
+              "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+              "try:\n";
     }
-    //}
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareCurveFile
 // -----------------------------------------------------------------------
-void P4InputVF::prepareCurveFile(QTextStream *fp)
+void P4InputVF::prepareCurveFile(QTextStream &fp)
 {
     QString name_curvetab;
     QString s;
@@ -1837,37 +1654,37 @@ void P4InputVF::prepareCurveFile(QTextStream *fp)
 
     user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
 
-    *fp << "restart;\n";
-    *fp << "read( \"" << ba_mainmaple << "\" );\n";
-    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
-    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
-    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
-    *fp << "user_platform := \"" << user_platform << "\":\n";
-    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
-    *fp << "user_simplify := " << user_simplify << ":\n";
-    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
-    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+    fp << "restart;\n";
+    fp << "read( \"" << ba_mainmaple << "\" );\n";
+    fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    fp << "user_platform := \"" << user_platform << "\":\n";
+    fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    fp << "user_simplify := " << user_simplify << ":\n";
+    fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    fp << "all_crit_points := " << typeofstudy_ << ":\n";
 
     name_curvetab = getfilename_curvetable();
     removeFile(name_curvetab);
     ba_name_curvetab = maplepathformat(name_curvetab);
-    *fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
+    fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
 
     prepareMapleCurve(fp);
     prepareMapleParameters(fp);
 
-    *fp << "try prepareCurve() catch:\n"
-           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-           "lastexception[2] );\n"
-           "finally: closeallfiles();\n"
-           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
-           "try:\n";
+    fp << "try prepareCurve() catch:\n"
+          "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+          "lastexception[2] );\n"
+          "finally: closeallfiles();\n"
+          "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+          "try:\n";
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareIsoclinesFile
 // -----------------------------------------------------------------------
-void P4InputVF::prepareIsoclinesFile(QTextStream *fp)
+void P4InputVF::prepareIsoclinesFile(QTextStream &fp)
 {
     QString name_isoclinestab;
     QString s;
@@ -1920,31 +1737,31 @@ void P4InputVF::prepareIsoclinesFile(QTextStream *fp)
 
     user_simplifycmd = MAPLE_SIMPLIFY_EXPRESSIONS;
 
-    *fp << "restart;\n";
-    *fp << "read( \"" << ba_mainmaple << "\" );\n";
-    *fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
-    *fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
-    *fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
-    *fp << "user_platform := \"" << user_platform << "\":\n";
-    *fp << "user_removecmd := \"" << user_removecmd << "\":\n";
-    *fp << "user_simplify := " << user_simplify << ":\n";
-    *fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
-    *fp << "all_crit_points := " << typeofstudy_ << ":\n";
+    fp << "restart;\n";
+    fp << "read( \"" << ba_mainmaple << "\" );\n";
+    fp << "user_bindir := \"" << ba_user_bindir << "\":\n";
+    fp << "user_tmpdir := \"" << ba_user_tmpdir << "\":\n";
+    fp << "user_exeprefix := \"" << user_exeprefix << "\":\n";
+    fp << "user_platform := \"" << user_platform << "\":\n";
+    fp << "user_removecmd := \"" << user_removecmd << "\":\n";
+    fp << "user_simplify := " << user_simplify << ":\n";
+    fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
+    fp << "all_crit_points := " << typeofstudy_ << ":\n";
 
     name_isoclinestab = getfilename_isoclinestable();
     removeFile(name_isoclinestab);
     ba_name_isoclinestab = maplepathformat(name_isoclinestab);
-    *fp << "isoclines_table := \"" << ba_name_isoclinestab << "\":\n";
+    fp << "isoclines_table := \"" << ba_name_isoclinestab << "\":\n";
 
     prepareMapleIsoclines(fp);
     prepareMapleParameters(fp);
 
-    *fp << "try prepareIsoclines() catch:\n"
-           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-           "lastexception[2] );\n"
-           "finally: closeallfiles();\n"
-           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
-           "try:\n";
+    fp << "try prepareIsoclines() catch:\n"
+          "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+          "lastexception[2] );\n"
+          "finally: closeallfiles();\n"
+          "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
+          "try:\n";
 }
 
 // -----------------------------------------------------------------------
@@ -1953,12 +1770,8 @@ void P4InputVF::prepareIsoclinesFile(QTextStream *fp)
 
 void P4InputVF::evaluate()
 {
-    // QString filedotred;
-    // QString filedotrun;
     QString filedotmpl;
     QString s, e;
-    // QFile *fptr;
-    // QTextStream *fp;
     QProcess *proc;
 
     evaluatinggcf_ = false;
@@ -1973,73 +1786,6 @@ void P4InputVF::evaluate()
 
     prepare();
 
-    /*if (symbolicpackage == PACKAGE_REDUCE) {
-        filedotred = getreducefilename();
-        filedotrun = getrunfilename();
-
-        fptr = new QFile(filedotrun);
-        if (fptr->open(QIODevice::WriteOnly)) {
-            fp = new QTextStream(fptr);
-            *fp << "#!/bin/sh\n";
-            *fp << GetReduceExe() << " <" << filedotred << "\n";
-            fp->flush();
-            delete fp;
-            fptr->close();
-            delete fptr;
-            fptr = nullptr;
-        } else {
-            delete fptr;
-            fptr = nullptr;
-
-            // cannot open???
-        }
-
-        if (ProcessText == nullptr)
-            CreateProcessWindow();
-        else {
-            ProcessText->append(
-                "\n\n----------------------------------------------------------"
-                "---------------------\n\n");
-            ProcessText->show();
-            ProcessButton->setEnabled(true);
-            ProcessClearButton->setEnabled(true);
-        }
-
-        proc = new QProcess(this);
-        proc->setWorkingDirectory(QDir::currentPath());
-
-        connect(proc, SIGNAL(finished(int)), g_p4app,
-                SLOT(Signal_Evaluated(int)));
-        connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                SLOT(cathProcessError(QProcess::ProcessError)));
-        connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                SLOT(ReadProcessStdout()));
-
-        processfailed = false;
-        QString pa = "External Command: ";
-        pa += "sh ";
-        pa += filedotrun;
-        ProcessText->append(pa);
-        proc->start("sh", QStringList(filedotrun), QIODevice::ReadWrite);
-        if (proc->state() != QProcess::Running &&
-            proc->state() != QProcess::Starting) {
-            processfailed = true;
-            delete proc;
-            proc = nullptr;
-            EvalProcess = nullptr;
-            EvalFile = "";
-            EvalFile2 = "";
-            g_p4app->Signal_Evaluated(-1);
-            ProcessButton->setEnabled(false);
-        } else {
-            EvalProcess = proc;
-            EvalFile = filedotred;
-            EvalFile2 = filedotrun;
-            evaluating = true;
-            evaluating_gcf = false;
-            evaluating_piecewiseconfig = false;
-        }
-    } else {*/
     filedotmpl = getmaplefilename();
 
     s = getMapleExe();
@@ -2057,10 +1803,9 @@ void P4InputVF::evaluate()
         if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append(
-                "\n\n--------------------------------------"
-                "-----------------------------------------"
-                "\n\n");
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
@@ -2075,9 +1820,8 @@ void P4InputVF::evaluate()
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 this, &P4InputVF::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, this,
@@ -2112,7 +1856,6 @@ void P4InputVF::evaluate()
             evaluatingPiecewiseConfig_ = false;
         }
     }
-    //}
 }
 
 // -----------------------------------------------------------------------
@@ -2154,10 +1897,9 @@ void P4InputVF::evaluateCurveTable()
         if (outputWindow_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append(
-                "\n\n--------------------------------------"
-                "-----------------------------------------"
-                "\n\n");
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
@@ -2166,7 +1908,7 @@ void P4InputVF::evaluateCurveTable()
         // proc = new QProcess(this);
 
         // QProcess *proc;
-        if (evalProcess_ != nullptr) {  // re-use process of last GCF
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc,
@@ -2256,17 +1998,16 @@ void P4InputVF::evaluateIsoclinesTable()
         if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append(
-                "\n\n--------------------------------------"
-                "-----------------------------------------"
-                "\n\n");
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
         }
 
         QProcess *proc;
-        if (evalProcess_ != nullptr) {  // re-use process of last GCF
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc,
@@ -2326,21 +2067,21 @@ void P4InputVF::catchProcessError(QProcess::ProcessError prerr)
 {
     processfailed_ = true;
     switch (prerr) {
-        case QProcess::FailedToStart:
-            processError_ = "Failed to start";
-            break;
-        case QProcess::Crashed:
-            processError_ = "Crash";
-            break;
-        case QProcess::Timedout:
-            processError_ = "Time-out";
-            break;
-        case QProcess::WriteError:
-        case QProcess::ReadError:
-        case QProcess::UnknownError:
-        default:
-            processError_ = "Unknown error";
-            break;
+    case QProcess::FailedToStart:
+        processError_ = "Failed to start";
+        break;
+    case QProcess::Crashed:
+        processError_ = "Crash";
+        break;
+    case QProcess::Timedout:
+        processError_ = "Time-out";
+        break;
+    case QProcess::WriteError:
+    case QProcess::ReadError:
+    case QProcess::UnknownError:
+    default:
+        processError_ = "Unknown error";
+        break;
     }
 }
 
@@ -2368,10 +2109,9 @@ void P4InputVF::finishEvaluation(int exitCode)
             outputWindow_->show();
             outputWindow_->raise();
             QString buf;
-            buf =
-                "\n----------------------------------------------------------"
-                "----"
-                "-----------------\n";
+            buf = "\n----------------------------------------------------------"
+                  "----"
+                  "-----------------\n";
             processText_->append(buf);
             if (evalProcess_ != nullptr) {
                 if (evalProcess_->state() == QProcess::Running) {
@@ -2463,49 +2203,15 @@ void P4InputVF::finishIsoclinesEvaluation()
 // -----------------------------------------------------------------------
 void P4InputVF::prepare()
 {
-    // QString filedotred;
-    QString filedotmpl;
-    QFile *fptr;
-    QTextStream *fp;
-
-    /*if (symbolicpackage_ == PACKAGE_REDUCE) {
-        filedotred = getreducefilename();
-        fptr = new QFile(filedotred);
-        if (fptr->open(QIODevice::WriteOnly)) {
-            fp = new QTextStream(fptr);
-            prepareFile(fp);
-            fp->flush();
-            delete fp;
-            fp = nullptr;
-            fptr->close();
-            delete fptr;
-            fptr = nullptr;
-        } else {
-            delete fptr;
-            fptr = nullptr;
-
-            // cannot open ???
-        }
-    } else {*/
-    filedotmpl = getmaplefilename();
-
-    fptr = new QFile(filedotmpl);
-    if (fptr->open(QIODevice::WriteOnly)) {
-        fp = new QTextStream(fptr);
+    QString filedotmpl = getmaplefilename();
+    QFile file(QFile::encodeName(filedotmpl));
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream fp(&file);
         prepareFile(fp);
-        fp->flush();
-        delete fp;
-        fp = nullptr;
-        fptr->close();
-        delete fptr;
-        fptr = nullptr;
-    } else {
-        delete fptr;
-        fptr = nullptr;
-
-        // cannot open?
+        fp.flush();
+        file.close();
     }
-    /*}*/
+    // TODO: what if P4 cannot open the file?
 }
 
 // -----------------------------------------------------------------------
@@ -2513,28 +2219,15 @@ void P4InputVF::prepare()
 // -----------------------------------------------------------------------
 void P4InputVF::prepareCurve()
 {
-    QString filedotmpl;
-    QFile *fptr;
-    QTextStream *fp;
-
-    filedotmpl = getPrepareCurveFileName();
-
-    fptr = new QFile(filedotmpl);
-    if (fptr->open(QIODevice::WriteOnly)) {
-        fp = new QTextStream(fptr);
+    QString filedotmpl = getPrepareCurveFileName();
+    QFile file(QFile::encodeName(filedotmpl));
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream fp(&file);
         prepareCurveFile(fp);
-        fp->flush();
-        delete fp;
-        fp = nullptr;
-        fptr->close();
-        delete fptr;
-        fptr = nullptr;
-    } else {
-        delete fptr;
-        fptr = nullptr;
-
-        // cannot open?
+        fp.flush();
+        file.close();
     }
+    // TODO: what if P4 cannot open the file?
 }
 
 // -----------------------------------------------------------------------
@@ -2542,28 +2235,15 @@ void P4InputVF::prepareCurve()
 // -----------------------------------------------------------------------
 void P4InputVF::prepareIsoclines()
 {
-    QString filedotmpl;
-    QFile *fptr;
-    QTextStream *fp;
-
-    filedotmpl = getPrepareIsoclinesFileName();
-
-    fptr = new QFile(filedotmpl);
-    if (fptr->open(QIODevice::WriteOnly)) {
-        fp = new QTextStream(fptr);
-        prepareIsoclinesFile(fp);
-        fp->flush();
-        delete fp;
-        fp = nullptr;
-        fptr->close();
-        delete fptr;
-        fptr = nullptr;
-    } else {
-        delete fptr;
-        fptr = nullptr;
-
-        // cannot open?
+    QString filedotmpl = getPrepareIsoclinesFileName();
+    QFile file(QFile::encodeName(filedotmpl));
+    if (file.open(QIODevice::WriteOnly)) {
+        QTextStream fp(&file);
+        prepareCurveFile(fp);
+        fp.flush();
+        file.close();
     }
+    // TODO: what if P4 cannot open the file?
 }
 
 // -----------------------------------------------------------------------
@@ -2591,7 +2271,7 @@ void P4InputVF::readProcessStdout()
                 if (i == j + 1)
                     t = t.mid(j + 2);
                 else
-                    t = t.mid(j + 1);  // treat CR+LF as one lineend
+                    t = t.mid(j + 1); // treat CR+LF as one lineend
             } else {
                 line = t.left(i);
                 t = t.mid(i + 1);
@@ -2613,9 +2293,8 @@ void P4InputVF::onTerminateButton()
     QString buf;
     if (evalProcess_ != nullptr) {
         if (evalProcess_->state() == QProcess::Running) {
-            buf =
-                "\n----------------------------------------------------------"
-                "---------------------\n";
+            buf = "\n----------------------------------------------------------"
+                  "---------------------\n";
             processText_->append(buf);
             evalProcess_->terminate();
             QTimer::singleShot(2000, evalProcess_, SLOT(kill()));
@@ -2697,115 +2376,24 @@ void P4InputVF::createProcessWindow()
 // -----------------------------------------------------------------------
 bool P4InputVF::evaluateGcf()
 {
-    /*QString filedotred;
-    QString filedotrun;*/
-    QString filedotmpl;
-    QString filedotgcf;
-    QString s;
+    // NOTICE: the code for reduce implementations can be found in older
+    // versions of P4, it is removed from 7.0.2 onwards
+    QString filedotmpl = getmaplefilename();
 
-    /*if (symbolicpackage_ == PACKAGE_REDUCE) {
-        filedotred = getreducefilename();
-        filedotrun = getrunfilename();
-        QString filedotgcfresults = getfilename_gcfresults();
-        QFile *fptr = new QFile(filedotrun);
-        if (fptr->open(QIODevice::WriteOnly)) {
-            QTextStream *fps;
-            fps = new QTextStream(fptr);
-            *fps << "#!/bin/sh\n";
-            *fps << getReduceExe() << ".psl"
-                 << " <" << filedotred << ">" << filedotgcfresults << "\n";
-            fps->flush();
-            delete fps;
-            fps = nullptr;
-            fptr->close();
-            delete fptr;
-            fptr = nullptr;
-        }
-
-        if (processText_ == nullptr)
-            createProcessWindow();
-        else {
-            processText_->append("\n\n------------------------------------------"
-                                "-------------------------------------\n\n");
-            terminateProcessButton_->setEnabled(true);
-        }
-
-        QProcess *proc;
-
-        if (evalProcess_ != nullptr) { // re-use process of last GCF
-            proc = evalProcess_;
-            disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-            connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalCurveEvaluated(int)));
-        } else {
-            proc = new QProcess(this);
-            connect(proc, SIGNAL(finished(int)), g_p4app,
-                    SLOT(signalCurveEvaluated(int)));
-            connect(proc, SIGNAL(error(QProcess::ProcessError)), g_p4app,
-                    SLOT(catchProcessError(QProcess::ProcessError)));
-            connect(proc, SIGNAL(readyReadStandardOutput()), this,
-                    SLOT(readProcessStdout()));
-        }
-
-        proc->setWorkingDirectory(QDir::currentPath());
-
-        processfailed_ = false;
-
-        // syntax:  %s/psl/bpsl -td %d -f %s/reduce.img <%s >%s"
-        //                      %s = reduce directory (getenv("reduce"))
-        //                      %d = memory
-        //                      %s = reduce directory (getenv("reduce"))
-        //                      %s = filedotred
-        //                      %s = getfilename_gcfresults
-
-        QString pa = "External Command: sh ";
-        pa += filedotrun;
-        processText_->append(pa);
-        proc->start("sh", QStringList(filedotrun), QIODevice::ReadWrite);
-
-        if (proc->state() != QProcess::Running &&
-            proc->state() != QProcess::Starting) {
-            processfailed_ = true;
-            delete proc;
-            proc = nullptr;
-            evalProcess_ = nullptr;
-            evalFile_ = "";
-            evalFile2_ = "";
-            g_p4app->signalCurveEvaluated(-1);
-            terminateProcessButton_->setEnabled(false);
-            return false;
-        } else {
-            evalProcess_ = proc;
-            evalFile_ = filedotred;
-            evalFile2_ = filedotrun;
-            evaluatinggcf_ = true;
-            return true;
-        }
-    } else {*/  // MAPLE MAPLE MAPLE
-    filedotmpl = getmaplefilename();
-
-    s = getMapleExe();
-    s = s.append(" ");
-    if (filedotmpl.contains(' ')) {
-        s = s.append("\"");
-        s = s.append(filedotmpl);
-        s = s.append("\"");
-    } else
-        s = s.append(filedotmpl);
+    // QString s = getMapleExe().append(" \"").append(filedotmpl).append("\"");
 
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) {  // re-use process of last GCF
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2815,9 +2403,8 @@ bool P4InputVF::evaluateGcf()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2854,10 +2441,8 @@ bool P4InputVF::evaluateGcf()
         evaluatinggcf_ = true;
         evaluating_ = true;
         evaluatingPiecewiseConfig_ = false;
-
         return true;
     }
-    /*}*/
 }
 
 // -----------------------------------------------------------------------
@@ -2870,96 +2455,50 @@ bool P4InputVF::evaluateGcf()
 bool P4InputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
                            int numpoints)
 {
-    FILE *fp;
     int i;
-    char buf[100];
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    /*if (symbolicpackage_ == PACKAGE_REDUCE) {
-        QString filedotred;
-        QString userfilered;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-        filedotred = getreducefilename();
-        fp = fopen(QFile::encodeName(filedotred), "w");
+        QString user_file = getfilename_gcf();
+        QByteArray ba_user_file = maplepathformat(user_file);
+        removeFile(user_file);
 
-        userfilered = getfilename_gcf();
-        removeFile(userfilered);
+        QString user_platform = USERPLATFORM;
 
-        fprintf(fp, "load gnuplot; \n");
-        fprintf(fp, "symbolic procedure plot!-filename();\n");
-        fprintf(fp, "plot!-files!*:=\"%s\";\n",
-                (const char *)(QFile::encodeName(userfilered)));
-        fprintf(fp, "lisp setq(plotcommand!*,\"cat\");\n");
-        fprintf(fp, "precision %d$\n", precision);
-        fprintf(fp, "f:=");
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := " << -1.0 << ":\n";
+        out << "user_x2 := " << 1.0 << ":\n";
+        out << "user_y1 := " << y1 << ":\n";
+        out << "user_y2 := " << y2 << ":\n";
+        out << "u := x:\n";
+        out << "v := y:\n";
+        out << "user_f := ");
         for (i = 0; f != nullptr; i++) {
-            fprintf(fp, "%s",
-                    printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
+            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
             f = f->next_term2;
         }
         if (i == 0)
-            fprintf(fp, "0$\n");
+            out << "0:\n";
         else
-            fprintf(fp, "$\n");
-        fprintf(fp, "on rounded$\n");
-        fprintf(fp, "if deg(f,x)=0 then f:=f*(x^2+1)$\n");
-        fprintf(fp, "if deg(f,y)=0 then f:=f*(y^2+1)$\n");
-        fprintf(fp, "plot(f=0,x=(-1 .. 1),y=(%f .. %f),", (float)y1, (float)y2);
-        fprintf(fp, "points=%d)$\n", numpoints);
-        fclose(fp);
-    } else {*/
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
+            out << ":\n";
 
-    filedotmpl = getmaplefilename();
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
-
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
-
-    user_platform = USERPLATFORM;
-    mainmaple += MAINMAPLEGCFFILE;
-
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_gcf();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)(-1.0));
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)y1);
-    fprintf(fp, "user_y2 := %g:\n", (float)y2);
-    fprintf(fp, "u := %s:\n", "x");
-    fprintf(fp, "v := %s:\n", "y");
-    fprintf(fp, "user_f := ");
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
-        f = f->next_term2;
+        out.flush();
+        file.close();
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-    /*}*/
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -2973,107 +2512,52 @@ bool P4InputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
 bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
                                        int precision, int numpoints, int index)
 {
-    FILE *fp;
-    char buf[100];
-    P4POLYNOM3 f;
     int i;
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    f = g_VFResults.vf_[index]->gcf_C_;
+        P4POLYNOM f = g_VFResults.vf_[index]->gcf_C_;
 
-    /*if (symbolicpackage_ == PACKAGE_REDUCE) {
-        QString filedotred;
-        QString userfilered;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-        filedotred = getreducefilename();
-        fp = fopen(QFile::encodeName(filedotred), "w");
+        QString user_file = getfilename_gcf();
+        removeFile(user_file);
+        QByteArray ba_user_file = maplepathformat(user_file);
 
-        userfilered = getfilename_gcf();
-        removeFile(userfilered);
+        QString user_platform = USERPLATFORM;
 
-        fprintf(fp, "load gnuplot; \n");
-        fprintf(fp, "symbolic procedure plot!-filename();\n");
-        fprintf(fp, "plot!-files!*:=\"%s\";\n",
-                (const char *)QFile::encodeName(userfilered));
-        fprintf(fp, "lisp setq(plotcommand!*,\"cat\");\n");
-
-        fprintf(fp, "precision %d$\n", precision);
-        fprintf(fp, "Co:=cos(y)$\n");
-        fprintf(fp, "Si:=sin(y)$\n");
-        fprintf(fp, "f:=");
-
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := " << 0.0 << ":\n";
+        out << "user_x2 := " << 1.0 << ":\n";
+        out << "user_y1 := " << theta1 << ":\n";
+        out << "user_y2 := " << theta2 << ":\n";
+        out << "u := cos(y):\n";
+        out << "v := sin(y):\n";
+        out << "user_f := ";
         for (i = 0; f != nullptr; i++) {
-            fprintf(fp, "%s", printterm3(buf, f, (i == 0) ? true : false, "x",
-                                         "Co", "Si"));
+            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
             f = f->next_term3;
         }
         if (i == 0)
-            fprintf(fp, "0$\n");
+            out << "0:\n";
         else
-            fprintf(fp, "$\n");
+            out << ":\n";
 
-        fprintf(fp, "on rounded$\n");
-        fprintf(fp, "if deg(f,x)=0 then f:=f*(x^2+1)$\n");
-        fprintf(fp, "if deg(f,y)=0 then f:=f*(y^2+1)$\n");
-        fprintf(fp, "plot(f=0,x=(0 .. 1),y=(%f .. %f),", (float)theta1,
-                (float)theta2);
-        fprintf(fp, "points=%d)$\n", numpoints);
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-        fclose(fp);
-    } else {*/
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
-
-    filedotmpl = getmaplefilename();
-
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
-
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
-
-    user_platform = USERPLATFORM;
-    mainmaple += MAINMAPLEGCFFILE;
-
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_gcf();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)0.0);
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)theta1);
-    fprintf(fp, "user_y2 := %g:\n", (float)theta2);
-    fprintf(fp, "u := %s:\n", "cos(y)");
-    fprintf(fp, "v := %s:\n", "sin(y)");
-    fprintf(fp, "user_f := ");
-
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V"));
-        f = f->next_term3;
+        out.flush();
+        file.close();
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-    /*}*/
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3090,103 +2574,53 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
 
 bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
 {
-    FILE *fp;
-    char buf[100];
-    P4POLYNOM2 f;
     int i;
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    f = g_VFResults.vf_[index]->gcf_;
+        P4POLYNOM2 f = g_VFResults.vf_[index]->gcf_;
 
-    /*if (symbolicpackage_ == PACKAGE_REDUCE) {
-        QString filedotred;
-        QString userfilered;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-        filedotred = getreducefilename();
-        fp = fopen(QFile::encodeName(filedotred), "w");
+        QString user_file = getfilename_gcf();
+        QByteArray ba_user_file = maplepathformat(user_file);
+        removeFile(user_file);
 
-        userfilered = getfilename_gcf();
-        removeFile(userfilered);
+        QString user_platform = USERPLATFORM;
 
-        fprintf(fp, "load gnuplot; \n");
-        fprintf(fp, "symbolic procedure plot!-filename();\n");
-        fprintf(fp, "plot!-files!*:=\"%s\";\n",
-                (const char *)QFile::encodeName(userfilered));
-        fprintf(fp, "lisp setq(plotcommand!*,\"cat\");\n");
-
-        fprintf(fp, "precision %d$\n", precision);
-        fprintf(fp, "u:=x*cos(y)$\n");
-        fprintf(fp, "v:=x*sin(y)$\n");
-        fprintf(fp, "f:=");
-        for (i = 0; f != nullptr; i++) {
-            fprintf(fp, "%s",
-                    printterm2(buf, f, (i == 0) ? true : false, "u", "v"));
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := 0.0:\n", (float)0.0);
+        out << "user_x2 := 1.0:\n", (float)1.0);
+        out << "user_y1 := 0.0:\n", (float)0.0);
+        out << "user_y2 := " << TWOPI << ":\n";
+        ;
+        out << "u := x*cos(y):\n";
+        out << "v := x*sin(y):\n";
+        out << "user_f := ";
+        for (int i = 0; f != nullptr; i++) {
+            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
             f = f->next_term2;
         }
         if (i == 0)
-            fprintf(fp, "0$\n");
+            out << "0:\n";
         else
-            fprintf(fp, "$\n");
-        fprintf(fp, "on rounded$\n");
-        fprintf(fp, "if deg(f,x)=0 then f:=f*(x^2+1)$\n");
-        fprintf(fp, "if deg(f,y)=0 then f:=f*(y^2+1)$\n");
-        fprintf(fp, "plot(f=0,x=(0 .. 1),y=(0 .. 2*pi),");
-        fprintf(fp, "points=%d)$\n", numpoints);
-        fclose(fp);
-    } else {*/
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
+            out << ":\n";
 
-    filedotmpl = getmaplefilename();
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
-
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
-
-    user_platform = USERPLATFORM;
-    mainmaple = mainmaple.append(MAINMAPLEGCFFILE);
-
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_gcf();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)0.0);
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)0.0);
-    fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
-    fprintf(fp, "u := %s:\n", "x*cos(y)");
-    fprintf(fp, "v := %s:\n", "x*sin(y)");
-    fprintf(fp, "user_f := ");
-
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm2(buf, f, (i == 0) ? true : false, "U", "V"));
-        f = f->next_term2;
+        out.flush();
+        file.close();
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-    /*}*/
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3211,9 +2645,8 @@ bool P4InputVF::evaluateCurve()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -3231,9 +2664,8 @@ bool P4InputVF::evaluateCurve()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -3282,63 +2714,48 @@ bool P4InputVF::evaluateCurve()
 bool P4InputVF::prepareCurve(P4POLYNOM2 f, double y1, double y2, int precision,
                              int numpoints)
 {
-    FILE *fp;
     int i;
-    char buf[100];
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
+        QString user_platform = USERPLATFORM;
+        QString user_file = getfilename_curve();
+        QByteArray ba_user_file = maplepathformat(user_file);
+        removeFile(user_file);
 
-    filedotmpl = getmaplefilename();
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := -1.0:\n";
+        out << "user_x2 := 1.0:\n";
+        out << "user_y1 := " << y1 << ":\n";
+        out << "user_y2 := " << y2 << ":\n";
+        out << "u := x:\n";
+        out << "v := y:\n";
+        out << "user_f := ";
+        for (i = 0; f != nullptr; i++) {
+            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
+            f = f->next_term2;
+        }
+        if (i == 0)
+            out << "0:\n";
+        else
+            out << ":\n";
 
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
+        out.flush();
+        file.close();
 
-    user_platform = USERPLATFORM;
-    mainmaple += MAINMAPLEGCFFILE;
-
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_curve();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)(-1.0));
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)y1);
-    fprintf(fp, "user_y2 := %g:\n", (float)y2);
-    fprintf(fp, "u := %s:\n", "x");
-    fprintf(fp, "v := %s:\n", "y");
-    fprintf(fp, "user_f := ");
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
-        f = f->next_term2;
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3352,67 +2769,52 @@ bool P4InputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
                                          int precision, int numpoints,
                                          int index)
 {
-    FILE *fp;
-    char buf[100];
-    P4POLYNOM3 f;
     int i;
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    f = g_VFResults.vf_[index]->curve_vector_.back().c;
+        P4POLYNOM3 f = g_VFResults.vf_[index]->curve_vector_.back().c;
 
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-    filedotmpl = getmaplefilename();
+        QString user_platform = USERPLATFORM;
 
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
+        QString user_file = getfilename_curve();
+        QByteArray ba_user_file = maplepathformat(user_file);
+        removeFile(user_file);
 
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := 0.0:\n";
+        out << "user_x2 := 1.0:\n";
+        out << "user_y1 := " << theta1 << ":\n";
+        out << "user_y2 := " << theta2 << ":\n";
+        out << "u := cos(y):\n";
+        out << "v := sin(y):\n";
+        out << "user_f := ";
+        for (i = 0; f != nullptr; i++) {
+            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
+            f = f->next_term3;
+        }
+        if (i == 0)
+            out << "0:\n";
+        else
+            out << ":\n";
 
-    user_platform = USERPLATFORM;
-    mainmaple += MAINMAPLEGCFFILE;
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+               "`quit`(0); else `quit(1)` end if: end try:\n";
 
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_curve();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)0.0);
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)theta1);
-    fprintf(fp, "user_y2 := %g:\n", (float)theta2);
-    fprintf(fp, "u := %s:\n", "cos(y)");
-    fprintf(fp, "v := %s:\n", "sin(y)");
-    fprintf(fp, "user_f := ");
-
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V"));
-        f = f->next_term3;
+        out.flush();
+        file.close();
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3428,68 +2830,54 @@ bool P4InputVF::prepareCurve_LyapunovCyl(double theta1, double theta2,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
 bool P4InputVF::prepareCurve_LyapunovR2(int precision, int numpoints, int index)
 {
-    FILE *fp;
-    char buf[100];
-    P4POLYNOM2 f;
     int i;
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    f = g_VFResults.vf_[index]->curve_vector_.back().r2;
+        P4POLYNOM2 f = g_VFResults.vf_[index]->curve_vector_.back().r2;
 
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-    filedotmpl = getmaplefilename();
+        QString user_platform = USERPLATFORM;
 
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
+        QString user_file = getfilename_curve();
+        QByteArray ba_user_file = maplepathformat(user_file);
+        removeFile(user_file);
 
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := 0.0:\n";
+        out << "user_x2 := 1.0:\n";
+        out << "user_y1 := 0.0:\n";
+        out << "user_y2 := " << TWOPI << ":\n";
+        out << "u := x*cos(y):\n";
+        out << "v := x*sin(y):\n";
+        out << "user_f := ";
+        for (i = 0; f != nullptr; i++) {
+            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
+            f = f->next_term2;
+        }
+        if (i == 0)
+            out << "0:\n";
+        else
+            out << ":\n";
 
-    user_platform = USERPLATFORM;
-    mainmaple = mainmaple.append(MAINMAPLEGCFFILE);
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+               "`quit`(0); else `quit(1)` end if: end try:\n";
 
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_curve();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)0.0);
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)0.0);
-    fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
-    fprintf(fp, "u := %s:\n", "x*cos(y)");
-    fprintf(fp, "v := %s:\n", "x*sin(y)");
-    fprintf(fp, "user_f := ");
-
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm2(buf, f, (i == 0) ? true : false, "U", "V"));
-        f = f->next_term2;
+        out.flush();
+        file.close();
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-
-    return true;
+    return false;
 }
+
 // -----------------------------------------------------------------------
 //          P4InputVF::evaluateIsoclines
 // -----------------------------------------------------------------------
@@ -3512,16 +2900,15 @@ bool P4InputVF::evaluateIsoclines()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) {  // re-use process of last GCF
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -3531,9 +2918,8 @@ bool P4InputVF::evaluateIsoclines()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -3582,63 +2968,50 @@ bool P4InputVF::evaluateIsoclines()
 bool P4InputVF::prepareIsoclines(P4POLYNOM2 f, double y1, double y2,
                                  int precision, int numpoints)
 {
-    FILE *fp;
     int i;
-    char buf[100];
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    QString mainmaple;
-    QString user_platform;
-    QString user_file;
-    QString filedotmpl;
-    QByteArray ba_mainmaple;
-    QByteArray ba_user_file;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-    filedotmpl = getmaplefilename();
+        QString user_platform = USERPLATFORM;
 
-    fp = fopen(QFile::encodeName(filedotmpl), "w");
-    if (fp == nullptr)
-        return false;
+        QString user_file = getfilename_isoclines();
+        QByteArray ba_user_file = maplepathformat(user_file);
+        removeFile(user_file);
 
-    mainmaple = getP4MaplePath();
-    mainmaple += QDir::separator();
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := 1.0:\n";
+        out << "user_x2 := -1.0:\n";
+        out << "user_y1 := " << y1 << ":\n";
+        out << "user_y2 := " << y2 << ":\n";
+        out << "u := x:\n";
+        out << "v := y:\n";
+        out << "user_f := ";
+        for (i = 0; f != nullptr; i++) {
+            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
+            f = f->next_term2;
+        }
+        if (i == 0)
+            out << "0:\n";
+        else
+            out << ":\n";
 
-    user_platform = USERPLATFORM;
-    mainmaple += MAINMAPLEGCFFILE;
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-    ba_mainmaple = maplepathformat(mainmaple);
-    user_file = getfilename_isoclines();
-    removeFile(user_file);
-    ba_user_file = maplepathformat(user_file);
-
-    fprintf(fp, "restart;\n");
-    fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-    fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-    fprintf(fp, "user_numpoints := %d:\n", numpoints);
-    fprintf(fp, "Digits := %d:\n", precision);
-    fprintf(fp, "user_x1 := %g:\n", (float)(-1.0));
-    fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-    fprintf(fp, "user_y1 := %g:\n", (float)y1);
-    fprintf(fp, "user_y2 := %g:\n", (float)y2);
-    fprintf(fp, "u := %s:\n", "x");
-    fprintf(fp, "v := %s:\n", "y");
-    fprintf(fp, "user_f := ");
-    for (i = 0; f != nullptr; i++) {
-        fprintf(fp, "%s",
-                printterm2(buf, f, (i == 0) ? true : false, "x", "y"));
-        f = f->next_term2;
+        out.flush();
+        file.close();
+        return true;
     }
-    if (i == 0)
-        fprintf(fp, "0:\n");
-    else
-        fprintf(fp, ":\n");
-
-    fprintf(fp,
-            "try FindSingularities() finally: if returnvalue=0 then "
-            "`quit`(0); else `quit(1)` end if: end try:\n");
-
-    fclose(fp);
-
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3652,68 +3025,52 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                              int precision, int numpoints,
                                              int index)
 {
-    FILE *fp;
-    char buf[100];
-    P4POLYNOM3 f;
     int i;
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    for (int j = 0; j < 2; j++) {
-        f = g_VFResults.vf_[index]->isocline_vector_.back().c;
+        P4POLYNOM3 f = g_VFResults.vf_[index]->isocline_vector_.back().c;
 
-        QString mainmaple;
-        QString user_platform;
-        QString user_file;
-        QString filedotmpl;
-        QByteArray ba_mainmaple;
-        QByteArray ba_user_file;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-        filedotmpl = getmaplefilename();
+        QString user_platform = USERPLATFORM;
 
-        fp = fopen(QFile::encodeName(filedotmpl), "w");
-        if (fp == nullptr)
-            return false;
-
-        mainmaple = getP4MaplePath();
-        mainmaple += QDir::separator();
-
-        user_platform = USERPLATFORM;
-        mainmaple += MAINMAPLEGCFFILE;
-
-        ba_mainmaple = maplepathformat(mainmaple);
-        user_file = getfilename_isoclines();
+        QString user_file = getfilename_isoclines();
+        QByteArray ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
-        ba_user_file = maplepathformat(user_file);
 
-        fprintf(fp, "restart;\n");
-        fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-        fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-        fprintf(fp, "user_numpoints := %d:\n", numpoints);
-        fprintf(fp, "Digits := %d:\n", precision);
-        fprintf(fp, "user_x1 := %g:\n", (float)0.0);
-        fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-        fprintf(fp, "user_y1 := %g:\n", (float)theta1);
-        fprintf(fp, "user_y2 := %g:\n", (float)theta2);
-        fprintf(fp, "u := %s:\n", "cos(y)");
-        fprintf(fp, "v := %s:\n", "sin(y)");
-        fprintf(fp, "user_f := ");
-
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := 0.0:\n";
+        out << "user_x2 := 1.0:\n";
+        out << "user_y1 := " << theta1 << ":\n";
+        out << "user_y2 := " << theta2 << ":\n";
+        out << "u := cos(y):\n";
+        out << "v := sin(y):\n";
+        out << "user_f := ";
         for (i = 0; f != nullptr; i++) {
-            fprintf(fp, "%s",
-                    printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V"));
+            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
             f = f->next_term3;
         }
         if (i == 0)
-            fprintf(fp, "0:\n");
+            out << "0:\n";
         else
-            fprintf(fp, ":\n");
+            out << ":\n";
 
-        fprintf(fp,
-                "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-        fclose(fp);
+        out.flush();
+        file.close();
+        return true;
     }
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3730,68 +3087,52 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
 bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
                                             int index)
 {
-    FILE *fp;
-    char buf[100];
-    P4POLYNOM2 f;
     int i;
+    QFile file(QFile::encodeName(getmaplefilename()));
+    if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out(&file);
 
-    for (int j = 0; j < 2; j++) {
-        f = g_VFResults.vf_[index]->isocline_vector_.back().r2;
+        P4POLYNOM2 f = g_VFResults.vf_[index]->isocline_vector_.back().r2;
 
-        QString mainmaple;
-        QString user_platform;
-        QString user_file;
-        QString filedotmpl;
-        QByteArray ba_mainmaple;
-        QByteArray ba_user_file;
+        QString mainmaple =
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
+        QByteArray ba_mainmaple = maplepathformat(mainmaple);
 
-        filedotmpl = getmaplefilename();
+        QString user_platform = USERPLATFORM;
 
-        fp = fopen(QFile::encodeName(filedotmpl), "w");
-        if (fp == nullptr)
-            return false;
-
-        mainmaple = getP4MaplePath();
-        mainmaple += QDir::separator();
-
-        user_platform = USERPLATFORM;
-        mainmaple = mainmaple.append(MAINMAPLEGCFFILE);
-
-        ba_mainmaple = maplepathformat(mainmaple);
-        user_file = getfilename_isoclines();
+        QString user_file = getfilename_isoclines();
+        QByteArray ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
-        ba_user_file = maplepathformat(user_file);
 
-        fprintf(fp, "restart;\n");
-        fprintf(fp, "read( \"%s\" );\n", (const char *)ba_mainmaple);
-        fprintf(fp, "user_file := \"%s\":\n", (const char *)ba_user_file);
-        fprintf(fp, "user_numpoints := %d:\n", numpoints);
-        fprintf(fp, "Digits := %d:\n", precision);
-        fprintf(fp, "user_x1 := %g:\n", (float)0.0);
-        fprintf(fp, "user_x2 := %g:\n", (float)1.0);
-        fprintf(fp, "user_y1 := %g:\n", (float)0.0);
-        fprintf(fp, "user_y2 := %g:\n", (float)TWOPI);
-        fprintf(fp, "u := %s:\n", "x*cos(y)");
-        fprintf(fp, "v := %s:\n", "x*sin(y)");
-        fprintf(fp, "user_f := ");
-
+        out << "restart;\n";
+        out << "read( \"" << ba_mainmaple << "\" );\n";
+        out << "user_file := \"" << user_file << "\":\n";
+        out << "user_numpoints := " << numpoints << ":\n";
+        out << "Digits := " << precision << ":\n";
+        out << "user_x1 := 0.0:\n";
+        out << "user_x2 := 1.0:\n";
+        out << "user_y1 := 0.0:\n";
+        out << "user_y2 := " << TWOPI << ":\n";
+        out << "u := x*cos(y):\n";
+        out << "v := x*sin(y):\n";
+        out << "user_f := ";
         for (i = 0; f != nullptr; i++) {
-            fprintf(fp, "%s",
-                    printterm2(buf, f, (i == 0) ? true : false, "U", "V"));
+            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
             f = f->next_term2;
         }
         if (i == 0)
-            fprintf(fp, "0:\n");
+            out << "0:\n";
         else
-            fprintf(fp, ":\n");
+            out << ":\n";
 
-        fprintf(fp,
-                "try FindSingularities() finally: if returnvalue=0 then "
-                "`quit`(0); else `quit(1)` end if: end try:\n");
+        out << "try FindSingularities() finally: if returnvalue=0 then "
+            << "`quit`(0); else `quit(1)` end if: end try:\n";
 
-        fclose(fp);
+        out.flush();
+        file.close();
+        return true;
     }
-    return true;
+    return false;
 }
 
 // -----------------------------------------------------------------------
@@ -3801,13 +3142,10 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonString
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonString(std::vector<QString>)
+bool P4InputVF::hasCommonString(std::vector<QString> lst)
 {
-    int i, j, j0;
-    j0 = selected_[0];
-    for (i = 1; i < numSelected_; i++) {
-        j = selected_[i];
-        if (lst[j0]->compare(*(lst[j])))
+    for (int i = 1; i < numSelected_; i++) {
+        if (lst[selected_[0]].compare(lst[selected_[i]]))
             return false;
     }
     return true;
@@ -3816,13 +3154,10 @@ bool P4InputVF::hasCommonString(std::vector<QString>)
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonInt
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonInt(int *lst)
+bool P4InputVF::hasCommonInt(std::vector<int> lst)
 {
-    int i, j, j0;
-    j0 = selected_[0];
-    for (i = 1; i < numSelected_; i++) {
-        j = selected_[i];
-        if (lst[j] != lst[j0])
+    for (int i = 1; i < numSelected_; i++) {
+        if (lst[selected_[i]] != lst[selected_[0]])
             return false;
     }
     return true;
@@ -3831,13 +3166,10 @@ bool P4InputVF::hasCommonInt(int *lst)
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonBool
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonBool(bool *lst)
+bool P4InputVF::hasCommonBool(std::vector<bool> lst)
 {
-    int i, j, j0;
-    j0 = selected_[0];
-    for (i = 1; i < numSelected_; i++) {
-        j = selected_[i];
-        if (lst[j] != lst[j0])
+    for (int i = 1; i < numSelected_; i++) {
+        if (lst[selected_[i]] != lst[selected_[0]])
             return false;
     }
     return true;
@@ -3848,11 +3180,9 @@ bool P4InputVF::hasCommonBool(bool *lst)
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonParvalue(int index)
 {
-    int i, j, j0;
-    j0 = selected_[0];
-    for (i = 1; i < numSelected_; i++) {
-        j = selected_[i];
-        if (parvalue_[j0][index]->compare(*(parvalue_[j][index])))
+    for (int i = 1; i < numSelected_; i++) {
+        if (parvalue_[selected_[0]][index].compare(
+                parvalue_[selected_[i]][index]))
             return false;
     }
     return true;
@@ -3861,59 +3191,57 @@ bool P4InputVF::hasCommonParvalue(int index)
 // -----------------------------------------------------------------------
 //          P4InputVF::commonString
 // -----------------------------------------------------------------------
-QString P4InputVF::commonString(QString **lst) { return *(lst[selected_[0]]); }
+QString P4InputVF::commonString(std::vector<QString> lst)
+{
+    return lst[selected_[0]];
+}
 
 // -----------------------------------------------------------------------
 //          P4InputVF::commonInt
 // -----------------------------------------------------------------------
-int P4InputVF::commonInt(int *lst) { return lst[selected_[0]]; }
+int P4InputVF::commonInt(std::vector<int> lst) { return lst[selected_[0]]; }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::commonBoolean
 // -----------------------------------------------------------------------
-bool P4InputVF::commonBoolean(bool *lst) { return lst[selected_[0]]; }
+bool P4InputVF::commonBoolean(std::vector<bool> lst)
+{
+    return lst[selected_[0]];
+}
 
 // -----------------------------------------------------------------------
 //          P4InputVF::commonParvalue
 // -----------------------------------------------------------------------
 QString P4InputVF::commonParvalue(int index)
 {
-    return *(parvalue_[selected_[0]][index]);
+    return parvalue_[selected_[0]][index];
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonString
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonString(QString **lst, QString val)
+void P4InputVF::setCommonString(std::vector<QString> lst, QString val)
 {
-    int i, j;
-    for (i = 0; i < numSelected_; i++) {
-        j = selected_[i];
-        *(lst[j]) = val;
-    }
+    for (int i = 0; i < numSelected_; i++)
+        lst[selected_[i]] = val;
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonInt
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonInt(int *lst, int val)
+void P4InputVF::setCommonInt(std::vector<int> lst, int val)
 {
-    int i, j;
-    for (i = 0; i < numSelected_; i++) {
-        j = selected_[i];
-        lst[j] = val;
-    }
+    for (int i = 0; i < numSelected_; i++)
+        lst[selected_[i]] = val;
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonBool
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonBool(bool *lst, bool val)
+void P4InputVF::setCommonBool(std::vector<bool> lst, bool val)
 {
-    int i, j;
-    for (i = 0; i < numSelected_; i++) {
-        j = selected_[i];
-        lst[j] = val;
+    for (int i = 0; i < numSelected_; i++) {
+        lst[selected_[i]] = val;
     }
 }
 
@@ -3922,10 +3250,9 @@ void P4InputVF::setCommonBool(bool *lst, bool val)
 // -----------------------------------------------------------------------
 void P4InputVF::setCommonParvalue(int index, QString val)
 {
-    int i, j;
-    for (i = 0; i < numSelected_; i++) {
+    for (int i = 0; i < numSelected_; i++) {
         j = selected_[i];
-        *(parvalue_[j][index]) = val;
+        parvalue_[selected_[i]][index] = val;
     }
 }
 
@@ -3936,25 +3263,11 @@ void P4InputVF::addVectorField()
 {
     int i;
 
-    if (!VFResults.vf_.empty()) {
-        VFResults.clearVFs();
-        VFResults.vfK_ = nullptr;
-        VFResults.K_ = 0;
+    if (!g_VFResults.vf_.empty()) {
+        g_VFResults.clearVFs();
+        g_VFResults.vfK_ = nullptr;
+        g_VFResults.K_ = 0;
     }
-
-    // TODO: treure reallocs i implementar-ho com vectors
-    // xdot = (QString **)realloc(xdot, sizeof(QString *) * (numVF_ + 1));
-    // ydot = (QString **)realloc(ydot, sizeof(QString *) * (numVF_ + 1));
-    // gcf = (QString **)realloc(gcf, sizeof(QString *) * (numVF_ + 1));
-    // epsilon = (QString **)realloc(epsilon, sizeof(QString *) * (numVF_ + 1));
-    // numeric = (bool *)realloc(numeric, sizeof(bool) * (numVF_ + 1));
-    // precision = (int *)realloc(precision, sizeof(int) * (numVF_ + 1));
-    // testsep = (bool *)realloc(testsep, sizeof(bool) * (numVF_ + 1));
-    // taylorlevel = (int *)realloc(taylorlevel, sizeof(int) * (numVF_ + 1));
-    // numericlevel = (int *)realloc(numericlevel, sizeof(int) * (numVF_ + 1));
-    // maxlevel = (int *)realloc(maxlevel, sizeof(int) * (numVF_ + 1));
-    // weakness = (int *)realloc(weakness, sizeof(int) * (numVF_ + 1));
-    parvalue = (QString ***)realloc(parvalue, sizeof(QString *) * (numVF_ + 1));
 
     xdot_.push_back(QString(DEFAULTXDOT));
     ydot_.push_back(QString(DEFAULTYDOT));
@@ -3967,114 +3280,106 @@ void P4InputVF::addVectorField()
     numericlevel_.push_back(DEFAULTNUMLEVEL);
     maxlevel_.push_back(DEFAULTMAXLEVEL);
     weakness_.push_back(DEFAULTWEAKNESS);
-    parvalue[numVF_] = (QString **)malloc(sizeof(QString *) * MAXNUMPARAMS);
-    for (i = 0; i < MAXNUMPARAMS; i++) parvalue[numVF_][i] = new QString("");
+    parvalue_.push_back(std::vector<QString>());
+    for (i = 0; i < MAXNUMPARAMS; i++)
+        parvalue_.back().push_back(QString());
 
     if (hasCommonString(xdot_))
-        xdot[numVF_] = commonString(xdot);
-    if (hasCommonString(ydot))
-        *(ydot[numVF_]) = commonString(ydot);
-    if (hasCommonString(gcf))
-        *(gcf[numVF_]) = commonString(gcf);
-    if (hasCommonString(epsilon))
-        *(epsilon[numVF_]) = commonString(epsilon);
-    if (hasCommonBool(numeric))
-        numeric[numVF_] = commonBool(numeric);
-    if (hasCommonBool(testsep))
-        testsep[numVF_] = commonBool(testsep);
-    if (hasCommonInt(precision))
-        precision[numVF_] = commonInt(precision);
-    if (hasCommonInt(taylorlevel))
-        taylorlevel[numVF_] = commonInt(taylorlevel);
-    if (hasCommonInt(numericlevel))
-        numericlevel[numVF_] = commonInt(numericlevel);
-    if (hasCommonInt(maxlevel))
-        maxlevel[numVF_] = commonInt(maxlevel);
-    if (hasCommonInt(weakness))
-        weakness[numVF_] = commonInt(weakness);
+        xdot_[numVF_] = commonString(xdot_);
+    if (hasCommonString(ydot_))
+        ydot_[numVF_] = commonString(ydot_);
+    if (hasCommonString(gcf_))
+        gcf_[numVF_] = commonString(gcf_);
+    if (hasCommonString(epsilon_))
+        epsilon_[numVF_] = commonString(epsilon_);
+    if (hasCommonBool(numeric_))
+        numeric_[numVF_] = commonBool(numeric_);
+    if (hasCommonBool(testsep_))
+        testsep_[numVF_] = commonBool(testsep_);
+    if (hasCommonInt(precision_))
+        precision_[numVF_] = commonInt(precision_);
+    if (hasCommonInt(taylorlevel_))
+        taylorlevel_[numVF_] = commonInt(taylorlevel_);
+    if (hasCommonInt(numericlevel_))
+        numericlevel_[numVF_] = commonInt(numericlevel_);
+    if (hasCommonInt(maxlevel_))
+        maxlevel_[numVF_] = commonInt(maxlevel_);
+    if (hasCommonInt(weakness_))
+        weakness_[numVF_] = commonInt(weakness_);
 
     for (i = 0; i < MAXNUMPARAMS; i++)
-        if (HasCommonParvalue(i))
-            *(parvalue[numVF_][i]) = CommonParvalue(i);
+        if (hasCommonParvalue(i))
+            parvalue_[numVF_][i] = commonParvalue(i);
 
-    numvf++;
+    numVF_++;
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::deleteVectorField
 // -----------------------------------------------------------------------
-void P4InputVF::deleteVectorField(int index)
+void P4InputVF::deleteVectorField(int index) // FIXME
 {
     // first disconnect from other structures
 
     int k, i;
 
-    if (!VFResults.vf_.empty()) {
-        VFResults.clearVFs();
-        VFResults.vfK_ = nullptr;
-        VFResults.K_ = 0;
+    if (!g_VFResults.vf_.empty()) {
+        g_VFResults.clearVFs();
+        g_VFResults.vfK_ = nullptr;
+        g_VFResults.K_ = 0;
     }
 
-    for (k = 0; k < numVFRegions_; k++) {
-        if (vfRegions_[k].vfIndex == index) {
-            free(vfRegions_[k].signs);
-            if (k < numVFRegions_ - 1)
-                memmove(vfRegions_ + k, vfRegions_ + k + 1,
-                        sizeof(VFREGION) * (numVFRegions_ - k - 1));
+    for (auto it = vfRegions_.begin(); it != vfRegions_.end(); ++it) {
+        if (it->vfIndex == index) {
+            it->signs.clear();
+            vfRegions_.erase(it);
             numVFRegions_--;
-            k--;
-            if (numVFRegions_ == 0) {
-                free(vfRegions_);
-                vfRegions_ = NULL;
-            }
-        } else if (vfRegions_[k].vfIndex > index)
-            vfRegions_[k].vfIndex--;
+        } else if (it->vfIndex > index)
+            it->vfIndex--;
     }
-    for (k = 0; k < numSelected_; k++) {
-        if (selected[k] == index) {
-            if (k < numSelected_ - 1)
-                memmove(selected + k, selected + k + 1,
-                        sizeof(int) * (numSelected_ - k - 1));
+
+    for (auto it = selected_.begin(); it != selected_.end(); ++it) {
+        if (*it == index) {
+            selected_.erase(it);
             numSelected_--;
-            k--;
             if (numSelected_ == 0) {
                 numSelected_ = 1;
-                selected[0] = index;
-                if (selected[0] >= numvf - 1)
-                    selected[0] = numvf - 2;
-                if (selected[0] < 0)
-                    selected[0] = 0;
+                selected_[0] = index;
+                if (selected_[0] >= numVF_ - 1)
+                    selected_[0] = numVF_ - 2;
+                if (selected_[0] < 0)
+                    selected_[0] = 0;
                 break;
             }
-        } else if (selected[k] > index)
-            selected[k]--;
+        } else if (*it > index)
+            *it--;
     }
 
-    if (numvf == 1) {
+    if (numVF_ == 1) {
         // delete last one: replace by default startup values
+        xdot_[0] = DEFAULTXDOT;
+        ydot_[0] = DEFAULTYDOT;
+        gcf_[0] = DEFAULTGCF;
+        epsilon_[0] = DEFAULTEPSILON;
+        numeric_[0] = DEFAULTNUMERIC;
+        precision_[0] = DEFAULTPRECISION;
+        testsep_[0] = DEFAULTTESTSEP;
+        taylorlevel_[0] = DEFAULTLEVEL;
+        numericlevel_[0] = DEFAULTNUMLEVEL;
+        maxlevel_[0] = DEFAULTMAXLEVEL;
+        weakness_[0] = DEFAULTWEAKNESS;
+        for (k = 0; k < MAXNUMPARAMS; k++) {
+            parvalue_[0][k] = QString();
+            parlabel_[k] = QString();
+        }
 
-        *(xdot[0]) = DEFAULTXDOT;
-        *(ydot[0]) = DEFAULTYDOT;
-        *(gcf[0]) = DEFAULTGCF;
-        *(epsilon[0]) = DEFAULTEPSILON;
-        *numeric = DEFAULTNUMERIC;
-        *precision = DEFAULTPRECISION;
-        *testsep = DEFAULTTESTSEP;
-        *taylorlevel = DEFAULTLEVEL;
-        *numericlevel = DEFAULTNUMLEVEL;
-        *maxlevel = DEFAULTMAXLEVEL;
-        *weakness = DEFAULTWEAKNESS;
-        for (k = 0; k < MAXNUMPARAMS; k++) *(parvalue[0][k]) = "";
-
-        for (k = 0; k < MAXNUMPARAMS; k++) parlabel[k] = "";
-
-        numparams = 0;
-        p = DEFAULTP;
-        q = DEFAULTQ;
-        symbolicpackage = PACKAGE_MAPLE;
-        typeofstudy = DEFAULTTYPE;
-        x0 = DEFAULTX0;
-        y0 = DEFAULTY0;
+        numparams_ = 0;
+        p_ = DEFAULTP;
+        q_ = DEFAULTQ;
+        // symbolicpackage = PACKAGE_MAPLE;
+        typeofstudy_ = DEFAULTTYPE;
+        x0_ = DEFAULTX0;
+        y0_ = DEFAULTY0;
         /*
                 defaulttypeofview = TYPEOFVIEW_SPHERE;
                 defaultxmin = X_MIN;
@@ -4083,48 +3388,54 @@ void P4InputVF::deleteVectorField(int index)
                 defaultymax = Y_MAX;
         */
     } else {
-        delete xdot[index];
-        delete ydot[index];
-        delete gcf[index];
-        delete epsilon[index];
-        for (k = 0; k < MAXNUMPARAMS; k++) delete parvalue[index][k];
-        free(parvalue[index]);
+        xdot_.erase(xdot_.begin() + index);
+        ydot_.erase(ydot_.begin() + index);
+        gcf_.erase(gcf_.begin() + index);
+        epsilon_.erase(epsilon_.begin() + index);
+        parvalue_.erase(parvalue_.begin() + index); // TODO: funcioinarà?
 
-        if (index < numvf - 1) {
-            // do some memory moving
-
-            memmove(xdot + index, xdot + index + 1,
-                    sizeof(QString *) * (numvf - index - 1));
-            memmove(ydot + index, ydot + index + 1,
-                    sizeof(QString *) * (numvf - index - 1));
-            memmove(gcf + index, gcf + index + 1,
-                    sizeof(QString *) * (numvf - index - 1));
-            memmove(epsilon + index, epsilon + index + 1,
-                    sizeof(QString *) * (numvf - index - 1));
-            memmove(numeric + index, numeric + index + 1,
-                    sizeof(bool) * (numvf - index - 1));
-            memmove(testsep + index, testsep + index + 1,
-                    sizeof(bool) * (numvf - index - 1));
-            memmove(precision + index, precision + index + 1,
-                    sizeof(int) * (numvf - index - 1));
-            memmove(taylorlevel + index, taylorlevel + index + 1,
-                    sizeof(int) * (numvf - index - 1));
-            memmove(numericlevel + index, numericlevel + index + 1,
-                    sizeof(int) * (numvf - index - 1));
-            memmove(maxlevel + index, maxlevel + index + 1,
-                    sizeof(int) * (numvf - index - 1));
-            memmove(weakness + index, weakness + index + 1,
-                    sizeof(int) * (numvf - index - 1));
-            memmove(parvalue + index, parvalue + index + 1,
-                    sizeof(QString **) * (numvf - index - 1));
-        }
-        numvf--;
+        numVF_--;
     }
-
-    if (numvf == 1 && numvfregions == 0 && numcurves == 0) {
-        numvfregions = 1;
+    // TODO: segurament innecessari
+    /*if (numVF_ == 1 && numVFRegions_ == 0 && numCurves_ == 0) {
+        numVFRegions_ = 1;
         vfregions = (VFREGION *)malloc(sizeof(VFREGION));
         vfregions->vfindex = 0;
         vfregions->signs = NULL;
+    }*/
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::addSeparatingCurve
+// -----------------------------------------------------------------------
+void P4InputVF::addSeparatingCurve()
+{
+    int i, n;
+
+    if (!g_VFResults.curves_.empty()) {
+        for (i = 0; i < numcurves; i++)
+            g_VFResults.resetCurveInfo(i);
+        g_VFResults.curves.clear();
+        g_VFResults.curves = NULL;
+    }
+
+    n = numcurves;
+    numcurves++;
+
+    curve = (QString **)realloc(curve, sizeof(QString *) * numcurves);
+    numpointscurve = (int *)realloc(numpointscurve, sizeof(int) * numcurves);
+    curve[n] = new QString("");
+    numpointscurve[n] = DEFAULT_CURVEPOINTS;
+
+    for (i = 0; i < numvfregions; i++) {
+        vfregions[i].signs =
+            (int *)realloc(vfregions[i].signs, sizeof(int) * numcurves);
+        vfregions[i].signs[n] = 1;
+    }
+
+    for (i = 0; i < numcurveregions; i++) {
+        curveregions[i].signs =
+            (int *)realloc(curveregions[i].signs, sizeof(int) * numcurves);
+        curveregions[i].signs[n] = 1;
     }
 }
