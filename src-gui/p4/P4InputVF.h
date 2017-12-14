@@ -236,6 +236,9 @@ class P4InputVF : public QObject
     void deleteSeparatingCurve();
     void resampleCurve();
 
+    void prepareCurves();
+    bool evaluateCurves();
+
     int getVFIndex_R2(const double *);
     int getVFIndex_U1(const double *);
     int getVFIndex_U2(const double *);
