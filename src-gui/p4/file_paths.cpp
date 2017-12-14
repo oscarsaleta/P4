@@ -25,8 +25,8 @@
 #include <QSettings>
 #include <QString>
 
-QByteArray Win_GetLongPathName(QByteArray);
-QByteArray Win_GetShortPathName(QByteArray);
+QByteArray win_GetLongPathName(QByteArray);
+QByteArray win_GetShortPathName(QByteArray);
 
 // -----------------------------------------------------------------------
 //                          GETDEFAULTP4PATH
@@ -491,7 +491,7 @@ letter?
 //                          WIN_GETSHORTPATHNAME
 // -----------------------------------------------------------------------
 
-QByteArray Win_GetShortPathName(QByteArray f)
+QByteArray win_GetShortPathName(QByteArray f)
 {
     char *shortfname;
     const char *longfname;
@@ -523,7 +523,7 @@ QByteArray Win_GetShortPathName(QByteArray f)
 //                          WIN_GETLONGPATHNAME
 // -----------------------------------------------------------------------
 
-QByteArray Win_GetLongPathName(QByteArray f)
+QByteArray win_GetLongPathName(QByteArray f)
 {
     /*
         char * longfname;
