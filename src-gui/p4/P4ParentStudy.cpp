@@ -53,7 +53,7 @@ P4ParentStudy::P4ParentStudy()
     double_q_ = q;
     double_p_plus_q_ = p + q;
     double_p_minus_1_ = p - 1;
-    double_q_minus_1_ = q_1;
+    double_q_minus_1_ = q-1;
     double_q_minus_p_ = q - p;
     config_lc_value_ =
         DEFAULT_LCORBITS; // number of orbits in the limit cycle window
@@ -82,8 +82,6 @@ P4ParentStudy::P4ParentStudy()
     current_lim_cycle_ = nullptr;
 
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
-
-    curves_result_ = new std::vector<curveResult>();
 
     setupCoordinateTransformations();
 }
