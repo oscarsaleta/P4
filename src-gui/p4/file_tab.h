@@ -30,14 +30,14 @@ class QTextEdit;
 // -----------------------------------------------------------------------
 
 // Linked list of univariate terms a*x^i
-namespace p4polynomials //TODO: usar aquestes structs com vectors 
+namespace p4polynom // TODO: usar aquestes structs com vectors
 {
 struct term1 {
     int exp;
     double coeff;
-    struct term1 *next_term1;
-
-    term1() : next_term1(nullptr){};
+    // struct term1 *next_term1;
+    term1() {}
+    ~term1() {}
 };
 
 // typedef struct term1 *P4POLYNOM1;
@@ -48,9 +48,9 @@ struct term2 {
     int exp_x;
     int exp_y;
     double coeff;
-    struct term2 *next_term2;
-
-    term2() : next_term2(nullptr){};
+    // struct term2 *next_term2;
+    term2() {}
+    ~term2() {}
 };
 
 // Linked list of terms a*r^i*cos(theta)^j*sin(theta)^k
@@ -62,9 +62,9 @@ struct term3 {
     int exp_Co;
     int exp_Si;
     double coeff;
-    struct term3 *next_term3;
-
-    term3() : next_term3(nullptr){};
+    // struct term3 *next_term3;
+    term3() {}
+    ~term3() {}
 };
 
 // typedef struct term3 *P4POLYNOM3;
@@ -75,32 +75,52 @@ struct term3 {
 namespace p4orbits
 {
 struct orbits_points {
-    int color;  // color of seperatrice
+    int color; // color of seperatrice
 
-    double pcoord[3];  // point on the poincare sphere -> p=(X,Y,Z)
-                       // or on the poincare-lyapunov sphere
-                       // -> p=(0,x,y) or p=(1,r,theta)
+    double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
+                      // or on the poincare-lyapunov sphere
+                      // -> p=(0,x,y) or p=(1,r,theta)
     int dashes;
-    int dir;   // if we have a line of sing at infinity and have to change
-    int type;  // the direction if we integrate the orbit of separatrice
-               // and sometimes the type
+    int dir;  // if we have a line of sing at infinity and have to change
+    int type; // the direction if we integrate the orbit of separatrice
+              // and sometimes the type
 
-    struct orbits_points *next_point;
+    // struct orbits_points *next_point;
 
-    orbits_points() : next_point(nullptr){};
+    orbits_points() {}
+    orbits_points(int co, double pc[3], int da, int di, int ty)
+        : color(co), dashes(da), dir(di), type(ty)
+    {
+        pcoord[0] = pc[0];
+        pcoord[1] = pc[1];
+        pcoord[2] = pc[2];
+    }
+    ~orbits_points() {}
 };
 
 // typedef struct orbits_points *P4ORBIT;
 
 struct orbits {
-    double pcoord[3];  // startpoint
+    double pcoord[3]; // startpoint
     int color;
-    orbits_points *f_orbits;          // orbit
-    orbits_points *current_f_orbits;  // orbit
-    struct orbits *next_orbit;
+    std::vector<orbits_points> f_orbits;         // orbit
+    std::vector<orbits_points> current_f_orbits; // orbit
+    // struct orbits *next_orbit;
 
-    orbits()
-        : f_orbits(nullptr), current_f_orbits(nullptr), next_orbit(nullptr){};
+    orbits() {}
+    orbits(double pc[3], int co, std::vector<orbits_points> fo,
+           std::vector<orbits_points> cu)
+        : color(co), f_orbits(fo), current_f_orbits(cu)
+    {
+        pcoord[0] = pc[0];
+        pcoord[1] = pc[1];
+        pcoord[2] = pc[2];
+    }
+    ~orbits()
+    {
+        f_orbits.clear();
+        current_f_orbits.clear();
+    }
 };
 }
 
@@ -108,34 +128,60 @@ struct orbits {
 //                      Curves and isoclines
 // -----------------------------------------------------------------------
 struct curves {
-    p4polynomials::term2 *r2, *u1, *u2, *v1, *v2;
-    p4polynomials::term3 *c;
-    p4orbits::orbits_points *points;
+    std::vector<p4polynom::term2> r2, u1, u2, v1, v2;
+    std::vector<p4polynom::term3> c;
+    std::vector<p4orbits::orbits_points> points;
 
-    curves()
-        : r2(nullptr),
-          u1(nullptr),
-          u2(nullptr),
-          v1(nullptr),
-          v2(nullptr),
-          c(nullptr),
-          points(nullptr){};
+    curves() {}
+    curves(std::vector<p4polynom::term2> _r2,
+           std::vector<p4polynom::term2> _u1,
+           std::vector<p4polynom::term2> _u2,
+           std::vector<p4polynom::term2> _v1,
+           std::vector<p4polynom::term2> _v2,
+           std::vector<p4polynom::term3> _c,
+           std::vector<p4orbits::orbits_points> po)
+        : r2(_r2), u1(_u1), u2(_u2), v1(_v1), v2(_v2), c(_c), points(po)
+    {
+    }
+    ~curves()
+    {
+        r2.clear();
+        u1.clear();
+        u2.clear();
+        v1.clear();
+        v2.clear();
+        c.clear();
+        points.clear();
+    }
 };
 
 struct isoclines {
-    p4polynomials::term2 *r2, *u1, *u2, *v1, *v2;
-    p4polynomials::term3 *c;
-    p4orbits::orbits_points *points;
+    std::vector<p4polynom::term2> r2, u1, u2, v1, v2;
+    std::vector<p4polynom::term3> c;
+    std::vector<p4orbits::orbits_points> points;
     int color;
 
-    isoclines()
-        : r2(nullptr),
-          u1(nullptr),
-          u2(nullptr),
-          v1(nullptr),
-          v2(nullptr),
-          c(nullptr),
-          points(nullptr){};
+    isoclines() {}
+    isoclines(std::vector<p4polynom::term2> _r2,
+              std::vector<p4polynom::term2> _u1,
+              std::vector<p4polynom::term2> _u2,
+              std::vector<p4polynom::term2> _v1,
+              std::vector<p4polynom::term2> _v2,
+              std::vector<p4polynom::term3> _c,
+              std::vector<p4orbits::orbits_points> po)
+        : r2(_r2), u1(_u1), u2(_u2), v1(_v1), v2(_v2), c(_c), points(po)
+    {
+    }
+    ~isoclines()
+    {
+        r2.clear();
+        u1.clear();
+        u2.clear();
+        v1.clear();
+        v2.clear();
+        c.clear();
+        points.clear();
+    }
 };
 
 // -----------------------------------------------------------------------
@@ -144,55 +190,93 @@ struct isoclines {
 namespace p4blowup
 {
 struct transformations {
-    double x0, y0;               // translation point
-    int c1, c2, d1, d2, d3, d4;  // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
-    int d;                       // X/x^d
-    struct transformations *next_trans;
+    double x0, y0;              // translation point
+    int c1, c2, d1, d2, d3, d4; // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
+    int d;                      // X/x^d
+    // struct transformations *next_trans;
 
-    transformations() : next_trans(nullptr){};
+    transformations() {}
+    transformations(double _x0, double _y0, int _c1, int _c2, int _d1, int _d2,
+                    int _d3, int _d4, int _d)
+        : x0(_x0), y0(_y0), c1(_c1), c2(_c2), d1(_d1), d2(_d2), d3(_d3),
+          d4(_d4), d(_d)
+    {
+    }
+    ~transformations() {}
 };
 
 struct blow_up_points {
-    int n;  // number of transformations
-    struct transformations *trans;
-    double x0, y0;                  // last point that is not degenerate
-    double a11, a12, a21, a22;      // transformation matrix
-    struct term2 *vector_field[2];  // vector field
-    struct term1 *sep;              // sep (t,g(t))
-    int type;                       // type of seperatrice (STYPE_STABLE, ...)
-    int blow_up_vec_field;  // if true then use the blow up vector field if
+    int n; // number of transformations
+    std::vector<transformations> trans;
+    double x0, y0;             // last point that is not degenerate
+    double a11, a12, a21, a22; // transformation matrix
+    term2 *vector_field[2];    // vector field FIXME
+    std::vector<term1> sep;    // sep (t,g(t))
+    int type;                  // type of seperatrice (STYPE_STABLE, ...)
+    int blow_up_vec_field;     // if true then use the blow up vector field if
     // the modulus of the last point of the separatrices is less
     // than 1
-    double point[2];  // end point sep in blow up chart
+    double point[2]; // end point sep in blow up chart
 
-    struct orbits_points *first_sep_point;
-    struct orbits_points *last_sep_point;
-    struct blow_up_points *next_blow_up_point;
+    std::vector<orbits_points> first_sep_point;
+    std::vector<orbits_points> last_sep_point;
+    std::vector<blow_up_points> next_blow_up_point;
 
     blow_up_points()
-        : trans(nullptr),
-          sep(nullptr),
-          first_sep_point(nullptr),
-          last_sep_point(nullptr),
-          next_blow_up_point(nullptr){};
+    {
+        vector_field[0] = nullptr;
+        vector_field[2] = nullptr;
+    }
+    blow_up_points(int _n, std::vector<transformations> tr, double _x0,
+                   double _y0, double _a11, double _a12, double _a21,
+                   double _a22, term2 **ve, std::vector<term1> se, int ty,
+                   int bl, double po[2], std::vector<orbits_points> fi,
+                   std::vector<orbits_points> la,
+                   std::vector<blow_up_points> ne)
+        : n(_n), trans(tr), x0(_x0), y0(_y0), a11(_a11), a12(_a12), a21(_a21),
+          a22(_a22), sep(se), type(ty), blow_up_vec_field(bl),
+          first_sep_point(fi), last_sep_point(la), next_blow_up_point(ne)
+    {
+        vector_field[0] = ve[0];
+        vector_field[1] = ve[1];
+    }
+
+    ~blow_up_points()
+    {
+        trans.clear();
+        sep.clear();
+        first_sep_point.clear();
+        last_sep_point.clear();
+        next_blow_up_point.clear();
+        delete[] vector_field; // TODO: mirar si aixo funciona
+    }
 };
 
 struct sep {
-    struct orbits_points *first_sep_point;
-    struct orbits_points *last_sep_point;
-    int type;  // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
+    std::vector<orbits_points> first_sep_point;
+    std::vector<orbits_points> last_sep_point;
+    int type; // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
     int direction;
     int d;
-    bool notadummy;  // false if separatrice is a copy of a structure (obtained
-                     // through a symmetry)
-    struct term1 *separatrice;  // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
-    struct sep *next_sep;
+    bool notadummy; // false if separatrice is a copy of a structure (obtained
+                    // through a symmetry)
+    std::vector<term1> separatrice; // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
+    // sep *next_sep;
 
-    sep()
-        : first_sep_point(nullptr),
-          last_sep_point(nullptr),
-          separatrice(nullptr),
-          next_sep(nullptr){};
+    sep() {}
+    sep(std::vector<orbits_points> fi, std::vector<orbits_points> la, int ty,
+        int di, int _d, bool no, std::vector<term1> se)
+        : first_sep_point(fi), last_sep_point(la), type(ty), direction(di),
+          d(_d), notadummy(no), separatrice(se)
+    {
+    }
+    ~sep()
+    {
+        first_sep_point.clear();
+        last_sep_point.clear();
+        separatrice.clear();
+        next_sep.clear();
+    }
 };
 }
 
@@ -205,113 +289,170 @@ struct sep {
 // lines.  In that case, we mark the singularity in a different way.
 // Of course, on screen it need only be marked once and not several times.
 
-#define POSITION_VIRTUAL 0          // virtual singularity
-#define POSITION_STANDALONE 1       // stand-alone singularity
-#define POSITION_COINCIDING_MAIN 2  // singularity coincides and will be drawn
-#define POSITION_COINCIDING_VIRTUAL \
-    3  // is a virtual singularity, but coincides with a real one so do not plot
-       // at all
-#define POSITION_COINCIDING 4  // singularity coincides, but is already drawn
+#define POSITION_VIRTUAL 0         // virtual singularity
+#define POSITION_STANDALONE 1      // stand-alone singularity
+#define POSITION_COINCIDING_MAIN 2 // singularity coincides and will be drawn
+#define POSITION_COINCIDING_VIRTUAL                                            \
+    3 // is a virtual singularity, but coincides with a real one so do not plot
+      // at all
+#define POSITION_COINCIDING 4 // singularity coincides, but is already drawn
 // --------------------------------------
 namespace p4singularities
 {
-struct genericsingularity  // part of the structure that is the same for all
-                           // types
+struct genericsingularity // part of the structure that is the same for all
+                          // types
 {
     double x0;
     double y0;
-    struct genericsingularity *next;
+    // struct genericsingularity *next;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
-    genericsingularity() : next(nullptr){};
+    genericsingularity() {}
+    genericsingularity(double _x0, double _y0, int ch, int po)
+        : x0(_x0), y0(_y0), chart(ch), position(po)
+    {
+    }
+    ~genericsingularity() {}
 };
 
 struct saddle {
     double x0;
     double y0;
-    struct saddle *next_saddle;
+    // struct saddle *next_saddle;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
     double epsilon;
     bool notadummy;
 
-    struct sep *separatrices;
-    struct term2 *vector_field[2];  // vector field {xdot,ydot}
-    double a11, a12, a21, a22;      // transformation matrix
+    std::vector<sep> separatrices;
+    struct term2 *vector_field[2]; // vector field {xdot,ydot} // FIXME
+    double a11, a12, a21, a22;     // transformation matrix
 
-    saddle() : next_saddle(nullptr), separatrices(nullptr){};
+    saddle()
+    {
+        vector_field[0] = nullptr;
+        vector_field[1] = nullptr;
+    }
+    saddle(double _x0, double _y0, int ch, int po, double ep, bool no,
+           std::vector<sep> se, term2 **ve, double _a11, double _a12,
+           double _a21, double _a22)
+        : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
+          separatrices(se), a11(_a11), a12(_a12), a21(_a21), a22(_a22)
+    {
+        vector_field[0] = ve[0];
+        vector_field[1] = ve[1];
+    }
+    ~saddle() { separatrices.clear(); }
 };
 
 struct semi_elementary {
     double x0;
     double y0;
-    struct semi_elementary *next_se;
+    // struct semi_elementary *next_se;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
     double epsilon;
     bool notadummy;
 
-    struct sep *separatrices;       // center sep (t,f(t)), sep (g(t),t)
-    struct term2 *vector_field[2];  // vector field
-    double a11, a12, a21, a22;      // transformation matrix
+    std::vector<sep> separatrices; // center sep (t,f(t)), sep (g(t),t)
+    struct term2 *vector_field[2]; // vector field
+    double a11, a12, a21, a22;     // transformation matrix
 
-    int type;  // type of semi-elementary point
+    int type; // type of semi-elementary point
 
-    semi_elementary() : next_se(nullptr), separatrices(nullptr){};
+    semi_elementary()
+    {
+        vector_field[0] = nullptr;
+        vector_field[1] = nullptr;
+    }
+    semi_elementary(double _x0, double _y0, int ch, int po, double ep, bool no,
+                    std::vector<sep> se, term2 **ve, double _a11, double _a12,
+                    double _a21, double _a22, int ty)
+        : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
+          separatrices(se), a11(_a11), a12(_a12), a21(_a21), a22(_a22), type(ty)
+    {
+        vector_field[0] = ve[0];
+        vector_field[1] = ve[1];
+    }
+    ~semi_elementary() { separatrices.clear(); }
 };
 
 struct degenerate {
     double x0;
     double y0;
-    struct degenerate *next_de;
+    // struct degenerate *next_de;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
     double epsilon;
     bool notadummy;
 
-    struct blow_up_points *blow_up;
+    std::vector<blow_up_points> blow_up;
 
-    degenerate() : next_de(nullptr), blow_up(nullptr){};
+    degenerate() {}
+    degenerate(double _x0, double _y0, int ch, int po, double ep, bool no,
+               std::vector<blow_up_points> bl)
+        : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
+          blow_up(bl)
+    {
+        vector_field[0] = ve[0];
+        vector_field[1] = ve[1];
+    }
+    ~degenerate() { blow_up.clear(); }
 };
 
 struct node {
     double x0;
     double y0;
-    struct node *next_node;
+    // struct node *next_node;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
     int stable;
 
-    node() : next_node(nullptr){};
+    node() {}
+    node(double _x0, double _y0, int ch, int po, int st)
+        : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
+    {
+    }
+    ~node() {}
 };
 
 struct strong_focus {
     double x0;
     double y0;
-    struct strong_focus *next_sf;
+    // struct strong_focus *next_sf;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
     int stable;
 
-    strong_focus() : next_sf(nullptr){};
+    strong_focus() {}
+    strong_focus(double _x0, double _y0, int ch, int po, int st)
+        : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
+    {
+    }
+    ~strong_focus() {}
 };
 
 struct weak_focus {
     double x0;
     double y0;
-    struct weak_focus *next_wf;
+    // struct weak_focus *next_wf;
     int chart;
-    int position;  // POSITION_ constants
+    int position; // POSITION_ constants
 
     int type;
 
-    weak_focus() : next_wf(nullptr){};
+    weak_focus() {}
+    weak_focus(double _x0, double _y0, int ch, int po, int st)
+        : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
+    {
+    }
+    ~weak_focus() {}
 };
 }
 // -----------------------------------------------------------------------
@@ -331,7 +472,7 @@ struct weak_focus {
 #define SEMI_HYPERBOLIC 5
 #define NON_ELEMENTARY 6
 
-#define STYPE_UNSTABLE (1)  // separatrice type
+#define STYPE_UNSTABLE (1) // separatrice type
 #define STYPE_STABLE (-1)
 #define STYPE_CENUNSTABLE 2
 #define STYPE_CENSTABLE (-2)
@@ -366,39 +507,44 @@ namespace p4curveRegions
 {
 // TODO: podria ser redundant amb p4VFStudyRegions::vfRegion
 struct vfRegionResult {
-    int vfindex;  // which vector field
-    int *signs;
+    int vfIndex; // which vector field
+    std::vector<int> signs;
+    vfRegionResult() {}
+    vfRegionResult(int vf, std::vector<int> si) : vfIndex(vf), signs(si) {}
+    ~vfRegionResult() { signs.clear(); }
 };
 // TODO: podria ser redundant amb p4VFStudyRegions::curveRegion
 struct curveRegionResult {
-    int curveindex;  // which curve are we talking about
-    int *signs;
+    int curveIndex; // which curve are we talking about
+    std::vector<int> signs;
+    curveRegionResult() {}
+    curveRegionResult(int cu, std::vector<int> si) : curveIndex(cu), signs(si)
+    {
+    }
+    ~curveRegionResult() { signs.clear(); }
 };
 
-struct curveResult {  // TODO: arreglar aixo convertint a vectors
-    std::vector<p4polynomials::term2> sep;
-    std::vector<p4polynomials::term2> sep_U1;
-    std::vector<p4polynomials::term2> sep_U2;
-    std::vector<p4polynomials::term2> sep_V1;
-    std::vector<p4polynomials::term2> sep_V2;
-    std::vector<p4polynomials::term3> sep_C;
+struct curveResult {
+    std::vector<p4polynom::term2> sep;
+    std::vector<p4polynom::term2> sep_U1;
+    std::vector<p4polynom::term2> sep_U2;
+    std::vector<p4polynom::term2> sep_V1;
+    std::vector<p4polynom::term2> sep_V2;
+    std::vector<p4polynom::term3> sep_C;
     std::vector<p4orbits::orbits_points> sep_points;
 
-    curveResult(){};
-    curveResult(std::vector<p4polynomials::term2> _sep,
-                std::vector<p4polynomials::term2> _sep_U1,
-                std::vector<p4polynomials::term2> _sep_U2,
-                std::vector<p4polynomials::term2> _sep_V1,
-                std::vector<p4polynomials::term2> _sep_V2,
-                std::vector<p4polynomials::term3> _sep_C,
+    curveResult() {}
+    curveResult(std::vector<p4polynom::term2> _sep,
+                std::vector<p4polynom::term2> _sep_U1,
+                std::vector<p4polynom::term2> _sep_U2,
+                std::vector<p4polynom::term2> _sep_V1,
+                std::vector<p4polynom::term2> _sep_V2,
+                std::vector<p4polynom::term3> _sep_C,
                 std::vector<p4orbits::orbits_points> _sep_points)
-        : sep(_sep),
-          sep_U1(_sep_U1),
-          sep_U2(_sep_U2),
-          sep_V1(_sep_V1),
-          sep_V2(_sep_V2),
-          sep_C(_sep_C),
-          sep_points(_sep_points){};
+        : sep(_sep), sep_U1(_sep_U1), sep_U2(_sep_U2), sep_V1(_sep_V1),
+          sep_V2(_sep_V2), sep_C(_sep_C), sep_points(_sep_points)
+    {
+    }
     ~curveResult()
     {
         sep.clear();
