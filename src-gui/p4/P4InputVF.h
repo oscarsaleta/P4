@@ -50,7 +50,7 @@ class QTextStream;
 
 struct term2;
 
-namespace p4VFStudyRegions
+namespace p4InputVFRegions
 {
 struct vfRegion {
     int vfIndex;
@@ -216,12 +216,12 @@ class P4InputVF : public QObject
     // p5 modifications --------------------------------------------------------
     int numVF_;
     int numVFRegions_;
-    // TODO: are they vectors or just pointers?
-    std::vector<p4VFStudyRegions::vfRegion> vfRegions;
+    std::vector<p4InputVFRegions::vfRegion> vfRegions;
 
     int numCurves_;
     int numCurveRegions_;
-    std::vector<p4VFStudyRegions::curveRegion> curveRegions;
+    std::vector<p4InputVFRegions::curveRegion> curveRegions;
+    
     std::vector<int> numPointsCurve_;
     std::vector<QString> curves_;
 
