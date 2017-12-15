@@ -34,11 +34,6 @@ P4ParentStudy::P4ParentStudy()
     vfK_ = nullptr;
 
     selected_ucoord_[0] = selected_ucoord_[1] = 0;
-    selected_saddle_point_ = nullptr;
-    selected_se_point_ = nullptr;
-    selected_de_point_ = nullptr;
-    selected_sep_ = nullptr;
-    selected_de_sep_ = nullptr;
 
     xmin_ = -1.0;
     xmax_ = 1.0;
@@ -49,12 +44,12 @@ P4ParentStudy::P4ParentStudy()
     plweights_ = false;
     typeofstudy_ = TYPEOFSTUDY_ALL;
     typeofview_ = TYPEOFVIEW_SPHERE;
-    double_p_ = p;
-    double_q_ = q;
-    double_p_plus_q_ = p + q;
-    double_p_minus_1_ = p - 1;
-    double_q_minus_1_ = q-1;
-    double_q_minus_p_ = q - p;
+    double_p_ = p_;
+    double_q_ = q_;
+    double_p_plus_q_ = p_ + q_;
+    double_p_minus_1_ = p_ - 1;
+    double_q_minus_1_ = q_ - 1;
+    double_q_minus_p_ = q_ - p_;
     config_lc_value_ =
         DEFAULT_LCORBITS; // number of orbits in the limit cycle window
     config_lc_numpoints_ =
@@ -76,11 +71,6 @@ P4ParentStudy::P4ParentStudy()
 
     // initialize limit cycles & orbits
 
-    first_lim_cycle_ = nullptr;
-    first_orbit_ = nullptr;
-    current_orbit_ = nullptr;
-    current_lim_cycle_ = nullptr;
-
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
 
     setupCoordinateTransformations();
@@ -97,14 +87,7 @@ P4ParentStudy::~P4ParentStudy() { reset(); }
 P4ParentStudy::reset()
 {
     int i;
-    if (vf_ != nullptr) {
-        for (i = 0; i < g_ThisVF->numf; i++) {
-            delete vf_[i];
-            vf_[i] = nullptr;
-        }
-        delete vf_;
-        vf_ = nullptr;
-    }
+    vf_.clear();
     vfK_ = nullptr;
     K_ = 0;
 
@@ -118,12 +101,12 @@ P4ParentStudy::reset()
     typeofstudy_ = TYPEOFSTUDY_ALL;
     typeofview_ = TYPEOFVIEW_SPHERE;
     config_projection_ = DEFAULT_PROJECTION;
-    double_p_ = p;
-    double_q_ = q;
-    double_p_plus_q_ = p + q;
-    double_p_minus_1_ = p - 1;
-    double_q_minus_1_ = q - 1;
-    double_q_minus_p_ = q - p;
+    double_p_ = p_;
+    double_q_ = q_;
+    double_p_plus_q_ = p_ + q_;
+    double_p_minus_1_ = p_ - 1;
+    double_q_minus_1_ = q_ - 1;
+    double_q_minus_p_ = q_ - p_;
     config_lc_value_ = DEFAULT_LCORBITS;
     config_lc_numpoints_ = DEFAULT_LCPOINTS;
     config_currentstep_ = DEFAULT_STEPSIZE;
@@ -132,21 +115,19 @@ P4ParentStudy::reset()
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
 
     // delete orbits
-    deleteOrbit(first_orbit_);
-    first_orbit_ = nullptr;
-    current_orbit_ = nullptr;
+    first_orbit_.clear();
+    current_orbit = nullptr;
 
     // delete limit cycles
-    deleteLimitCycle(first_lim_cycle_);
-    first_lim_cycle_ = nullptr;
+    first_lim_cycle_.clear();
     current_lim_cycle_ = nullptr;
 
     selected_ucoord_[0] = selected_ucoord_[1] = 0;
-    selected_saddle_point_ = nullptr;
-    selected_se_point_ = nullptr;
-    selected_de_point_ = nullptr;
-    selected_sep_ = nullptr;
-    selected_de_sep_ = nullptr;
+    selected_saddle_point_.clear();
+    selected_se_point_.clear();
+    selected_de_point_.clear();
+    selected_sep_.clear();
+    selected_de_sep_.clear();
 
     curves_result_.clear();
 
@@ -161,47 +142,6 @@ P4ParentStudy::reset()
 }
 
 // -----------------------------------------------------------------------
-//          P4ParentStudy::deleteOrbitPoint
-// -----------------------------------------------------------------------
-void P4ParentStudy::deleteOrbitPoint(p4orbits::orbits_points *p)
-{
-    p4orbits::orbits_points *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_point;
-
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//          P4ParentStudy::deleteLimitCycle
-// -----------------------------------------------------------------------
-void P4ParentStudy::deleteLimitCycle(p4orbits::orbits *p)
-{
-    deleteOrbit(p); // limit cycle is implemented as orbit.
-}
-
-// -----------------------------------------------------------------------
-//          P4ParentStudy::deleteOrbit
-// -----------------------------------------------------------------------
-void P4ParentStudy::deleteOrbit(p4orbits::orbits *p)
-{
-    p4orbits::orbits *q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_orbit;
-
-        deleteOrbitPoint(q->f_orbits);
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
 //          P4ParentStudy::readPieceWiseData
 // -----------------------------------------------------------------------
 bool P4ParentStudy::readPieceWiseData(FILE *fp)
@@ -211,33 +151,33 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
         return true;
     if (fscanf(fp, "%d\n", &v) != 1)
         return false;
-    if (v != g_ThisVF->numVFRegions)
+    if (v != g_ThisVF->numVFRegions_)
         return false;
 
-    if (g_ThisVF->numVFRegions > 0) {
-        for (j = 0; j < g_ThisVF->numVFRegions; j++) {
+    if (g_ThisVF->numVFRegions_ > 0) {
+        for (j = 0; j < g_ThisVF->numVFRegions_; j++) {
             if (fscanf(fp, "%d" & v) != 1 ||
-                v != g_ThisVF->vfRegions[j].vfIndex)
+                v != g_ThisVF->vfRegions_[j].vfIndex)
                 return false;
             for (k = 0; k < g_ThisVF->numCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1 ||
-                    v != g_ThisVF->vfRegions[j].signs[k])
+                    v != g_ThisVF->vfRegions_[j].signs[k])
                     return false;
             }
             fscanf(fp, "\n");
         }
     }
 
-    if (fscanf(fp, "%d\n", &v) != 1 || v != g_ThisVF->numCurveRegions)
+    if (fscanf(fp, "%d\n", &v) != 1 || v != g_ThisVF->numCurveRegions_)
         return false;
-    if (g_ThisVF->numCurveRegions > 0) {
-        for (j = 0; j < g_ThisVF->numCurveRegions; j++) {
+    if (g_ThisVF->numCurveRegions_ > 0) {
+        for (j = 0; j < g_ThisVF->numCurveRegions_; j++) {
             if (fscanf(fp, "%d", &v) != 1 ||
-                v != g_ThisVF->curveRegions[j].curveIndex)
+                v != g_ThisVF->curveRegions_[j].curveIndex)
                 return false;
             for (k = 0; k < g_ThisVF->numCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1 ||
-                    v != g_ThisVF->curveRegions[j].signs[k])
+                    v != g_ThisVF->curveRegions_[j].signs[k])
                     return false;
             }
             fscanf(fp, "\n");
@@ -277,52 +217,23 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
            coordinates . Plot data in 5 different charts.
         */
 
-        if (curves_result_.empty()) {
-            // TODO: make this a std::vector
-            // curves_result_ = (curveResult *)malloc(sizeof(curveResult) *
-            //                                       (g_ThisVF->numCurves_));
-            /* crec q aixo no cal, perque no cal inicialitzar res
-            p4curveRegions::curveResult curve = new p4curveRegions::curve();
-            for (j = 0; j < g_ThisVF->numCurves_; j++) {
-                curve.sep = nullptr;
-                curve.sep_U1 = nullptr;
-                curve.sep_U2 = nullptr;
-                curve.sep_V1 = nullptr;
-                curve.sep_V2 = nullptr;
-                curve.sep_C = nullptr;
-                curve.sep_points = nullptr;
-                curves_result_.push_back(curve);
-            }
-            */
-        } else {
-            for (j = 0; j < g_ThisVF->numCurves_; j++) {
-                resetCurveInfo(j);
-            }
-        }
+        curves_result.clear();
 
         fpcurv = fopen(QFile::encodeName(basename + "_curves.tab"), "rt");
-        if (fpcurv == nullptr) {
-            free(curves_result_);
-            curves_result_ = nullptr;
+        if (fpcurv == nullptr)
             return false;
-        }
-        if (fscanf(fpcurv, "p5\n%d %d %d %d\n", &_p, &_q, &_prec,
-                   &_numcurves) != 4) {
-            free(curves_result_);
-            curves_result_ = nullptr;
+
+        if (fscanf(fpcurv, "p5\n%d %d %d %d\n", &p, &q, &prec, &numcurves) !=
+            4) {
             fclose(fpcurv);
             return false;
         }
-        if (_numcurves != g_ThisVF->numCurves_ || _p != ThisVF->p ||
-            _q != ThisVF->q) {
+        if (numcurves != g_ThisVF->numCurves_ || p != ThisVF->p ||
+            q != ThisVF->q) {
             if (onlytry) {
-                free(curves_result_);
-                curves_result_ = nullptr;
                 fclose(fpcurv);
                 return false;
             }
-            free(curves_result_);
-            curves_result_ = nullptr;
             reset();
             fclose(fpcurv);
             return false;
@@ -341,20 +252,14 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         /*P5 Store precision _prec */
 
         for (j = 0; j < g_ThisVF->numCurves_; j++) {
-            if (!readSeparatingCurve(fpcurv, curves_result_ + j)) {
-                for (; j >= 0; j--)
-                    resetCurveInfo(j);
-                free(curves_result_);
-                curves_result_ = nullptr;
+            if (!readSeparatingCurve(fpcurv)) {
+                curves_result_.clear();
                 fclose(fpcurv);
                 return false;
             }
-
+            // FIXME: escriure funció ... math_curves.cpp
             if (!readCurvePoints(fpcurv, &(curves_result_[j].sep_points), j)) {
-                for (; j >= 0; j--)
-                    resetCurveInfo(j);
-                free(curves_result_);
-                curves_result_ = nullptr;
+                curves_result_.clear();
                 fclose(fpcurv);
                 return false;
             }
@@ -386,6 +291,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
     // allocate room for all vector fields
 
     vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
+    vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
     for (j = 0; j < g_ThisVF->numVF_; j++) {
         vf_[j] = new QVFStudy(); // TODO: posar parent al constructor
         vf_[j]->parent = this;
@@ -490,13 +396,11 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
 }
 
 // -----------------------------------------------------------------------
-//          P4ParentStudy::resetCurveInfo
+//          P4ParentStudy::resetCurveInfo //FIXME not needed
 // -----------------------------------------------------------------------
 void P4ParentStudy::resetCurveInfo()
 {
-    std::vector<p4curveRegions::curveResult>::const_iterator it;
-
-    for (it = curves_result_.begin(); it != curves_result_.end(); it++) {
+    for (auto it = curves_result_.begin(); it != curves_result_.end(); it++) {
         delete_term2(it->sep);
         delete_term2(it->sep_U1);
         delete_term2(it->sep_U2);
@@ -514,68 +418,43 @@ void P4ParentStudy::resetCurveInfo()
 bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 {
     int N, degree_sep;
-    p4curveRegions::curveRegion dummy;
+    p4curveRegions::curveResult dummy;
 
     setLocale(LC_ALL, "C");
 
     if (fscanf(fp, "%d", &degree_sep) != 1 || degree_sep < 0)
         return false;
-
-    if (!degree_sep)
+    if (degree_sep == 0)
         return true;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-
-    dummy.sep = new term2();
-    dummy.sep->next_term2 = nullptr;
-
     if (!readTerm2(fp, dummy.sep, N))
         return false;
 
-    if (fscanf(fp, "%d", &N) != 1)
+    if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-
-    dummy.sep_U1 = new term2();
-    dummy.sep_U1->next_term2 = nullptr;
-
     if (!readTerm2(fp, dummy.sep_U1, N))
         return false;
 
-    if (fscanf(fp, "%d", &N) != 1)
+    if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-
-    dummy.sep_U2 = new term2();
-    dummy.sep_U2->next_term2 = nullptr;
-
     if (!readTerm2(fp, dummy.sep_U2, N))
         return false;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-
-    dummy.sep_V1 = new term2();
-    dummy.sep_V1->next_term2 = nullptr;
-
     if (!readTerm2(fp, dummy.sep_V1, N))
         return false;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-
-    dummy.sep_V2 = new term2();
-    dummy.sep_V2->next_term2 = nullptr;
-
     if (!readTerm2(fp, dummy.sep_V2, N))
         return false;
 
     if (plweights_) {
-        if (fscanf(fp, "%d", &N) != 1)
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
-
-        dummy.sep_C = new term3();
-        dummy.sep_C->next_term3 = nullptr;
-
         if (!readTerm3(fp, dummy.sep_C, N))
             return false;
     }
