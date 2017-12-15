@@ -62,7 +62,7 @@ class P4VFStudy : public QObject
     p4polynomials::term2 *gcf_V1_;
     p4polynomials::term2 *gcf_V2_;
     p4polynomials::term3 *gcf_C_;
-    P4ORBIT gcf_points_;
+    p4orbits::orbits_points *gcf_points_;
 
     // curves
     std::vector<curves> curve_vector_;
