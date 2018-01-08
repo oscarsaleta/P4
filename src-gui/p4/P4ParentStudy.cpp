@@ -19,7 +19,6 @@
 
 #include "P4ParentStudy.h"
 
-#include "file_tab.h"
 #include "math_charts.h"
 
 P4ParentStudy g_VFResults;
@@ -116,7 +115,7 @@ P4ParentStudy::reset()
 
     // delete orbits
     first_orbit_.clear();
-    current_orbit = nullptr;
+    current_orbit_ = nullptr;
 
     // delete limit cycles
     first_lim_cycle_.clear();

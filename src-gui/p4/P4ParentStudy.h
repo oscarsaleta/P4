@@ -48,7 +48,7 @@ class P4ParentStudy : public QObject
     int p_;
     int q_;
     bool plweights_; // true if p<>1 or q<>1; false if p=q=1
-    doube config_projection_;
+    double config_projection_;
 
     double double_p_;                  // shortcuts: = (double)p
     double double_q_;                  // = (double)q
