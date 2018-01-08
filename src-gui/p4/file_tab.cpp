@@ -854,12 +854,14 @@ bool QVFStudy::readPoints(FILE *fp)
 // -----------------------------------------------------------------------
 bool readTerm1(FILE *fp, std::vector<p4polynom::term1> &p, int N)
 {
-    p4polynom::term1 poly;
+    int exp;
+    double coeff;
+    p.clear();
     for (int i = 0; i < N; i++) {
-        if (fscanf(fp, "%d %lf", &(poly.exp), &(poly.coeff)) != 2) {
+        if (fscanf(fp, "%d %lf", &exp, &coeff) != 2) {
             return false;
         }
-        p.push_back(poly);
+        p.push_back(p4polynom::term1(exp, coeff));
     }
     return true;
 }
@@ -869,13 +871,14 @@ bool readTerm1(FILE *fp, std::vector<p4polynom::term1> &p, int N)
 // -----------------------------------------------------------------------
 bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N)
 {
-    p4polynom::term2 poly;
+    int xx, xy;
+    double coeff;
+    p.clear();
     for (int i = 0; i < N; i++) {
-        if (fscanf(fp, "%d %d %lf", &(poly.exp_x), &(poly.exp_y),
-                   &(poly.coeff)) != 3) {
+        if (fscanf(fp, "%d %d %lf", &xx, &xy, &coeff) != 3) {
             return false;
         }
-        p.push_back(poly);
+        p.push_back(p4polynom::term2(xx, xy, coeff));
     }
     return true;
 }
@@ -885,13 +888,14 @@ bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N)
 // -----------------------------------------------------------------------
 bool readTerm3(FILE *fp, std::vector<p4polynom::term3> &p, int N)
 {
-    p4polynom::term3 poly;
+    int xr, xc, xs;
+    double coeff;
+    p.clear();
     for (int i = 0; i < N; i++) {
-        if (fscanf(fp, "%d %d %d %lf", &(poly.exp_r), &(poly.exp_Co),
-                   &(poly.exp_Si), &(poly.coeff)) != 4) {
+        if (fscanf(fp, "%d %d %d %lf", &xr, &xc, &xs, &coeff) != 4) {
             return false;
         }
-        p.push_back(poly);
+        p.push_back(p4polynom::term3(xr, xc, xs, coeff));
     }
     return true;
 }
