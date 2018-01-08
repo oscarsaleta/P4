@@ -24,9 +24,9 @@ struct term1;
 struct term2;
 struct term3;
 
-double eval_term1(term1 *, double);
-double eval_term2(term2 *, double *);
-double eval_term3(term3 *, double *);
+double eval_term1(std::vector<p4polynom::term1>, double);
+double eval_term2(std::vector<p4polynom::term2>, double *);
+double eval_term3(std::vector<p4polynom::term3>, double *);
 
 void delete_term1(term1 *p);
 void delete_term2(term2 *p);

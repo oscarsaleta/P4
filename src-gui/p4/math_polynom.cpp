@@ -34,19 +34,14 @@
 // -----------------------------------------------------------------------
 //
 // Calculates p(t) for a polynomial p and a value t.
-
-double eval_term1(P4POLYNOM1 p, double t)
+double eval_term1(std::vector<p4polynom::term1> p, double t)
 {
-    double s;
-
-    s = 0;
-    while (p != nullptr) {
-        if (p->exp != 0)
-            s += (p->coeff) * pow(t, (double)(p->exp));
+    double s = 0;
+    for (auto q : p) {
+        if (q.exp != 0)
+            s += (q.coeff) * pow(t, (double)(q.exp));
         else
-            s += p->coeff;
-
-        p = p->next_term1;
+            s += q.coeff;
     }
 
     return s;
@@ -59,8 +54,7 @@ double eval_term1(P4POLYNOM1 p, double t)
 // Calculates f(x,y) for a polynomial f and values x and y.
 //
 // value refers to an array containing x and y: value[0]=x, value[1]=y
-
-double eval_term2(P4POLYNOM2 f, double *value)
+double eval_term2(std::vector<p4polynom::term2> f, double *value)
 {
     double s;
 
