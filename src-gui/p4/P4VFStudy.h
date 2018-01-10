@@ -26,8 +26,8 @@ class P4VFStudy : public QObject
 {
   public:
     // Constructor and destructor
-    P4VFStudy();  // constructor
-    ~P4VFStudy(); // destructor
+    P4VFStudy(P4ParentStudy *parent = nullptr); // constructor
+    ~P4VFStudy();                               // destructor
 
     P4ParentStudy *parent_;
 

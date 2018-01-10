@@ -24,9 +24,8 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4VFStudy::P4VFStudy()
+P4VFStudy::P4VFStudy(P4ParentStudy *parent) : parent_(parent)
 {
-    parent_ = nullptr;
     // initialize others
     singinf_ = false;
     dir_vec_field_ = 1;
