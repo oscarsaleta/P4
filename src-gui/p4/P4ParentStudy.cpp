@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -29,7 +29,6 @@ P4ParentStudy g_VFResults;
 P4ParentStudy::P4ParentStudy()
 {
     K_ = 0;
-    vf_ = nullptr;
     vfK_ = nullptr;
 
     selected_ucoord_[0] = selected_ucoord_[1] = 0;

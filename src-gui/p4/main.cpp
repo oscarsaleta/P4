@@ -3,7 +3,7 @@
  *  their phase portrait in several spaces, such as Poincaré sphere.
  *  URL: http://github.com/oscarsaleta/P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify

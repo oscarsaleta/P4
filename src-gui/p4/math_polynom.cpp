@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -78,7 +78,6 @@ double eval_term2(std::vector<p4polynom::term2> f, double *value)
 // of r and theta.
 //
 // value refers to an array containing r and theta: value[0]=r, value[1]=theta
-
 double eval_term3(std::vector<p4polynom::term3> F, double *value)
 {
     double s = 0;
@@ -297,7 +296,6 @@ const char *dumpPoly3(std::vector<p4polynom::term3> f, const char *x,
 // -----------------------------------------------------------------------
 //
 // Following are used in preparation of GCF :
-
 char *printterm2(char *buf, p4polynom::term2 f, bool isfirst,
                  const char *x, const char *y)
 {

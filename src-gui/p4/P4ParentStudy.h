@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -94,11 +94,11 @@ class P4ParentStudy : public QObject
     //void deleteOrbit(p4orbits::orbits *);
 
     bool readPiecewiseData(FILE *);
-    void examinePositionsOfSingularities(void);
+    void examinePositionsOfSingularities();
     bool readTables(QString, bool, bool);
     void dump(QString basename);
-    void reset(void);
-    void setupCoordinateTransformations(void);
+    void reset();
+    void setupCoordinateTransformations();
     bool readSeparatingCurve(FILE *);
 
     void resetCurveInfo(int);
