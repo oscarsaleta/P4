@@ -255,8 +255,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
                 fclose(fpcurv);
                 return false;
             }
-            // FIXME: escriure funció ... math_curves.cpp
-            if (!readCurvePoints(fpcurv, &(curves_result_[j].sep_points), j)) {
+            if (!readCurvePoints(fpcurv, curves_result_[j].sep_points, j)) {
                 curves_result_.clear();
                 fclose(fpcurv);
                 return false;
@@ -287,12 +286,11 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
     }
 
     // allocate room for all vector fields
-
-    vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
+    // FIXME
+    //vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
     vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
     for (j = 0; j < g_ThisVF->numVF_; j++) {
-        vf_[j] = new QVFStudy(); // TODO: posar parent al constructor
-        vf_[j]->parent = this;
+        vf_[j] = new P4VFStudy(this);
     }
 
     if (fscanf(fpvec, "%d\n%d\n%d\n", &typeofstudy, &p, &q) != 3) {
