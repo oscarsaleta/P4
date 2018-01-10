@@ -339,6 +339,13 @@ struct saddle {
           a12(_a12), a21(_a21), a22(_a22)
     {
     }
+    saddle(genericsingularity g)
+    {
+        x0 = g.x0;
+        y0 = g.y0;
+        chart = g.chart;
+        position = g.position;
+    }
     ~saddle() { separatrices.clear(); }
 };
 
@@ -369,6 +376,13 @@ struct semi_elementary {
           a12(_a12), a21(_a21), a22(_a22), type(ty)
     {
     }
+    semi_elementary(genericsingularity g)
+    {
+        x0 = g.x0;
+        y0 = g.y0;
+        chart = g.chart;
+        position = g.position;
+    }
     ~semi_elementary() { separatrices.clear(); }
 };
 
@@ -382,7 +396,7 @@ struct degenerate {
     double epsilon;
     bool notadummy;
 
-    std::vector<blow_up_points> blow_up;
+    std::vector<p4blowup::blow_up_points> blow_up;
 
     degenerate() {}
     degenerate(double _x0, double _y0, int ch, int po, double ep, bool no,
@@ -390,6 +404,13 @@ struct degenerate {
         : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
           blow_up(bl)
     {
+    }
+    degenerate(genericsingularity g)
+    {
+        x0 = g.x0;
+        y0 = g.y0;
+        chart = g.chart;
+        position = g.position;
     }
     ~degenerate() { blow_up.clear(); }
 };
@@ -408,6 +429,13 @@ struct node {
         : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
     {
     }
+    node(genericsingularity g)
+    {
+        x0 = g.x0;
+        y0 = g.y0;
+        chart = g.chart;
+        position = g.position;
+    }
     ~node() {}
 };
 
@@ -425,6 +453,13 @@ struct strong_focus {
         : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
     {
     }
+    strong_focus(genericsingularity g)
+    {
+        x0 = g.x0;
+        y0 = g.y0;
+        chart = g.chart;
+        position = g.position;
+    }
     ~strong_focus() {}
 };
 
@@ -441,6 +476,13 @@ struct weak_focus {
     weak_focus(double _x0, double _y0, int ch, int po, int st)
         : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
     {
+    }
+    weak_focus(genericsingularity g)
+    {
+        x0 = g.x0;
+        y0 = g.y0;
+        chart = g.chart;
+        position = g.position;
     }
     ~weak_focus() {}
 };
