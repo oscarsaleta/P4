@@ -327,7 +327,7 @@ struct saddle : genericsingularity {
            std::vector<sep> se, std::vector<p4polynom::term2> ve0,
            std::vector<p4polynom::term2> ve1, double _a11, double _a12,
            double _a21, double _a22)
-        : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
+        : genericsingularity(_x0, _y0, ch, po), epsilon(ep), notadummy(no),
           separatrices(se), vector_field_0(ve0), vector_field_1(ve1), a11(_a11),
           a12(_a12), a21(_a21), a22(_a22)
     {
@@ -340,7 +340,8 @@ struct semi_elementary : genericsingularity {
     bool notadummy;
 
     std::vector<sep> separatrices; // center sep (t,f(t)), sep (g(t),t)
-    std::vector<p4polynom::term2> vector_field_0; // vector field // FIXME
+    std::vector<p4polynom::term2>
+        vector_field_0; // vector field // FIXME arreglar on s'usi
     std::vector<p4polynom::term2> vector_field_1; // vector field // FIXME
     double a11, a12, a21, a22;                    // transformation matrix
 
@@ -351,7 +352,7 @@ struct semi_elementary : genericsingularity {
                     std::vector<sep> se, std::vector<p4polynom::term2> ve0,
                     std::vector<p4polynom::term2> ve1, double _a11, double _a12,
                     double _a21, double _a22, int ty)
-        : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
+        : genericsingularity(_x0, _y0, ch, po), epsilon(ep), notadummy(no),
           separatrices(se), vector_field_0(ve0), vector_field_1(ve1), a11(_a11),
           a12(_a12), a21(_a21), a22(_a22), type(ty)
     {
@@ -368,7 +369,7 @@ struct degenerate : genericsingularity {
     degenerate() {}
     degenerate(double _x0, double _y0, int ch, int po, double ep, bool no,
                std::vector<blow_up_points> bl)
-        : x0(_x0), y0(_y0), chart(ch), position(po), epsilon(ep), notadummy(no),
+        : genericsingularity(_x0, _y0, ch, po), epsilon(ep), notadummy(no),
           blow_up(bl)
     {
     }
@@ -380,7 +381,7 @@ struct node : genericsingularity {
 
     node() {}
     node(double _x0, double _y0, int ch, int po, int st)
-        : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
+        : genericsingularity(_x0, _y0, ch, po), stable(st)
     {
     }
     ~node() {}
@@ -391,7 +392,7 @@ struct strong_focus : genericsingularity {
 
     strong_focus() {}
     strong_focus(double _x0, double _y0, int ch, int po, int st)
-        : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
+        : genericsingularity(_x0, _y0, ch, po), stable(st)
     {
     }
     ~strong_focus() {}
@@ -402,7 +403,7 @@ struct weak_focus : genericsingularity {
 
     weak_focus() {}
     weak_focus(double _x0, double _y0, int ch, int po, int st)
-        : x0(_x0), y0(_y0), chart(ch), position(po), stable(st)
+        : genericsingularity(_x0, _y0, ch, po), stable(st)
     {
     }
     ~weak_focus() {}
