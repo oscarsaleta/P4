@@ -203,7 +203,7 @@ void P4InputVF::reset(int n)
     parvalue_.swap(std::vector<std::vector<QString>>());
 
     curves_.clear();
-    g_VFResults.resetCurveInfo(); // TODO: mirar si he de canviar alguna cosa
+    g_VFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
     numCurves_ = 0;
 
     numPointsCurve_.clear();
@@ -1116,7 +1116,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 
     fp << "user_f_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        myxdot = convertMapleUserParameterLabels(*(xdot_[i])); // FIXME
+        myxdot = convertMapleUserParameterLabels(*(xdot_[i]));  // FIXME
         myydot = convertMapleUserParameterLabels(*(ydot_[i]));
         fp << "[" << myxdot << "," << myydot << "]";
         if (i == numVF_ - 1)
@@ -1156,7 +1156,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
         fp << lbl << "_pieces := [ ";
 
         for (i = 0; i < numVF_; i++) {
-            val = convertMapleUserParameterLabels(*(parvalue_[i][k])); // FIXME
+            val = convertMapleUserParameterLabels(*(parvalue_[i][k]));  // FIXME
             if (!numeric_[i])
                 fp << val;
             else
@@ -1206,7 +1206,7 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleCurve (P4 version)
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleCurve(QTextStream &fp) // FIXME
+void P4InputVF::prepareMapleCurve(QTextStream &fp)  // FIXME
 {
     QString mycurve;
     QString lbl;
@@ -1320,20 +1320,20 @@ static int indexOfWordInString(const QString *src, const QString *word,
         // we have found word as a substring.  The index i is an index from the
         // very beginning of string (not depending of start)
 
-        start = i + 1; // do not find this substring next loop
+        start = i + 1;  // do not find this substring next loop
 
         // check if the substring is the beginning of a word:
         j = i;
         if (j > 0)
             if ((*src)[j - 1].isLetter() || (*src)[j - 1] == '_' ||
                 (*src)[j - 1].isDigit())
-                continue; // no: it is part of a bigger word, so continue...
+                continue;  // no: it is part of a bigger word, so continue...
 
         // check if the substring is the end of a word;
         j = i + word->length();
         if (j < src->length())
             if ((*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit())
-                continue; // no: it is part of a bigger word, so continue...
+                continue;  // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
         break;
@@ -1793,9 +1793,10 @@ void P4InputVF::evaluate()
     if (outputWindow_ == nullptr || processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n--------------------------------------"
-                             "-----------------------------------------"
-                             "\n\n");
+        processText_->append(
+            "\n\n--------------------------------------"
+            "-----------------------------------------"
+            "\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -1809,8 +1810,9 @@ void P4InputVF::evaluate()
     connect(proc, &QProcess::readyReadStandardOutput, this,
             &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-    connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                      &QProcess::error),
+    connect(proc,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                &QProcess::error),
             this, &P4InputVF::catchProcessError);
 #else
     connect(proc, &QProcess::errorOccurred, this,
@@ -1874,9 +1876,10 @@ void P4InputVF::evaluateCurveTable()
     if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n--------------------------------------"
-                             "-----------------------------------------"
-                             "\n\n");
+        processText_->append(
+            "\n\n--------------------------------------"
+            "-----------------------------------------"
+            "\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -1889,8 +1892,9 @@ void P4InputVF::evaluateCurveTable()
     connect(proc, &QProcess::readyReadStandardOutput, this,
             &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-    connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                      &QProcess::error),
+    connect(proc,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                &QProcess::error),
             g_p4app, &P4Application::catchProcessError);
 #else
     connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -1963,16 +1967,17 @@ void P4InputVF::evaluateIsoclinesTable()
         if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append("\n\n--------------------------------------"
-                                 "-----------------------------------------"
-                                 "\n\n");
+            processText_->append(
+                "\n\n--------------------------------------"
+                "-----------------------------------------"
+                "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
         }
 
         QProcess *proc;
-        if (evalProcess_ != nullptr) { // re-use process of last GCF
+        if (evalProcess_ != nullptr) {  // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc,
@@ -2032,21 +2037,21 @@ void P4InputVF::catchProcessError(QProcess::ProcessError prerr)
 {
     processfailed_ = true;
     switch (prerr) {
-    case QProcess::FailedToStart:
-        processError_ = "Failed to start";
-        break;
-    case QProcess::Crashed:
-        processError_ = "Crash";
-        break;
-    case QProcess::Timedout:
-        processError_ = "Time-out";
-        break;
-    case QProcess::WriteError:
-    case QProcess::ReadError:
-    case QProcess::UnknownError:
-    default:
-        processError_ = "Unknown error";
-        break;
+        case QProcess::FailedToStart:
+            processError_ = "Failed to start";
+            break;
+        case QProcess::Crashed:
+            processError_ = "Crash";
+            break;
+        case QProcess::Timedout:
+            processError_ = "Time-out";
+            break;
+        case QProcess::WriteError:
+        case QProcess::ReadError:
+        case QProcess::UnknownError:
+        default:
+            processError_ = "Unknown error";
+            break;
     }
 }
 
@@ -2074,9 +2079,10 @@ void P4InputVF::finishEvaluation(int exitCode)
             outputWindow_->show();
             outputWindow_->raise();
             QString buf;
-            buf = "\n----------------------------------------------------------"
-                  "----"
-                  "-----------------\n";
+            buf =
+                "\n----------------------------------------------------------"
+                "----"
+                "-----------------\n";
             processText_->append(buf);
             if (evalProcess_ != nullptr) {
                 if (evalProcess_->state() == QProcess::Running) {
@@ -2236,7 +2242,7 @@ void P4InputVF::readProcessStdout()
                 if (i == j + 1)
                     t = t.mid(j + 2);
                 else
-                    t = t.mid(j + 1); // treat CR+LF as one lineend
+                    t = t.mid(j + 1);  // treat CR+LF as one lineend
             } else {
                 line = t.left(i);
                 t = t.mid(i + 1);
@@ -2258,8 +2264,9 @@ void P4InputVF::onTerminateButton()
     QString buf;
     if (evalProcess_ != nullptr) {
         if (evalProcess_->state() == QProcess::Running) {
-            buf = "\n----------------------------------------------------------"
-                  "---------------------\n";
+            buf =
+                "\n----------------------------------------------------------"
+                "---------------------\n";
             processText_->append(buf);
             evalProcess_->terminate();
             QTimer::singleShot(2000, evalProcess_, SLOT(kill()));
@@ -2350,15 +2357,16 @@ bool P4InputVF::evaluateGcf()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) { // re-use process of last GCF
+    if (evalProcess_ != nullptr) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2368,8 +2376,9 @@ bool P4InputVF::evaluateGcf()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 g_p4app, &P4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2608,8 +2617,9 @@ bool P4InputVF::evaluateCurve()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -2627,8 +2637,9 @@ bool P4InputVF::evaluateCurve()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 g_p4app, &P4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2867,14 +2878,15 @@ bool P4InputVF::evaluateIsoclines()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
-    if (evalProcess_ != nullptr) { // re-use process of last GCF
+    if (evalProcess_ != nullptr) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2884,8 +2896,9 @@ bool P4InputVF::evaluateIsoclines()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                          &QProcess::error),
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
                 g_p4app, &P4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -3283,7 +3296,7 @@ void P4InputVF::addVectorField()
 // -----------------------------------------------------------------------
 //          P4InputVF::deleteVectorField
 // -----------------------------------------------------------------------
-void P4InputVF::deleteVectorField(int index) // FIXME
+void P4InputVF::deleteVectorField(int index)  // FIXME
 {
     // first disconnect from other structures
 
@@ -3358,7 +3371,7 @@ void P4InputVF::deleteVectorField(int index) // FIXME
         ydot_.erase(ydot_.begin() + index);
         gcf_.erase(gcf_.begin() + index);
         epsilon_.erase(epsilon_.begin() + index);
-        parvalue_.erase(parvalue_.begin() + index); // TODO: funcioinarà?
+        parvalue_.erase(parvalue_.begin() + index);  // TODO: funcioinarà?
 
         numVF_--;
     }
@@ -3485,8 +3498,9 @@ bool P4InputVF::evaluateCurves()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
+        processText_->append(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -3499,8 +3513,9 @@ bool P4InputVF::evaluateCurves()
     connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
             g_p4app, &P4Application::signalCurvesEvaluated);
 #ifdef QT_QPROCESS_OLD
-    connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                      &QProcess::error),
+    connect(proc,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                &QProcess::error),
             g_p4app, &P4Application::catchProcessError);
 #else
     connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -3596,10 +3611,10 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
             break;
     }
     if (i < 0)
-        return; // region cannot be found???
+        return;  // region cannot be found???
 
     if (vfRegions_[i].vfIndex != index)
-        return; // region does not have the corresponding index
+        return;  // region does not have the corresponding index
 
     vfRegions_.erase(vfRegions_.begin() + i);
     if (numVFRegions_ == 1) {
@@ -3745,30 +3760,723 @@ void P4InputVF::resampleCurve(int i)
 // -----------------------------------------------------------------------
 //          P4InputVF::resampleGcf
 // -----------------------------------------------------------------------
-// FIXME !!
 void P4InputVF::resampleGcf(int i)
 {
-    struct orbits_points **sep;
-    struct orbits_points *sepx;
-
     if (g_VFResults.curves_result_.empty() || g_VFResults.vf_.empty())
         return;
 
-    sep = &(VFResults.vf[i]->gcf_points);
-
-    // FIXME aixo s'ha de fer vector
-    for (auto sep : g_VFResults.vf_[i].gcf_points_) {
-        if (getVFIndex_sphere(sep.pcoord)!=i) {
-
+    for (auto it = g_VFResults.vf_[i]->gcf_points_.begin();
+         it != g_VFResults.vf_[i]->gcf_points.end(); ++it) {
+        if (getVFIndex_sphere(it->pcoord) != i) {
+            g_VFResults.vf_[i]->gcf_points_.erase(it);
+            if (it + 1 != g_VFResults.vf_[i]->gcf_points_.end())
+                (it + 1)->dashes = 0;
         }
-        while (*sep != NULL) {
-            if (GetVFIndex_sphere((*sep)->pcoord) != i) {
-                sepx = *sep;
-                *sep = sepx->nextpt;
-                free(sepx);
-                if (*sep != NULL)
-                    (*sep)->dashes = 0;
-            } else
-                sep = &((*sep)->nextpt);
+    }
+}
+
+// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
+//          GET VF INDEX FUNCTIONS //TODO posar totes
+// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
+
+/*
+
+    In this file, routines are developped to check if a point belongs
+    to a given region, and to find the associated vector field.
+
+
+    In order to avoid calculations with large numbers, when a point
+    is close to infinity, the calculations are not done in usual
+    coordinates, but instead in one of the charts near infinity.
+
+    Therefore, a lot of variants have been developed with care.
+
+*/
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_R2
+// ---------------------------------------------------------------------
+//
+// Given a coordinate ucoord=(x0,y0), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The point is given in standard coordinates (in the finite region)
+// and is assumed to be in a ball with small radius.
+int P4InputVF::getVFIndex_R2(const double *ucoord)
+{
+    if (g_VFResults.curves_result_.empty())
+        return -1;
+    for (int i = numVFRegions_ - 1; i >= 0; i--) {
+        if (isInsideRegion_R2(vfRegions_[i].signs, ucoord))
+            return vfRegions_[i].vfIndex;
+    }
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_sphere
+// ---------------------------------------------------------------------
+//
+// Given a coordinate pcoord=(X,Y,Z), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The point is given in Poincare-sphere coordinates (X,Y,Z), or
+// Poincare-Lyapunov coordinates (X,Y,Z) depending on the setting of the
+// system
+int P4InputVF::getVFIndex_sphere(const double *pcoord)
+{
+    double ucoord[2], theta;
+    if (!g_VFResults.plweights_) {
+        return getVFIndex_psphere(pcoord);
+    } else {
+        return getVFIndex_plsphere(pcoord);
+    }
+}
+
+// ---------------------------------------------------------------------
+//                      GETVFINDEX_PSPHERE
+// ---------------------------------------------------------------------
+//
+// Given a coordinate pcoord=(X,Y,Z), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The point is given in Poincare-sphere coordinates (X,Y,Z), where
+// (X,Y) lies on the unit circle and Z is (the inverse of) a radial coordinate.
+//
+// Since we do not know if the point is close to infinity or not, and
+// if it is, in which chart it lies, we need to first find that out.
+int P4InputVF::getVFIndex_psphere(const double *pcoord)
+{
+    double ucoord[2], theta;
+    if (pcoord[2] > ZCOORD) {
+        psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+        return getVFIndex_R2(ucoord);
+    } else {
+        theta = atan2(fabs(pcoord[1]), fabs(pcoord[0]));
+        if (theta < PI_DIV4 && theta > -PI_DIV4) {
+            if (pcoord[0] > 0) {
+                psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                return getVFIndex_U1(ucoord);
+            } else {
+                psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                return getVFIndex_V1(ucoord);
+            }
+        } else {
+            if (pcoord[1] > 0) {
+                psphere_to_U2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                return getVFIndex_U2(ucoord);
+            } else {
+                psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                return getVFIndex_V2(ucoord);
+            }
         }
+    }
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_plsphere
+// ---------------------------------------------------------------------
+//
+// Given a coordinate pcoord=(X,Y,Z), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The point is given in Poincare-sphere coordinates (X,Y,Z).  Such coordinates
+// can be of two forms:
+//
+//      (X,Y,Z) = (0,u,v)  --> (x,y) = (u,v)
+//      (X,Y,Z) = (1,u,v)  --> (x,y) = (cos(v)/u^p, sin(v)/u^q)
+//
+// The first form is used for points inside the unit circle; the second
+// for points near infinity.  In the above form, the relation with the
+// normal (x,y)-coordinates in the plane are shown.
+int P4InputVF::getVFIndex_plsphere(const double *pcoord)
+{
+    double ucoord[2];
+
+    ucoord[0] = pcoord[1];
+    ucoord[1] = pcoord[2];
+
+    if (pcoord[0])
+        return getVFIndex_R2(ucoord);
+    else
+        return getVFIndex_cyl(ucoord);
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_cyl
+// ---------------------------------------------------------------------
+//
+// Given a coordinate y=(r,theta), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// This is only used in the Poincare-Lyapunov setting, in a study
+// near infinity.
+//
+// The point is given in cylindrical coordinates (r,theta).  The r-coordinate
+// is a (inverse) radial coordinate, the theta is an angular coordinate.
+int P4InputVF::getVFIndex_cyl(const double *y)
+{
+    if (g_VFResults.curves_result_.empty())
+        return -1;
+    for (int i = numVFRegions_ - 1; i >= 0; i--) {
+        if (isInsideRegion_cyl(vfRegions_[i].signs, y))
+            return vfRegions_[i].vfIndex;
+    }
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_U1
+// ---------------------------------------------------------------------
+//
+// Given a coordinate y=(z1,z2), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The relation with original coordinates is:
+//
+//          (x,y) = (1/z2,z1/z2),           z2 > 0.
+//
+// If z2<0, we are inside the chart VV1.
+int P4InputVF::getVFIndex_U1(const double *y)
+{
+    if (g_VFResults.curves_result_.empty())
+        return -1;
+    for (int i = numVFRegions_ - 1; i >= 0; i--) {
+        if (isInsideRegion_U1(vfRegions_[i].signs, y))
+            return vfRegions_.vfIndex;
+    }
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_V1
+// ---------------------------------------------------------------------
+//
+// Given a coordinate y=(z1,z2), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The relation with original coordinates is:
+//
+//          (x,y) = (-1/z2,z1/z2),           z2 > 0.
+//
+// If z2<0, we are inside the chart UU1.
+int P4InputVF::getVFIndex_V1(const double *y)
+{
+    if (g_VFResults.curves_result_.empty())
+        return -1;
+    for (int i = numVFRegions_ - 1; i >= 0; i--) {
+        if (isInsideRegion_V1(vfRegions_[i].signs, y))
+            return vfRegions_.vfIndex;
+    }
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_U2
+// ---------------------------------------------------------------------
+//
+// Given a coordinate y=(z1,z2), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The relation with original coordinates is:
+//
+//          (x,y) = (z1/z2,1/z2),           z2 > 0.
+//
+// If z2<0, we are inside the chart VV2.
+int P4InputVF::getVFIndex_U2(const double *y)
+{
+    if (g_VFResults.curves_result_.empty())
+        return -1;
+    for (int i = numVFRegions_ - 1; i >= 0; i--) {
+        if (isInsideRegion_U2(vfRegions_[i].signs, y))
+            return vfRegions_.vfIndex;
+    }
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+//          P4InputVF::getVFIndex_V2
+// ---------------------------------------------------------------------
+//
+// Given a coordinate y=(z1,z2), we find the index of the vector
+// field that is assigned to the region where the point belongs to.
+//
+// The relation with original coordinates is:
+//
+//          (x,y) = (z1/z2,-1/z2),           z2 > 0.
+//
+// If z2<0, we are inside the chart UU2.
+int P4InputVF::getVFIndex_V2(const double *y)
+{
+    if (g_VFResults.curves_result_.empty())
+        return -1;
+    for (int i = numVFRegions_ - 1; i >= 0; i--) {
+        if (isInsideRegion_V2(vfRegions_[i].signs, y))
+            return vfRegions_.vfIndex;
+    }
+    return -1;
+}
+
+// ---------------------------------------------------------------------
+//  getVFIndex_UU1, getVFIndex_UU2, getVFIndex_VV1, getVFIndex_VV2
+// ---------------------------------------------------------------------
+//
+// When integration starts, for example in a U1 chart in a point (z1,z2)
+// very close to infinity (close to z2=0, but z2>0), it may sometimes happen
+// that the line of infinity is crossed (to a point z2<0).  The resulting
+// point lies in the U1 chart, but in a wrong part of it.  We say that
+// it lies in the VV1-part: this point will be mapped to the symmetric point
+// in the V1-chart.
+//
+// So:
+//
+//   * a point in the UU1 chart lies in the wrong part of the V1-chart, and is
+//   in fact a U1-point
+//   * a point in the UU2 chart lies in the wrong part of the V2-chart, and is
+//   in fact a U2-point
+//   * a point in the VV1 chart lies in the wrong part of the U1-chart, and is
+//   in fact a V1-point
+//   * a point in the VV2 chart lies in the wrong part of the U2-chart, and is
+//   in fact a V2-point
+//
+// The relation between the symmetric charts is simple:
+//              (z1,z2) ---> (-z1,-z2).
+//
+// Note: these charts are only used when p=q=1.
+int P4InputVF::getVFIndex_UU1(const double *yy)
+{
+    double y[2];
+    y[0] = -yy[0];
+    y[1] = -yy[1];
+    return getVFIndex_U1(y);
+}
+
+int P4InputVF::getVFIndex_UU2(const double *yy)
+{
+    double y[2];
+    y[0] = -yy[0];
+    y[1] = -yy[1];
+    return getVFIndex_U2(y);
+}
+
+int P4InputVF::getVFIndex_VV1(const double *yy)
+{
+    double y[2];
+    y[0] = -yy[0];
+    y[1] = -yy[1];
+    return getVFIndex_V1(y);
+}
+
+int P4InputVF::getVFIndex_VV2(const double *yy)
+{
+    double y[2];
+    y[0] = -yy[0];
+    y[1] = -yy[1];
+    return getVFIndex_V2(y);
+}
+
+// ---------------------------------------------------------------------
+//  isInsideRegion_R2, isInsideRegion_R2_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// The point lies in the finite region.
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+bool isInsideRegion_R2(const int *signs, const double *ucoord)
+{
+    int k;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(g_VFResults.curves_result_[k].sep, ucoord) < 0) {
+            if (signs[k] > 0)
+                return false;
+        } else {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
+                               double epsilon)
+{
+    int k;
+    double v;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(g_VFResults.curves_result_[k].sep, ucoord);
+        if (v < -epsilon) {
+            if (signs[k] > 0)
+                return false;
+        }
+        if (v > epsilon) {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+//  isInsideRegion_U1, isInsideRegion_U1_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// The point lies in the U1 chart.
+// This is only used when p=q=1
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+bool isInsideRegion_U1(const int *signs, const double *z1z2)
+{
+    int k;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(g_VFResults.curves_result_[k].sep_U1, z1z2) < 0) {
+            if (signs[k] > 0)
+                return false;
+        } else {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
+                               double epsilon)
+{
+    int k;
+    double v;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(g_VFResults.curves_result_[k].sep_U1, z1z2);
+        if (v < -epsilon) {
+            if (signs[k] > 0)
+                return false;
+        }
+        if (v > epsilon) {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+//  isInsideRegion_V1, isInsideRegion_V1_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// The point lies in the V1 chart.
+// This is only used when p=q=1
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+bool isInsideRegion_V1(const int *signs, const double *z1z2)
+{
+    int k;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(g_VFResults.curves_result_[k].sep_V1, z1z2) < 0) {
+            if (signs[k] > 0)
+                return false;
+        } else {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
+                               double epsilon)
+{
+    int k;
+    double v;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(g_VFResults.curves_result_[k].sep_V1, z1z2);
+        if (v < -epsilon) {
+            if (signs[k] > 0)
+                return false;
+        }
+        if (v > epsilon) {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+//  isInsideRegion_U2, isInsideRegion_U2_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// The point lies in the U2 chart.
+// This is only used when p=q=1
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+//
+
+bool isInsideRegion_U2(const int *signs, const double *z1z2)
+{
+    int k;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(g_VFResults.curves_result_[k].sep_U2, z1z2) < 0) {
+            if (signs[k] > 0)
+                return false;
+        } else {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
+                               double epsilon)
+{
+    int k;
+    double v;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(g_VFResults.curves_result_[k].sep_U2, z1z2);
+        if (v < -epsilon) {
+            if (signs[k] > 0)
+                return false;
+        }
+        if (v > epsilon) {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+//                      isInsideRegion_V2
+//                      isInsideRegion_V2_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// The point lies in the V2 chart.
+// This is only used when p=q=1
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+bool isInsideRegion_V2(const int *signs, const double *z1z2)
+{
+    int k;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(g_VFResults.curves_result_[k].sep_V2, z1z2) < 0) {
+            if (signs[k] > 0)
+                return false;
+        } else {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool isInsideRegion_V2_epsilon(const int *signs, const double *z1z2,
+                               double epsilon)
+{
+    int k;
+    double v;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(g_VFResults.curves_result_[k].sep_V2, z1z2);
+        if (v < -epsilon) {
+            if (signs[k] > 0)
+                return false;
+        }
+        if (v > epsilon) {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+//                      isInsideRegion_cyl
+//                      isInsideRegion_cyl_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// The point lies in the part near infinity, in the case of Poincare-
+// Lyapunov compactification ((p,q) is not (1,1)).
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+bool isInsideRegion_cyl(const int *signs, const double *rtheta)
+{
+    int k;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term3(g_VFResults.curves_result_[k].sep_C, rtheta) < 0) {
+            if (signs[k] > 0)
+                return false;
+        } else {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+bool isInsideRegion_cyl_epsilon(const int *signs, const double *rtheta,
+                                double epsilon)
+{
+    int k;
+    double v;
+
+    if (g_VFResults.curves_result_.empty())
+        return false;
+
+    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term3(g_VFResults.curves_result_[k].sep_C, rtheta);
+        if (v < -epsilon) {
+            if (signs[k] > 0)
+                return false;
+        }
+        if (v > epsilon) {
+            if (signs[k] < 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+// ---------------------------------------------------------------------
+//                      isInsideRegion_sphere
+//                      isInsideRegion_sphere_epsilon
+// ---------------------------------------------------------------------
+//
+// Checks if a points lies in a region determined by a set of signs.
+// We don't know where the point lies, so we have to determine this first.
+//
+// The _epsilon variant increases the region by an epsilon amount before
+// checking
+//
+bool isInsideRegion_sphere(const int *signs, const double *pcoord)
+{
+    double ucoord[2], theta;
+
+    if (!g_VFResults.plweights_) {
+        if (pcoord[2] > ZCOORD) {
+            psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+            return isInsideRegion_R2(signs, ucoord);
+        } else {
+            theta = atan2(fabs(pcoord[1]), fabs(pcoord[0]));
+            if (theta < PI_DIV4 && theta > -PI_DIV4) {
+                if (pcoord[0] > 0) {
+                    psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_U1(signs, ucoord);
+                } else {
+                    psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_V1(signs, ucoord);
+                }
+            } else {
+                if (pcoord[1] > 0) {
+                    psphere_to_U2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_U2(signs, ucoord);
+                } else {
+                    psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_V2(signs, ucoord);
+                }
+            }
+        }
+    } else {
+        ucoord[0] = pcoord[1];
+        ucoord[1] = pcoord[2];
+
+        if (pcoord[0])
+            return isInsideRegion_R2(signs, ucoord);
+        else
+            return isInsideRegion_cyl(signs, ucoord);
+    }
+}
+
+bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
+                                   double epsilon)
+{
+    double ucoord[2], theta;
+
+    if (!g_VFResults.plweights_) {
+        if (pcoord[2] > ZCOORD) {
+            psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+            return isInsideRegion_R2_epsilon(signs, ucoord, epsilon);
+        } else {
+            theta = atan2(fabs(pcoord[1]), fabs(pcoord[0]));
+            if (theta < PI_DIV4 && theta > -PI_DIV4) {
+                if (pcoord[0] > 0) {
+                    psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_U1_epsilon(signs, ucoord, epsilon);
+                } else {
+                    psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_V1_epsilon(signs, ucoord, epsilon);
+                }
+            } else {
+                if (pcoord[1] > 0) {
+                    psphere_to_U2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_U2_epsilon(signs, ucoord, epsilon);
+                } else {
+                    psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], ucoord);
+                    return isInsideRegion_V2_epsilon(signs, ucoord, epsilon);
+                }
+            }
+        }
+    } else {
+        ucoord[0] = pcoord[1];
+        ucoord[1] = pcoord[2];
+
+        if (pcoord[0])
+            return isInsideRegion_R2_epsilon(signs, ucoord, epsilon);
+        else
+            return isInsideRegion_cyl_epsilon(signs, ucoord, epsilon);
+    }
 }

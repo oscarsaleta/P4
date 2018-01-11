@@ -239,6 +239,7 @@ class P4InputVF : public QObject
     void prepareCurves();
     bool evaluateCurves();
 
+//TODO
     int getVFIndex_R2(const double *);
     int getVFIndex_U1(const double *);
     int getVFIndex_U2(const double *);
