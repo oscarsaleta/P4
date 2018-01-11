@@ -215,7 +215,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
            coordinates . Plot data in 5 different charts.
         */
 
-        curves_result.clear();
+        curves_result_.clear();
 
         fpcurv = fopen(QFile::encodeName(basename + "_curves.tab"), "rt");
         if (fpcurv == nullptr)
