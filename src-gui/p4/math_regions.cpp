@@ -697,7 +697,7 @@ static double plSphereDistance(double *p, double *q)
 }
 
 // ---------------------------------------------------------------------
-//          markSingularity FIXME
+//          markSingularity FIXME maybe do one for every singularity type
 // ---------------------------------------------------------------------
 void markSingularity(struct genericsingularity *s,
                             struct positionitem **plist, int *numpos,
