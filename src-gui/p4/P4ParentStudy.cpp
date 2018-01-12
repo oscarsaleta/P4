@@ -20,6 +20,7 @@
 #include "P4ParentStudy.h"
 
 #include "math_charts.h"
+#include "math_regions.h"
 
 P4ParentStudy g_VFResults;
 
@@ -49,23 +50,24 @@ P4ParentStudy::P4ParentStudy()
     double_q_minus_1_ = q_ - 1;
     double_q_minus_p_ = q_ - p_;
     config_lc_value_ =
-        DEFAULT_LCORBITS; // number of orbits in the limit cycle window
+        DEFAULT_LCORBITS;  // number of orbits in the limit cycle window
     config_lc_numpoints_ =
-        DEFAULT_LCPOINTS; // number of points in the limit cycle window
+        DEFAULT_LCPOINTS;  // number of points in the limit cycle window
     config_currentstep_ =
-        DEFAULT_STEPSIZE; // current step size (during integration)
-    config_dashes_ = DEFAULT_LINESTYLE; // line style (dashes or points)
+        DEFAULT_STEPSIZE;  // current step size (during integration)
+    config_dashes_ = DEFAULT_LINESTYLE;  // line style (dashes or points)
     config_kindvf_ = DEFAULT_INTCONFIG;
 
     // initialize parameters
 
-    config_hma_ = DEFAULT_HMA;             // maximum step size
-    config_hmi_ = DEFAULT_HMI;             // minimum step size
-    config_branchhmi_ = DEFAULT_BRANCHHMI; // minimum step size near branches of
-                                           // separating curves
-    config_step_ = DEFAULT_STEPSIZE;       // step size
-    config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
-    config_intpoints_ = DEFAULT_INTPOINTS; // number of points to integrate
+    config_hma_ = DEFAULT_HMA;  // maximum step size
+    config_hmi_ = DEFAULT_HMI;  // minimum step size
+    config_branchhmi_ =
+        DEFAULT_BRANCHHMI;            // minimum step size near branches of
+                                      // separating curves
+    config_step_ = DEFAULT_STEPSIZE;  // step size
+    config_tolerance_ = DEFAULT_TOLERANCE;  // tolerance
+    config_intpoints_ = DEFAULT_INTPOINTS;  // number of points to integrate
 
     // initialize limit cycles & orbits
 
@@ -270,7 +272,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         return true;
     }
 
-    reset(); // initialize structures, delete previous vector field if any
+    reset();  // initialize structures, delete previous vector field if any
 
     fpvec = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
     if (fpvec == nullptr)
@@ -287,7 +289,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
 
     // allocate room for all vector fields
     // FIXME
-    //vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
+    // vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
     vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
     for (j = 0; j < g_ThisVF->numVF_; j++) {
         vf_[j] = new P4VFStudy(this);
@@ -384,8 +386,8 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         fclose(fpfin);
     fclose(fpvec);
 
-    readTables(basename, true, true); // try to read the piecewise curve points
-                                      // as well if they are present on disk
+    readTables(basename, true, true);  // try to read the piecewise curve points
+                                       // as well if they are present on disk
     // dump(basename);
     examinePositionsOfSingularities();
     return true;
@@ -483,53 +485,57 @@ void P4ParentStudy::setupCoordinateTransformations(void)
         change_dir = change_dir_poincare;
 
         switch (typeofview_) {
-        case TYPEOFVIEW_SPHERE:
-            viewcoord_to_sphere = ucircle_psphere;
-            sphere_to_viewcoord = psphere_ucircle;
-            finite_to_viewcoord = finite_ucircle;
-            is_valid_viewcoord = isvalid_psphereviewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
+            case TYPEOFVIEW_SPHERE:
+                viewcoord_to_sphere = ucircle_psphere;
+                sphere_to_viewcoord = psphere_ucircle;
+                finite_to_viewcoord = finite_ucircle;
+                is_valid_viewcoord = isvalid_psphereviewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
 
-        case TYPEOFVIEW_PLANE:
-            viewcoord_to_sphere = R2_to_psphere;
-            sphere_to_viewcoord = psphere_to_R2;
-            finite_to_viewcoord = identitytrf_R2;
-            is_valid_viewcoord = isvalid_R2viewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
+            case TYPEOFVIEW_PLANE:
+                viewcoord_to_sphere = R2_to_psphere;
+                sphere_to_viewcoord = psphere_to_R2;
+                finite_to_viewcoord = identitytrf_R2;
+                is_valid_viewcoord = isvalid_R2viewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
 
-        case TYPEOFVIEW_U1:
-            viewcoord_to_sphere = xyrevU1_to_psphere;
-            sphere_to_viewcoord = psphere_to_xyrevU1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U1viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_U1:
+                viewcoord_to_sphere = xyrevU1_to_psphere;
+                sphere_to_viewcoord = psphere_to_xyrevU1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U1viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_U2:
-            viewcoord_to_sphere = U2_to_psphere;
-            sphere_to_viewcoord = psphere_to_U2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U2viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_U2:
+                viewcoord_to_sphere = U2_to_psphere;
+                sphere_to_viewcoord = psphere_to_U2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U2viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousy;
+                break;
 
-        case TYPEOFVIEW_V1:
-            viewcoord_to_sphere = xyrevV1_to_psphere;
-            sphere_to_viewcoord = psphere_to_xyrevV1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V1viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_V1:
+                viewcoord_to_sphere = xyrevV1_to_psphere;
+                sphere_to_viewcoord = psphere_to_xyrevV1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V1viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_V2:
-            viewcoord_to_sphere = V2_to_psphere;
-            sphere_to_viewcoord = psphere_to_V2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V2viewcoord;
-            sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_V2:
+                viewcoord_to_sphere = V2_to_psphere;
+                sphere_to_viewcoord = psphere_to_V2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V2viewcoord;
+                sphere_to_viewcoordpair =
+                    psphere_to_viewcoordpair_discontinuousy;
+                break;
         }
     } else {
         U1_to_sphere = U1_to_plsphere;
@@ -550,51 +556,55 @@ void P4ParentStudy::setupCoordinateTransformations(void)
         change_dir = change_dir_lyapunov;
 
         switch (typeofview_) {
-        case TYPEOFVIEW_SPHERE:
-            viewcoord_to_sphere = annulus_plsphere;
-            sphere_to_viewcoord = plsphere_annulus;
-            finite_to_viewcoord = finite_annulus;
-            is_valid_viewcoord = isvalid_plsphereviewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
-        case TYPEOFVIEW_PLANE:
-            viewcoord_to_sphere = R2_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_R2;
-            finite_to_viewcoord = identitytrf_R2;
-            is_valid_viewcoord = isvalid_R2viewcoord;
-            sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
-            break;
-        case TYPEOFVIEW_U1:
-            viewcoord_to_sphere = xyrevU1_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_xyrevU1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U1viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_SPHERE:
+                viewcoord_to_sphere = annulus_plsphere;
+                sphere_to_viewcoord = plsphere_annulus;
+                finite_to_viewcoord = finite_annulus;
+                is_valid_viewcoord = isvalid_plsphereviewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
+            case TYPEOFVIEW_PLANE:
+                viewcoord_to_sphere = R2_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_R2;
+                finite_to_viewcoord = identitytrf_R2;
+                is_valid_viewcoord = isvalid_R2viewcoord;
+                sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
+                break;
+            case TYPEOFVIEW_U1:
+                viewcoord_to_sphere = xyrevU1_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_xyrevU1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U1viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_U2:
-            viewcoord_to_sphere = U2_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_U2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_U2viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_U2:
+                viewcoord_to_sphere = U2_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_U2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_U2viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousy;
+                break;
 
-        case TYPEOFVIEW_V1:
-            viewcoord_to_sphere = xyrevV1_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_xyrevV1;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V1viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousx;
-            break;
+            case TYPEOFVIEW_V1:
+                viewcoord_to_sphere = xyrevV1_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_xyrevV1;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V1viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousx;
+                break;
 
-        case TYPEOFVIEW_V2:
-            viewcoord_to_sphere = V2_to_plsphere;
-            sphere_to_viewcoord = plsphere_to_V2;
-            finite_to_viewcoord = default_finite_to_viewcoord;
-            is_valid_viewcoord = isvalid_V2viewcoord;
-            sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousy;
-            break;
+            case TYPEOFVIEW_V2:
+                viewcoord_to_sphere = V2_to_plsphere;
+                sphere_to_viewcoord = plsphere_to_V2;
+                finite_to_viewcoord = default_finite_to_viewcoord;
+                is_valid_viewcoord = isvalid_V2viewcoord;
+                sphere_to_viewcoordpair =
+                    plsphere_to_viewcoordpair_discontinuousy;
+                break;
         }
     }
 }
@@ -619,9 +629,8 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
         for (j = 0; j < g_ThisVF->numVFRegions_; j++) {
             if (fscanf(fp, "%d", &v) != 1)
                 return false;
-            if (v !=
-                g_ThisVF->vfregions[j]
-                    .vfindex) // TODO: quan estigui llesta file_vf.cpp
+            if (v != g_ThisVF->vfregions[j]
+                         .vfindex)  // TODO: quan estigui llesta file_vf.cpp
                 return false;
             for (k = 0; k < g_ThisVF->numCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
@@ -659,3 +668,13 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
 //          P4ParentStudy::deleteVFs
 // -----------------------------------------------------------------------
 void P4ParentStudy::clearVFs() { vf_.clear(); }
+
+// -----------------------------------------------------------------------
+//          P4ParentStudy::examinePositionsOfSingularities
+// -----------------------------------------------------------------------
+void P4ParentStudy::examinePositionsOfSingularities()
+{
+    int i;
+    p4singularities::genericsingularity s;
+    // FIXME finish once markSingularity(math_regions) is done
+}
