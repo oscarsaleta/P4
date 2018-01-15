@@ -148,9 +148,11 @@
 #define MIN_LCORBITS 1 // when dividing transverse section length by
 #define MAX_LCORBITS                                                           \
     32767 //  grid: number of orbits must lie between these values
+
 #define DEFAULT_LCPOINTS 2000 // number of points to integrate EACH orbit
 #define MIN_LCPOINTS 1
 #define MAX_LCPOINTS 32767
+
 #define DEFAULT_LCGRID 0.01 // division interval for the transverse section
 #define MIN_LCGRID 1.E-16
 #define MAX_LCGRID 1E16
@@ -159,9 +161,11 @@
 #define DEFAULT_GCFPOINTS 40 // 40 horizontal and vertical points
 #define MIN_GCFPOINTS 1
 #define MAX_GCFPOINTS 32767
+
 #define DEFAULT_GCFPRECIS 12 // 12 digits precision
 #define MIN_GCFPRECIS 1
 #define MAX_GCFPRECIS 99
+
 #define DEFAULT_GCFMEMORY 16000 // 16 MB of memory
 #define MIN_GCFMEMORY 64
 #define MAX_GCFMEMORY 512000
@@ -170,9 +174,11 @@
 #define DEFAULT_CURVEPOINTS 400 // 40 horizontal and vertical points
 #define MIN_CURVEPOINTS 1
 #define MAX_CURVEPOINTS 32767
+
 #define DEFAULT_CURVEPRECIS 12 // 12 digits precision
 #define MIN_CURVEPRECIS 1
 #define MAX_CURVEPRECIS 99
+
 #define DEFAULT_CURVEMEMORY 16000 // 16 MB of memory
 #define MIN_CURVEMEMORY 64
 #define MAX_CURVEMEMORY 512000
@@ -235,6 +241,7 @@ extern bool PRINT_WHITE_BG;
 #define CSING GREEN     // curve of singularities
 #define CCURV CYAN
 #define CISOC PINK1
+
 #define CSEPCURVE BROWN3
 #define CSHADEDCURVE BROWN1
 
