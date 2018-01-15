@@ -41,9 +41,8 @@ int change_dir_poincare(double p[3])
 
     if (p[2] > ZCOORD) {
         // finite point
-
         psphere_to_R2(p[0], p[1], p[2], y);
-        if (eval_term2(g_VFResults.gcf_, y) >= 0)
+        if (eval_term2(g_VFResults.vf_.back().gcf_, y) >= 0)
             return 0;
         else
             return 1;
@@ -51,16 +50,16 @@ int change_dir_poincare(double p[3])
 
     theta = atan2(fabs(p[1]), fabs(p[0]));
 
-    if ((theta < PI_DIV4) && (theta > -PI_DIV4)) {
+    if (theta < PI_DIV4 && theta > -PI_DIV4) {
         if (p[0] > 0) {
             psphere_to_U1(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_U1_, y) >= 0)
+            if (eval_term2(g_VFResults.vf_->back().gcf_U1_, y) >= 0)
                 return 0;
             else
                 return 1;
         } else {
             psphere_to_V1(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_V1_, y) >= 0)
+            if (eval_term2(g_VFResults.vf_->back().gcf_V1_, y) >= 0)
                 return 0;
             else
                 return 1;
@@ -68,13 +67,13 @@ int change_dir_poincare(double p[3])
     } else {
         if (p[1] > 0) {
             psphere_to_U2(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_U2_, y) >= 0)
+            if (eval_term2(g_VFResults.vf_->back().gcf_U2_, y) >= 0)
                 return 0;
             else
                 return 1;
         } else {
             psphere_to_V2(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_V2_, y) >= 0)
+            if (eval_term2(g_VFResults.vf_->back().gcf_V2_, y) >= 0)
                 return 0;
             else
                 return 1;
@@ -93,14 +92,14 @@ int change_dir_lyapunov(double p[3])
     if (p[0] == 0) {
         y[0] = p[1];
         y[1] = p[2];
-        if (eval_term2(g_VFResults.gcf_, y) >= 0)
+        if (eval_term2(g_VFResults.vf_->back().gcf_, y) >= 0)
             return 0;
         else
             return 1;
     } else {
         y[0] = p[1];
         y[1] = p[2];
-        if (eval_term3(g_VFResults.gcf_C_, y) >= 0)
+        if (eval_term3(g_VFResults.vf_->back().gcf_C_, y) >= 0)
             return 0;
         else
             return 1;
