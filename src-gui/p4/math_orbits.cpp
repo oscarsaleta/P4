@@ -31,11 +31,27 @@
 #include <cmath>
 
 // -----------------------------------------------------------------------
-//                      INTEGRATEORBIT
+//          prepareVfForIntegration
+// -----------------------------------------------------------------------
+bool prepareVfForIntegration(double *pcoord)
+{
+    int K = g_ThisVF->getVFIndex_sphere(pcoord);
+    if (K >= 0) {
+        // TODO: does this work?
+        g_VFResults.vfK_ = g_VFResults.vf_[K];
+        g_VFResults.K_ = K;
+        return true;
+    } else {
+        g_VFResults.vfK_ = nullptr;
+        return false;
+    }
+}
+
+// -----------------------------------------------------------------------
+//          integrateOrbit
 // -----------------------------------------------------------------------
 //
 // dir = -1: backwards, dir=0: continue, dir=+1: forwards
-
 void integrateOrbit(QWinSphere *sphere, int dir)
 {
     orbits_points *sep;
