@@ -93,9 +93,10 @@ class P4InputVF : public QObject
     int p_;
     int q_;
 
-    std::vector<QString> xdot_; // TODO: fer vector (tot)
+    std::vector<QString> xdot_;
     std::vector<QString> ydot_;
-    QString **gcf_;
+    std::vector<QString> gcf_;
+    // FIXME these shouldn't be double pointers
     QString **curve_; // curve_ is the original, curves_ is P5
     QString **isoclines_;
     QString evalFile_;
@@ -221,7 +222,7 @@ class P4InputVF : public QObject
     int numCurves_;
     int numCurveRegions_;
     std::vector<p4InputVFRegions::curveRegion> curveRegions;
-    
+
     std::vector<int> numPointsCurve_;
     std::vector<QString> curves_;
 
@@ -239,7 +240,7 @@ class P4InputVF : public QObject
     void prepareCurves();
     bool evaluateCurves();
 
-//TODO
+    // TODO
     int getVFIndex_R2(const double *);
     int getVFIndex_U1(const double *);
     int getVFIndex_U2(const double *);
