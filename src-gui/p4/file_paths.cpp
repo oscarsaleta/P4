@@ -63,14 +63,11 @@ QString getDefaultP4Path(void)
 
     if (f.isNull()) {
         // try to find by another means
-
         f = QApplication::applicationFilePath();
-        if (!f.isNull()) {
-            if (f.length() > 0) {
-                if (f[f.length() - 1] == QDir::separator()) {
-                    // remove trailing slash if it is present
-                    f = f.left(f.length() - 1);
-                }
+        if (!f.isEmpty()) {
+            if (f[f.length() - 1] == QDir::separator()) {
+                // remove trailing slash if it is present
+                f = f.left(f.length() - 1);
             }
         }
         QFileInfo fi0(f);
@@ -92,12 +89,10 @@ QString getDefaultP4Path(void)
             f = QDir::toNativeSeparators(fp);
     }
 
-    if (!f.isNull()) {
-        if (f.length() > 0) {
-            if (f[f.length() - 1] == QDir::separator()) {
-                // remove trailing slash if it is present
-                f = f.left(f.length() - 1);
-            }
+    if (!f.isEmpty()) {
+        if (f[f.length() - 1] == QDir::separator()) {
+            // remove trailing slash if it is present
+            f = f.left(f.length() - 1);
         }
     }
 

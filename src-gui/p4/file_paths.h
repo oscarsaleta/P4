@@ -17,8 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EXTERN_METHODS_H
-#define EXTERN_METHODS_H
+#ifndef FILE_PATHS_H
+#define FILE_PATHS_H
 
 class QString;
 
@@ -36,4 +36,4 @@ QString getDefaultP4BinPath(void);
 QString getDefaultMapleInstallation(void);
 void removeFile(QString fname);
 
-#endif // EXTERN_METHODS_H
+#endif // FILE_PATHS_H
