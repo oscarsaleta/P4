@@ -63,6 +63,8 @@ void copy_x_into_y(double *x, double *y)
     y[2] = x[2];
 }
 
+double floatinfinity(void) { return pow(0, -1); }
+
 void R2_to_psphere(double x, double y, double *pcoord)
 {
     double s;
@@ -178,7 +180,8 @@ void V2_to_psphere(double z1, double z2, double *pcoord)
 
 void VV1_to_psphere(double z1, double z2, double *pcoord)
 {
-    /* (z1,z2) is a point on the U1 chart */
+    // (z1,z2) is a point on the U1 chart, but on the other side of the line at
+    // infinity
 
     U1_to_psphere(z1, z2, pcoord);
     pcoord[0] = -pcoord[0];
@@ -194,7 +197,8 @@ void psphere_to_VV1(double X, double Y, double Z, double *rcoord)
 void VV2_to_psphere(double z1, double z2, double *pcoord)
 {
 
-    /* (z1,z2) is a point on the U2 chart */
+    // (z1,z2) is a point on the U2 chart, but on the other side of the line at
+    // infinity
 
     U2_to_psphere(z1, z2, pcoord);
     pcoord[0] = -pcoord[0];
@@ -796,8 +800,6 @@ void identitytrf_R2(double x, double y, double *ucoord)
     ucoord[1] = y;
 }
 
-double floatinfinity(void) { return pow(0, -1); }
-
 void plsphere_to_U1(double ch, double x, double y, double *rcoord)
 {
     double a;
@@ -879,6 +881,7 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
         rcoord[1] = a;
     }
 }
+
 void plsphere_to_V1(double ch, double x, double y, double *rcoord)
 {
     double a;
@@ -915,6 +918,7 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
         rcoord[1] = a;
     }
 }
+
 void plsphere_to_xyrevV1(double ch, double x, double y, double *rcoord)
 {
     double _rcoord[2];
@@ -922,6 +926,7 @@ void plsphere_to_xyrevV1(double ch, double x, double y, double *rcoord)
     rcoord[0] = _rcoord[1];
     rcoord[1] = _rcoord[0];
 }
+
 void plsphere_to_V2(double ch, double x, double y, double *rcoord)
 {
     double a;
@@ -968,11 +973,11 @@ void eval_r_vec_field(double *y, double *f)
     double s = 1.0;
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.gcf_ != nullptr)
-        s = eval_term2(g_VFResults.gcf_, y);
+        g_VFResults.vf_->back().gcf_ != nullptr)
+        s = eval_term2(g_VFResults.vf_->back().gcf_, y);
 
-    f[0] = s * eval_term2(g_VFResults.f_vec_field_[0], y);
-    f[1] = s * eval_term2(g_VFResults.f_vec_field_[1], y);
+    f[0] = s * eval_term2(g_VFResults.vf_->back().f_vec_field_[0], y);
+    f[1] = s * eval_term2(g_VFResults.vf_->back().f_vec_field_[1], y);
 }
 
 void eval_U1_vec_field(double *y, double *f)
@@ -980,15 +985,15 @@ void eval_U1_vec_field(double *y, double *f)
     double s = 1.0;
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.gcf_U1_ != nullptr)
-        s = eval_term2(g_VFResults.gcf_U1_, y);
+        g_VFResults.vf_->back().gcf_U1_ != nullptr)
+        s = eval_term2(g_VFResults.vf_->back().gcf_U1_, y);
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.singinf_)
+    if (g_VFResults.vf_->back().config_kindvf_ == INTCONFIG_ORIGINAL &&
+        g_VFResults.vf_->back().singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(g_VFResults.vec_field_U1_[0], y);
-    f[1] = s * eval_term2(g_VFResults.vec_field_U1_[1], y);
+    f[0] = s * eval_term2(g_VFResults.vf_->back().vec_field_U1_[0], y);
+    f[1] = s * eval_term2(g_VFResults.vf_->back().vec_field_U1_[1], y);
 }
 
 void eval_U2_vec_field(double *y, double *f)
@@ -996,15 +1001,15 @@ void eval_U2_vec_field(double *y, double *f)
     double s = 1.0;
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.gcf_U2_ != nullptr)
-        s = eval_term2(g_VFResults.gcf_U2_, y);
+        g_VFResults.vf_->back().gcf_U2_ != nullptr)
+        s = eval_term2(g_VFResults.vf_->back().gcf_U2_, y);
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.singinf_)
+        g_VFResults.vf_->back().singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(g_VFResults.vec_field_U2_[0], y);
-    f[1] = s * eval_term2(g_VFResults.vec_field_U2_[1], y);
+    f[0] = s * eval_term2(g_VFResults.vf_->back().vec_field_U2_[0], y);
+    f[1] = s * eval_term2(g_VFResults.vf_->back().vec_field_U2_[1], y);
 }
 
 void eval_V1_vec_field(double *y, double *f)
@@ -1012,15 +1017,15 @@ void eval_V1_vec_field(double *y, double *f)
     double s = 1.0;
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.gcf_V1_ != nullptr)
-        s = eval_term2(g_VFResults.gcf_V1_, y);
+        g_VFResults.vf_->back().gcf_V1_ != nullptr)
+        s = eval_term2(g_VFResults.vf_->back().gcf_V1_, y);
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.singinf_)
+        g_VFResults.vf_->back().singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(g_VFResults.vec_field_V1_[0], y);
-    f[1] = s * eval_term2(g_VFResults.vec_field_V1_[1], y);
+    f[0] = s * eval_term2(g_VFResults.vf_->back().vec_field_V1_[0], y);
+    f[1] = s * eval_term2(g_VFResults.vf_->back().vec_field_V1_[1], y);
 }
 
 void eval_V2_vec_field(double *y, double *f)
@@ -1028,15 +1033,15 @@ void eval_V2_vec_field(double *y, double *f)
     double s = 1.0;
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.gcf_V2_ != nullptr)
-        s = eval_term2(g_VFResults.gcf_V2_, y);
+        g_VFResults.vf_->back().gcf_V2_ != nullptr)
+        s = eval_term2(g_VFResults.vf_->back().gcf_V2_, y);
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.singinf_)
+        g_VFResults.vf_->back().singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(g_VFResults.vec_field_V2_[0], y);
-    f[1] = s * eval_term2(g_VFResults.vec_field_V2_[1], y);
+    f[0] = s * eval_term2(g_VFResults.vf_->back().vec_field_V2_[0], y);
+    f[1] = s * eval_term2(g_VFResults.vf_->back().vec_field_V2_[1], y);
 }
 
 void eval_vec_field_cyl(double *y, double *f)
@@ -1044,11 +1049,11 @@ void eval_vec_field_cyl(double *y, double *f)
     double s = 1.0;
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        g_VFResults.gcf_C_ != nullptr)
-        s = eval_term3(g_VFResults.gcf_C_, y);
+        g_VFResults.vf_->back().gcf_C_ != nullptr)
+        s = eval_term3(g_VFResults.vf_->back().gcf_C_, y);
 
-    f[0] = s * eval_term3(g_VFResults.vec_field_C_[0], y);
-    f[1] = s * eval_term3(g_VFResults.vec_field_C_[1], y);
+    f[0] = s * eval_term3(g_VFResults.vf_->back().vec_field_C_[0], y);
+    f[1] = s * eval_term3(g_VFResults.vf_->back().vec_field_C_[1], y);
 }
 
 void default_finite_to_viewcoord(double x, double y, double *ucoord)
@@ -1075,8 +1080,6 @@ bool default_sphere_to_viewcoordpair(double *p, double *q, double *u1,
     */
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
-    UNUSED(u3); // u3&u4 are not used in this case
-    UNUSED(u4);
     return true; // returns true: line piece does not undergo a discontinuity in
                  // coordinates
 }
