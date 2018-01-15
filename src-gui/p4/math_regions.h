@@ -23,7 +23,7 @@ class QString;
 
 struct positionitem {
     double pcoord[3];
-    std::vector<p4singularities::genericsingularity> s;  // FIXME?
+    p4singularities::genericsingularity s;
 }
 
 bool isInsideRegion_R2(const int *signs, const double *ucoord);
@@ -58,7 +58,20 @@ bool isARealSingularity(double x0, double y0, int chart, int vfIndex);
 double pSphereDistance(double *p, double *q);
 double plSphereDistance(double *p, double *q);
 
-// FIXME son vectors?
-void markSingularity(std::vector<p4singularities::genericsingularity> s,
-                     std::vector<positionitem> &plist, int *numpos, int vfIndex,
-                     bool plWeights);
+void markSingularity(p4singularities::saddle s,
+                     std::vector<positionitem> &plist, int &numpos, int vfindex,
+                     bool plweights);
+void markSingularity(p4singularities::semi_elementary s,
+                     std::vector<positionitem> &plist, int &numpos, int vfindex,
+                     bool plweights);
+void markSingularity(p4singularities::node s, std::vector<positionitem> &plist,
+                     int &numpos, int vfindex, bool plweights);
+void markSingularity(p4singularities::strong_focus s,
+                     std::vector<positionitem> &plist, int &numpos, int vfindex,
+                     bool plweights);
+void markSingularity(p4singularities::weak_focus s,
+                     std::vector<positionitem> &plist, int &numpos, int vfindex,
+                     bool plweights);
+void markSingularity(p4singularities::degenerate s,
+                     std::vector<positionitem> &plist, int &numpos, int vfindex,
+                     bool plweights);
