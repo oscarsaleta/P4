@@ -135,4 +135,6 @@ class P4ParentStudy : public QObject
     int (*change_dir)(double *);
 }
 
+P4ParentStudy g_VFResults;
+
 #endif /* P4PARENTSTUDY_H */
