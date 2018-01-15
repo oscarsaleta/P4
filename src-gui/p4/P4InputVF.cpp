@@ -202,7 +202,7 @@ void P4InputVF::reset(int n)
     parvalue_.clear();
     parvalue_.swap(std::vector<std::vector<QString>>());
 
-    curves_.clear();
+    curves_result_.clear();
     g_VFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
     numCurves_ = 0;
 
@@ -478,11 +478,11 @@ bool P4InputVF::load()
                     fclose(fp);
                     return false;
                 }
-                curves_.push_back(QString(scanbuf));
+                curves_result_.push_back(QString(scanbuf));
                 numPointsCurve_.push_back(npoints);
             }
         } else {
-            curves_.clear();
+            curves_result_.clear();
             numPointsCurve_.clear();
         }
 
@@ -668,6 +668,7 @@ bool P4InputVF::checkevaluated()
     // if the evaluate files are already found on disc, then set the flag to
     // true.
 
+    // TODO: do these need to be pointers?
     QFileInfo *fi;
     QFileInfo *fifin;
     QFileInfo *fiinf;
@@ -779,10 +780,10 @@ bool P4InputVF::save()
         out << numVF_ << "\n";
         out << numCurves_ << "\n";
         for (i = 0; i < numCurves_; i++) {
-            if (curves_[i].isEmpty())
+            if (curves_result_[i].isEmpty())
                 out << "(null)\n";
             else
-                out << curves_[i] << "\n";
+                out << curves_result_[i] << "\n";
             out << numPointsCurve_[i] << "\n";
         }
 
@@ -1180,7 +1181,7 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
     fp << "user_curves := [ ";
     if (numCurves_ > 0)
         for (i = 0; i < numCurves_; i++) {
-            s = convertMapleUserParameterLabels(*(curves_[i]));
+            s = convertMapleUserParameterLabels(curves_result_[i]);
             fp << s;
             if (i == numCurves_ - 1)
                 fp << " ]:\n";
@@ -1234,6 +1235,7 @@ void P4InputVF::prepareMapleCurve(QTextStream &fp)  // FIXME
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleisoclines
 // -----------------------------------------------------------------------
+// FIXME
 void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
     QString myisoclines;
@@ -3400,7 +3402,7 @@ void P4InputVF::addSeparatingCurve()
     n = numCurves_;
     numCurves_++;
 
-    curves_.push_back(QString());
+    curves_result_.push_back(QString());
     numPointsCurve_.push_back(DEFAULT_CURVEPOINTS);
 
     for (i = 0; i < numVFRegions_; i++)
@@ -3430,7 +3432,7 @@ void P4InputVF::deleteSeparatingCurve(int index)
         // special case
 
         numCurves_ = 0;
-        curves_.clear();
+        curves_result_.clear();
         numPointsCurve_.clear();
 
         for (i = 0; i < numVFRegions_; i++)
@@ -3446,7 +3448,7 @@ void P4InputVF::deleteSeparatingCurve(int index)
         return;
     }
 
-    curves_.erase(curves_.begin() + index);
+    curves_result_.erase(curves_result_.begin() + index);
     numCurves_--;
 }
 
@@ -3565,7 +3567,6 @@ void P4InputVF::finishCurvesEvaluation(void)
 // -----------------------------------------------------------------------
 //          P4InputVF::markVFRegion
 // -----------------------------------------------------------------------
-// FIXME cal q sigui un punter la p?
 void P4InputVF::markVFRegion(int index, const double *p)
 {
     int i, k;
@@ -3574,7 +3575,6 @@ void P4InputVF::markVFRegion(int index, const double *p)
         return;
 
     for (i = numVFRegions_ - 1; i >= 0; i--) {
-        // FIXME: math_regions
         if (isInsideRegion_sphere(vfRegions_[i].signs, p))
             break;
     }
@@ -3606,7 +3606,6 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
         return;
 
     for (i = numVFRegions_ - 1; i >= 0; i--) {
-        // FIXME math_regions
         if (isInsideRegion_sphere(vfRegions_[i].signs, p))
             break;
     }
@@ -3636,16 +3635,13 @@ void P4InputVF::markCurveRegion(int index, const double *p)
     if (g_VFResults.curves_result_.empty())
         return;
 
-    signs.reserve(sizeof(int) * numCurves_);
-    // TODO: veure si realment cal anar marxa enrera
     for (i = 0; i < numCurves_; i++) {
         if (i == index)
-            signs[i] = 0;
-        // FIXME eval_curve
+            signs.push_back(0);
         else if (eval_curve(g_VFResults.curves_result_[i], p) < 0)
-            signs[i] = -1;
+            signs.push_back(-1);
         else
-            signs[i] = 1;
+            signs.push_back(1);
     }
     for (auto curve : curveRegions_) {
         if (signs == curve.signs && index == curve.index) {
@@ -3713,9 +3709,7 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
 {
     int k, j;
 
-    if (numCurves_ == 0)
-        return true;
-    if (g_VFResults.curves_result_.empty())
+    if (numCurves_ == 0 || g_VFResults.curves_result_.empty())
         return false;
 
     for (auto curve : curveRegions_) {
