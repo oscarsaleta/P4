@@ -28,29 +28,33 @@
 #include "plot_tools.h"
 
 // static global variables
-static term2 *s_vec_field[2];
+static std::vector<term2> s_vec_field_0;
+static std::vector<term2> s_vec_field_1;
 
 // function definitions
 void eval_blow_vec_field(double *y, double *f)
 {
-    f[0] = eval_term2(s_vec_field[0], y);
-    f[1] = eval_term2(s_vec_field[1], y);
+    f[0] = eval_term2(s_vec_field_0, y);
+    f[1] = eval_term2(s_vec_field_1, y);
 }
 
-orbits_points *integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
-                                 double *pcoord2, blow_up_points *de_sep,
+p4orbits::orbits_points *integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
+                                 double *pcoord2,
+                                 std::vector<p4blowup::blow_up_points> &de_sep,
                                  double step, int dir, int type,
-                                 orbits_points **orbit, int chart)
+                                 std::vector<p4orbits::orbits_points> &orbit,
+                                 int chart)
 {
     int i;
     double hhi, point[2];
     double pcoord[3];
     double y[2];
-    int color, dashes, ok = true;
-    orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
+    int color, dashes;
+    bool ok = true;
+    p4orbits::orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
 
-    s_vec_field[0] = de_sep->vector_field[0];
-    s_vec_field[1] = de_sep->vector_field[1];
+    s_vec_field_0 = de_sep->vector_field[0];
+    s_vec_field_1 = de_sep->vector_field[1];
     if (g_VFResults.plweights_ == false &&
         (chart == CHART_V1 || chart == CHART_V2))
         dir = g_VFResults.dir_vec_field_ * dir;
@@ -159,9 +163,9 @@ orbits_points *integrate_blow_up(QWinSphere *spherewnd, // double x0, double y0,
         last_orbit->color = color;
         last_orbit->dashes = dashes * g_VFResults.config_dashes_;
         last_orbit->dir = ((g_VFResults.plweights_ == false) &&
-                           (chart == CHART_V1 || chart == CHART_V2)) ?
-                              g_VFResults.dir_vec_field_ * dir :
-                              dir;
+                           (chart == CHART_V1 || chart == CHART_V2))
+                              ? g_VFResults.dir_vec_field_ * dir
+                              : dir;
         last_orbit->type = type;
         last_orbit->next_point = nullptr;
         if (last_orbit->dashes)
