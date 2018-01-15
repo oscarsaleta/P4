@@ -20,11 +20,6 @@
 #ifndef FILE_TAB_H
 #define FILE_TAB_H
 
-#include <QObject>
-#include <QString>
-
-class QTextEdit;
-
 // -----------------------------------------------------------------------
 //                      General polynomial expressions
 // -----------------------------------------------------------------------
@@ -318,8 +313,8 @@ struct saddle : genericsingularity {
     bool notadummy;
 
     std::vector<p4blowup::sep> separatrices;
-    std::vector<p4polynom::term2> vector_field_0; // FIXME
-    std::vector<p4polynom::term2> vector_field_1; // FIXME
+    std::vector<p4polynom::term2> vector_field_0;
+    std::vector<p4polynom::term2> vector_field_1;
     double a11, a12, a21, a22;                    // transformation matrix
 
     saddle() {}
@@ -341,8 +336,8 @@ struct semi_elementary : genericsingularity {
 
     std::vector<sep> separatrices; // center sep (t,f(t)), sep (g(t),t)
     std::vector<p4polynom::term2>
-        vector_field_0; // vector field // FIXME arreglar on s'usi
-    std::vector<p4polynom::term2> vector_field_1; // vector field // FIXME
+        vector_field_0; // vector field 
+    std::vector<p4polynom::term2> vector_field_1; // vector field
     double a11, a12, a21, a22;                    // transformation matrix
 
     int type; // type of semi-elementary point
