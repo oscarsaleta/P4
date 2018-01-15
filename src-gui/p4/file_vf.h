@@ -50,8 +50,6 @@ class QIsoclinesDlg;
 
 struct term2;
 
-
-
 class QInputVF : public QObject
 {
     Q_OBJECT
@@ -78,7 +76,7 @@ class QInputVF : public QObject
     int p_;
     int q_;
 
-    std::vector<QString> xdot_; //TODO:....
+    std::vector<QString> xdot_; // TODO:....
     QString ydot_;
     QString gcf_;
     QString curve_;
