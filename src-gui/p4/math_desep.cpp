@@ -21,6 +21,7 @@
 
 #include "file_tab.h"
 #include "math_separatrice.h"
+ #include "custom.h"
 
 static std::vector<p4polynom::term2> vec_field_0;
 static std::vector<p4polynom::term2> vec_field_1;
@@ -290,7 +291,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
 }
 
 // ---------------------------------------------------------------------------
-//                  PLOT_SEP_BLOW_UP
+//          plot_sep_blow_up
 // ---------------------------------------------------------------------------
 //
 // Starts separatrix integration, and plots the results meanwhile to the screen
@@ -524,6 +525,7 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
         orbit_result.push_back(last_orbit);
     }
 
+    // normal integration cycle
     de_sep.point[0] = t;
     de_sep.point[1] = y;
     de_sep.integrating_in_local_chart = true;
@@ -535,4 +537,65 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     if (first_orbit != NULL)
         *orbit = sep;
     return first_orbit;
+}
+
+// ---------------------------------------------------------------------------
+//          change_epsilon_de
+// ---------------------------------------------------------------------------
+void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
+{
+    p4blowup::blow_up_points separatrice;
+
+    g_VFResults.selected_de_point_.back().epsilon = epsilon;
+
+    separatrice = g_VFResults.selected_de_point_.back().blow_up;
+
+    for (auto it=g_VFResults.selected_de_point_.blow_up.begin(); it!=g_VFResults.selected_de_point_.blow_up.end();++it){
+        // TODO: mirar si estic cridant bé aquesta funció
+        draw_selected_sep(spherewnd,it->first_sep_point,CBACKGROUND);
+        it->first_sep_point.clear();
+    }
+}
+
+// FIXME mirar l'ordre en que fa les coses (a vegades usa first_sep i a vegades
+// usa last_sep...)
+void start_plot_de_sep(QWinSphere *spherewnd, int vfindex)
+{
+    p4orbits::orbits_points points;
+    double p[3];
+
+    draw_sep(spherewnd, g_VFResults.selected_de_sep_.first_sep_point);
+    if (!g_VFResults.selected_de_sep_.first_sep_point.empty()) { //FIXME
+        if (g_VFResults.selected_de_sep_.integrating_in_local_chart) {
+            copy_x_into_y(g_VFResults.selected_de_sep_.last_sep_point->pcoord, p);
+            points = g_VFResults.selected_de_sep_.last_sep_point;
+            g_VFResults.selected_de_sep_.last_sep_point->nextpt =
+                integrate_blow_up(
+                    spherewnd, p, g_VFResults.selected_de_sep_,
+                    g_VFResults.config_currentstep,
+                    g_VFResults.selected_de_sep_.last_sep_point->dir,
+                    g_VFResults.selected_de_sep_.last_sep_point->type, &points,
+                    g_VFResults.selected_de_point->chart);
+
+            g_VFResults.selected_de_sep_.last_sep_point = points;
+        } else {
+            copy_x_into_y(g_VFResults.selected_de_sep_.last_sep_point->pcoord, p);
+            points = g_VFResults.selected_de_sep_.last_sep_point;
+            g_VFResults.selected_de_sep_.last_sep_point->nextpt =
+                integrate_sep(spherewnd, p, g_VFResults.config_currentstep,
+                              g_VFResults.selected_de_sep_.last_sep_point->dir,
+                              g_VFResults.selected_de_sep_.last_sep_point->type,
+                              g_VFResults.config_intpoints, &points);
+
+            g_VFResults.selected_de_sep_.last_sep_point = points;
+        }
+    } else {
+        g_VFResults.selected_de_sep_.first_sep_point = plot_sep_blow_up(
+            spherewnd, g_VFResults.selected_de_point->x0,
+            g_VFResults.selected_de_point->y0, g_VFResults.selected_de_point->chart,
+            g_VFResults.selected_de_point->epsilon, g_VFResults.selected_de_sep_,
+            &points, vfindex);
+
+        g_VFResults.selected_de_sep_.last_sep_point = points;
+    }
 }
