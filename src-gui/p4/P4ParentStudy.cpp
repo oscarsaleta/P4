@@ -48,23 +48,24 @@ P4ParentStudy::P4ParentStudy()
     double_q_minus_1_ = q_ - 1;
     double_q_minus_p_ = q_ - p_;
     config_lc_value_ =
-        DEFAULT_LCORBITS; // number of orbits in the limit cycle window
+        DEFAULT_LCORBITS;  // number of orbits in the limit cycle window
     config_lc_numpoints_ =
-        DEFAULT_LCPOINTS; // number of points in the limit cycle window
+        DEFAULT_LCPOINTS;  // number of points in the limit cycle window
     config_currentstep_ =
-        DEFAULT_STEPSIZE; // current step size (during integration)
-    config_dashes_ = DEFAULT_LINESTYLE; // line style (dashes or points)
+        DEFAULT_STEPSIZE;  // current step size (during integration)
+    config_dashes_ = DEFAULT_LINESTYLE;  // line style (dashes or points)
     config_kindvf_ = DEFAULT_INTCONFIG;
 
     // initialize parameters
 
-    config_hma_ = DEFAULT_HMA;             // maximum step size
-    config_hmi_ = DEFAULT_HMI;             // minimum step size
-    config_branchhmi_ = DEFAULT_BRANCHHMI; // minimum step size near branches of
-                                           // separating curves
-    config_step_ = DEFAULT_STEPSIZE;       // step size
-    config_tolerance_ = DEFAULT_TOLERANCE; // tolerance
-    config_intpoints_ = DEFAULT_INTPOINTS; // number of points to integrate
+    config_hma_ = DEFAULT_HMA;  // maximum step size
+    config_hmi_ = DEFAULT_HMI;  // minimum step size
+    config_branchhmi_ =
+        DEFAULT_BRANCHHMI;            // minimum step size near branches of
+                                      // separating curves
+    config_step_ = DEFAULT_STEPSIZE;  // step size
+    config_tolerance_ = DEFAULT_TOLERANCE;  // tolerance
+    config_intpoints_ = DEFAULT_INTPOINTS;  // number of points to integrate
 
     // initialize limit cycles & orbits
 
@@ -269,7 +270,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         return true;
     }
 
-    reset(); // initialize structures, delete previous vector field if any
+    reset();  // initialize structures, delete previous vector field if any
 
     fpvec = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
     if (fpvec == nullptr)
@@ -287,9 +288,9 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
     // allocate room for all vector fields
     // FIXME
     // vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
-    vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
+    //vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
     for (j = 0; j < g_ThisVF->numVF_; j++) {
-        vf_[j] = new P4VFStudy(this);
+        vf_.push_back(new P4VFStudy(this));
     }
 
     if (fscanf(fpvec, "%d\n%d\n%d\n", &typeofstudy, &p, &q) != 3) {
@@ -329,8 +330,8 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
     // read the curves
 
     for (j = 0; j < g_ThisVF->numCurves_; j++) {
-        //        if( !readSeparatingCurve( fpvec, curves+j ) )
-        if (!readSeparatingCurve(fpvec, nullptr)) {
+        curves_result_.clear();  // TODO why do we need to clear?
+        if (!readSeparatingCurve(fpvec)) {
             reset();
             fclose(fpvec);
             return false;
@@ -383,28 +384,72 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         fclose(fpfin);
     fclose(fpvec);
 
-    readTables(basename, true, true); // try to read the piecewise curve points
-                                      // as well if they are present on disk
+    readTables(basename, true, true);  // try to read the piecewise curve points
+                                       // as well if they are present on disk
     // dump(basename);
     examinePositionsOfSingularities();
     return true;
 }
 
 // -----------------------------------------------------------------------
-//          P4ParentStudy::resetCurveInfo //FIXME not needed
+//          P4ParentStudy::readCurve
 // -----------------------------------------------------------------------
-void P4ParentStudy::resetCurveInfo()
+// P4 version, this is for visualizing a curve on the plane
+// FIXME: posar a readTables (P4ParentStudy)
+bool P4ParentStudy::readCurve(QString basename)
 {
-    for (auto it = curves_result_.begin(); it != curves_result_.end(); it++) {
-        delete_term2(it->sep);
-        delete_term2(it->sep_U1);
-        delete_term2(it->sep_U2);
-        delete_term2(it->sep_V1);
-        delete_term2(it->sep_V2);
-        delete_term3(it->sep_C);
-        deleteOrbitPoint(it->sep_points);
+    int N, degree_curve;
+    FILE *fp = nullptr;
+    setlocale(LC_ALL, "C");
+
+    fp = fopen(QFile::encodeName(basename + "_veccurve.tab"), "rt");
+    if (fp == nullptr) {
+        dump(basename, "Cannot open file " + basename + "_veccurve.tab");
+        return false;
     }
-    curves_result_.clear();
+
+    curves new_curve;
+    if (fscanf(fp, "%d", &degree_curve) != 1 || degree_curve < 0)
+        return false;
+    if (degree_curve == 0)
+        return true;
+
+    if (degree_curve > 0) {
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, new_curve.r2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, new_curve.u1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, new_curve.u2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, new_curve.v1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, new_curve.v2, N))
+            return false;
+
+        if (p_ != 1 || q_ != 1) {
+            if (fscanf(fp, "%d", &N) != 1 || N < 0)
+                return false;
+            if (!readTerm3(fp, new_curve.c, N))
+                return false;
+        }
+    }
+
+    curve_vector_.push_back(new_curve);
+    return true;
 }
 
 // -----------------------------------------------------------------------
@@ -618,9 +663,8 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
         for (j = 0; j < g_ThisVF->numVFRegions_; j++) {
             if (fscanf(fp, "%d", &v) != 1)
                 return false;
-            if (v !=
-                g_ThisVF->vfregions[j]
-                    .vfindex) // TODO: quan estigui llesta file_vf.cpp
+            if (v != g_ThisVF->vfregions[j]
+                         .vfindex)  // TODO: quan estigui llesta file_vf.cpp
                 return false;
             for (k = 0; k < g_ThisVF->numCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
