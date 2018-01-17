@@ -601,3 +601,66 @@ void start_plot_de_sep(QWinSphere *spherewnd, int vfindex)
             g_VFResults.selected_de_point.back().epsilon, sel_de_sep, vfindex);
     }
 }
+
+// ---------------------------------------------------------------------------
+//          cont_plot_de_sep
+// ---------------------------------------------------------------------------
+// TODO: mirar si back() hauria de ser front() pq les linked lists originals
+// anaven de principi a final
+void cont_plot_de_sep(QWinSphere *spherewnd)
+{
+    auto &sel_de_sep = g_VFResults.selected_de_sep_;
+    double p[3];
+    std::vector<p4orbits::orbits_points> points;
+
+    copy_x_into_y(sel_de_sep.sep_points.back().pcoord, p);
+    if (sel_de_sep.integrating_in_local_chart) {
+        points = integrate_blow_up(spherewnd, p, g_VFResults.selected_de_sep,
+                                   g_VFResults.config_currentstep_,
+                                   sel_de_sep.sep_points.back().dir,
+                                   sel_de_sep.sep_points.back().type,
+                                   g_VFResults.selected_de_point_.back().chart);
+    } else {
+        points = integrate_sep(spherewnd, p, g_VFResults.config_currentstep_,
+                               sel_de_sep.sep_points.back().dir,
+                               sel_de_sep.sep_points.back().type,
+                               g_VFResults.config_intpoints_);
+    }
+
+    sel_de_sep.sep_points.insert(sel_de_sep.end(),points.begin(),points.end());
+}
+
+// ---------------------------------------------------------------------------
+//          plot_next_de_sep
+// ---------------------------------------------------------------------------
+// FIXME
+void plot_next_de_sep(QWinSphere *spherewnd, int vfindex)
+{
+    auto &sel_de_sep = g_VFResults.selected_de_sep_;
+
+    draw_sep(spherewnd, sel_de_sep.front().sep_points);
+
+    sel_de_sep = sel_de_sep->next_blow_up_point;
+    if (sel_de_sep == NULL)
+        sel_de_sep = g_VFResults.selected_de_point->blow_up;
+
+    start_plot_de_sep(spherewnd, vfindex);
+}
+
+// ---------------------------------------------------------------------------
+//          select_next_de_sep
+// ---------------------------------------------------------------------------
+// FIXME
+void select_next_de_sep(QWinSphere *spherewnd)
+{
+    auto &sel_de_sep = g_VFResults.selected_de_sep_;
+
+    draw_sep(spherewnd, sel_de_sep->first_sep_point);
+
+    sel_de_sep = sel_de_sep->next_blow_up_point;
+    if (sel_de_sep == NULL)
+        sel_de_sep = g_VFResults.selected_de_point->blow_up;
+
+    draw_selected_sep(spherewnd, sel_de_sep->first_sep_point,
+                      CW_SEP);
+}
