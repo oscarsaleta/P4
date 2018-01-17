@@ -70,14 +70,14 @@ struct curveRegion {
 class P4InputVF : public QObject
 {
     Q_OBJECT
-  public:
+   public:
     P4InputVF();
     ~P4InputVF();
 
     QString filename_;
 
-    int symbolicpackage_; // 0 for reduce, 1 for maple
-    int typeofstudy_;     // 0, 1, 2, 3 = all, inf, fin, one
+    int symbolicpackage_;  // 0 for reduce, 1 for maple
+    int typeofstudy_;      // 0, 1, 2, 3 = all, inf, fin, one
 
     std::vector<bool> numeric_;
     std::vector<int> precision_;
@@ -96,9 +96,10 @@ class P4InputVF : public QObject
     std::vector<QString> xdot_;
     std::vector<QString> ydot_;
     std::vector<QString> gcf_;
-    // FIXME these shouldn't be double pointers
-    QString **curve_; // curve_ is the original, curves_ is P5
-    QString **isoclines_;
+    // curve_ is the original, curves_ is P5. There is only one curve regardless
+    // of how many regions we have
+    QString curve_;
+    std::vector<QString> isoclines_;
     QString evalFile_;
     QString evalFile2_;
 
@@ -113,42 +114,42 @@ class P4InputVF : public QObject
     QString parlabel_[MAXNUMPARAMS];
     std::vector<std::vector<QString>> parvalue_;
 
-    bool changed_;       // set when data needs to be saved
-    bool evaluated_;     // set when data has been evaluated
-    bool evaluating_;    // set while evaluating
-    bool cleared_;       // initial state, when records are clear
-    bool evaluatinggcf_; // true when evaluation is of GCF kind
+    bool changed_;        // set when data needs to be saved
+    bool evaluated_;      // set when data has been evaluated
+    bool evaluating_;     // set while evaluating
+    bool cleared_;        // initial state, when records are clear
+    bool evaluatinggcf_;  // true when evaluation is of GCF kind
     bool evaluatingCurve_;
     bool evaluatingIsoclines_;
-    bool processfailed_;   // true when process failed;
-    QString processError_; // only relevant when processfailed=true
+    bool processfailed_;    // true when process failed;
+    QString processError_;  // only relevant when processfailed=true
 
     QFindDlg *findDlg_;
     QGcfDlg *gcfDlg_;
     QCurveDlg *curveDlg_;
     QIsoclinesDlg *isoclinesDlg_;
 
-    QString getfilename() const;            // filename.inp
-    QString getbarefilename() const;        // filename
-    QString getfilename_finresults() const; // filename_fin.res
-    QString getfilename_infresults() const; // filename_inf.res
-    QString getfilename_fintable() const;   // filename_fin.tab
-    QString getfilename_inftable() const;   // filename_inf.tab
-    QString getfilename_vectable() const;   // filename_vec.tab
-    QString getfilename_gcf() const;        // filename_gcf.tab (temporary file)
+    QString getfilename() const;             // filename.inp
+    QString getbarefilename() const;         // filename
+    QString getfilename_finresults() const;  // filename_fin.res
+    QString getfilename_infresults() const;  // filename_inf.res
+    QString getfilename_fintable() const;    // filename_fin.tab
+    QString getfilename_inftable() const;    // filename_inf.tab
+    QString getfilename_vectable() const;    // filename_vec.tab
+    QString getfilename_gcf() const;  // filename_gcf.tab (temporary file)
     // QString getfilename_gcfresults() const; // filename_gcf.res (temp file,
     // only for reduce)
-    QString getreducefilename() const; // filename.red
-    QString getmaplefilename() const;  // filename.txt
-    QString getrunfilename() const;    // filename.run
+    QString getreducefilename() const;  // filename.red
+    QString getmaplefilename() const;   // filename.txt
+    QString getrunfilename() const;     // filename.run
     // curve filenames
-    QString getfilename_curvetable() const;  // filename_veccurve.tab
-    QString getfilename_curve() const;       // filename_curve.tab (tmp file)
-    QString getPrepareCurveFileName() const; // filename_curve_prep.txt
+    QString getfilename_curvetable() const;   // filename_veccurve.tab
+    QString getfilename_curve() const;        // filename_curve.tab (tmp file)
+    QString getPrepareCurveFileName() const;  // filename_curve_prep.txt
     // isoclines filenames
-    QString getfilename_isoclinestable() const; // filename_vecisocline.tab
-    QString getfilename_isoclines() const; // filename_isocline.tab (tmp file)
-    QString getPrepareIsoclinesFileName() const; // filename_isocline_prep.txt
+    QString getfilename_isoclinestable() const;  // filename_vecisocline.tab
+    QString getfilename_isoclines() const;  // filename_isocline.tab (tmp file)
+    QString getPrepareIsoclinesFileName() const;  // filename_isocline_prep.txt
 
     void getDataFromDlg();
 
@@ -171,7 +172,7 @@ class P4InputVF : public QObject
     QString convertMapleUserParameterLabels(QString);
     QString convertMapleUserParametersLabelsToValues(QString);
 
-    void prepareFile(QTextStream &); // used by Prepare()
+    void prepareFile(QTextStream &);  // used by Prepare()
 
     void prepare();
     void evaluate();
@@ -277,18 +278,18 @@ class P4InputVF : public QObject
     void setCommonBool(bool *, bool);
     void setCommonParvalue(int, QString);
 
-    QString getfilename_curveresults(void) const; // filename_curves.res
+    QString getfilename_curveresults(void) const;  // filename_curves.res
 
     void prepareMaplePiecewiseConfig(QTextStream &);
     // P5 function, the original one is prepareMapleCurve (singular)
     void prepareMapleCurves(QTextStream &);
     // -------------------------------------------------------------------------
 
-  signals:
+   signals:
     void saveSignal();
     void loadSignal();
 
-  public slots:
+   public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);
     void readProcessStdout();
