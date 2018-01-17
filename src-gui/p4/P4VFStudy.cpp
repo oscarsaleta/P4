@@ -121,6 +121,115 @@ bool P4VFStudy::readTables(FILE *fpvec, FILE *fpfin, FILE *fpinf)
 }
 
 // -----------------------------------------------------------------------
+//          P4VFStudy::readGCF
+// -----------------------------------------------------------------------
+bool P4VFStudy::readGCF(FILE *fp)
+{
+    int N, degree_gcf;
+
+    if (fscanf(fp, "%d", &degree_gcf) != 1 || degree_gcf < 0)
+        return false;
+
+    if (degree_gcf) {
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, gcf_, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, gcf_U1_, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, gcf_U2_, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, gcf_V1_, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            return false;
+        if (!readTerm2(fp, gcf_V2_, N))
+            return false;
+
+        if (parent_->p_ != 1 || parent_->q_ != 1) {
+            if (fscanf(fp, "%d", &N) != 1 || N < 0)
+                return false;
+            if (!readTerm3(fp, gcf_C_, N))
+                return false;
+        }
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          P4VFStudy::readSeparatingCurve
+// -----------------------------------------------------------------------
+// in fact a variant of ReadGCF, to read separating curves
+bool P4VFStudy::readSeparatingCurve(FILE *fp, std::vector<p4curves::curves> &c)
+{
+    bool v;
+    int N, degree_sep;
+    p4curves::curves d;
+
+    if (fscanf(fp, "%d", &degree_sep) != 1 || degree_sep < 0)
+        return false;
+
+    v = false;
+
+    while (1) {
+        if (!degree_sep) {
+            v = true;
+            break;
+        }
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0)
+            break;
+        if (!readTerm2(fp, d.r2, N))
+            break;
+
+        if (fscanf(fp, "%d", &N) != 1||N<0)
+            break;
+        if (!readTerm2(fp, d.u1, N))
+            break;
+
+        if (fscanf(fp, "%d", &N) != 1||N<0)
+            break;
+        if (!readTerm2(fp, d.u2, N))
+            break;
+
+        if (fscanf(fp, "%d", &N) != 1||N<0)
+            break;
+        if (!readTerm2(fp, d.v1, N))
+            break;
+
+        if (fscanf(fp, "%d", &N) != 1||N<0)
+            break;
+        if (!readTerm2(fp, d.v2, N))
+            break;
+
+        if (plweights_) {
+            if (fscanf(fp, "%d", &N) != 1 || N<0)
+                break;
+            if (!readTerm3(fp, d.c, N))
+                break;
+        }
+        v = true;
+        break;
+    }
+
+    if (v)
+        c.push_back(d);
+
+    return v;
+}
+
+// -----------------------------------------------------------------------
 //          P4VFStudy::readVectorField
 // -----------------------------------------------------------------------
 bool P4VFStudy::readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
@@ -279,7 +388,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         return false;
 
     switch (point.type) {
-    case 1: // sadle-node
+    case 1:  // sadle-node
         p4blowup::sep sep1;
         if (!s || (point.chart == CHART_R2)) {
             if (s)
@@ -310,8 +419,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1.notadummy = true;
                 if (!readTerm1(fp, sep1.separatrice, N))
                     return false;
-                sep1.first_sep_point.clear();
-                sep1.last_sep_point.clear();
+                sep1.sep_points.clear();
                 sepvec.push_back(sep1);
 
                 sep1.direction = -1;
@@ -321,7 +429,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
             point.separatrices = sepvec;
         }
         break;
-    case 2: // saddle-node
+    case 2:  // saddle-node
         p4blowup::sep sep1;
         if (s)
             sep1.type = STYPE_CENUNSTABLE;
@@ -339,8 +447,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         sep1.notadummy = true;
         if (!readTerm1(fp, sep1.separatrice, N))
             return false;
-        sep1.first_sep_point.clear();
-        sep1.last_sep_point.clear();
+        sep1.sep_points.clear();
         sepvec.push_back(sep1);
 
         if (point.chart == CHART_R2) {
@@ -352,8 +459,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
             sep1.notadummy = true;
             if (!readTerm1(fp, sep1.separatrice, N))
                 return false;
-            sep1.first_sep_point.clear();
-            sep1.last_sep_point.clear();
+            sep1.sep_points.clear();
             sepvec.push_back(sep1);
 
             sep1.notadummy = false;
@@ -361,7 +467,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         }
         point.separatrices = sepvec;
         break;
-    case 3: // saddle-node
+    case 3:  // saddle-node
         p4blowup::sep sep1;
         if (s)
             sep1.type = STYPE_CENSTABLE;
@@ -378,8 +484,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         sep1.notadummy = true;
         if (!readTerm1(fp, sep1.separatrice, N))
             return false;
-        sep1.first_sep_point.clear();
-        sep1.last_sep_point.clear();
+        sep1.sep_points.clear();
         sepvec.push_back(sep1);
 
         if (point.chart == CHART_R2) {
@@ -391,8 +496,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
             sep1.notadummy = true;
             if (!readTerm1(fp, sep1.separatrice, N))
                 return false;
-            sep1.first_sep_point.clear();
-            sep1.last_sep_point.clear();
+            sep1.sep_points.clear();
             sepvec.push_back(sep1);
 
             sep1.direction = -1;
@@ -401,7 +505,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         }
         point.separatrices = sepvec;
         break;
-    case 4: // saddle-node
+    case 4:  // saddle-node
         if (!s || point.chart == CHART_R2) {
             p4blowup::sep sep1;
             if (s)
@@ -421,8 +525,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
             sep1.notadummy = true;
             if (!readTerm1(fp, sep1.separatrice, N))
                 return false;
-            sep1.first_sep_point.clear();
-            sep1.last_sep_point.clear();
+            sep1.sep_points.clear();
             sepvec.push_back(sep1);
             if (point.chart == CHART_R2) {
                 sep1.type = STYPE_STABLE;
@@ -433,8 +536,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 sep1.notadummy = true;
                 if (!readTerm1(fp, sep1.separatrice, N))
                     return false;
-                sep1.first_sep_point.clear();
-                sep1.last_sep_point.clear();
+                sep1.sep_points.clear();
                 sepvec.push_back(sep1);
 
                 sep1.direction = -1;
@@ -444,7 +546,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         }
         point.separatrices = sepvec;
         break;
-    case 6: // saddle
+    case 6:  // saddle
         p4blowup::sep sep1;
         if (s)
             sep1.type = STYPE_CENUNSTABLE;
@@ -461,8 +563,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         sep1.notadummy = true;
         if (!readTerm1(fp, sep1.separatrice, N))
             return false;
-        sep1.first_sep_point.clear();
-        sep1.last_sep_point.clear();
+        sep1.sep_points.clear();
         sepvec.push_back(sep1);
 
         if (point.chart == CHART_R2) {
@@ -480,8 +581,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
             sep1.notadummy = true;
             if (!readTerm1(fp, sep1.separatrice, N))
                 return false;
-            sep1.first_sep_point.clear();
-            sep1.last_sep_point.clear();
+            sep1.sep_points.clear();
             sepvec.push_back(sep1);
 
             sep1.d = 1;
@@ -490,7 +590,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         }
         point.separatrices = sepvec;
         break;
-    case 7: // saddle
+    case 7:  // saddle
         p4blowup::sep sep1;
         if (s)
             sep1.type = STYPE_CENSTABLE;
@@ -507,8 +607,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
         sep1.notadummy = true;
         if (!readTerm1(fp, sep1.separatrice, N))
             return false;
-        sep1.first_sep_point.clear();
-        sep1.last_sep_point.clear();
+        sep1.sep_points.clear();
         sepvec.push_back(sep1);
 
         if (point.chart == CHART_R2) {
@@ -526,8 +625,7 @@ P4VFStudy::readSemiElementaryPoint(FILE *fp)
             sep1.notadummy = true;
             if (!readTerm1(fp, sep1.separatrice, N))
                 return false;
-            sep1.first_sep_point.clear();
-            sep1.last_sep_point.clear();
+            sep1.sep_points.clear();
             sepvec.push_back(sep1);
 
             sep1.direction = -1;
