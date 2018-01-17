@@ -168,65 +168,87 @@ bool P4VFStudy::readGCF(FILE *fp)
 }
 
 // -----------------------------------------------------------------------
-//          P4VFStudy::readSeparatingCurve
+//                      QVFStudy::ReadIsoclines
 // -----------------------------------------------------------------------
-// in fact a variant of ReadGCF, to read separating curves
-bool P4VFStudy::readSeparatingCurve(FILE *fp, std::vector<p4curves::curves> &c)
+// FIXME posar a readTables (P4VFStudy)
+bool QVFStudy::readIsoclines(QString basename)
 {
-    bool v;
-    int N, degree_sep;
-    p4curves::curves d;
+    int N, degree_curve;
+    FILE *fp = nullptr;
+    setlocale(LC_ALL, "C");
 
-    if (fscanf(fp, "%d", &degree_sep) != 1 || degree_sep < 0)
+    fp = fopen(QFile::encodeName(basename + "_vecisoclines.tab"), "rt");
+    if (fp == nullptr) {
+        dump(basename, "Cannot open file " + basename + "_vecisoclines.tab");
         return false;
-
-    v = false;
-
-    while (1) {
-        if (!degree_sep) {
-            v = true;
-            break;
-        }
-
-        if (fscanf(fp, "%d", &N) != 1 || N < 0)
-            break;
-        if (!readTerm2(fp, d.r2, N))
-            break;
-
-        if (fscanf(fp, "%d", &N) != 1||N<0)
-            break;
-        if (!readTerm2(fp, d.u1, N))
-            break;
-
-        if (fscanf(fp, "%d", &N) != 1||N<0)
-            break;
-        if (!readTerm2(fp, d.u2, N))
-            break;
-
-        if (fscanf(fp, "%d", &N) != 1||N<0)
-            break;
-        if (!readTerm2(fp, d.v1, N))
-            break;
-
-        if (fscanf(fp, "%d", &N) != 1||N<0)
-            break;
-        if (!readTerm2(fp, d.v2, N))
-            break;
-
-        if (plweights_) {
-            if (fscanf(fp, "%d", &N) != 1 || N<0)
-                break;
-            if (!readTerm3(fp, d.c, N))
-                break;
-        }
-        v = true;
-        break;
     }
 
-    if (v)
-        c.push_back(d);
+    isoclines new_isocline;
+    if (fscanf(fp, "%d", &degree_curve) != 1)
+        return false;
 
-    return v;
+    if (degree_curve > 0) {
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        // prepare a new isocline and link it to the list
+
+        new_isocline.r2 = new term2;
+        new_isocline.r2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline.r2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline.u1 = new term2;
+        new_isocline.u1->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline.u1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline.u2 = new term2;
+        new_isocline.u2->next_term2 = nullptr;
+
+        if (!readTerm2(fp, new_isocline.u2, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+
+        new_isocline.v1 = new term2;
+        new_isocline.v1->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline.v1, N))
+            return false;
+
+        if (fscanf(fp, "%d", &N) != 1)
+            return false;
+        new_isocline.v2 = new term2;
+        new_isocline.v2->next_term2 = nullptr;
+        if (!readTerm2(fp, new_isocline.v2, N))
+            return false;
+
+        if (p_ != 1 || q_ != 1) {
+            if (fscanf(fp, "%d", &N) != 1)
+                return false;
+
+            new_isocline.c = new term3;
+            new_isocline.c->next_term3 = nullptr;
+            if (!readTerm3(fp, new_isocline.c, N))
+                return false;
+        } else {
+            new_isocline.c = nullptr;
+        }
+    } else {
+        return false;
+    }
+
+    isocline_vector_.push_back(new_isocline);
+    return true;
 }
 
 // -----------------------------------------------------------------------
