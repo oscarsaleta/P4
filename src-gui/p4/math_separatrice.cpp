@@ -249,29 +249,36 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
     }
 }
 
-static orbits_points *integrate_sep(QWinSphere *spherewnd, double pcoord[3],
-                                    double step, int dir, int type,
-                                    int points_to_int, orbits_points **orbit)
+// ---------------------------------------------------------------------------
+//          integrate_sep
+// ---------------------------------------------------------------------------
+std::vector<p4orbits::orbits_points> integrate_sep(
+    QWinSphere *spherewnd, double pcoord[3], double step, int dir, int type,
+    int points_to_int /*, orbits_points **orbit*/)
 {
     int i, d, h;
     int color, dashes;
     double hhi;
-    double pcoord2[3], h_min, h_max;
-    orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
+    double pcoord2[3];
+    double h_min{g_VFResults.config_hmi_}, h_max{g_VFResults.config_hma_};
+    p4orbits::orbits_points last_orbit;
+    std::vector<p4orbits::orbits_points> orbit_result;
+    // orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
 
     /* if we intergrate a separatrice and use the original vector field
     then it is possible that we have to change the direction of the
     separatrice, because the separatrice is evaluate for the reduced
     vector field
     */
+    if (!prepareVfForIntegration(pcoord))
+        return std::vector<p4orbits::orbits_points>();
+
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
         MATHFUNC(change_dir)(pcoord))
         hhi = -g_VFResults.config_step_ * dir;
     else
         hhi = (double)dir * step;
 
-    h_min = g_VFResults.config_hmi_;
-    h_max = g_VFResults.config_hma_;
     copy_x_into_y(pcoord, pcoord2);
     for (i = 1; i <= points_to_int; ++i) {
         MATHFUNC(integrate_sphere_sep)
@@ -280,31 +287,26 @@ static orbits_points *integrate_sep(QWinSphere *spherewnd, double pcoord[3],
 
         if ((i % UPDATEFREQ_STEPSIZE) == 0)
             set_current_step(fabs(hhi));
-        if (last_orbit == nullptr) {
-            first_orbit = new orbits_points;
-            last_orbit = first_orbit;
-            h = dir;
-        } else {
-            last_orbit->next_point = new orbits_points;
-            h = last_orbit->dir;
-            last_orbit = last_orbit->next_point;
-        }
 
-        copy_x_into_y(pcoord, last_orbit->pcoord);
-        last_orbit->color = color;
-        last_orbit->dashes = dashes && g_VFResults.config_dashes_;
-        last_orbit->dir = d * h;
-        last_orbit->type = type;
-        last_orbit->next_point = nullptr;
+        copy_x_into_y(pcoord, last_orbit.pcoord);
+        last_orbit.color = color;
+        last_orbit.dashes = dashes && g_VFResults.config_dashes_;
+        last_orbit.dir = d * h;
+        last_orbit.type = type;
+
         if (dashes && g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
             (*plot_p)(spherewnd, pcoord, color);
         copy_x_into_y(pcoord, pcoord2);
+
+        orbit_result.push_back(last_orbit);
+
+        if (!prepareVfForIntegration(pcoord))
+            break;
     }
     set_current_step(fabs(hhi));
-    *orbit = last_orbit;
-    return (first_orbit);
+    return orbit_result;
 }
 
 int change_type(int type)
