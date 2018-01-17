@@ -75,15 +75,17 @@ class P4VFStudy : public QObject
 
     // reading of the Maple/Reduce results
     bool readTables(QString basename);
-    bool readGCF(FILE *fp);
-    bool readCurve(QString basename);
-    bool readIsoclines(QString basename);
+    
+    bool readGCF(FILE *fp); //TODO
+    bool readCurve(QString basename); //TODO
+    bool readIsoclines(QString basename); //TODO
+
     bool readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
                          std::vector<p4polynom::term2> &vf1);
     bool readVectorFieldCylinder(FILE *fp, std::vector<p4polynom::term3> &vf0,
                                  std::vector<p4polynom::term3> &vf1);
-    bool readPoints(FILE *fp);
 
+    bool readPoints(FILE *fp);
     bool readSaddlePoint(FILE *fp);
     bool readSemiElementaryPoint(FILE *fp);
     bool readStrongFocusPoint(FILE *fp);
