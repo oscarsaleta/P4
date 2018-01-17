@@ -56,7 +56,7 @@ int findSepColor2(term2 *f, int type, double y[2])
             break;
         default:
             color = 0;
-            break; // to avoid compiler warnings
+            break;  // to avoid compiler warnings
         }
     } else {
         switch (type) {
@@ -74,7 +74,7 @@ int findSepColor2(term2 *f, int type, double y[2])
             break;
         default:
             color = 0;
-            break; // to avoid compiler warnings
+            break;  // to avoid compiler warnings
         }
     }
     return (color);
@@ -594,12 +594,10 @@ void make_transformations(transformations *trans, double x0, double y0,
     x = x0;
     y = y0;
     while (trans != nullptr) {
-        point[0] = trans->x0 +
-                   (double)trans->c1 * power(x, (double)trans->d1) *
-                       power(y, (double)trans->d2);
-        point[1] = trans->y0 +
-                   (double)trans->c2 * power(x, (double)trans->d3) *
-                       power(y, (double)trans->d4);
+        point[0] = trans->x0 + (double)trans->c1 * power(x, (double)trans->d1) *
+                                   power(y, (double)trans->d2);
+        point[1] = trans->y0 + (double)trans->c2 * power(x, (double)trans->d3) *
+                                   power(y, (double)trans->d4);
         x = point[0];
         y = point[1];
         trans = trans->next_trans;
@@ -1072,7 +1070,7 @@ static void plot_all_de_sep(QWinSphere *spherewnd, struct degenerate *point)
                     copy_x_into_y(de_sep->last_sep_point->pcoord, p);
                     if (de_sep->blow_up_vec_field)
                         de_sep->last_sep_point->next_point = integrate_blow_up(
-                            spherewnd, // point->x0,point->y0,
+                            spherewnd,  // point->x0,point->y0,
                             p, de_sep, g_VFResults.config_currentstep_,
                             de_sep->last_sep_point->dir,
                             de_sep->last_sep_point->type, &sep, point->chart);
@@ -1103,32 +1101,35 @@ void plot_all_sep(QWinSphere *spherewnd)
     plot_all_de_sep(spherewnd, g_VFResults.first_de_point_);
 }
 
-void draw_sep(QWinSphere *spherewnd, orbits_points *sep)
+void draw_sep(QWinSphere *spherewnd, std::vector<p4orbits::orbits_points> sep)
 {
     double pcoord[3];
 
-    if (sep)
-        do {
-            if (sep->dashes)
-                (*plot_l)(spherewnd, sep->pcoord, pcoord, sep->color);
+    if (!sep.empty()) {
+        for (auto it : sep) {
+            if (it.dashes)
+                (*plot_l)(spherewnd, it.pcoord, pcoord, it.color);
             else
-                (*plot_p)(spherewnd, sep->pcoord, sep->color);
-            copy_x_into_y(sep->pcoord, pcoord);
-        } while ((sep = sep->next_point) != nullptr);
+                (*plot_p)(spherewnd, it.pcoord, it.color);
+            copy_x_into_y(it.pcoord, pcoord);
+        }
+    }
 }
 
-void draw_selected_sep(QWinSphere *spherewnd, orbits_points *sep, int color)
+void draw_selected_sep(QWinSphere *spherewnd,
+                       std::vector<p4orbits::orbits_points> sep, int color)
 {
     double pcoord[3];
 
-    if (sep)
-        do {
-            if (sep->dashes)
-                (*plot_l)(spherewnd, sep->pcoord, pcoord, color);
+    if (!sep.empty()) {
+        for (auto it : sep) {
+            if (it.dashes)
+                (*plot_l)(spherewnd, it.pcoord, pcoord, color);
             else
-                (*plot_p)(spherewnd, sep->pcoord, color);
-            copy_x_into_y(sep->pcoord, pcoord);
-        } while ((sep = sep->next_point) != nullptr);
+                (*plot_p)(spherewnd, it.pcoord, color);
+            copy_x_into_y(it.pcoord, pcoord);
+        }
+    }
 }
 
 void change_epsilon_saddle(QWinSphere *spherewnd, double epsilon)
