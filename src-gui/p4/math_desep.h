@@ -27,12 +27,10 @@ void eval_blow_vec_field(const double *y, double *f);
 void make_transformations(std::vector<p4blowup::transformations> &trans,
                           double x0, double y0, double *point);
 // math_intblowup.cpp
-std::vector<p4orbits::orbits_points>
-integrate_blow_up(QWinSphere *spherewnd, double *pcoord2,
-                  std::vector<p4blowup::blow_up_points> de_sep, double step,
-                  int dir, int type,
-                  std::vector<p4orbits::orbits_points> orbit /*vector?*/,
-                  int chart);
+std::vector<p4orbits::orbits_points> integrate_blow_up(
+    QWinSphere *spherewnd, double *pcoord2,
+    std::vector<p4blowup::blow_up_points> de_sep, double step, int dir,
+    int type, int chart);
 // math_separatrice.cpp
 void change_epsilon_de(QWinSphere *spherewnd, double epsilon);
 // math_separatrice.cpp

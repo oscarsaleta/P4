@@ -19,20 +19,20 @@
 
 #include "math_desep.h"
 
+#include "custom.h"
 #include "file_tab.h"
 #include "math_separatrice.h"
- #include "custom.h"
 
-static std::vector<p4polynom::term2> vec_field_0;
-static std::vector<p4polynom::term2> vec_field_1;
+static std::vector<p4polynom::term2> s_vec_field_0;
+static std::vector<p4polynom::term2> s_vec_field_1;
 
 // ---------------------------------------------------------------------------
 //          eval_blow_vec_field
 // ---------------------------------------------------------------------------
 void eval_blow_vec_field(const double *y, double *f)
 {
-    f[0] = eval_term2(vec_field_0, y);
-    f[1] = eval_term2(vec_field_1, y);
+    f[0] = eval_term2(s_vec_field_0, y);
+    f[1] = eval_term2(s_vec_field_1, y);
 }
 
 // ---------------------------------------------------------------------------
@@ -67,7 +67,8 @@ void make_transformations(std::vector<p4blowup::transformations> trans,
 // ---------------------------------------------------------------------------
 std::vector<p4orbits::orbits_points> integrate_blow_up(
     QWinSphere *spherewnd, double *pcoord2, p4blowup::blow_up_points &de_sep,
-    double step, int dir, int type, p4orbits::orbits_points &orbit, int chart)
+    double step, int dir, int type,
+    /*p4orbits::orbits_points &orbit,*/ int chart)
 {
     int i;
     double hhi, hhi0;
@@ -79,8 +80,8 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
     p4orbits::orbits_points last_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
 
-    vec_field_0 = de_sep.vector_field_0;
-    vec_field_1 = de_sep.vector_field_1;
+    s_vec_field_0 = de_sep.vector_field_0;
+    s_vec_field_1 = de_sep.vector_field_1;
 
     y[0] = de_sep.point[0];
     y[1] = de_sep.point[1];
@@ -304,8 +305,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
 // At the end, a normal integration cycle is added.
 static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     QWinSphere *spherewnd, double x0, double y0, int chart, double epsilon,
-    p4blowup::blow_up_points &de_sep, p4orbits::orbits_points &orbit,
-    int vfindex)
+    p4blowup::blow_up_points &de_sep, int vfindex)
 {
     double h, t{0}, pcoord[3], pcoord2[3], point[2];
     int i, color, dir, dashes, type, ok{true};
@@ -426,7 +426,7 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     copy_x_into_y(pcoord, last_orbit.pcoord);
     last_orbit.color = color;
     last_orbit.dashes = 0;
-    last_orbit.dir = dir; // TODO: aixo no hi era
+    last_orbit.dir = dir;  // TODO: aixo no hi era
     copy_x_into_y(pcoord, pcoord2);
     orbit_result.push_back(last_orbit);
     for (i = 0; i <= 99; i++) {
@@ -529,14 +529,14 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     de_sep.point[0] = t;
     de_sep.point[1] = y;
     de_sep.integrating_in_local_chart = true;
-    // FIXME tot això
-    sep = last_orbit;
-    last_orbit.nextpt =
+
+    std::vector<p4orbits::orbits_points> last_int_cycle =
         integrate_blow_up(spherewnd, pcoord2, de_sep, g_VFResults.config_step_,
-                          dir, last_orbit.type, &sep, chart);
-    if (first_orbit != NULL)
-        *orbit = sep;
-    return first_orbit;
+                          dir, last_orbit.type, chart);
+    orbit_result.insert(orbit_result.end(), last_int_cycle.begin(),
+                        last_int_cycle.end());
+
+    return orbit_result;
 }
 
 // ---------------------------------------------------------------------------
@@ -550,52 +550,54 @@ void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
 
     separatrice = g_VFResults.selected_de_point_.back().blow_up;
 
-    for (auto it=g_VFResults.selected_de_point_.blow_up.begin(); it!=g_VFResults.selected_de_point_.blow_up.end();++it){
-        // TODO: mirar si estic cridant bé aquesta funció
-        draw_selected_sep(spherewnd,it->first_sep_point,CBACKGROUND);
-        it->first_sep_point.clear();
+    for (auto it = g_VFResults.selected_de_point_.blow_up.begin();
+         it != g_VFResults.selected_de_point_.blow_up.end(); ++it) {
+        draw_selected_sep(spherewnd, it->sep_points, CBACKGROUND);
+        it->sep_points.clear();
     }
 }
 
-// FIXME mirar l'ordre en que fa les coses (a vegades usa first_sep i a vegades
-// usa last_sep...)
+// ---------------------------------------------------------------------------
+//          start_plot_de_sep
+// ---------------------------------------------------------------------------
 void start_plot_de_sep(QWinSphere *spherewnd, int vfindex)
 {
-    p4orbits::orbits_points points;
+    auto &sel_de_sep = g_VFResults.selected_de_sep_;
+    std::vector<p4orbits::orbits_points> points;
     double p[3];
 
-    draw_sep(spherewnd, g_VFResults.selected_de_sep_.first_sep_point);
-    if (!g_VFResults.selected_de_sep_.first_sep_point.empty()) { //FIXME
-        if (g_VFResults.selected_de_sep_.integrating_in_local_chart) {
-            copy_x_into_y(g_VFResults.selected_de_sep_.last_sep_point->pcoord, p);
-            points = g_VFResults.selected_de_sep_.last_sep_point;
-            g_VFResults.selected_de_sep_.last_sep_point->nextpt =
-                integrate_blow_up(
-                    spherewnd, p, g_VFResults.selected_de_sep_,
-                    g_VFResults.config_currentstep,
-                    g_VFResults.selected_de_sep_.last_sep_point->dir,
-                    g_VFResults.selected_de_sep_.last_sep_point->type, &points,
-                    g_VFResults.selected_de_point->chart);
+    draw_sep(spherewnd, sel_de_sep.sep_points);
 
-            g_VFResults.selected_de_sep_.last_sep_point = points;
+    if (!sel_de_sep.sep_points.empty()) {
+        if (sel_de_sep.integrating_in_local_chart) {
+            copy_x_into_y(sel_de_sep.sep_points.back().pcoord, p);
+            // generate a vector of points by integrating the blowup
+            points = integrate_blow_up(
+                spherewnd, p, sel_de_sep, g_VFResults.config_currentstep_,
+                sel_de_sep.sep_points.back().dir,
+                sel_de_sep.sep_points.back().type,
+                g_VFResults.selected_de_point_.back().chart);
+            // append this vector to the previous one in the structure
+            if (!points.empty())
+                sel_de_sep.sep_points.insert(sel_de_sep.sep_points.end(),
+                                             points.begin(), points.end());
         } else {
-            copy_x_into_y(g_VFResults.selected_de_sep_.last_sep_point->pcoord, p);
-            points = g_VFResults.selected_de_sep_.last_sep_point;
-            g_VFResults.selected_de_sep_.last_sep_point->nextpt =
-                integrate_sep(spherewnd, p, g_VFResults.config_currentstep,
-                              g_VFResults.selected_de_sep_.last_sep_point->dir,
-                              g_VFResults.selected_de_sep_.last_sep_point->type,
-                              g_VFResults.config_intpoints, &points);
-
-            g_VFResults.selected_de_sep_.last_sep_point = points;
+            copy_x_into_y(sel_de_sep.sep_points.back().pcoord, p);
+            // generate a vector of points by integrating the separatrice
+            points =
+                integrate_sep(spherewnd, p, g_VFResults.config_currentstep_,
+                              sel_de_sep.sep_points.back().dir,
+                              sel_de_sep.sep_points.back().type,
+                              g_VFResults.config_intpoints_);
+            // append this vector to the previous one in the structure
+            sel_de_sep.sep_points.insert(sel_de_sep.end(), points.begin(),
+                                         points.end());
         }
     } else {
-        g_VFResults.selected_de_sep_.first_sep_point = plot_sep_blow_up(
-            spherewnd, g_VFResults.selected_de_point->x0,
-            g_VFResults.selected_de_point->y0, g_VFResults.selected_de_point->chart,
-            g_VFResults.selected_de_point->epsilon, g_VFResults.selected_de_sep_,
-            &points, vfindex);
-
-        g_VFResults.selected_de_sep_.last_sep_point = points;
+        sel_de_sep.sep_points = plot_sep_blow_up(
+            spherewnd, g_VFResults.selected_de_point.back().x0,
+            g_VFResults.selected_de_point.back().y0,
+            g_VFResults.selected_de_point.back().chart,
+            g_VFResults.selected_de_point.back().epsilon, sel_de_sep, vfindex);
     }
 }
