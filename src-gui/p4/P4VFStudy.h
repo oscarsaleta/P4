@@ -68,14 +68,16 @@ class P4VFStudy : public QObject
     std::vector<p4polynomials::term3> gcf_C_;
     std::vector<p4orbits::orbits_points> gcf_points_;
 
-    // curves
-    std::vector<curves> curve_vector_;
+    
     // isoclines
     std::vector<isoclines> isocline_vector_;
 
+    /* CLASS METHODS */
+    void reset();
+    
     // reading of the Maple/Reduce results
     bool readTables(QString basename);
-    
+
     bool readGCF(FILE *fp); //TODO
     bool readCurve(QString basename); //TODO
     bool readIsoclines(QString basename); //TODO
