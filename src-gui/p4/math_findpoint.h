@@ -22,6 +22,6 @@
 
 class QWinSphere;
 
-int find_critical_point(QWinSphere *spherewnd, double x, double y);
+bool find_critical_point(QWinSphere *spherewnd, double x, double y);
 
-#endif // MATH_FINDPOINT_H
+#endif  // MATH_FINDPOINT_H
