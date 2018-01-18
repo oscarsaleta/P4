@@ -71,6 +71,13 @@ P4ParentStudy::P4ParentStudy()
 
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
 
+    // selected structs
+    selected_saddle_point_ = 0;
+    selected_se_point_ = 0;
+    selected_de_point_ = 0;
+    selected_sep_ = 0;
+    selected_de_sep_ = 0;
+
     setupCoordinateTransformations();
 }
 
@@ -288,7 +295,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
     // allocate room for all vector fields
     // FIXME
     // vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * g_ThisVF->numVF_);
-    //vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
+    // vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * g_ThisVF->numVF_);
     for (j = 0; j < g_ThisVF->numVF_; j++) {
         vf_.push_back(new P4VFStudy(this));
     }

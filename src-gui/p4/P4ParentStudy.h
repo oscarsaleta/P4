@@ -70,13 +70,24 @@ class P4ParentStudy : public QObject
     p4orbits::orbits *current_lim_cycle_;
 
     double selected_ucoord_[2];
-    std::vector<p4singularities::saddle> selected_saddle_point_;
-    std::vector<p4singularities::semi_elementary> selected_se_point_;
-    std::vector<p4singularities::degenerate> selected_de_point_;
-    std::vector<p4blowup::sep> selected_sep_;
-    //std::vector<p4blowup::blow_up_points> selected_de_sep_;
+
+    // FIXME arreglar aquest berenjenal
+    // FIXME selected_X_X_ no són índexos de vectors, haurien de ser punters a
+    // vectors. Realment no necessitarem els vectors de separatrius autèntics
+    // (seps_ i de_seps_) perquè sempre seran simplement punters als vectors de
+    // saddle/se/de_points
+    std::vector<p4singularities::saddle> saddle_points_;
+    int selected_saddle_point_;
+    std::vector<p4singularities::semi_elementary> se_points_;
+    int selected_se_point_;
+    std::vector<p4singularities::degenerate> de_points_;
+    int selected_de_point_;
+    std::vector<p4blowup::sep> seps_;
+    int selected_sep_;
+    // std::vector<p4blowup::blow_up_points> selected_de_sep_;
     std::vector<p4blowup::blow_up_points> de_seps_;
-    std::shared_ptr<p4blowup::blow_up_points> selected_de_sep_;
+    int selected_de_sep_;
+
     int selected_sep_vfindex_;
 
     double config_currentstep_;
