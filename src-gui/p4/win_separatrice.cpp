@@ -84,8 +84,9 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
     setLayout(mainLayout_);
 
 #ifdef TOOLTIPS
-    edt_epsilon_->setToolTip("Epsilon value for this separatrix\n"
-                             "Confirm any change by pressing ENTER");
+    edt_epsilon_->setToolTip(
+        "Epsilon value for this separatrix\n"
+        "Confirm any change by pressing ENTER");
     btn_start_->setToolTip("Start integrating this separatrix");
     btn_cont_->setToolTip("Continue integrating this separatrix");
     btn_intnext_->setToolTip("Select next separatrix, and start integrating");
@@ -169,7 +170,7 @@ void QSepDlg::onbtn_intnext(void)
     btn_intnext_->setEnabled(true);
 
     mainSphere_->prepareDrawing();
-    (*plot_next_sep)(mainSphere_);
+    (*plot_next_sep)(mainSphere_, g_VFResults.selected_sep_vfindex_);
     mainSphere_->finishDrawing();
 }
 
@@ -187,7 +188,7 @@ void QSepDlg::onbtn_start(void)
     btn_intnext_->setEnabled(true);
 
     mainSphere_->prepareDrawing();
-    (*start_plot_sep)(mainSphere_);
+    (*start_plot_sep)(mainSphere_, g_VFResults.selected_sep_vfindex_);
     mainSphere_->finishDrawing();
 }
 
