@@ -244,14 +244,14 @@ struct blow_up_points {
 };
 
 struct sep {
-    std::vector<orbits_points> sep_points;
-    std::vector<orbits_points> last_sep_point;
+    std::vector<p4orbits::orbits_points> sep_points;
+    std::vector<p4orbits::orbits_points> last_sep_point;
     int type;  // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
     int direction;
     int d;
     bool notadummy;  // false if separatrice is a copy of a structure (obtained
                      // through a symmetry)
-    std::vector<term1> separatrice;  // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
+    std::vector<p4polynom::term1> separatrice;  // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
     // sep *next_sep;
 
     sep() {}
@@ -333,7 +333,7 @@ struct semi_elementary : genericsingularity {
     double epsilon;
     bool notadummy;
 
-    std::vector<sep> separatrices;  // center sep (t,f(t)), sep (g(t),t)
+    std::vector<p4blowup::sep> separatrices;  // center sep (t,f(t)), sep (g(t),t)
     std::vector<p4polynom::term2> vector_field_0;  // vector field
     std::vector<p4polynom::term2> vector_field_1;  // vector field
     double a11, a12, a21, a22;                     // transformation matrix
