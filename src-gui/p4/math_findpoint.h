@@ -17,11 +17,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_FINDPOINT_H
-#define MATH_FINDPOINT_H
+#pragma once
 
 class QWinSphere;
 
-bool find_critical_point(QWinSphere *spherewnd, double x, double y);
-
-#endif  // MATH_FINDPOINT_H
+bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
+                         double y);
