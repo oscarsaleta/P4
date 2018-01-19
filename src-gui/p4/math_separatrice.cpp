@@ -56,7 +56,7 @@ int findSepColor2(term2 *f, int type, double y[2])
             break;
         default:
             color = 0;
-            break;  // to avoid compiler warnings
+            break; // to avoid compiler warnings
         }
     } else {
         switch (type) {
@@ -74,7 +74,7 @@ int findSepColor2(term2 *f, int type, double y[2])
             break;
         default:
             color = 0;
-            break;  // to avoid compiler warnings
+            break; // to avoid compiler warnings
         }
     }
     return (color);
@@ -252,9 +252,10 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
 // ---------------------------------------------------------------------------
 //          integrate_sep
 // ---------------------------------------------------------------------------
-std::vector<p4orbits::orbits_points> integrate_sep(
-    QWinSphere *spherewnd, double pcoord[3], double step, int dir, int type,
-    int points_to_int /*, orbits_points **orbit*/)
+std::vector<p4orbits::orbits_points>
+integrate_sep(std::shared_ptr<QWinSphere> spherewnd, double pcoord[3],
+              double step, int dir, int type,
+              int points_to_int /*, orbits_points **orbit*/)
 {
     int i, d, h;
     int color, dashes;
@@ -395,10 +396,11 @@ static double find_step(term1 *sep, double epsilon, int dir)
     return (t2);
 }
 
-orbits_points *plot_separatrice(QWinSphere *spherewnd, double x0, double y0,
-                                double a11, double a12, double a21, double a22,
-                                double epsilon, sep *sep1,
-                                orbits_points **orbit, short int chart)
+orbits_points *plot_separatrice(std::shared_ptr<QWinSphere> spherewnd,
+                                double x0, double y0, double a11, double a12,
+                                double a21, double a22, double epsilon,
+                                sep *sep1, orbits_points **orbit,
+                                short int chart)
 {
     double t = 0.0, h, y, pcoord[3], pcoord2[3], point[2];
     int i, dashes, ok = true;
@@ -596,19 +598,21 @@ void make_transformations(transformations *trans, double x0, double y0,
     x = x0;
     y = y0;
     while (trans != nullptr) {
-        point[0] = trans->x0 + (double)trans->c1 * power(x, (double)trans->d1) *
-                                   power(y, (double)trans->d2);
-        point[1] = trans->y0 + (double)trans->c2 * power(x, (double)trans->d3) *
-                                   power(y, (double)trans->d4);
+        point[0] = trans->x0 +
+                   (double)trans->c1 * power(x, (double)trans->d1) *
+                       power(y, (double)trans->d2);
+        point[1] = trans->y0 +
+                   (double)trans->c2 * power(x, (double)trans->d3) *
+                       power(y, (double)trans->d4);
         x = point[0];
         y = point[1];
         trans = trans->next_trans;
     }
 }
 
-static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
-                                       double y0, int chart, double epsilon,
-                                       blow_up_points *de_sep,
+static orbits_points *plot_sep_blow_up(std::shared_ptr<QWinSphere> spherewnd,
+                                       double x0, double y0, int chart,
+                                       double epsilon, blow_up_points *de_sep,
                                        orbits_points **orbit)
 {
     double h, t = 0, y, pcoord[3], pcoord2[3], point[2];
@@ -780,7 +784,7 @@ static orbits_points *plot_sep_blow_up(QWinSphere *spherewnd, double x0,
     return (first_orbit);
 }
 
-void start_plot_saddle_sep(QWinSphere *spherewnd)
+void start_plot_saddle_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     double p[3];
     orbits_points *points;
@@ -809,7 +813,7 @@ void start_plot_saddle_sep(QWinSphere *spherewnd)
     }
 }
 
-void cont_plot_saddle_sep(QWinSphere *spherewnd)
+void cont_plot_saddle_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     double p[3];
     orbits_points *points;
@@ -823,7 +827,7 @@ void cont_plot_saddle_sep(QWinSphere *spherewnd)
     g_VFResults.selected_sep_->last_sep_point = points;
 }
 
-void plot_next_saddle_sep(QWinSphere *spherewnd)
+void plot_next_saddle_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     draw_sep(spherewnd, g_VFResults.selected_sep_->first_sep_point);
     if (!(g_VFResults.selected_sep_ = g_VFResults.selected_sep_->next_sep))
@@ -832,7 +836,7 @@ void plot_next_saddle_sep(QWinSphere *spherewnd)
     start_plot_saddle_sep(spherewnd);
 }
 
-void select_next_saddle_sep(QWinSphere *spherewnd)
+void select_next_saddle_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     draw_sep(spherewnd, g_VFResults.selected_sep_->first_sep_point);
     if (!(g_VFResults.selected_sep_ = g_VFResults.selected_sep_->next_sep))
@@ -842,7 +846,8 @@ void select_next_saddle_sep(QWinSphere *spherewnd)
                       CW_SEP);
 }
 
-static void plot_all_saddle_sep(QWinSphere *spherewnd, saddle *point)
+static void plot_all_saddle_sep(std::shared_ptr<QWinSphere> spherewnd,
+                                saddle *point)
 {
     sep *sep1;
     orbits_points *points;
@@ -873,7 +878,7 @@ static void plot_all_saddle_sep(QWinSphere *spherewnd, saddle *point)
     }
 }
 
-void start_plot_se_sep(QWinSphere *spherewnd)
+void start_plot_se_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     orbits_points *points;
     double p[3];
@@ -901,7 +906,7 @@ void start_plot_se_sep(QWinSphere *spherewnd)
     }
 }
 
-void cont_plot_se_sep(QWinSphere *spherewnd)
+void cont_plot_se_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     double p[3];
     orbits_points *points;
@@ -915,7 +920,7 @@ void cont_plot_se_sep(QWinSphere *spherewnd)
     g_VFResults.selected_sep_->last_sep_point = points;
 }
 
-void plot_next_se_sep(QWinSphere *spherewnd)
+void plot_next_se_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     draw_sep(spherewnd, g_VFResults.selected_sep_->first_sep_point);
     if (!(g_VFResults.selected_sep_ = g_VFResults.selected_sep_->next_sep))
@@ -924,7 +929,7 @@ void plot_next_se_sep(QWinSphere *spherewnd)
     start_plot_se_sep(spherewnd);
 }
 
-void select_next_se_sep(QWinSphere *spherewnd)
+void select_next_se_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     draw_sep(spherewnd, g_VFResults.selected_sep_->first_sep_point);
     if (!(g_VFResults.selected_sep_ = g_VFResults.selected_sep_->next_sep))
@@ -934,7 +939,8 @@ void select_next_se_sep(QWinSphere *spherewnd)
                       CW_SEP);
 }
 
-static void plot_all_se_sep(QWinSphere *spherewnd, semi_elementary *point)
+static void plot_all_se_sep(std::shared_ptr<QWinSphere> spherewnd,
+                            semi_elementary *point)
 {
     sep *sep1;
     orbits_points *points;
@@ -965,7 +971,7 @@ static void plot_all_se_sep(QWinSphere *spherewnd, semi_elementary *point)
     }
 }
 
-void start_plot_de_sep(QWinSphere *spherewnd)
+void start_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     orbits_points *points;
     double p[3];
@@ -1011,7 +1017,7 @@ void start_plot_de_sep(QWinSphere *spherewnd)
     }
 }
 
-void cont_plot_de_sep(QWinSphere *spherewnd)
+void cont_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     double p[3];
     orbits_points *points;
@@ -1039,7 +1045,7 @@ void cont_plot_de_sep(QWinSphere *spherewnd)
     g_VFResults.selected_de_sep_->last_sep_point = points;
 }
 
-void plot_next_de_sep(QWinSphere *spherewnd)
+void plot_next_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     draw_sep(spherewnd, g_VFResults.selected_de_sep_->first_sep_point);
     if (!(g_VFResults.selected_de_sep_ =
@@ -1048,7 +1054,7 @@ void plot_next_de_sep(QWinSphere *spherewnd)
     start_plot_de_sep(spherewnd);
 }
 
-void select_next_de_sep(QWinSphere *spherewnd)
+void select_next_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     draw_sep(spherewnd, g_VFResults.selected_de_sep_->first_sep_point);
     if (!(g_VFResults.selected_de_sep_ =
@@ -1058,7 +1064,8 @@ void select_next_de_sep(QWinSphere *spherewnd)
                       CW_SEP);
 }
 
-static void plot_all_de_sep(QWinSphere *spherewnd, struct degenerate *point)
+static void plot_all_de_sep(std::shared_ptr<QWinSphere> spherewnd,
+                            struct degenerate *point)
 {
     blow_up_points *de_sep;
     orbits_points *sep;
@@ -1072,7 +1079,7 @@ static void plot_all_de_sep(QWinSphere *spherewnd, struct degenerate *point)
                     copy_x_into_y(de_sep->last_sep_point->pcoord, p);
                     if (de_sep->blow_up_vec_field)
                         de_sep->last_sep_point->next_point = integrate_blow_up(
-                            spherewnd,  // point->x0,point->y0,
+                            spherewnd, // point->x0,point->y0,
                             p, de_sep, g_VFResults.config_currentstep_,
                             de_sep->last_sep_point->dir,
                             de_sep->last_sep_point->type, &sep, point->chart);
@@ -1096,14 +1103,15 @@ static void plot_all_de_sep(QWinSphere *spherewnd, struct degenerate *point)
     }
 }
 
-void plot_all_sep(QWinSphere *spherewnd)
+void plot_all_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     plot_all_saddle_sep(spherewnd, g_VFResults.first_saddle_point_);
     plot_all_se_sep(spherewnd, g_VFResults.first_se_point_);
     plot_all_de_sep(spherewnd, g_VFResults.first_de_point_);
 }
 
-void draw_sep(QWinSphere *spherewnd, std::vector<p4orbits::orbits_points> sep)
+void draw_sep(std::shared_ptr<QWinSphere> spherewnd,
+              std::vector<p4orbits::orbits_points> sep)
 {
     double pcoord[3];
 
@@ -1118,7 +1126,7 @@ void draw_sep(QWinSphere *spherewnd, std::vector<p4orbits::orbits_points> sep)
     }
 }
 
-void draw_selected_sep(QWinSphere *spherewnd,
+void draw_selected_sep(std::shared_ptr<QWinSphere> spherewnd,
                        std::vector<p4orbits::orbits_points> sep, int color)
 {
     double pcoord[3];
@@ -1134,7 +1142,8 @@ void draw_selected_sep(QWinSphere *spherewnd,
     }
 }
 
-void change_epsilon_saddle(QWinSphere *spherewnd, double epsilon)
+void change_epsilon_saddle(std::shared_ptr<QWinSphere> spherewnd,
+                           double epsilon)
 {
     sep *separatrice;
 
@@ -1150,7 +1159,7 @@ void change_epsilon_saddle(QWinSphere *spherewnd, double epsilon)
     }
 }
 
-void change_epsilon_se(QWinSphere *spherewnd, double epsilon)
+void change_epsilon_se(std::shared_ptr<QWinSphere> spherewnd, double epsilon)
 {
     sep *separatrice;
 
@@ -1166,7 +1175,7 @@ void change_epsilon_se(QWinSphere *spherewnd, double epsilon)
     }
 }
 
-void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
+void change_epsilon_de(std::shared_ptr<QWinSphere> spherewnd, double epsilon)
 {
     blow_up_points *separatrice;
 
