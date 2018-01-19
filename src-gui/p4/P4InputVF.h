@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef P4INPUTVF_H
-#define P4INPUTVF_H
+#pragma once
 
 #include "custom.h"
 
@@ -56,14 +55,14 @@ struct vfRegion {
     int vfIndex;
     std::vector<int> signs;
     vfRegion(int i, std::vector<int> s) : vfIndex(i), signs(s) {}
-    ~vfRegion() { signs.clear(); }
+    //~vfRegion() { signs.clear(); }
 }
 
 struct curveRegion {
     int curveIndex;
     std::vector<int> signs;
     curveRegion(int i, std::vector<int> s) : curveIndex(i), signs(s) {}
-    ~curveRegion() { signs.clear(); }
+    //~curveRegion() { signs.clear(); }
 }
 }
 
@@ -72,7 +71,7 @@ class P4InputVF : public QObject
     Q_OBJECT
    public:
     P4InputVF();
-    ~P4InputVF();
+    //~P4InputVF();
 
     QString filename_;
 
@@ -103,11 +102,11 @@ class P4InputVF : public QObject
     QString evalFile_;
     QString evalFile2_;
 
-    QWidget *outputWindow_;
-    QProcess *evalProcess_;
-    QTextEdit *processText_;
-    QPushButton *terminateProcessButton_;
-    QPushButton *clearProcessButton_;
+    std::unique_ptr<QWidget> outputWindow_;
+    std::unique_ptr<QProcess> evalProcess_;
+    std::unique_ptr<QTextEdit> processText_;
+    std::unique_ptr<QPushButton> terminateProcessButton_;
+    std::unique_ptr<QPushButton> clearProcessButton_;
 
     /* parameters list */
     int numparams_;
@@ -124,10 +123,10 @@ class P4InputVF : public QObject
     bool processfailed_;    // true when process failed;
     QString processError_;  // only relevant when processfailed=true
 
-    QFindDlg *findDlg_;
-    QGcfDlg *gcfDlg_;
-    QCurveDlg *curveDlg_;
-    QIsoclinesDlg *isoclinesDlg_;
+    std::unique_ptr<QFindDlg> findDlg_;
+    std::unique_ptr<QGcfDlg> gcfDlg_;
+    std::unique_ptr<QCurveDlg> curveDlg_;
+    std::unique_ptr<QIsoclinesDlg> isoclinesDlg_;
 
     QString getfilename() const;             // filename.inp
     QString getbarefilename() const;         // filename
@@ -177,6 +176,7 @@ class P4InputVF : public QObject
     void prepare();
     void evaluate();
 
+//FIXME
     bool prepareGcf(term2 *f, double y1, double y2, int precision,
                     int numpoints);
     bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
@@ -195,7 +195,7 @@ class P4InputVF : public QObject
     void prepareMapleCurve(QTextStream &);
     // the following are called from math_curve.cpp
     bool prepareCurve(term2 *f, double y1, double y2, int precision,
-                      int numpoints);
+                      int numpoints); //FIXME
     bool prepareCurve_LyapunovCyl(double theta1, double theta2, int precision,
                                   int numpoints, int index);
     bool prepareCurve_LyapunovR2(int precision, int numpoints, int index);
@@ -207,7 +207,7 @@ class P4InputVF : public QObject
     void prepareIsoclinesFile(QTextStream &);
     void prepareMapleIsoclines(QTextStream &);
     bool prepareIsoclines(term2 *f, double y1, double y2, int precision,
-                          int numpoints);
+                          int numpoints); //FIXME
     bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                       int precision, int numpoints, int index);
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
@@ -299,6 +299,4 @@ class P4InputVF : public QObject
     void finishIsoclinesEvaluation();
 };
 
-extern P4InputVF *g_ThisVF;
-
-#endif /* P4INPUTVF_H */
+extern std::unique_ptr<P4InputVF> g_ThisVF;

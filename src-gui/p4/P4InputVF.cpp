@@ -22,7 +22,7 @@
 #include <QFile>
 #include <QTextStream>
 
-P4InputVF *g_ThisVF = nullptr;
+std::unique_ptr<P4InputVF> g_ThisVF = std::unique_ptr<P4InputVF>{};
 
 /*
     THIS FILE IMPLEMENTS READING AND LOADING THE VECTOR FIELD, THE PARAMETERS
@@ -88,58 +88,37 @@ P4InputVF *g_ThisVF = nullptr;
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
 P4InputVF::P4InputVF()
+    : processText_{std::unique_ptr<QTextEdit>{}},
+      terminateProcessButton_{std::unique_ptr<QPushButton>{}},
+      clearProcessButton_{std::unique_ptr<QPushButton>{}},
+      evalProcess_{std::unique_ptr<QProcess>{}},
+      gcfDlg_{std::unique_ptr<QGcfDlg>{}},
+      findDlg_{std::unique_ptr<QFindDlg>{}},
+      curveDlg_{std::unique_ptr<QCurveDlg>{}},
+      isoclinesDlg_{std::unique_ptr<QIsoclinesDlg>{}},
+      numparams_{0},
+      numVF_{0},
+      numCurves_{0},
+      numVFRegions_{0},
+      numCurveRegions_{0},
+      numSelected_{0},
+      cleared_{true},
+      changed_{false},
+      evaluated_{false},
+      filename_{DEFAULTFILENAME};
 {
-    processText_ = nullptr;
-    terminateProcessButton_ = nullptr;
-    clearProcessButton_ = nullptr;
-    evalProcess_ = nullptr;
-
-    gcfDlg_ = nullptr;
-
-    numeric_ = nullptr;
-    precision_ = nullptr;
-    epsilon_ = nullptr;
-    testsep_ = nullptr;
-    taylorlevel_ = nullptr;
-    numericlevel_ = nullptr;
-    maxlevel_ = nullptr;
-    weakness_ = nullptr;
-
-    numparams = 0;
-    parvalue_ = nullptr;
-
-    xdot_ = nullptr;
-    ydot_ = nullptr;
-    gcf_ = nullptr;
-
-    numVF_ = 0;
-    numCurves_ = 0;
-    numPointsCurve_ = nullptr;
-    curves_ = nullptr;
-    numVFRegions_ = 0;
-    numCurveRegions_ = 0;
-
-    numSelected_ = 0;
-    selected_ = nullptr;
-
-    cleared_ = true;
-    changed_ = false;
-    evaluated_ = false;
-
-    filename_ = DEFAULTFILENAME;
-
     reset(1);
 }
 
 // -----------------------------------------------------------------------
 //          DESTRUCTOR
 // -----------------------------------------------------------------------
-P4InputVF::~P4InputVF()
+P4InputVF::~P4InputVF() // FIXME no volem destructors?
 {
-    if (outputWindow_ != nullptr) {
+    /*if (outputWindow_ != nullptr) {
         delete outputWindow_;
         outputWindow_ = nullptr;
-    }
+    }*/
     // remove curve auxiliary files
     removeFile(getfilename_curvetable());
     removeFile(getfilename_curve());
@@ -160,7 +139,7 @@ void P4InputVF::reset(int n)
     int i;
 
     g_VFResults.clearVFs();
-    g_VFResults.vfK_ = nullptr;
+    // g_VFResults.vfK_ = nullptr;
     g_VFResults.K_ = 0;
 
     // symbolicpackage_ = PACKAGE_MAPLE;//getMathPackage();
@@ -203,7 +182,7 @@ void P4InputVF::reset(int n)
     parvalue_.swap(std::vector<std::vector<QString>>());
 
     curves_result_.clear();
-    g_VFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
+    g_VFResults.resetCurveInfo(); // TODO: mirar si he de canviar alguna cosa
     numCurves_ = 0;
 
     numPointsCurve_.clear();
@@ -1117,7 +1096,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 
     fp << "user_f_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        myxdot = convertMapleUserParameterLabels(*(xdot_[i]));  // FIXME
+        myxdot = convertMapleUserParameterLabels(*(xdot_[i])); // FIXME
         myydot = convertMapleUserParameterLabels(*(ydot_[i]));
         fp << "[" << myxdot << "," << myydot << "]";
         if (i == numVF_ - 1)
@@ -1157,7 +1136,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
         fp << lbl << "_pieces := [ ";
 
         for (i = 0; i < numVF_; i++) {
-            val = convertMapleUserParameterLabels(*(parvalue_[i][k]));  // FIXME
+            val = convertMapleUserParameterLabels(*(parvalue_[i][k])); // FIXME
             if (!numeric_[i])
                 fp << val;
             else
@@ -1207,7 +1186,7 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleCurve (P4 version)
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleCurve(QTextStream &fp)  // FIXME
+void P4InputVF::prepareMapleCurve(QTextStream &fp) // FIXME
 {
     QString mycurve;
     QString lbl;
@@ -1322,20 +1301,20 @@ static int indexOfWordInString(const QString *src, const QString *word,
         // we have found word as a substring.  The index i is an index from the
         // very beginning of string (not depending of start)
 
-        start = i + 1;  // do not find this substring next loop
+        start = i + 1; // do not find this substring next loop
 
         // check if the substring is the beginning of a word:
         j = i;
         if (j > 0)
             if ((*src)[j - 1].isLetter() || (*src)[j - 1] == '_' ||
                 (*src)[j - 1].isDigit())
-                continue;  // no: it is part of a bigger word, so continue...
+                continue; // no: it is part of a bigger word, so continue...
 
         // check if the substring is the end of a word;
         j = i + word->length();
         if (j < src->length())
             if ((*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit())
-                continue;  // no: it is part of a bigger word, so continue...
+                continue; // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
         break;
@@ -1795,10 +1774,9 @@ void P4InputVF::evaluate()
     if (outputWindow_ == nullptr || processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n--------------------------------------"
-            "-----------------------------------------"
-            "\n\n");
+        processText_->append("\n\n--------------------------------------"
+                             "-----------------------------------------"
+                             "\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -1812,9 +1790,8 @@ void P4InputVF::evaluate()
     connect(proc, &QProcess::readyReadStandardOutput, this,
             &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-    connect(proc,
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                &QProcess::error),
+    connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                      &QProcess::error),
             this, &P4InputVF::catchProcessError);
 #else
     connect(proc, &QProcess::errorOccurred, this,
@@ -1878,10 +1855,9 @@ void P4InputVF::evaluateCurveTable()
     if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n--------------------------------------"
-            "-----------------------------------------"
-            "\n\n");
+        processText_->append("\n\n--------------------------------------"
+                             "-----------------------------------------"
+                             "\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -1894,9 +1870,8 @@ void P4InputVF::evaluateCurveTable()
     connect(proc, &QProcess::readyReadStandardOutput, this,
             &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-    connect(proc,
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                &QProcess::error),
+    connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                      &QProcess::error),
             g_p4app, &P4Application::catchProcessError);
 #else
     connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -1969,17 +1944,16 @@ void P4InputVF::evaluateIsoclinesTable()
         if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append(
-                "\n\n--------------------------------------"
-                "-----------------------------------------"
-                "\n\n");
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
         }
 
         QProcess *proc;
-        if (evalProcess_ != nullptr) {  // re-use process of last GCF
+        if (evalProcess_ != nullptr) { // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
             connect(proc,
@@ -2039,21 +2013,21 @@ void P4InputVF::catchProcessError(QProcess::ProcessError prerr)
 {
     processfailed_ = true;
     switch (prerr) {
-        case QProcess::FailedToStart:
-            processError_ = "Failed to start";
-            break;
-        case QProcess::Crashed:
-            processError_ = "Crash";
-            break;
-        case QProcess::Timedout:
-            processError_ = "Time-out";
-            break;
-        case QProcess::WriteError:
-        case QProcess::ReadError:
-        case QProcess::UnknownError:
-        default:
-            processError_ = "Unknown error";
-            break;
+    case QProcess::FailedToStart:
+        processError_ = "Failed to start";
+        break;
+    case QProcess::Crashed:
+        processError_ = "Crash";
+        break;
+    case QProcess::Timedout:
+        processError_ = "Time-out";
+        break;
+    case QProcess::WriteError:
+    case QProcess::ReadError:
+    case QProcess::UnknownError:
+    default:
+        processError_ = "Unknown error";
+        break;
     }
 }
 
@@ -2081,10 +2055,9 @@ void P4InputVF::finishEvaluation(int exitCode)
             outputWindow_->show();
             outputWindow_->raise();
             QString buf;
-            buf =
-                "\n----------------------------------------------------------"
-                "----"
-                "-----------------\n";
+            buf = "\n----------------------------------------------------------"
+                  "----"
+                  "-----------------\n";
             processText_->append(buf);
             if (evalProcess_ != nullptr) {
                 if (evalProcess_->state() == QProcess::Running) {
@@ -2244,7 +2217,7 @@ void P4InputVF::readProcessStdout()
                 if (i == j + 1)
                     t = t.mid(j + 2);
                 else
-                    t = t.mid(j + 1);  // treat CR+LF as one lineend
+                    t = t.mid(j + 1); // treat CR+LF as one lineend
             } else {
                 line = t.left(i);
                 t = t.mid(i + 1);
@@ -2266,9 +2239,8 @@ void P4InputVF::onTerminateButton()
     QString buf;
     if (evalProcess_ != nullptr) {
         if (evalProcess_->state() == QProcess::Running) {
-            buf =
-                "\n----------------------------------------------------------"
-                "---------------------\n";
+            buf = "\n----------------------------------------------------------"
+                  "---------------------\n";
             processText_->append(buf);
             evalProcess_->terminate();
             QTimer::singleShot(2000, evalProcess_, SLOT(kill()));
@@ -2359,16 +2331,15 @@ bool P4InputVF::evaluateGcf()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     QProcess *proc;
-    if (evalProcess_ != nullptr) {  // re-use process of last GCF
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2378,9 +2349,8 @@ bool P4InputVF::evaluateGcf()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &P4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2619,9 +2589,8 @@ bool P4InputVF::evaluateCurve()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -2639,9 +2608,8 @@ bool P4InputVF::evaluateCurve()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &P4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -2880,15 +2848,14 @@ bool P4InputVF::evaluateIsoclines()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
-    if (evalProcess_ != nullptr) {  // re-use process of last GCF
+    if (evalProcess_ != nullptr) { // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
@@ -2898,9 +2865,8 @@ bool P4InputVF::evaluateIsoclines()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
+        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                          &QProcess::error),
                 g_p4app, &P4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -3246,7 +3212,7 @@ void P4InputVF::addVectorField()
 
     if (!g_VFResults.vf_.empty()) {
         g_VFResults.clearVFs();
-        g_VFResults.vfK_ = nullptr;
+        // g_VFResults.vfK_ = nullptr;
         g_VFResults.K_ = 0;
     }
 
@@ -3298,7 +3264,7 @@ void P4InputVF::addVectorField()
 // -----------------------------------------------------------------------
 //          P4InputVF::deleteVectorField
 // -----------------------------------------------------------------------
-void P4InputVF::deleteVectorField(int index)  // FIXME
+void P4InputVF::deleteVectorField(int index) // FIXME
 {
     // first disconnect from other structures
 
@@ -3306,7 +3272,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
 
     if (!g_VFResults.vf_.empty()) {
         g_VFResults.clearVFs();
-        g_VFResults.vfK_ = nullptr;
+        // g_VFResults.vfK_ = nullptr;
         g_VFResults.K_ = 0;
     }
 
@@ -3373,7 +3339,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
         ydot_.erase(ydot_.begin() + index);
         gcf_.erase(gcf_.begin() + index);
         epsilon_.erase(epsilon_.begin() + index);
-        parvalue_.erase(parvalue_.begin() + index);  // TODO: funcioinarà?
+        parvalue_.erase(parvalue_.begin() + index); // TODO: funcioinarà?
 
         numVF_--;
     }
@@ -3500,9 +3466,8 @@ bool P4InputVF::evaluateCurves()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -3515,9 +3480,8 @@ bool P4InputVF::evaluateCurves()
     connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
             g_p4app, &P4Application::signalCurvesEvaluated);
 #ifdef QT_QPROCESS_OLD
-    connect(proc,
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                &QProcess::error),
+    connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                      &QProcess::error),
             g_p4app, &P4Application::catchProcessError);
 #else
     connect(proc, &QProcess::errorOccurred, g_p4app,
@@ -3610,10 +3574,10 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
             break;
     }
     if (i < 0)
-        return;  // region cannot be found???
+        return; // region cannot be found???
 
     if (vfRegions_[i].vfIndex != index)
-        return;  // region does not have the corresponding index
+        return; // region does not have the corresponding index
 
     vfRegions_.erase(vfRegions_.begin() + i);
     if (numVFRegions_ == 1) {
@@ -4012,4 +3976,3 @@ int P4InputVF::getVFIndex_V2(const double *y)
     }
     return -1;
 }
-
