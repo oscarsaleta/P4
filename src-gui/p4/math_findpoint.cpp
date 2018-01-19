@@ -242,7 +242,6 @@ bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
         sepc = g_VFResults.saddle_points_.back().separatrices;
         g_VFResults.selected_sep_ = &sepc;
         draw_selected_sep(spherewnd, sepc.back().first_sep_point, CW_SEP);
-        sepcount = sepc.size();
 
         start_plot_sep = start_plot_saddle_sep;
         cont_plot_sep = cont_plot_saddle_sep;
@@ -289,11 +288,9 @@ bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
         break;
 
     case SEMI_HYPERBOLIC:
-        sepc = g_VFResults.se_points_.back().separatrices;
+        sepc = g_VFResults.se_points_.back().separatrices.front();
         g_VFResults.selected_sep_ = &sepc;
-        draw_selected_sep(spherewnd, sepc.back().first_sep_point, CW_SEP);
-
-        sepcount = sepc.size();
+        draw_selected_sep(spherewnd, sepc->first_sep_point, CW_SEP);
 
         start_plot_sep = start_plot_se_sep;
         cont_plot_sep = cont_plot_se_sep;
@@ -338,12 +335,11 @@ bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
         break;
 
     case NON_ELEMENTARY:
-        g_VFResults.selected_de_sep_ = &(g_VFResults.de_points_.back().blow_up);
+        g_VFResults.selected_de_sep_ =
+            &(g_VFResults.de_points_.back().blow_up.front());
         draw_selected_sep(spherewnd,
-                          g_VFResults.selected_de_sep_->back().first_sep_point,
+                          g_VFResults.selected_de_sep_->first_sep_point,
                           CW_SEP);
-
-        sepcount = g_VFResults.selected_de_sep_->size();
 
         start_plot_sep = start_plot_de_sep;
         cont_plot_sep = cont_plot_de_sep;
@@ -387,7 +383,7 @@ bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
         }
         break;
     }
-    
+
     if (g_ThisVF_->numVF_ > 1) {
         QString msg;
         msg.sprintf(" (VF #%d)", vfindex + 1);
