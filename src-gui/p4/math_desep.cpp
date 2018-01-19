@@ -65,10 +65,10 @@ void make_transformations(std::vector<p4blowup::transformations> trans,
 // ---------------------------------------------------------------------------
 //          integrate_blow_up
 // ---------------------------------------------------------------------------
-std::vector<p4orbits::orbits_points> integrate_blow_up(
-    QWinSphere *spherewnd, double *pcoord2, p4blowup::blow_up_points &de_sep,
-    double step, int dir, int type,
-    /*p4orbits::orbits_points &orbit,*/ int chart)
+std::vector<p4orbits::orbits_points>
+integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
+                  p4blowup::blow_up_points &de_sep, double step, int dir,
+                  int type, int chart)
 {
     int i;
     double hhi, hhi0;
@@ -109,7 +109,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
     }
 
     if (!prepareForIntegration(pcoord))
-        return std::vector<p4orbits::orbits_points>();
+        return std::vector<p4orbits::orbits_points>{};
 
     if (g_VFResults.plweights_ == false &&
         (chart == CHART_V1 || chart == CHART_V2))
@@ -133,8 +133,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
                 de_sep.y0 + de_sep.a21 * y[0] + de_sep.a22 * y[1], point);
             switch (chart) {
             case CHART_R2:
-                MATHFUNC(R2_to_sphere)
-                (point[0], point[1], point[2], pcoord);
+                MATHFUNC(R2_to_sphere)(point[0], point[1], point[2], pcoord);
                 break;
             case CHART_U1:
                 if (point[1] >= 0 || !g_VFResults.vf_->back().singinf_)
@@ -284,10 +283,6 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
     }
     de_sep.point[0] = y[0];
     de_sep.point[1] = y[1];
-    // FIXME que fer amb el parametre orbit?
-    /*if (first_orbit != NULL)
-        *orbit = last_orbit;
-    return (first_orbit);*/
     return orbit_result;
 }
 
@@ -303,9 +298,10 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
 // by the user.
 //
 // At the end, a normal integration cycle is added.
-static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
-    QWinSphere *spherewnd, double x0, double y0, int chart, double epsilon,
-    p4blowup::blow_up_points &de_sep, int vfindex)
+static std::vector<p4orbits::orbits_points>
+plot_sep_blow_up(std::shared_ptr<QWinSphere> spherewnd, double x0, double y0,
+                 int chart, double epsilon, p4blowup::blow_up_points &de_sep,
+                 int vfindex)
 {
     double h, t{0}, pcoord[3], pcoord2[3], point[2];
     int i, color, dir, dashes, type, ok{true};
@@ -426,7 +422,7 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     copy_x_into_y(pcoord, last_orbit.pcoord);
     last_orbit.color = color;
     last_orbit.dashes = 0;
-    last_orbit.dir = dir;  // TODO: aixo no hi era
+    last_orbit.dir = dir; // TODO: aixo no hi era
     copy_x_into_y(pcoord, pcoord2);
     orbit_result.push_back(last_orbit);
     for (i = 0; i <= 99; i++) {
@@ -542,16 +538,12 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
 // ---------------------------------------------------------------------------
 //          change_epsilon_de
 // ---------------------------------------------------------------------------
-void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
+void change_epsilon_de(std::shared_ptr<QWinSphere> spherewnd, double epsilon)
 {
-    p4blowup::blow_up_points separatrice;
+    g_VFResults.de_points.back().epsilon = epsilon;
 
-    g_VFResults.selected_de_point_.back().epsilon = epsilon;
-
-    separatrice = g_VFResults.selected_de_point_.back().blow_up;
-
-    for (auto it = g_VFResults.selected_de_point_.blow_up.begin();
-         it != g_VFResults.selected_de_point_.blow_up.end(); ++it) {
+    for (auto it = g_VFResults.de_points.blow_up.begin();
+         it != g_VFResults.de_points.blow_up.end(); ++it) {
         draw_selected_sep(spherewnd, it->sep_points, CBACKGROUND);
         it->sep_points.clear();
     }
@@ -560,9 +552,9 @@ void change_epsilon_de(QWinSphere *spherewnd, double epsilon)
 // ---------------------------------------------------------------------------
 //          start_plot_de_sep
 // ---------------------------------------------------------------------------
-void start_plot_de_sep(QWinSphere *spherewnd, int vfindex)
+void start_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex)
 {
-    auto &de_sep = g_VFResults.de_seps_;
+    auto &de_sep = *(g_VFResults.selected_de_sep_);
     std::vector<p4orbits::orbits_points> points;
     double p[3];
 
@@ -603,39 +595,40 @@ void start_plot_de_sep(QWinSphere *spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 //          cont_plot_de_sep
 // ---------------------------------------------------------------------------
-// TODO: mirar si back() hauria de ser front() pq les linked lists originals
-// anaven de principi a final
-void cont_plot_de_sep(QWinSphere *spherewnd)
+void cont_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
-    auto &de_seps = g_VFResults.de_seps_;
     double p[3];
     std::vector<p4orbits::orbits_points> points;
+    auto &de_sep = *(g_VFResults.selected_de_sep_);
 
-    copy_x_into_y(de_seps.sep_points.back().pcoord, p);
-    if (de_seps.integrating_in_local_chart) {
+    copy_x_into_y(de_sep.sep_points.back().pcoord, p);
+    if (de_sep.integrating_in_local_chart) {
         points = integrate_blow_up(spherewnd, p, g_VFResults.selected_de_sep,
                                    g_VFResults.config_currentstep_,
-                                   de_seps.sep_points.back().dir,
-                                   de_seps.sep_points.back().type,
+                                   de_sep.sep_points.back().dir,
+                                   de_sep.sep_points.back().type,
                                    g_VFResults.selected_de_point_.back().chart);
     } else {
         points = integrate_sep(spherewnd, p, g_VFResults.config_currentstep_,
-                               de_seps.sep_points.back().dir,
-                               de_seps.sep_points.back().type,
+                               de_sep.sep_points.back().dir,
+                               de_sep.sep_points.back().type,
                                g_VFResults.config_intpoints_);
     }
 
-    de_seps.sep_points.insert(de_seps.end(), points.begin(), points.end());
+    de_sep.sep_points.insert(de_sep.end(), points.begin(), points.end());
 }
 
 // ---------------------------------------------------------------------------
 //          plot_next_de_sep
 // ---------------------------------------------------------------------------
 // FIXME
-void plot_next_de_sep(QWinSphere *spherewnd, int vfindex)
+void plot_next_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex)
 {
-    auto &sep = g_VFResults.de_seps_[g_VFResults.selected_de_sep_];
-    draw_sep(spherewnd, sep.sep_points);
+    auto it = g_VFResults.select();
+    
+    draw_sep(
+        spherewnd,
+        g_VFResults.selected_de_sep_->sep_points.front().sep_points);
 
     if (g_VFResults.selected_de_sep_++ > g_VFResults.de_seps_.size()) {
         g_VFResults.de_seps_ =
@@ -649,7 +642,7 @@ void plot_next_de_sep(QWinSphere *spherewnd, int vfindex)
 //          select_next_de_sep
 // ---------------------------------------------------------------------------
 // FIXME
-void select_next_de_sep(QWinSphere *spherewnd)
+void select_next_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 {
     auto &sel_de_sep = g_VFResults.selected_de_sep_;
 

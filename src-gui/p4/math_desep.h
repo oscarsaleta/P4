@@ -17,6 +17,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#pragma once
+ 
 struct p4blowup::transformations;
 struct p4singularities::degenerate;
 class QWinSphere;
@@ -28,7 +30,7 @@ void make_transformations(std::vector<p4blowup::transformations> &trans,
                           double x0, double y0, double *point);
 // math_intblowup.cpp
 std::vector<p4orbits::orbits_points> integrate_blow_up(
-    QWinSphere *spherewnd, double *pcoord2,
+    std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
     std::vector<p4blowup::blow_up_points> de_sep, double step, int dir,
     int type, int chart);
 // math_separatrice.cpp
