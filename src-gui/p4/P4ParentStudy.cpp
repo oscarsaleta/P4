@@ -26,57 +26,41 @@
 //                              P4ParentStudy CONSTRUCTOR
 // -----------------------------------------------------------------------
 P4ParentStudy::P4ParentStudy()
+    : K_{0},
+      xmin_{-1.0},
+      xmax_{1.0},
+      ymin_{-1.0},
+      ymax_{1.0},
+      p_{1},
+      q_{1},
+      plweights_{false},
+      typeofstudy_{TYPEOFSTUDY_ALL},
+      typeofview_{TYPEOFVIEW_SPHERE},
+      config_lc_value_{DEFAULT_LCORBITS},
+      config_lc_numpoints_{DEFAULT_LCPOINTS},
+      config_currentstep_{DEFAULT_STEPSIZE},
+      config_dashes_{DEFAULT_LINESTYLE},
+      config_kindvf_{DEFAULT_INTCONFIG},
+      config_hma_{DEFAULT_HMA},
+      config_hmi_{DEFAULT_HMI},
+      config_branchhmi_{DEFAULT_BRANCHHMI},
+      config_step_{DEFAULT_STEPSIZE},
+      config_tolerance_{DEFAULT_TOLERANCE},
+      config_intpoints_{DEFAULT_INTPOINTS},
+      plotVirtualSingularities_{DEFAULTPLOTVIRTUALSINGULARITIES},
+      selected_sep_{std::shared_ptr<p4blowup::sep>{}},
+      selected_de_sep_{std::shared_ptr<p4blowup::blow_up_points>{}}
 {
-    K_ = 0;
-    vfK_ = nullptr;
+    // vfK_ = nullptr;
 
     selected_ucoord_[0] = selected_ucoord_[1] = 0;
 
-    xmin_ = -1.0;
-    xmax_ = 1.0;
-    ymin_ = -1.0;
-    ymax_ = 1.0;
-    p_ = 1;
-    q_ = 1;
-    plweights_ = false;
-    typeofstudy_ = TYPEOFSTUDY_ALL;
-    typeofview_ = TYPEOFVIEW_SPHERE;
     double_p_ = p_;
     double_q_ = q_;
     double_p_plus_q_ = p_ + q_;
     double_p_minus_1_ = p_ - 1;
     double_q_minus_1_ = q_ - 1;
     double_q_minus_p_ = q_ - p_;
-    config_lc_value_ =
-        DEFAULT_LCORBITS;  // number of orbits in the limit cycle window
-    config_lc_numpoints_ =
-        DEFAULT_LCPOINTS;  // number of points in the limit cycle window
-    config_currentstep_ =
-        DEFAULT_STEPSIZE;  // current step size (during integration)
-    config_dashes_ = DEFAULT_LINESTYLE;  // line style (dashes or points)
-    config_kindvf_ = DEFAULT_INTCONFIG;
-
-    // initialize parameters
-
-    config_hma_ = DEFAULT_HMA;  // maximum step size
-    config_hmi_ = DEFAULT_HMI;  // minimum step size
-    config_branchhmi_ =
-        DEFAULT_BRANCHHMI;            // minimum step size near branches of
-                                      // separating curves
-    config_step_ = DEFAULT_STEPSIZE;  // step size
-    config_tolerance_ = DEFAULT_TOLERANCE;  // tolerance
-    config_intpoints_ = DEFAULT_INTPOINTS;  // number of points to integrate
-
-    // initialize limit cycles & orbits
-
-    plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
-
-    // selected structs
-    selected_saddle_point_ = 0;
-    selected_se_point_ = 0;
-    selected_de_point_ = 0;
-    selected_sep_ = 0;
-    selected_de_sep_ = 0;
 
     setupCoordinateTransformations();
 }
@@ -84,12 +68,12 @@ P4ParentStudy::P4ParentStudy()
 // -----------------------------------------------------------------------
 //                      P4ParentStudy DESTRUCTOR
 // -----------------------------------------------------------------------
-P4ParentStudy::~P4ParentStudy() { reset(); }
+// P4ParentStudy::~P4ParentStudy() { reset(); }
 
 // -----------------------------------------------------------------------
 //          P4ParentStudy::reset
 // -----------------------------------------------------------------------
-P4ParentStudy::reset()
+/*P4ParentStudy::reset()
 {
     int i;
     vf_.clear();
@@ -144,7 +128,7 @@ P4ParentStudy::reset()
     config_intpoints_ = DEFAULT_INTPOINTS;
 
     setupCoordinateTransformations();
-}
+}*/
 
 // -----------------------------------------------------------------------
 //          P4ParentStudy::readPieceWiseData
@@ -277,7 +261,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         return true;
     }
 
-    reset();  // initialize structures, delete previous vector field if any
+    reset(); // initialize structures, delete previous vector field if any
 
     fpvec = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
     if (fpvec == nullptr)
@@ -337,7 +321,7 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
     // read the curves
 
     for (j = 0; j < g_ThisVF->numCurves_; j++) {
-        curves_result_.clear();  // TODO why do we need to clear?
+        curves_result_.clear(); // TODO why do we need to clear?
         if (!readSeparatingCurve(fpvec)) {
             reset();
             fclose(fpvec);
@@ -391,8 +375,8 @@ bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
         fclose(fpfin);
     fclose(fpvec);
 
-    readTables(basename, true, true);  // try to read the piecewise curve points
-                                       // as well if they are present on disk
+    readTables(basename, true, true); // try to read the piecewise curve points
+                                      // as well if they are present on disk
     // dump(basename);
     examinePositionsOfSingularities();
     return true;
@@ -670,8 +654,9 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
         for (j = 0; j < g_ThisVF->numVFRegions_; j++) {
             if (fscanf(fp, "%d", &v) != 1)
                 return false;
-            if (v != g_ThisVF->vfregions[j]
-                         .vfindex)  // TODO: quan estigui llesta file_vf.cpp
+            if (v !=
+                g_ThisVF->vfregions[j]
+                    .vfindex) // TODO: quan estigui llesta file_vf.cpp
                 return false;
             for (k = 0; k < g_ThisVF->numCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
