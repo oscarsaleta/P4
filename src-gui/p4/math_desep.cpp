@@ -67,8 +67,8 @@ void make_transformations(std::vector<p4blowup::transformations> trans,
 // ---------------------------------------------------------------------------
 std::vector<p4orbits::orbits_points>
 integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
-                  p4blowup::blow_up_points &de_sep, double step, int dir,
-                  int type, int chart)
+                  std::vector<p4blowup::blow_up_points>::iterator &de_sep,
+                  double step, int dir, int type, int chart)
 {
     int i;
     double hhi, hhi0;
@@ -80,15 +80,15 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
     p4orbits::orbits_points last_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
 
-    s_vec_field_0 = de_sep.vector_field_0;
-    s_vec_field_1 = de_sep.vector_field_1;
+    s_vec_field_0 = de_sep->vector_field_0;
+    s_vec_field_1 = de_sep->vector_field_1;
 
-    y[0] = de_sep.point[0];
-    y[1] = de_sep.point[1];
+    y[0] = de_sep->point[0];
+    y[1] = de_sep->point[1];
 
     make_transformations(
-        de_sep.trans, de_sep.x0 + de_sep.a11 * y[0] + de_sep.a12 * y[1],
-        de_sep.y0 + de_sep.a21 * y[0] + de_sep.a22 * y[1], point);
+        de_sep->trans, de_sep->x0 + de_sep->a11 * y[0] + de_sep->a12 * y[1],
+        de_sep->y0 + de_sep->a21 * y[0] + de_sep->a22 * y[1], point);
 
     switch (chart) {
     case CHART_R2:
@@ -116,8 +116,8 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
         dir *= g_VFResults.vf_->back().dir_vec_field_;
 
     hhi = (double)dir * step;
-    y[0] = de_sep.point[0];
-    y[1] = de_sep.point[1];
+    y[0] = de_sep->point[0];
+    y[1] = de_sep->point[1];
 
     for (i = 1; i <= g_VFResults.config_intpoints_; ++i) {
         hhi0 = hhi;
@@ -129,8 +129,8 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
             rk78(eval_blow_vec_field, y, &hhi0, g_VFResults.config_hmi_,
                  g_VFResults.config_hma_, g_VFResults.config_tolerance_);
             make_transformations(
-                de_sep.trans, de_sep.x0 + de_sep.a11 * y[0] + de_sep.a12 * y[1],
-                de_sep.y0 + de_sep.a21 * y[0] + de_sep.a22 * y[1], point);
+                de_sep->trans, de_sep->x0 + de_sep->a11 * y[0] + de_sep->a12 * y[1],
+                de_sep->y0 + de_sep->a21 * y[0] + de_sep->a22 * y[1], point);
             switch (chart) {
             case CHART_R2:
                 MATHFUNC(R2_to_sphere)(point[0], point[1], point[2], pcoord);
@@ -164,7 +164,7 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;
-                de_sep.integrating_in_local_chart = false;
+                de_sep->integrating_in_local_chart = false;
                 break;
             }
         }
@@ -186,7 +186,7 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
                     if (g_VFResults.vf_->back().dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                type = de_sep.type;
+                type = de_sep->type;
                 color =
                     findSepColor(g_VFResults.vf_->back().gcf_U1_, type, point);
             } else {
@@ -198,9 +198,9 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
                         dir *= -1;
                 }
                 if (g_VFResults.vf_->back().dir_vec_field_ == 1)
-                    type = change_type(de_sep.type);
+                    type = change_type(de_sep->type);
                 else
-                    type = de_sep.type;
+                    type = de_sep->type;
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
                 color =
                     findSepColor(g_VFResults.vf_->back().gcf_V1_, type, point);
@@ -223,7 +223,7 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
                     if (g_VFResults.vf_->back().dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                type = de_sep.type;
+                type = de_sep->type;
                 color =
                     findSepColor(g_VFResults.vf_->back().gcf_U2_, type, point);
             } else {
@@ -235,9 +235,9 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
                         dir *= -1;
                 }
                 if (g_VFResults.vf_->back().dir_vec_field_ == 1)
-                    type = change_type(de_sep.type);
+                    type = change_type(de_sep->type);
                 else
-                    type = de_sep.type;
+                    type = de_sep->type;
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
                 color =
                     findSepColor(g_VFResults.vf_->back().gcf_V2_, type, point);
@@ -275,8 +275,8 @@ integrate_blow_up(std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
             (*plot_p)(spherewnd, pcoord, color);
 
         if (y[0] * y[0] + y[1] * y[1] >= 1.0)
-            de_sep.integrating_in_local_chart = false;
-        if (!de_sep.integrating_in_local_chart)
+            de_sep->integrating_in_local_chart = false;
+        if (!de_sep->integrating_in_local_chart)
             break;
 
         copy_x_into_y(pcoord, pcoord2);
@@ -603,7 +603,7 @@ void cont_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 
     copy_x_into_y(de_sep.sep_points.back().pcoord, p);
     if (de_sep.integrating_in_local_chart) {
-        points = integrate_blow_up(spherewnd, p, g_VFResults.selected_de_sep,
+        points = integrate_blow_up(spherewnd, p, g_VFResults.selected_de_sep_,
                                    g_VFResults.config_currentstep_,
                                    de_sep.sep_points.back().dir,
                                    de_sep.sep_points.back().type,
@@ -625,10 +625,9 @@ void cont_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd)
 void plot_next_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex)
 {
     auto it = g_VFResults.select();
-    
-    draw_sep(
-        spherewnd,
-        g_VFResults.selected_de_sep_->sep_points.front().sep_points);
+
+    draw_sep(spherewnd,
+             g_VFResults.selected_de_sep_->sep_points.front().sep_points);
 
     if (g_VFResults.selected_de_sep_++ > g_VFResults.de_seps_.size()) {
         g_VFResults.de_seps_ =
