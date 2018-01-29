@@ -34,15 +34,15 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
     std::vector<p4blowup::blow_up_points> de_sep, double step, int dir,
     int type, int chart);
 // math_separatrice.cpp
-void change_epsilon_de(QWinSphere *spherewnd, double epsilon);
+void change_epsilon_de(std::shared_ptr<QWinSphere> spherewnd, double epsilon);
 // math_separatrice.cpp
-void start_plot_de_sep(QWinSphere *spherewnd, int vfindex);
+void start_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex);
 // math_separatrice.cpp
-void cont_plot_de_sep(QWinSphere *spherewnd);
+void cont_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd);
 // math_separatrice.cpp
-void plot_next_de_sep(QWinSphere *spherewnd, int vfindex);
+void plot_next_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex);
 // math_separatrice.cpp
-void select_next_de_sep(QWinSphere *spherewnd);
+void select_next_de_sep(std::shared_ptr<QWinSphere> spherewnd);
 // math_separatrice.cpp
-void plot_all_de_sep(QWinSphere *spherewnd, int vfindex,
+void plot_all_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex,
                      p4singularities::degenerate point /*maybe vector*/);
