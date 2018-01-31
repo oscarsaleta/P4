@@ -37,8 +37,6 @@
 class QWinSphere;
 struct orbits_points;
 
-extern orbits_points *g_last_gcf_point;
-
 bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis);
 bool evalGcfContinue(int points, int prec);
 bool evalGcfFinish(void);
