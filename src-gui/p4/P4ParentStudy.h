@@ -64,9 +64,9 @@ class P4ParentStudy : public QObject
     std::vector<p4orbits::orbits> first_lim_cycle_;
     std::vector<p4orbits::orbits> first_orbit_;
 
-    // run-time when plotting
-    std::shared_ptr<p4orbits::orbits> current_orbit_;
-    std::shared_ptr<p4orbits::orbits> current_lim_cycle_;
+    // run-time when plotting FIXME probably same problem as selected_ variables
+    std::unique_ptr<p4orbits::orbits> current_orbit_;
+    std::unique_ptr<p4orbits::orbits> current_lim_cycle_;
 
     double selected_ucoord_[2];
 
@@ -79,9 +79,9 @@ class P4ParentStudy : public QObject
     std::vector<p4singularities::semi_elementary> se_points_;
     std::vector<p4singularities::degenerate> de_points_;
     std::vector<p4blowup::sep>::iterator selected_sep_;
-    //std::shared_ptr<p4blowup::sep> selected_sep_;
+    // std::shared_ptr<p4blowup::sep> selected_sep_;
     std::vector<p4blowup::blow_up_points>::iterator selected_de_sep_;
-    //std::shared_ptr<p4blowup::blow_up_points> selected_de_sep_;
+    // std::shared_ptr<p4blowup::blow_up_points> selected_de_sep_;
 
     int selected_sep_vfindex_;
 
