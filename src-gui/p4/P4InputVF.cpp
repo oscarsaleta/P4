@@ -2544,12 +2544,12 @@ bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
         out << "user_x2 := 1.0:\n", (float)1.0);
         out << "user_y1 := 0.0:\n", (float)0.0);
         out << "user_y2 := " << TWOPI << ":\n";
-        ;
+
         out << "u := x*cos(y):\n";
         out << "v := x*sin(y):\n";
         out << "user_f := ";
         for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
+            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
         }
         if (i == 0)
             out << "0:\n";
