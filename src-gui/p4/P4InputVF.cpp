@@ -2398,8 +2398,8 @@ bool P4InputVF::evaluateGcf()
 // Prepare files in case of calculating GCF in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
 
-bool P4InputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
-                           int numpoints)
+bool P4InputVF::prepareGcf(std::vector<p4polynom::term2> f, double y1,
+                           double y2, int precision, int numpoints)
 {
     int i;
     QFile file(QFile::encodeName(getmaplefilename()));
@@ -2428,9 +2428,9 @@ bool P4InputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
         out << "u := x:\n";
         out << "v := y:\n";
         out << "user_f := ");
-        for (i = 0; f != nullptr; i++) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
-            f = f->next_term2;
+
+        for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
+            out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
         }
         if (i == 0)
             out << "0:\n";
@@ -2454,7 +2454,6 @@ bool P4InputVF::prepareGcf(P4POLYNOM2 f, double y1, double y2, int precision,
 // Prepare files in case of calculating GCF in charts near infinity.  This
 // is only called in case of Poincare-Lyapunov compactification (weights (p,q)
 // !=(1,1))
-
 bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
                                        int precision, int numpoints, int index)
 {
@@ -2463,7 +2462,7 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
 
-        P4POLYNOM f = g_VFResults.vf_[index]->gcf_C_;
+        auto &f = g_VFResults.vf_[index]->gcf_C_;
 
         QString mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
@@ -2487,9 +2486,8 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
         out << "u := cos(y):\n";
         out << "v := sin(y):\n";
         out << "user_f := ";
-        for (i = 0; f != nullptr; i++) {
-            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
-            f = f->next_term3;
+        for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
+            out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
         }
         if (i == 0)
             out << "0:\n";
@@ -2525,7 +2523,7 @@ bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out(&file);
 
-        P4POLYNOM2 f = g_VFResults.vf_[index]->gcf_;
+        auto &f = g_VFResults.vf_[index]->gcf_;
 
         QString mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
@@ -2550,9 +2548,8 @@ bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
         out << "u := x*cos(y):\n";
         out << "v := x*sin(y):\n";
         out << "user_f := ";
-        for (int i = 0; f != nullptr; i++) {
+        for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
             out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
-            f = f->next_term2;
         }
         if (i == 0)
             out << "0:\n";
