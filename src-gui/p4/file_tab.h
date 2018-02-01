@@ -88,13 +88,12 @@ struct orbits_points {
 struct orbits {
     double pcoord[3]; // startpoint
     int color;
-    std::vector<orbits_points> f_orbits;         // orbit
-    std::vector<orbits_points> current_f_orbits; // orbit
+    std::vector<orbits_points> points; // orbit
+    int current_point_index; // FIXME needed?
 
     orbits() {}
-    orbits(double pc[3], int co, std::vector<orbits_points> fo,
-           std::vector<orbits_points> cu)
-        : color{co}, f_orbits{fo}, current_f_orbits{cu}
+    orbits(double pc[3], int co, std::vector<orbits_points> fo, int cu)
+        : color{co}, points{fo}, current_point_index{cu}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
