@@ -37,10 +37,12 @@
 class QWinSphere;
 struct orbits_points;
 
-bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis);
+bool evalGcfStart(std::shared_ptr<QWinSphere> sp, int dashes, int points,
+                  int precis);
 bool evalGcfContinue(int points, int prec);
 bool evalGcfFinish(void);
 bool runTask(int task, int points, int prec);
-void draw_gcf(QWinSphere *spherewnd, orbits_points *sep, int color, int dashes);
+void draw_gcf(std::shared_ptr<QWinSphere> spherewnd,
+              std::vector<p4orbits::orbits_points> sep, int color, int dashes);
 
 #endif // MATH_GCF_H

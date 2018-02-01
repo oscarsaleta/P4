@@ -33,7 +33,7 @@
 
 // static global variables
 static int s_GcfTask = EVAL_GCF_NONE;
-static QWinSphere *s_GcfSphere = nullptr;
+static std::shared_ptr<QWinSphere> s_GcfSphere;
 static int s_GcfDashes = 0;
 static bool s_GcfError = false;
 static int s_GcfVfIndex = 0;
@@ -44,7 +44,8 @@ static bool readTaskResults(int task, int index);
 static bool read_gcf(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
+bool evalGcfStart(std::smart_ptr<QWinSphere> sp, int dashes, int points,
+                  int precis)
 {
     int r;
     sp->prepareDrawing();
@@ -68,15 +69,14 @@ bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
     return runTask(s_GcfTask, points, precis, memory, 0);
 }
 
-bool evalGcfContinue(int points, int prec,
-                     int memory)  // returns true when finished.  Then
-                                  // run EvalGCfFinish to see if error
-                                  // occurred or not
+// returns true when finished.  Then run EvalGCfFinish to see if error occurred
+// or not
+bool evalGcfContinue(int points, int prec, int memory)
 {
     if (s_GcfTask == EVAL_GCF_NONE)
         return true;
 
-    if (!readTaskResults(s_GcfTask, points, prec, memory, s_GcfVfIndex)) {
+    if (!readTaskResults(s_GcfTask, s_GcfVfIndex)) {
         s_GcfError = true;
         return true;
     }
@@ -104,10 +104,10 @@ bool evalGcfContinue(int points, int prec,
         return true;
     }
 
-    return false;  // still busy
+    return false; // still busy
 }
 
-bool evalGcfFinish(void)  // return false in case an error occured
+bool evalGcfFinish(void) // return false in case an error occured
 {
     int index;
     if (s_GcfTask != EVAL_GCF_NONE) {
@@ -144,49 +144,49 @@ bool runTask(int task, int points, int prec, int mem, int index)
     switch (task) {
     case EVAL_GCF_R2:
         value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_, -1, 1, prec,
-                                     points, mem, index);
+                                     points);
         break;
     case EVAL_GCF_U1:
         value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U1_, 0, 1,
-                                     prec, points, mem, index);
+                                     prec, points);
         break;
     case EVAL_GCF_V1:
         value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U1_, -1, 0,
-                                     prec, points, mem, index);
+                                     prec, points);
         break;
     case EVAL_GCF_U2:
         value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U2_, 0, 1,
-                                     prec, points, mem, index);
+                                     prec, points);
         break;
     case EVAL_GCF_V2:
         value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U2_, -1, 0,
-                                     prec, points, mem, index);
+                                     prec, points);
         break;
     case EVAL_GCF_LYP_R2:
-        value = g_ThisVF->prepareGcf_LyapunovR2(prec, points, mem, index);
+        value = g_ThisVF->prepareGcf_LyapunovR2(prec, points, index);
         break;
     case EVAL_GCF_CYL1:
         value = g_ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec,
-                                                 points, mem, index);
+                                                 points, index);
         break;
     case EVAL_GCF_CYL2:
         value = g_ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
-                                                 points, mem, index);
+                                                 points, index);
         break;
     case EVAL_GCF_CYL3:
         value = g_ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                 prec, points, mem, index);
+                                                 prec, points, index);
         break;
     case EVAL_GCF_CYL4:
         value = g_ThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
-                                                 points, mem, index);
+                                                 points, index);
         break;
     default:
         value = false;
         break;
     }
 
-    return g_ThisVF->evaluateGcf(prec, points, mem, index);
+    return g_ThisVF->evaluateGcf();
 }
 
 static bool readTaskResults(int task, int index)
@@ -256,10 +256,8 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes,
         p4orbits::orbits_point(CSING, pcoord, dashes, 0, 0));
 }
 
-// FIXME
 static bool read_gcf(void (*chart)(double, double, double *), int index)
 {
-    // int t;
     int k;
     FILE *fp;
     double x, y;
@@ -270,85 +268,13 @@ static bool read_gcf(void (*chart)(double, double, double *), int index)
     if (fp == nullptr)
         return false;
 
-    /*if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
-        // search the x-label, and check for error.
-
-        FILE *fp2;
-        fp2 = fopen(QFile::encodeName(g_ThisVF->getfilename_gcfresults()), "r");
-        if (fp == nullptr) {
-            fclose(fp);
-            return false;
-        }
-        char str[256];
-        t = 3;
-        while (!feof(fp2)) {
-            if (fscanf(fp2, "%s", str) != 1) {
-                fclose(fp2);
-                return false;
-            }
-            if (!strcmp(str, "Heap")) {
-                // Reduce ran out of memory
-                t = 3;
-                break;
-            }
-            if (!strcmp(str, "xlabel")) {
-                if (fscanf(fp2, "%s", str) != 1) {
-                    fclose(fp2);
-                    return false;
-                }
-                if (!strcmp(str, "\"x\""))
-                    t = 1; // order is ok: it is a x versus y plot
-                else
-                    t = 0; // order is reversed: it is a y versus x plot
-                break;
-            }
-        }
-        fclose(fp2);
-        if (t == 3)
-            return false;
-
-        for (uint_fast8_t cnt = 0; cnt < 8; cnt++) {
-            if (fscanf(fp, "%lf %lf", &x, &y) !=
-                1) { // seems we have to skip 8 values
-                fclose(fp);
-                return false;
-            }
-        }
-        if (t != 0)
-            chart(x, y, pcoord);
-        else
-            chart(y, x, pcoord);
-        insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], 0);
-        getc(fp);
-        getc(fp);
-        c = getc(fp);
-        while (!feof(fp)) {
-            d = 0;
-            if (c != '\n') {
-                d = 1;
-                ungetc(c, fp);
-            }
-            if (fscanf(fp, "%lf %lf", &x, &y) != 1) {
-                fclose(fp);
-                return false;
-            }
-            if (t != 0)
-                chart(x, y, pcoord);
-            else
-                chart(y, x, pcoord);
-            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
-            getc(fp);
-            getc(fp);
-            c = getc(fp);
-        }
-    } else {*/
     k = 0;
     while (1) {
         d = 0;
         while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
             k++;
             chart(x, y, pcoord);
-            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
+            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d, index);
             // d=1;
             d = s_GcfDashes;
         }
@@ -357,7 +283,6 @@ static bool read_gcf(void (*chart)(double, double, double *), int index)
         if (c != ',')
             break;
     }
-    //}
 
     fclose(fp);
     return true;
