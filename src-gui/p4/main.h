@@ -28,18 +28,20 @@ class QPixmap;
 class QPrinter;
 class QWidget;
 
-#define UNUSED(x)                                                              \
-    (void)(x) //  to avoid warnings of unused variables in case we cannot avoid
-              //  it
+// to avoid warnings of unused variables in case we cannot avoid it
+#define UNUSED(x) (void)(x)
 
+// FIXME
 struct P4POLYLINES {
     double x1;
     double y1;
     double x2;
     double y2;
-    P4POLYLINES *next;
-
-    P4POLYLINES() : next(nullptr){};
+    P4POLYLINES() {}
+    P4POLYLINES(double a1, double b1, double a2, double b2)
+        : x1{a1}, y1{b1}, x2{a2}, y2{b2}
+    {
+    }
 };
 
 // (g_VFResults.p_,g_VFResults.q_) are lyapunov weights
