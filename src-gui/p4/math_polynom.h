@@ -20,26 +20,22 @@
 #ifndef MATH_POLYNOM_H
 #define MATH_POLYNOM_H
 
-struct term1;
-struct term2;
-struct term3;
+struct p4polynom::term1;
+struct p4polynom::term2;
+struct p4polynom::term3;
 
 double eval_term1(std::vector<p4polynom::term1>, double);
 double eval_term2(std::vector<p4polynom::term2>, double *);
 double eval_term3(std::vector<p4polynom::term3>, double *);
 
-void delete_term1(term1 *p);
-void delete_term2(term2 *p);
-void delete_term3(term3 *p);
-
-const char *dumpPoly1(term1 *f, const char *x);
-const char *dumpPoly2(term2 *f, const char *x, const char *y);
-const char *dumpPoly3(term3 *f, const char *x, const char *y,
+const char *dumpPoly1(std::vector<p4polynom::term1> f, const char *x);
+const char *dumpPoly2(std::vector<p4polynom::term2> f, const char *x, const char *y);
+const char *dumpPoly3(std::vector<p4polynom::term3> f, const char *x, const char *y,
                       const char *z);
 
-char *printterm2(char *buf, term2 *f, bool isfirst, const char *x,
+char *printterm2(char *buf, p4polynom::term2 f, bool isfirst, const char *x,
                  const char *y);
-char *printterm3(char *buf, term3 *f, bool isfirst, const char *r,
+char *printterm3(char *buf, p4polynom::term3 f, bool isfirst, const char *r,
                  const char *Co, const char *Si);
 
 #endif // MATH_POLYNOM_H
