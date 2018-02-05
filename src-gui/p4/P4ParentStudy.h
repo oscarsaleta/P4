@@ -63,9 +63,10 @@ class P4ParentStudy : public QObject
     // FIXME segurament puc canviar first_lim_cycle per lim_cycles.front() i
     // current per .back() limit cycles and orbits
     std::vector<p4orbits::orbits> lim_cycles_; // FIXME canviar ocurrències
-    std::vector<p4orbits::orbits> first_orbit_;
+    std::vector<p4orbits::orbits> orbits_; // FIXME canviar ocurrències
 
-    // run-time when plotting FIXME probably same problem as selected_ variables
+    // run-time when plotting 
+    // FIXME remove?
     std::unique_ptr<p4orbits::orbits> current_orbit_;
     std::unique_ptr<p4orbits::orbits> current_lim_cycle_;
 
