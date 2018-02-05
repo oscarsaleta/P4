@@ -156,12 +156,12 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
     double p1[3], pf1[3], pb1[3], rf1[2], rb1[2];
     double p2[3], pf2[3], pb2[3], rf2[2], rb2[2], p3[3];
     double grid_dx, grid_dy;
-    double a, b, c; // ax+by+c=0 defines the equation of the line of the
-                    // transverse section
+    double a, b, c;  // ax+by+c=0 defines the equation of the line of the
+                     // transverse section
     double x, y, z;
     bool okf1, okb1, found;
-    int counter{0}; // counter to keep steps: after so many steps, the progress
-                    // window needs to be updated
+    int counter{0};  // counter to keep steps: after so many steps, the progress
+                     // window needs to be updated
 
     // first make sure x0 < x1:
     if (x1 < x0) {
@@ -181,12 +181,12 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
     grid_dx = grid * cos(z);
     grid_dy = grid * sin(z);
     if ((z <= PI_DIV4) && (z >= -PI_DIV4)) {
-        a = (y1 - y0) / (x1 - x0); // abs(a) <= 1
+        a = (y1 - y0) / (x1 - x0);  // abs(a) <= 1
         b = -1.0;
         c = y0 - a * x0;
     } else {
         a = -1.0;
-        b = (x1 - x0) / (y1 - y0); // abs(b) <= 1
+        b = (x1 - x0) / (y1 - y0);  // abs(b) <= 1
         c = x0 - b * y0;
     }
 
@@ -199,7 +199,7 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
 
     found = true;
     while (found) {
-        found = false; // assume not found
+        found = false;  // assume not found
         while (1) {
             if (++counter == g_VFResults.config_lc_value_) {
                 counter = 0;
@@ -261,7 +261,7 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
             }
             write_to_limit_window(x0, y0);
         }
-        if (okf1 || okb1) { // note: they cannot be both true here
+        if (okf1 || okb1) {  // note: they cannot be both true here
             while (1) {
                 x = x0;
                 y = y0;
@@ -318,7 +318,7 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
                         y0 = y;
                         break;
                     }
-                } else { // okb1=true
+                } else {  // okb1=true
                     MATHFUNC(sphere_to_R2)(pb1[0], pb1[1], pb1[2], rb1);
                     while (1) {
                         x = x + grid_dx;
@@ -382,16 +382,6 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
     p4orbits::orbits LC;
     p4orbits::orbits_points LCpoints;
 
-    // FIXME
-    /*if (g_VFResults.current_lim_cycle_) {
-        g_VFResults.first_lim_cycle_ = new orbits;
-        g_VFResults.current_lim_cycle_ = g_VFResults.first_lim_cycle_;
-    } else {
-        g_VFResults.current_lim_cycle_->next_orbit = new orbits;
-        g_VFResults.current_lim_cycle_ =
-            g_VFResults.current_lim_cycle_->next_orbit;
-    }*/
-
     MATHFUNC(R2_to_sphere)(x, y, p1);
     copy_x_into_y(p1, LC.pcoord);
     LC.color = CLIMIT;
@@ -450,7 +440,7 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
 
         LCpoints.color = CLIMIT;
         LCpoints.dashes = g_VFResults.config_dashes_;
-        copy_x_into_y(p2,LCpoints.pcoord);
+        copy_x_into_y(p2, LCpoints.pcoord);
         LC.points.push_back(LCpoints);
         LC.current_point_index++;
 
@@ -468,50 +458,35 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
         (*plot_p)(spherewnd, p2, CLIMIT);
+
+    g_VFResults.lim_cycles_.push_back(LC);
 }
 
-void drawLimitCycles(QWinSphere *spherewnd)
+// -----------------------------------------------------------------------
+//          drawLimitCycles
+// -----------------------------------------------------------------------
+// Draw limit cycles that were calculated earlier.  This is called during
+// a repaint (but also during a print command).
+void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd)
 {
-    struct orbits *orbit;
+    std::vector<p4orbits::orbits> &orbits = g_VFResults.lim_cycles_;
 
-    orbit = g_VFResults.first_lim_cycle_;
-
-    if (orbit != nullptr) {
-        do {
-            drawOrbit(spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color);
-        } while ((orbit = orbit->next_orbit) != nullptr);
+    for (auto it : orbits) {
+        drawOrbit(spherewnd, it.pcoord, it.f_orbits, it.color);
     }
 }
 
 // -----------------------------------------------------------------------
-//                      DELETELASTLIMITCYCLE
+//          deleteLastLimitCycle
 // -----------------------------------------------------------------------
-
-void deleteLastLimitCycle(QWinSphere *spherewnd)
+void deleteLastLimitCycle(std::shared_ptr<QWinSphere> spherewnd)
 {
-    struct orbits *orbit1, *orbit2;
-
-    if (g_VFResults.current_lim_cycle_ == nullptr)
+    if (g_VFResults.lim_cycles_.empty())
         return;
 
-    orbit2 = g_VFResults.current_lim_cycle_;
-    drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
+    p4orbits::orbits &orbit1 = g_VFResults.lim_cycles_.back();
+    drawOrbit(spherewnd, orbit2.pcoord, orbit2.f_orbits,
               spherewnd->spherebgcolor_);
 
-    if (g_VFResults.first_lim_cycle_ == g_VFResults.current_lim_cycle_) {
-        g_VFResults.first_lim_cycle_ = nullptr;
-        g_VFResults.current_lim_cycle_ = nullptr;
-    } else {
-        orbit1 = g_VFResults.first_lim_cycle_;
-
-        do {
-            g_VFResults.current_lim_cycle_ = orbit1;
-            orbit1 = orbit1->next_orbit;
-        } while (orbit1 != orbit2);
-
-        g_VFResults.current_lim_cycle_->next_orbit = nullptr;
-    }
-    g_VFResults.deleteOrbitPoint(orbit2->f_orbits);
-    delete orbit2; // free( orbit2 );
-    orbit2 = nullptr;
+    g_VFResults.lim_cycles_.pop_back();    
 }
