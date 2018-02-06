@@ -20,67 +20,8 @@
 #include "math_regions.h"
 
 // ---------------------------------------------------------------------
-//  getVFIndex_UU1, getVFIndex_UU2, getVFIndex_VV1, getVFIndex_VV2
-// ---------------------------------------------------------------------
-//
-// When integration starts, for example in a U1 chart in a point (z1,z2)
-// very close to infinity (close to z2=0, but z2>0), it may sometimes happen
-// that the line of infinity is crossed (to a point z2<0).  The resulting
-// point lies in the U1 chart, but in a wrong part of it.  We say that
-// it lies in the VV1-part: this point will be mapped to the symmetric point
-// in the V1-chart.
-//
-// So:
-//
-//   * a point in the UU1 chart lies in the wrong part of the V1-chart, and is
-//   in fact a U1-point
-//   * a point in the UU2 chart lies in the wrong part of the V2-chart, and is
-//   in fact a U2-point
-//   * a point in the VV1 chart lies in the wrong part of the U1-chart, and is
-//   in fact a V1-point
-//   * a point in the VV2 chart lies in the wrong part of the U2-chart, and is
-//   in fact a V2-point
-//
-// The relation between the symmetric charts is simple:
-//              (z1,z2) ---> (-z1,-z2).
-//
-// Note: these charts are only used when p=q=1.
-int P4InputVF::getVFIndex_UU1(const double *yy)
-{
-    double y[2];
-    y[0] = -yy[0];
-    y[1] = -yy[1];
-    return getVFIndex_U1(y);
-}
-
-int P4InputVF::getVFIndex_UU2(const double *yy)
-{
-    double y[2];
-    y[0] = -yy[0];
-    y[1] = -yy[1];
-    return getVFIndex_U2(y);
-}
-
-int P4InputVF::getVFIndex_VV1(const double *yy)
-{
-    double y[2];
-    y[0] = -yy[0];
-    y[1] = -yy[1];
-    return getVFIndex_V1(y);
-}
-
-int P4InputVF::getVFIndex_VV2(const double *yy)
-{
-    double y[2];
-    y[0] = -yy[0];
-    y[1] = -yy[1];
-    return getVFIndex_V2(y);
-}
-
-// ---------------------------------------------------------------------
 //  isInsideRegion_R2, isInsideRegion_R2_epsilon
 // ---------------------------------------------------------------------
-//
 // Checks if a points lies in a region determined by a set of signs.
 // The point lies in the finite region.
 //
@@ -131,7 +72,6 @@ bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
 // ---------------------------------------------------------------------
 //  isInsideRegion_U1, isInsideRegion_U1_epsilon
 // ---------------------------------------------------------------------
-//
 // Checks if a points lies in a region determined by a set of signs.
 // The point lies in the U1 chart.
 // This is only used when p=q=1
@@ -183,7 +123,6 @@ bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
 // ---------------------------------------------------------------------
 //  isInsideRegion_V1, isInsideRegion_V1_epsilon
 // ---------------------------------------------------------------------
-//
 // Checks if a points lies in a region determined by a set of signs.
 // The point lies in the V1 chart.
 // This is only used when p=q=1
@@ -235,7 +174,6 @@ bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
 // ---------------------------------------------------------------------
 //  isInsideRegion_U2, isInsideRegion_U2_epsilon
 // ---------------------------------------------------------------------
-//
 // Checks if a points lies in a region determined by a set of signs.
 // The point lies in the U2 chart.
 // This is only used when p=q=1
@@ -262,6 +200,7 @@ bool isInsideRegion_U2(const int *signs, const double *z1z2)
     }
     return true;
 }
+
 bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
                                double epsilon)
 {
@@ -289,7 +228,6 @@ bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
 //                      isInsideRegion_V2
 //                      isInsideRegion_V2_epsilon
 // ---------------------------------------------------------------------
-//
 // Checks if a points lies in a region determined by a set of signs.
 // The point lies in the V2 chart.
 // This is only used when p=q=1
@@ -484,7 +422,6 @@ bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
 // ---------------------------------------------------------------------
 //          eval_curve
 // ---------------------------------------------------------------------
-//
 // A polynom is evaluated in a point pcoord=(X,Y,Z).  Only the sign of
 // the resulting polynomial is important, so therefore we can replace
 // the polynomial by a rescaled one if the point lies close to infinity.
@@ -530,7 +467,6 @@ double eval_curve(p4curveRegions::curveResult c, const double *pcoord)
 // ---------------------------------------------------------------------
 //          describeRegion
 // ---------------------------------------------------------------------
-//
 // included for debugging region
 QString describeRegion(double *pcoord)
 {
@@ -539,7 +475,7 @@ QString describeRegion(double *pcoord)
     double v;
 
     s = "";
-    for (k = 0; k < g_ThisVF->numcurves; k++) {
+    for (k = 0; k < g_ThisVF->numCurves_; k++) {
         v = eval_curve(g_VFResults.curves_result_[k], pcoord);
         if (fabs(v) <= 1.e-8)
             s += "0";
@@ -577,7 +513,7 @@ bool isInTheSameRegion(double *testpt, double *refpos)
 // ---------------------------------------------------------------------
 bool isARealSingularity(double *pcoord, int vfindex)
 {
-    if (g_VFResults.curves == nullptr)
+    if (g_VFResults.curves_result_.empty())
         return false;
 
     for (int i = g_ThisVF->numVFRegions_ - 1; i >= 0; i--) {
@@ -619,7 +555,6 @@ bool isARealSingularity(double x0, double y0, int chart, int vfindex)
 // ---------------------------------------------------------------------
 //          pSphereDistance
 // ---------------------------------------------------------------------
-//
 // Calculates somehow the distance between two points on the sphere
 double pSphereDistance(double *p, double *q)
 {
@@ -629,7 +564,7 @@ double pSphereDistance(double *p, double *q)
 
     if (p[2] == 0) {
         if (q[2] != 0)
-            return 1.0; // one is finite, the other is infinite
+            return 1.0;  // one is finite, the other is infinite
 
         theta1 = atan2(p[1], p[0]);
         theta2 = atan2(q[1], q[0]);
@@ -644,7 +579,7 @@ double pSphereDistance(double *p, double *q)
     }
 
     if (q[2] == 0)
-        return 1.0; // one is finite, the other is infinite
+        return 1.0;  // one is finite, the other is infinite
 
     // both are finite:
 
@@ -659,7 +594,6 @@ double pSphereDistance(double *p, double *q)
 // ---------------------------------------------------------------------
 //          plSphereDistance
 // ---------------------------------------------------------------------
-//
 // Calculates somehow the distance between two points on the sphere
 static double plSphereDistance(double *p, double *q)
 {
@@ -669,7 +603,7 @@ static double plSphereDistance(double *p, double *q)
 
     if (p[0] == 1 && p[1] == 0) {
         if (!(q[0] == 1 && q[1] == 0))
-            return 1.0; // one is finite, the other is infinite
+            return 1.0;  // one is finite, the other is infinite
 
         theta1 = p[2];
         theta2 = q[2];
@@ -684,7 +618,7 @@ static double plSphereDistance(double *p, double *q)
     }
 
     if (q[0] == 1 && q[1] == 0)
-        return 1.0; // one is finite, the other is infinite
+        return 1.0;  // one is finite, the other is infinite
 
     // both are finite:
 
@@ -696,6 +630,8 @@ static double plSphereDistance(double *p, double *q)
     return sqrt(dist);
 }
 
+// TODO: check if overload is needed or we can use implicit cast thanks to
+// struct heritance
 // ---------------------------------------------------------------------
 //          markSingularity
 // ---------------------------------------------------------------------
@@ -755,13 +691,8 @@ void markSingularity(p4singularities::saddle &s,
     //    Debug( "standalone" );
     s.position = POSITION_STANDALONE;
 
-    positionitem newPosition;
-    newPosition.pcoord[0] = pcoord[0];
-    newPosition.pcoord[1] = pcoord[1];
-    newPosition.pcoord[2] = pcoord[2];
     // this automatically casts the saddle as a genericsingularity
-    newPosition.s = s;
-
+    positionitem newPosition{pcoord,s};
     plist.push_back(newPosition);
 
     numpos = N + 1;

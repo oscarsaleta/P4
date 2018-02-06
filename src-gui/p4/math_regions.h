@@ -24,6 +24,13 @@ class QString;
 struct positionitem {
     double pcoord[3];
     p4singularities::genericsingularity s;
+    positionitem() {}
+    positionitem(double *p, p4singularities::genericsingularity _s) : s{_s}
+    {
+        pcoord[0] = p[0];
+        pcoord[1] = p[1];
+        pcoord[2] = p[2];
+    }
 }
 
 bool isInsideRegion_R2(const int *signs, const double *ucoord);
