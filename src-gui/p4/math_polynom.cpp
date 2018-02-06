@@ -30,9 +30,8 @@
 #include <cmath>
 
 // -----------------------------------------------------------------------
-//                              EVAL_TERM1
+//          eval_term1
 // -----------------------------------------------------------------------
-//
 // Calculates p(t) for a polynomial p and a value t.
 double eval_term1(std::vector<p4polynom::term1> p, double t)
 {
@@ -47,11 +46,9 @@ double eval_term1(std::vector<p4polynom::term1> p, double t)
 }
 
 // -----------------------------------------------------------------------
-//                              EVAL_TERM2
+//          eval_term2
 // -----------------------------------------------------------------------
-//
 // Calculates f(x,y) for a polynomial f and values x and y.
-//
 // value refers to an array containing x and y: value[0]=x, value[1]=y
 double eval_term2(std::vector<p4polynom::term2> f, double *value)
 {
@@ -71,12 +68,10 @@ double eval_term2(std::vector<p4polynom::term2> f, double *value)
 }
 
 // -----------------------------------------------------------------------
-//                              EVAL_TERM3
+//          eval_term3
 // -----------------------------------------------------------------------
-//
 // Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
 // of r and theta.
-//
 // value refers to an array containing r and theta: value[0]=r, value[1]=theta
 double eval_term3(std::vector<p4polynom::term3> F, double *value)
 {
@@ -102,9 +97,8 @@ double eval_term3(std::vector<p4polynom::term3> F, double *value)
 }
 
 // -----------------------------------------------------------------------
-//                              DUMPPOLY1
+//          dumpPoly1
 // -----------------------------------------------------------------------
-//
 // Make a string representation of a polynomial in one variable.
 // The variable name to be used is given as a parameter
 const char *dumpPoly1(std::vector<p4polynom::term1> f, const char *x)
@@ -155,9 +149,8 @@ const char *dumpPoly1(std::vector<p4polynom::term1> f, const char *x)
 }
 
 // -----------------------------------------------------------------------
-//                              DUMPPOLY2
+//          dumpPoly2
 // -----------------------------------------------------------------------
-//
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
 const char *dumpPoly2(std::vector<p4polynom::term2> f, const char *x,
@@ -220,9 +213,8 @@ const char *dumpPoly2(std::vector<p4polynom::term2> f, const char *x,
 }
 
 // -----------------------------------------------------------------------
-//                              DUMPPOLY3
+//          dumpPoly3
 // -----------------------------------------------------------------------
-//
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
 const char *dumpPoly3(std::vector<p4polynom::term3> f, const char *x,
@@ -292,12 +284,13 @@ const char *dumpPoly3(std::vector<p4polynom::term3> f, const char *x,
     return (const char *)_s;
 }
 
-// -----------------------------------------------------------------------
-// -----------------------------------------------------------------------
-//
 // Following are used in preparation of GCF :
-char *printterm2(char *buf, p4polynom::term2 f, bool isfirst,
-                 const char *x, const char *y)
+
+// -----------------------------------------------------------------------
+//          printterm2
+// -----------------------------------------------------------------------
+char *printterm2(char *buf, p4polynom::term2 f, bool isfirst, const char *x,
+                 const char *y)
 {
     if (f.coeff == 0) {
         if (isfirst)
@@ -358,6 +351,9 @@ char *printterm2(char *buf, p4polynom::term2 f, bool isfirst,
     return buf;
 }
 
+// -----------------------------------------------------------------------
+//          printterm3
+// -----------------------------------------------------------------------
 char *printterm3(char *buf, p4polynom::term3 f, bool isfirst, const char *r,
                  const char *Co, const char *Si)
 {
