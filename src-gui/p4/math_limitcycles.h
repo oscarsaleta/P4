@@ -19,11 +19,11 @@
 
 #pragma once
 
-class QWinSphere;
+class P4WinSphere;
 
-void drawLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
+void drawLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
                     double a, double b, double c);
-void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
+void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
                       double y0, double x1, double y1, double grid);
-void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd);
-void deleteLastLimitCycle(std::shared_ptr<QWinSphere> spherewnd);
+void drawLimitCycles(std::shared_ptr<P4WinSphere> spherewnd);
+void deleteLastLimitCycle(std::shared_ptr<P4WinSphere> spherewnd);
