@@ -61,7 +61,8 @@ class P4ParentStudy : public QObject
     std::vector<p4curves::curves> curve_vector_;
 
     // FIXME segurament puc canviar first_lim_cycle per lim_cycles.front() i
-    // current per .back() limit cycles and orbits
+    // current per .back()
+    // limit cycles and orbits
     std::vector<p4orbits::orbits> lim_cycles_; // FIXME canviar ocurrències
     std::vector<p4orbits::orbits> orbits_; // FIXME canviar ocurrències
 
@@ -80,10 +81,10 @@ class P4ParentStudy : public QObject
     std::vector<p4singularities::saddle> saddle_points_;
     std::vector<p4singularities::semi_elementary> se_points_;
     std::vector<p4singularities::degenerate> de_points_;
+
     std::vector<p4blowup::sep>::iterator selected_sep_;
-    // std::shared_ptr<p4blowup::sep> selected_sep_;
+    std::unique_ptr<std::vector<p4blowup::sep>> selected_sep_;
     std::vector<p4blowup::blow_up_points>::iterator selected_de_sep_;
-    // std::shared_ptr<p4blowup::blow_up_points> selected_de_sep_;
 
     int selected_sep_vfindex_;
 
