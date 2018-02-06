@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_POLYNOM_H
-#define MATH_POLYNOM_H
+#pragma once
 
 struct p4polynom::term1;
 struct p4polynom::term2;
@@ -29,13 +28,12 @@ double eval_term2(std::vector<p4polynom::term2>, double *);
 double eval_term3(std::vector<p4polynom::term3>, double *);
 
 const char *dumpPoly1(std::vector<p4polynom::term1> f, const char *x);
-const char *dumpPoly2(std::vector<p4polynom::term2> f, const char *x, const char *y);
-const char *dumpPoly3(std::vector<p4polynom::term3> f, const char *x, const char *y,
-                      const char *z);
+const char *dumpPoly2(std::vector<p4polynom::term2> f, const char *x,
+                      const char *y);
+const char *dumpPoly3(std::vector<p4polynom::term3> f, const char *x,
+                      const char *y, const char *z);
 
 char *printterm2(char *buf, p4polynom::term2 f, bool isfirst, const char *x,
                  const char *y);
 char *printterm3(char *buf, p4polynom::term3 f, bool isfirst, const char *r,
                  const char *Co, const char *Si);
-
-#endif // MATH_POLYNOM_H

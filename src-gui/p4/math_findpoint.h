@@ -19,7 +19,7 @@
 
 #pragma once
 
-class QWinSphere;
+class P4WinSphere;
 
-bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
+bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                          double y);

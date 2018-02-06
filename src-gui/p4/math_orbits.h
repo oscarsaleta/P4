@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_ORBITS_H
-#define MATH_ORBITS_H
+#pragma once
 
 class P4WinSphere;
 struct orbits_points;
@@ -47,5 +46,3 @@ bool startOrbit(std::shared_ptr<P4WinSphere> sphere, double x, double y,
 void drawOrbits(std::shared_ptr<P4WinSphere> spherewnd);
 
 void deleteLastOrbit(std::shared_ptr<P4WinSphere> spherewnd);
-
-#endif  // MATH_ORBITS_H

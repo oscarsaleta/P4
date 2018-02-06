@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_LIMITCYCLES_H
-#define MATH_LIMITCYCLES_H
+#pragma once
 
 class QWinSphere;
 
@@ -28,5 +27,3 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
                       double y0, double x1, double y1, double grid);
 void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd);
 void deleteLastLimitCycle(std::shared_ptr<QWinSphere> spherewnd);
-
-#endif // MATH_LIMITCYCLES_H

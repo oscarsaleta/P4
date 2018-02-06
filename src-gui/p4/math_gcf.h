@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_GCF_H
-#define MATH_GCF_H
+#pragma once
 
 #define EVAL_GCF_NONE 0
 #define EVAL_GCF_R2 1
@@ -44,5 +43,3 @@ bool evalGcfFinish(void);
 bool runTask(int task, int points, int prec);
 void draw_gcf(std::shared_ptr<QWinSphere> spherewnd,
               std::vector<p4orbits::orbits_points> sep, int color, int dashes);
-
-#endif // MATH_GCF_H
