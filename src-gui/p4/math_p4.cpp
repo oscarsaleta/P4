@@ -38,6 +38,9 @@ bool less_poincare(double *p1, double *p2)
     return (false);
 }
 
+// eval_lc_poincare: given a transverse section ax+by+cz=0, this function
+// calculates the value of the level function ax+by+cz.  By looking at the sign,
+// it is seen when the section is crossed.
 double eval_lc_poincare(double *pp, double a, double b, double c)
 {
     return (a * pp[0] + b * pp[1] + c * pp[2]);
@@ -70,11 +73,9 @@ void set_current_step(double curstep)
 {
     g_VFResults.config_currentstep_ = curstep;
 
-    if (g_p4stardlg != nullptr)
-        if (g_p4stardlg->plotWindow_ != nullptr)
-            if (g_p4stardlg->plotWindow_->intParamsWindow_ != nullptr)
-                g_p4stardlg->plotWindow_->intParamsWindow_->setCurrentStep(
-                    curstep);
+    if (g_p4stardlg && g_p4stardlg->plotWindow_ &&
+        g_p4stardlg->plotWindow_->intParamsWindow_)
+        g_p4stardlg->plotWindow_->intParamsWindow_->setCurrentStep(curstep);
 }
 
 void rplane_plsphere0(double x, double y, double *pcoord)
