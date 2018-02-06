@@ -20,31 +20,32 @@
 #ifndef MATH_ORBITS_H
 #define MATH_ORBITS_H
 
-class QWinSphere;
+class P4WinSphere;
 struct orbits_points;
 
 bool prepareVfForIntegration(double *pcoord);
 
 void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
-                              double *hhi, int *dashes, int *dir, double h_min,
+                              double &hhi, int &dashes, int &dir, double h_min,
                               double h_max);
 
 void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
-                              double *hhi, int *dashes, int *dir, double h_min,
+                              double &hhi, int &dashes, int &dir, double h_min,
                               double h_max);
 
-void integrateOrbit(QWinSphere *, int);
+void integrateOrbit(std::shared_ptr<P4WinSphere>, int);
 
-orbits_points *integrate_orbit(QWinSphere *, double *, double, int, int, int,
-                               orbits_points **);
+std::vector<p4orbits::orbits_points> integrate_orbit(
+    std::shared_ptr<P4WinSphere>, double *, double, int, int, int);
 
-void drawOrbit(QWinSphere *spherewnd, double *pcoord,
-               struct orbits_points *points, int color);
+void drawOrbit(std::shared_ptr<P4WinSphere> spherewnd, double *pcoord,
+               std::vector<p4orbits::orbits_points> points, int color);
 
-bool startOrbit(QWinSphere *sphere, double x, double y, bool R);
+bool startOrbit(std::shared_ptr<P4WinSphere> sphere, double x, double y,
+                bool R);
 
-void drawOrbits(QWinSphere *spherewnd);
+void drawOrbits(std::shared_ptr<P4WinSphere> spherewnd);
 
-void deleteLastOrbit(QWinSphere *spherewnd);
+void deleteLastOrbit(std::shared_ptr<P4WinSphere> spherewnd);
 
-#endif // MATH_ORBITS_H
+#endif  // MATH_ORBITS_H

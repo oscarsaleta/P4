@@ -65,11 +65,9 @@ void integrateOrbit(std::shared_ptr<P4WinSphere> sphere, int dir)
         if (!prepareVfForIntegration(pcoord))
             return;
 
-        auto sep = g_VFResults.orbits_.back().points;
-
         pts = integrate_orbit(sphere, pcoord, g_VFResults.config_currentstep_,
                               dir, bgColours::CORBIT,
-                              g_VFResults.config_intpoints_, sep);
+                              g_VFResults.config_intpoints_);
         g_VFResults.orbits_.back().points.push_back(pts);
 
         return;
@@ -86,21 +84,19 @@ void integrateOrbit(std::shared_ptr<P4WinSphere> sphere, int dir)
             dir = -dir;
 
     if (g_VFResults.orbits_.back().points.empty()) {
-        // FIXME is sep really needed?
         pts = integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir,
-                              bgColours::CORBIT, g_VFResults.config_intpoints_,
-                              sep);
+                              bgColours::CORBIT, g_VFResults.config_intpoints_);
         g_VFResults.orbits_.back().points = pts;
     } else {
         // create an orbit point
         pts = p4orbits::orbits_points{bgColours::CORBIT, pcoord, 0, dir, 0};
         // integrate more points
-        std::vector<orbits_points> int_pts = integrate_orbit(
+        std::vector<p4orbits::orbits_points> int_pts = integrate_orbit(
             sphere, pcoord, g_VFResults.config_step_, dir, bgColours::CORBIT,
-            g_VFResults.config_intpoints_ /*, &sep*/);
+            g_VFResults.config_intpoints_);
         // create a vector starting by the first point and appending the
         // integrated ones to the end
-        std::vector<orbits_points> orbit_result{pts};
+        std::vector<p4orbits::orbits_points> orbit_result{pts};
         orbit_result.insert(orbit_result.end(), int_pts.begin(), int_pts.end());
         // append this vector to g_VFResults.orbits_.back().points
         g_VFResults.orbits_.back().points.insert(
@@ -377,57 +373,97 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
     }
 }
 
-
-// FIXME: aqui me quedo
-/* integrate on the Poincare-Lyapunov sphere */
+// ---------------------------------------------------------------------------
+//          integrate_lyapunov_orbit
+// ---------------------------------------------------------------------------
+// integrate on the Poincare-Lyapunov sphere
+// This calculates 1 step.
 void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
-                              double *hhi, int *dashes, int *dir, double h_min,
+                              double &hhi, int &dashes, int &dir, double h_min,
                               double h_max)
 {
     double y[2];
+    double hhi0{hhi};
 
-    *dashes = true;
-    *dir = 1;
     if (p0 == 0) {
-        y[0] = p1;
-        y[1] = p2;
-        rk78(eval_r_vec_field, y, hhi, h_min, h_max,
-             g_VFResults.config_tolerance_);
+        while (1) {
+            dir = 1;
+            dashes = true;
+            y[0] = p1;
+            y[1] = p2;
+            // TODO: changed hhi for hhi0, works?
+            rk78(eval_r_vec_field, y, hhi0, h_min, h_max,
+                 g_VFResults.config_tolerance_);
+            if (g_ThisVF->getVFIndex_R2(y) == g_VFResults.K_)
+                break;
+            h_min = g_VFResults.config_branchhmi_;
+            h_max /= 2;
+            hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
+            if (fabs(hhi0) < h_min || h_max < g_VFResults.config_branchhmi_) {
+                hhi0 = h_min;
+                if (hhi < 0)
+                    hhi0 = -hhi0;
+                break;
+            }
+        }
+        hhi = hhi0;
         R2_to_plsphere(y[0], y[1], pcoord);
     } else {
-        y[0] = p1;
-        y[1] = p2;
-        rk78(eval_vec_field_cyl, y, hhi, h_min, h_max,
-             g_VFResults.config_tolerance_);
-        if (y[1] >= TWOPI)
-            y[1] -= TWOPI;
+        while (1) {
+            dashes = true;
+            dir = 1;
+            y[0] = p1;
+            y[1] = p2;
+            // TODO: changed hhi for hhi0, works?
+            rk78(eval_vec_field_cyl, y, hhi0, h_min, h_max,
+                 g_VFResults.config_tolerance_);
+            if (g_ThisVF->getVFIndex_cyl(y) == g_VFResults.K_)
+                break;
+            h_min = g_VFResults.config_branchhmi_;
+            h_max /= 2;
+            hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
+            if (fabs(hhi0) < h_min || h_max < g_VFResults.config_branchhmi_) {
+                hhi0 = h_min;
+                if (hhi < 0)
+                    hhi0 = -hhi0;
+                break;
+            }
+        }
+        hhi = hhi0;
         cylinder_to_plsphere(y[0], y[1], pcoord);
     }
 }
 
-orbits_points *integrate_orbit(P4WinSphere *spherewnd, double pcoord[3],
-                               double step, int dir, int color,
-                               int points_to_int, orbits_points **orbit)
+// ---------------------------------------------------------------------------
+//          integrate_orbit
+// ---------------------------------------------------------------------------
+// Integrate a number of points (user-dependent)
+std::vector<p4orbits::orbits_points> integrate_orbit(
+    std::shared_ptr<P4WinSphere> spherewnd, double pcoord[3], double step,
+    int dir, int color, int points_to_int)
 {
     int i, d, h;
     int dashes;
     double hhi;
     double pcoord2[3], h_min, h_max;
-    orbits_points *first_orbit = nullptr, *last_orbit = nullptr;
+    p4orbits::orbits_points new_orbit;
+    std::vector<p4orbits::orbits_points> orbit_result;
 
     hhi = dir * step;
     h_min = g_VFResults.config_hmi_;
     h_max = g_VFResults.config_hma_;
     copy_x_into_y(pcoord, pcoord2);
     for (i = 1; i <= points_to_int; ++i) {
+        if (!prepareVfForIntegration(pcoord))
+            break;
         MATHFUNC(integrate_sphere_orbit)
-        (pcoord[0], pcoord[1], pcoord[2], pcoord, &hhi, &dashes, &d, h_min,
+        (pcoord[0], pcoord[1], pcoord[2], pcoord, hhi, dashes, d, h_min,
          h_max);
 
         if ((i % UPDATEFREQ_STEPSIZE) == 0)
             set_current_step(fabs(hhi));
 
-        if (last_orbit == nullptr) {
+        /*if (last_orbit == nullptr) {
             first_orbit = new orbits_points;
             last_orbit = first_orbit;
             h = dir;
@@ -435,13 +471,15 @@ orbits_points *integrate_orbit(P4WinSphere *spherewnd, double pcoord[3],
             last_orbit->next_point = new orbits_points;
             h = last_orbit->dir;
             last_orbit = last_orbit->next_point;
-        }
+        }*/
 
-        copy_x_into_y(pcoord, last_orbit->pcoord);
-        last_orbit->color = color;
-        last_orbit->dashes = dashes * g_VFResults.config_dashes_;
-        last_orbit->dir = d * h;
-        last_orbit->next_point = nullptr;
+        copy_x_into_y(pcoord, last_orbit.pcoord);
+        last_orbit.color = color;
+        last_orbit.dashes = dashes * g_VFResults.config_dashes_;
+        last_orbit.dir = d * h;
+
+        orbit_result.push_back(last_orbit);
+
         if (dashes && g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
@@ -449,6 +487,5 @@ orbits_points *integrate_orbit(P4WinSphere *spherewnd, double pcoord[3],
         copy_x_into_y(pcoord, pcoord2);
     }
     set_current_step(fabs(hhi));
-    *orbit = last_orbit;
-    return (first_orbit);
+    return orbit_result;
 }
