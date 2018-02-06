@@ -33,13 +33,13 @@
 #define EVAL_GCF_CYL4 11
 #define EVAL_GCF_FINISHLYAPUNOV 12
 
-class QWinSphere;
+class P4WinSphere;
 struct orbits_points;
 
-bool evalGcfStart(std::shared_ptr<QWinSphere> sp, int dashes, int points,
+bool evalGcfStart(std::shared_ptr<P4WinSphere> sp, int dashes, int points,
                   int precis);
 bool evalGcfContinue(int points, int prec);
 bool evalGcfFinish(void);
 bool runTask(int task, int points, int prec);
-void draw_gcf(std::shared_ptr<QWinSphere> spherewnd,
+void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
               std::vector<p4orbits::orbits_points> sep, int color, int dashes);
