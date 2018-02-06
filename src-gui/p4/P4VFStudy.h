@@ -38,18 +38,18 @@ class P4VFStudy : public QObject
 
     // vector field in various charts
     // FIXME arreglar tots els llocs on s'usen
-    std::vector<p4polynomials::term2> f_vec_field_0_;
-    std::vector<p4polynomials::term2> f_vec_field_1_;
-    std::vector<p4polynomials::term2> vec_field_U1_0_;
-    std::vector<p4polynomials::term2> vec_field_U1_1_;
-    std::vector<p4polynomials::term2> vec_field_U2_0_;
-    std::vector<p4polynomials::term2> vec_field_U2_1_;
-    std::vector<p4polynomials::term2> vec_field_V1_0_;
-    std::vector<p4polynomials::term2> vec_field_V1_1_;
-    std::vector<p4polynomials::term2> vec_field_V2_0_;
-    std::vector<p4polynomials::term2> vec_field_V2_1_;
-    std::vector<p4polynomials::term3> vec_field_C_0_;
-    std::vector<p4polynomials::term3> vec_field_C_1_;
+    std::vector<p4polynom::term2> f_vec_field_0_;
+    std::vector<p4polynom::term2> f_vec_field_1_;
+    std::vector<p4polynom::term2> vec_field_U1_0_;
+    std::vector<p4polynom::term2> vec_field_U1_1_;
+    std::vector<p4polynom::term2> vec_field_U2_0_;
+    std::vector<p4polynom::term2> vec_field_U2_1_;
+    std::vector<p4polynom::term2> vec_field_V1_0_;
+    std::vector<p4polynom::term2> vec_field_V1_1_;
+    std::vector<p4polynom::term2> vec_field_V2_0_;
+    std::vector<p4polynom::term2> vec_field_V2_1_;
+    std::vector<p4polynom::term3> vec_field_C_0_;
+    std::vector<p4polynom::term3> vec_field_C_1_;
 
     // singular points and their properties:
     std::vector<p4singularities::saddle> first_saddle_point_;
@@ -60,12 +60,12 @@ class P4VFStudy : public QObject
     std::vector<p4singularities::degenerate> first_de_point_;
 
     // Greatest common factor if present:
-    std::vector<p4polynomials::term2> gcf_;
-    std::vector<p4polynomials::term2> gcf_U1_;
-    std::vector<p4polynomials::term2> gcf_U2_;
-    std::vector<p4polynomials::term2> gcf_V1_;
-    std::vector<p4polynomials::term2> gcf_V2_;
-    std::vector<p4polynomials::term3> gcf_C_;
+    std::vector<p4polynom::term2> gcf_;
+    std::vector<p4polynom::term2> gcf_U1_;
+    std::vector<p4polynom::term2> gcf_U2_;
+    std::vector<p4polynom::term2> gcf_V1_;
+    std::vector<p4polynom::term2> gcf_V2_;
+    std::vector<p4polynom::term3> gcf_C_;
     std::vector<p4orbits::orbits_points> gcf_points_;
 
     
