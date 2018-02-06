@@ -54,15 +54,13 @@ namespace p4InputVFRegions
 struct vfRegion {
     int vfIndex;
     std::vector<int> signs;
-    vfRegion(int i, std::vector<int> s) : vfIndex(i), signs(s) {}
-    //~vfRegion() { signs.clear(); }
+    vfRegion(int i, std::vector<int> s) : vfIndex{i}, signs{s} {}
 }
 
 struct curveRegion {
     int curveIndex;
     std::vector<int> signs;
-    curveRegion(int i, std::vector<int> s) : curveIndex(i), signs(s) {}
-    //~curveRegion() { signs.clear(); }
+    curveRegion(int i, std::vector<int> s) : curveIndex{i}, signs{s} {}
 }
 }
 
@@ -176,9 +174,9 @@ class P4InputVF : public QObject
     void prepare();
     void evaluate();
 
-//FIXME
-    bool prepareGcf(term2 *f, double y1, double y2, int precision,
-                    int numpoints);
+    // FIXME
+    bool prepareGcf(std::vector<p4polynom::term2> f, double y1, double y2,
+                    int precision, int numpoints);
     bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
                                 int numpoints, int index);
     bool prepareGcf_LyapunovR2(int precision, int numpoints, int index);
@@ -194,8 +192,8 @@ class P4InputVF : public QObject
     // called from prepareCurveFile
     void prepareMapleCurve(QTextStream &);
     // the following are called from math_curve.cpp
-    bool prepareCurve(term2 *f, double y1, double y2, int precision,
-                      int numpoints); //FIXME
+    bool prepareCurve(std::vector<p4polynom::term2> f, double y1, double y2,
+                      int precision, int numpoints);  // FIXME
     bool prepareCurve_LyapunovCyl(double theta1, double theta2, int precision,
                                   int numpoints, int index);
     bool prepareCurve_LyapunovR2(int precision, int numpoints, int index);
@@ -206,8 +204,9 @@ class P4InputVF : public QObject
     void prepareIsoclines();
     void prepareIsoclinesFile(QTextStream &);
     void prepareMapleIsoclines(QTextStream &);
-    bool prepareIsoclines(term2 *f, double y1, double y2, int precision,
-                          int numpoints); //FIXME
+    bool prepareIsoclines(std::vector<p4polynom::term2> f, double y1, double y2,
+                          int precision,
+                          int numpoints);  // FIXME
     bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                       int precision, int numpoints, int index);
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
