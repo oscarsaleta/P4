@@ -73,20 +73,17 @@ class P4ParentStudy : public QObject
 
     double selected_ucoord_[2];
 
-    // FIXME arreglar aquest berenjenal
-    // FIXME selected_X_X_ no són índexos de vectors, haurien de ser punters a
-    // vectors. Realment no necessitarem els vectors de separatrius autèntics
-    // (seps_ i de_seps_) perquè sempre seran simplement punters als vectors de
-    // saddle/se/de_points
-    std::vector<p4singularities::saddle> saddle_points_;
-    int selectedSaddleIndex_;
-    std::vector<p4singularities::semi_elementary> se_points_;
-    int selectedSeIndex_;
-    std::vector<p4singularities::degenerate> de_points_;
-    int selectedDeIndex_;
+    std::vector<p4singularities::saddle> saddlePoints_;
+    int selectedSaddlePointIndex_;
+    std::vector<p4singularities::semi_elementary> sePoints_;
+    int selectedSePointIndex_;
+    std::vector<p4singularities::degenerate> dePoints_;
+    int selectedDePointIndex_;
 
-    std::unique_ptr<std::vector<p4blowup::sep>> selected_sep_;
-    std::unique_ptr<std::vector<p4blowup::blow_up_points>> selected_de_sep_;
+    std::vector<p4blowup::sep> seps_;
+    int selectedSepIndex_;
+    std::vector<p4blowup::blow_up_points> deSeps_;
+    int selectedDeSepIndex_
 
     int selected_sep_vfindex_;
 
