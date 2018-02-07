@@ -193,7 +193,7 @@ struct blow_up_points {
 
 struct sep {
     std::vector<p4orbits::orbits_points> sep_points;
-    std::vector<p4orbits::orbits_points> last_sep_point;  // TODO. fa falta?
+    //std::vector<p4orbits::orbits_points> last_sep_point;  // TODO. fa falta?
     int type;  // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
     int direction;
     int d;
