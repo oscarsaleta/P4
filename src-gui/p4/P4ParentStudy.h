@@ -79,12 +79,14 @@ class P4ParentStudy : public QObject
     // (seps_ i de_seps_) perquè sempre seran simplement punters als vectors de
     // saddle/se/de_points
     std::vector<p4singularities::saddle> saddle_points_;
+    int selectedSaddleIndex_;
     std::vector<p4singularities::semi_elementary> se_points_;
+    int selectedSeIndex_;
     std::vector<p4singularities::degenerate> de_points_;
+    int selectedDeIndex_;
 
-    std::vector<p4blowup::sep>::iterator selected_sep_;
     std::unique_ptr<std::vector<p4blowup::sep>> selected_sep_;
-    std::vector<p4blowup::blow_up_points>::iterator selected_de_sep_;
+    std::unique_ptr<std::vector<p4blowup::blow_up_points>> selected_de_sep_;
 
     int selected_sep_vfindex_;
 
