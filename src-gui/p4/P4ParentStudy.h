@@ -33,9 +33,7 @@ class P4ParentStudy : public QObject
     P4ParentStudy();
     //~P4ParentStudy();
 
-    std::vector<std::unique_ptr<P4VFStudy>> vf_;
-    // shortcut for vf[K]. Must be updated whenever K changes
-    // std::shared_ptr<P4VFStudy> vfK_; // TODO is this really used?
+    std::vector<P4VFStudy> vf_;
     // K_ will be throughout the current vector field selected
     int K_;
 
