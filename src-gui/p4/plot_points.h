@@ -17,24 +17,39 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLOT_POINTS_H
-#define PLOT_POINTS_H
+#pragma once
+
+#include <memory>
 
 class QPainter;
 
-void win_plot_saddle(QPainter *p, int x, int y);
-void win_plot_stablenode(QPainter *p, int x, int y);
-void win_plot_unstablenode(QPainter *p, int x, int y);
-void win_plot_weakfocus(QPainter *p, int x, int y);
-void win_plot_stableweakfocus(QPainter *p, int x, int y);
-void win_plot_unstableweakfocus(QPainter *p, int x, int y);
-void win_plot_center(QPainter *p, int x, int y);
-void win_plot_stablestrongfocus(QPainter *p, int x, int y);
-void win_plot_unstablestrongfocus(QPainter *p, int x, int y);
-void win_plot_sesaddlenode(QPainter *p, int x, int y);
-void win_plot_sestablenode(QPainter *p, int x, int y);
-void win_plot_seunstablenode(QPainter *p, int x, int y);
-void win_plot_sesaddle(QPainter *p, int x, int y);
-void win_plot_degen(QPainter *p, int x, int y);
+void win_plot_saddle(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_stablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_unstablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_weakfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_stableweakfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_unstableweakfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_center(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_stablestrongfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_unstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_sesaddlenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_sestablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_seunstablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_sesaddle(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_degen(std::unique_ptr<QPainter> p, int x, int y);
 
-#endif // PLOT_POINTS_H
+void win_plot_virtualsaddle(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualstablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualunstablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualweakfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualunstableweakfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualcenter(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualunstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualsesaddlenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualsestablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualseunstablenode(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualsesaddle(std::unique_ptr<QPainter> p, int x, int y);
+void win_plot_virtualdegen(std::unique_ptr<QPainter> p, int x, int y);
+
+void win_plot_coinciding(std::unique_ptr<QPainter> p, int x, int y);
