@@ -43,10 +43,10 @@ void start_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
                           g_VFResults.selected_sep_->last_sep_point->dir,
                           g_VFResults.selected_sep_->last_sep_point->type,
                           g_VFResults.config_intpoints_);
-
-        g_VFResults.seps_[sepid].sep_points.insert(
-            g_VFResults.seps_[sepid].sep_points.end(), nextpts.begin(),
-            nextpts.end());
+        if (!nextpts.empty())
+            g_VFResults.seps_[sepid].sep_points.insert(
+                g_VFResults.seps_[sepid].sep_points.end(), nextpts.begin(),
+                nextpts.end());
     } else {
         g_VFResults.seps_[sepid].sep_points = plot_separatrice(
             spherewnd, g_VFResults.sePoints_[seid].x0,
@@ -81,8 +81,10 @@ void cont_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
                       g_VFResults.config_intpoints_);
 
     // append computed points to existing vector
-    auto &seppts{g_VFResults.seps_[sepid].sep_points};
-    seppts.insert(seppts.end(), nextpt.begin(), nextpt.end());
+    if (!nextpts.empty()) {
+        auto &seppts{g_VFResults.seps_[sepid].sep_points};
+        seppts.insert(seppts.end(), nextpt.begin(), nextpt.end());
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -139,8 +141,9 @@ void plot_all_se_sep(std::shared_ptr<P4WinSphere> spherewnd,
                         spherewnd, p, g_VFResults.config_currentstep_,
                         it2->sep_points.back().dir, it2->sep_points.back().type,
                         g_VFResults.config_intpoints_);
-                    it2->sep_points.insert(it2->sep_points.end(),
-                                           newpts.begin(), newpts.end());
+                    if (!newpts.empty())
+                        it2->sep_points.insert(it2->sep_points.end(),
+                                               newpts.begin(), newpts.end());
                 } else {
                     it2->sep_points = plot_separatrice(
                         spherewnd, it1.x0, it1.y0, it1.a11, it1.a12, it1.a21,
