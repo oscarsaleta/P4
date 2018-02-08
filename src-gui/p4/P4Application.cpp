@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "p4application.h"
+#include "P4Application.h"
 
 #include "custom.h"
 #include "file_vf.h"
@@ -28,9 +28,9 @@
 
 #include <QFont>
 
-QP4Application *g_p4app = nullptr;
+std::unique_ptr<P4Application> g_p4app{nullptr};
 
-QP4Application::QP4Application(int &argc, char **argv)
+P4Application::P4Application(int &argc, char **argv)
     : QApplication(argc, argv)
 {
     standardFont_ = new QFont();
@@ -67,7 +67,7 @@ QP4Application::QP4Application(int &argc, char **argv)
 //
 // Following signals may be called from another thread
 
-void QP4Application::signalChanged(void)
+void P4Application::signalChanged(void)
 {
     g_ThisVF->evaluated_ = false;
     g_ThisVF->changed_ = true;
@@ -76,7 +76,7 @@ void QP4Application::signalChanged(void)
     g_p4app->postEvent(g_p4stardlg, e);
 }
 
-void QP4Application::signalEvaluated(int exitCode)
+void P4Application::signalEvaluated(int exitCode)
 {
     g_ThisVF->evaluated_ = true;
     g_ThisVF->evaluating_ = false;
@@ -98,7 +98,18 @@ void QP4Application::signalEvaluated(int exitCode)
     }
 }
 
-void QP4Application::signalCurveEvaluated(int exitCode)
+void P4Application::signalGcfEvaluated(int exitCode) {
+    g_ThisVF->evaluated_ = true;
+    g_ThisVF->evaluating_ = false;
+    g_ThisVF->finishEvaluation(exitCode);
+}
+
+void P4Application::signalSeparatingCurvesEvaluated(int exitCode) {
+    g_ThisVF->evaluating_=false;
+    g_ThisVF->finishEvaluation(exitCode);
+}
+
+void P4Application::signalCurveEvaluated(int exitCode)
 {
     g_ThisVF->evaluated_ = true;
     g_ThisVF->evaluating_ = false;
@@ -106,21 +117,12 @@ void QP4Application::signalCurveEvaluated(int exitCode)
     g_ThisVF->finishEvaluation(exitCode);
 }
 
-void QP4Application::signalEvaluating(void)
-{
-    g_ThisVF->evaluating_ = true;
-    g_ThisVF->evaluated_ = false;
-
-    QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATING, nullptr);
-    g_p4app->postEvent(g_p4stardlg, e);
-}
-
-void QP4Application::catchProcessError(QProcess::ProcessError qperr)
+void P4Application::catchProcessError(QProcess::ProcessError qperr)
 {
     g_ThisVF->catchProcessError(qperr);
 }
 
-void QP4Application::signalLoaded(void)
+void P4Application::signalLoaded(void)
 {
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr);
     g_p4app->postEvent(g_p4stardlg, e);
@@ -137,7 +139,7 @@ void QP4Application::signalLoaded(void)
     }
 }
 
-void QP4Application::signalSaved(void)
+void P4Application::signalSaved(void)
 {
     QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr);
     g_p4app->postEvent(g_p4stardlg, e);

@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef P4APPLICATION_H
-#define P4APPLICATION_H
+#pragma once
 
 #include <QApplication>
 #include <QProcess>
@@ -31,12 +30,12 @@
 
 class QFont;
 
-class QP4Application : public QApplication
+class P4Application : public QApplication
 {
     Q_OBJECT
 
   public:
-    QP4Application(int &argc, char **argv);
+    P4Application(int &argc, char **argv);
 
     QFont *standardFont_;
     QFont *boldFont_;
@@ -46,15 +45,14 @@ class QP4Application : public QApplication
     QFont *legendFont_;
 
   public slots:
-    void signalEvaluating(void);
     void signalEvaluated(int);
+    void signalGcfEvaluated(int);
     void signalCurveEvaluated(int);
+    void signalSeparatingCurvesEvaluated(int);
     void signalChanged(void);
     void signalLoaded(void);
     void signalSaved(void);
     void catchProcessError(QProcess::ProcessError);
 };
 
-extern QP4Application *g_p4app;
-
-#endif /* P4APPLICATION_H */
+extern std::unique_ptr<P4Application> g_p4app;
