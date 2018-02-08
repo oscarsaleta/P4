@@ -586,8 +586,9 @@ void start_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
                 de_sep.sep_points.back().dir, de_sep.sep_points.back().type,
                 g_VFResults.config_intpoints_);
             // append this vector to the previous one in the structure
-            de_sep.sep_points.insert(de_sep.end(), points.begin(),
-                                     points.end());
+            if (!points.empty())
+                de_sep.sep_points.insert(de_sep.end(), points.begin(),
+                                         points.end());
         }
     } else {
         de_sep.sep_points = plot_sep_blow_up(
@@ -696,8 +697,10 @@ void plot_all_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
                         auto nextpt = integrate_sep(
                             spherewnd, p, g_VFResults.config_currentstep,
                             sep.dir, sep.type, g_VFResults.config_intpoints);
-                        it2->sep_points.insert(it2->sep_points.end(),
-                                               nextpt.begin(), nextpt.end());
+                        if (!nextpt.empty())
+                            it2->sep_points.insert(it2->sep_points.end(),
+                                                   nextpt.begin(),
+                                                   nextpt.end());
                     }
                 } else {
                     it2->sep_points =
