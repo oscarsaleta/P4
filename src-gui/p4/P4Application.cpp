@@ -30,33 +30,32 @@
 
 std::unique_ptr<P4Application> g_p4app{nullptr};
 
-P4Application::P4Application(int &argc, char **argv)
-    : QApplication(argc, argv)
+P4Application::P4Application(int &argc, char **argv) : QApplication(argc, argv)
 {
-    standardFont_ = new QFont();
+    standardFont_ = std::make_unique(new QFont());
     standardFont_->setPointSize(standardFont_->pointSize() + FONTSIZE);
     setFont(*standardFont_);
 
-    boldFont_ = new QFont();
+    boldFont_ = std::make_unique(new QFont());
     boldFont_->setWeight(QFont::Bold);
 
-    titleFont_ = new QFont();
+    titleFont_ = std::make_unique(new QFont());
     titleFont_->setPointSize(titleFont_->pointSize() + TITLEFONTSIZE);
     titleFont_->setWeight(QFont::Bold);
 
-    courierFont_ = new QFont;
-    courierFont_->setFamily("Courier");
+    courierFont_ =
+        std::make_unique(new QFont;) courierFont_->setFamily("Courier");
     courierFont_->setFixedPitch(true);
     courierFont_->setPointSize(courierFont_->pointSize() + FONTSIZE);
 
-    boldCourierFont_ = new QFont;
-    boldCourierFont_->setFamily("Courier");
+    boldCourierFont_ =
+        std::make_unique(new QFont;) boldCourierFont_->setFamily("Courier");
     boldCourierFont_->setFixedPitch(true);
     boldCourierFont_->setWeight(QFont::Bold);
     boldCourierFont_->setPointSize(boldCourierFont_->pointSize() + FONTSIZE);
 
-    legendFont_ = new QFont;
-    legendFont_->setFamily("Courier");
+    legendFont_ =
+        std::make_unique(new QFont;) legendFont_->setFamily("Courier");
     legendFont_->setFixedPitch(true);
     legendFont_->setPointSize(legendFont_->pointSize() + LEGENDFONTSIZE);
 }
@@ -72,8 +71,9 @@ void P4Application::signalChanged(void)
     g_ThisVF->evaluated_ = false;
     g_ThisVF->changed_ = true;
 
-    QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr);
-    g_p4app->postEvent(g_p4stardlg, e);
+    std::unique_ptr<QP4Event> e{
+        new QP4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr)};
+    g_p4app->postEvent(g_p4stardlg, e.get());
 }
 
 void P4Application::signalEvaluated(int exitCode)
@@ -83,8 +83,9 @@ void P4Application::signalEvaluated(int exitCode)
 
     g_ThisVF->finishEvaluation(exitCode);
 
-    QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr);
-    g_p4app->postEvent(g_p4stardlg, e);
+    std::unique_ptr<QP4Event> e{
+        new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr)};
+    g_p4app->postEvent(g_p4stardlg, e.get());
 
     if (g_cmdLine_AutoExit) {
         g_cmdLine_AutoPlot = false;
@@ -98,14 +99,16 @@ void P4Application::signalEvaluated(int exitCode)
     }
 }
 
-void P4Application::signalGcfEvaluated(int exitCode) {
+void P4Application::signalGcfEvaluated(int exitCode)
+{
     g_ThisVF->evaluated_ = true;
     g_ThisVF->evaluating_ = false;
     g_ThisVF->finishEvaluation(exitCode);
 }
 
-void P4Application::signalSeparatingCurvesEvaluated(int exitCode) {
-    g_ThisVF->evaluating_=false;
+void P4Application::signalSeparatingCurvesEvaluated(int exitCode)
+{
+    g_ThisVF->evaluating_ = false;
     g_ThisVF->finishEvaluation(exitCode);
 }
 
@@ -124,8 +127,9 @@ void P4Application::catchProcessError(QProcess::ProcessError qperr)
 
 void P4Application::signalLoaded(void)
 {
-    QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr);
-    g_p4app->postEvent(g_p4stardlg, e);
+    std::unique_ptr<QP4Event> e{
+        new QP4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr)};
+    g_p4app->postEvent(g_p4stardlg, e.get());
 
     if (g_cmdLine_AutoEvaluate) {
         g_cmdLine_AutoEvaluate = false;
@@ -141,6 +145,7 @@ void P4Application::signalLoaded(void)
 
 void P4Application::signalSaved(void)
 {
-    QP4Event *e = new QP4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr);
-    g_p4app->postEvent(g_p4stardlg, e);
+    std::unique_ptr<QP4Event> e{
+        new QP4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr)};
+    g_p4app->postEvent(g_p4stardlg, e.get());
 }

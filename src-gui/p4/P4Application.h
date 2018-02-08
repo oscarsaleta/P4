@@ -28,6 +28,8 @@
 #define USERPLATFORM "LINUX"
 #endif
 
+#include <memory>
+
 class QFont;
 
 class P4Application : public QApplication
@@ -37,12 +39,12 @@ class P4Application : public QApplication
   public:
     P4Application(int &argc, char **argv);
 
-    QFont *standardFont_;
-    QFont *boldFont_;
-    QFont *courierFont_;
-    QFont *boldCourierFont_;
-    QFont *titleFont_;
-    QFont *legendFont_;
+    std::unique_ptr<QFont> standardFont_;
+    std::unique_ptr<QFont> boldFont_;
+    std::unique_ptr<QFont> courierFont_;
+    std::unique_ptr<QFont> boldCourierFont_;
+    std::unique_ptr<QFont> titleFont_;
+    std::unique_ptr<QFont> legendFont_;
 
   public slots:
     void signalEvaluated(int);
