@@ -20,6 +20,9 @@
 #include "math_saddlesep.h"
 
 #include "file_tab.h"
+#include "math_orbits.h"
+#include "math_regions.h"
+#include "math_separatrice.h"
 
 // ---------------------------------------------------------------------------
 //      start_plot_saddle_sep
@@ -44,19 +47,23 @@ void start_plot_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
             g_VFResults.seps_[sepid].sep_points.end(), nextpts.begin(),
             nextpts.end());
     } else {
-        g_VFResults.seps_[sepid].sep_points =
-            plot_separatrice(spherewnd, g_VFResults.saddlePoints_[sadid].x0,
-                             g_VFResults.saddlePoints_[sadid].y0,
-                             g_VFResults.saddlePoints_[sadid].a11,
-                             g_VFResults.saddlePoints_[sadid].a12,
-                             g_VFResults.saddlePoints_[sadid].a21,
-                             g_VFResults.saddlePoints_[sadid].a22,
-                             g_VFResults.saddlePoints_[sadid].epsilon,
-                             g_VFResults.seps_[sepid],
-                             g_VFResults.saddlePoints_[sadid].chart, vfindex);
+        g_VFResults.seps_[sepid].sep_points = plot_separatrice(
+            spherewnd, g_VFResults.saddlePoints_[sadid].x0,
+            g_VFResults.saddlePoints_[sadid].y0,
+            g_VFResults.saddlePoints_[sadid].a11,
+            g_VFResults.saddlePoints_[sadid].a12,
+            g_VFResults.saddlePoints_[sadid].a21,
+            g_VFResults.saddlePoints_[sadid].a22,
+            g_VFResults.saddlePoints_[sadid].epsilon, g_VFResults.seps_[sepid],
+            g_VFResults.saddlePoints_[sadid].chart, vfindex);
     }
 }
 
+// ---------------------------------------------------------------------------
+//          cont_plot_saddle_sep
+// ---------------------------------------------------------------------------
+// Continuation of the plot is done via the standard integrate_sep method,
+// and no longer depends on the type of the singularity.
 void cont_plot_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     double p[3];
@@ -68,17 +75,19 @@ void cont_plot_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd)
     copy_x_into_y(g_VFResults.seps_[sepid].sep_points.back().pcoord, p);
 
     // compute next vector of points
-    auto nextpt =
-        integrate_sep(spherewnd, p, g_VFResults.config_currentstep_,
-                      g_VFResults.seps_[sepid].sep_points.back().dir,
-                      g_VFResults.seps_[sepid].sep_points.back().type,
-                      g_VFResults.config_intpoints_);
+    auto nextpt = integrate_sep(spherewnd, p, g_VFResults.config_currentstep_,
+                                g_VFResults.seps_[sepid].sep_points.back().dir,
+                                g_VFResults.seps_[sepid].sep_points.back().type,
+                                g_VFResults.config_intpoints_);
 
     // append computed points to existing vector
     auto &seppts{g_VFResults.seps_[sepid].sep_points};
     seppts.insert(seppts.end(), nextpt.begin(), nextpt.end());
 }
 
+// ---------------------------------------------------------------------------
+//          plot_next_saddle_sep
+// ---------------------------------------------------------------------------
 void plot_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 {
     int &sepid{g_VFResults.selectedSepIndex_};
@@ -88,14 +97,16 @@ void plot_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
     sepid++;
 
     if (sepid > g_VFResults.seps_.size()) {
-        g_VFResults.seps_ =
-            g_VFResults.saddlePoints_[sadid].separatrices;
+        g_VFResults.seps_ = g_VFResults.saddlePoints_[sadid].separatrices;
         sepid = 0;
     }
 
     start_plot_saddle_sep(spherewnd, vfindex);
 }
 
+// ---------------------------------------------------------------------------
+//          select_next_saddle_sep
+// ---------------------------------------------------------------------------
 void select_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     int &sepid{g_VFResults.selectedSepIndex_};
@@ -105,26 +116,28 @@ void select_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd)
     sepid++;
 
     if (sepid > g_VFResults.seps_[sepid].size()) {
-        g_VFResults.seps_ =
-            g_VFResults.saddlePoints_[sadid].separatrices;
+        g_VFResults.seps_ = g_VFResults.saddlePoints_[sadid].separatrices;
         sepid = 0;
     }
 
-    draw_selected_sep(
-        spherewnd, g_VFResults.seps_[sepid].sep_points.front(), CW_SEP);
+    draw_selected_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front(),
+                      CW_SEP);
 }
 
+// ---------------------------------------------------------------------------
+//          plot_all_saddle_sep
+// ---------------------------------------------------------------------------
 void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd,
                          std::vector<p4singularity::saddle> point)
 {
     std::vector<p4orbits::sep> sep1;
     double p[3];
 
-    for (auto it : point) {
-        if (!isARealSingularity(it.x0, it.y0, it.chart, vfindex))
+    for (auto it1 : point) {
+        if (!isARealSingularity(it1.x0, it1.y0, it1.chart, vfindex))
             continue;
-        if (point->notadummy) {
-            sep1 = it.separatrices;
+        if (it1.notadummy) {
+            sep1 = it1.separatrices;
             for (auto it2 = sep1.begin(); it2 != sep1.end(); ++it2) {
                 if (!it2->sep_points.empty()) {
                     copy_x_into_y(it2->sep_points.back().pcoord, p);
@@ -136,10 +149,26 @@ void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd,
                                            newpts.begin(), newpts.end());
                 } else {
                     it2->sep_points = plot_separatrice(
-                        spherewnd, it.x0, it.y0, it.a11, it.a12, it.a21, it.a22,
-                        it.epsilon, it, it.chart);
+                        spherewnd, it1.x0, it1.y0, it1.a11, it1.a12, it1.a21,
+                        it1.a22, it1.epsilon, it1, it1.chart);
                 }
             }
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+//          change_epsilon_saddle
+// ---------------------------------------------------------------------------
+void change_epsilon_saddle(std::shared_ptr<P4WinSphere> spherewnd,
+                           double epsilon)
+{
+    int sadid{g_VFResults.selectedSaddlePointIndex_};
+    p4blowup::sep &separatrice{g_VFResults.saddlePoints_[sadid].separatrices};
+    g_VFResults.saddlePoints_[sadid].epsilon = epsilon;
+    for (auto it : separatrice) {
+        draw_selected_sep(spherewnd, it.sep_points.back(),
+                          bgColours::CBACKGROUND);
+        it.sep_points.clear();
     }
 }
