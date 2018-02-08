@@ -34,7 +34,7 @@ void start_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
     int seid{g_VFResults.selectedSePointIndex_};
     p4orbits::orbits_points &points{g_VFResults.seps_[sepid].sep_points.back()};
 
-    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points);
 
     if (!points.empty()) {
         copy_x_into_y(points.pcoord, p);
@@ -94,7 +94,7 @@ void plot_next_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     int &sepid{g_VFResults.selectedSepIndex_};
     int seid{g_VFResults.selectedSePointIndex_};
-    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points);
     sepid++;
     if (sepid > g_VFResults.seps_.size()) {
         g_VFResults.seps_ = g_VFResults.sePoints_[seid].separatrices;
@@ -110,7 +110,7 @@ void select_next_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     int &sepid{g_VFResults.selectedSepIndex_};
     int seid{g_VFResults.selectedSePointIndex_};
-    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points);
     sepid++;
     if (sepid > g_VFResults.seps_[sepid].size()) {
         g_VFResults.seps_ = g_VFResults.sePoints_[seid].separatrices;

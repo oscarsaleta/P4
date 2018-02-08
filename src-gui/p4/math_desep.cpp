@@ -633,7 +633,7 @@ void plot_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
     int &desepid{g_VFResults.selectedDeSepIndex_};
     int depointid{g_VFResults.selectedDePointIndex_};
 
-    draw_sep(spherewnd, g_VFResults.deSeps_[desepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.deSeps_[desepid].sep_points);
 
     desepid++;
 
@@ -653,7 +653,7 @@ void select_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
     int &desepid{g_VFResults.selectedDeSepIndex_};
     int depointid{g_VFResults.selectedDePointIndex_};
 
-    draw_sep(spherewnd, g_VFResults.deSeps_[desepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.deSeps_[desepid].sep_points);
 
     desepid++;
 

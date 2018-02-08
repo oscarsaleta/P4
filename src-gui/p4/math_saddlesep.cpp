@@ -35,7 +35,7 @@ void start_plot_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
     p4orbits::orbits_points &last_sep_point{
         g_VFResults.seps_[sepid].sep_points.back()};
 
-    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points);
 
     if (!last_sep_point.empty()) {
         copy_x_into_y(last_sep_point.pcoord, p);
@@ -94,7 +94,7 @@ void plot_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 {
     int &sepid{g_VFResults.selectedSepIndex_};
     int sadid{g_VFResults.selectedSaddlePointIndex_};
-    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points);
 
     sepid++;
 
@@ -113,7 +113,7 @@ void select_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     int &sepid{g_VFResults.selectedSepIndex_};
     int sadid{g_VFResults.selectedSaddlePointIndex_};
-    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points.front());
+    draw_sep(spherewnd, g_VFResults.seps_[sepid].sep_points);
 
     sepid++;
 
