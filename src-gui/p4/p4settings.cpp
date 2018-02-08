@@ -50,7 +50,6 @@ QString getP4Path(void) { return s_Settings_p4path; }
 QString getP4TempPath(void) { return s_Settings_temppath; }
 QString getP4SumTablePath(void) { return s_Settings_sumtablepath; }
 QString getMapleExe(void) { return s_Settings_mapleexe; }
-// QString getReduceExe(void) { return s_Settings_reduceexe; }
 
 void setMathManipulator(QString s)
 {
@@ -92,14 +91,6 @@ void setMapleExe(QString s)
     }
 }
 
-/*void setReduceExe(QString s)
-{
-    if (s_Settings_reduceexe != s) {
-        s_Settings_reduceexe = s;
-        s_Settings_changed = true;
-    }
-}*/
-
 QString getP4MaplePath(void)
 {
     QString f, g;
@@ -114,25 +105,7 @@ QString getP4MaplePath(void)
 
 QString getMathManipulator(void) { return s_Settings_mathmanipulator; }
 
-int getMathPackage(void)
-{
-    // QString s;
-    // s = getMathManipulator().simplified().toLower();
-    // if (s == "maple")
-    return PACKAGE_MAPLE;
-    // else
-    //    return PACKAGE_REDUCE;
-}
-
-/*void setMathPackage(int pck)
-{
-    if (getMathPackage() != pck) {
-        if (pck == PACKAGE_MAPLE)
-            setMathManipulator("Maple");
-        else
-            setMathManipulator("Reduce");
-    }
-}*/
+int getMathPackage(void) { return PACKAGE_MAPLE; }
 
 QString getP4HelpPath(void)
 {
@@ -158,32 +131,14 @@ QString getP4BinPath(void)
     return g;
 }
 
-/*QString getP4ReducePath(void)
-{
-    QString f, g;
-
-    f = getP4Path();
-    if (f.isNull() == false) {
-        g = f;
-        g += QDir::separator();
-        g += "reduce";
-    }
-
-    return g;
-}*/
-
 // ------------------------------------------------------------------------------------------
 
 bool readP4Settings(void)
 {
-    QSettings *p4settings;
-    bool _ok;
-
-    p4settings = new QSettings();
+    std::unique_ptr<QSettings> p4settings{new QSettings()};
+    bool _ok{false};
 
     s_Settings_changed = false;
-
-    _ok = false;
 
     if (p4settings->value("/Version").toString() == g_p4Version) {
         _ok = true;
@@ -191,32 +146,19 @@ bool readP4Settings(void)
         s_Settings_sumtablepath = p4settings->value("/SumtablePath").toString();
         s_Settings_temppath = p4settings->value("/TempPath").toString();
         s_Settings_mapleexe = p4settings->value("/MapleExe").toString();
-        //#ifndef Q_OS_WIN
-        // s_Settings_reduceexe = p4settings->value("/ReduceExe").toString();
-        // s_Settings_mathmanipulator = p4settings->value("/Math").toString();
-        //#else
         s_Settings_mathmanipulator = "Maple";
-        //#endif
-        if (s_Settings_p4path == "" ||
-            (s_Settings_mapleexe == ""
-             /*#ifndef Q_OS_WIN
-                                                     && s_Settings_reduceexe ==
-             ""
-             #endif*/
-             )) {
+        if (s_Settings_p4path == "" || (s_Settings_mapleexe == "")) {
             _ok = false;
         }
     }
 
-    delete p4settings;
-    p4settings = nullptr;
+    p4settings.reset();
 
     if (!_ok) {
         s_Settings_p4path = getDefaultP4Path();
         s_Settings_sumtablepath = getDefaultP4SumTablePath();
         s_Settings_temppath = getDefaultP4TempPath();
         s_Settings_mapleexe = getDefaultMapleInstallation();
-        // s_Settings_reduceexe = getDefaultReduceInstallation();
         s_Settings_mathmanipulator = getDefaultMathManipulator();
         s_Settings_changed = true;
         return false;
@@ -227,12 +169,10 @@ bool readP4Settings(void)
 
 void saveP4Settings(void)
 {
-    QSettings *p4settings;
-
     if (s_Settings_changed == false)
         return;
 
-    p4settings = new QSettings();
+    std::unique_ptr<QSettings> p4settings{new QSettings()};
 
     p4settings->setValue("/Version", g_p4Version);
     p4settings->setValue("/BuildDate", g_p4VersionDate);
@@ -242,9 +182,7 @@ void saveP4Settings(void)
     p4settings->setValue("/MapleExe", getMapleExe());
 #ifndef Q_OS_WIN
     p4settings->setValue("/Math", getMathManipulator());
-// p4settings->setValue("/ReduceExe", getReduceExe());
 #endif
 
-    delete p4settings;
-    p4settings = nullptr;
+    p4settings.reset();
 }
