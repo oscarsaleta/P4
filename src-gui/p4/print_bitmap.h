@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PRINT_BITMAP_H
-#define PRINT_BITMAP_H
+#pragma once
+
+#include <memory>
 
 class QPainter;
 
 int printColorTable(int color);
-void prepareP4Printing(int w, int h, bool isblackwhite, QPainter *p4paint,
-                       int linewidth, int symbolwidth);
+void prepareP4Printing(int w, int h, bool isblackwhite,
+                       std::unique_ptr<QPainter> p4paint, int linewidth,
+                       int symbolwidth);
 void finishP4Printing(void);
-
-#endif // PRINT_BITMAP_H
