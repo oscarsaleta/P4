@@ -72,8 +72,8 @@ P4WinSphere **P4WinSphere::sm_SphereList = nullptr;
 
 // parameters x1,... are irrelevant if isZoom is false
 
-P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
-                       double y1, double x2, double y2)
+P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
+                         double x1, double y1, double x2, double y2)
     : QWidget(parent)
 {
     reverseYAxis_ = false;
@@ -275,7 +275,7 @@ static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart)
     return (QString)buf;
 }
 
-void P4WinSphere::setupPlot(void)
+void P4WinSphere::setupPlot()
 {
     struct P4POLYLINES *t;
     QPalette palette;
@@ -418,7 +418,7 @@ P4WinSphere::~P4WinSphere()
     }
 }
 
-void P4WinSphere::loadAnchorMap(void)
+void P4WinSphere::loadAnchorMap()
 {
     int x1_, y1_;
     int x2, y2;
@@ -503,7 +503,7 @@ void P4WinSphere::loadAnchorMap(void)
     }
 }
 
-void P4WinSphere::saveAnchorMap(void)
+void P4WinSphere::saveAnchorMap()
 {
     int x1_, y1_;
     int x2, y2;
@@ -576,7 +576,7 @@ void P4WinSphere::saveAnchorMap(void)
     update(x1_, y1_, aw, ah);
 }
 
-void P4WinSphere::adjustToNewSize(void)
+void P4WinSphere::adjustToNewSize()
 {
     double idealhd;
     double reqratio;
@@ -674,7 +674,7 @@ void P4WinSphere::adjustToNewSize(void)
     }
 }
 
-void P4WinSphere::refreshAfterResize(void)
+void P4WinSphere::refreshAfterResize()
 {
     if (refreshTimeout_ != nullptr) {
         delete refreshTimeout_;
@@ -750,7 +750,7 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
 }
 
 void P4WinSphere::markSelection(int x1_, int y1_, int x2, int y2,
-                               int selectiontype)
+                                int selectiontype)
 {
     int bx1, by1, bx2, by2;
 
@@ -1157,7 +1157,7 @@ bool P4WinSphere::getChartPos(int chart, double x0_, double y0_, double *pos)
     return true;
 }
 
-void P4WinSphere::updatePointSelection(void)
+void P4WinSphere::updatePointSelection()
 {
     if (selectingPointStep_ == 0) {
         selectingPointRadius_ = 0;
@@ -1589,7 +1589,7 @@ void P4WinSphere::plotPoint(p4singularity::semi_elementary p)
     }
 }
 
-void P4WinSphere::plotPoints(void)
+void P4WinSphere::plotPoints()
 {
     if (!g_VFResults.vf_.empty()) {
         for (int i = 0; i < g_ThisVF->numVF_; i++) {
@@ -1622,14 +1622,15 @@ void P4WinSphere::plotPointSeparatrices(std::vector<p4singularity::saddle> p)
         draw_sep(this, separatrice.sep_points);
 }
 
-void P4WinSphere::plotPointSeparatrices(std::vector<p4singularity::degenerate> p)
+void P4WinSphere::plotPointSeparatrices(
+    std::vector<p4singularity::degenerate> p)
 {
     for (auto blow_up : p) {
         draw_sep(this, blow_up.sep_points);
     }
 }
 
-void P4WinSphere::plotSeparatrices(void)
+void P4WinSphere::plotSeparatrices()
 {
     if (!g_VFResults.vf_.empty()) {
         for (int i = 0; i < g_ThisVF->numVF; i++) {
@@ -1643,13 +1644,13 @@ void P4WinSphere::plotSeparatrices(void)
     }
 }
 
-void P4WinSphere::plotGcf(void)
+void P4WinSphere::plotGcf()
 {
     for (auto it : g_VFResults.vf_)
         draw_gcf(this, it.gcf_points_, CSING, 1);
 }
 
-void P4WinSphere::plotCurve(void)
+void P4WinSphere::plotCurve()
 {
     std::vector<curves>::const_iterator it;
     for (it = g_VFResults.curve_vector_.begin();
@@ -1658,7 +1659,7 @@ void P4WinSphere::plotCurve(void)
     }
 }
 
-void P4WinSphere::drawIsoclines(void)
+void P4WinSphere::drawIsoclines()
 {
     std::vector<isoclines>::const_iterator it;
     for (it = g_VFResults.isocline_vector_.begin();
@@ -1671,50 +1672,36 @@ void P4WinSphere::drawIsoclines(void)
 //                          PLOT TOOLS
 // -----------------------------------------------------------------------
 
-P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
-                                        double b, bool dotted, double resa,
-                                        double resb)
+std::vector<P4POLYLINES> P4WinSphere::produceEllipse(double cx, double cy,
+                                                     double a, double b,
+                                                     bool dotted, double resa,
+                                                     double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output is
     // stored in a list of points that is dynamically allocated.
 
-    double theta, t1, t2, e, R, x, y, c, prevx, prevy;
-    bool d;
-    bool doton;
-    int dotcount;
-    P4POLYLINES *first;
-    P4POLYLINES *last;
+    double theta{0};
+    double t1, t2;
+    double e;
+    double R{(resa < resb) ? resa : resb};
+    double x, y, c;
+    double prevx{0.}, prevy{0.};
+    bool d{false}, doton{true};
+    int dotcount{0};
+    std::vector<P4POLYLINES> result;
 
-    prevx = prevy = 0;
-    dotcount = 0;
-    first = nullptr;
-    last = nullptr;
-
-    R = (resa < resb) ? resa : resb;
     if (R < 1.0)
         R = 1.0;  // protection
     e = 2 * acos(1.0 - 0.5 / R);
     if (R * sin(e) > 1.0)
         e = asin(1.0 / R);
 
-    theta = 0;
-
-    d = false;
-    doton = true;
-
-    //  FILE * fp;
-    //  fp = fopen( "C:\\test.txt", "wt" );
-
     while (theta < TWOPI) {
-        //        fprintf( fp, "%f\n", (float)theta );
-        //        fflush(fp);
         c = (x0_ - cx) / a;
         if (c > -1.0 && c < 1.0) {
             t1 = acos(c);
             t2 = TWOPI - t1;
             if (theta >= t1 && theta < t2) {
-                //                fprintf( fp, "A EXCL [%f %f]\n", (float)t1,
-                //                (float)t2 );
                 theta = t2 + e / 4;
                 d = false;
                 continue;
@@ -1725,15 +1712,11 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             t1 = acos(c);
             t2 = TWOPI - t1;
             if (theta < t1) {
-                //                fprintf( fp, "B EXCL [-infinity %f]\n",
-                //                (float)t1 );
                 theta = t1 + e / 4;
                 d = false;
                 continue;
             }
             if (theta >= t2) {
-                //                fprintf( fp, "C EXCL [%f, infinity]\n",
-                //                (float)t2 );
                 theta = TWOPI + e / 4;
                 d = false;
                 break;
@@ -1747,23 +1730,17 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
                 t2 = t1 + TWOPI;
                 t1 = PI - t1;
                 if (theta >= t1 && theta < t2) {
-                    //                    fprintf( fp, "D EXCL [%f %f]\n",
-                    //                    (float)t1, (float)t2 );
                     theta = t2 + e / 4;
                     d = false;
                     continue;
                 }
             } else {
                 if (theta < t1) {
-                    //                    fprintf( fp, "E EXCL [-infinity
-                    //                    %f]\n", (float)t1 );
                     theta = t1 + e / 4;
                     d = false;
                     continue;
                 }
                 if (theta >= t2) {
-                    //                    fprintf( fp, "F EXCL [%f,
-                    //                    infinity]\n",  (float)t2 );
                     theta = TWOPI + e / 4;
                     d = false;
                     break;
@@ -1778,23 +1755,17 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
                 t2 = t1 + TWOPI;
                 t1 = PI - t1;
                 if (theta < t1) {
-                    //                    fprintf( fp, "G EXCL [-infinity
-                    //                    %f]\n", (float)t1 );
                     theta = t1 + e / 4;
                     d = false;
                     continue;
                 }
                 if (theta >= t2) {
-                    //                    fprintf( fp, "H EXCL [%f,
-                    //                    infinity]\n",  (float)t2 );
                     theta = TWOPI;
                     d = false;
                     break;
                 }
             } else {
                 if (theta >= t1 && theta < t2) {
-                    //                    fprintf( fp, "I EXCL [%f %f]\n",
-                    //                    (float)t1, (float)t2 );
                     theta = t2 + e / 4;
                     d = false;
                     continue;
@@ -1824,20 +1795,7 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             }
         } else {
             if (doton) {
-                if (first == nullptr) {
-                    last = first = new P4POLYLINES;
-                    last->next = nullptr;
-                } else {
-                    last->next = new P4POLYLINES;
-                    last = last->next;
-                    last->next = nullptr;
-                }
-
-                last->x1 = prevx;
-                last->y1 = prevy;
-                last->x2 = x;
-                last->y2 = y;
-
+                result.push_back(P4POLYLINES(x1, y1, x2, y2));
                 prevx = x;
                 prevy = y;
             }
@@ -1848,54 +1806,43 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             }
         }
     }
-    //  fclose(fp);
-    return first;
+    return result;
 }
 
-void P4WinSphere::plotPoincareSphere(void)
+void P4WinSphere::plotPoincareSphere()
 {
-    int color;
-    P4POLYLINES *p;
-
-    p = circleAtInfinity_;
-    color = g_VFResults.singinf_ ? CSING : CLINEATINFINITY;
+    std::vector<P4POLYLINES> &p{circleAtInfinity_};
+    int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    while (p != nullptr) {
-        staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                 coWinY(p->y2));
-        p = p->next;
+    for (auto it : p) {
+        staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
+                                 coWinY(it.y2));
     }
 }
 
-void P4WinSphere::plotPoincareLyapunovSphere(void)
+void P4WinSphere::plotPoincareLyapunovSphere()
 {
-    int color;
-    P4POLYLINES *p;
-
-    p = circleAtInfinity_;
-    color = g_VFResults.singinf_ ? CSING : CLINEATINFINITY;
+    std::vector<P4POLYLINES> &p{circleAtInfinity_};
+    int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    while (p != nullptr) {
-        staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                 coWinY(p->y2));
-        p = p->next;
+    for (auto it : p) {
+        staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
+                                 coWinY(it.y2));
     }
 
-    p = plCircle_;
+    std::vector<P4POLYLINES> &p2{plCircle_};
     color = CLINEATINFINITY;
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    while (p != nullptr) {
-        staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                 coWinY(p->y2));
-        p = p->next;
+    for (auto it : p2) {
+        staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
+                                 coWinY(it.y2));
     }
-    return;
 }
 
-void P4WinSphere::plotLineAtInfinity(void)
+void P4WinSphere::plotLineAtInfinity()
 {
     switch (g_VFResults.typeofview_) {
     case TYPEOFVIEW_U1:
@@ -1913,14 +1860,14 @@ void P4WinSphere::plotLineAtInfinity(void)
         }
 
         break;
-    case TYPEOFVIEW_PLANE:
-    case TYPEOFVIEW_SPHERE:
-        // should not appear
+    default:
+        // other cases should not appear
         break;
     }
 }
 
-void P4WinSphere::drawLine(double x1, double y1, double x2, double y2, int color)
+void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
+                           int color)
 {
     int wx1, wy1, wx2, wy2;
 
@@ -2203,7 +2150,7 @@ void P4WinSphere::printPoint(struct semi_elementary *p)
     }
 }
 
-void P4WinSphere::printPoints(void)
+void P4WinSphere::printPoints()
 {
     struct saddle *sp;
     struct node *np;
@@ -2267,7 +2214,7 @@ void P4WinSphere::printPointSeparatrices(struct degenerate *p)
     }
 }
 
-void P4WinSphere::printSeparatrices(void)
+void P4WinSphere::printSeparatrices()
 {
     QString comment;
     struct saddle *sp;
@@ -2293,7 +2240,7 @@ void P4WinSphere::printSeparatrices(void)
     }
 }
 
-void P4WinSphere::printGcf(void)
+void P4WinSphere::printGcf()
 {
     QString comment;
 
@@ -2304,7 +2251,7 @@ void P4WinSphere::printGcf(void)
     }
 }
 
-void P4WinSphere::printCurve(void)
+void P4WinSphere::printCurve()
 {
     QString comment;
     std::vector<curves>::const_iterator it;
@@ -2319,7 +2266,7 @@ void P4WinSphere::printCurve(void)
     }
 }
 
-void P4WinSphere::printIsoclines(void)
+void P4WinSphere::printIsoclines()
 {
     QString comment;
 
@@ -2335,7 +2282,7 @@ void P4WinSphere::printIsoclines(void)
     }
 }
 
-void P4WinSphere::printPoincareSphere(void)
+void P4WinSphere::printPoincareSphere()
 {
     QString comment;
     struct P4POLYLINES *p;
@@ -2361,7 +2308,7 @@ void P4WinSphere::printPoincareSphere(void)
     }
 }
 
-void P4WinSphere::printPoincareLyapunovSphere(void)
+void P4WinSphere::printPoincareLyapunovSphere()
 {
     QString comment;
     struct P4POLYLINES *p;
@@ -2411,7 +2358,7 @@ void P4WinSphere::printPoincareLyapunovSphere(void)
     }
 }
 
-void P4WinSphere::printLineAtInfinity(void)
+void P4WinSphere::printLineAtInfinity()
 {
     switch (g_VFResults.typeofview_) {
     case TYPEOFVIEW_U1:
@@ -2433,7 +2380,7 @@ void P4WinSphere::printLineAtInfinity(void)
     }
 }
 
-void P4WinSphere::printOrbits(void)
+void P4WinSphere::printOrbits()
 {
     // inspired by DrawOrbits, except that we put comments between
 
@@ -2450,7 +2397,7 @@ void P4WinSphere::printOrbits(void)
     }
 }
 
-void P4WinSphere::printLimitCycles(void)
+void P4WinSphere::printLimitCycles()
 {
     // inspired by DrawOrbits, except that we put comments between
 
@@ -2468,7 +2415,7 @@ void P4WinSphere::printLimitCycles(void)
 }
 
 void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
-                           int color)
+                            int color)
 {
     int wx1, wy1, wx2, wy2;
 
@@ -2527,15 +2474,15 @@ void P4WinSphere::printPoint(double x, double y, int color)
     print_point(coWinX(x), coWinY(y), color);
 }
 
-void P4WinSphere::refresh(void)
+void P4WinSphere::refresh()
 {
     isPainterCacheDirty_ = true;
     update();
 }
 
 void P4WinSphere::calculateHeightFromWidth(int *width, int *height,
-                                          int maxheight = -1,
-                                          double aspectratio = 1)
+                                           int maxheight = -1,
+                                           double aspectratio = 1)
 {
     // given an optimal width in *width, this procedure calculates the
     // corresponding height in order to maintain the given aspectratio
@@ -2564,8 +2511,8 @@ void P4WinSphere::calculateHeightFromWidth(int *width, int *height,
 }
 
 void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
-                                 int myresolution, double mylinewidth,
-                                 double mysymbolsize)
+                                  int myresolution, double mylinewidth,
+                                  double mysymbolsize)
 {
     double aspectratio, lw, ss, hpixels, maxvpixels, pagewidth, pageheight, tx,
         ty;
@@ -2716,7 +2663,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     msgBar_->showMessage("Printing ...");
 }
 
-void P4WinSphere::finishPrinting(void)
+void P4WinSphere::finishPrinting()
 {
     if (printMethod_ == P4PRINT_EPSIMAGE) {
         finishPostscriptPrinting();
@@ -2767,7 +2714,7 @@ void P4WinSphere::finishPrinting(void)
     msgBar_->showMessage("Printing has finished.");
 }
 
-void P4WinSphere::print(void)
+void P4WinSphere::print()
 {
     if (printMethod_ == P4PRINT_JPEGIMAGE && s_p4pixmap == nullptr)
         return;
@@ -2832,7 +2779,7 @@ void P4WinSphere::finishDrawing()
     }
 }
 
-void P4WinSphere::signalEvaluating(void)
+void P4WinSphere::signalEvaluating()
 {
     /*
         QPalette palette;
@@ -2842,7 +2789,7 @@ void P4WinSphere::signalEvaluating(void)
     */
 }
 
-void P4WinSphere::signalChanged(void)
+void P4WinSphere::signalChanged()
 {
     /*
         QPalette palette;
@@ -2850,4 +2797,37 @@ void P4WinSphere::signalChanged(void)
        );
         setPalette(palette);
     */
+}
+
+void P4WinSphere::plotSeparatringCurves()
+{
+    bool dashes;
+    double pcoord[3];
+    p4orbits::orbits_points sep;
+
+    if (g_VFResults.curves_result_.empty())
+        return;
+
+    for (int k = 0; k < g_ThisVF->numCurves_; k++) {
+        dashes = true;
+        sep = g_VFResults.curves_result_[k].sep_points;
+        for (auto it = sep.begin(); it != sep.eng(); ++it) {
+            if (it->color == CSEPCURVE) {
+                if (it->dashes && dashes)
+                    (*plot_l)(this, pcoord, it->pcoord, it->color);
+                else {
+                    if (it + 1 == sep.end())
+                        (*plot_p)(this, it->pcoord, it->color);
+                    else if ((it + 1)->dashes || (it + 1)->color == CSEPCURVE ||
+                             dashes)
+                        // draw nothing when the next point is a dash
+                        (*plot_p)(this, it->pcoord, it->color);
+                }
+                dashes = true;
+            } else {
+                dashes = false;
+            }
+            copy_x_into_y(it->pcoord, pcoord);
+        }
+    }
 }

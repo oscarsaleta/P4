@@ -105,7 +105,7 @@ class P4WinSphere : public QWidget
     void plotPointSeparatrices(std::vector<p4singularities::degenerate> p);
     void plotPoints();
     void plotSeparatrices();
-    void plotSeparatingCurves(); // FIXME new in p5
+    void plotSeparatingCurves();
     void plotGcf();
     void plotCurve();
     void drawIsoclines();
