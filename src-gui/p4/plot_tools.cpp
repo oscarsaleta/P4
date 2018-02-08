@@ -25,8 +25,8 @@
 
 #include <cmath>
 
-void (*plot_l)(QWinSphere *, double *, double *, int) = nullptr;
-void (*plot_p)(QWinSphere *, double *, int) = nullptr;
+void (*plot_l)(std::shared_ptr<P4WinSphere>, double *, double *, int) = nullptr;
+void (*plot_p)(std::shared_ptr<P4WinSphere>, double *, int) = nullptr;
 
 /*
 void plotEllipse( QPainter * p, int cx, int cy, int a, int b, int color, bool
@@ -54,7 +54,8 @@ WHEN ZOOMING
 }
 */
 
-void spherePlotLine(QWinSphere *sp, double *p1, double *p2, int color)
+void spherePlotLine(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p1,
+                    double *p2, int color)
 {
     double ucoord1[2];
     double ucoord2[2];
@@ -63,32 +64,31 @@ void spherePlotLine(QWinSphere *sp, double *p1, double *p2, int color)
 
     if (MATHFUNC(sphere_to_viewcoordpair)(p1, p2, ucoord1, ucoord2, ucoord3,
                                           ucoord4)) {
-        while (sp != nullptr) {
-            sp->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
-            sp = sp->next_;
+        for (auto it : sp) {
+            it->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
         }
     } else {
-        while (sp != nullptr) {
-            sp->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
-            sp->drawLine(ucoord3[0], ucoord3[1], ucoord4[0], ucoord4[1], color);
-            sp = sp->next_;
+        for (auto it : sp) {
+            it->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
+            it->drawLine(ucoord3[0], ucoord3[1], ucoord4[0], ucoord4[1], color);
         }
     }
 }
 
-void spherePlotPoint(QWinSphere *sp, double *p, int color)
+void spherePlotPoint(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p,
+                     int color)
 {
     double ucoord[2];
 
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], ucoord);
 
-    while (sp != nullptr) {
-        sp->drawPoint(ucoord[0], ucoord[1], color);
-        sp = sp->next_;
+    for (auto it : sp) {
+        it->drawPoint(ucoord[0], ucoord[1], color);
     }
 }
 
-void spherePrintLine(QWinSphere *sp, double *p1, double *p2, int color)
+void spherePrintLine(std::shared_ptr<P4WinSphere> sp, double *p1, double *p2,
+                     int color)
 {
     double ucoord1[2];
     double ucoord2[2];
@@ -104,7 +104,7 @@ void spherePrintLine(QWinSphere *sp, double *p1, double *p2, int color)
     }
 }
 
-void spherePrintPoint(QWinSphere *sp, double *p, int color)
+void spherePrintPoint(std::shared_ptr<P4WinSphere> sp, double *p, int color)
 {
     double ucoord[2];
 
@@ -114,14 +114,11 @@ void spherePrintPoint(QWinSphere *sp, double *p, int color)
 }
 
 // Intersects a line with a rectangle.  Changes the coordinates so that both
-// endpoints
-// are the endpoints of the visible part of the line.  Returns false if there is
-// no visible
-// part.
+// endpoints are the endpoints of the visible part of the line.  Returns false
+// if there is no visible part.
 //
 // The rectangle is given by [xmin,xmax] and [ymin,ymax], whereas the line is
-// given by
-// the two end points (x1,y1), (x2,y2).
+// given by the two end points (x1,y1), (x2,y2).
 
 bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
                             double xmin, double xmax, double ymin, double ymax)
@@ -137,7 +134,6 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
         (y1 < ymin && y2 < ymin) || (y1 > ymax && y2 > ymax)) {
         // early out when it is easily seen that the line does not cut the
         // window:
-
         return false;
     }
 
@@ -147,7 +143,6 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
     if (fabs(dx) < fabs(dy)) {
         if (fabs(dy) == 0)
             return false;
-
         return lineRectangleIntersect(y1, x1, y2, x2, ymin, ymax, xmin, xmax);
     }
 
@@ -171,14 +166,14 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
 
     if (dy > 0) {
         if (y1 > ymax)
-            return false; // y will be increasing, and is already too large
+            return false;  // y will be increasing, and is already too large
         if (y1 < ymin) {
             if (y2 + (dy / dx) / (xmax - x2) < ymin)
-                return false; // y is increasing, but will never reach ymin
-                              // quickly enough for x in [xmin,xmax].
+                return false;  // y is increasing, but will never reach ymin
+                               // quickly enough for x in [xmin,xmax].
 
             y1 = ymin;
-            x1 = x2 + dx / dy * (ymin - y2); // calculate intersection point.
+            x1 = x2 + dx / dy * (ymin - y2);  // calculate intersection point.
         }
     } else {
         if (y1 < ymin)
@@ -205,7 +200,7 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
     if (dy < 0) {
         if (y2 < ymin) {
             y2 = ymin;
-            x2 = x1 + dx / dy * (ymin - y1); // calculate intersection point.
+            x2 = x1 + dx / dy * (ymin - y1);  // calculate intersection point.
         }
     } else {
         if (y2 > ymax) {
