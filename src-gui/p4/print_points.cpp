@@ -34,7 +34,7 @@ void (*print_seunstablenode)(double, double) = nullptr;
 void (*print_degen)(double, double) = nullptr;
 void (*print_center)(double, double) = nullptr;
 void (*print_elips)(double, double, double, double, int, bool,
-                    struct P4POLYLINES *) = nullptr;
+                    std::vector<P4POLYLINES>) = nullptr;
 void (*print_line)(double, double, double, double, int) = nullptr;
 void (*print_point)(double, double, int) = nullptr;
 void (*print_comment)(QString) = nullptr;

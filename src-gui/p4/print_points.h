@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PRINT_POINTS_H
-#define PRINT_POINTS_H
+#pragma once
 
 class QString;
 struct P4POLYLINES;
@@ -38,9 +37,7 @@ extern void (*print_seunstablenode)(double, double);
 extern void (*print_degen)(double, double);
 extern void (*print_center)(double, double);
 extern void (*print_elips)(double, double, double, double, int, bool,
-                           P4POLYLINES *);
+                           std::vector<P4POLYLINES>);
 extern void (*print_line)(double, double, double, double, int);
 extern void (*print_point)(double, double, int);
 extern void (*print_comment)(QString);
-
-#endif // PRINT_POINTS_H
