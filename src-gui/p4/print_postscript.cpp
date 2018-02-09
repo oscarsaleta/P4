@@ -596,6 +596,29 @@ static void ps_print_virtualdegen(double x, double y)
     }
 }
 
+static void ps_print_coinciding(double x, double y)
+{
+    if (s_PSFILE) {
+        QString s;
+        if (s_PSBlackWhitePrint) {
+            s_lastpscolor = bgColours::CFOREGROUND;
+            s.printf(
+                "LW 1.3 mul setlinewidth\n"
+                "col%d %f %f doublecross\n"
+                "LW setlinewidth\n",
+                printColorTable(bgColours::CFOREGROUND), (float)x, (float)y)
+        } else {
+            s_lastpscolor = CDEGEN;
+            s.printf(
+                "LW 1.3 mul setlinewidth\n"
+                "col%d %f %f doublecross\n"
+                "LW setlinewidth\n",
+                printColorTable(CDEGEN), (float)x, (float)y)
+        }
+        s_PSFileStream << s;
+    }
+}
+
 static void ps_print_elips(double x0, double y0, double a, double b, int color,
                            bool dotted, std::vector<P4POLYLINES> ellipse)
 {
