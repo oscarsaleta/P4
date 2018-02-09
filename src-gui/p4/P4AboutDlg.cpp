@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_about.h"
+#include "P4AboutDlg.h"
 
 #include "main.h"
 #include "p4settings.h"
@@ -37,11 +37,11 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // define controls
 
-    if (g_p4smallicon != nullptr)
+    if (g_p4smallicon)
         setWindowIcon(*g_p4smallicon);
 
-    btn_ok_ = new QPushButton("&Ok");
-    btn_settings_ = new QPushButton("&Main Settings");
+    btn_ok_.reset(new QPushButton("&Ok"));
+    btn_settings_.reset(new QPushButton("&Main Settings"));
 
 #ifdef TOOLTIPS
     btn_ok_->setToolTip("Go back to program");
@@ -50,9 +50,9 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // define placement of controls
 
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
+    mainLayout_.reset{new QBoxLayout(QBoxLayout::TopToBottom)};
 
-    QGridLayout *lay00 = new QGridLayout();
+    std::unique_ptr<QGridLayout> lay00(new QGridLayout());
     lay00->addWidget(new QLabel("P4 (Planar Polynomial Phase Portraits) by"), 0,
                      1);
     lay00->addWidget(new QLabel(""), 1, 1);
@@ -81,15 +81,14 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     lay00->addWidget(new QLabel(versionstr), 10, 1);
 
-    QLabel *l;
-    l = new QLabel("(missing image)");
+    std::unique_ptr<QLabel> l{new QLabel("(missing image)"});
     if (p4image_.load(getP4BinPath() + "/portrait.png"))
         l->setPixmap(p4image_);
 
     lay00->addWidget(l, 0, 0, 10, 1);
 
     mainLayout_->addLayout(lay00);
-    QHBoxLayout *buttons = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> buttons{new QHBoxLayout()};
     buttons->addStretch(1);
     buttons->addWidget(btn_ok_);
     buttons->addStretch(0);
@@ -98,9 +97,9 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     setLayout(mainLayout_);
 
     // connections
-
-    connect(btn_ok_, &QPushButton::clicked, this, &P4AboutDlg::onOk);
-    connect(btn_settings_, &QPushButton::clicked, this,
+    // TODO: check if i can use the smart pointer directly 
+    connect(btn_ok_.get(), &QPushButton::clicked, this, &P4AboutDlg::onOk);
+    connect(btn_settings_.get(), &QPushButton::clicked, this,
             &P4AboutDlg::onSettings);
 
     btn_ok_->setFocus();
@@ -113,11 +112,9 @@ void P4AboutDlg::onOk(void) { done(0); }
 void P4AboutDlg::onSettings(void)
 {
     int value;
-    QSettingsDlg *psettings;
-    psettings = new QSettingsDlg(this, 0);
+    std::unique_ptr<QSettingsDlg> psettings{new QSettingsDlg(this, 0)};
     value = psettings->exec();
-    delete psettings;
-    psettings = nullptr;
+    psettings.reset();
     if (value)
         done(0);
 }
