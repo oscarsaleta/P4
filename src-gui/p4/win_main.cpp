@@ -42,14 +42,15 @@
 #include <QTextStream>
  #include <QCloseEvent>
 
-QStartDlg *g_p4stardlg = nullptr;
+std::unique_ptr<P4StartDlg> g_p4StartDlg();
+
 // initialise background colors
 int bgColours::CBACKGROUND = BLACK;
 int bgColours::CFOREGROUND = WHITE;
 int bgColours::CORBIT = YELLOW;
 bool bgColours::PRINT_WHITE_BG = true;
 
-QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
+P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget()
 {
     // general initialization
 
@@ -122,25 +123,25 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
 
     QAction *ActFin = new QAction("Fini&te", this);
     ActFin->setShortcut(Qt::ALT + Qt::Key_T);
-    connect(ActFin, &QAction::triggered, this, &QStartDlg::onViewFinite);
+    connect(ActFin, &QAction::triggered, this, &P4StartDlg::onViewFinite);
     viewMenu_->addAction(ActFin);
 
     QAction *ActInf = new QAction("&Infinite", this);
     ActInf->setShortcut(Qt::ALT + Qt::Key_I);
-    connect(ActInf, &QAction::triggered, this, &QStartDlg::onViewInfinite);
+    connect(ActInf, &QAction::triggered, this, &P4StartDlg::onViewInfinite);
     viewMenu_->addAction(ActInf);
 
     btn_view_->setMenu(viewMenu_);
 
-    connect(btn_quit_, &QPushButton::clicked, this, &QStartDlg::onQuit);
-    connect(btn_plot_, &QPushButton::clicked, this, &QStartDlg::onPlot);
-    connect(btn_help_, &QPushButton::clicked, this, &QStartDlg::onHelp);
-    connect(btn_about_, &QPushButton::clicked, this, &QStartDlg::onAbout);
-    connect(btn_browse_, &QPushButton::clicked, this, &QStartDlg::onBrowse);
+    connect(btn_quit_, &QPushButton::clicked, this, &P4StartDlg::onQuit);
+    connect(btn_plot_, &QPushButton::clicked, this, &P4StartDlg::onPlot);
+    connect(btn_help_, &QPushButton::clicked, this, &P4StartDlg::onHelp);
+    connect(btn_about_, &QPushButton::clicked, this, &P4StartDlg::onAbout);
+    connect(btn_browse_, &QPushButton::clicked, this, &P4StartDlg::onBrowse);
     connect(edt_name_, &QLineEdit::textChanged, this,
-            &QStartDlg::onFilenameChange);
-    connect(g_ThisVF, &QInputVF::saveSignal, this, &QStartDlg::onSaveSignal);
-    connect(g_ThisVF, &QInputVF::loadSignal, this, &QStartDlg::onLoadSignal);
+            &P4StartDlg::onFilenameChange);
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &P4StartDlg::onSaveSignal);
+    connect(g_ThisVF, &QInputVF::loadSignal, this, &P4StartDlg::onLoadSignal);
 
     // setting focus
 
@@ -168,17 +169,17 @@ QStartDlg::QStartDlg(const QString &autofilename) : QWidget()
         delete findWindow_;
         findWindow_ = nullptr;
         // connect(findWindow_, &QFindDlg::saveStateSignal, this,
-        //        &QStartDlg::saveSettings);
+        //        &P4StartDlg::saveSettings);
     }
 
     setP4WindowTitle(this, cap);
 }
 
-void QStartDlg::onSaveSignal()
+void P4StartDlg::onSaveSignal()
 {
     QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
-    settings.beginGroup("QStartDlg");
+    settings.beginGroup("P4StartDlg");
 
     settings.setValue("pos", pos());
     settings.setValue("size", size());
@@ -215,11 +216,11 @@ void QStartDlg::onSaveSignal()
     settings.endGroup();
 }
 
-void QStartDlg::onLoadSignal()
+void P4StartDlg::onLoadSignal()
 {
     QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
-    settings.beginGroup("QStartDlg");
+    settings.beginGroup("P4StartDlg");
     // check if there is configuration in this file
     if (settings.contains("size")) {
         resize(settings.value("size").toSize());
@@ -271,7 +272,7 @@ void QStartDlg::onLoadSignal()
     settings.endGroup();
 }
 
-void QStartDlg::onHelp()
+void P4StartDlg::onHelp()
 {
     // display help
     QTextBrowser *hlp;
@@ -313,7 +314,7 @@ void QStartDlg::onHelp()
     helpWindow_ = hlp;
 }
 
-void QStartDlg::onPlot()
+void P4StartDlg::onPlot()
 {
     // show plot window
 
@@ -352,7 +353,7 @@ void QStartDlg::onPlot()
     plotWindow_->adjustHeight();
 }
 
-void QStartDlg::onQuit()
+void P4StartDlg::onQuit()
 {
     if (plotWindow_ != nullptr) {
         delete plotWindow_;
@@ -383,12 +384,12 @@ void QStartDlg::onQuit()
     close();
 }
 
-void QStartDlg::onFilenameChange(const QString &fname)
+void P4StartDlg::onFilenameChange(const QString &fname)
 {
     g_ThisVF->filename_ = fname;
 }
 
-void QStartDlg::signalEvaluating()
+void P4StartDlg::signalEvaluating()
 {
     // disable view button, disable plot button:
 
@@ -407,7 +408,7 @@ void QStartDlg::signalEvaluating()
         plotWindow_->signalEvaluating();
 }
 
-void QStartDlg::signalEvaluated()
+void P4StartDlg::signalEvaluated()
 {
     // enable view button, disable plot button:
 
@@ -497,17 +498,17 @@ void QStartDlg::signalEvaluated()
         signalChanged();
 }
 
-void QStartDlg::signalSaved()
+void P4StartDlg::signalSaved()
 {
     //
 }
 
-void QStartDlg::signalLoaded()
+void P4StartDlg::signalLoaded()
 {
     //
 }
 
-void QStartDlg::signalChanged()
+void P4StartDlg::signalChanged()
 {
     if (viewFiniteWindow_ != nullptr) {
         viewFiniteWindow_->setFont(*(g_p4app->courierFont_));
@@ -521,7 +522,7 @@ void QStartDlg::signalChanged()
     }
 }
 
-void QStartDlg::onBrowse()
+void P4StartDlg::onBrowse()
 {
     QString result;
 
@@ -535,16 +536,16 @@ void QStartDlg::onBrowse()
     }
 }
 
-void QStartDlg::onAbout()
+void P4StartDlg::onAbout()
 {
-    QP4AboutDlg *pdlg;
-    pdlg = new QP4AboutDlg(this, 0);
+    P4AboutDlg *pdlg;
+    pdlg = new P4AboutDlg(this, 0);
     pdlg->exec();
     delete pdlg;
     pdlg = nullptr;
 }
 
-void QStartDlg::onViewFinite()
+void P4StartDlg::onViewFinite()
 {
     // display help
 
@@ -580,7 +581,7 @@ void QStartDlg::onViewFinite()
     }
 }
 
-void QStartDlg::onViewInfinite()
+void P4StartDlg::onViewInfinite()
 {
     QString fname;
 
@@ -614,7 +615,7 @@ void QStartDlg::onViewInfinite()
     }
 }
 
-QWidget *QStartDlg::showText(QWidget *win, QString caption, QString fname)
+QWidget *P4StartDlg::showText(QWidget *win, QString caption, QString fname)
 {
     bool shown;
     QTextEdit *result;
@@ -667,7 +668,7 @@ QWidget *QStartDlg::showText(QWidget *win, QString caption, QString fname)
     return result;
 }
 
-void QStartDlg::closeEvent(QCloseEvent *ce)
+void P4StartDlg::closeEvent(QCloseEvent *ce)
 {
     int result;
 
@@ -711,7 +712,7 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
     }
 }
 
-void QStartDlg::customEvent(QEvent *e)
+void P4StartDlg::customEvent(QEvent *e)
 {
     switch ((int)(e->type())) {
     case TYPE_SIGNAL_EVALUATING:
@@ -740,7 +741,7 @@ void QStartDlg::customEvent(QEvent *e)
     }
 }
 
-/*void QStartDlg::saveSettings()
+/*void P4StartDlg::saveSettings()
 {
     QString settingsName = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(settingsName, QSettings::NativeFormat);
@@ -748,7 +749,7 @@ void QStartDlg::customEvent(QEvent *e)
     settings.setValue("state", saveState());
 }*/
 
-/*void QStartDlg::readSettings()
+/*void P4StartDlg::readSettings()
 {
     QString settingsName = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(settingsName, QSettings::NativeFormat);

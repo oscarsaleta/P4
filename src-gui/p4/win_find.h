@@ -24,7 +24,7 @@
 
 class QParamsDlg;
 class QVectorFieldDlg;
-class QStartDlg;
+class P4StartDlg;
 
 class QBoxLayout;
 class QPushButton;
@@ -35,12 +35,12 @@ class QFindDlg : public QWidget
     Q_OBJECT
 
   public:
-    QFindDlg(QStartDlg *startwindow);
+    QFindDlg(P4StartDlg *startwindow);
     ~QFindDlg();
     void getDataFromDlg();
 
   private:
-    QStartDlg *parent_;
+    P4StartDlg *parent_;
 
     QBoxLayout *mainLayout_;
     QBoxLayout *superLayout_;

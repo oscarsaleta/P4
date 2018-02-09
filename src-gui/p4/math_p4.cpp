@@ -73,9 +73,9 @@ void set_current_step(double curstep)
 {
     g_VFResults.config_currentstep_ = curstep;
 
-    if (g_p4stardlg && g_p4stardlg->plotWindow_ &&
-        g_p4stardlg->plotWindow_->intParamsWindow_)
-        g_p4stardlg->plotWindow_->intParamsWindow_->setCurrentStep(curstep);
+    if (g_p4StartDlg && g_p4StartDlg->plotWindow_ &&
+        g_p4StartDlg->plotWindow_->intParamsWindow_)
+        g_p4StartDlg->plotWindow_->intParamsWindow_->setCurrentStep(curstep);
 }
 
 void rplane_plsphere0(double x, double y, double *pcoord)

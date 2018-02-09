@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_ABOUT_H
-#define WIN_ABOUT_H
+#pragma once
 
 #include <QDialog>
 #include <QPixmap>
@@ -27,7 +26,7 @@ class QBoxLayout;
 class QPushButton;
 class QWidget;
 
-class QP4AboutDlg : public QDialog
+class P4AboutDlg : public QDialog
 {
     Q_OBJECT
 
@@ -39,11 +38,9 @@ class QP4AboutDlg : public QDialog
     QPixmap p4image_;
 
   public:
-    QP4AboutDlg(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    P4AboutDlg(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
   public slots:
     void onOk(void);
     void onSettings(void);
 };
-
-#endif /* WIN_ABOUT_H */

@@ -20,6 +20,8 @@
 #ifndef WIN_MAIN_H
 #define WIN_MAIN_H
 
+#include <memory>
+
 #include <QWidget>
 
 class QPlotWnd;
@@ -53,15 +55,15 @@ struct DOUBLEPOINT {
 };
 
 // class defined in win_main.cpp
-class QStartDlg : public QWidget
+class P4StartDlg : public QWidget
 {
     Q_OBJECT
 
-  public:
-    QStartDlg(const QString &);
+   public:
+    P4StartDlg(const QString &);
 
-    QFindDlg *findWindow_;
-    QPlotWnd *plotWindow_;
+    std::unique_ptr<QFindDlg> findWindow_;
+    std::unique_ptr<QPlotWnd> plotWindow_;
 
     void closeEvent(QCloseEvent *ce);
 
@@ -75,7 +77,7 @@ class QStartDlg : public QWidget
 
     void customEvent(QEvent *e);
 
-  public slots:
+   public slots:
     // following slots are called by QT when a button is pressed or a file name
     // is changed:
     void onQuit();
@@ -90,23 +92,23 @@ class QStartDlg : public QWidget
     void onSaveSignal();
     void onLoadSignal();
 
-  private:
-    QBoxLayout *mainLayout_;
-    QPushButton *btn_quit_;
-    QPushButton *btn_find_;
-    QPushButton *btn_view_;
-    QPushButton *btn_plot_;
-    QPushButton *btn_help_;
-    QPushButton *btn_about_;
-    QPushButton *btn_browse_;
-    QLineEdit *edt_name_;
-    QMenu *viewMenu_;
+   private:
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QPushButton> btn_quit_;
+    std::unique_ptr<QPushButton> btn_find_;
+    std::unique_ptr<QPushButton> btn_view_;
+    std::unique_ptr<QPushButton> btn_plot_;
+    std::unique_ptr<QPushButton> btn_help_;
+    std::unique_ptr<QPushButton> btn_about_;
+    std::unique_ptr<QPushButton> btn_browse_;
+    std::unique_ptr<QLineEdit> edt_name_;
+    std::unique_ptr<QMenu> viewMenu_;
 
-    QWidget *helpWindow_;
-    QWidget *viewInfiniteWindow_;
-    QWidget *viewFiniteWindow_;
+    std::unique_ptr<QWidget> helpWindow_;
+    std::unique_ptr<QWidget> viewInfiniteWindow_;
+    std::unique_ptr<QWidget> viewFiniteWindow_;
 };
 
-extern QStartDlg *g_p4stardlg;
+extern std::unique_ptr<P4StartDlg> g_p4StartDlg;
 
 #endif /* WIN_MAIN_H */

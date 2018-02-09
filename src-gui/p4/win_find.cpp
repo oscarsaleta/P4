@@ -51,7 +51,7 @@ QFindDlg::~QFindDlg()
     }
 }
 
-QFindDlg::QFindDlg(QStartDlg *startdlg) : QWidget(startdlg)
+QFindDlg::QFindDlg(P4StartDlg *startdlg) : QWidget(startdlg)
 
 {
     parent_ = startdlg;

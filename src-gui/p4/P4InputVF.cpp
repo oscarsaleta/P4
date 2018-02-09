@@ -2090,7 +2090,7 @@ void P4InputVF::finishEvaluation(int exitCode)
         //      processText_->hide();
         if (processText_->isActiveWindow()) {
             if (!evaluatingGcf_)
-                g_p4stardlg->activateWindow();
+                g_p4StartDlg->activateWindow();
             else {
                 if (gcfDlg != nullptr)
                     gcfDlg->activateWindow();
@@ -2119,7 +2119,7 @@ void P4InputVF::finishGcfEvaluation()
 
         //        QP4Event * e = new QP4Event(
         //        (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
-        //        g_p4app->postEvent( g_p4stardlg, e );
+        //        g_p4app->postEvent( g_p4StartDlg, e );
     }
 }
 
@@ -3532,7 +3532,7 @@ void P4InputVF::finishCurvesEvaluation(void)
     evaluatingPiecewiseConfig_ = false;
     P4Event *e =
         new P4Event((QEvent::Type)TYPE_SIGNAL_CURVESEVALUATED, nullptr);
-    g_p4app->postEvent(g_p4stardlg, e);
+    g_p4app->postEvent(g_p4StartDlg, e);
 }
 
 // -----------------------------------------------------------------------

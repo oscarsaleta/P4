@@ -20,6 +20,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <memory>
+
 #include <QString>
 
 class P4ParentStudy;
@@ -29,9 +31,9 @@ class QPrinter;
 class QWidget;
 
 // to avoid warnings of unused variables in case we cannot avoid it
-#define UNUSED(x) (void)(x)
+//#define UNUSED(x) (void)(x)
 
-// FIXME
+// FIXME fix usages
 struct P4POLYLINES {
     double x1;
     double y1;
@@ -56,8 +58,8 @@ extern QString g_p4Version;
 extern QString g_p4VersionDate;
 extern QString g_p4Platform;
 
-extern QPixmap *g_p4smallicon;
-extern QPrinter *g_p4printer;
+extern std::unique_ptr<QPixmap> g_p4smallicon;
+extern std::unique_ptr<QPrinter> g_p4printer;
 
 extern bool g_action_OnlyPrepareFile;
 extern bool g_action_SaveAll;
@@ -72,4 +74,4 @@ void setP4WindowTitle(QWidget *win, QString title);
 void handleCommandLineOption(char *arg);
 void handleCommandLineArgument(char *arg);
 
-#endif // MAIN_H
+#endif  // MAIN_H

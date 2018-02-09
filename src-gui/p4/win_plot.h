@@ -32,7 +32,7 @@ class QLegendWnd;
 class QLimitCyclesDlg;
 class QOrbitsDlg;
 class QSepDlg;
-class QStartDlg;
+class P4StartDlg;
 class QViewDlg;
 class QWinSphere;
 class QZoomWnd;
@@ -47,14 +47,14 @@ class QPlotWnd : public QMainWindow
     Q_OBJECT
 
   public:
-    QPlotWnd(QStartDlg *);
+    QPlotWnd(P4StartDlg *);
     ~QPlotWnd();
 
     QIntParamsDlg *intParamsWindow_;
     QViewDlg *viewParamsWindow_;
 
   private:
-    QStartDlg *parent_;
+    P4StartDlg *parent_;
     QBoxLayout *mainLayout_;
     QAction *actClose_;
     QAction *actRefresh_;

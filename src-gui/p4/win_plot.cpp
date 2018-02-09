@@ -47,7 +47,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 
-QPlotWnd::QPlotWnd(QStartDlg *main) : QMainWindow()
+QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 

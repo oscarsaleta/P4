@@ -28,7 +28,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
+P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
 {
     // general initialization
@@ -99,18 +99,18 @@ QP4AboutDlg::QP4AboutDlg(QWidget *parent, Qt::WindowFlags f)
 
     // connections
 
-    connect(btn_ok_, &QPushButton::clicked, this, &QP4AboutDlg::onOk);
+    connect(btn_ok_, &QPushButton::clicked, this, &P4AboutDlg::onOk);
     connect(btn_settings_, &QPushButton::clicked, this,
-            &QP4AboutDlg::onSettings);
+            &P4AboutDlg::onSettings);
 
     btn_ok_->setFocus();
 
     setP4WindowTitle(this, "About P4");
 }
 
-void QP4AboutDlg::onOk(void) { done(0); }
+void P4AboutDlg::onOk(void) { done(0); }
 
-void QP4AboutDlg::onSettings(void)
+void P4AboutDlg::onSettings(void)
 {
     int value;
     QSettingsDlg *psettings;

@@ -1781,7 +1781,7 @@ void QInputVF::finishEvaluation(int exitCode)
         //      processText_->hide();
         if (processText_->isActiveWindow()) {
             if (!evaluatinggcf_)
-                g_p4stardlg->activateWindow();
+                g_p4StartDlg->activateWindow();
             else {
                 if (gcfDlg != nullptr)
                     gcfDlg->activateWindow();
@@ -1808,7 +1808,7 @@ void QInputVF::finishGcfEvaluation(void)
 
         //        QP4Event * e = new QP4Event(
         //        (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
-        //        g_p4app->postEvent( g_p4stardlg, e );
+        //        g_p4app->postEvent( g_p4StartDlg, e );
     }
 }
 
