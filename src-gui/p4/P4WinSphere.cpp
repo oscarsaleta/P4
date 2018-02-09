@@ -2297,6 +2297,7 @@ void P4WinSphere::printPoincareSphere()
         q->x2 = coWinX(q->x2);
         q->y2 = coWinY(q->y2);
     }
+    // FIXME p needs to be a P4POLYLINE vector
     print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1),
                 g_VFResults.singinf_ ? CSING : CLINEATINFINITY, false, p);
 
