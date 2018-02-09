@@ -28,8 +28,7 @@
 #include <QLabel>
 #include <QPushButton>
 
-P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
-    : QDialog(parent, f)
+P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
     // general initialization
 
@@ -97,10 +96,11 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f)
     setLayout(mainLayout_);
 
     // connections
-    // TODO: check if i can use the smart pointer directly 
-    connect(btn_ok_.get(), &QPushButton::clicked, this, &P4AboutDlg::onOk);
-    connect(btn_settings_.get(), &QPushButton::clicked, this,
-            &P4AboutDlg::onSettings);
+    // TODO: check if i can use the smart pointer directly
+    QObject::connect(btn_ok_.get(), &QPushButton::clicked, this,
+                     &P4AboutDlg::onOk);
+    QObject::connect(btn_settings_.get(), &QPushButton::clicked, this,
+                     &P4AboutDlg::onSettings);
 
     btn_ok_->setFocus();
 
