@@ -95,7 +95,7 @@ P4InputVF::P4InputVF()
       clearProcessButton_{std::unique_ptr<QPushButton>{}},
       evalProcess_{std::unique_ptr<QProcess>{}},
       gcfDlg_{std::unique_ptr<QGcfDlg>{}},
-      findDlg_{std::unique_ptr<QFindDlg>{}},
+      findDlg_{std::unique_ptr<P4FindDlg>{}},
       curveDlg_{std::unique_ptr<QCurveDlg>{}},
       isoclinesDlg_{std::unique_ptr<QIsoclinesDlg>{}}, numparams_{0}, numVF_{0},
       numCurves_{0}, numVFRegions_{0}, numCurveRegions_{0}, numSelected_{0},
@@ -1748,10 +1748,10 @@ void P4InputVF::evaluate()
 {
     QString filedotmpl;
     QString s, e;
-    QProcess *proc;
+    std::unique_ptr<QProcess> proc;
 
     // possible clean up after last GCF evaluation
-    if (evalProcess_ != nullptr) {
+    if (evalProcess_) {
         delete evalProcess_;
         evalProcess_ = nullptr;
     }
@@ -1778,21 +1778,22 @@ void P4InputVF::evaluate()
         outputWindow_->raise();
     }
 
-    proc = new QProcess(this);
+    proc.reset(new QProcess(this));
     proc->setWorkingDirectory(QDir::currentPath());
 
-    connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-            g_p4app, &P4Application::signalEvaluated);
-    connect(proc, &QProcess::readyReadStandardOutput, this,
-            &P4InputVF::readProcessStdout);
+    QObject::connect(proc,
+                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                     g_p4app, &P4Application::signalEvaluated);
+    QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                     &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-    connect(proc,
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                &QProcess::error),
-            this, &P4InputVF::catchProcessError);
+    QObject::connect(proc,
+                     static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                         &QProcess::error),
+                     this, &P4InputVF::catchProcessError);
 #else
-    connect(proc, &QProcess::errorOccurred, this,
-            &P4InputVF::catchProcessError);
+    QObject::connect(proc, &QProcess::errorOccurred, this,
+                     &P4InputVF::catchProcessError);
 #endif
 
     processfailed_ = false;
@@ -1830,10 +1831,10 @@ void P4InputVF::evaluateCurveTable()
 {
     QString filedotmpl;
     QString s, e;
-    QProcess *proc;
+    std::unique_ptr<QProcess> proc;
 
     // possible clean up after last evaluation
-    if (evalProcess_ != nullptr) {
+    if (evalProcess_) {
         delete evalProcess_;
         evalProcess_ = nullptr;
     }
@@ -1861,20 +1862,21 @@ void P4InputVF::evaluateCurveTable()
         outputWindow_->raise();
     }
 
-    proc = new QProcess(this);
+    proc.reset(new QProcess(this));
     proc->setWorkingDirectory(QDir::currentPath());
-    connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-            g_p4app, &P4Application::signalCurveEvaluated);
-    connect(proc, &QProcess::readyReadStandardOutput, this,
-            &P4InputVF::readProcessStdout);
+    QObject::connect(proc,
+                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                     g_p4app, &P4Application::signalCurveEvaluated);
+    QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                     &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-    connect(proc,
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                &QProcess::error),
-            g_p4app, &P4Application::catchProcessError);
+    QObject::connect(proc,
+                     static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                         &QProcess::error),
+                     g_p4app, &P4Application::catchProcessError);
 #else
-    connect(proc, &QProcess::errorOccurred, g_p4app,
-            &P4Application::catchProcessError);
+    QObject::connect(proc, &QProcess::errorOccurred, g_p4app,
+                     &P4Application::catchProcessError);
 #endif
 
     processfailed_ = false;
@@ -1912,13 +1914,13 @@ void P4InputVF::evaluateIsoclinesTable()
 {
     QString filedotmpl;
     QString s, e;
-    // QProcess *proc;
+    // std::unique_ptr<QProcess> proc;
 
     evaluatingGcf_ = false;
     evaluatingCurve_ = false;
     evaluatingIsoclines_ = false;
     // possible clean up after last Curve evaluation
-    if (evalProcess_ != nullptr) {
+    if (evalProcess_) {
         delete evalProcess_;
         evalProcess_ = nullptr;
     }
@@ -1952,28 +1954,29 @@ void P4InputVF::evaluateIsoclinesTable()
             outputWindow_->raise();
         }
 
-        QProcess *proc;
-        if (evalProcess_ != nullptr) {  // re-use process of last GCF
+        std::unique_ptr<QProcess> proc;
+        if (evalProcess_) {  // re-use process of last GCF
             proc = evalProcess_;
             disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-            connect(proc,
-                    static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                    g_p4app, &P4Application::signalCurveEvaluated);
+            QObject::connect(
+                proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &P4Application::signalCurveEvaluated);
         } else {
-            proc = new QProcess(this);
-            connect(proc,
-                    static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                    g_p4app, &P4Application::signalCurveEvaluated);
-            connect(proc, &QProcess::readyReadStandardOutput, this,
-                    &P4InputVF::readProcessStdout);
+            proc.reset(new QProcess(this));
+            QObject::connect(
+                proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                g_p4app, &P4Application::signalCurveEvaluated);
+            QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                             &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-            connect(proc,
-                    static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                        &QProcess::error),
-                    g_p4app, &P4Application::catchProcessError);
+            QObject::connect(
+                proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
+                g_p4app, &P4Application::catchProcessError);
 #else
-            connect(proc, &QProcess::errorOccurred, g_p4app,
-                    &P4Application::catchProcessError);
+            QObject::connect(proc, &QProcess::errorOccurred, g_p4app,
+                             &P4Application::catchProcessError);
 #endif
         }
 
@@ -2050,7 +2053,7 @@ void P4InputVF::finishEvaluation(int exitCode)
     if (terminateProcessButton_ != nullptr)
         terminateProcessButton_->setEnabled(false);
 
-    if (evalProcess_ != nullptr) {
+    if (evalProcess_) {
         if (processText_ != nullptr) {
             outputWindow_->show();
             outputWindow_->raise();
@@ -2060,7 +2063,7 @@ void P4InputVF::finishEvaluation(int exitCode)
                 "----"
                 "-----------------\n";
             processText_->append(buf);
-            if (evalProcess_ != nullptr) {
+            if (evalProcess_) {
                 if (evalProcess_->state() == QProcess::Running) {
                     evalProcess_->terminate();
                     QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
@@ -2238,7 +2241,7 @@ void P4InputVF::readProcessStdout()
 void P4InputVF::onTerminateButton()
 {
     QString buf;
-    if (evalProcess_ != nullptr) {
+    if (evalProcess_) {
         if (evalProcess_->state() == QProcess::Running) {
             buf =
                 "\n----------------------------------------------------------"
@@ -2341,27 +2344,30 @@ bool P4InputVF::evaluateGcf()
         outputWindow_->raise();
     }
 
-    QProcess *proc;
-    if (evalProcess_ != nullptr) {  // re-use process of last GCF
+    std::unique_ptr<QProcess> proc;
+    if (evalProcess_) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                g_p4app, &P4Application::signalCurveEvaluated);
+        QObject::connect(
+            proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            g_p4app, &P4Application::signalCurveEvaluated);
     } else {
-        proc = new QProcess(this);
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                g_p4app, &P4Application::signalCurveEvaluated);
+        proc.reset(new QProcess(this));
+        QObject::connect(
+            proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
-                g_p4app, &P4Application::catchProcessError);
+        QObject::connect(
+            proc,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                &QProcess::error),
+            g_p4app, &P4Application::catchProcessError);
 #else
-        connect(proc, &QProcess::errorOccurred, g_p4app,
-                &P4Application::catchProcessError);
+        QObject::connect(proc, &QProcess::errorOccurred, g_p4app,
+                         &P4Application::catchProcessError);
 #endif
-        connect(proc, &QProcess::readyReadStandardOutput, this,
-                &P4InputVF::readProcessStdout);
+        QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                         &P4InputVF::readProcessStdout);
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -2598,28 +2604,31 @@ bool P4InputVF::evaluateCurve()
         outputWindow_->raise();
     }
 
-    QProcess *proc;
+    std::unique_ptr<QProcess> proc;
     // re-use process of last GCF
-    if (evalProcess_ != nullptr) {
+    if (evalProcess_) {
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                g_p4app, &P4Application::signalCurveEvaluated);
+        QObject::connect(
+            proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            g_p4app, &P4Application::signalCurveEvaluated);
     } else {
-        proc = new QProcess(this);
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                g_p4app, &P4Application::signalCurveEvaluated);
+        proc.reset(new QProcess(this));
+        QObject::connect(
+            proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
-                g_p4app, &P4Application::catchProcessError);
+        QObject::connect(
+            proc,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                &QProcess::error),
+            g_p4app, &P4Application::catchProcessError);
 #else
-        connect(proc, &QProcess::errorOccurred, g_p4app,
-                &P4Application::catchProcessError);
+        QObject::connect(proc, &QProcess::errorOccurred, g_p4app,
+                         &P4Application::catchProcessError);
 #endif
-        connect(proc, &QProcess::readyReadStandardOutput, this,
-                &P4InputVF::readProcessStdout);
+        QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                         &P4InputVF::readProcessStdout);
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -2832,12 +2841,11 @@ bool P4InputVF::evaluateIsoclines()
 {
     QString filedotmpl;
     QString s;
-    QProcess *proc;
 
     evaluatingGcf_ = false;
-    evaluating
+    // evaluating
 
-        filedotmpl = getmaplefilename();
+    filedotmpl = getmaplefilename();
 
     s = getMapleExe();
     s = s.append(" ");
@@ -2859,26 +2867,30 @@ bool P4InputVF::evaluateIsoclines()
         outputWindow_->raise();
     }
 
-    if (evalProcess_ != nullptr) {  // re-use process of last GCF
+    std::unique_ptr<QProcess> proc;
+    if (evalProcess_) {  // re-use process of last GCF
         proc = evalProcess_;
         disconnect(proc, SIGNAL(finished(int)), g_p4app, 0);
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                g_p4app, &P4Application::signalCurveEvaluated);
+        QObject::connect(
+            proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            g_p4app, &P4Application::signalCurveEvaluated);
     } else {
-        proc = new QProcess(this);
-        connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                g_p4app, &P4Application::signalCurveEvaluated);
+        proc.reset(new QProcess(this));
+        QObject::connect(
+            proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            g_p4app, &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc,
-                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                    &QProcess::error),
-                g_p4app, &P4Application::catchProcessError);
+        QObject::connect(
+            proc,
+            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                &QProcess::error),
+            g_p4app, &P4Application::catchProcessError);
 #else
-        connect(proc, &QProcess::errorOccurred, g_p4app,
-                &P4Application::catchProcessError);
+        QObject::connect(proc, &QProcess::errorOccurred, g_p4app,
+                         &P4Application::catchProcessError);
 #endif
-        connect(proc, &QProcess::readyReadStandardOutput, this,
-                &P4InputVF::readProcessStdout);
+        QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                         &P4InputVF::readProcessStdout);
     }
 
     proc->setWorkingDirectory(QDir::currentPath());
@@ -3446,21 +3458,19 @@ bool P4InputVF::evaluateCurves()
 {
     QString filedotmpl;
     QString s, e;
-    QProcess *proc;
+    std::unique_ptr<QProcess> proc;
 
     evaluatingGcf_ = false;
     evaluatingPiecewiseConfig_ = true;
 
     // possible clean up after last GCF evaluation
-    if (evalProcess_ != nullptr) {
-        delete evalProcess_;
-        evalProcess_ = nullptr;
+    if (evalProcess_) {
+        evalProcess_.reset();
     }
 
     prepareCurves();
 
-    QString filedotmpl;
-    filedotmpl = getmaplefilename();
+    QString filedotmpl{getmaplefilename()};
 
     s = getMapleExe();
     if (s.isEmpty())
@@ -3479,35 +3489,34 @@ bool P4InputVF::evaluateCurves()
         outputWindow_->raise();
     }
 
-    QProcess proc = new QProcess(this);
+    QProcess proc.reset(new QProcess(this));
 
     proc->setWorkingDirectory(QDir::currentPath());
 
-    connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-            g_p4app, &P4Application::signalCurvesEvaluated);
+    QObject::connect(proc,
+                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                     g_p4app, &P4Application::signalCurvesEvaluated);
 #ifdef QT_QPROCESS_OLD
-    connect(proc,
-            static_cast<void (QProcess::*)(QProcess::ProcessError)>(
-                &QProcess::error),
-            g_p4app, &P4Application::catchProcessError);
+    QObject::connect(proc,
+                     static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                         &QProcess::error),
+                     g_p4app, &P4Application::catchProcessError);
 #else
-    connect(proc, &QProcess::errorOccurred, g_p4app,
-            &P4Application::catchProcessError);
+    QObject::connect(proc, &QProcess::errorOccurred, g_p4app,
+                     &P4Application::catchProcessError);
 #endif
-    connect(proc, &QProcess::readyReadStandardOutput, this,
-            &P4InputVF::readProcessStdout);
+    QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
+                     &P4InputVF::readProcessStdout);
 
     processfailed_ = false;
-    QString pa = "External Command: " + getMapleExe() + " " + filedotmpl;
+    QString pa{"External Command: " + getMapleExe() + " " + filedotmpl};
     processText_->append(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
         processfailed_ = true;
-        delete proc;
-        proc = nullptr;
-        evalProcess_ = nullptr;
+        evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
         g_p4app->signalEvaluated(-1);
@@ -3515,8 +3524,8 @@ bool P4InputVF::evaluateCurves()
         return false;
     } else {
         evalProcess_ = proc;
-        evalFile = filedotmpl;
-        EvalFile2 = "";
+        evalFile_ = filedotmpl;
+        evalFile2_ = "";
         evaluating_ = true;
         evaluatingPiecewiseConfig_ = true;
         evaluatingGcf_ = false;
@@ -3530,9 +3539,8 @@ bool P4InputVF::evaluateCurves()
 void P4InputVF::finishCurvesEvaluation(void)
 {
     evaluatingPiecewiseConfig_ = false;
-    P4Event *e =
-        new P4Event((QEvent::Type)TYPE_SIGNAL_CURVESEVALUATED, nullptr);
-    g_p4app->postEvent(g_p4StartDlg, e);
+    std::unique_ptr<P4Event> e{new P4Event((QEvent::Type)TYPE_SIGNAL_CURVESEVALUATED, nullptr)};
+    g_p4app->postEvent(g_p4StartDlg, e.get());
 }
 
 // -----------------------------------------------------------------------
