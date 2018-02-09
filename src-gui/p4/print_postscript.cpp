@@ -802,6 +802,21 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
     print_point = ps_print_point;
     print_line = ps_print_line;
     print_comment = ps_print_comment;
+    print_virtualsaddle = ps_print_virtualsaddle;
+    print_virtualstablenode = ps_print_virtualstablenode;
+    print_virtualunstablenode = ps_print_virtualunstablenode;
+    print_virtualstableweakfocus = ps_print_virtualstableweakfocus;
+    print_virtualunstableweakfocus = ps_print_virtualunstableweakfocus;
+    print_virtualweakfocus = ps_print_virtualweakfocus;
+    print_virtualstablestrongfocus = ps_print_virtualstablestrongfocus;
+    print_virtualunstablestrongfocus = ps_print_virtualunstablestrongfocus;
+    print_virtualsesaddle = ps_print_virtualsesaddle;
+    print_virtualsesaddlenode = ps_print_virtualsesaddlenode;
+    print_virtualsestablenode = ps_print_virtualsestablenode;
+    print_virtualseunstablenode = ps_print_virtualseunstablenode;
+    print_virtualdegen = ps_print_virtualdegen;
+    print_virtualcenter = ps_print_virtualcenter;
+    print_coinciding = ps_print_coinciding;
 
     QString title;
     QString datestring;
