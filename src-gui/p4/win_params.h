@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
-class QFindDlg;
+class P4FindDlg;
 
 class QBoxLayout;
 class QRadioButton;
@@ -35,13 +35,13 @@ class QParamsDlg : public QWidget
     Q_OBJECT
 
   public:
-    QParamsDlg(QFindDlg *startwindow);
+    QParamsDlg(P4FindDlg *startwindow);
     ~QParamsDlg();
     void getDataFromDlg(void);
     void updateDlgData(void);
 
   private:
-    QFindDlg *parent_;
+    P4FindDlg *parent_;
     QBoxLayout *mainLayout_;
 
     QRadioButton *btn_sepyes_;

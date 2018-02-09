@@ -37,7 +37,7 @@
 #include <QRadioButton>
 #include <QSettings>
 
-QFindDlg::~QFindDlg()
+P4FindDlg::~P4FindDlg()
 {
     getDataFromDlg();
 
@@ -51,7 +51,7 @@ QFindDlg::~QFindDlg()
     }
 }
 
-QFindDlg::QFindDlg(P4StartDlg *startdlg) : QWidget(startdlg)
+P4FindDlg::P4FindDlg(P4StartDlg *startdlg) : QWidget(startdlg)
 
 {
     parent_ = startdlg;
@@ -316,10 +316,10 @@ QFindDlg::QFindDlg(P4StartDlg *startdlg) : QWidget(startdlg)
         }
     });
 
-    connect(btn_load_, &QPushButton::clicked, this, &QFindDlg::onBtnLoad);
-    connect(btn_save_, &QPushButton::clicked, this, &QFindDlg::onBtnSave);
-    connect(btn_eval_, &QPushButton::clicked, this, &QFindDlg::onBtnEval);
-    connect(g_ThisVF, &QInputVF::saveSignal, this, &QFindDlg::onSaveSignal);
+    connect(btn_load_, &QPushButton::clicked, this, &P4FindDlg::onBtnLoad);
+    connect(btn_save_, &QPushButton::clicked, this, &P4FindDlg::onBtnSave);
+    connect(btn_eval_, &QPushButton::clicked, this, &P4FindDlg::onBtnEval);
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &P4FindDlg::onSaveSignal);
     // TODO: implement onSaveSignal slot
 
     // finishing
@@ -355,14 +355,14 @@ QFindDlg::QFindDlg(P4StartDlg *startdlg) : QWidget(startdlg)
     // readSettings();
 }
 
-void QFindDlg::onSaveSignal()
+void P4FindDlg::onSaveSignal()
 {
     // QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
     // QSettings::NativeFormat);
-    // settings.setValue("QFindDlg/state",saveState());
+    // settings.setValue("P4FindDlg/state",saveState());
 }
 
-void QFindDlg::onBtnLoad()
+void P4FindDlg::onBtnLoad()
 {
     if (g_ThisVF->load() == false) {
         QMessageBox::critical(this, "P4",
@@ -388,7 +388,7 @@ void QFindDlg::onBtnLoad()
     }
 }
 
-void QFindDlg::onBtnSave()
+void P4FindDlg::onBtnSave()
 {
     getDataFromDlg();
     if (g_ThisVF->changed_)
@@ -405,7 +405,7 @@ void QFindDlg::onBtnSave()
     }
 }
 
-void QFindDlg::onBtnEval()
+void P4FindDlg::onBtnEval()
 {
     //  int result;
 
@@ -466,7 +466,7 @@ void QFindDlg::onBtnEval()
     }
 }
 
-void QFindDlg::getDataFromDlg()
+void P4FindDlg::getDataFromDlg()
 {
     if (vfWindow_ != nullptr) {
         vfWindow_->getDataFromDlg();
@@ -476,7 +476,7 @@ void QFindDlg::getDataFromDlg()
     }
 }
 
-void QFindDlg::updateDlgData()
+void P4FindDlg::updateDlgData()
 {
     switch (g_ThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
@@ -501,6 +501,6 @@ void QFindDlg::updateDlgData()
     }
 }
 
-void QFindDlg::signalEvaluating() { btn_eval_->setEnabled(false); }
+void P4FindDlg::signalEvaluating() { btn_eval_->setEnabled(false); }
 
-void QFindDlg::signalEvaluated() { btn_eval_->setEnabled(true); }
+void P4FindDlg::signalEvaluated() { btn_eval_->setEnabled(true); }

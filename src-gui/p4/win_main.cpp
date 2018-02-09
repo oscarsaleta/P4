@@ -161,14 +161,14 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget()
 
     // show find dialog
     if (findWindow_ == nullptr) {
-        findWindow_ = new QFindDlg(this);
+        findWindow_ = new P4FindDlg(this);
         findWindow_->show();
         findWindow_->raise();
         mainLayout_->addWidget(findWindow_);
     } else {
         delete findWindow_;
         findWindow_ = nullptr;
-        // connect(findWindow_, &QFindDlg::saveStateSignal, this,
+        // connect(findWindow_, &P4FindDlg::saveStateSignal, this,
         //        &P4StartDlg::saveSettings);
     }
 

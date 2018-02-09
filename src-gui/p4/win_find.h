@@ -30,13 +30,13 @@ class QBoxLayout;
 class QPushButton;
 class QRadioButton;
 
-class QFindDlg : public QWidget
+class P4FindDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QFindDlg(P4StartDlg *startwindow);
-    ~QFindDlg();
+    P4FindDlg(P4StartDlg *startwindow);
+    ~P4FindDlg();
     void getDataFromDlg();
 
   private:

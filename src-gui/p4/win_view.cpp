@@ -33,9 +33,9 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-QViewDlg::~QViewDlg() { getDataFromDlg(); }
+P4ViewDlg::~P4ViewDlg() { getDataFromDlg(); }
 
-QViewDlg::QViewDlg(QWidget *parent)
+P4ViewDlg::P4ViewDlg(QWidget *parent)
     : QWidget(parent = nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -158,21 +158,21 @@ QViewDlg::QViewDlg(QWidget *parent)
     // connections
 
     connect(btn_sphere_, &QRadioButton::toggled, this,
-            &QViewDlg::btn_sphere_toggled);
+            &P4ViewDlg::btn_sphere_toggled);
     connect(btn_plane_, &QRadioButton::toggled, this,
-            &QViewDlg::btn_plane_toggled);
-    connect(btn_U1_, &QRadioButton::toggled, this, &QViewDlg::btn_U1_toggled);
-    connect(btn_U2_, &QRadioButton::toggled, this, &QViewDlg::btn_U2_toggled);
-    connect(btn_V1_, &QRadioButton::toggled, this, &QViewDlg::btn_V1_toggled);
-    connect(btn_V2_, &QRadioButton::toggled, this, &QViewDlg::btn_V2_toggled);
+            &P4ViewDlg::btn_plane_toggled);
+    connect(btn_U1_, &QRadioButton::toggled, this, &P4ViewDlg::btn_U1_toggled);
+    connect(btn_U2_, &QRadioButton::toggled, this, &P4ViewDlg::btn_U2_toggled);
+    connect(btn_V1_, &QRadioButton::toggled, this, &P4ViewDlg::btn_V1_toggled);
+    connect(btn_V2_, &QRadioButton::toggled, this, &P4ViewDlg::btn_V2_toggled);
     connect(btn_square_, &QPushButton::clicked, this,
-            &QViewDlg::btn_square_clicked);
+            &P4ViewDlg::btn_square_clicked);
     connect(edt_projection_, &QLineEdit::textChanged, this,
-            &QViewDlg::onFieldChange);
-    connect(edt_x0_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
-    connect(edt_x1_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
-    connect(edt_y0_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
-    connect(edt_y1_, &QLineEdit::textChanged, this, &QViewDlg::onFieldChange);
+            &P4ViewDlg::onFieldChange);
+    connect(edt_x0_, &QLineEdit::textChanged, this, &P4ViewDlg::onFieldChange);
+    connect(edt_x1_, &QLineEdit::textChanged, this, &P4ViewDlg::onFieldChange);
+    connect(edt_y0_, &QLineEdit::textChanged, this, &P4ViewDlg::onFieldChange);
+    connect(edt_y1_, &QLineEdit::textChanged, this, &P4ViewDlg::onFieldChange);
 
     // finishing
 
@@ -181,13 +181,13 @@ QViewDlg::QViewDlg(QWidget *parent)
     setP4WindowTitle(this, "View Parameters");
 }
 
-void QViewDlg::onFieldChange(const QString &dummy)
+void P4ViewDlg::onFieldChange(const QString &dummy)
 {
     UNUSED(dummy);
     changed_ = true;
 }
 
-void QViewDlg::btn_sphere_toggled()
+void P4ViewDlg::btn_sphere_toggled()
 {
     changed_ = true;
 
@@ -208,7 +208,7 @@ void QViewDlg::btn_sphere_toggled()
     }
 }
 
-void QViewDlg::btn_plane_toggled()
+void P4ViewDlg::btn_plane_toggled()
 {
     changed_ = true;
 
@@ -229,7 +229,7 @@ void QViewDlg::btn_plane_toggled()
     }
 }
 
-void QViewDlg::btn_U1_toggled()
+void P4ViewDlg::btn_U1_toggled()
 {
     changed_ = true;
 
@@ -250,7 +250,7 @@ void QViewDlg::btn_U1_toggled()
     }
 }
 
-void QViewDlg::btn_U2_toggled()
+void P4ViewDlg::btn_U2_toggled()
 {
     changed_ = true;
 
@@ -271,7 +271,7 @@ void QViewDlg::btn_U2_toggled()
     }
 }
 
-void QViewDlg::btn_V1_toggled()
+void P4ViewDlg::btn_V1_toggled()
 {
     changed_ = true;
 
@@ -292,7 +292,7 @@ void QViewDlg::btn_V1_toggled()
     }
 }
 
-void QViewDlg::btn_V2_toggled()
+void P4ViewDlg::btn_V2_toggled()
 {
     changed_ = true;
 
@@ -313,7 +313,7 @@ void QViewDlg::btn_V2_toggled()
     }
 }
 
-void QViewDlg::btn_square_clicked(void)
+void P4ViewDlg::btn_square_clicked(void)
 {
     double x0;
 
@@ -335,7 +335,7 @@ void QViewDlg::btn_square_clicked(void)
     }
 }
 
-bool QViewDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
+bool P4ViewDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
                               double minvalue, double maxvalue)
 {
     // returns true in case of error
@@ -358,7 +358,7 @@ bool QViewDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
     return false;
 }
 
-void QViewDlg::markBad(QLineEdit *edt)
+void P4ViewDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -372,7 +372,7 @@ void QViewDlg::markBad(QLineEdit *edt)
     edt->setText(t);
 }
 
-bool QViewDlg::getDataFromDlg(void)
+bool P4ViewDlg::getDataFromDlg(void)
 {
     if (!changed_) {
         return false;
@@ -443,7 +443,7 @@ bool QViewDlg::getDataFromDlg(void)
     return false;
 }
 
-void QViewDlg::updateDlgData(void)
+void P4ViewDlg::updateDlgData(void)
 {
     QString buf;
 

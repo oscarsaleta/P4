@@ -44,7 +44,7 @@ class QTextEdit;
 class QTextStream;
 
 class QCurveDlg;
-class QFindDlg;
+class P4FindDlg;
 class QGcfDlg;
 class QIsoclinesDlg;
 
@@ -111,7 +111,7 @@ class QInputVF : public QObject
     bool processfailed_;   // true when process failed;
     QString processError_; // only relevant when processfailed=true
 
-    QFindDlg *findDlg_;
+    P4FindDlg *findDlg_;
     QGcfDlg *gcfDlg_;
     QCurveDlg *curveDlg_;
     QIsoclinesDlg *isoclinesDlg_;

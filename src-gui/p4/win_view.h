@@ -30,13 +30,13 @@ class QRadioButton;
 class QSpinBox;
 class QString;
 
-class QViewDlg : public QWidget
+class P4ViewDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QViewDlg(QWidget *);
-    ~QViewDlg();
+    P4ViewDlg(QWidget *);
+    ~P4ViewDlg();
     bool getDataFromDlg(void);
     void updateDlgData(void);
 

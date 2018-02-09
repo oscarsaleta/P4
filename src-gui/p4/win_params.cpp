@@ -35,7 +35,7 @@
 
 QParamsDlg::~QParamsDlg() { getDataFromDlg(); }
 
-QParamsDlg::QParamsDlg(QFindDlg *finddlg) : QWidget(finddlg)
+QParamsDlg::QParamsDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );

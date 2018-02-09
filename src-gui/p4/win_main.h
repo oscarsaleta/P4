@@ -25,7 +25,7 @@
 #include <QWidget>
 
 class QPlotWnd;
-class QFindDlg;
+class P4FindDlg;
 
 class QCloseEvent;
 class QEvent;
@@ -62,7 +62,7 @@ class P4StartDlg : public QWidget
    public:
     P4StartDlg(const QString &);
 
-    std::unique_ptr<QFindDlg> findWindow_;
+    std::unique_ptr<P4FindDlg> findWindow_;
     std::unique_ptr<QPlotWnd> plotWindow_;
 
     void closeEvent(QCloseEvent *ce);

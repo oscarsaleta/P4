@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
- class QFindDlg;
+ class P4FindDlg;
 
  class QBoxLayout;
  class QPushButton;
@@ -45,7 +45,7 @@ class QIntParamsDlg : public QWidget
 
   private:
     bool changed_;
-    QFindDlg *parent_;
+    P4FindDlg *parent_;
     QBoxLayout *mainLayout_;
 
     QPushButton *btn_reset_;

@@ -181,7 +181,7 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
     orbitsWindow_ = new QOrbitsDlg(this, sphere_);
     sepWindow_ = new QSepDlg(this, sphere_);
     intParamsWindow_ = new QIntParamsDlg();
-    viewParamsWindow_ = new QViewDlg(this);
+    viewParamsWindow_ = new P4ViewDlg(this);
     lcWindow_ = new QLimitCyclesDlg(this, sphere_);
     gcfWindow_ = new QGcfDlg(this, sphere_);
     curveWindow_ = new QCurveDlg(this, sphere_);

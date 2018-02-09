@@ -33,7 +33,7 @@ class QLimitCyclesDlg;
 class QOrbitsDlg;
 class QSepDlg;
 class P4StartDlg;
-class QViewDlg;
+class P4ViewDlg;
 class QWinSphere;
 class QZoomWnd;
 
@@ -51,7 +51,7 @@ class QPlotWnd : public QMainWindow
     ~QPlotWnd();
 
     QIntParamsDlg *intParamsWindow_;
-    QViewDlg *viewParamsWindow_;
+    P4ViewDlg *viewParamsWindow_;
 
   private:
     P4StartDlg *parent_;

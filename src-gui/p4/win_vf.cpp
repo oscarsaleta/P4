@@ -33,7 +33,7 @@
 #include <QScrollBar>
 #include <QSpinBox>
 
-QVectorFieldDlg::QVectorFieldDlg(QFindDlg *finddlg) : QWidget(finddlg)
+QVectorFieldDlg::QVectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );

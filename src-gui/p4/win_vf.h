@@ -25,7 +25,7 @@
 #include <QString>
 #include <QWidget>
 
-class QFindDlg;
+class P4FindDlg;
 class QVFParams; // declare them first because both classes defined in
                  // this file need each other
 
@@ -41,14 +41,14 @@ class QVectorFieldDlg : public QWidget
     Q_OBJECT
 
   public:
-    QVectorFieldDlg(QFindDlg *startwindow);
+    QVectorFieldDlg(P4FindDlg *startwindow);
     ~QVectorFieldDlg();
     void getDataFromDlg(void);
     void updateDlgData(void);
 
   private:
     QBoxLayout *mainLayout_;
-    QFindDlg *parent_;
+    P4FindDlg *parent_;
     QLineEdit *edt_xprime_;
     QLineEdit *edt_yprime_;
     QLineEdit *edt_gcf_;
