@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#pragma once
 
 #include <memory>
 
@@ -73,5 +72,3 @@ void setP4WindowTitle(QWidget *win, QString title);
 
 void handleCommandLineOption(char *arg);
 void handleCommandLineArgument(char *arg);
-
-#endif  // MAIN_H
