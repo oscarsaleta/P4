@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PRINT_XFIG_H
-#define PRINT_XFIG_H
+#pragma once
 
 #define XFIG_LINE_MAXPOINTS 2000 // group line pieces together in polylines
                                  //  of at most this number of points.
@@ -26,5 +25,3 @@
 void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                          int resolution, int linewidth, int symbolwidth);
 void finishXFigPrinting(void);
-
-#endif // PRINT_XFIG_H
