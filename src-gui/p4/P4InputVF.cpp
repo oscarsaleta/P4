@@ -3293,7 +3293,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
         g_VFResults.K_ = 0;
     }
 
-    for (auto it = vfRegions_.begin(); it != vfRegions_.end(); ++it) {
+    for (auto &it = vfRegions_.begin(); it != vfRegions_.end(); ++it) {
         if (it->vfIndex == index) {
             it->signs.clear();
             vfRegions_.erase(it);
@@ -3302,7 +3302,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
             it->vfIndex--;
     }
 
-    for (auto it = selected_.begin(); it != selected_.end(); ++it) {
+    for (auto &it = selected_.begin(); it != selected_.end(); ++it) {
         if (*it == index) {
             selected_.erase(it);
             numSelected_--;
@@ -3356,7 +3356,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
         ydot_.erase(ydot_.begin() + index);
         gcf_.erase(gcf_.begin() + index);
         epsilon_.erase(epsilon_.begin() + index);
-        parvalue_.erase(parvalue_.begin() + index);  // TODO: funcioinarà?
+        parvalue_.erase(parvalue_.begin() + index);  // TODO: funcionarà?
 
         numVF_--;
     }
