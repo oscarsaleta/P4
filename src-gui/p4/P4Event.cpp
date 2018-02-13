@@ -17,20 +17,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_EVENT_H
-#define WIN_EVENT_H
+#include "P4Event.h"
 
-#include <QEvent>
+P4Event::P4Event(QEvent::Type t, void *data) : QEvent(t) { customData_ = data; }
 
-class QP4Event : public QEvent
+void *P4Event::data() const { return customData_; }
+
+P4Event::~P4Event()
 {
-  public:
-    QP4Event(QEvent::Type, void *data);
-    void *data() const;
-    ~QP4Event();
-
-  protected:
-    void *customData_;
-};
-
-#endif /* WIN_EVENT_H */
+    // data is freeed by caller
+}

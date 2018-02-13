@@ -24,7 +24,7 @@
 #include "main.h"
 #include "p4application.h"
 #include "plot_tools.h"
-#include "win_event.h"
+#include "P4Event.h"
 #include "win_main.h"
 #include "win_plot.h"
 #include "win_print.h"
@@ -147,7 +147,7 @@ void QZoomWnd::onBtnClose(void)
     int *data = new int;
     *data = zoomid_;
 
-    QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
+    P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
     g_p4app->postEvent(parent_, e1);
 }
 
@@ -156,7 +156,7 @@ bool QZoomWnd::close(void)
     int *data = new int;
     *data = zoomid_;
 
-    QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
+    P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
     g_p4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
@@ -214,13 +214,13 @@ void QZoomWnd::configure(void)
 
 void QZoomWnd::customEvent(QEvent *_e)
 {
-    QP4Event *e;
-    e = (QP4Event *)_e;
+    P4Event *e;
+    e = (P4Event *)_e;
 
     if (e->type() == TYPE_OPENZOOMWINDOW || e->type() == TYPE_ORBIT_EVENT ||
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
-        QP4Event *newe = new QP4Event(e->type(), e->data());
+        P4Event *newe = new P4Event(e->type(), e->data());
         g_p4app->postEvent(parent_, newe);
         return;
     }
@@ -235,7 +235,7 @@ void QZoomWnd::hideEvent(QHideEvent *h)
         int *data = new int;
         *data = zoomid_;
 
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
         g_p4app->postEvent(parent_, e1);
     }
 }

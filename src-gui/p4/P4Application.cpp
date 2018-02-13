@@ -22,7 +22,7 @@
 #include "custom.h"
 #include "file_vf.h"
 #include "main.h"
-#include "win_event.h"
+#include "P4Event.h"
 #include "win_find.h"
 #include "win_main.h"
 
@@ -71,8 +71,8 @@ void P4Application::signalChanged(void)
     g_ThisVF->evaluated_ = false;
     g_ThisVF->changed_ = true;
 
-    std::unique_ptr<QP4Event> e{
-        new QP4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr)};
+    std::unique_ptr<P4Event> e{
+        new P4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr)};
     g_p4app->postEvent(g_p4StartDlg, e.get());
 }
 
@@ -83,8 +83,8 @@ void P4Application::signalEvaluated(int exitCode)
 
     g_ThisVF->finishEvaluation(exitCode);
 
-    std::unique_ptr<QP4Event> e{
-        new QP4Event((QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr)};
+    std::unique_ptr<P4Event> e{
+        new P4Event((QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr)};
     g_p4app->postEvent(g_p4StartDlg, e.get());
 
     if (g_cmdLine_AutoExit) {
@@ -127,8 +127,8 @@ void P4Application::catchProcessError(QProcess::ProcessError qperr)
 
 void P4Application::signalLoaded(void)
 {
-    std::unique_ptr<QP4Event> e{
-        new QP4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr)};
+    std::unique_ptr<P4Event> e{
+        new P4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr)};
     g_p4app->postEvent(g_p4StartDlg, e.get());
 
     if (g_cmdLine_AutoEvaluate) {
@@ -145,7 +145,7 @@ void P4Application::signalLoaded(void)
 
 void P4Application::signalSaved(void)
 {
-    std::unique_ptr<QP4Event> e{
-        new QP4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr)};
+    std::unique_ptr<P4Event> e{
+        new P4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr)};
     g_p4app->postEvent(g_p4StartDlg, e.get());
 }

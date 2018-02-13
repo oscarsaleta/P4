@@ -27,7 +27,7 @@
 #include "p4application.h"
 #include "plot_tools.h"
 #include "win_curve.h"
-#include "win_event.h"
+#include "P4Event.h"
 #include "win_gcf.h"
 #include "win_intparams.h"
 #include "win_isoclines.h"
@@ -314,13 +314,13 @@ void QPlotWnd::signalEvaluated(void)
 
 void QPlotWnd::onBtnClose(void)
 {
-    QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
+    P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
     g_p4app->postEvent(parent_, e1);
 }
 
 bool QPlotWnd::close(void)
 {
-    QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
+    P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
     g_p4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
@@ -499,7 +499,7 @@ void QPlotWnd::closeZoomWindow(int id)
 
 void QPlotWnd::customEvent(QEvent *_e)
 {
-    QP4Event *e;
+    P4Event *e;
     double pcoord[3];
     double ucoord[2];
     double ucoord0[2];
@@ -508,7 +508,7 @@ void QPlotWnd::customEvent(QEvent *_e)
     double x, y, x0, y0, x1, y1;
     int *oet;
 
-    e = (QP4Event *)_e;
+    e = (P4Event *)_e;
 
     if (e->type() == TYPE_OPENZOOMWINDOW) {
         double *data1;
@@ -606,8 +606,8 @@ void QPlotWnd::hideEvent(QHideEvent *h)
 {
     UNUSED(h);
     if (!isMinimized()) {
-        QP4Event *e1 =
-            new QP4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
+        P4Event *e1 =
+            new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
         g_p4app->postEvent(parent_, e1);
     }
 }

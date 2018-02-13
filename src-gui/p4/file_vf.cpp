@@ -1806,7 +1806,7 @@ void QInputVF::finishGcfEvaluation(void)
     if (gcfDlg_ != nullptr) {
         gcfDlg_->finishGcfEvaluation();
 
-        //        QP4Event * e = new QP4Event(
+        //        P4Event * e = new P4Event(
         //        (QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr );
         //        g_p4app->postEvent( g_p4StartDlg, e );
     }

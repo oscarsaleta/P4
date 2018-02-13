@@ -36,7 +36,7 @@
 #include "print_points.h"
 #include "print_postscript.h"
 #include "print_xfig.h"
-#include "win_event.h"
+#include "P4Event.h"
 #include "win_main.h"
 #include "win_print.h"
 
@@ -162,7 +162,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 1;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
     if (id == Qt::Key_C && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
@@ -170,7 +170,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 0;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
     if (id == Qt::Key_B && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
@@ -178,7 +178,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = -1;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
     if (id == Qt::Key_D && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
@@ -186,7 +186,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 2;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 
@@ -195,7 +195,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 3;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 
@@ -205,7 +205,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 0;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 
@@ -215,7 +215,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 3;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 
@@ -225,7 +225,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 2;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 
@@ -235,7 +235,7 @@ void QWinSphere::keyPressEvent(QKeyEvent *e)
 
         data1 = new int;
         *data1 = 1;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 
@@ -1056,8 +1056,8 @@ void QWinSphere::mousePressEvent(QMouseEvent *e)
 
         double pcoord[3];
         if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
-            QP4Event *e1;
-            e1 = new QP4Event((QEvent::Type)TYPE_SELECT_ORBIT, data1);
+            P4Event *e1;
+            e1 = new P4Event((QEvent::Type)TYPE_SELECT_ORBIT, data1);
             g_p4app->postEvent(parentWnd_, e1);
         } else {
             free(data1);
@@ -1101,8 +1101,8 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(zoomAnchor1_.y());
             data1[2] = coWorldX(zoomAnchor2_.x());
             data1[3] = coWorldY(zoomAnchor2_.y());
-            QP4Event *e1 =
-                new QP4Event((QEvent::Type)TYPE_OPENZOOMWINDOW, data1);
+            P4Event *e1 =
+                new P4Event((QEvent::Type)TYPE_OPENZOOMWINDOW, data1);
             g_p4app->postEvent(parentWnd_, e1);
         }
 
@@ -1115,8 +1115,8 @@ void QWinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(lcAnchor1_.y());
             data1[2] = coWorldX(lcAnchor2_.x());
             data1[3] = coWorldY(lcAnchor2_.y());
-            QP4Event *e1 =
-                new QP4Event((QEvent::Type)TYPE_SELECT_LCSECTION, data1);
+            P4Event *e1 =
+                new P4Event((QEvent::Type)TYPE_SELECT_LCSECTION, data1);
             g_p4app->postEvent(parentWnd_, e1);
         }
 
@@ -1215,7 +1215,7 @@ void QWinSphere::selectNearestSingularity(QPoint winpos)
         int *data1;
         data1 = new int;
         *data1 = -1;
-        QP4Event *e1 = new QP4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
+        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
         g_p4app->postEvent(parentWnd_, e1);
     }
 }

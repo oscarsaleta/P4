@@ -98,7 +98,7 @@ HEADERS += win_view.h \
     win_intparams.h \
     win_gcf.h \
     win_find.h \
-    win_event.h \
+    P4Event.h \
     win_curve.h \
     win_about.h \
     p4application.h \
