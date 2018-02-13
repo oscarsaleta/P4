@@ -81,6 +81,7 @@ class P4WinInputSphere : public QWidget
     // coordinate changes: from window to world coordinates
     double coWorldX(int x);
     double coWorldY(int y);
+    int coWinH(double);
     int coWinV(double);
 
     void adjustToNewSize();
@@ -103,9 +104,9 @@ class P4WinInputSphere : public QWidget
 
     void setupPlot();
     void refresh();
-    void calculateHeightFromWidth(int *width, int *height, int maxheight,
-                                  double aspectratio);
-    void updatePointSelection();
+    //void calculateHeightFromWidth(int *width, int *height, int maxheight,
+    //                              double aspectratio);
+    //void updatePointSelection();
     void markSelection(int x1, int y1, int x2, int y2);
 
     void plotCurves();
