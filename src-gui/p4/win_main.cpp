@@ -26,7 +26,7 @@
 #include "p4application.h"
 #include "p4settings.h"
 #include "win_about.h"
-#include "win_find.h"
+#include "P4FindDlg.h"
 #include "win_plot.h"
 
 #include <QBoxLayout>

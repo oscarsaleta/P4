@@ -23,7 +23,7 @@
 #include "file_vf.h"
 #include "main.h"
 #include "P4Event.h"
-#include "win_find.h"
+#include "P4FindDlg.h"
 #include "win_main.h"
 
 #include <QFont>

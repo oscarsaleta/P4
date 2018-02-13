@@ -17,10 +17,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_FIND_H
-#define WIN_FIND_H
+#pragma once
 
 #include <QWidget>
+#include <memory>
 
 class QParamsDlg;
 class QVectorFieldDlg;
@@ -35,49 +35,42 @@ class P4FindDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4FindDlg(P4StartDlg *startwindow);
-    ~P4FindDlg();
+    P4FindDlg(std::unique_ptr<P4StartDlg> startwindow);
     void getDataFromDlg();
 
   private:
-    P4StartDlg *parent_;
+    std::unique_ptr<P4StartDlg> parent_;
 
-    QBoxLayout *mainLayout_;
-    QBoxLayout *superLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QBoxLayout> superLayout_;
 
-    // QRadioButton *btn_maple_;
-    // QRadioButton *btn_reduce_;
-    QRadioButton *btn_actionrun_;
-    QRadioButton *btn_actionprep_;
-    QRadioButton *btn_all_;
-    QRadioButton *btn_fin_;
-    QRadioButton *btn_inf_;
-    QRadioButton *btn_one_;
-    QRadioButton *btn_yes_;
-    QRadioButton *btn_no_;
-    QPushButton *btn_load_;
-    QPushButton *btn_save_;
-    QPushButton *btn_eval_;
+    std::unique_ptr<QRadioButton> btn_actionrun_;
+    std::unique_ptr<QRadioButton> btn_actionprep_;
+    std::unique_ptr<QRadioButton> btn_all_;
+    std::unique_ptr<QRadioButton> btn_fin_;
+    std::unique_ptr<QRadioButton> btn_inf_;
+    std::unique_ptr<QRadioButton> btn_one_;
+    std::unique_ptr<QRadioButton> btn_yes_;
+    std::unique_ptr<QRadioButton> btn_no_;
+    std::unique_ptr<QPushButton> btn_load_;
+    std::unique_ptr<QPushButton> btn_save_;
+    std::unique_ptr<QPushButton> btn_eval_;
 
-    QVectorFieldDlg *vfWindow_;
-    QParamsDlg *paramsWindow_;
+    std::unique_ptr<QVectorFieldDlg> vfWindow_;
+    std::unique_ptr<QParamsDlg> paramsWindow_;
+    // TODO. veure si s'ha de treballar en el layout
+    std::unique_ptr<P4VFSelectDlg> vfSelectWindow_;
 
     // void saveSettings();
     // void readSettings();
 
   public slots:
-    // void btn_maple_toggled(bool);
-    // void btn_reduce_toggled(bool);
     void updateDlgData();
-
     void signalEvaluating();
     void signalEvaluated();
-
+    void signalCurvesEvaluated();
     void onBtnLoad();
     void onBtnSave();
     void onBtnEval();
-
     void onSaveSignal();
 };
-
-#endif /* WIN_FIND_H */

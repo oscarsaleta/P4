@@ -23,7 +23,7 @@
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
-#include "win_find.h"
+#include "P4FindDlg.h"
 
 #include <QBoxLayout>
 #include <QFormLayout>
