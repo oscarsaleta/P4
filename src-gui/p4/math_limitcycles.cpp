@@ -25,7 +25,7 @@
 #include "math_orbits.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "win_limitcycles.h"
+#include "P4LimitCyclesDlg.h"
 #include "win_sphere.h"
 
 #include <cmath>
@@ -399,7 +399,7 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
     LCpoints.color = CLIMIT;
     LCpoints.dashes = g_VFResults.config_dashes_;
     LC.points.push_back(LCpoints);
-    LC.current_point_index = 0;
+    //LC.current_point_index = 0;
     if (g_VFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
@@ -410,12 +410,11 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
 
+        copy_x_into_y(p2, LCpoints.pcoord);
         LCpoints.color = CLIMIT;
         LCpoints.dashes = g_VFResults.config_dashes_;
-        copy_x_into_y(p2, LCpoints.pcoord);
         LC.points.push_back(LCpoints);
-        LC.current_point_index++;
-
+        //LC.current_point_index++;
         if (g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, p1, p2, CLIMIT);
         else
@@ -438,11 +437,11 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
 
+        copy_x_into_y(p2, LCpoints.pcoord);
         LCpoints.color = CLIMIT;
         LCpoints.dashes = g_VFResults.config_dashes_;
-        copy_x_into_y(p2, LCpoints.pcoord);
         LC.points.push_back(LCpoints);
-        LC.current_point_index++;
+        //LC.current_point_index++;
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
@@ -453,13 +452,13 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
             (*plot_p)(spherewnd, p2, CLIMIT);
     }
     MATHFUNC(R2_to_sphere)(x, y, p2);
-    copy_x_into_y(p2, g_VFResults.current_lim_cycle_->current_f_orbits->pcoord);
+    copy_x_into_y(p2, g_VFResults.LCpoints.pcoord);
     if (g_VFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
         (*plot_p)(spherewnd, p2, CLIMIT);
 
-    g_VFResults.lim_cycles_.push_back(LC);
+    g_VFResults.limCycles_.push_back(LC);
 }
 
 // -----------------------------------------------------------------------
@@ -469,7 +468,7 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
 // a repaint (but also during a print command).
 void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd)
 {
-    std::vector<p4orbits::orbits> &orbits = g_VFResults.lim_cycles_;
+    std::vector<p4orbits::orbits> &orbits = g_VFResults.limCycles_;
 
     for (auto it : orbits) {
         drawOrbit(spherewnd, it.pcoord, it.f_orbits, it.color);
@@ -481,12 +480,12 @@ void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd)
 // -----------------------------------------------------------------------
 void deleteLastLimitCycle(std::shared_ptr<QWinSphere> spherewnd)
 {
-    if (g_VFResults.lim_cycles_.empty())
+    if (g_VFResults.limCycles_.empty())
         return;
 
-    p4orbits::orbits &orbit1 = g_VFResults.lim_cycles_.back();
+    p4orbits::orbits &orbit1 = g_VFResults.limCycles_.back();
     drawOrbit(spherewnd, orbit2.pcoord, orbit2.f_orbits,
               spherewnd->spherebgcolor_);
 
-    g_VFResults.lim_cycles_.pop_back();    
+    g_VFResults.limCycles_.pop_back();    
 }
