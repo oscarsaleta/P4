@@ -32,7 +32,7 @@
 #include "P4IntParamsDlg.h"
 #include "win_isoclines.h"
 #include "P4LegendWnd.h"
-#include "win_limitcycles.h"
+#include "P4LimitCyclesDlg.h"
 #include "win_main.h"
 #include "win_orbits.h"
 #include "win_print.h"
@@ -182,7 +182,7 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
     sepWindow_ = new QSepDlg(this, sphere_);
     intParamsWindow_ = new P4IntParamsDlg();
     viewParamsWindow_ = new P4ViewDlg(this);
-    lcWindow_ = new QLimitCyclesDlg(this, sphere_);
+    lcWindow_ = new P4LimitCyclesDlg(this, sphere_);
     gcfWindow_ = new P4GcfDlg(this, sphere_);
     curveWindow_ = new QCurveDlg(this, sphere_);
     isoclinesWindow_ = new QIsoclinesDlg(this, sphere_);

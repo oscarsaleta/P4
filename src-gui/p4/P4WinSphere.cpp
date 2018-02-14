@@ -2401,13 +2401,12 @@ void P4WinSphere::printOrbits()
 void P4WinSphere::printLimitCycles()
 {
     // inspired by DrawOrbits, except that we put comments between
-
     struct orbits *orbit;
     QString s;
     int i;
     i = 1;
 
-    for (orbit = g_VFResults.first_lim_cycle_; orbit != nullptr;
+    for (orbit = g_VFResults.limCycles_; orbit != nullptr;
          orbit = orbit->next_orbit) {
         s.sprintf("Starting Limit Cycle %d", i++);
         print_comment(s);
