@@ -17,27 +17,24 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_LEGEND_H
-#define WIN_LEGEND_H
+#pragma once
 
 #include <QWidget>
 
 class QPaintEvent;
 class QBoxLayout;
 
-class QLegendWnd : public QWidget
+class P4LegendWnd : public QWidget
 {
     Q_OBJECT
 
   public:
-    QLegendWnd();
+    P4LegendWnd();
     void paintEvent(QPaintEvent *);
     void calculateGeometry();
     void loadState();
 
   private:
-    QBoxLayout *mainLayout_;
-
     int orbitwidth_;
     int sepwidth_;
 
@@ -60,5 +57,3 @@ class QLegendWnd : public QWidget
     int vmargin7_;
     int vmargin8_;
 };
-
-#endif /* WIN_LEGEND_H */

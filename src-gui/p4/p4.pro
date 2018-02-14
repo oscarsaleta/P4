@@ -93,7 +93,7 @@ HEADERS += win_view.h \
     win_orbits.h \
     win_main.h \
     win_limitcycles.h \
-    win_legend.h \
+    P4LegendWnd.h \
     win_isoclines.h \
     P4IntParamsDlg.h \
     P4GcfDlg.h \

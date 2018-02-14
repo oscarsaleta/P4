@@ -28,7 +28,7 @@ class QCurveDlg;
 class P4GcfDlg;
 class QIsoclinesDlg;
 class P4IntParamsDlg;
-class QLegendWnd;
+class P4LegendWnd;
 class QLimitCyclesDlg;
 class QOrbitsDlg;
 class QSepDlg;
@@ -70,7 +70,7 @@ class QPlotWnd : public QMainWindow
     QAction *actLimitCycles_;
     QAction *actPrint_;
 
-    QLegendWnd *legendWindow_;
+    P4LegendWnd *legendWindow_;
     QOrbitsDlg *orbitsWindow_;
     QSepDlg *sepWindow_;
     QLimitCyclesDlg *lcWindow_;

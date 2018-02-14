@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_legend.h"
+#include "P4LegendWnd.h"
 
 #include "custom.h"
 #include "main.h"
@@ -32,7 +32,6 @@
 
 P4RGBITEM g_XFigToRGB[NUMXFIGCOLORS] = {
     // 8 pure colours:
-
     {0, 0, 0},       // BLACK
     {0, 0, 255},     // BLUE
     {0, 255, 0},     // GREEN
@@ -43,7 +42,6 @@ P4RGBITEM g_XFigToRGB[NUMXFIGCOLORS] = {
     {255, 255, 255}, // WHITE
 
     // shaded colours (ordered from dark to light):
-
     {0, 0, 143},     // BLUE1
     {0, 0, 176},     // BLUE2
     {0, 0, 209},     // BLUE3
@@ -74,7 +72,7 @@ P4RGBITEM g_XFigToRGB[NUMXFIGCOLORS] = {
 //                              LEGEND
 // -----------------------------------------------------------------------
 
-QLegendWnd::QLegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+P4LegendWnd::P4LegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     int w, h;
 
@@ -87,11 +85,9 @@ QLegendWnd::QLegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
     setP4WindowTitle(this, "P4 Legend");
 }
 
-void QLegendWnd::paintEvent(QPaintEvent *p)
+void P4LegendWnd::paintEvent(QPaintEvent *p)
 {
     QPainter paint(this);
-    UNUSED(p);
-
     paint.setFont(*(g_p4app->legendFont_));
 
     paint.setPen(QPen(QXFIGCOLOR(bgColours::CFOREGROUND)));
@@ -241,11 +237,11 @@ vertical margins:
     7 bottom
 */
 
-void QLegendWnd::calculateGeometry(void)
+void P4LegendWnd::calculateGeometry(void)
 {
     int e, me;
 
-    QFontMetrics fm(*(g_p4app->legendFont_));
+    QFontMetrics fm{*(g_p4app->legendFont_)};
 
     QPalette palette;
     palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND));

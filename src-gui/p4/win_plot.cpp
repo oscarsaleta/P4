@@ -31,7 +31,7 @@
 #include "P4GcfDlg.h"
 #include "P4IntParamsDlg.h"
 #include "win_isoclines.h"
-#include "win_legend.h"
+#include "P4LegendWnd.h"
 #include "win_limitcycles.h"
 #include "win_main.h"
 #include "win_orbits.h"
@@ -177,7 +177,7 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
     statusBar()->showMessage("Ready");
 
     sphere_ = new QWinSphere(this, statusBar(), false, 0, 0, 0, 0);
-    legendWindow_ = new QLegendWnd();
+    legendWindow_ = new P4LegendWnd();
     orbitsWindow_ = new QOrbitsDlg(this, sphere_);
     sepWindow_ = new QSepDlg(this, sphere_);
     intParamsWindow_ = new P4IntParamsDlg();
@@ -335,7 +335,7 @@ void QPlotWnd::onBtnRefresh(void)
 void QPlotWnd::onBtnLegend(void)
 {
     if (legendWindow_ == nullptr)
-        legendWindow_ = new QLegendWnd();
+        legendWindow_ = new P4LegendWnd();
 
     legendWindow_->show();
     legendWindow_->raise();
