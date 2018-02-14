@@ -91,7 +91,7 @@ HEADERS += win_view.h \
     win_plot.h \
     win_params.h \
     win_orbits.h \
-    win_main.h \
+    P4StartDlg.h \
     P4LimitCyclesDlg.h \
     P4LegendWnd.h \
     win_isoclines.h \

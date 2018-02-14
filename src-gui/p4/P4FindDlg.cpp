@@ -24,7 +24,7 @@
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"
-#include "win_main.h"
+#include "P4StartDlg.h"
 #include "win_params.h"
 
 #include <QBoxLayout>

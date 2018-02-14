@@ -37,7 +37,7 @@
 #include "print_postscript.h"
 #include "print_xfig.h"
 #include "P4Event.h"
-#include "win_main.h"
+#include "P4StartDlg.h"
 #include "win_print.h"
 
 #include <QKeyEvent>

@@ -25,7 +25,7 @@
 #include "p4application.h"
 #include "plot_tools.h"
 #include "P4Event.h"
-#include "win_main.h"
+#include "P4StartDlg.h"
 #include "win_plot.h"
 #include "win_print.h"
 #include "win_sphere.h"

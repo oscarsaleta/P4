@@ -33,7 +33,7 @@
 #include "win_isoclines.h"
 #include "P4LegendWnd.h"
 #include "P4LimitCyclesDlg.h"
-#include "win_main.h"
+#include "P4StartDlg.h"
 #include "win_orbits.h"
 #include "win_print.h"
 #include "win_separatrice.h"

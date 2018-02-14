@@ -26,7 +26,7 @@
 #include "p4application.h"
 #include "p4settings.h"
 #include "P4FindDlg.h"
-#include "win_main.h"
+#include "P4StartDlg.h"
 #include "win_settings.h"
 
 #ifdef HAVE_CONFIG_H

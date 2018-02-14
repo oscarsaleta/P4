@@ -24,7 +24,7 @@
 #include "main.h"
 #include "P4Event.h"
 #include "P4FindDlg.h"
-#include "win_main.h"
+#include "P4StartDlg.h"
 
 #include <QFont>
 
