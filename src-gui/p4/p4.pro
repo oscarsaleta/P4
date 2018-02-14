@@ -96,7 +96,7 @@ HEADERS += win_view.h \
     win_legend.h \
     win_isoclines.h \
     win_intparams.h \
-    win_gcf.h \
+    P4GcfDlg.h \
     P4FindDlg.h \
     P4Event.h \
     win_curve.h \

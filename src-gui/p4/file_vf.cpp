@@ -28,7 +28,7 @@
 #include "p4settings.h"
 #include "win_curve.h"
 #include "P4FindDlg.h"
-#include "win_gcf.h"
+#include "P4GcfDlg.h"
 #include "win_isoclines.h"
 
 #include <QDateTime>

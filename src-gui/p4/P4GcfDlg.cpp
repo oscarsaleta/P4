@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_gcf.h"
+#include "P4GcfDlg.h"
 
 #include "custom.h"
 #include "file_tab.h"
@@ -33,7 +33,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
+P4GcfDlg::P4GcfDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     mainSphere_ = sp;
@@ -112,13 +112,13 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
     // connections
 
     connect(btn_evaluate_, &QPushButton::clicked, this,
-            &QGcfDlg::onbtn_evaluate);
+            &P4GcfDlg::onbtn_evaluate);
     // finishing
 
     setP4WindowTitle(this, "GCF Plot");
 }
 
-void QGcfDlg::reset(void)
+void P4GcfDlg::reset(void)
 {
     QString buf;
 
@@ -137,7 +137,7 @@ void QGcfDlg::reset(void)
         btn_dots_->toggle();
 }
 
-void QGcfDlg::onbtn_evaluate(void)
+void P4GcfDlg::onbtn_evaluate(void)
 {
     bool dashes, result;
     int points, precis, memory;
@@ -201,7 +201,7 @@ void QGcfDlg::onbtn_evaluate(void)
     }
 }
 
-void QGcfDlg::finishGcfEvaluation(void)
+void P4GcfDlg::finishGcfEvaluation(void)
 {
     bool result;
 

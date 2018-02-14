@@ -28,7 +28,7 @@
 #include "plot_tools.h"
 #include "win_curve.h"
 #include "P4Event.h"
-#include "win_gcf.h"
+#include "P4GcfDlg.h"
 #include "win_intparams.h"
 #include "win_isoclines.h"
 #include "win_legend.h"
@@ -183,7 +183,7 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
     intParamsWindow_ = new QIntParamsDlg();
     viewParamsWindow_ = new P4ViewDlg(this);
     lcWindow_ = new QLimitCyclesDlg(this, sphere_);
-    gcfWindow_ = new QGcfDlg(this, sphere_);
+    gcfWindow_ = new P4GcfDlg(this, sphere_);
     curveWindow_ = new QCurveDlg(this, sphere_);
     isoclinesWindow_ = new QIsoclinesDlg(this, sphere_);
     g_LCWindowIsUp = false; // Limit cycles: initially hidden

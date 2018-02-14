@@ -122,7 +122,7 @@ class P4InputVF : public QObject
     QString processError_;  // only relevant when processfailed=true
 
     std::unique_ptr<P4FindDlg> findDlg_;
-    std::unique_ptr<QGcfDlg> gcfDlg_;
+    std::unique_ptr<P4GcfDlg> gcfDlg_;
     std::unique_ptr<QCurveDlg> curveDlg_;
     std::unique_ptr<QIsoclinesDlg> isoclinesDlg_;
 

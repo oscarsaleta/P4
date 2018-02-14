@@ -19,8 +19,6 @@
 
 #include "P4FindDlg.h"
 
-#include "file_vf.h"
-
 #include "P4InputVF.h"
 #include "P4ParentStudy.h"
 #include "main.h"
@@ -38,23 +36,8 @@
 #include <QRadioButton>
 #include <QSettings>
 
-/*P4FindDlg::~P4FindDlg()
-{
-    getDataFromDlg();
-
-    if (vfWindow_ != nullptr) {
-        delete vfWindow_;
-        vfWindow_ = nullptr;
-    }
-    if (paramsWindow_ != nullptr) {
-        delete paramsWindow_;
-        paramsWindow_ = nullptr;
-    }
-}*/
-
 P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
     : QWidget(startdlg.get()), parent_{startdlg}
-
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -339,7 +322,7 @@ void P4FindDlg::onBtnLoad()
         bool oldeval = g_ThisVF->evaluated_;
 
         if (vfSelectWindow_) {
-            if (vfSelectWindow_->win_curves) {
+            if (vfSelectWindow_->win_curves_) {
                 g_VFResults.readTables(g_ThisVF->getbarefilename(), true, true);
             }
         }

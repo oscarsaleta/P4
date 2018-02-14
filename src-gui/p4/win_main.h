@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_MAIN_H
-#define WIN_MAIN_H
+#pragma once
 
 #include <memory>
 
@@ -110,5 +109,3 @@ class P4StartDlg : public QWidget
 };
 
 extern std::unique_ptr<P4StartDlg> g_p4StartDlg;
-
-#endif /* WIN_MAIN_H */

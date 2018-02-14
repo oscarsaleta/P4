@@ -25,7 +25,7 @@
 #include <memory>
 
 class QCurveDlg;
-class QGcfDlg;
+class P4GcfDlg;
 class QIsoclinesDlg;
 class QIntParamsDlg;
 class QLegendWnd;
@@ -74,7 +74,7 @@ class QPlotWnd : public QMainWindow
     QOrbitsDlg *orbitsWindow_;
     QSepDlg *sepWindow_;
     QLimitCyclesDlg *lcWindow_;
-    QGcfDlg *gcfWindow_;
+    P4GcfDlg *gcfWindow_;
     QCurveDlg *curveWindow_;
     QIsoclinesDlg *isoclinesWindow_;
 

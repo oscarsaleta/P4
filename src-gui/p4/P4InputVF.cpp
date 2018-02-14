@@ -94,7 +94,7 @@ P4InputVF::P4InputVF()
       terminateProcessButton_{std::unique_ptr<QPushButton>{}},
       clearProcessButton_{std::unique_ptr<QPushButton>{}},
       evalProcess_{std::unique_ptr<QProcess>{}},
-      gcfDlg_{std::unique_ptr<QGcfDlg>{}},
+      gcfDlg_{std::unique_ptr<P4GcfDlg>{}},
       findDlg_{std::unique_ptr<P4FindDlg>{}},
       curveDlg_{std::unique_ptr<QCurveDlg>{}},
       isoclinesDlg_{std::unique_ptr<QIsoclinesDlg>{}}, numparams_{0}, numVF_{0},

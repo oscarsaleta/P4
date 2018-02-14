@@ -45,7 +45,7 @@ class QTextStream;
 
 class QCurveDlg;
 class P4FindDlg;
-class QGcfDlg;
+class P4GcfDlg;
 class QIsoclinesDlg;
 
 struct term2;
@@ -112,7 +112,7 @@ class QInputVF : public QObject
     QString processError_; // only relevant when processfailed=true
 
     P4FindDlg *findDlg_;
-    QGcfDlg *gcfDlg_;
+    P4GcfDlg *gcfDlg_;
     QCurveDlg *curveDlg_;
     QIsoclinesDlg *isoclinesDlg_;
 

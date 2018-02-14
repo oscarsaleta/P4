@@ -30,12 +30,12 @@ class QRadioButton;
 class QBoxLayout;
 class QLineEdit;
 
-class QGcfDlg : public QWidget
+class P4GcfDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QGcfDlg(QPlotWnd *, QWinSphere *);
+    P4GcfDlg(QPlotWnd *, QWinSphere *);
     void reset(void);
     void finishGcfEvaluation(void);
 

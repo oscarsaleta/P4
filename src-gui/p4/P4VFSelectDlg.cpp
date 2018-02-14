@@ -19,6 +19,15 @@
 
 #include "P4VFSelectDlg.h"
 
+#include <QBoxLayout>
+#include <QComboBox>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QMessageBox>
+#include <QPushButton>
+
+#include "P4InputVF.h"
+#include "P4ParentStudy.h"
 #include "main.h"
 
 P4VFSelectDlg::P4VFSelectDlg(std::unique_ptr<P4FindDlg> finddlg)
@@ -73,10 +82,9 @@ P4VFSelectDlg::P4VFSelectDlg(std::unique_ptr<P4FindDlg> finddlg)
                      &P4VFSelectDlg::onBtnDel);
     QObject::connect(btn_p5config_, &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnP5Config);
-    QObject::connect(
-        cbb_vfselect_,
-        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &P4VFSelectDlg::onVFSelectionChanged);
+    QObject::connect(cbb_vfselect_, static_cast<void (QComboBox::*)(int)>(
+                                        &QComboBox::currentIndexChanged),
+                     this, &P4VFSelectDlg::onVFSelectionChanged);
 
     setP4WindowTitle(this, "P4 Vector Field Selection");
 
@@ -171,5 +179,92 @@ void P4VFSelectDlg::onBtnDel()
     if (g_ThisVF->changed_ == false) {
         g_ThisVF->changed_ = true;
         g_p4app->signalChanged();
+    }
+}
+
+void P4VFSelectDlg::onBtnPrev()
+{
+    parent_->getDataFromDlg();
+    int j{g_ThisVF->selected_[0]};
+    if (g_ThisVF->numSelected_ > 1) {
+        g_ThisVF->selected_.clear();
+        g_ThisVF->numSelected_ = 1;
+    }
+    if (--j < 0)
+        j = 0;
+    g_ThisVF->selected_.push_back(j);
+    parent_->updateDlgData();
+}
+
+void P4VFSelectDlg::onBtnNext()
+{
+    parent_->getDataFromDlg();
+    int j{g_ThisVF->selected_[0]};
+    if (g_ThisVF->numSelected_ > 1) {
+        g_ThisVF->selected_.clear();
+        g_ThisVF->numSelected_ = 1;
+    }
+    if (++j >= g_ThisVF->numVF_)
+        j = g_ThisVF->numVF_ - 1;
+    g_ThisVF->selected_.push_back(j);
+    parent_->updateDlgData();
+}
+
+void P4VFSelectDlg::onVFSelectionChanged(int index)
+{
+    if (index < g_ThisVF->numVF_) {
+        if (index != g_ThisVF->selected_[0] || g_ThisVF->numSelected_ > 1) {
+            parent_->getDataFromDlg();
+            g_ThisVF->selected_.clear();
+            g_ThisVF->selected_.push_back(index);
+            g_ThisVF->numSelected_ = 1;
+            parent_->getDataFromDlg();
+        }
+    } else if (index >= g_ThisVF->numVF_) {
+        // selected all
+        if (g_ThisVF->numSelected_ != g_ThisVF->numVF_) {
+            parent_->getDataFromDlg();
+            g_ThisVF->selected_.clear();
+            for (int k = 0; k < g_ThisVF->numVF_; k++)
+                g_ThisVF->selected_.push_back(k);
+            g_ThisVF->numSelected_ = g_ThisVF->numVF_;
+            parent_->updateDlgData();
+        }
+    }
+}
+
+bool P4VFSelectDlg::checkPlotWindowClosed()
+{
+    if (!(parent_->parent_->plotWindow_))
+        return true;
+    if (!(parent_->parent_->plotWindow_->isVisible())) {
+        parent_->parent_->closePlotWindow();
+        return true;
+    }
+    QMessageBox::critical(this, "P4", "Please close the plot window before "
+                                      "changing the piecewise "
+                                      "configuration!\n");
+    return false;
+}
+
+void P4VFSelectDlg::onBtnP5Config()
+{
+    if (!checkPlotWindowClosed())
+        return;
+
+    if (!win_curves_) {
+        g_VFResults.readTables(g_ThisVF->getbarefilename(), true, true);
+        win_curves_.reset(new P4SeparatingCurvesDlg(parent_));
+        win_curves_->show();
+    } else {
+        win_curves_->show();
+        win_curves_->raise();
+    }
+}
+
+void P4VFSelectDlg::closeConfigWindow()
+{
+    if (win_curves_) {
+        win_curves_.reset();
     }
 }
