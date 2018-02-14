@@ -27,7 +27,7 @@
 class QCurveDlg;
 class P4GcfDlg;
 class QIsoclinesDlg;
-class QIntParamsDlg;
+class P4IntParamsDlg;
 class QLegendWnd;
 class QLimitCyclesDlg;
 class QOrbitsDlg;
@@ -50,7 +50,7 @@ class QPlotWnd : public QMainWindow
     QPlotWnd(P4StartDlg *);
     ~QPlotWnd();
 
-    QIntParamsDlg *intParamsWindow_;
+    P4IntParamsDlg *intParamsWindow_;
     P4ViewDlg *viewParamsWindow_;
 
   private:
