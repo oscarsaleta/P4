@@ -33,30 +33,30 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-P4GcfDlg::P4GcfDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+P4GcfDlg::P4GcfDlg(std::unique_ptr<QPlotWnd> plt,
+                   std::unique_ptr<P4WinSphere> sp)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
+      plotwnd_{plt},
+      mainSphere_{sp}
 {
-    mainSphere_ = sp;
-    plotwnd_ = plt;
-
-    QButtonGroup *btngrp = new QButtonGroup(this);
-    btn_dots_ = new QRadioButton("Dots", this);
-    btn_dashes_ = new QRadioButton("Dashes", this);
+    std::unique_ptr<QButtonGroup> btngrp{new QButtonGroup(this)};
+    btn_dots_.reset(QRadioButton("Dots", this));
+    btn_dashes_.reset(QRadioButton("Dashes", this));
     btngrp->addButton(btn_dots_);
     btngrp->addButton(btn_dashes_);
 
-    QLabel *lbl1 = new QLabel("Appearance: ", this);
+    std::unique_ptr<QLabel> lbl1{new QLabel("Appearance: ", this)};
 
-    edt_points_ = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("#Points: ", this);
+    edt_points_.reset(QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl2{new QLabel("#Points: ", this)};
 
-    edt_precis_ = new QLineEdit("", this);
-    QLabel *lbl3 = new QLabel("Precision: ", this);
+    edt_precis_.reset(QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl3{new QLabel("Precision: ", this)};
 
-    edt_memory_ = new QLineEdit("", this);
-    QLabel *lbl4 = new QLabel("Max. Memory: ", this);
+    edt_memory_.reset(QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl4{new QLabel("Max. Memory: ", this)};
 
-    btn_evaluate_ = new QPushButton("&Evaluate", this);
+    btn_evaluate_.reset(QPushButton("&Evaluate", this));
 
 #ifdef TOOLTIPS
     btn_dots_->setToolTip(
@@ -64,10 +64,9 @@ P4GcfDlg::P4GcfDlg(QPlotWnd *plt, QWinSphere *sp)
     btn_dashes_->setToolTip("Connect points of the curve of singularities with "
                             "small line segments");
     btn_evaluate_->setToolTip("Start evaluation (using symbolic manipulator)");
-    QString ttip;
-    ttip = QString::fromStdString("Number of points. Must be between " +
-                                  std::to_string(MIN_GCFPOINTS) + " and " +
-                                  std::to_string(MAX_GCFPOINTS));
+    QString ttip{QString::fromStdString(
+        "Number of points. Must be between " + std::to_string(MIN_GCFPOINTS) +
+        " and " + std::to_string(MAX_GCFPOINTS))};
     edt_points_->setToolTip(ttip);
     ttip = QString::fromStdString("Required precision. Must be between " +
                                   std::to_string(MIN_GCFPRECIS) + " and " +
@@ -81,15 +80,14 @@ P4GcfDlg::P4GcfDlg(QPlotWnd *plt, QWinSphere *sp)
 #endif
 
     // layout
+    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
 
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
-
-    QHBoxLayout *layout1 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
     layout1->addWidget(lbl1);
     layout1->addWidget(btn_dots_);
     layout1->addWidget(btn_dashes_);
 
-    QGridLayout *lay00 = new QGridLayout();
+    std::unique_ptr<QGridLayout> lay00{new QGridLayout()};
     lay00->addWidget(lbl2, 0, 0);
     lay00->addWidget(edt_points_, 0, 1);
     lay00->addWidget(lbl3, 1, 0);
@@ -97,7 +95,7 @@ P4GcfDlg::P4GcfDlg(QPlotWnd *plt, QWinSphere *sp)
     lay00->addWidget(lbl4, 2, 0);
     lay00->addWidget(edt_memory_, 2, 1);
 
-    QHBoxLayout *layout2 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
     layout2->addStretch(0);
     layout2->addWidget(btn_evaluate_);
     layout2->addStretch(0);
@@ -110,15 +108,14 @@ P4GcfDlg::P4GcfDlg(QPlotWnd *plt, QWinSphere *sp)
     setLayout(mainLayout_);
 
     // connections
-
     connect(btn_evaluate_, &QPushButton::clicked, this,
             &P4GcfDlg::onbtn_evaluate);
-    // finishing
 
+    // finishing
     setP4WindowTitle(this, "GCF Plot");
 }
 
-void P4GcfDlg::reset(void)
+void P4GcfDlg::reset()
 {
     QString buf;
 
@@ -137,21 +134,14 @@ void P4GcfDlg::reset(void)
         btn_dots_->toggle();
 }
 
-void P4GcfDlg::onbtn_evaluate(void)
+void P4GcfDlg::onbtn_evaluate()
 {
-    bool dashes, result;
+    bool dashes{btn_dashes_->isChecked()}, result;
     int points, precis, memory;
+    bool ok{true};
 
-    bool ok;
-    QString buf;
-
-    dashes = btn_dashes_->isChecked();
-
-    ok = true;
-
-    buf = edt_points_->text();
+    QString buf{edt_points_->text()};
     points = buf.toInt();
-
     if (points < MIN_GCFPOINTS || points > MAX_GCFPOINTS) {
         buf += " ???";
         edt_points_->setText(buf);
@@ -178,12 +168,10 @@ void P4GcfDlg::onbtn_evaluate(void)
         QMessageBox::information(
             this, "P4", "One of the fields has a value that is out of bounds.\n"
                         "Please correct before continuing.\n");
-
         return;
     }
 
     // Evaluate GCF with given parameters {dashes, points, precis, memory}.
-
     evaluating_points_ = points;
     evaluating_memory_ = memory;
     evaluating_precision_ = precis;
@@ -196,24 +184,22 @@ void P4GcfDlg::onbtn_evaluate(void)
         btn_evaluate_->setEnabled(true);
         QMessageBox::critical(this, "P4", "An error occured while plotting the "
                                           "GCF.\nThe singular locus may not be "
-                                          "visible, or may "
-                                          "be partially visible.");
+                                          "visible, or may be partially "
+                                          "visible.");
     }
 }
 
-void P4GcfDlg::finishGcfEvaluation(void)
+void P4GcfDlg::finishGcfEvaluation()
 {
-    bool result;
-
     if (btn_evaluate_->isEnabled() == true)
         return; // not busy??
 
-    result = evalGcfContinue(evaluating_points_, evaluating_precision_);
+    bool result{evalGcfContinue(evaluating_points_, evaluating_precision_)};
 
     if (result) {
         btn_evaluate_->setEnabled(true);
-        result = evalGcfFinish(); // return false in case an error occured
-        if (!result) {
+        // return false in case an error occured
+        if (!evalGcfFinish()) {
             QMessageBox::critical(this, "P4", "An error occured while plotting "
                                               "the GCF.\nThe singular locus "
                                               "may not be visible, or may "

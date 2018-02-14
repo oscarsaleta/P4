@@ -17,12 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_GCF_H
-#define WIN_GCF_H
+#pragma once
 
 #include <QWidget>
 
-class QWinSphere;
+class P4WinSphere;
 class QPlotWnd;
 
 class QPushButton;
@@ -35,23 +34,23 @@ class P4GcfDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4GcfDlg(QPlotWnd *, QWinSphere *);
+    P4GcfDlg(std::unique_ptr<QPlotWnd>, std::unique_ptr<P4WinSphere>);
     void reset(void);
     void finishGcfEvaluation(void);
 
   private:
-    QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd_;
+    std::unique_ptr<P4WinSphere> mainSphere_;
+    std::unique_ptr<QPlotWnd> plotwnd_;
 
-    QPushButton *btn_evaluate_;
+    std::unique_ptr<QPushButton> btn_evaluate_;
 
-    QRadioButton *btn_dots_;
-    QRadioButton *btn_dashes_;
-    QLineEdit *edt_points_;
-    QLineEdit *edt_precis_;
-    QLineEdit *edt_memory_;
+    std::unique_ptr<QRadioButton> btn_dots_;
+    std::unique_ptr<QRadioButton> btn_dashes_;
+    std::unique_ptr<QLineEdit> edt_points_;
+    std::unique_ptr<QLineEdit> edt_precis_;
+    std::unique_ptr<QLineEdit> edt_memory_;
 
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
     int evaluating_points_;
     int evaluating_memory_;
@@ -60,5 +59,3 @@ class P4GcfDlg : public QWidget
   public slots:
     void onbtn_evaluate(void);
 };
-
-#endif /* WIN_GCF_H */
