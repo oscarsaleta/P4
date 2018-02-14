@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_limitcycles.h"
+#include "P4LimitCyclesDlg.h"
 
 #include "custom.h"
 #include "file_tab.h"
@@ -37,40 +37,40 @@
 
 #include <cmath>
 
-bool g_LCWindowIsUp = false; // see definition in main.h
+bool g_LCWindowIsUp{false}; // see definition in main.h
 
-static QProgressDialog *s_LCprogressDlg = nullptr;
-static int s_LCprogressCount = 1;
-static int s_LCmaxProgressCount = 0;
+static std::unique_ptr<QProgressDialog> s_LCprogressDlg{};
+static int s_LCprogressCount{1};
+static int s_LCmaxProgressCount{0};
 
-QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<QPlotWnd> plt,
+                                   std::unique_ptr<QWinSphere> sp)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
+      plotwnd_{plt},
+      mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    mainSphere_ = sp;
-    plotwnd_ = plt;
+    edt_x0_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl1{new QLabel("x0 = ", this)};
+    edt_y0_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl2{new QLabel("y0 = ", this)};
+    edt_x1_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl3{new QLabel("x1 = ", this)};
+    edt_y1_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl4{new QLabel("y1 = ", this)};
+    edt_grid_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl5{new QLabel("Grid: ", this)};
 
-    edt_x0_ = new QLineEdit("", this);
-    QLabel *lbl1 = new QLabel("x0 = ", this);
-    edt_y0_ = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("y0 = ", this);
-    edt_x1_ = new QLineEdit("", this);
-    QLabel *lbl3 = new QLabel("x1 = ", this);
-    edt_y1_ = new QLineEdit("", this);
-    QLabel *lbl4 = new QLabel("y1 = ", this);
-    edt_grid_ = new QLineEdit("", this);
-    QLabel *lbl5 = new QLabel("Grid: ", this);
-
-    spin_numpoints_ = new QSpinBox(this);
+    spin_numpoints_.reset(new QSpinBox(this));
     spin_numpoints_->setMinimum(MIN_LCPOINTS);
     spin_numpoints_->setMaximum(MAX_LCPOINTS);
-    QLabel *lbl6 = new QLabel("# Points: ", this);
+    std::unique_ptr<QLabel> lbl6{new QLabel("# Points: ", this)};
 
-    btn_start_ = new QPushButton("&Start", this);
-    btn_cancel_ = new QPushButton("&Reset setpoints", this);
-    btn_dellast_ = new QPushButton("&Delete Last LC", this);
-    btn_delall_ = new QPushButton("Delete &All LC", this);
+    btn_start_.reset(new QPushButton("&Start", this));
+    btn_cancel_.reset(new QPushButton("&Reset setpoints", this));
+    btn_dellast_.reset(new QPushButton("&Delete Last LC", this));
+    btn_delall_.reset(new QPushButton("Delete &All LC", this));
 
 #ifdef TOOLTIPS
     edt_x0_->setToolTip(
@@ -97,9 +97,9 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // layout
 
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
 
-    QGridLayout *lay00 = new QGridLayout();
+    std::unique_ptr<QGridLayout> lay00{new QGridLayout()};
     lay00->addWidget(lbl1, 0, 0);
     lay00->addWidget(edt_x0_, 0, 1);
     lay00->addWidget(lbl2, 0, 2);
@@ -109,19 +109,19 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     lay00->addWidget(lbl4, 1, 2);
     lay00->addWidget(edt_y1_, 1, 3);
 
-    QHBoxLayout *layout1 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
     layout1->addWidget(lbl5);
     layout1->addWidget(edt_grid_);
 
-    QHBoxLayout *layout2 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
     layout2->addWidget(btn_start_);
     layout2->addWidget(btn_cancel_);
 
-    QHBoxLayout *layout3 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout3{new QHBoxLayout()};
     layout3->addWidget(lbl6);
     layout3->addWidget(spin_numpoints_);
 
-    QHBoxLayout *layout4 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout4{new QHBoxLayout()};
     layout4->addWidget(btn_dellast_);
     layout4->addWidget(btn_delall_);
 
@@ -135,18 +135,16 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     setLayout(mainLayout_);
 
     // connections
-
     connect(btn_start_, &QPushButton::clicked, this,
-            &QLimitCyclesDlg::onbtn_start);
+            &P4LimitCyclesDlg::onbtn_start);
     connect(btn_cancel_, &QPushButton::clicked, this,
-            &QLimitCyclesDlg::onbtn_cancel);
+            &P4LimitCyclesDlg::onbtn_cancel);
     connect(btn_delall_, &QPushButton::clicked, this,
-            &QLimitCyclesDlg::onbtn_delall);
+            &P4LimitCyclesDlg::onbtn_delall);
     connect(btn_dellast_, &QPushButton::clicked, this,
-            &QLimitCyclesDlg::onbtn_dellast);
+            &P4LimitCyclesDlg::onbtn_dellast);
 
     // finishing
-
     selected_x0_ = 0;
     selected_y0_ = 0;
     selected_x1_ = 0;
@@ -159,7 +157,7 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     buf.sprintf("%g", (float)selected_grid_);
     edt_grid_->setText(buf);
 
-    if (g_VFResults.first_lim_cycle_ == nullptr) {
+    if (g_VFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     }
@@ -167,7 +165,7 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "Limit Cycles");
 }
 
-void QLimitCyclesDlg::setSection(double x0, double y0, double x1, double y1)
+void P4LimitCyclesDlg::setSection(double x0, double y0, double x1, double y1)
 {
     QString buf;
     QString bufx;
@@ -183,21 +181,14 @@ void QLimitCyclesDlg::setSection(double x0, double y0, double x1, double y1)
     edt_y1_->setText(bufy);
 }
 
-void QLimitCyclesDlg::onbtn_start(void)
+void P4LimitCyclesDlg::onbtn_start(void)
 {
-    double d;
-    QString bufx;
-    QString bufy;
-    QString buf;
-    bool empty;
 
     plotwnd_->getDlgData();
 
-    bufx = edt_x0_->text();
-    bufy = edt_y0_->text();
-
-    empty = false;
-
+    QString bufx{edt_x0_->text()};
+    QString bufy{edt_y0_->text()};
+    bool empty{false};
     if (bufx.length() == 0 || bufy.length() == 0) {
         empty = true;
     }
@@ -207,26 +198,24 @@ void QLimitCyclesDlg::onbtn_start(void)
 
     bufx = edt_x1_->text();
     bufy = edt_y1_->text();
-
     if (bufx.length() == 0 || bufy.length() == 0 || empty) {
         QMessageBox::critical(
-            this, "P4",
-            "Please enter setpoint coordinates for the transverse section.\n"
-            "You can also click on the poincare sphere with the left mouse "
-            "button\n"
-            "while the limit cycle window is opened.\n");
+            this, "P4", "Please enter setpoint coordinates for the transverse "
+                        "section.\nYou can also click on the poincare sphere "
+                        "with the left mouse button\nwhile the limit cycle "
+                        "window is opened.\n");
         return;
     }
 
     selected_x1_ = bufx.toDouble();
     selected_y1_ = bufy.toDouble();
 
-    buf = edt_grid_->text();
+    QString buf{edt_grid_->text()};
     selected_grid_ = buf.toDouble();
 
     selected_numpoints_ = spin_numpoints_->value();
 
-    d = (selected_x0_ - selected_x1_) * (selected_x0_ - selected_x1_);
+    double d{(selected_x0_ - selected_x1_) * (selected_x0_ - selected_x1_)};
     d += (selected_y0_ - selected_y1_) * (selected_y0_ - selected_y1_);
     d = sqrt(d);
     if (selected_grid_ > d || selected_grid_ < MIN_LCGRID ||
@@ -244,11 +233,10 @@ void QLimitCyclesDlg::onbtn_start(void)
     }
 
     // SEARCH FOR LIMIT CYCLES:
-
     s_LCmaxProgressCount = (int)(d + 0.5);
-    s_LCprogressDlg =
-        new QProgressDialog("Searching for limit cycles...", "Stop search", 0,
-                            s_LCmaxProgressCount, this, 0);
+    s_LCprogressDlg.reset(new QProgressDialog("Searching for limit cycles...",
+                                              "Stop search", 0,
+                                              s_LCmaxProgressCount, this, 0));
     s_LCprogressDlg->setAutoReset(false);
     s_LCprogressDlg->setAutoClose(false);
     s_LCprogressDlg->setMinimumDuration(0);
@@ -259,8 +247,7 @@ void QLimitCyclesDlg::onbtn_start(void)
                      selected_y1_, selected_grid_);
 
     // update buttons
-
-    if (g_VFResults.first_lim_cycle_ == nullptr) {
+    if (g_VFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     } else {
@@ -273,7 +260,7 @@ void QLimitCyclesDlg::onbtn_start(void)
     s_LCprogressDlg = nullptr;
 }
 
-void QLimitCyclesDlg::onbtn_cancel(void)
+void P4LimitCyclesDlg::onbtn_cancel(void)
 {
     edt_x0_->setText("");
     edt_y0_->setText("");
@@ -281,10 +268,9 @@ void QLimitCyclesDlg::onbtn_cancel(void)
     edt_y1_->setText("");
 }
 
-void QLimitCyclesDlg::reset(void)
+void P4LimitCyclesDlg::reset(void)
 {
     // finishing
-
     selected_x0_ = 0;
     selected_y0_ = 0;
     selected_x1_ = 0;
@@ -302,7 +288,7 @@ void QLimitCyclesDlg::reset(void)
     edt_grid_->setText(buf);
     spin_numpoints_->setValue(selected_numpoints_);
 
-    if (g_VFResults.first_lim_cycle_ == nullptr) {
+    if (g_VFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     } else {
@@ -311,33 +297,32 @@ void QLimitCyclesDlg::reset(void)
     }
 }
 
-void QLimitCyclesDlg::showEvent(QShowEvent *se)
+void P4LimitCyclesDlg::showEvent(QShowEvent *se)
 {
     QWidget::showEvent(se);
     g_LCWindowIsUp = true;
 }
 
-void QLimitCyclesDlg::hideEvent(QHideEvent *he)
+void P4LimitCyclesDlg::hideEvent(QHideEvent *he)
 {
     QWidget::hideEvent(he);
     g_LCWindowIsUp = false;
 }
 
-void QLimitCyclesDlg::onbtn_delall(void)
+void P4LimitCyclesDlg::onbtn_delall(void)
 {
     plotwnd_->getDlgData();
 
     btn_delall_->setEnabled(false);
     btn_dellast_->setEnabled(false);
 
-    g_VFResults.deleteOrbit(g_VFResults.first_lim_cycle_);
-    g_VFResults.first_lim_cycle_ = nullptr;
-    g_VFResults.current_lim_cycle_ = nullptr;
+    g_VFResults.limCycles_.clear();
+    //g_VFResults.currentLimCycleIndex_ = -1;
 
     mainSphere_->refresh();
 }
 
-void QLimitCyclesDlg::onbtn_dellast(void)
+void P4LimitCyclesDlg::onbtn_dellast(void)
 {
     plotwnd_->getDlgData();
 
@@ -345,7 +330,7 @@ void QLimitCyclesDlg::onbtn_dellast(void)
     deleteLastLimitCycle(mainSphere_);
     mainSphere_->finishDrawing();
 
-    if (g_VFResults.first_lim_cycle_ == nullptr) {
+    if (g_VFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     }
@@ -362,8 +347,6 @@ bool stop_search_limit(void)
 
 void write_to_limit_window(double x, double y)
 {
-    UNUSED(x);
-    UNUSED(y);
     s_LCprogressCount++;
 
     if (!(s_LCprogressDlg->wasCanceled()))

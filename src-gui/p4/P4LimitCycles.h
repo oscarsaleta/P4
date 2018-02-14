@@ -17,10 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_LIMITCYCLES_H
-#define WIN_LIMITCYCLES_H
+#pragma once
 
 #include <QWidget>
+
+#include <memory>
 
 class QPlotWnd;
 class QWinSphere;
@@ -33,35 +34,35 @@ class QBoxLayout;
 bool stop_search_limit(void);
 void write_to_limit_window(double x, double y);
 
-class QLimitCyclesDlg : public QWidget
+class P4LimitCyclesDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QLimitCyclesDlg(QPlotWnd *, QWinSphere *);
-    void reset(void);
+    P4LimitCyclesDlg(std::unique_ptr<QPlotWnd>, std::unique_ptr<QWinSphere>);
+    void reset();
     void setSection(double, double, double, double);
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
 
   private:
-    QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd_;
+    std::unique_ptr<QWinSphere> mainSphere_;
+    std::unique_ptr<QPlotWnd> plotwnd_;
 
-    QPushButton *btn_start_;
-    QPushButton *btn_cancel_;
-    QPushButton *btn_delall_;
-    QPushButton *btn_dellast_;
+    std::unique_ptr<QPushButton> btn_start_;
+    std::unique_ptr<QPushButton> btn_cancel_;
+    std::unique_ptr<QPushButton> btn_delall_;
+    std::unique_ptr<QPushButton> btn_dellast_;
 
-    QLineEdit *edt_x0_;
-    QLineEdit *edt_y0_;
-    QLineEdit *edt_x1_;
-    QLineEdit *edt_y1_;
-    QLineEdit *edt_grid_;
+    std::unique_ptr<QLineEdit> edt_x0_;
+    std::unique_ptr<QLineEdit> edt_y0_;
+    std::unique_ptr<QLineEdit> edt_x1_;
+    std::unique_ptr<QLineEdit> edt_y1_;
+    std::unique_ptr<QLineEdit> edt_grid_;
 
-    QSpinBox *spin_numpoints_;
+    std::unique_ptr<QSpinBox> spin_numpoints_;
 
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
     double selected_x0_;
     double selected_y0_;
@@ -71,10 +72,8 @@ class QLimitCyclesDlg : public QWidget
     int selected_numpoints_;
 
   public slots:
-    void onbtn_start(void);
-    void onbtn_cancel(void);
-    void onbtn_delall(void);
-    void onbtn_dellast(void);
+    void onbtn_start();
+    void onbtn_cancel();
+    void onbtn_delall();
+    void onbtn_dellast();
 };
-
-#endif
