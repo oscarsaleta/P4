@@ -106,6 +106,8 @@ class P4StartDlg : public QWidget
     std::unique_ptr<QWidget> helpWindow_;
     std::unique_ptr<QWidget> viewInfiniteWindow_;
     std::unique_ptr<QWidget> viewFiniteWindow_;
+
+    bool canOpenPlot();
 };
 
 extern std::unique_ptr<P4StartDlg> g_p4StartDlg;
