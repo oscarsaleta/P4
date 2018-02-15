@@ -44,19 +44,19 @@ class P4VFSelectDlg : public QWidget
     std::unique_ptr<QPushButton> btn_p5config_;
     std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
 
-    void GetDataFromDlg(void);
-    void UpdateDlgData(void);
+    void getDataFromDlg(void);
+    void updateDlgData(void);
 
-    void CloseConfigWindow(void);
-    bool CheckPlotWindowClosed(void);
+    void closeConfigWindow(void);
+    bool checkPlotWindowClosed(void);
 
   public slots:
-    void OnBtnAdd(void);
-    void OnBtnDel(void);
-    void OnBtnPrev(void);
-    void OnBtnNext(void);
-    void OnBtnP5Config(void);
-    void OnVfSelectionChanged(int);
+    void onBtnAdd(void);
+    void onBtnDel(void);
+    void onBtnPrev(void);
+    void onBtnNext(void);
+    void onBtnP5Config(void);
+    void onVfSelectionChanged(int);
 
   private:
     std::unique_ptr<QBoxLayout> mainLayout_;
