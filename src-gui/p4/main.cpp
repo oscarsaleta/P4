@@ -22,11 +22,11 @@
 
 #include "main.h"
 
+#include "P4FindDlg.h"
+#include "P4StartDlg.h"
 #include "file_vf.h"
 #include "p4application.h"
 #include "p4settings.h"
-#include "P4FindDlg.h"
-#include "P4StartDlg.h"
 #include "win_settings.h"
 
 #ifdef HAVE_CONFIG_H
@@ -161,9 +161,9 @@ int main(int argc, char *argv[])
 
     //  g_p4app->setStyle( new QCDEStyle() );
 
-    g_ThisVF.reset(new QInputVF());
+    g_ThisVF = std::make_shared<P4InputVF>();
 
-    g_p4StartDlg.reset(new P4StartDlg(g_cmdLine_Filename));
+    g_p4StartDlg = std::make_shared<P4StartDlg>(g_cmdLine_Filename);
     if (!g_cmdLine_AutoExit)
         g_p4StartDlg->show();
 
@@ -192,9 +192,9 @@ int main(int argc, char *argv[])
                                  "In particular, check if P4 has found the "
                                  "Command-Line Version of MAPLE.\n");
 
-        std::unique_ptr<QSettingsDlg> psettings{new QSettingsDlg(nullptr, 0)};
+        std::unique_ptr<QSettingsDlg> psettings{
+            std::make_unique<QSettingsDlg>(nullptr, 0)};
         psettings->exec();
-        psettings.reset();
     }
 
     returnvalue = g_p4app->exec();
