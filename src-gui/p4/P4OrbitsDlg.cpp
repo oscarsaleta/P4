@@ -31,28 +31,27 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-P4OrbitsDlg::P4OrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+P4OrbitsDlg::P4OrbitsDlg(std::unique_ptr<QPlotWnd> plt,
+                         std::shared_ptr<QWinSphere> sp)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
+      mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    mainSphere_ = sp;
-    plotwnd_ = plt;
-
-    edt_x0_ = new QLineEdit("", this);
-    QLabel *lbl1 = new QLabel("&x0 = ", this);
+    edt_x0_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl1{new QLabel("&x0.reset(", this)});
     lbl1->setBuddy(edt_x0_);
-    edt_y0_ = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("&y0 = ", this);
+    edt_y0_.reset(new QLineEdit("", this));
+    std::unique_ptr<QLabel> lbl2{new QLabel("&y0.reset(", this)});
     lbl2->setBuddy(edt_y0_);
 
-    btnSelect_ = new QPushButton("&Select", this);
+    btnSelect_.reset(new QPushButton("&Select", this));
 
-    btnForwards_ = new QPushButton("&Forwards", this);
-    btnContinue_ = new QPushButton("&Continue", this);
-    btnBackwards_ = new QPushButton("&Backwards", this);
-    btnDelLast_ = new QPushButton("&Delete Last Orbit", this);
-    btnDelAll_ = new QPushButton("Delete &All Orbits", this);
+    btnForwards_.reset(new QPushButton("&Forwards", this));
+    btnContinue_.reset(new QPushButton("&Continue", this));
+    btnBackwards_.reset(new QPushButton("&Backwards", this));
+    btnDelLast_.reset(new QPushButton("&Delete Last Orbit", this));
+    btnDelAll_.reset(new QPushButton("Delete &All Orbits", this));
 
 #ifdef TOOLTIPS
     edt_x0_->setToolTip(
@@ -61,8 +60,9 @@ P4OrbitsDlg::P4OrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     edt_y0_->setToolTip(
         "Start point of orbit.\n"
         "You can also click on the plot window to fill this field.");
-    btnSelect_->setToolTip("Validate your choice of (x0,y0).\n"
-                           "When using the mouse, this is not necessary.");
+    btnSelect_->setToolTip(
+        "Validate your choice of (x0,y0).\n"
+        "When using the mouse, this is not necessary.");
     btnForwards_->setToolTip("Start integrating the orbit in forward time");
     btnBackwards_->setToolTip("Start integrating the orbit in backward time");
     btnContinue_->setToolTip(
@@ -73,22 +73,22 @@ P4OrbitsDlg::P4OrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // layout
 
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
 
-    QGridLayout *lay00 = new QGridLayout();
+    std::unique_ptr<QGridLayout> lay00{new QGridLayout()};
     lay00->addWidget(lbl1, 0, 0);
     lay00->addWidget(edt_x0_, 0, 1);
     lay00->addWidget(lbl2, 1, 0);
     lay00->addWidget(edt_y0_, 1, 1);
     lay00->addWidget(btnSelect_, 0, 2, 2, 1);
 
-    QHBoxLayout *layout1 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
     layout1->addWidget(btnForwards_);
     layout1->addWidget(btnContinue_);
     layout1->addWidget(btnBackwards_);
     layout1->addStretch(0);
 
-    QHBoxLayout *layout2 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
     layout2->addWidget(btnDelLast_);
     layout2->addWidget(btnDelAll_);
     layout2->addStretch(0);
@@ -102,19 +102,20 @@ P4OrbitsDlg::P4OrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    connect(btnSelect_, &QPushButton::clicked, this, &P4OrbitsDlg::onBtnSelect);
-    connect(btnForwards_, &QPushButton::clicked, this,
-            &P4OrbitsDlg::onBtnForwards);
-    connect(btnBackwards_, &QPushButton::clicked, this,
-            &P4OrbitsDlg::onBtnBackwards);
-    connect(btnContinue_, &QPushButton::clicked, this,
-            &P4OrbitsDlg::onBtnContinue);
-    connect(btnDelAll_, &QPushButton::clicked, this, &P4OrbitsDlg::onBtnDelAll);
-    connect(btnDelLast_, &QPushButton::clicked, this,
-            &P4OrbitsDlg::onBtnDelLast);
+    QObject::connect(btnSelect_, &QPushButton::clicked, this,
+                     &P4OrbitsDlg::onBtnSelect);
+    QObject::connect(btnForwards_, &QPushButton::clicked, this,
+                     &P4OrbitsDlg::onBtnForwards);
+    QObject::connect(btnBackwards_, &QPushButton::clicked, this,
+                     &P4OrbitsDlg::onBtnBackwards);
+    QObject::connect(btnContinue_, &QPushButton::clicked, this,
+                     &P4OrbitsDlg::onBtnContinue);
+    QObject::connect(btnDelAll_, &QPushButton::clicked, this,
+                     &P4OrbitsDlg::onBtnDelAll);
+    QObject::connect(btnDelLast_, &QPushButton::clicked, this,
+                     &P4OrbitsDlg::onBtnDelLast);
 
     // finishing
-
     selected_x0_ = 0;
     selected_y0_ = 0;
 
@@ -122,7 +123,7 @@ P4OrbitsDlg::P4OrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.first_orbit_ == nullptr) {
+    if (g_VFResults.orbits_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -137,7 +138,7 @@ void P4OrbitsDlg::setInitialPoint(double x, double y)
     QString bufx;
     QString bufy;
 
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
     selected_x0_ = x;
     selected_y0_ = y;
@@ -156,13 +157,10 @@ void P4OrbitsDlg::setInitialPoint(double x, double y)
 
 void P4OrbitsDlg::onBtnSelect(void)
 {
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
-    QString bufx;
-    QString bufy;
-
-    bufx = edt_x0_->text();
-    bufy = edt_y0_->text();
+    QString bufx{edt_x0_->text()};
+    QString bufy{edt_y0_->text()};
 
     selected_x0_ = bufx.toDouble();
     selected_y0_ = bufy.toDouble();
@@ -176,7 +174,7 @@ void P4OrbitsDlg::onBtnSelect(void)
 
 void P4OrbitsDlg::onBtnBackwards(void)
 {
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
     if (!orbitStarted_) {
         if (!orbitSelected_)
@@ -205,7 +203,7 @@ void P4OrbitsDlg::onBtnBackwards(void)
 
 void P4OrbitsDlg::onBtnContinue(void)
 {
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
     if (orbitStarted_) {
         mainSphere_->prepareDrawing();
@@ -216,7 +214,7 @@ void P4OrbitsDlg::onBtnContinue(void)
 
 void P4OrbitsDlg::onBtnForwards(void)
 {
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
     if (!orbitStarted_) {
         if (!orbitSelected_)
@@ -245,7 +243,7 @@ void P4OrbitsDlg::onBtnForwards(void)
 
 void P4OrbitsDlg::onBtnDelAll(void)
 {
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
     btnForwards_->setEnabled(false);
     btnBackwards_->setEnabled(false);
@@ -253,16 +251,14 @@ void P4OrbitsDlg::onBtnDelAll(void)
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    g_VFResults.deleteOrbit(g_VFResults.first_orbit_);
-    g_VFResults.first_orbit_ = nullptr;
-    g_VFResults.current_orbit_ = nullptr;
+    g_VFResults.orbits_.clear();
 
     mainSphere_->refresh();
 }
 
 void P4OrbitsDlg::onBtnDelLast(void)
 {
-    plotwnd_->getDlgData();
+    plotWnd_->getDlgData();
 
     mainSphere_->prepareDrawing();
     deleteLastOrbit(mainSphere_);
@@ -274,7 +270,7 @@ void P4OrbitsDlg::onBtnDelLast(void)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.first_orbit_ == nullptr) {
+    if (g_VFResults.orbits_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -304,7 +300,6 @@ void P4OrbitsDlg::orbitEvent(int i)
 void P4OrbitsDlg::reset(void)
 {
     // finishing
-
     selected_x0_ = 0;
     selected_y0_ = 0;
 
@@ -312,7 +307,7 @@ void P4OrbitsDlg::reset(void)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.first_orbit_ == nullptr) {
+    if (g_VFResults.orbits_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }

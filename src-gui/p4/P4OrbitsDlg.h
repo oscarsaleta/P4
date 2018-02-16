@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_ORBITS_H
-#define WIN_ORBITS_H
+#pragma once
 
 #include <QWidget>
 
@@ -38,20 +37,20 @@ class P4OrbitsDlg : public QWidget
     void reset(void);
 
   private:
-    QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd_;
+    std::shared_ptr<QWinSphere> mainSphere_;
+    std::shared_ptr<QPlotWnd> plotWnd_;
 
-    QPushButton *btnForwards_;
-    QPushButton *btnContinue_;
-    QPushButton *btnBackwards_;
-    QPushButton *btnDelAll_;
-    QPushButton *btnDelLast_;
-    QPushButton *btnSelect_;
+    std::unique_ptr<QPushButton> btnForwards_;
+    std::unique_ptr<QPushButton> btnContinue_;
+    std::unique_ptr<QPushButton> btnBackwards_;
+    std::unique_ptr<QPushButton> btnDelAll_;
+    std::unique_ptr<QPushButton> btnDelLast_;
+    std::unique_ptr<QPushButton> btnSelect_;
 
-    QLineEdit *edt_x0_;
-    QLineEdit *edt_y0_;
+    std::unique_ptr<QLineEdit> edt_x0_;
+    std::unique_ptr<QLineEdit> edt_y0_;
 
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
     double selected_x0_;
     double selected_y0_;
@@ -70,5 +69,3 @@ class P4OrbitsDlg : public QWidget
 
     void setInitialPoint(double, double);
 };
-
-#endif /* WIN_ORBITS_H */
