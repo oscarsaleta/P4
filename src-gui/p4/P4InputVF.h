@@ -264,17 +264,17 @@ class P4InputVF : public QObject
     bool isCurvePointDrawn(int, const double *);
     void resampleGcf(int);
 
-    bool hasCommonString(QString **);
-    bool hasCommonInt(int *);
-    bool hasCommonBool(bool *);
+    bool hasCommonString(const std::vector<QString> &);
+    bool hasCommonInt(const std::vector<int> &);
+    bool hasCommonBool(const std::vector<bool> &);
     bool hasCommonParvalue(int);
-    QString commonString(QString **);
-    int commonInt(int *);
-    bool commonBool(bool *);
+    QString commonString(const std::vector<QString> &);
+    int commonInt(const std::vector<int> &);
+    bool commonBool(const std::vector<bool> &);
     QString commonParvalue(int);
-    void setCommonString(QString **, QString);
-    void setCommonInt(int *, int);
-    void setCommonBool(bool *, bool);
+    void setCommonString(std::vector<QString> &, QString);
+    void setCommonInt(std::vector<int> &, int);
+    void setCommonBool(std::vector<bool> &, bool);
     void setCommonParvalue(int, QString);
 
     QString getfilename_curveresults(void) const;  // filename_curves.res
