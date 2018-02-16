@@ -31,7 +31,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-P4OrbitsDlg::P4OrbitsDlg(std::unique_ptr<QPlotWnd> plt,
+P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<QPlotWnd> plt,
                          std::shared_ptr<QWinSphere> sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}
@@ -155,7 +155,7 @@ void P4OrbitsDlg::setInitialPoint(double x, double y)
     btnContinue_->setEnabled(false);
 }
 
-void P4OrbitsDlg::onBtnSelect(void)
+void P4OrbitsDlg::onBtnSelect()
 {
     plotWnd_->getDlgData();
 
@@ -172,7 +172,7 @@ void P4OrbitsDlg::onBtnSelect(void)
     btnContinue_->setEnabled(false);
 }
 
-void P4OrbitsDlg::onBtnBackwards(void)
+void P4OrbitsDlg::onBtnBackwards()
 {
     plotWnd_->getDlgData();
 
@@ -201,7 +201,7 @@ void P4OrbitsDlg::onBtnBackwards(void)
     }
 }
 
-void P4OrbitsDlg::onBtnContinue(void)
+void P4OrbitsDlg::onBtnContinue()
 {
     plotWnd_->getDlgData();
 
@@ -212,7 +212,7 @@ void P4OrbitsDlg::onBtnContinue(void)
     }
 }
 
-void P4OrbitsDlg::onBtnForwards(void)
+void P4OrbitsDlg::onBtnForwards()
 {
     plotWnd_->getDlgData();
 
@@ -241,7 +241,7 @@ void P4OrbitsDlg::onBtnForwards(void)
     }
 }
 
-void P4OrbitsDlg::onBtnDelAll(void)
+void P4OrbitsDlg::onBtnDelAll()
 {
     plotWnd_->getDlgData();
 
@@ -256,7 +256,7 @@ void P4OrbitsDlg::onBtnDelAll(void)
     mainSphere_->refresh();
 }
 
-void P4OrbitsDlg::onBtnDelLast(void)
+void P4OrbitsDlg::onBtnDelLast()
 {
     plotWnd_->getDlgData();
 
@@ -297,7 +297,7 @@ void P4OrbitsDlg::orbitEvent(int i)
     }
 }
 
-void P4OrbitsDlg::reset(void)
+void P4OrbitsDlg::reset()
 {
     // finishing
     selected_x0_ = 0;
