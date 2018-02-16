@@ -114,9 +114,6 @@ bool startOrbit(std::shared_ptr<P4WinSphere> sphere, double x, double y, bool R)
     double pcoord[3];
     double ucoord[2];
 
-    std::vector<p4orbits::orbits> newOrbitVector;
-    p4orbits::orbits newOrbit;
-
     if (R)
         MATHFUNC(R2_to_sphere)(x, y, pcoord);
     else if ((MATHFUNC(is_valid_viewcoord)(x, y, pcoord)) == false)
