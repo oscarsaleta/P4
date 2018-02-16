@@ -62,7 +62,9 @@ class P4StartDlg : public QWidget
     P4StartDlg(const QString &);
 
     std::unique_ptr<P4FindDlg> findWindow_;
-    std::unique_ptr<QPlotWnd> plotWindow_;
+    // FIXME all pointers in different classes that actually point to the same
+    // object will have to be shared_ptr
+    std::shared_ptr<QPlotWnd> plotWindow_;
 
     void closeEvent(QCloseEvent *ce);
 
