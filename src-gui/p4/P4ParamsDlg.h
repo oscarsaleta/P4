@@ -30,13 +30,13 @@ class QSpinBox;
 class QLineEdit;
 class QLabel;
 
-class QParamsDlg : public QWidget
+class P4ParamsDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QParamsDlg(P4FindDlg *startwindow);
-    ~QParamsDlg();
+    P4ParamsDlg(P4FindDlg *startwindow);
+    ~P4ParamsDlg();
     void getDataFromDlg(void);
     void updateDlgData(void);
 

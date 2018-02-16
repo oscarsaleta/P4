@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_params.h"
+#include "P4ParamsDlg.h"
 
 #include "custom.h"
 #include "file_vf.h"
@@ -33,9 +33,9 @@
 #include <QRadioButton>
 #include <QSpinBox>
 
-QParamsDlg::~QParamsDlg() { getDataFromDlg(); }
+P4ParamsDlg::~P4ParamsDlg() { getDataFromDlg(); }
 
-QParamsDlg::QParamsDlg(P4FindDlg *finddlg) : QWidget(finddlg)
+P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -236,23 +236,23 @@ QParamsDlg::QParamsDlg(P4FindDlg *finddlg) : QWidget(finddlg)
     // connections
 
     connect(btn_alg_, &QRadioButton::toggled, this,
-            &QParamsDlg::btn_alg_toggled);
+            &P4ParamsDlg::btn_alg_toggled);
     connect(btn_num_, &QRadioButton::toggled, this,
-            &QParamsDlg::btn_num_toggled);
+            &P4ParamsDlg::btn_num_toggled);
     connect(spin_level_,
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-            &QParamsDlg::onLevelChange);
+            &P4ParamsDlg::onLevelChange);
     connect(btn_sepno_, &QRadioButton::toggled, this,
-            &QParamsDlg::btn_sepno_toggled);
+            &P4ParamsDlg::btn_sepno_toggled);
     connect(btn_sepyes_, &QRadioButton::toggled, this,
-            &QParamsDlg::btn_sepyes_toggled);
+            &P4ParamsDlg::btn_sepyes_toggled);
 
     // finishing
 
     updateDlgData();
 }
 
-void QParamsDlg::onLevelChange(int value)
+void P4ParamsDlg::onLevelChange(int value)
 {
     spin_maxlevel_->setMinimum(value);
     spin_numlevel_->setMinimum(value);
@@ -264,7 +264,7 @@ void QParamsDlg::onLevelChange(int value)
         spin_numlevel_->setValue(value);
 }
 
-void QParamsDlg::btn_alg_toggled(bool on)
+void P4ParamsDlg::btn_alg_toggled(bool on)
 {
     if (on) {
         if (g_ThisVF->numeric_ != false) {
@@ -277,7 +277,7 @@ void QParamsDlg::btn_alg_toggled(bool on)
     }
 }
 
-void QParamsDlg::btn_num_toggled(bool on)
+void P4ParamsDlg::btn_num_toggled(bool on)
 {
     if (on) {
         if (g_ThisVF->numeric_ != true) {
@@ -290,7 +290,7 @@ void QParamsDlg::btn_num_toggled(bool on)
     }
 }
 
-void QParamsDlg::btn_sepyes_toggled(bool on)
+void P4ParamsDlg::btn_sepyes_toggled(bool on)
 {
     if (on) {
         if (g_ThisVF->testsep_ != true) {
@@ -303,7 +303,7 @@ void QParamsDlg::btn_sepyes_toggled(bool on)
     }
 }
 
-void QParamsDlg::btn_sepno_toggled(bool on)
+void P4ParamsDlg::btn_sepno_toggled(bool on)
 {
     if (on) {
         if (g_ThisVF->testsep_ != false) {
@@ -316,7 +316,7 @@ void QParamsDlg::btn_sepno_toggled(bool on)
     }
 }
 
-void QParamsDlg::getDataFromDlg(void)
+void P4ParamsDlg::getDataFromDlg(void)
 {
     QString epsilon;
     QString x0;
@@ -365,7 +365,7 @@ void QParamsDlg::getDataFromDlg(void)
     }
 }
 
-void QParamsDlg::updateDlgData(void)
+void P4ParamsDlg::updateDlgData(void)
 {
     if (g_ThisVF->numeric_)
         btn_num_->toggle();

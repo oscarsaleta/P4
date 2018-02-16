@@ -25,7 +25,7 @@
 #include "p4application.h"
 #include "p4settings.h"
 #include "P4StartDlg.h"
-#include "win_params.h"
+#include "P4ParamsDlg.h"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -287,7 +287,7 @@ P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
     }
     // show params dialog
     if (!paramsWindow_) {
-        paramsWindow_.reset(new QParamsDlg(this));
+        paramsWindow_.reset(new P4ParamsDlg(this));
         vfSelectWindow_.reset(new P4VFSelectDlg(this));
         paramsWindow_->show();
         vfSelectWindow_->show();
