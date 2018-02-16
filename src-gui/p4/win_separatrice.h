@@ -23,7 +23,7 @@
 #include <QWidget>
 
 class QWinSphere;
-class QPlotWnd;
+class P4PlotWnd;
 
 class QPushButton;
 class QLineEdit;
@@ -38,12 +38,12 @@ class QSepDlg : public QWidget
     Q_OBJECT
 
   public:
-    QSepDlg(QPlotWnd *, QWinSphere *);
+    QSepDlg(P4PlotWnd *, QWinSphere *);
     void reset(void);
 
   private:
     QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd_;
+    P4PlotWnd *plotwnd_;
 
     QPushButton *btn_selectnext_;
     QPushButton *btn_intnext_;

@@ -42,13 +42,13 @@ class QBoxLayout;
 class QEvent;
 class QHideEvent;
 
-class QPlotWnd : public QMainWindow
+class P4PlotWnd : public QMainWindow
 {
     Q_OBJECT
 
   public:
-    QPlotWnd(P4StartDlg *);
-    ~QPlotWnd();
+    P4PlotWnd(P4StartDlg *);
+    ~P4PlotWnd();
 
     P4IntParamsDlg *intParamsWindow_;
     P4ViewDlg *viewParamsWindow_;

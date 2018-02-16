@@ -23,7 +23,7 @@
 #include "math_charts.h"
 #include "P4IntParamsDlg.h"
 #include "P4StartDlg.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 #include "win_sphere.h"
 
 #include <cmath>

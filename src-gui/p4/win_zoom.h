@@ -22,7 +22,7 @@
 
 #include <QMainWindow>
 
-class QPlotWnd;
+class P4PlotWnd;
 class QWinSphere;
 
 class QAction;
@@ -35,13 +35,13 @@ class QZoomWnd : public QMainWindow
     Q_OBJECT
 
   public:
-    QZoomWnd(QPlotWnd *, int, double x1, double y1, double x2, double y2);
+    QZoomWnd(P4PlotWnd *, int, double x1, double y1, double x2, double y2);
     ~QZoomWnd();
 
     int zoomid_;
 
   private:
-    QPlotWnd *parent_;
+    P4PlotWnd *parent_;
     QBoxLayout *mainLayout_;
     QAction *actClose_;
     QAction *actRefresh_;

@@ -22,7 +22,7 @@
 #include <QWidget>
 
 class P4WinSphere;
-class QPlotWnd;
+class P4PlotWnd;
 
 class QPushButton;
 class QRadioButton;
@@ -34,13 +34,13 @@ class P4GcfDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4GcfDlg(std::unique_ptr<QPlotWnd>, std::unique_ptr<P4WinSphere>);
+    P4GcfDlg(std::unique_ptr<P4PlotWnd>, std::unique_ptr<P4WinSphere>);
     void reset(void);
     void finishGcfEvaluation(void);
 
   private:
     std::unique_ptr<P4WinSphere> mainSphere_;
-    std::unique_ptr<QPlotWnd> plotwnd_;
+    std::unique_ptr<P4PlotWnd> plotwnd_;
 
     std::unique_ptr<QPushButton> btn_evaluate_;
 

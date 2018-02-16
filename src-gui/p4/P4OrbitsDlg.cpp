@@ -23,7 +23,7 @@
 #include "file_tab.h"
 #include "main.h"
 #include "math_orbits.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 #include "win_sphere.h"
 
 #include <QBoxLayout>
@@ -31,7 +31,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<QPlotWnd> plt,
+P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<P4PlotWnd> plt,
                          std::shared_ptr<QWinSphere> sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}

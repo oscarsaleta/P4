@@ -33,7 +33,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-P4GcfDlg::P4GcfDlg(std::unique_ptr<QPlotWnd> plt,
+P4GcfDlg::P4GcfDlg(std::unique_ptr<P4PlotWnd> plt,
                    std::unique_ptr<P4WinSphere> sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
       plotwnd_{plt},

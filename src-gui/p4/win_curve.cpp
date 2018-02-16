@@ -24,7 +24,7 @@
 #include "main.h"
 #include "math_curve.h"
 #include "math_polynom.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 #include "win_sphere.h"
 
 #include <QBoxLayout>
@@ -35,7 +35,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
+QCurveDlg::QCurveDlg(P4PlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
       plotwnd_(plt)
 {

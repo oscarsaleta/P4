@@ -26,7 +26,7 @@
 #include "plot_tools.h"
 #include "P4Event.h"
 #include "P4StartDlg.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 #include "win_print.h"
 #include "win_sphere.h"
 
@@ -37,7 +37,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 
-QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
+QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                    double y2)
     : QMainWindow()
 {

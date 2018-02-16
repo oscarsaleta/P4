@@ -88,7 +88,7 @@ HEADERS += win_view.h \
     win_sphere.h \
     win_settings.h \
     win_print.h \
-    win_plot.h \
+    P4PlotWnd.h \
     P4ParamsDlg.h \
     P4OrbitsDlg.h \
     P4StartDlg.h \

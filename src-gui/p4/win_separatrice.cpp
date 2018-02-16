@@ -22,7 +22,7 @@
 #include "custom.h"
 #include "main.h"
 #include "math_separatrice.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 #include "win_sphere.h"
 
 #include <QBoxLayout>
@@ -33,7 +33,7 @@
 QString g_CurrentSingularityInfo[4] = {"", "", "", ""};
 double g_CurrentSeparatriceEpsilon = 0;
 
-QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
+QSepDlg::QSepDlg(P4PlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );

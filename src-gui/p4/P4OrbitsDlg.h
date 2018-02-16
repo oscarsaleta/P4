@@ -22,7 +22,7 @@
 #include <QWidget>
 
 class QWinSphere;
-class QPlotWnd;
+class P4PlotWnd;
 
 class QPushButton;
 class QLineEdit;
@@ -33,12 +33,12 @@ class P4OrbitsDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4OrbitsDlg(QPlotWnd *, QWinSphere *);
+    P4OrbitsDlg(P4PlotWnd *, QWinSphere *);
     void reset(void);
 
   private:
     std::shared_ptr<QWinSphere> mainSphere_;
-    std::shared_ptr<QPlotWnd> plotWnd_;
+    std::shared_ptr<P4PlotWnd> plotWnd_;
 
     std::unique_ptr<QPushButton> btnForwards_;
     std::unique_ptr<QPushButton> btnContinue_;

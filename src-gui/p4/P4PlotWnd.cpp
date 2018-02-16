@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 
 #include "custom.h"
 #include "file_tab.h"
@@ -47,7 +47,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 
-QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
+P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow()
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 
@@ -79,78 +79,78 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
 
     actClose_ = new QAction("Clos&e", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(actClose_, &QAction::triggered, this, &QPlotWnd::onBtnClose);
+    connect(actClose_, &QAction::triggered, this, &P4PlotWnd::onBtnClose);
     toolBar1->addAction(actClose_);
 
     actRefresh_ = new QAction("&Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(actRefresh_, &QAction::triggered, this, &QPlotWnd::onBtnRefresh);
+    connect(actRefresh_, &QAction::triggered, this, &P4PlotWnd::onBtnRefresh);
     toolBar1->addAction(actRefresh_);
 
     actLegend_ = new QAction("&Legend", this);
     actLegend_->setShortcut(Qt::ALT + Qt::Key_L);
-    connect(actLegend_, &QAction::triggered, this, &QPlotWnd::onBtnLegend);
+    connect(actLegend_, &QAction::triggered, this, &P4PlotWnd::onBtnLegend);
     toolBar1->addAction(actLegend_);
 
     actOrbits_ = new QAction("&Orbits", this);
     actOrbits_->setShortcut(Qt::ALT + Qt::Key_O);
-    connect(actOrbits_, &QAction::triggered, this, &QPlotWnd::onBtnOrbits);
+    connect(actOrbits_, &QAction::triggered, this, &P4PlotWnd::onBtnOrbits);
     toolBar1->addAction(actOrbits_);
 
     actIntParams_ = new QAction("&Integration Parameters", this);
     actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
     connect(actIntParams_, &QAction::triggered, this,
-            &QPlotWnd::onBtnIntParams);
+            &P4PlotWnd::onBtnIntParams);
     toolBar1->addAction(actIntParams_);
 
     actGCF_ = new QAction("&GCF", this);
     actGCF_->setShortcut(Qt::ALT + Qt::Key_G);
-    connect(actGCF_, &QAction::triggered, this, &QPlotWnd::onBtnGCF);
+    connect(actGCF_, &QAction::triggered, this, &P4PlotWnd::onBtnGCF);
     toolBar1->addAction(actGCF_);
 
     actCurve_ = new QAction("&Curves", this);
     actCurve_->setShortcut(Qt::ALT + Qt::Key_C);
-    connect(actCurve_, &QAction::triggered, this, &QPlotWnd::onBtnCurve);
+    connect(actCurve_, &QAction::triggered, this, &P4PlotWnd::onBtnCurve);
     toolBar1->addAction(actCurve_);
 
     actPlotSep_ = new QAction("Plot &Separatrice", this);
     actPlotSep_->setShortcut(Qt::ALT + Qt::Key_S);
-    connect(actPlotSep_, &QAction::triggered, this, &QPlotWnd::onBtnPlotSep);
+    connect(actPlotSep_, &QAction::triggered, this, &P4PlotWnd::onBtnPlotSep);
     toolBar2->addAction(actPlotSep_);
 
     actPlotAllSeps_ = new QAction("Plot All Separa&trices", this);
     actPlotAllSeps_->setShortcut(Qt::ALT + Qt::Key_T);
     connect(actPlotAllSeps_, &QAction::triggered, this,
-            &QPlotWnd::onBtnPlotAllSeps);
+            &P4PlotWnd::onBtnPlotAllSeps);
     toolBar2->addAction(actPlotAllSeps_);
 
     actLimitCycles_ = new QAction("Limit C&ycles", this);
     actLimitCycles_->setShortcut(Qt::ALT + Qt::Key_Y);
     connect(actLimitCycles_, &QAction::triggered, this,
-            &QPlotWnd::onBtnLimitCycles);
+            &P4PlotWnd::onBtnLimitCycles);
     toolBar2->addAction(actLimitCycles_);
 
     actIsoclines_ = new QAction("Isoclines", this);
     connect(actIsoclines_, &QAction::triggered, this,
-            &QPlotWnd::onBtnIsoclines);
+            &P4PlotWnd::onBtnIsoclines);
     toolBar2->addAction(actIsoclines_);
 
     actView_ = new QAction("&View", this);
     actView_->setShortcut(Qt::ALT + Qt::Key_V);
-    connect(actView_, &QAction::triggered, this, &QPlotWnd::onBtnView);
+    connect(actView_, &QAction::triggered, this, &P4PlotWnd::onBtnView);
     toolBar2->addAction(actView_);
 
     actPrint_ = new QAction("&Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(actPrint_, &QAction::triggered, this, &QPlotWnd::onBtnPrint);
+    connect(actPrint_, &QAction::triggered, this, &P4PlotWnd::onBtnPrint);
     toolBar2->addAction(actPrint_);
 
     addToolBar(Qt::TopToolBarArea, toolBar1);
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(Qt::TopToolBarArea, toolBar2);
 
-    connect(g_ThisVF, &QInputVF::saveSignal, this, &QPlotWnd::onSaveSignal);
-    connect(g_ThisVF, &QInputVF::loadSignal, this, &QPlotWnd::onLoadSignal);
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &P4PlotWnd::onSaveSignal);
+    connect(g_ThisVF, &QInputVF::loadSignal, this, &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
 
@@ -201,7 +201,7 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
     //      SetP4WindowTitle( this, "Phase Portrait (*)" );
 }
 
-QPlotWnd::~QPlotWnd()
+P4PlotWnd::~P4PlotWnd()
 {
     zoomWindows_.clear();
     numZooms_ = 0;
@@ -229,24 +229,24 @@ QPlotWnd::~QPlotWnd()
     g_ThisVF->isoclinesDlg_ = nullptr;
 }
 
-void QPlotWnd::onSaveSignal()
+void P4PlotWnd::onSaveSignal()
 {
     QString fname = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
-    settings.setValue("QPlotWnd/size", size());
-    settings.setValue("QPlotWnd/pos", pos());
-    settings.setValue("QPlotWnd/numZooms", numZooms_);
-    settings.setValue("QPlotWnd/allSeps", flagAllSepsPlotted_);
+    settings.setValue("P4PlotWnd/size", size());
+    settings.setValue("P4PlotWnd/pos", pos());
+    settings.setValue("P4PlotWnd/numZooms", numZooms_);
+    settings.setValue("P4PlotWnd/allSeps", flagAllSepsPlotted_);
 }
 
-void QPlotWnd::onLoadSignal()
+void P4PlotWnd::onLoadSignal()
 {
     QString fname = g_ThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
-    resize(settings.value("QPlotWnd/size").toSize());
-    move(settings.value("QPlotWnd/pos").toPoint());
+    resize(settings.value("P4PlotWnd/size").toSize());
+    move(settings.value("P4PlotWnd/pos").toPoint());
 
-    numZooms_ = settings.value("QPlotWnd/numZooms").toInt();
+    numZooms_ = settings.value("P4PlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
         for (int i = 1; i <= numZooms_; i++) {
             QString zoomName = QString("QZoomWnd").append(i);
@@ -269,12 +269,12 @@ void QPlotWnd::onLoadSignal()
         }
     }
 
-    if (settings.value("QPlotWnd/allSeps").toBool()) {
+    if (settings.value("P4PlotWnd/allSeps").toBool()) {
         onBtnPlotAllSeps();
     }
 }
 
-void QPlotWnd::adjustHeight(void)
+void P4PlotWnd::adjustHeight(void)
 {
     sphere_->adjustToNewSize();
     resize(width(), height() + sphere_->idealh_ - sphere_->h_);
@@ -282,7 +282,7 @@ void QPlotWnd::adjustHeight(void)
     statusBar()->showMessage("Ready.");
 }
 
-void QPlotWnd::signalChanged(void)
+void P4PlotWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
@@ -292,7 +292,7 @@ void QPlotWnd::signalChanged(void)
         (*it)->signalChanged();
 }
 
-void QPlotWnd::signalEvaluating(void)
+void P4PlotWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
@@ -302,7 +302,7 @@ void QPlotWnd::signalEvaluating(void)
         (*it)->signalEvaluating();
 }
 
-void QPlotWnd::signalEvaluated(void)
+void P4PlotWnd::signalEvaluated(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
@@ -312,13 +312,13 @@ void QPlotWnd::signalEvaluated(void)
         (*it)->signalEvaluated();
 }
 
-void QPlotWnd::onBtnClose(void)
+void P4PlotWnd::onBtnClose(void)
 {
     P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
     g_p4app->postEvent(parent_, e1);
 }
 
-bool QPlotWnd::close(void)
+bool P4PlotWnd::close(void)
 {
     P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
     g_p4app->postEvent(parent_, e1);
@@ -326,13 +326,13 @@ bool QPlotWnd::close(void)
     return QMainWindow::close();
 }
 
-void QPlotWnd::onBtnRefresh(void)
+void P4PlotWnd::onBtnRefresh(void)
 {
     getDlgData();
     sphere_->refresh();
 }
 
-void QPlotWnd::onBtnLegend(void)
+void P4PlotWnd::onBtnLegend(void)
 {
     if (legendWindow_ == nullptr)
         legendWindow_ = new P4LegendWnd();
@@ -341,50 +341,50 @@ void QPlotWnd::onBtnLegend(void)
     legendWindow_->raise();
 }
 
-void QPlotWnd::onBtnOrbits(void)
+void P4PlotWnd::onBtnOrbits(void)
 {
     orbitsWindow_->show();
     orbitsWindow_->raise();
 }
 
-void QPlotWnd::onBtnIntParams(void)
+void P4PlotWnd::onBtnIntParams(void)
 {
     intParamsWindow_->show();
     intParamsWindow_->raise();
 }
 
-void QPlotWnd::onBtnView(void)
+void P4PlotWnd::onBtnView(void)
 {
     viewParamsWindow_->show();
     viewParamsWindow_->raise();
 }
 
-void QPlotWnd::onBtnGCF(void)
+void P4PlotWnd::onBtnGCF(void)
 {
     gcfWindow_->show();
     gcfWindow_->raise();
 }
 
-void QPlotWnd::onBtnCurve(void)
+void P4PlotWnd::onBtnCurve(void)
 {
     curveWindow_->show();
     curveWindow_->raise();
 }
 
-void QPlotWnd::onBtnIsoclines(void)
+void P4PlotWnd::onBtnIsoclines(void)
 {
     isoclinesWindow_->show();
     isoclinesWindow_->raise();
 }
 
-void QPlotWnd::onBtnPlotSep(void)
+void P4PlotWnd::onBtnPlotSep(void)
 {
     getDlgData();
     sepWindow_->show();
     sepWindow_->raise();
 }
 
-void QPlotWnd::onBtnPlotAllSeps(void)
+void P4PlotWnd::onBtnPlotAllSeps(void)
 {
     getDlgData();
     sphere_->prepareDrawing();
@@ -393,13 +393,13 @@ void QPlotWnd::onBtnPlotAllSeps(void)
     flagAllSepsPlotted_ = true;
 }
 
-void QPlotWnd::onBtnLimitCycles(void)
+void P4PlotWnd::onBtnLimitCycles(void)
 {
     lcWindow_->show();
     lcWindow_->raise();
 }
 
-void QPlotWnd::onBtnPrint(void)
+void P4PlotWnd::onBtnPrint(void)
 {
     int res;
     double lw;
@@ -436,7 +436,7 @@ void QPlotWnd::onBtnPrint(void)
     }
 }
 
-void QPlotWnd::configure(void)
+void P4PlotWnd::configure(void)
 {
     statusBar()->showMessage("Ready"); // reset status bar
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
@@ -459,7 +459,7 @@ void QPlotWnd::configure(void)
         actGCF_->setEnabled(true);
 }
 
-void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
+void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
 {
     double swap;
     if (x1 > x2) {
@@ -484,7 +484,7 @@ void QPlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     numZooms_++;
 }
 
-void QPlotWnd::closeZoomWindow(int id)
+void P4PlotWnd::closeZoomWindow(int id)
 {
     std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
     for (it = zoomWindows_.begin(); it != zoomWindows_.end(); it++) {
@@ -497,7 +497,7 @@ void QPlotWnd::closeZoomWindow(int id)
     return; // error, zoom window not found
 }
 
-void QPlotWnd::customEvent(QEvent *_e)
+void P4PlotWnd::customEvent(QEvent *_e)
 {
     P4Event *e;
     double pcoord[3];
@@ -602,7 +602,7 @@ void QPlotWnd::customEvent(QEvent *_e)
     QMainWindow::customEvent(e);
 }
 
-void QPlotWnd::hideEvent(QHideEvent *h)
+void P4PlotWnd::hideEvent(QHideEvent *h)
 {
     UNUSED(h);
     if (!isMinimized()) {
@@ -612,7 +612,7 @@ void QPlotWnd::hideEvent(QHideEvent *h)
     }
 }
 
-void QPlotWnd::getDlgData(void)
+void P4PlotWnd::getDlgData(void)
 {
     intParamsWindow_->getDataFromDlg();
     if (viewParamsWindow_->getDataFromDlg()) {

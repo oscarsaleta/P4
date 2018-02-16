@@ -23,7 +23,7 @@
 
 #include <QWidget>
 
-class QPlotWnd;
+class P4PlotWnd;
 class P4FindDlg;
 
 class QCloseEvent;
@@ -64,7 +64,7 @@ class P4StartDlg : public QWidget
     std::unique_ptr<P4FindDlg> findWindow_;
     // FIXME all pointers in different classes that actually point to the same
     // object will have to be shared_ptr
-    std::shared_ptr<QPlotWnd> plotWindow_;
+    std::shared_ptr<P4PlotWnd> plotWindow_;
 
     void closeEvent(QCloseEvent *ce);
 

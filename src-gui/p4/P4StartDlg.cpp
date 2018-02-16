@@ -27,7 +27,7 @@
 #include "p4application.h"
 #include "p4settings.h"
 #include "win_about.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 
 #include <QBoxLayout>
 #include <QCloseEvent>
@@ -334,7 +334,7 @@ void P4StartDlg::onPlot()
     g_VFResults.setupCoordinateTransformations();
 
     if (!plotWindow_) {
-        plotWindow_.reset(new QPlotWnd(this));
+        plotWindow_.reset(new P4PlotWnd(this));
     }
 
     plotWindow_->configure();  // configure plot window

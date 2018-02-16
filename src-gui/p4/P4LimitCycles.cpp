@@ -24,7 +24,7 @@
 #include "main.h"
 #include "math_limitcycles.h"
 #include "p4application.h"
-#include "win_plot.h"
+#include "P4PlotWnd.h"
 #include "win_sphere.h"
 
 #include <QBoxLayout>
@@ -43,7 +43,7 @@ static std::unique_ptr<QProgressDialog> s_LCprogressDlg{};
 static int s_LCprogressCount{1};
 static int s_LCmaxProgressCount{0};
 
-P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<QPlotWnd> plt,
+P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd> plt,
                                    std::unique_ptr<QWinSphere> sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
       plotwnd_{plt},

@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
-class QPlotWnd;
+class P4PlotWnd;
 class QWinSphere;
 
 class QPushButton;
@@ -35,13 +35,13 @@ class QIsoclinesDlg : public QWidget
     Q_OBJECT
 
   public:
-    QIsoclinesDlg(QPlotWnd *, QWinSphere *);
+    QIsoclinesDlg(P4PlotWnd *, QWinSphere *);
     void reset();
     void finishIsoclinesEvaluation();
 
   private:
     QWinSphere *mainSphere_;
-    QPlotWnd *plotwnd_;
+    P4PlotWnd *plotwnd_;
 
     QPushButton *btnEvaluate_;
     QPushButton *btnPlot_;
