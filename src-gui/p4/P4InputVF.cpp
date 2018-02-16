@@ -24,7 +24,7 @@
 #include <QFile>
 #include <QTextStream>
 
-std::unique_ptr<P4InputVF> g_ThisVF = std::unique_ptr<P4InputVF>{};
+// std::shared_ptr<P4InputVF> g_ThisVF = std::make_shared<P4InputVF>();
 
 /*
     THIS FILE IMPLEMENTS READING AND LOADING THE VECTOR FIELD, THE PARAMETERS
@@ -90,17 +90,17 @@ std::unique_ptr<P4InputVF> g_ThisVF = std::unique_ptr<P4InputVF>{};
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
 P4InputVF::P4InputVF()
-    : processText_{std::unique_ptr<QTextEdit>{}},
-      terminateProcessButton_{std::unique_ptr<QPushButton>{}},
-      clearProcessButton_{std::unique_ptr<QPushButton>{}},
-      evalProcess_{std::unique_ptr<QProcess>{}},
-      gcfDlg_{std::unique_ptr<P4GcfDlg>{}},
-      findDlg_{std::unique_ptr<P4FindDlg>{}},
-      curveDlg_{std::unique_ptr<QCurveDlg>{}},
-      isoclinesDlg_{std::unique_ptr<QIsoclinesDlg>{}}, numparams_{0}, numVF_{0},
-      numCurves_{0}, numVFRegions_{0}, numCurveRegions_{0}, numSelected_{0},
-      cleared_{true}, changed_{false}, evaluated_{false}, filename_{
-                                                              DEFAULTFILENAME};
+    : processText_{std::make_unique<QTextEdit>()},
+      terminateProcessButton_{std::make_unique<QPushButton>()},
+      clearProcessButton_{std::make_unique<QPushButton>()},
+      evalProcess_{std::make_unique<QProcess>()},
+      gcfDlg_{std::make_unique<P4GcfDlg>()},
+      findDlg_{std::make_unique<P4FindDlg>()},
+      curveDlg_{std::make_unique<QCurveDlg>()},
+      isoclinesDlg_{std::make_unique<QIsoclinesDlg>()},
+      numparams_{0}, numVF_{0}, numCurves_{0}, numVFRegions_{0},
+      numCurveRegions_{0}, numSelected_{0}, cleared_{true}, changed_{false},
+      evaluated_{false}, filename_{DEFAULTFILENAME};
 {
     reset(1);
 }
@@ -108,12 +108,8 @@ P4InputVF::P4InputVF()
 // -----------------------------------------------------------------------
 //          DESTRUCTOR
 // -----------------------------------------------------------------------
-P4InputVF::~P4InputVF()  // FIXME no volem destructors?
+P4InputVF::~P4InputVF()
 {
-    /*if (outputWindow_ != nullptr) {
-        delete outputWindow_;
-        outputWindow_ = nullptr;
-    }*/
     // remove curve auxiliary files
     removeFile(getfilename_curvetable());
     removeFile(getfilename_curve());
@@ -1283,7 +1279,6 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
 // -----------------------------------------------------------------------
 //          indexOfWordInString
 // -----------------------------------------------------------------------
-//
 //  If the user gives a vector field with user-parameters such as "alpha" or
 //  "b", we add a suffix to these qualifier names and change them to "alpha_" or
 //  "b_", in order to avoid mixing with internal variables.
@@ -3106,7 +3101,7 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonString
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonString(std::vector<QString> lst)
+bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 {
     for (int i = 1; i < numSelected_; i++) {
         if (lst[selected_[0]].compare(lst[selected_[i]]))
@@ -3118,7 +3113,7 @@ bool P4InputVF::hasCommonString(std::vector<QString> lst)
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonInt
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonInt(std::vector<int> lst)
+bool P4InputVF::hasCommonInt(const std::vector<int> &lst)
 {
     for (int i = 1; i < numSelected_; i++) {
         if (lst[selected_[i]] != lst[selected_[0]])
@@ -3130,7 +3125,7 @@ bool P4InputVF::hasCommonInt(std::vector<int> lst)
 // -----------------------------------------------------------------------
 //          P4InputVF::hasCommonBool
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonBool(std::vector<bool> lst)
+bool P4InputVF::hasCommonBool(const std::vector<bool> &lst)
 {
     for (int i = 1; i < numSelected_; i++) {
         if (lst[selected_[i]] != lst[selected_[0]])
@@ -3155,7 +3150,7 @@ bool P4InputVF::hasCommonParvalue(int index)
 // -----------------------------------------------------------------------
 //          P4InputVF::commonString
 // -----------------------------------------------------------------------
-QString P4InputVF::commonString(std::vector<QString> lst)
+QString P4InputVF::commonString(const std::vector<QString> &lst)
 {
     return lst[selected_[0]];
 }
@@ -3163,12 +3158,15 @@ QString P4InputVF::commonString(std::vector<QString> lst)
 // -----------------------------------------------------------------------
 //          P4InputVF::commonInt
 // -----------------------------------------------------------------------
-int P4InputVF::commonInt(std::vector<int> lst) { return lst[selected_[0]]; }
+int P4InputVF::commonInt(const std::vector<int> &lst)
+{
+    return lst[selected_[0]];
+}
 
 // -----------------------------------------------------------------------
-//          P4InputVF::commonBoolean
+//          P4InputVF::commonBool
 // -----------------------------------------------------------------------
-bool P4InputVF::commonBoolean(std::vector<bool> lst)
+bool P4InputVF::commonBool(const std::vector<bool> &lst)
 {
     return lst[selected_[0]];
 }
@@ -3184,7 +3182,7 @@ QString P4InputVF::commonParvalue(int index)
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonString
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonString(std::vector<QString> lst, QString val)
+void P4InputVF::setCommonString(std::vector<QString> &lst, QString val)
 {
     for (int i = 0; i < numSelected_; i++)
         lst[selected_[i]] = val;
@@ -3193,7 +3191,7 @@ void P4InputVF::setCommonString(std::vector<QString> lst, QString val)
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonInt
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonInt(std::vector<int> lst, int val)
+void P4InputVF::setCommonInt(std::vector<int> &lst, int val)
 {
     for (int i = 0; i < numSelected_; i++)
         lst[selected_[i]] = val;
@@ -3202,7 +3200,7 @@ void P4InputVF::setCommonInt(std::vector<int> lst, int val)
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonBool
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonBool(std::vector<bool> lst, bool val)
+void P4InputVF::setCommonBool(std::vector<bool> &lst, bool val)
 {
     for (int i = 0; i < numSelected_; i++) {
         lst[selected_[i]] = val;
@@ -3539,7 +3537,8 @@ bool P4InputVF::evaluateCurves()
 void P4InputVF::finishCurvesEvaluation(void)
 {
     evaluatingPiecewiseConfig_ = false;
-    std::unique_ptr<P4Event> e{new P4Event((QEvent::Type)TYPE_SIGNAL_CURVESEVALUATED, nullptr)};
+    std::unique_ptr<P4Event> e{
+        new P4Event((QEvent::Type)TYPE_SIGNAL_CURVESEVALUATED, nullptr)};
     g_p4app->postEvent(g_p4StartDlg, e.get());
 }
 
