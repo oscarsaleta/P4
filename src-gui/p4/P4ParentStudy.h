@@ -64,7 +64,7 @@ class P4ParentStudy : public QObject
     std::vector<p4orbits::orbits> limCycles_; // FIXME canviar ocurrències
     //int currentLimCycleIndex_;
     std::vector<p4orbits::orbits> orbits_; // FIXME canviar ocurrències
-    int currentOrbitIndex_;
+    //int currentOrbitIndex_;
 
     // run-time when plotting 
     // FIXME remove? canviar a int indexos?
