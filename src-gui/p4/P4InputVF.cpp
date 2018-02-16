@@ -2434,7 +2434,7 @@ bool P4InputVF::prepareGcf(std::vector<p4polynom::term2> f, double y1,
         out << "v := y:\n";
         out << "user_f := ");
 
-        for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
+        for (i = 0, auto it = std::begin(f); it != std::end(f); ++it, i++) {
             out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
         }
         if (i == 0)
@@ -2491,7 +2491,7 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
         out << "u := cos(y):\n";
         out << "v := sin(y):\n";
         out << "user_f := ";
-        for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
+        for (i = 0, auto it = std::begin(f); it != std::end(f); ++it, i++) {
             out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
         }
         if (i == 0)
@@ -2553,7 +2553,7 @@ bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
         out << "u := x*cos(y):\n";
         out << "v := x*sin(y):\n";
         out << "user_f := ";
-        for (i = 0, auto it = f.begin(); it != f.end(); ++it, i++) {
+        for (i = 0, auto it = std::begin(f); it != std::end(f); ++it, i++) {
             out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
         }
         if (i == 0)
@@ -3291,7 +3291,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
         g_VFResults.K_ = 0;
     }
 
-    for (auto &it = vfRegions_.begin(); it != vfRegions_.end(); ++it) {
+    for (auto &it = begin(vfRegions_); it != std::end(vfRegions_); ++it) {
         if (it->vfIndex == index) {
             it->signs.clear();
             vfRegions_.erase(it);
@@ -3300,7 +3300,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
             it->vfIndex--;
     }
 
-    for (auto &it = selected_.begin(); it != selected_.end(); ++it) {
+    for (auto &it = std::begin(selected_); it != std::end(selected_); ++it) {
         if (*it == index) {
             selected_.erase(it);
             numSelected_--;
@@ -3350,11 +3350,11 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
                 defaultymax = Y_MAX;
         */
     } else {
-        xdot_.erase(xdot_.begin() + index);
-        ydot_.erase(ydot_.begin() + index);
-        gcf_.erase(gcf_.begin() + index);
-        epsilon_.erase(epsilon_.begin() + index);
-        parvalue_.erase(parvalue_.begin() + index);  // TODO: funcionarà?
+        xdot_.erase(std::begin(xdot_) + index);
+        ydot_.erase(std::begin(ydot_) + index);
+        gcf_.erase(std::begin(gcf_) + index);
+        epsilon_.erase(std::begin(epsilon_) + index);
+        parvalue_.erase(std::begin(parvalue_) + index);  // TODO: funcionarà?
 
         numVF_--;
     }
@@ -3429,7 +3429,7 @@ void P4InputVF::deleteSeparatingCurve(int index)
         return;
     }
 
-    curves_result_.erase(curves_result_.begin() + index);
+    curves_result_.erase(std::begin(curves_result_) + index);
     numCurves_--;
 }
 
@@ -3593,7 +3593,7 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
     if (vfRegions_[i].vfIndex != index)
         return;  // region does not have the corresponding index
 
-    vfRegions_.erase(vfRegions_.begin() + i);
+    vfRegions_.erase(begin(vfRegions_) + i);
     if (numVFRegions_ == 1) {
         vfRegions_.clear();
     }
@@ -3652,7 +3652,8 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
         else
             signs.push_back(1);
     }
-    for (auto k = curveRegions_.begin(); k != curveRegions_.end(); ++k) {
+    for (auto k = std::begin(curveRegions_); k != std::end(curveRegions_);
+         ++k) {
         if (signs == k->signs && index == k->curveIndex) {
             // curve mark exists
             curveRegions_.erase(k);
@@ -3737,11 +3738,11 @@ void P4InputVF::resampleGcf(int i)
     if (g_VFResults.curves_result_.empty() || g_VFResults.vf_.empty())
         return;
 
-    for (auto it = g_VFResults.vf_[i]->gcf_points_.begin();
-         it != g_VFResults.vf_[i]->gcf_points.end(); ++it) {
+    for (auto it = std::begin(g_VFResults.vf_[i]->gcf_points_);
+         it != std::end(g_VFResults.vf_[i]->gcf_points_); ++it) {
         if (getVFIndex_sphere(it->pcoord) != i) {
             g_VFResults.vf_[i]->gcf_points_.erase(it);
-            if (it + 1 != g_VFResults.vf_[i]->gcf_points_.end())
+            if (it + 1 != std::end(g_VFResults.vf_[i]->gcf_points_))
                 (it + 1)->dashes = 0;
         }
     }

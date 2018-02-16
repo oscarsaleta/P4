@@ -717,5 +717,5 @@ void P4ParentStudy::examinePositionsOfSingularities()
 // -----------------------------------------------------------------------
 void P4ParentStudy::resetSeparatingCurveInfo(int i)
 {
-    curves_result_.erase(curves_result_.begin() + i);
+    curves_result_.erase(std::begin(curves_result_) + i);
 }

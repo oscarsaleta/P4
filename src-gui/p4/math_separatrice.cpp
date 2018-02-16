@@ -891,8 +891,8 @@ std::vector<p4orbits::orbits_points> plot_separatrice(
         integrate_sep(spherewnd, pcoord, g_VFResults.config_step_,
                       new_orbit.dir, type, g_VFResults.config_intpoints_);
     if (!lastpoints.empty())
-        orbit_result.insert(orbit_result.end(), lastpoints.begin(),
-                            lastpoints.end());
+        orbit_result.insert(std::end(orbit_result), std::begin(lastpoints),
+                            std::end(lastpoints));
 
     return (orbit_result);
 }

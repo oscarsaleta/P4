@@ -43,7 +43,8 @@ static double find_distance_saddle(std::vector<p4singularities::saddle> points,
 {
     double d, pcoord[3], ucoord[2];
 
-    for (auto it = points.begin(), int i = 0; it != points.end(); ++it, i++) {
+    for (auto it = std::begin(points), int i = 0; it != std::end(points);
+         ++it, i++) {
         if (it->position == POSITION_VIRTUAL)
             continue;
         switch (it->chart) {
@@ -88,7 +89,8 @@ static double find_distance_se(
 {
     double d, pcoord[3], ucoord[2];
 
-    for (auto it = points.begin(), int i = 0; it != points.end(); ++it, i++) {
+    for (auto it = std::begin(points), int i = 0; it != std::end(points);
+         ++it, i++) {
         if (it->position == POSITION_VIRTUAL)
             continue;
         if (!(it->separatrices).empty()) {
@@ -136,7 +138,8 @@ static double find_distance_de(std::vector<p4singularities::degenerate> points,
 {
     double d, pcoord[3], ucoord[2];
 
-    for (auto it = points.begin(), int i = 0; it != points.end(); ++it, i++) {
+    for (auto it = std::begin(points), int i = 0; it != std::end(points);
+         ++it, i++) {
         if (it->position == POSITION_VIRTUAL)
             continue;
         if (!(it->blow_up).empty()) {

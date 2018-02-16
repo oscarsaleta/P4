@@ -45,8 +45,8 @@ void start_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
                           g_VFResults.config_intpoints_);
         if (!nextpts.empty())
             g_VFResults.seps_[sepid].sep_points.insert(
-                g_VFResults.seps_[sepid].sep_points.end(), nextpts.begin(),
-                nextpts.end());
+                std::end(g_VFResults.seps_[sepid].sep_points),
+                std::begin(nextpts), std::end(nextpts));
     } else {
         g_VFResults.seps_[sepid].sep_points = plot_separatrice(
             spherewnd, g_VFResults.sePoints_[seid].x0,
@@ -83,7 +83,7 @@ void cont_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
     // append computed points to existing vector
     if (!nextpts.empty()) {
         auto &seppts{g_VFResults.seps_[sepid].sep_points};
-        seppts.insert(seppts.end(), nextpt.begin(), nextpt.end());
+        seppts.insert(std::end(seppts), std::begin(nextpt), std::end(nextpt));
     }
 }
 
@@ -134,7 +134,7 @@ void plot_all_se_sep(std::shared_ptr<P4WinSphere> spherewnd,
             continue;
         if (it1.notadummy) {
             sep1 = it1.separatrices;
-            for (auto it2 = sep1.begin(); it2 != sep1.end(); ++it2) {
+            for (auto it2 = std::begin(sep1); it2 != std::end(sep1); ++it2) {
                 if (!it2->sep_points.empty()) {
                     copy_x_into_y(it2->sep_points.back().pcoord, p);
                     auto newpts = integrate_sep(
@@ -142,8 +142,9 @@ void plot_all_se_sep(std::shared_ptr<P4WinSphere> spherewnd,
                         it2->sep_points.back().dir, it2->sep_points.back().type,
                         g_VFResults.config_intpoints_);
                     if (!newpts.empty())
-                        it2->sep_points.insert(it2->sep_points.end(),
-                                               newpts.begin(), newpts.end());
+                        it2->sep_points.insert(std::end(it2->sep_points),
+                                               std::begin(newpts),
+                                               std::end(newpts));
                 } else {
                     it2->sep_points = plot_separatrice(
                         spherewnd, it1.x0, it1.y0, it1.a11, it1.a12, it1.a21,

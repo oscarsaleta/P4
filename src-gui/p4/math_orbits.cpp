@@ -97,11 +97,12 @@ void integrateOrbit(std::shared_ptr<P4WinSphere> sphere, int dir)
         // create a vector starting by the first point and appending the
         // integrated ones to the end
         std::vector<p4orbits::orbits_points> orbit_result{pts};
-        orbit_result.insert(orbit_result.end(), int_pts.begin(), int_pts.end());
+        orbit_result.insert(std::end(orbit_result), std::begin(int_pts),
+                            std::end(int_pts));
         // append this vector to g_VFResults.orbits_.back().points
         g_VFResults.orbits_.back().points.insert(
-            g_VFResults.orbits_.back().points.end(), orbit_result.begin(),
-            orbit_result.end());
+            std::end(g_VFResults.orbits_.back().points),
+            std::begin(orbit_result), std::end(orbit_result));
     }
 }
 
