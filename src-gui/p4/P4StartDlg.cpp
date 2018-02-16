@@ -381,8 +381,9 @@ void P4StartDlg::signalEvaluated()
         fname = g_ThisVF->getfilename_finresults();
 
         if (g_ThisVF->fileExists(fname)) {
-            viewFiniteWindow_ = showText(
-                viewFiniteWindow_, "View results at the finite region", fname);
+            viewFiniteWindow_ =
+                showText(viewFiniteWindow_.get(),
+                         "View results at the finite region", fname);
         } else {
             if (viewFiniteWindow_) {
                 ((QTextEdit *)viewFiniteWindow_.get())->clear();
@@ -403,7 +404,7 @@ void P4StartDlg::signalEvaluated()
 
         fname = g_ThisVF->getfilename_infresults();
         if (g_ThisVF->fileExists(fname)) {
-            viewInfiniteWindow_ = showText(viewInfiniteWindow_,
+            viewInfiniteWindow_ = showText(viewInfiniteWindow_.get(),
                                            "View results at infinity", fname);
             if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
                 g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
@@ -528,7 +529,8 @@ void P4StartDlg::onViewFinite()
         return;
     }
 
-    viewFiniteWindow_.reset(showText(viewFiniteWindow_, "View results at the finite region", fname));
+    viewFiniteWindow_.reset(showText(
+        viewFiniteWindow_.get(), "View results at the finite region", fname));
     viewFiniteWindow_->show();
     viewFiniteWindow_->raise();
 
@@ -562,7 +564,8 @@ void P4StartDlg::onViewInfinite()
         return;
     }
 
-    viewInfiniteWindow_ .reset(showText(viewInfiniteWindow_, "View results at infinity", fname));
+    viewInfiniteWindow_.reset(
+        showText(viewInfiniteWindow_.get(), "View results at infinity", fname));
     viewInfiniteWindow_->show();
     viewInfiniteWindow_->raise();
     if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
@@ -573,25 +576,21 @@ void P4StartDlg::onViewInfinite()
     }
 }
 
-QWidget *P4StartDlg::showText(std::unique_ptr<QWidget> win, QString caption, QString fname)
+QWidget *P4StartDlg::showText(QWidget *win, QString caption, QString fname)
 {
     bool shown;
-    QTextEdit *result;
-
-    result = (QTextEdit *)win;
+    std::unique_ptr<QTextEdit> result{dynamic_cast<QTextEdit *> win};
     if (result == nullptr)
         result = new QTextEdit();
     else
         result->clear();
 
-    if (g_p4smallicon != nullptr)
+    if (g_p4smallicon)
         result->setWindowIcon(*g_p4smallicon);
 
-    QFile f(fname);
-    if (!f.open(QIODevice::ReadOnly)) {
-        delete result;
+    QFile f{fname};
+    if (!f.open(QIODevice::ReadOnly))
         return nullptr;
-    }
 
     shown = false;
     if (result->isHidden() == false) {
@@ -635,12 +634,12 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
     // hide may often mean "iconify" but close means that the window is going
     // away for good.
 
-    if (g_ThisVF == nullptr) {
+    if (!g_ThisVF) {
         ce->accept();
         return;
     }
 
-    if (findWindow_ != nullptr)
+    if (findWindow_)
         findWindow_->getDataFromDlg();
 
     if (g_ThisVF->changed_ == false) {
@@ -648,11 +647,9 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
         return;
     }
 
-    result =
-        QMessageBox::information(this, "P4",
-                                 "The vector field has been changed since "
-                                 "the last save.",
-                                 "&Save Now", "&Cancel", "&Leave Anyway", 0, 1);
+    result = QMessageBox::information(
+        this, "P4", "The vector field has been changed since the last save.",
+        "&Save Now", "&Cancel", "&Leave Anyway", 0, 1);
 
     if (result == 2)
         ce->accept();
@@ -662,10 +659,10 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
                 ce->accept();
                 return;
             }
-            QMessageBox::critical(
-                this, "P4",
-                "Unable to save the input vector field.\n"
-                "Please check permissions on the write location.\n");
+            QMessageBox::critical(this, "P4",
+                                  "Unable to save the input vector "
+                                  "field.\nPlease check permissions on the "
+                                  "write location.\n");
         }
         ce->ignore();
     }
@@ -673,10 +670,10 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
 
 void P4StartDlg::customEvent(QEvent *e)
 {
-    switch ((int)(e->type())) {
-    case TYPE_SIGNAL_EVALUATING:
+    switch (e->type()) {
+    /*case TYPE_SIGNAL_EVALUATING:
         signalEvaluating();
-        break;
+        break;*/
     case TYPE_SIGNAL_EVALUATED:
         signalEvaluated();
         break;
@@ -690,10 +687,8 @@ void P4StartDlg::customEvent(QEvent *e)
         signalSaved();
         break;
     case TYPE_CLOSE_PLOTWINDOW:
-        if (plotWindow_ != nullptr) {
-            delete plotWindow_;
-            plotWindow_ = nullptr;
-        }
+        if (plotWindow_)
+            plotWindow_.reset();
         break;
     default:
         QWidget::customEvent(e);
@@ -724,4 +719,16 @@ bool P4StartDlg::canOpenPlot()
         findWindow_->vfSelectWindow_->closeConfigWindow();
 
     return true;
+}
+
+void P4StartDlg::signalSeparatingCurvesEvaluated()
+{
+    if (findWindow_)
+        findWindow_->signalSeparatingCurvesEvaluated();
+}
+
+void P4StartDlg::closePlotWindow()
+{
+    if (plotWindow_)
+        plotWindow_.reset();
 }

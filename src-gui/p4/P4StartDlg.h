@@ -68,13 +68,14 @@ class P4StartDlg : public QWidget
 
     // following functions are called by other P4 widgets when something
     // happened:
-    void signalEvaluating(void);
-    void signalEvaluated(void);
-    void signalChanged(void);
-    void signalLoaded(void);
-    void signalSaved(void);
-
+    void signalEvaluating();
+    void signalEvaluated();
+    void signalChanged();
+    void signalLoaded();
+    void signalSaved();
+    bool canOpenPlot();
     void customEvent(QEvent *e);
+    void closePlotWindow();
 
    public slots:
     // following slots are called by QT when a button is pressed or a file name
