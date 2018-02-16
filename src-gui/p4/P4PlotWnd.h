@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_PLOT_H
-#define WIN_PLOT_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -46,48 +45,48 @@ class P4PlotWnd : public QMainWindow
 {
     Q_OBJECT
 
-  public:
-    P4PlotWnd(P4StartDlg *);
-    ~P4PlotWnd();
+   public:
+    P4PlotWnd(std::shared_ptr<P4StartDlg>, bool, std::shared<P4PlotWnd>);
 
-    P4IntParamsDlg *intParamsWindow_;
-    P4ViewDlg *viewParamsWindow_;
+    std::shared_ptr<P4IntParamsDlg> intParamsWindow_;
+    std::shared_ptr<P4ViewDlg> viewParamsWindow_;
 
-  private:
-    P4StartDlg *parent_;
-    QBoxLayout *mainLayout_;
-    QAction *actClose_;
-    QAction *actRefresh_;
-    QAction *actLegend_;
-    QAction *actOrbits_;
-    QAction *actIntParams_;
-    QAction *actView_;
-    QAction *actGCF_;
-    QAction *actCurve_;
-    QAction *actIsoclines_;
-    QAction *actPlotSep_;
-    QAction *actPlotAllSeps_;
-    QAction *actLimitCycles_;
-    QAction *actPrint_;
+   private:
+    std::shared_ptr<P4StartDlg> parent_;
 
-    P4LegendWnd *legendWindow_;
-    P4OrbitsDlg *orbitsWindow_;
-    QSepDlg *sepWindow_;
-    P4LimitCyclesDlg *lcWindow_;
-    P4GcfDlg *gcfWindow_;
-    QCurveDlg *curveWindow_;
-    QIsoclinesDlg *isoclinesWindow_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QAction> actClose_;
+    std::unique_ptr<QAction> actRefresh_;
+    std::unique_ptr<QAction> actLegend_;
+    std::unique_ptr<QAction> actOrbits_;
+    std::unique_ptr<QAction> actIntParams_;
+    std::unique_ptr<QAction> actView_;
+    std::unique_ptr<QAction> actGCF_;
+    std::unique_ptr<QAction> actCurve_;
+    std::unique_ptr<QAction> actIsoclines_;
+    std::unique_ptr<QAction> actPlotSep_;
+    std::unique_ptr<QAction> actPlotAllSeps_;
+    std::unique_ptr<QAction> actLimitCycles_;
+    std::unique_ptr<QAction> actPrint_;
 
-    QWinSphere *sphere_; // main sphere
+    std::unique_ptr<P4LegendWnd> legendWindow_;
+    std::unique_ptr<P4OrbitsDlg> orbitsWindow_;
+    std::unique_ptr<QSepDlg> sepWindow_;
+    std::unique_ptr<P4LimitCyclesDlg> lcWindow_;
+    std::unique_ptr<P4GcfDlg> gcfWindow_;
+    std::unique_ptr<QCurveDlg> curveWindow_;
+    std::unique_ptr<QIsoclinesDlg> isoclinesWindow_;
+
+    std::shared_ptr<QWinSphere> sphere_;  // main sphere
 
     int numZooms_;
     int lastZoomIdentifier_;
-    std::vector<std::shared_ptr<QZoomWnd>> zoomWindows_;
+    std::vector<std::unique_ptr<QZoomWnd>> zoomWindows_;
 
     bool flagAllSepsPlotted_;
 
-  public slots:
-    void signalEvaluating();
+   public slots:
+    //void signalEvaluating();
     void signalEvaluated();
     void signalChanged();
 
@@ -98,8 +97,8 @@ class P4PlotWnd : public QMainWindow
     void onBtnIntParams();
     void onBtnView();
     void onBtnGCF();
-    void onBtnCurve();
-    void onBtnIsoclines();
+    void onBtnCurve(); //FIXME
+    void onBtnIsoclines(); //FIXME
     void onBtnPlotSep();
     void onBtnPlotAllSeps();
     void onBtnLimitCycles();
@@ -117,5 +116,3 @@ class P4PlotWnd : public QMainWindow
     void onSaveSignal();
     void onLoadSignal();
 };
-
-#endif /* WIN_PLOT_H */
