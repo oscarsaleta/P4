@@ -29,12 +29,12 @@ class QPushButton;
 class QLineEdit;
 class QBoxLayout;
 
-class QOrbitsDlg : public QWidget
+class P4OrbitsDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    QOrbitsDlg(QPlotWnd *, QWinSphere *);
+    P4OrbitsDlg(QPlotWnd *, QWinSphere *);
     void reset(void);
 
   private:

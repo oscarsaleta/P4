@@ -34,7 +34,7 @@
 #include "P4LegendWnd.h"
 #include "P4LimitCyclesDlg.h"
 #include "P4StartDlg.h"
-#include "win_orbits.h"
+#include "P4OrbitsDlg.h"
 #include "win_print.h"
 #include "win_separatrice.h"
 #include "win_sphere.h"
@@ -178,7 +178,7 @@ QPlotWnd::QPlotWnd(P4StartDlg *main) : QMainWindow()
 
     sphere_ = new QWinSphere(this, statusBar(), false, 0, 0, 0, 0);
     legendWindow_ = new P4LegendWnd();
-    orbitsWindow_ = new QOrbitsDlg(this, sphere_);
+    orbitsWindow_ = new P4OrbitsDlg(this, sphere_);
     sepWindow_ = new QSepDlg(this, sphere_);
     intParamsWindow_ = new P4IntParamsDlg();
     viewParamsWindow_ = new P4ViewDlg(this);

@@ -90,7 +90,7 @@ HEADERS += win_view.h \
     win_print.h \
     win_plot.h \
     win_params.h \
-    win_orbits.h \
+    P4OrbitsDlg.h \
     P4StartDlg.h \
     P4LimitCyclesDlg.h \
     P4LegendWnd.h \

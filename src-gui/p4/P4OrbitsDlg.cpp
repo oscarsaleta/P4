@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_orbits.h"
+#include "P4OrbitsDlg.h"
 
 #include "custom.h"
 #include "file_tab.h"
@@ -31,7 +31,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
+P4OrbitsDlg::P4OrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -102,16 +102,16 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    connect(btnSelect_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnSelect);
+    connect(btnSelect_, &QPushButton::clicked, this, &P4OrbitsDlg::onBtnSelect);
     connect(btnForwards_, &QPushButton::clicked, this,
-            &QOrbitsDlg::onBtnForwards);
+            &P4OrbitsDlg::onBtnForwards);
     connect(btnBackwards_, &QPushButton::clicked, this,
-            &QOrbitsDlg::onBtnBackwards);
+            &P4OrbitsDlg::onBtnBackwards);
     connect(btnContinue_, &QPushButton::clicked, this,
-            &QOrbitsDlg::onBtnContinue);
-    connect(btnDelAll_, &QPushButton::clicked, this, &QOrbitsDlg::onBtnDelAll);
+            &P4OrbitsDlg::onBtnContinue);
+    connect(btnDelAll_, &QPushButton::clicked, this, &P4OrbitsDlg::onBtnDelAll);
     connect(btnDelLast_, &QPushButton::clicked, this,
-            &QOrbitsDlg::onBtnDelLast);
+            &P4OrbitsDlg::onBtnDelLast);
 
     // finishing
 
@@ -132,7 +132,7 @@ QOrbitsDlg::QOrbitsDlg(QPlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "Plot Orbits");
 }
 
-void QOrbitsDlg::setInitialPoint(double x, double y)
+void P4OrbitsDlg::setInitialPoint(double x, double y)
 {
     QString bufx;
     QString bufy;
@@ -154,7 +154,7 @@ void QOrbitsDlg::setInitialPoint(double x, double y)
     btnContinue_->setEnabled(false);
 }
 
-void QOrbitsDlg::onBtnSelect(void)
+void P4OrbitsDlg::onBtnSelect(void)
 {
     plotwnd_->getDlgData();
 
@@ -174,7 +174,7 @@ void QOrbitsDlg::onBtnSelect(void)
     btnContinue_->setEnabled(false);
 }
 
-void QOrbitsDlg::onBtnBackwards(void)
+void P4OrbitsDlg::onBtnBackwards(void)
 {
     plotwnd_->getDlgData();
 
@@ -203,7 +203,7 @@ void QOrbitsDlg::onBtnBackwards(void)
     }
 }
 
-void QOrbitsDlg::onBtnContinue(void)
+void P4OrbitsDlg::onBtnContinue(void)
 {
     plotwnd_->getDlgData();
 
@@ -214,7 +214,7 @@ void QOrbitsDlg::onBtnContinue(void)
     }
 }
 
-void QOrbitsDlg::onBtnForwards(void)
+void P4OrbitsDlg::onBtnForwards(void)
 {
     plotwnd_->getDlgData();
 
@@ -243,7 +243,7 @@ void QOrbitsDlg::onBtnForwards(void)
     }
 }
 
-void QOrbitsDlg::onBtnDelAll(void)
+void P4OrbitsDlg::onBtnDelAll(void)
 {
     plotwnd_->getDlgData();
 
@@ -260,7 +260,7 @@ void QOrbitsDlg::onBtnDelAll(void)
     mainSphere_->refresh();
 }
 
-void QOrbitsDlg::onBtnDelLast(void)
+void P4OrbitsDlg::onBtnDelLast(void)
 {
     plotwnd_->getDlgData();
 
@@ -280,7 +280,7 @@ void QOrbitsDlg::onBtnDelLast(void)
     }
 }
 
-void QOrbitsDlg::orbitEvent(int i)
+void P4OrbitsDlg::orbitEvent(int i)
 {
     switch (i) {
     case -1:
@@ -301,7 +301,7 @@ void QOrbitsDlg::orbitEvent(int i)
     }
 }
 
-void QOrbitsDlg::reset(void)
+void P4OrbitsDlg::reset(void)
 {
     // finishing
 
