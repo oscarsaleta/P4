@@ -61,15 +61,15 @@ class P4ParentStudy : public QObject
     // FIXME segurament puc canviar first_lim_cycle per lim_cycles.front() i
     // current per .back()
     // limit cycles and orbits
-    std::vector<p4orbits::orbits> limCycles_; // FIXME canviar ocurrències
-    //int currentLimCycleIndex_;
-    std::vector<p4orbits::orbits> orbits_; // FIXME canviar ocurrències
-    //int currentOrbitIndex_;
+    std::vector<p4orbits::orbits> limCycles_;  // FIXME canviar ocurrències
+    // int currentLimCycleIndex_;
+    std::vector<p4orbits::orbits> orbits_;  // FIXME canviar ocurrències
+    // int currentOrbitIndex_;
 
-    // run-time when plotting 
+    // run-time when plotting
     // FIXME remove? canviar a int indexos?
-    //std::unique_ptr<p4orbits::orbits> current_orbit_;
-    //std::unique_ptr<p4orbits::orbits> current_lim_cycle_;
+    // std::unique_ptr<p4orbits::orbits> current_orbit_;
+    // std::unique_ptr<p4orbits::orbits> current_lim_cycle_;
 
     double selected_ucoord_[2];
 
@@ -83,7 +83,7 @@ class P4ParentStudy : public QObject
     std::vector<p4blowup::sep> seps_;
     int selectedSepIndex_;
     std::vector<p4blowup::blow_up_points> deSeps_;
-    int selectedDeSepIndex_
+    int selectedDeSepIndex_;
 
     int selected_sep_vfindex_;
 
@@ -105,10 +105,12 @@ class P4ParentStudy : public QObject
     // void deleteLimitCycle(p4orbits::orbits *);
     // void deleteOrbit(p4orbits::orbits *);
 
+    void resetSeparatingCurveInfo(int);
+
     bool readPiecewiseData(FILE *);
     void examinePositionsOfSingularities();
-    bool readTables(QString, bool, bool);
-    void dump(QString basename);
+    bool readTables(const QString &, bool, bool);
+    void dump(const QString &basename);
     void reset();
     void setupCoordinateTransformations();
     bool readSeparatingCurve(FILE *);

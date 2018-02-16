@@ -171,7 +171,7 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
 // -----------------------------------------------------------------------
 //          P4ParentStudy::readTables
 // -----------------------------------------------------------------------
-bool P4ParentStudy::readTables(QString basename, bool evalpiecewisedata,
+bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
                                bool onlytry)
 {
     FILE *fpvec;
@@ -490,7 +490,7 @@ bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 // -----------------------------------------------------------------------
 //          P4ParentStudy::setupCoordinateTransformations
 // -----------------------------------------------------------------------
-void P4ParentStudy::setupCoordinateTransformations(void)
+void P4ParentStudy::setupCoordinateTransformations()
 {
     if (!plweights_) {
         U1_to_sphere = U1_to_psphere;
@@ -710,4 +710,12 @@ void P4ParentStudy::examinePositionsOfSingularities()
         for (auto &sing : vf_[i].first_de_point_)
             markSingularity(sing, positions, numpositions, i, plweights_);
     }
+}
+
+// -----------------------------------------------------------------------
+//          P4ParentStudy::resetSeparatingCurveInfo
+// -----------------------------------------------------------------------
+void P4ParentStudy::resetSeparatingCurveInfo(int i)
+{
+    curves_result_.erase(curves_result_.begin() + i);
 }
