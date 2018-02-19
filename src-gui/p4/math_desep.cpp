@@ -426,7 +426,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
     last_orbit.dashes = 0;
     last_orbit.dir = dir;  // TODO: aixo no hi era
     copy_x_into_y(pcoord, pcoord2);
-    orbit_result.push_back(last_orbit);
+    orbit_result.push_back(std::move(last_orbit));
     for (i = 0; i <= 99; i++) {
         dashes = true;
         y = eval_term1(de_sep.sep, t);
@@ -520,7 +520,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
             (*plot_p)(spherewnd, pcoord, color);
         copy_x_into_y(pcoord, pcoord2);
 
-        orbit_result.push_back(last_orbit);
+        orbit_result.push_back(std::move(last_orbit));
     }
 
     // normal integration cycle
@@ -530,11 +530,11 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
 
     auto last_int_cycle =
         integrate_blow_up(spherewnd, pcoord2, de_sep, g_VFResults.config_step_,
-                          dir, last_orbit.type, chart);
+                          dir, orbit_result.back().type, chart);
     orbit_result.insert(std::end(orbit_result), std::begin(last_int_cycle),
                         std::end(last_int_cycle));
 
-    return std::move(orbit_result);
+    return orbit_result;
 }
 
 // ---------------------------------------------------------------------------
