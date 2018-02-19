@@ -19,6 +19,9 @@
 
 #include "P4WinSphere.h"
 
+#include "P4Event.h"
+#include "P4PrintDlg.h"
+#include "P4StartDlg.h"
 #include "file_vf.h"
 #include "main.h"
 #include "math_curve.h"
@@ -36,26 +39,24 @@
 #include "print_points.h"
 #include "print_postscript.h"
 #include "print_xfig.h"
-#include "P4Event.h"
-#include "P4StartDlg.h"
-#include "P4PrintDlg.h"
 
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QPainter>
 #include <QPrinter>
 #include <QResizeEvent>
 #include <QStatusBar>
 #include <QTimer>
- #include <QPainter>
 
 #include <cmath>
 
-static QPixmap *s_p4pixmap = nullptr;
-static double s_p4pixmap_dpm = 0;
+static std::unique_ptr<QPixmap> s_p4pixmap{};
+static double s_p4pixmap_dpm{0};
 
 // TODO: canviar per vector de spheres
-int P4WinSphere::sm_numSpheres = 0;
-P4WinSphere **P4WinSphere::sm_SphereList = nullptr;
+int P4WinSphere::sm_numSpheres{0};
+// std::vector<std::shared_ptr<P4WinSphere>> P4WinSphere::sm_SphereList =
+// nullptr;
 
 /*
     Coordinates on the sphere:
@@ -72,29 +73,24 @@ P4WinSphere **P4WinSphere::sm_SphereList = nullptr;
 
 // parameters x1,... are irrelevant if isZoom is false
 
-P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x1,
-                       double y1, double x2, double y2)
-    : QWidget(parent)
+P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
+                         double x1, double y1, double x2, double y2)
+    : QWidget(parent), parentWnd_{std::make_shared<QWidget>(parent)},
+      msgBar_{std::make_shared<QStatusBar>(bar)}
 {
     reverseYAxis_ = false;
-    painterCache_ = nullptr;
     isPainterCacheDirty_ = true;
-    anchorMap_ = nullptr;
-    refreshTimeout_ = nullptr;
-    selectingTimer_ = nullptr;
 
     //    setAttribute( Qt::WA_PaintOnScreen );
 
-    sm_SphereList = (P4WinSphere **)realloc(
-        sm_SphereList, sizeof(P4WinSphere *) * (sm_numSpheres + 1));
-    sm_SphereList[sm_numSpheres++] = this;
-    if (sm_numSpheres > 1) {
-        sm_SphereList[sm_numSpheres - 2]->next_ = this;
-    }
+    // FIXME is next needed?
+    if (!sm_SphereList.empty())
+        sm_SphereList.back()->next_ = std::make_shared<this>;
+    sm_SphereList.push_back(std::make_shared<this>);
+    sm_numSpheres++;
 
-    parentWnd_ = parent;
-    setMinimumSize(MINWIDTHPLOTWINDOW,
-                   MINHEIGHTPLOTWINDOW); // THIS IS THE MINIMUM SIZE
+    // THIS IS THE MINIMUM SIZE
+    setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW);
     w_ = width();
     h_ = height();
     idealh_ = w_;
@@ -104,16 +100,16 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x
     selectingPointRadius_ = 0;
     selectingPointStep_ = 0;
 
-    horPixelsPerMM_ = ((double)w_) / ((double)widthMM());
-    verPixelsPerMM_ = ((double)h_) / ((double)heightMM());
+    horPixelsPerMM_ =
+        (static_cast<double>(w_)) / (static_cast<double>(widthMM()));
+    verPixelsPerMM_ =
+        (static_cast<double>(h_)) / (static_cast<double>(heightMM()));
 
     setMouseTracking(true);
-    msgBar_ = bar;
     selectingZoom_ = false;
     selectingLCSection_ = false;
     setFocusPolicy(Qt::ClickFocus);
     setWindowFlags(windowFlags());
-    next_ = nullptr;
 
     iszoom_ = isZoom;
     if (isZoom) {
@@ -123,9 +119,6 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x
         x1_ = x2;
         y1_ = y2;
     }
-
-    circleAtInfinity_ = nullptr;
-    plCircle_ = nullptr;
 
     paintedXMin_ = 0;
     paintedXMax_ = w_;
@@ -152,91 +145,94 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom, double x
 void P4WinSphere::keyPressEvent(QKeyEvent *e)
 {
     int id;
-    int *data1;
+    std::unique_ptr<int> data1;
     Qt::KeyboardModifiers bs;
 
     id = e->key();
     bs = e->modifiers();
-    if (id == Qt::Key_F && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
-        // F: integrate orbit forwards in time
-
-        data1 = new int;
-        *data1 = 1;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-    if (id == Qt::Key_C && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
-        // C: continue integrate orbit
-
-        data1 = new int;
-        *data1 = 0;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-    if (id == Qt::Key_B && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
-        // B: integrate orbit backwards in time
-
-        data1 = new int;
-        *data1 = -1;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-    if (id == Qt::Key_D && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
-        // D: delete orbit
-
-        data1 = new int;
-        *data1 = 2;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-
-    if (id == Qt::Key_A && (bs == Qt::NoModifier || bs == Qt::AltModifier)) {
-        // A: delete all orbits
-
-        data1 = new int;
-        *data1 = 3;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_ORBIT_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-
-    if (id == Qt::Key_C && (bs == Qt::ShiftModifier ||
-                            bs == Qt::AltModifier + Qt::ShiftModifier)) {
-        // SHIFT+C:  continue integrating separatrice
-
-        data1 = new int;
-        *data1 = 0;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-
-    if (id == Qt::Key_N && (bs == Qt::ShiftModifier ||
-                            bs == Qt::AltModifier + Qt::ShiftModifier)) {
-        // SHIFT+N: select next separatrice
-
-        data1 = new int;
-        *data1 = 3;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-
-    if (id == Qt::Key_I && (bs == Qt::ShiftModifier ||
-                            bs == Qt::AltModifier + Qt::ShiftModifier)) {
-        // SHIFT+I: integrate next separatrice
-
-        data1 = new int;
-        *data1 = 2;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
-    }
-
-    if (id == Qt::Key_S && (bs == Qt::ShiftModifier ||
-                            bs == Qt::AltModifier + Qt::ShiftModifier)) {
-        // SHIFT+S: start integrate separatrice
-
-        data1 = new int;
-        *data1 = 1;
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_SEP_EVENT, data1);
-        g_p4app->postEvent(parentWnd_, e1);
+    switch (id) {
+    case Qt::Key_F:
+        if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
+            // F: integrate orbit forwards in time
+            data1 = std::make_unique<int>(1);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_C:
+        if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
+            // C: continue integrate orbit
+            data1 = std::make_unique<int>(0);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        } else if (bs == Qt::ShiftModifier ||
+                   bs == Qt::AltModifier + Qt::ShiftModifier) {
+            // SHIFT+C:  continue integrating separatrice
+            data1 = std::make_unique<int>(0);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_B:
+        if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
+            // B: integrate orbit backwards in time
+            data1 = std::make_unique<int>(-1);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_D:
+        if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
+            // D: delete orbit
+            data1 = std::make_unique<int>(2);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_A:
+        if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
+            // A: delete all orbits
+            data1 = std::make_unique<int>(3);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_N:
+        if (bs == Qt::ShiftModifier ||
+            bs == Qt::AltModifier + Qt::ShiftModifier) {
+            // SHIFT+N: select next separatrice
+            data1 = std::make_unique<int>(3);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_I:
+        if (bs == Qt::ShiftModifier ||
+            bs == Qt::AltModifier + Qt::ShiftModifier) {
+            // SHIFT+I: integrate next separatrice
+            data1 = std::make_unique<int>(2);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
+    case Qt::Key_I:
+        if (bs == Qt::ShiftModifier ||
+            bs == Qt::AltModifier + Qt::ShiftModifier) {
+            // SHIFT+S: start integrate separatrice
+            data1 = std::make_unique<int>(1);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        }
+        break;
     }
 
     e->ignore();
@@ -387,7 +383,7 @@ P4WinSphere::~P4WinSphere()
             break;
     }
     if (i == sm_numSpheres)
-        return; // error: sphere not found?
+        return;  // error: sphere not found?
 
     if (i > 0)
         sm_SphereList[i - 1]->next_ = next_;
@@ -483,18 +479,16 @@ void P4WinSphere::loadAnchorMap(void)
     QPainter paint(anchorMap_);
     if (selectingZoom_) {
         // only copy rectangular edges, not inside
-        //   paint.drawPixmap (    0,    0, aw,  1, *painterCache_, x1_, y1_,
-        //   aw, 1
+        //   paint.drawPixmap (    0,    0, aw,  1, *painterCache_, x1_,
+        //   y1_, aw, 1
         //   );
-        //     paint.drawPixmap (    0, ah-1, aw,  1, *painterCache_, x1_, y2,
-        //     aw,
-        //     1 );
+        //     paint.drawPixmap (    0, ah-1, aw,  1, *painterCache_, x1_,
+        //     y2, aw, 1 );
         //       paint.drawPixmap (    0,    0,  1, ah, *painterCache_, x1_,
         //       y1_,
         //       1, ah );
-        //         paint.drawPixmap ( aw-1, 0,     1, ah, *painterCache_, x2,
-        //         y1_,
-        //         1, ah );
+        //         paint.drawPixmap ( aw-1, 0,     1, ah, *painterCache_,
+        //         x2, y1_, 1, ah );
 
         paint.drawPixmap(0, 0, aw, ah, *painterCache_, x1_, y1_, aw, ah);
 
@@ -558,15 +552,15 @@ void P4WinSphere::saveAnchorMap(void)
 
     if (selectingZoom_) {
         // only copy rectangular edges, not inside
-        //         paint.drawPixmap ( x1_, y1_, aw,  1, *anchorMap_,    0,    0,
-        //         aw, 1 );
-        //       paint.drawPixmap ( x1_, y2, aw,  1, *anchorMap_,    0, ah-1,
-        //       aw,
-        //       1 );
-        //     paint.drawPixmap ( x1_, y1_,  1, ah, *anchorMap_,    0,    0, 1,
-        //     ah
+        //         paint.drawPixmap ( x1_, y1_, aw,  1, *anchorMap_,    0,
+        //         0, aw, 1 );
+        //       paint.drawPixmap ( x1_, y2, aw,  1, *anchorMap_,    0,
+        //       ah-1, aw, 1 );
+        //     paint.drawPixmap ( x1_, y1_,  1, ah, *anchorMap_,    0,    0,
+        //     1, ah
         //     );
-        //   paint.drawPixmap ( x2, y1_,  1, ah, *anchorMap_, aw-1,    0, 1, ah
+        //   paint.drawPixmap ( x2, y1_,  1, ah, *anchorMap_, aw-1,    0, 1,
+        //   ah
         //   );
         paint.drawPixmap(x1_, y1_, aw, ah, *anchorMap_, 0, 0, aw, ah);
     } else {
@@ -750,7 +744,7 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
 }
 
 void P4WinSphere::markSelection(int x1_, int y1_, int x2, int y2,
-                               int selectiontype)
+                                int selectiontype)
 {
     int bx1, by1, bx2, by2;
 
@@ -960,7 +954,7 @@ int P4WinSphere::coWinX(double x)
     wx = (x - x0_) / dx_;
     wx *= w_ - 1;
 
-    iwx = (int)(wx + 0.5); // +0.5 to round upwards
+    iwx = (int)(wx + 0.5);  // +0.5 to round upwards
     if (iwx >= w_)
         iwx = w_ - 1;
 
@@ -993,13 +987,13 @@ int P4WinSphere::coWinY(double y)
     wy = (y - y0_) / dy_;
     wy *= h_ - 1;
 
-    iwy = (int)(wy + 0.5); // +0.5 to round upwards
+    iwy = (int)(wy + 0.5);  // +0.5 to round upwards
     if (iwy >= h_)
         iwy = h_ - 1;
 
-    return (reverseYAxis_) ?
-               iwy :
-               h_ - 1 - iwy; // on screen: vertical axis orientation is reversed
+    return (reverseYAxis_) ? iwy : h_ - 1 - iwy;  // on screen: vertical
+                                                  // axis orientation is
+                                                  // reversed
 }
 
 void P4WinSphere::mousePressEvent(QMouseEvent *e)
@@ -1101,8 +1095,7 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(zoomAnchor1_.y());
             data1[2] = coWorldX(zoomAnchor2_.x());
             data1[3] = coWorldY(zoomAnchor2_.y());
-            P4Event *e1 =
-                new P4Event((QEvent::Type)TYPE_OPENZOOMWINDOW, data1);
+            P4Event *e1 = new P4Event((QEvent::Type)TYPE_OPENZOOMWINDOW, data1);
             g_p4app->postEvent(parentWnd_, e1);
         }
 
@@ -1524,11 +1517,11 @@ void P4WinSphere::drawIsoclines(void)
 // -----------------------------------------------------------------------
 
 P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
-                                        double b, bool dotted, double resa,
-                                        double resb)
+                                         double b, bool dotted, double resa,
+                                         double resb)
 {
-    // this is an exact copy of the plotEllipse routine, except that output is
-    // stored in a list of points that is dynamically allocated.
+    // this is an exact copy of the plotEllipse routine, except that output
+    // is stored in a list of points that is dynamically allocated.
 
     double theta, t1, t2, e, R, x, y, c, prevx, prevy;
     bool d;
@@ -1544,7 +1537,7 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
 
     R = (resa < resb) ? resa : resb;
     if (R < 1.0)
-        R = 1.0; // protection
+        R = 1.0;  // protection
     e = 2 * acos(1.0 - 0.5 / R);
     if (R * sin(e) > 1.0)
         e = asin(1.0 / R);
@@ -1565,8 +1558,8 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             t1 = acos(c);
             t2 = TWOPI - t1;
             if (theta >= t1 && theta < t2) {
-                //                fprintf( fp, "A EXCL [%f %f]\n", (float)t1,
-                //                (float)t2 );
+                //                fprintf( fp, "A EXCL [%f %f]\n",
+                //                (float)t1, (float)t2 );
                 theta = t2 + e / 4;
                 d = false;
                 continue;
@@ -1772,7 +1765,8 @@ void P4WinSphere::plotLineAtInfinity(void)
     }
 }
 
-void P4WinSphere::drawLine(double x1, double y1, double x2, double y2, int color)
+void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
+                           int color)
 {
     int wx1, wy1, wx2, wy2;
 
@@ -2321,7 +2315,7 @@ void P4WinSphere::printLimitCycles(void)
 }
 
 void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
-                           int color)
+                            int color)
 {
     int wx1, wy1, wx2, wy2;
 
@@ -2387,8 +2381,8 @@ void P4WinSphere::refresh(void)
 }
 
 void P4WinSphere::calculateHeightFromWidth(int *width, int *height,
-                                          int maxheight = -1,
-                                          double aspectratio = 1)
+                                           int maxheight = -1,
+                                           double aspectratio = 1)
 {
     // given an optimal width in *width, this procedure calculates the
     // corresponding height in order to maintain the given aspectratio
@@ -2417,15 +2411,15 @@ void P4WinSphere::calculateHeightFromWidth(int *width, int *height,
 }
 
 void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
-                                 int myresolution, double mylinewidth,
-                                 double mysymbolsize)
+                                  int myresolution, double mylinewidth,
+                                  double mysymbolsize)
 {
     double aspectratio, lw, ss, hpixels, maxvpixels, pagewidth, pageheight, tx,
         ty;
 
     printMethod_ = printmethod;
 
-    aspectratio = 1; // assume aspect ratio 1
+    aspectratio = 1;  // assume aspect ratio 1
 
     if (printmethod == P4PRINT_DEFAULT) {
         // g_p4printer->setResolution(myresolution); we have moved this.
@@ -2438,7 +2432,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
         pagewidth = g_p4printer->width();
         pageheight = g_p4printer->height();
     } else
-        pagewidth = pageheight = -1; // will be redefined in a minut
+        pagewidth = pageheight = -1;  // will be redefined in a minut
 
     s_p4pixmap_dpm = lw = ss = hpixels = myresolution;
     s_p4pixmap_dpm /= 2.54;
@@ -2467,7 +2461,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
         pageheight = -1;
         break;
     case P4PRINT_EPSIMAGE:
-        pagewidth = POSTSCRIPTPAGEWIDTH; // see custom.cpp
+        pagewidth = POSTSCRIPTPAGEWIDTH;  // see custom.cpp
         pageheight = POSTSCRIPTPAGEHEIGHT;
         pagewidth *= myresolution;
         pageheight *= myresolution;
@@ -2481,15 +2475,15 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
     calculateHeightFromWidth(&w_, &h_, (int)maxvpixels, aspectratio);
 
-    lw /= 25.4;        // dots per mm
-    lw *= mylinewidth; // linewidth in pixels
-    lw += 0.5;         // prepare round above
+    lw /= 25.4;         // dots per mm
+    lw *= mylinewidth;  // linewidth in pixels
+    lw += 0.5;          // prepare round above
     if (lw < 1.0)
         lw = 1.0;
 
-    ss /= 25.4;         // dots per mm
-    ss *= mysymbolsize; // symbolsize in pixels
-    ss += 0.5;          // prepare round above for units of 2
+    ss /= 25.4;          // dots per mm
+    ss *= mysymbolsize;  // symbolsize in pixels
+    ss += 0.5;           // prepare round above for units of 2
     ss /= 2.0;
     if (ss < 1.0)
         ss = 1.0;
@@ -2535,7 +2529,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
             staticPainter_->drawRect(0, 0, w_, h_);
         }
         //      staticPainter_->setClipRect( (int)tx, (int)ty, w_, h_ );
-        reverseYAxis_ = false; // no need for reversing axes in this case
+        reverseYAxis_ = false;  // no need for reversing axes in this case
         prepareP4Printing(w_, h_, isblackwhite, staticPainter_, (int)lw,
                           2 * (int)ss);
         break;
@@ -2543,7 +2537,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     case P4PRINT_JPEGIMAGE:
         staticPainter_ = new QPainter();
         s_p4pixmap = new QPixmap(w_, h_);
-        reverseYAxis_ = false; // no need for reversing axes in this case
+        reverseYAxis_ = false;  // no need for reversing axes in this case
         if (s_p4pixmap->isNull()) {
             msgBar_->showMessage(
                 "Print failure (try to choose a lower resolution).");
@@ -2605,9 +2599,10 @@ void P4WinSphere::finishPrinting(void)
 
         if (s_p4pixmap->save(g_ThisVF->getbarefilename() + ".jpg", "JPEG",
                              100) == false) {
-            QMessageBox::critical(this, "P4", "For some reason, P4 is unable "
-                                              "to save the resulting JPEG "
-                                              "image to disc.");
+            QMessageBox::critical(this, "P4",
+                                  "For some reason, P4 is unable "
+                                  "to save the resulting JPEG "
+                                  "image to disc.");
         }
 
         delete s_p4pixmap;
@@ -2698,7 +2693,8 @@ void P4WinSphere::signalChanged(void)
 {
     /*
         QPalette palette;
-        palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ = DARKGRAY)
+        palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
+       DARKGRAY)
        );
         setPalette(palette);
     */
