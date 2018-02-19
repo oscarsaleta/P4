@@ -46,7 +46,7 @@ class P4PlotWnd : public QMainWindow
     Q_OBJECT
 
    public:
-    P4PlotWnd(std::shared_ptr<P4StartDlg>, bool, std::shared<P4PlotWnd>);
+    P4PlotWnd(std::shared_ptr<P4StartDlg>);
 
     std::shared_ptr<P4IntParamsDlg> intParamsWindow_;
     std::shared_ptr<P4ViewDlg> viewParamsWindow_;
