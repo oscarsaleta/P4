@@ -30,7 +30,7 @@ class P4IntParamsDlg;
 class P4LegendWnd;
 class P4LimitCyclesDlg;
 class P4OrbitsDlg;
-class QSepDlg;
+class P4SepDlg;
 class P4StartDlg;
 class P4ViewDlg;
 class QWinSphere;
@@ -71,7 +71,7 @@ class P4PlotWnd : public QMainWindow
 
     std::unique_ptr<P4LegendWnd> legendWindow_;
     std::unique_ptr<P4OrbitsDlg> orbitsWindow_;
-    std::unique_ptr<QSepDlg> sepWindow_;
+    std::unique_ptr<P4SepDlg> sepWindow_;
     std::unique_ptr<P4LimitCyclesDlg> lcWindow_;
     std::unique_ptr<P4GcfDlg> gcfWindow_;
     std::unique_ptr<QCurveDlg> curveWindow_;

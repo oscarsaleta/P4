@@ -115,7 +115,7 @@ HEADERS += win_view.h \
     math_changedir.h \
     math_charts.h \
     math_separatrice.h \
-    win_separatrice.h \
+    P4SepDlg.h \
     math_findpoint.h \
     math_gcf.h \
     math_intblowup.h \

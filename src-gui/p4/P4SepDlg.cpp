@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_separatrice.h"
+#include "P4SepDlg.h"
 
 #include "custom.h"
 #include "main.h"
@@ -33,7 +33,7 @@
 QString g_CurrentSingularityInfo[4] = {"", "", "", ""};
 double g_CurrentSeparatriceEpsilon = 0;
 
-QSepDlg::QSepDlg(P4PlotWnd *plt, QWinSphere *sp)
+P4SepDlg::P4SepDlg(P4PlotWnd *plt, QWinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -97,12 +97,12 @@ QSepDlg::QSepDlg(P4PlotWnd *plt, QWinSphere *sp)
     // connections
 
     connect(btn_selectnext_, &QPushButton::clicked, this,
-            &QSepDlg::onbtn_selectnext);
-    connect(btn_intnext_, &QPushButton::clicked, this, &QSepDlg::onbtn_intnext);
-    connect(btn_start_, &QPushButton::clicked, this, &QSepDlg::onbtn_start);
-    connect(btn_cont_, &QPushButton::clicked, this, &QSepDlg::onbtn_cont);
+            &P4SepDlg::onbtn_selectnext);
+    connect(btn_intnext_, &QPushButton::clicked, this, &P4SepDlg::onbtn_intnext);
+    connect(btn_start_, &QPushButton::clicked, this, &P4SepDlg::onbtn_start);
+    connect(btn_cont_, &QPushButton::clicked, this, &P4SepDlg::onbtn_cont);
     connect(edt_epsilon_, &QLineEdit::returnPressed, this,
-            &QSepDlg::onepsilon_enter);
+            &P4SepDlg::onepsilon_enter);
 
     // finishing
 
@@ -111,7 +111,7 @@ QSepDlg::QSepDlg(P4PlotWnd *plt, QWinSphere *sp)
     setP4WindowTitle(this, "Separatrices");
 }
 
-void QSepDlg::setInitialPoint(void)
+void P4SepDlg::setInitialPoint(void)
 {
     QString buf;
 
@@ -136,7 +136,7 @@ void QSepDlg::setInitialPoint(void)
     //  raise();
 }
 
-void QSepDlg::onbtn_selectnext(void)
+void P4SepDlg::onbtn_selectnext(void)
 {
     if (!selected_)
         return;
@@ -155,7 +155,7 @@ void QSepDlg::onbtn_selectnext(void)
     mainSphere_->finishDrawing();
 }
 
-void QSepDlg::onbtn_intnext(void)
+void P4SepDlg::onbtn_intnext(void)
 {
     if (!selected_)
         return;
@@ -174,7 +174,7 @@ void QSepDlg::onbtn_intnext(void)
     mainSphere_->finishDrawing();
 }
 
-void QSepDlg::onbtn_start(void)
+void P4SepDlg::onbtn_start(void)
 {
     if (!selected_ || started_)
         return;
@@ -192,7 +192,7 @@ void QSepDlg::onbtn_start(void)
     mainSphere_->finishDrawing();
 }
 
-void QSepDlg::onbtn_cont(void)
+void P4SepDlg::onbtn_cont(void)
 {
     if (!selected_ || !started_)
         return;
@@ -204,7 +204,7 @@ void QSepDlg::onbtn_cont(void)
     mainSphere_->finishDrawing();
 }
 
-void QSepDlg::reset(void)
+void P4SepDlg::reset(void)
 {
     lbl_info_[0]->setText("no point selected_.");
     lbl_info_[1]->setText("");
@@ -220,7 +220,7 @@ void QSepDlg::reset(void)
     btn_intnext_->setEnabled(false);
 }
 
-void QSepDlg::sepEvent(int i)
+void P4SepDlg::sepEvent(int i)
 {
     switch (i) {
     case -1:
@@ -241,7 +241,7 @@ void QSepDlg::sepEvent(int i)
     }
 }
 
-void QSepDlg::markBad(QLineEdit *edt)
+void P4SepDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -255,7 +255,7 @@ void QSepDlg::markBad(QLineEdit *edt)
     edt->setText(t);
 }
 
-void QSepDlg::onepsilon_enter(void)
+void P4SepDlg::onepsilon_enter(void)
 {
     // called when user presses ENTER after changing the epsilon value
 

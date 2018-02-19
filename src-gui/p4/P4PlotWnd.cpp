@@ -36,7 +36,7 @@
 #include "win_curve.h"
 #include "win_isoclines.h"
 #include "P4PrintDlg.h"
-#include "win_separatrice.h"
+#include "P4SepDlg.h"
 #include "win_sphere.h"
 #include "win_view.h"
 #include "win_zoom.h"
@@ -189,7 +189,7 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
         std::make_shared<QWinSphere>(this, statusBar(), false, 0, 0, 0, 0);
     legendWindow_ = new P4LegendWnd();
     orbitsWindow_ = new P4OrbitsDlg(this, sphere_);
-    sepWindow_ = new QSepDlg(this, sphere_);
+    sepWindow_ = new P4SepDlg(this, sphere_);
     intParamsWindow_ = new P4IntParamsDlg();
     viewParamsWindow_ = new P4ViewDlg(this);
     lcWindow_ = new P4LimitCyclesDlg(this, sphere_);

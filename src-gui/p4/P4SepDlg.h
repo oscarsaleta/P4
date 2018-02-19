@@ -17,10 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_SEPARATRICES_H
-#define WIN_SEPARATRICES_H
+#pragma once
 
 #include <QWidget>
+
+#include <memory>
 
 class QWinSphere;
 class P4PlotWnd;
@@ -33,31 +34,31 @@ class QBoxLayout;
 extern QString g_CurrentSingularityInfo[];
 extern double g_CurrentSeparatriceEpsilon;
 
-class QSepDlg : public QWidget
+class P4SepDlg : public QWidget
 {
     Q_OBJECT
 
-  public:
-    QSepDlg(P4PlotWnd *, QWinSphere *);
+   public:
+    P4SepDlg(P4PlotWnd *, QWinSphere *);
     void reset(void);
 
-  private:
-    QWinSphere *mainSphere_;
-    P4PlotWnd *plotwnd_;
+   private:
+    std::shared_ptr<QWinSphere> mainSphere_;
+    std::shared_ptr<P4PlotWnd> plotwnd_;
 
-    QPushButton *btn_selectnext_;
-    QPushButton *btn_intnext_;
-    QPushButton *btn_start_;
-    QPushButton *btn_cont_;
-    QLineEdit *edt_epsilon_;
-    QLabel *lbl_info_[4];
+    std::unique_ptr<QPushButton> btn_selectnext_;
+    std::unique_ptr<QPushButton> btn_intnext_;
+    std::unique_ptr<QPushButton> btn_start_;
+    std::unique_ptr<QPushButton> btn_cont_;
+    std::unique_ptr<QLineEdit> edt_epsilon_;
+    std::unique_ptr<QLabel> lbl_info_[4];
 
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
     bool started_;
     bool selected_;
 
-  public slots:
+   public slots:
     void onbtn_selectnext(void);
     void onbtn_intnext(void);
     void onbtn_cont(void);
