@@ -49,10 +49,9 @@ class P4WinSphere : public QWidget
     Q_OBJECT
 
     static int sm_numSpheres;
-    // this could be implemented as a c++ vector
-    static P4WinSphere **sm_SphereList;
+    static std::vector<std::shared_ptr<P4WinSphere>> sm_SphereList;
 
-  public:
+   public:
     /* Constructor and destructor */
     P4WinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);
     ~P4WinSphere();
@@ -61,40 +60,41 @@ class P4WinSphere : public QWidget
     double horPixelsPerMM_;
     double verPixelsPerMM_;
 
-    double x0_, y0_; // world-coordinates of upper-left corner
-    double x1_, y1_; // world-coordinates of upper-right corner
-    double dx_;      // x1-x0
-    double dy_;      // y1-y0
+    double x0_, y0_;  // world-coordinates of upper-left corner
+    double x1_, y1_;  // world-coordinates of upper-right corner
+    double dx_;       // x1-x0
+    double dy_;       // y1-y0
 
-    QPixmap *painterCache_;
+    std::unique_ptr<QPixmap> painterCache_;
     bool isPainterCacheDirty_;
-    int paintedXMin_; // to know the update rectangle after painting
-    int paintedXMax_; // we keep to smallest rectangle enclosing
-    int paintedYMin_; // all painted objects.
+    int paintedXMin_;  // to know the update rectangle after painting
+    int paintedXMax_;  // we keep to smallest rectangle enclosing
+    int paintedYMin_;  // all painted objects.
     int paintedYMax_;
 
     QString chartstring_;
 
     int spherebgcolor_;
-    P4WinSphere *next_; // visible to PlotWnd
+    // FIXME used?
+    std::shared_ptr<P4WinSphere> next_;  // visible to PlotWnd
     int selectingX_, selectingY_, selectingPointStep_, selectingPointRadius_;
-    QTimer *selectingTimer_;
+    std::unique_ptr<QTimer> selectingTimer_;
 
-    int oldw_; // used while printing
+    int oldw_;  // used while printing
     int oldh_;
-    int w_;      // width of window
-    int h_;      // height of window
-    int idealh_; // ideal height of window to get good aspect ratio
+    int w_;       // width of window
+    int h_;       // height of window
+    int idealh_;  // ideal height of window to get good aspect ratio
 
     /* Member functions */
 
     void paintEvent(QPaintEvent *);
 
     bool getChartPos(int, double, double, double *);
-    void adjustToNewSize(void);
+    void adjustToNewSize();
 
-    void signalEvaluating(void);
-    void signalChanged(void);
+    void signalEvaluating();
+    void signalChanged();
     void plotPoint(saddle *);
     void plotPoint(node *);
     void plotPoint(semi_elementary *);
@@ -104,14 +104,14 @@ class P4WinSphere : public QWidget
     void plotPointSeparatrices(semi_elementary *p);
     void plotPointSeparatrices(saddle *p);
     void plotPointSeparatrices(degenerate *p);
-    void plotPoints(void);
-    void plotSeparatrices(void);
-    void plotGcf(void);
-    void plotCurve(void);
-    void drawIsoclines(void);
-    void plotPoincareSphere(void);
-    void plotPoincareLyapunovSphere(void);
-    void plotLineAtInfinity(void);
+    void plotPoints();
+    void plotSeparatrices();
+    void plotGcf();
+    void plotCurve();
+    void drawIsoclines();
+    void plotPoincareSphere();
+    void plotPoincareLyapunovSphere();
+    void plotLineAtInfinity();
     void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
     void printPoint(saddle *);
@@ -123,35 +123,36 @@ class P4WinSphere : public QWidget
     void printPointSeparatrices(semi_elementary *p);
     void printPointSeparatrices(saddle *p);
     void printPointSeparatrices(degenerate *p);
-    void printPoints(void);
-    void printSeparatrices(void);
-    void printGcf(void);
-    void printCurve(void);
+    void printPoints();
+    void printSeparatrices();
+    void printGcf();
+    void printCurve();
     void printIsoclines();
-    void printPoincareSphere(void);
-    void printPoincareLyapunovSphere(void);
-    void printLineAtInfinity(void);
+    void printPoincareSphere();
+    void printPoincareLyapunovSphere();
+    void printLineAtInfinity();
 
-    P4POLYLINES *produceEllipse(double cx, double cy, double a, double b,
-                                bool dotted, double resa, double resb);
+    std::vector<P4POLYLINES> produceEllipse(double cx, double cy, double a,
+                                            double b, bool dotted, double resa,
+                                            double resb);
 
     void selectNearestSingularity(QPoint winpos);
 
-    void prepareDrawing(void);
+    void prepareDrawing();
     void drawPoint(double x, double y, int color);
     void drawLine(double x1, double y1, double x2, double y2, int color);
-    void finishDrawing(void);
-    void printOrbits(void);
-    void printLimitCycles(void);
+    void finishDrawing();
+    void printOrbits();
+    void printLimitCycles();
 
     void preparePrinting(int, bool, int, double, double);
     void printPoint(double x, double y, int color);
-    void print(void);
+    void print();
     void printLine(double x1, double y1, double x2, double y2, int color);
-    void finishPrinting(void);
+    void finishPrinting();
 
-    void saveAnchorMap(void);
-    void loadAnchorMap(void);
+    void saveAnchorMap();
+    void loadAnchorMap();
 
     // coordinate changes: from world to windows coordinates
     int coWinX(double x);
@@ -162,30 +163,32 @@ class P4WinSphere : public QWidget
     int coWinV(double);
     int coWinH(double);
 
-  public slots:
+   public slots:
     void resizeEvent(QResizeEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
-    void setupPlot(void);
-    void refresh(void);
+    void setupPlot();
+    void refresh();
     void keyPressEvent(QKeyEvent *e);
     void calculateHeightFromWidth(int *width, int *height, int maxheight,
                                   double aspectratio);
-    void refreshAfterResize(void);
-    void updatePointSelection(void);
+    void refreshAfterResize();
+    void updatePointSelection();
 
-  private:
-    QPainter *staticPainter_;
-    QWidget *parentWnd_;
+   private:
+    std::shared_ptr<QWidget> parentWnd_;
+    std::shared_ptr<QStatusBar> msgBar_;
     bool iszoom_;
-    bool reverseYAxis_; // when calculating coordinates: this determines
-                        // orientation
-    // of horizontal axis.  Normally false, only true when printing.
+    bool reverseYAxis_;  // when calculating coordinates: this determines
+                         // orientation of horizontal axis.  Normally false,
+                         // only true when printing.
 
-    P4POLYLINES *circleAtInfinity_;
-    P4POLYLINES *plCircle_;
-    QTimer *refreshTimeout_;
+    std::vector<P4POLYLINES> circleAtInfinity_;
+    std::vector<P4POLYLINES> plCircle_;
+
+    std::unique_ptr<QPainter> staticPainter_;
+    std::unique_ptr<QTimer> refreshTimeout_;
 
     bool selectingZoom_;
     bool selectingLCSection_;
@@ -193,9 +196,8 @@ class P4WinSphere : public QWidget
     QPoint zoomAnchor2_;
     QPoint lcAnchor1_;
     QPoint lcAnchor2_;
-    QPixmap *anchorMap_;
+    std::unique_ptr<QPixmap> anchorMap_;
 
-    QStatusBar *msgBar_;
     int printMethod_;
 };
 
