@@ -27,7 +27,7 @@
 #include "P4Event.h"
 #include "P4StartDlg.h"
 #include "P4PlotWnd.h"
-#include "win_print.h"
+#include "P4PrintDlg.h"
 #include "win_sphere.h"
 
 #include <QDesktopWidget>
@@ -172,8 +172,8 @@ void QZoomWnd::onBtnPrint(void)
 {
     int res;
     double lw, ss;
-    QPrintDlg *pdlg;
-    pdlg = new QPrintDlg(this, 0);
+    P4PrintDlg *pdlg;
+    pdlg = new P4PrintDlg(this, 0);
     int result = pdlg->exec();
     res = pdlg->getChosenResolution();
     lw = pdlg->getChosenLineWidth();

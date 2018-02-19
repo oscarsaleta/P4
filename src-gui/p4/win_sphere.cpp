@@ -38,7 +38,7 @@
 #include "print_xfig.h"
 #include "P4Event.h"
 #include "P4StartDlg.h"
-#include "win_print.h"
+#include "P4PrintDlg.h"
 
 #include <QKeyEvent>
 #include <QMessageBox>

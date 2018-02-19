@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_print.h"
+#include "P4PrintDlg.h"
 
 #include "custom.h"
 #include "main.h"
@@ -37,12 +37,12 @@
     the P4PRINT_ constants.
 */
 
-bool QPrintDlg::sm_LastBlackWhite = false;
-double QPrintDlg::sm_LastLineWidth = DEFAULT_LINEWIDTH;
-double QPrintDlg::sm_LastSymbolSize = DEFAULT_SYMBOLSIZE;
-int QPrintDlg::sm_LastResolution = DEFAULT_RESOLUTION;
+bool P4PrintDlg::sm_LastBlackWhite = false;
+double P4PrintDlg::sm_LastLineWidth = DEFAULT_LINEWIDTH;
+double P4PrintDlg::sm_LastSymbolSize = DEFAULT_SYMBOLSIZE;
+int P4PrintDlg::sm_LastResolution = DEFAULT_RESOLUTION;
 
-QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -128,15 +128,15 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 #ifdef USE_SYSTEM_PRINTER
     connect(btn_default_, &QPushButton::clicked, this,
-            &QPrintDlg::onDefaultPrinter);
+            &P4PrintDlg::onDefaultPrinter);
 #endif
     connect(btn_epsimage_, &QPushButton::clicked, this,
-            &QPrintDlg::onEpsImagePrinter);
+            &P4PrintDlg::onEpsImagePrinter);
     connect(btn_xfigimage_, &QPushButton::clicked, this,
-            &QPrintDlg::onXfigImagePrinter);
+            &P4PrintDlg::onXfigImagePrinter);
     connect(btn_jpeg_, &QPushButton::clicked, this,
-            &QPrintDlg::onJpegImagePrinter);
-    connect(btn_cancel_, &QPushButton::clicked, this, &QPrintDlg::onCancel);
+            &P4PrintDlg::onJpegImagePrinter);
+    connect(btn_cancel_, &QPushButton::clicked, this, &P4PrintDlg::onCancel);
     connect(btn_whitebg_, &QRadioButton::toggled, this,
             [=]() { bgColours::PRINT_WHITE_BG = true; });
     connect(btn_blackbg_, &QRadioButton::toggled, this,
@@ -188,7 +188,7 @@ QPrintDlg::QPrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     return;
 }
 
-bool QPrintDlg::readDialog(void)
+bool P4PrintDlg::readDialog(void)
 {
     double res;
     bool result;
@@ -207,7 +207,7 @@ bool QPrintDlg::readDialog(void)
     return !result;
 }
 
-void QPrintDlg::onDefaultPrinter(void)
+void P4PrintDlg::onDefaultPrinter(void)
 {
     if (!readDialog())
         return;
@@ -218,7 +218,7 @@ void QPrintDlg::onDefaultPrinter(void)
         done(P4PRINT_DEFAULT);
 }
 
-void QPrintDlg::onEpsImagePrinter(void)
+void P4PrintDlg::onEpsImagePrinter(void)
 {
     if (!readDialog())
         return;
@@ -228,7 +228,7 @@ void QPrintDlg::onEpsImagePrinter(void)
         done(P4PRINT_EPSIMAGE);
 }
 
-void QPrintDlg::onXfigImagePrinter(void)
+void P4PrintDlg::onXfigImagePrinter(void)
 {
     if (!readDialog())
         return;
@@ -256,7 +256,7 @@ void QPrintDlg::onXfigImagePrinter(void)
         done(P4PRINT_XFIGIMAGE);
 }
 
-void QPrintDlg::onJpegImagePrinter(void)
+void P4PrintDlg::onJpegImagePrinter(void)
 {
     if (!readDialog())
         return;
@@ -266,9 +266,9 @@ void QPrintDlg::onJpegImagePrinter(void)
         done(P4PRINT_JPEGIMAGE);
 }
 
-void QPrintDlg::onCancel(void) { done(P4PRINT_NONE); }
+void P4PrintDlg::onCancel(void) { done(P4PRINT_NONE); }
 
-bool QPrintDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
+bool P4PrintDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
                                double minvalue, double maxvalue)
 {
     // returns true in case of error
@@ -291,7 +291,7 @@ bool QPrintDlg::readFloatField(QLineEdit *edt, double *presult, double defvalue,
     return false;
 }
 
-void QPrintDlg::markBad(QLineEdit *edt)
+void P4PrintDlg::markBad(QLineEdit *edt)
 {
     QString t;
     int i;
@@ -305,6 +305,6 @@ void QPrintDlg::markBad(QLineEdit *edt)
     edt->setText(t);
 }
 
-int QPrintDlg::getChosenResolution(void) { return sm_LastResolution; }
-double QPrintDlg::getChosenLineWidth(void) { return sm_LastLineWidth; }
-double QPrintDlg::getChosenSymbolSize(void) { return sm_LastSymbolSize; }
+int P4PrintDlg::getChosenResolution(void) { return sm_LastResolution; }
+double P4PrintDlg::getChosenLineWidth(void) { return sm_LastLineWidth; }
+double P4PrintDlg::getChosenSymbolSize(void) { return sm_LastSymbolSize; }

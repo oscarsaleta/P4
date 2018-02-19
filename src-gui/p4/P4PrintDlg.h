@@ -30,7 +30,7 @@ class QPushButton;
 class QRadioButton;
 class QWidget;
 
-class QPrintDlg : public QDialog
+class P4PrintDlg : public QDialog
 {
     Q_OBJECT
 
@@ -52,7 +52,7 @@ class QPrintDlg : public QDialog
     QLineEdit *edt_symbolsize_;
 
   public:
-    QPrintDlg(QWidget *parent, Qt::WindowFlags f);
+    P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
 
     static bool sm_LastBlackWhite;
     static double sm_LastLineWidth;

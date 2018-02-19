@@ -35,7 +35,7 @@
 #include "plot_tools.h"
 #include "win_curve.h"
 #include "win_isoclines.h"
-#include "win_print.h"
+#include "P4PrintDlg.h"
 #include "win_separatrice.h"
 #include "win_sphere.h"
 #include "win_view.h"
@@ -376,7 +376,7 @@ void P4PlotWnd::onBtnLimitCycles()
 
 void P4PlotWnd::onBtnPrint()
 {
-    std::unique_ptr<QPrintDlg> pdlg{std::make_unique<QPrintDlg>(this, 0)};
+    std::unique_ptr<P4PrintDlg> pdlg{std::make_unique<P4PrintDlg>(this, 0)};
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
     int lw{pdlg->getChosenLineWidth()};
