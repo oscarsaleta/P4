@@ -51,6 +51,7 @@ class QMenu;
 struct DOUBLEPOINT {
     double x;
     double y;
+    DOUBLEPOINT(int thex = 0, int they = 0) : x{thex}, y{they} {}
 };
 
 // class defined in win_main.cpp
