@@ -579,7 +579,8 @@ void P4StartDlg::onViewInfinite()
 QWidget *P4StartDlg::showText(QWidget *win, QString caption, QString fname)
 {
     bool shown;
-    std::unique_ptr<QTextEdit> result{dynamic_cast<QTextEdit *> win};
+    // TODO will try static_cast, if it doesn't work will use dynamic_cast
+    std::unique_ptr<QTextEdit> result{static_cast<QTextEdit *> win};
     if (result == nullptr)
         result = new QTextEdit();
     else
