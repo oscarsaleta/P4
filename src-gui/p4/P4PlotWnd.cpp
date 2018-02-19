@@ -468,9 +468,10 @@ void P4PlotWnd::closeZoomWindow(int id)
     return;  // error, zoom window not found
 }
 
+// FIXME should think of how to
 void P4PlotWnd::customEvent(QEvent *_e)
 {
-    P4Event e{dynamic_cast<P4Event>(*_e)};
+    P4Event e{reinterpret_cast<P4Event>(*_e)};
     double pcoord[3];
     double ucoord[2];
     double ucoord0[2];
@@ -480,30 +481,26 @@ void P4PlotWnd::customEvent(QEvent *_e)
     switch (e.type()) {
     case TYPE_OPENZOOMWINDOW:
         // FIXME quin lio
-        std::unique_ptr<double> data1{
-            std::make_unique<double>(static_cast<double *>(e.data()))}
-
+        double *data1{static_cast<double *>(e.data())};
         openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
+        delete data1;
         break;
     case TYPE_CLOSE_ZOOMWINDOW:
-        std::unique_ptr<int> data2{
-            std::make_unique<int>(static_cast<int *>(e.data()))};
+        int *data2{static_cast<int *>(e.data())};
         closeZoomWindow(data2.get());
+        delete data2;
         break;
     case TYPE_ORBIT_EVENT:
-        std::unique_ptr<int> oet{
-            std::make_unique<int>(static_cast<int *> e.data())};
+        int *oet{static_cast<int *>(e.data())};
         orbitsWindow_->orbitEvent(*oet);
+        delete oet;
         break;
     case TYPE_SELECT_ORBIT:
-        std::unique_ptr<DOUBLEPOINT> p{std::make_unique<DOUBLEPOINT>(
-            dynamic_cast<DOUBLEPOINT *>(e.data()))};
+        DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e.data())};
         p = (struct DOUBLEPOINT *)(e.data());
         x = p->x;
         y = p->y;
-
         // mouse clicked in position (x,y)  (world coordinates)
-
         if (MATHFUNC(is_valid_viewcoord)(x, y, pcoord)) {
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             orbitsWindow_->show();
@@ -511,18 +508,18 @@ void P4PlotWnd::customEvent(QEvent *_e)
             if (orbitsWindow_)
                 orbitsWindow_->raise();
         }
+        delete p;
         break;
     case TYPE_SELECT_LCSECTION:
-        // FIXME PLEASE
-        DOUBLEPOINT *iregretthisvariable = (DOUBLEPOINT *)(e.data());
-        x0 = iregretthisvariable->x;
-        y0 = iregretthisvariable->y;
-        iregretthisvariable++;
-        x1 = iregretthisvariable->x;
-        y1 = iregretthisvariable->y;
-        iregretthisvariable--;
-        delete iregretthisvariable;
-        iregretthisvariable = nullptr;
+        DOUBLEPOINT *p {static_cast<DOUBLEPOINT *>(e.data())};
+        x0 = p->x;
+        y0 = p->y;
+        p++;
+        x1 = p->x;
+        y1 = p->y;
+        p--;
+        delete p;
+        p = nullptr;
 
         MATHFUNC(viewcoord_to_sphere)(x0, y0, pcoord);
         MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord0);
@@ -543,15 +540,11 @@ void P4PlotWnd::customEvent(QEvent *_e)
         lcWindow_->raise();
         break;
     case TYPE_SEP_EVENT:
-        oet = (int *)(e.data());
+        int *oet {static_cast<int *>(e.data())};
         sepWindow_->sepEvent(*oet);
         delete oet;
-        oet = nullptr;
         break;
     }
-}
-
-QMainWindow::customEvent(e);
 }
 
 void P4PlotWnd::hideEvent(QHideEvent *h)
