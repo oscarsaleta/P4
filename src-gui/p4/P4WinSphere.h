@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_SPHERE_H
-#define WIN_SPHERE_H
+#pragma once
 
 #include <QPoint>
 #include <QString>
@@ -200,5 +199,3 @@ class P4WinSphere : public QWidget
 
     int printMethod_;
 };
-
-#endif /* WIN_SPHERE_H */
