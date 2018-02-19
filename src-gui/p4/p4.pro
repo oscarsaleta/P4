@@ -85,7 +85,7 @@ SOURCES += win_view.cpp \
 
 HEADERS += win_view.h \
     win_vf.h \
-    win_sphere.h \
+    P4WinSphere.h \
     win_settings.h \
     P4PrintDlg.h \
     P4PlotWnd.h \

@@ -27,7 +27,7 @@
 #include "math_isoclines.h"
 #include "math_polynom.h"
 #include "P4PlotWnd.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -37,7 +37,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, QWinSphere *sp)
+QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
       plotwnd_(plt)
 {

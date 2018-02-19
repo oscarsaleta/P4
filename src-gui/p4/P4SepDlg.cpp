@@ -23,7 +23,7 @@
 #include "custom.h"
 #include "main.h"
 #include "math_separatrice.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <QBoxLayout>
 #include <QLabel>
@@ -34,7 +34,7 @@ QString g_CurrentSingularityInfo[4]{"", "", "", ""};
 double g_CurrentSeparatriceEpsilon{0};
 
 P4SepDlg::P4SepDlg(std::shared_ptr<P4PlotWnd> plt,
-                   std::shared_ptr<QWinSphere> sp)
+                   std::shared_ptr<P4WinSphere> sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
       plotWnd_{std::move(plt)}, mainSphere_{std::move(sp)}
 {

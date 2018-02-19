@@ -28,7 +28,7 @@
 #include "P4StartDlg.h"
 #include "P4PlotWnd.h"
 #include "P4PrintDlg.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <QDesktopWidget>
 #include <QPrintDialog>
@@ -87,7 +87,7 @@ QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = new QWinSphere(this, statusBar(), true, x1_, y1_, x2_, y2_);
+    sphere_ = new P4WinSphere(this, statusBar(), true, x1_, y1_, x2_, y2_);
     sphere_->show();
     setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);

@@ -34,16 +34,16 @@
 #define EVAL_ISOCLINES_CYL4 11
 #define EVAL_ISOCLINES_FINISHLYAPUNOV 12
 
-class QWinSphere;
+class P4WinSphere;
 struct orbits_points;
 
 extern orbits_points *g_last_isoclines_point;
 
-bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points);
+bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points);
-void draw_isoclines(QWinSphere *spherewnd, orbits_points *isoc, int color, int dashes);
-void deleteLastIsocline(QWinSphere *sp);
+void draw_isoclines(P4WinSphere *spherewnd, orbits_points *isoc, int color, int dashes);
+void deleteLastIsocline(P4WinSphere *sp);
 
 #endif // MATH_ISOCLINES_H

@@ -21,7 +21,7 @@
 
 #include "file_tab.h"
 #include "math_p4.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <cmath>
 

@@ -24,7 +24,7 @@
 #include "math_p4.h"
 #include "math_separatrice.h"
 #include "P4SepDlg.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <cmath>
 
@@ -183,7 +183,7 @@ static double find_distance_de(std::vector<p4singularities::degenerate> points,
     return (distance);
 }
 
-bool find_critical_point(std::shared_ptr<QWinSphere> spherewnd, double x,
+bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                          double y)
 {
     int type;

@@ -36,12 +36,12 @@ class QResizeEvent;
 class QStatusBar;
 class QTimer;
 
-struct p4singularities::saddle;
-struct p4singularities::node;
-struct p4singularities::semi_elementary;
-struct p4singularities::weak_focus;
-struct p4singularities::strong_focus;
-struct p4singularities::degenerate;
+struct saddle;
+struct node;
+struct semi_elementary;
+struct weak_focus;
+struct strong_focus;
+struct degenerate;
 struct P4POLYLINES;
 
 class P4WinSphere : public QWidget
@@ -50,7 +50,7 @@ class P4WinSphere : public QWidget
 
     static int sm_numSpheres;
     // this could be implemented as a c++ vector
-    static std::vector<P4WinSphere> sm_SphereList;
+    static P4WinSphere **sm_SphereList;
 
   public:
     /* Constructor and destructor */
@@ -66,7 +66,7 @@ class P4WinSphere : public QWidget
     double dx_;      // x1-x0
     double dy_;      // y1-y0
 
-    std::unique_ptr<QPixmap> painterCache_;
+    QPixmap *painterCache_;
     bool isPainterCacheDirty_;
     int paintedXMin_; // to know the update rectangle after painting
     int paintedXMax_; // we keep to smallest rectangle enclosing
@@ -76,9 +76,9 @@ class P4WinSphere : public QWidget
     QString chartstring_;
 
     int spherebgcolor_;
-    P4WinSphere *next_; // visible to PlotWnd // FIXME needed??????
+    P4WinSphere *next_; // visible to PlotWnd
     int selectingX_, selectingY_, selectingPointStep_, selectingPointRadius_;
-    std::unique_ptr<QTimer> selectingTimer_;
+    QTimer *selectingTimer_;
 
     int oldw_; // used while printing
     int oldh_;
@@ -87,73 +87,71 @@ class P4WinSphere : public QWidget
     int idealh_; // ideal height of window to get good aspect ratio
 
     /* Member functions */
-    void paintEvent(QPaintEvent *); // FIXME not in p5
+
+    void paintEvent(QPaintEvent *);
 
     bool getChartPos(int, double, double, double *);
-    void adjustToNewSize();
+    void adjustToNewSize(void);
 
-    void signalEvaluating(); // FIXME not in p5
-    void signalChanged();
-    void plotPoint(std::vector<p4singularities::saddle>);
-    void plotPoint(std::vector<p4singularities::node>);
-    void plotPoint(std::vector<p4singularities::semi_elementary>);
-    void plotPoint(std::vector<p4singularities::weak_focus>);
-    void plotPoint(std::vector<p4singularities::strong_focus>);
-    void plotPoint(std::vector<p4singularities::degenerate>);
-    void plotPointSeparatrices(std::vector<p4singularities::semi_elementary> p);
-    void plotPointSeparatrices(std::vector<p4singularities::saddle> p);
-    void plotPointSeparatrices(std::vector<p4singularities::degenerate> p);
-    void plotPoints();
-    void plotSeparatrices();
-    void plotSeparatingCurves();
-    void plotGcf();
-    void plotCurve();
-    void drawIsoclines();
-    void plotPoincareSphere();
-    void plotPoincareLyapunovSphere();
-    void plotLineAtInfinity();
+    void signalEvaluating(void);
+    void signalChanged(void);
+    void plotPoint(saddle *);
+    void plotPoint(node *);
+    void plotPoint(semi_elementary *);
+    void plotPoint(weak_focus *);
+    void plotPoint(strong_focus *);
+    void plotPoint(degenerate *);
+    void plotPointSeparatrices(semi_elementary *p);
+    void plotPointSeparatrices(saddle *p);
+    void plotPointSeparatrices(degenerate *p);
+    void plotPoints(void);
+    void plotSeparatrices(void);
+    void plotGcf(void);
+    void plotCurve(void);
+    void drawIsoclines(void);
+    void plotPoincareSphere(void);
+    void plotPoincareLyapunovSphere(void);
+    void plotLineAtInfinity(void);
     void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
-    void printPoint(std::vector<p4singularities::saddle>);
-    void printPoint(std::vector<p4singularities::node>);
-    void printPoint(std::vector<p4singularities::semi_elementary>);
-    void printPoint(std::vector<p4singularities::weak_focus>);
-    void printPoint(std::vector<p4singularities::strong_focus>);
-    void printPoint(std::vector<p4singularities::degenerate>);
-    void printPointSeparatrices(std::vector<p4singularities::semi_elementary>);
-    void printPointSeparatrices(std::vector<p4singularities::saddle>);
-    void printPointSeparatrices(std::vector<p4singularities::degenerate>);
-    void printPoints();
-    void printSeparatrices();
-    void printSeparatingCurves(); // FIXME new in p5
-    void printGcf();
-    void printCurve();
+    void printPoint(saddle *);
+    void printPoint(node *);
+    void printPoint(semi_elementary *);
+    void printPoint(weak_focus *);
+    void printPoint(strong_focus *);
+    void printPoint(degenerate *);
+    void printPointSeparatrices(semi_elementary *p);
+    void printPointSeparatrices(saddle *p);
+    void printPointSeparatrices(degenerate *p);
+    void printPoints(void);
+    void printSeparatrices(void);
+    void printGcf(void);
+    void printCurve(void);
     void printIsoclines();
-    void printPoincareSphere();
-    void printPoincareLyapunovSphere();
-    void printLineAtInfinity();
+    void printPoincareSphere(void);
+    void printPoincareLyapunovSphere(void);
+    void printLineAtInfinity(void);
 
-    // FIXME si ha de generar un vector de p4polylines s'ha d'arreglar
     P4POLYLINES *produceEllipse(double cx, double cy, double a, double b,
                                 bool dotted, double resa, double resb);
 
     void selectNearestSingularity(QPoint winpos);
 
-    void prepareDrawing();
+    void prepareDrawing(void);
     void drawPoint(double x, double y, int color);
     void drawLine(double x1, double y1, double x2, double y2, int color);
-    void finishDrawing();
-    void printOrbits();
-    void printLimitCycles();
+    void finishDrawing(void);
+    void printOrbits(void);
+    void printLimitCycles(void);
 
     void preparePrinting(int, bool, int, double, double);
     void printPoint(double x, double y, int color);
-    void print();
+    void print(void);
     void printLine(double x1, double y1, double x2, double y2, int color);
-    void finishPrinting();
+    void finishPrinting(void);
 
-    void saveAnchorMap();
-    void loadAnchorMap();
+    void saveAnchorMap(void);
+    void loadAnchorMap(void);
 
     // coordinate changes: from world to windows coordinates
     int coWinX(double x);
@@ -169,26 +167,25 @@ class P4WinSphere : public QWidget
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
-    void setupPlot();
-    void refresh();
+    void setupPlot(void);
+    void refresh(void);
     void keyPressEvent(QKeyEvent *e);
     void calculateHeightFromWidth(int *width, int *height, int maxheight,
                                   double aspectratio);
-    void refreshAfterResize();
-    void updatePointSelection();
+    void refreshAfterResize(void);
+    void updatePointSelection(void);
 
   private:
-    std::unique_ptr<QPainter> staticPainter_;
-    std::unique_ptr<QWidget> parentWnd_;
+    QPainter *staticPainter_;
+    QWidget *parentWnd_;
     bool iszoom_;
     bool reverseYAxis_; // when calculating coordinates: this determines
                         // orientation
     // of horizontal axis.  Normally false, only true when printing.
 
-    std::vector<P4POLYLINES> circleAtInfinity_;
-    std::vector<P4POLYLINES> plCircle_;
-
-    std::unique_ptr<QTimer> refreshTimeout_;
+    P4POLYLINES *circleAtInfinity_;
+    P4POLYLINES *plCircle_;
+    QTimer *refreshTimeout_;
 
     bool selectingZoom_;
     bool selectingLCSection_;
@@ -196,9 +193,9 @@ class P4WinSphere : public QWidget
     QPoint zoomAnchor2_;
     QPoint lcAnchor1_;
     QPoint lcAnchor2_;
-    std::unique_ptr<QPixmap> anchorMap_;
+    QPixmap *anchorMap_;
 
-    std::unique_ptr<QStatusBar> msgBar_;
+    QStatusBar *msgBar_;
     int printMethod_;
 };
 

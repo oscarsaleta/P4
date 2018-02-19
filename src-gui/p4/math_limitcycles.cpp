@@ -26,7 +26,7 @@
 #include "math_p4.h"
 #include "plot_tools.h"
 #include "P4LimitCyclesDlg.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <cmath>
 
@@ -150,7 +150,7 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 //
 // Loop to find limit cycles cutting some transverse section determined by two
 // end points.
-void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
+void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
                       double y0, double x1, double y1, double grid)
 {
     double p1[3], pf1[3], pb1[3], rf1[2], rb1[2];
@@ -373,7 +373,7 @@ void searchLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x0,
 // The found limit cycle is re-integrated, and stored in memory.
 // It is meanwhile drawn on the screen.
 // The limit cycle is found through forward integration.
-void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
+void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
                      double a, double b, double c)
 {
     double p1[3], p2[3];
@@ -466,7 +466,7 @@ void storeLimitCycle(std::shared_ptr<QWinSphere> spherewnd, double x, double y,
 // -----------------------------------------------------------------------
 // Draw limit cycles that were calculated earlier.  This is called during
 // a repaint (but also during a print command).
-void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd)
+void drawLimitCycles(std::shared_ptr<P4WinSphere> spherewnd)
 {
     std::vector<p4orbits::orbits> &orbits = g_VFResults.limCycles_;
 
@@ -478,7 +478,7 @@ void drawLimitCycles(std::shared_ptr<QWinSphere> spherewnd)
 // -----------------------------------------------------------------------
 //          deleteLastLimitCycle
 // -----------------------------------------------------------------------
-void deleteLastLimitCycle(std::shared_ptr<QWinSphere> spherewnd)
+void deleteLastLimitCycle(std::shared_ptr<P4WinSphere> spherewnd)
 {
     if (g_VFResults.limCycles_.empty())
         return;

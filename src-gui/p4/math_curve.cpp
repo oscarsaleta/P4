@@ -24,7 +24,7 @@
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <QFile>
 
@@ -32,7 +32,7 @@
 
 // static global variables
 static int s_CurveTask = EVAL_CURVE_NONE;
-static QWinSphere *s_CurveSphere = nullptr;
+static P4WinSphere *s_CurveSphere = nullptr;
 static int s_CurveDashes = 0;
 static bool s_CurveError = false;
 
@@ -45,7 +45,7 @@ static bool readTaskResults(int);
 static bool read_curve(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalCurveStart(QWinSphere *sp, int dashes, int precision, int points)
+bool evalCurveStart(P4WinSphere *sp, int dashes, int precision, int points)
 {
     if (g_VFResults.plweights_)
         s_CurveTask = EVAL_CURVE_LYP_R2;
@@ -201,7 +201,7 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_curve(QWinSphere *spherewnd, P4ORBIT sep, int color, int dashes)
+void draw_curve(P4WinSphere *spherewnd, P4ORBIT sep, int color, int dashes)
 {
     double pcoord[3];
 
@@ -267,7 +267,7 @@ static bool read_curve(void (*chart)(double, double, double *))
     return true;
 }
 
-void deleteLastCurve(QWinSphere *sp)
+void deleteLastCurve(P4WinSphere *sp)
 {
     if (g_VFResults.curve_vector_.empty())
         return;

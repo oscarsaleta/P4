@@ -25,7 +25,7 @@
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <QFile>
 
@@ -33,7 +33,7 @@
 
 // static global variables
 static int s_IsoclinesTask = EVAL_ISOCLINES_NONE;
-static QWinSphere *s_IsoclinesSphere = nullptr;
+static P4WinSphere *s_IsoclinesSphere = nullptr;
 static int s_IsoclinesDashes = 0;
 static bool s_IsoclinesError = false;
 
@@ -46,7 +46,7 @@ static bool readTaskResults(int);
 static bool read_isoclines(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points)
+bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points)
 {
     if (g_VFResults.plweights_)
         s_IsoclinesTask = EVAL_ISOCLINES_LYP_R2;
@@ -204,7 +204,7 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color, int dashes)
+void draw_isoclines(P4WinSphere *spherewnd, P4ORBIT isoc, int color, int dashes)
 {
     double pcoord[3];
 
@@ -269,7 +269,7 @@ static bool read_isoclines(void (*chart)(double, double, double *))
     return true;
 }
 
-void deleteLastIsocline(QWinSphere *sp)
+void deleteLastIsocline(P4WinSphere *sp)
 {
     if (g_VFResults.isocline_vector_.empty())
         return;

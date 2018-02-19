@@ -23,7 +23,7 @@
 
 #include <memory>
 
-class QWinSphere;
+class P4WinSphere;
 class P4PlotWnd;
 
 class QPushButton;
@@ -39,11 +39,11 @@ class P4SepDlg : public QWidget
     Q_OBJECT
 
    public:
-    P4SepDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<QWinSphere>);
+    P4SepDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<P4WinSphere>);
     void reset();
 
    private:
-    std::shared_ptr<QWinSphere> mainSphere_;
+    std::shared_ptr<P4WinSphere> mainSphere_;
     std::shared_ptr<P4PlotWnd> plotWnd_;
 
     std::unique_ptr<QPushButton> btn_selectnext_;

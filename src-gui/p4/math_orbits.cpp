@@ -26,7 +26,7 @@
 #include "math_p4.h"
 #include "math_polynom.h"
 #include "plot_tools.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <cmath>
 

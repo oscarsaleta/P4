@@ -23,7 +23,7 @@
 #include <QWidget>
 
 class P4PlotWnd;
-class QWinSphere;
+class P4WinSphere;
 
 class QPushButton;
 class QRadioButton;
@@ -35,12 +35,12 @@ class QCurveDlg : public QWidget
     Q_OBJECT
 
   public:
-    QCurveDlg(P4PlotWnd *, QWinSphere *);
+    QCurveDlg(P4PlotWnd *, P4WinSphere *);
     void reset(void);
     void finishCurveEvaluation(void);
 
   private:
-    QWinSphere *mainSphere_;
+    P4WinSphere *mainSphere_;
     P4PlotWnd *plotwnd_;
 
     QPushButton *btnEvaluate_;

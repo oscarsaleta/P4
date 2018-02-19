@@ -24,7 +24,7 @@
 #include <memory>
 
 class P4PlotWnd;
-class QWinSphere;
+class P4WinSphere;
 
 class QPushButton;
 class QLineEdit;
@@ -39,14 +39,14 @@ class P4LimitCyclesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd>, std::unique_ptr<QWinSphere>);
+    P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd>, std::unique_ptr<P4WinSphere>);
     void reset();
     void setSection(double, double, double, double);
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
 
   private:
-    std::unique_ptr<QWinSphere> mainSphere_;
+    std::unique_ptr<P4WinSphere> mainSphere_;
     std::unique_ptr<P4PlotWnd> plotwnd_;
 
     std::unique_ptr<QPushButton> btn_start_;

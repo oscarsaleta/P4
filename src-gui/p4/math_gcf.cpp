@@ -25,7 +25,7 @@
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <QFile>
 
@@ -33,7 +33,7 @@
 
 // static global variables
 static int s_GcfTask = EVAL_GCF_NONE;
-static std::shared_ptr<QWinSphere> s_GcfSphere;
+static std::shared_ptr<P4WinSphere> s_GcfSphere;
 static int s_GcfDashes = 0;
 static bool s_GcfError = false;
 static int s_GcfVfIndex = 0;
@@ -44,7 +44,7 @@ static bool readTaskResults(int task, int index);
 static bool read_gcf(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalGcfStart(std::smart_ptr<QWinSphere> sp, int dashes, int points,
+bool evalGcfStart(std::smart_ptr<P4WinSphere> sp, int dashes, int points,
                   int precis)
 {
     int r;
@@ -233,7 +233,7 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_gcf(std::shared_ptr<QWinSphere> spherewnd,
+void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
               std::vector<p4orbits::orbits_points> sep, int color, int dashes)
 {
     double pcoord[3];

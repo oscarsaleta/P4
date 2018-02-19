@@ -23,7 +23,7 @@
 #include <QMainWindow>
 
 class P4PlotWnd;
-class QWinSphere;
+class P4WinSphere;
 
 class QAction;
 class QBoxLayout;
@@ -48,7 +48,7 @@ class QZoomWnd : public QMainWindow
     QAction *actPrint_;
     double x1_, x2_, y1_, y2_;
 
-    QWinSphere *sphere_; // main sphere
+    P4WinSphere *sphere_; // main sphere
 
   public slots:
     // TODO: maybe change these 3 to actual signals?

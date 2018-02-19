@@ -24,7 +24,7 @@
 #include "P4IntParamsDlg.h"
 #include "P4StartDlg.h"
 #include "P4PlotWnd.h"
-#include "win_sphere.h"
+#include "P4WinSphere.h"
 
 #include <cmath>
 

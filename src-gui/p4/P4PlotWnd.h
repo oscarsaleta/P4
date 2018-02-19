@@ -33,7 +33,7 @@ class P4OrbitsDlg;
 class P4SepDlg;
 class P4StartDlg;
 class P4ViewDlg;
-class QWinSphere;
+class P4WinSphere;
 class QZoomWnd;
 
 class QAction;
@@ -77,7 +77,7 @@ class P4PlotWnd : public QMainWindow
     std::unique_ptr<QCurveDlg> curveWindow_;
     std::unique_ptr<QIsoclinesDlg> isoclinesWindow_;
 
-    std::shared_ptr<QWinSphere> sphere_;  // main sphere
+    std::shared_ptr<P4WinSphere> sphere_;  // main sphere
 
     int numZooms_;
     int lastZoomIdentifier_;
