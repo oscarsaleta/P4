@@ -18,31 +18,24 @@
  */
 
 #pragma once
- 
+
 struct p4blowup::transformations;
 struct p4singularities::degenerate;
 class QWinSphere;
 
-// math_intblowup.cpp
 void eval_blow_vec_field(const double *y, double *f);
-// math_separatrice.cpp
-void make_transformations(std::vector<p4blowup::transformations> &trans,
+void make_transformations(const std::vector<p4blowup::transformations> &trans,
                           double x0, double y0, double *point);
-// math_intblowup.cpp
+
 std::vector<p4orbits::orbits_points> integrate_blow_up(
     std::shared_ptr<QWinSphere> spherewnd, double *pcoord2,
     std::vector<p4blowup::blow_up_points> de_sep, double step, int dir,
     int type, int chart);
-// math_separatrice.cpp
+
 void change_epsilon_de(std::shared_ptr<QWinSphere> spherewnd, double epsilon);
-// math_separatrice.cpp
 void start_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex);
-// math_separatrice.cpp
 void cont_plot_de_sep(std::shared_ptr<QWinSphere> spherewnd);
-// math_separatrice.cpp
 void plot_next_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex);
-// math_separatrice.cpp
 void select_next_de_sep(std::shared_ptr<QWinSphere> spherewnd);
-// math_separatrice.cpp
 void plot_all_de_sep(std::shared_ptr<QWinSphere> spherewnd, int vfindex,
-                     p4singularities::degenerate point /*maybe vector*/);
+                     const std::vector<p4singularities::degenerate> &point);

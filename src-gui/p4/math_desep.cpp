@@ -50,7 +50,7 @@ static double power(double a, int b)
 // ---------------------------------------------------------------------------
 //          make_transformations
 // ---------------------------------------------------------------------------
-void make_transformations(std::vector<p4blowup::transformations> trans,
+void make_transformations(const std::vector<p4blowup::transformations> &trans,
                           double x0, double y0, double *point)
 {
     double x{x0}, y{y0};
@@ -67,8 +67,7 @@ void make_transformations(std::vector<p4blowup::transformations> trans,
 // ---------------------------------------------------------------------------
 std::vector<p4orbits::orbits_points> integrate_blow_up(
     std::shared_ptr<P4WinSphere> spherewnd, double *pcoord2,
-    std::vector<p4blowup::blow_up_points> &de_sep, double step, int dir,
-    int type, int chart)
+    p4blowup::blow_up_points &de_sep, double step, int dir, int type, int chart)
 {
     int i;
     double hhi, hhi0;
@@ -80,15 +79,15 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
     p4orbits::orbits_points last_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
 
-    s_vec_field_0 = de_sep->vector_field_0;
-    s_vec_field_1 = de_sep->vector_field_1;
+    s_vec_field_0 = de_sep.vector_field_0;
+    s_vec_field_1 = de_sep.vector_field_1;
 
-    y[0] = de_sep->point[0];
-    y[1] = de_sep->point[1];
+    y[0] = de_sep.point[0];
+    y[1] = de_sep.point[1];
 
     make_transformations(
-        de_sep->trans, de_sep->x0 + de_sep->a11 * y[0] + de_sep->a12 * y[1],
-        de_sep->y0 + de_sep->a21 * y[0] + de_sep->a22 * y[1], point);
+        de_sep.trans, de_sep.x0 + de_sep.a11 * y[0] + de_sep.a12 * y[1],
+        de_sep.y0 + de_sep.a21 * y[0] + de_sep.a22 * y[1], point);
 
     switch (chart) {
     case CHART_R2:
@@ -116,8 +115,8 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
         dir *= g_VFResults.vf_[g_VFResults.K_].dir_vec_field_;
 
     hhi = (double)dir * step;
-    y[0] = de_sep->point[0];
-    y[1] = de_sep->point[1];
+    y[0] = de_sep.point[0];
+    y[1] = de_sep.point[1];
 
     for (i = 1; i <= g_VFResults.config_intpoints_; ++i) {
         hhi0 = hhi;
@@ -129,9 +128,8 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
             rk78(eval_blow_vec_field, y, &hhi0, g_VFResults.config_hmi_,
                  g_VFResults.config_hma_, g_VFResults.config_tolerance_);
             make_transformations(
-                de_sep->trans,
-                de_sep->x0 + de_sep->a11 * y[0] + de_sep->a12 * y[1],
-                de_sep->y0 + de_sep->a21 * y[0] + de_sep->a22 * y[1], point);
+                de_sep.trans, de_sep.x0 + de_sep.a11 * y[0] + de_sep.a12 * y[1],
+                de_sep.y0 + de_sep.a21 * y[0] + de_sep.a22 * y[1], point);
             switch (chart) {
             case CHART_R2:
                 MATHFUNC(R2_to_sphere)(point[0], point[1], point[2], pcoord);
@@ -165,7 +163,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;
-                de_sep->integrating_in_local_chart = false;
+                de_sep.integrating_in_local_chart = false;
                 break;
             }
         }
@@ -188,7 +186,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
                     if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                type = de_sep->type;
+                type = de_sep.type;
                 color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U1_,
                                       type, point);
             } else {
@@ -200,9 +198,9 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
                         dir *= -1;
                 }
                 if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
-                    type = change_type(de_sep->type);
+                    type = change_type(de_sep.type);
                 else
-                    type = de_sep->type;
+                    type = de_sep.type;
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
                 color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V1_,
                                       type, point);
@@ -226,7 +224,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
                     if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                type = de_sep->type;
+                type = de_sep.type;
                 color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
                                       type, point);
             } else {
@@ -238,9 +236,9 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
                         dir *= -1;
                 }
                 if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
-                    type = change_type(de_sep->type);
+                    type = change_type(de_sep.type);
                 else
-                    type = de_sep->type;
+                    type = de_sep.type;
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
                 color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
                                       type, point);
@@ -279,8 +277,8 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
             (*plot_p)(spherewnd, pcoord, color);
 
         if (y[0] * y[0] + y[1] * y[1] >= 1.0)
-            de_sep->integrating_in_local_chart = false;
-        if (!de_sep->integrating_in_local_chart)
+            de_sep.integrating_in_local_chart = false;
+        if (!de_sep.integrating_in_local_chart)
             break;
 
         copy_x_into_y(pcoord, pcoord2);
@@ -302,7 +300,7 @@ std::vector<p4orbits::orbits_points> integrate_blow_up(
 // by the user.
 //
 // At the end, a normal integration cycle is added.
-static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
+static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
     std::shared_ptr<P4WinSphere> spherewnd, double x0, double y0, int chart,
     double epsilon, p4blowup::blow_up_points &de_sep, int vfindex)
 {
@@ -326,7 +324,7 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
         break;
     }
     if (!prepareVfForIntegration(pcoord))
-        return std::vector<p4orbits::orbits_points>();
+        return {};
 
     /* if we have a line of singularities at infinity then we have to change the
      * chart if the chart is V1 or V2 */
@@ -419,7 +417,7 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     }
 
     if (g_ThisVF->getVFIndex_sphere(pcoord2) != vfindex)
-        return std::vector<p4orbits::orbits_points>();
+        return {};
 
     // end of P5 addition
 
@@ -536,7 +534,7 @@ static std::vector<p4orbits::orbits_points> plot_sep_blow_up(
     orbit_result.insert(std::end(orbit_result), std::begin(last_int_cycle),
                         std::end(last_int_cycle));
 
-    return orbit_result;
+    return std::move(orbit_result);
 }
 
 // ---------------------------------------------------------------------------
@@ -591,11 +589,13 @@ void start_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
                                          std::end(points));
         }
     } else {
-        de_sep.sep_points = plot_sep_blow_up(
+        auto v = plot_sep_blow_up(
             spherewnd, g_VFResults.selected_de_point.back().x0,
             g_VFResults.selected_de_point.back().y0,
             g_VFResults.selected_de_point.back().chart,
             g_VFResults.selected_de_point.back().epsilon, de_sep, vfindex);
+        if (v)
+            de_sep.sep_points = std::move(v);
     }
 }
 
@@ -670,7 +670,7 @@ void select_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
 void plot_all_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
-                     std::vector<p4singularity::degenerate> point)
+                     const std::vector<p4singularity::degenerate> &point)
 {
     std::vector<p4blowup::blow_up_points> de_sep;
     std::vector<p4orbits::orbits_points> sep;
@@ -705,9 +705,11 @@ void plot_all_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
                                                    std::end(nextpt));
                     }
                 } else {
-                    it2->sep_points =
+                    auto v =
                         plot_sep_blow_up(spherewnd, it1.x0, it1.y0, it1.chart,
                                          it1.epsilon, de_sep, vfindex);
+                    if (v)
+                        it2->sep_points = std::move(v);
                 }
             }
         }
