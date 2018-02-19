@@ -36,7 +36,7 @@
 P4ParamsDlg::~P4ParamsDlg() { getDataFromDlg(); }
 
 P4ParamsDlg::P4ParamsDlg(std::shared_ptr<P4FindDlg> finddlg)
-    : QWidget(finddlg), parent_{finddlg}
+    : QWidget(finddlg), parent_{std::move(finddlg)}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
