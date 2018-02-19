@@ -39,19 +39,22 @@ class P4SepDlg : public QWidget
     Q_OBJECT
 
    public:
-    P4SepDlg(P4PlotWnd *, QWinSphere *);
-    void reset(void);
+    P4SepDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<QWinSphere>);
+    void reset();
 
    private:
     std::shared_ptr<QWinSphere> mainSphere_;
-    std::shared_ptr<P4PlotWnd> plotwnd_;
+    std::shared_ptr<P4PlotWnd> plotWnd_;
 
     std::unique_ptr<QPushButton> btn_selectnext_;
     std::unique_ptr<QPushButton> btn_intnext_;
     std::unique_ptr<QPushButton> btn_start_;
     std::unique_ptr<QPushButton> btn_cont_;
     std::unique_ptr<QLineEdit> edt_epsilon_;
-    std::unique_ptr<QLabel> lbl_info_[4];
+    std::unique_ptr<QLabel> lbl_info_0_;
+    std::unique_ptr<QLabel> lbl_info_1_;
+    std::unique_ptr<QLabel> lbl_info_2_;
+    std::unique_ptr<QLabel> lbl_info_3_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
@@ -59,14 +62,14 @@ class P4SepDlg : public QWidget
     bool selected_;
 
    public slots:
-    void onbtn_selectnext(void);
-    void onbtn_intnext(void);
-    void onbtn_cont(void);
-    void onbtn_start(void);
+    void onbtn_selectnext();
+    void onbtn_intnext();
+    void onbtn_cont();
+    void onbtn_start();
 
-    void setInitialPoint(void);
+    void setInitialPoint();
     void sepEvent(int);
-    void onepsilon_enter(void);
+    void onepsilon_enter();
     void markBad(QLineEdit *);
 };
 
