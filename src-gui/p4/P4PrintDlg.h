@@ -17,10 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_PRINT_H
-#define WIN_PRINT_H
+#pragma once
 
 #include <QDialog>
+
+ #include <memory>
 
 class QBoxLayout;
 class QCheckBox;
@@ -35,21 +36,21 @@ class P4PrintDlg : public QDialog
     Q_OBJECT
 
   private:
-    QPushButton *btn_default_;
-    QPushButton *btn_epsimage_;
-    QPushButton *btn_xfigimage_;
-    QPushButton *btn_cancel_;
-    QPushButton *btn_jpeg_;
-    QBoxLayout *mainLayout_;
-    QCheckBox *btn_blackwhite_;
+    std::unique_ptr<QPushButton> btn_default_;
+    std::unique_ptr<QPushButton> btn_epsimage_;
+    std::unique_ptr<QPushButton> btn_xfigimage_;
+    std::unique_ptr<QPushButton> btn_cancel_;
+    std::unique_ptr<QPushButton> btn_jpeg_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QCheckBox> btn_blackwhite_;
 
-    QLabel *lbl_bgcolor_;
-    QRadioButton *btn_whitebg_;
-    QRadioButton *btn_blackbg_;
+    std::unique_ptr<QLabel> lbl_bgcolor_;
+    std::unique_ptr<QRadioButton> btn_whitebg_;
+    std::unique_ptr<QRadioButton> btn_blackbg_;
 
-    QLineEdit *edt_resolution_;
-    QLineEdit *edt_linewidth_;
-    QLineEdit *edt_symbolsize_;
+    std::unique_ptr<QLineEdit> edt_resolution_;
+    std::unique_ptr<QLineEdit> edt_linewidth_;
+    std::unique_ptr<QLineEdit> edt_symbolsize_;
 
   public:
     P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
@@ -81,5 +82,3 @@ class P4PrintDlg : public QDialog
 #define P4PRINT_EPSIMAGE 2
 #define P4PRINT_XFIGIMAGE 3
 #define P4PRINT_JPEGIMAGE 4
-
-#endif /* WIN_PRINT_H */
