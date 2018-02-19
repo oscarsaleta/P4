@@ -23,8 +23,10 @@
 
 class P4WinSphere;
 
-void start_plot_se_sep(std::shared_ptr<P4WinSphere>);
+void start_plot_se_sep(std::shared_ptr<P4WinSphere>, int);
 void cont_plot_se_sep(std::shared_ptr<P4WinSphere>);
-void plot_next_se_sep(std::shared_ptr<P4WinSphere>);
+void plot_next_se_sep(std::shared_ptr<P4WinSphere>, int);
 void select_next_se_sep(std::shared_ptr<P4WinSphere>);
 void change_epsilon_se(std::shared_ptr<P4WinSphere>, double);
+void plot_all_se_sep(std::shared_ptr<QWinSphere>, int,
+                     const std::vector<semi_elementary> &)
