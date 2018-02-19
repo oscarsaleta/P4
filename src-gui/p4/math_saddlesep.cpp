@@ -129,8 +129,8 @@ void select_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd)
 // ---------------------------------------------------------------------------
 //          plot_all_saddle_sep
 // ---------------------------------------------------------------------------
-void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd,
-                         std::vector<p4singularity::saddle> point)
+void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
+                         const std::vector<p4singularity::saddle> &point)
 {
     std::vector<p4orbits::sep> sep1;
     double p[3];
@@ -164,8 +164,7 @@ void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd,
 // ---------------------------------------------------------------------------
 //          change_epsilon_saddle
 // ---------------------------------------------------------------------------
-void change_epsilon_saddle(std::shared_ptr<P4WinSphere> spherewnd,
-                           double epsilon)
+void change_epsilon_saddle(std::shared_ptr<P4WinSphere> spherewnd, double epsilon)
 {
     int sadid{g_VFResults.selectedSaddlePointIndex_};
     p4blowup::sep &separatrice{g_VFResults.saddlePoints_[sadid].separatrices};

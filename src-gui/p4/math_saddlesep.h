@@ -25,5 +25,5 @@ void start_plot_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex);
 void cont_plot_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd);
 void plot_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex);
 void select_next_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd);
-void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd,
-                         std::vector<p4singularity::saddle> point);
+void plot_all_saddle_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
+                         const std::vector<p4singularity::saddle> &point);
