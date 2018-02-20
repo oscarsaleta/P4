@@ -24,4 +24,4 @@
 
 void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                          int resolution, int linewidth, int symbolwidth);
-void finishXFigPrinting(void);
+void finishXFigPrinting();
