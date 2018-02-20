@@ -50,7 +50,8 @@ static int s_xfig_line_lastx = 0;
 static int s_xfig_line_lasty = 0;
 static int s_xfig_line_color = 0;
 static int s_xfig_line_numpoints = 0;
-static int *s_xfig_line_points = nullptr;
+// NOTE: check if this works
+static std::unique_ptr<int[]> s_xfig_line_points;
 
 static void xfig_line_start(int x0, int y0, int x1, int y1, int color);
 static void xfig_line_continue(int x1, int y1);
@@ -416,7 +417,7 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
 
 static void xfig_print_elips(double x0, double y0, double a, double b,
                              int color, bool dotted,
-                             std::vector<P4POLYLINES> ellipse)
+                             const std::vector<P4POLYLINES> &ellipse)
 {
     if (!s_XFigFile)
         return;
@@ -482,7 +483,7 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
         s_XFigStream << s;
     } else {
         // ellipse is only partially visible, so emulate with polygon.
-        for (auto it : ellipse) {
+        for (auto const &it : ellipse) {
             xfig_print_line(it.x1, it.y1, it.x2, it.y2, color);
         }
     }
@@ -875,7 +876,8 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     s_LastXfigcolor = -1;
 
     s_xfig_line_busy = false;
-    s_xfig_line_points = new int[XFIG_LINE_MAXPOINTS * 2];
+    s_xfig_line_points =
+        std::make_unique<int[]>(new int[XFIG_LINE_MAXPOINTS * 2]);
 
     s_XFigW = w * 1200;
     s_XFigW /= resolution;
@@ -958,7 +960,7 @@ void finishXFigPrinting(void)
     plot_p = spherePlotPoint;
 
     if (s_xfig_line_points != nullptr) {
-        delete[] s_xfig_line_points; 
+        delete[] s_xfig_line_points;
         s_xfig_line_points = nullptr;
     }
 }
