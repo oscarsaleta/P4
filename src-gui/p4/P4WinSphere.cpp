@@ -86,8 +86,8 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
 
     // FIXME is next needed?
     if (!sm_SphereList.empty())
-        sm_SphereList.back()->next_ = std::make_shared<this>;
-    sm_SphereList.push_back(std::make_shared<this>);
+        sm_SphereList.back()->next_ = std::make_shared<P4WinSphere>(this);
+    sm_SphereList.push_back(std::make_shared<P4WinSphere>(this));
     sm_numSpheres++;
 
     // THIS IS THE MINIMUM SIZE
@@ -307,7 +307,7 @@ void P4WinSphere::setupPlot()
     dx_ = x1_ - x0_;
     dy_ = y1_ - y0_;
 
-    double idealhd{ceil(w_ / dx_ * dy_)};
+    double idealhd{std::round(w_ / dx_ * dy_)};
 
     switch (g_VFResults.typeofview_) {
     case TYPEOFVIEW_PLANE:
@@ -485,7 +485,7 @@ void P4WinSphere::adjustToNewSize()
     w_ = width();
     h_ = height();
 
-    auto idealhd = static_cast<double>(ceil(w_ / dx_ * dy));
+    auto idealhd = static_cast<double>(std::round(w_ / dx_ * dy));
 
     auto reqratio = (static_cast<double>(w_) / horPixelsPerMM_) /
                     (idealh_ / verPixelsPerMM_);
@@ -835,20 +835,20 @@ int P4WinSphere::coWinH(double deltax)
 {
     double wx{deltax / dx_ * (w_ - 1)};
 
-    return ceil(wx);
+    return std::round(wx);
 }
 
 int P4WinSphere::coWinV(double deltay)
 {
     double wy{deltay / dy_ * (h_ - 1)};
 
-    return ceil(wy);
+    return std::round(wy);
 }
 
 int P4WinSphere::coWinX(double x)
 {
     double wx{(x - x0_) / dx_ * (w_ - 1)};
-    int iwx{ceil(wx)};
+    int iwx{std::round(wx)};
 
     if (iwx >= w_)
         iwx = w_ - 1;
@@ -859,7 +859,7 @@ int P4WinSphere::coWinX(double x)
 int P4WinSphere::coWinY(double y)
 {
     double wy{(y - y0_) / dy_ * (h_ - 1)};
-    int iwy{ceil(wy)};
+    int iwy{std::round(wy)};
 
     if (iwy >= h_)
         iwy = h_ - 1;
@@ -2266,14 +2266,14 @@ void P4WinSphere::printSeparatingCurves()
                             (*plot_p)(this, it->pcoord, it->color);
                         else if (!nexpt->dahes || nexpt->color != CSEPCURVE ||
                                  !dashes)
-                            (*plot_p)(this,it->pcoord,it->color);
+                            (*plot_p)(this, it->pcoord, it->color);
                         // draw nothing when the next point is a dash
                     }
                     dashes = true;
                 } else {
                     dashes = false;
                 }
-                copy_x_into_y(it->pcoord,pcoord);
+                copy_x_into_y(it->pcoord, pcoord);
             }
         }
     }
@@ -2314,81 +2314,49 @@ void P4WinSphere::printIsoclines()
 
 void P4WinSphere::printPoincareSphere()
 {
-    struct P4POLYLINES *q;
-
     print_comment("Printing Poincare Sphere:");
-    auto p = produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
+    auto p =
+        produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
     for (auto &q : p) {
         q.x1 = coWinX(q.x1);
         q.y1 = coWinY(q.y1);
         q.x2 = coWinX(q.x2);
-        q.y2
+        q.y2 = coWinY(q.y2);
     }
-    for (q = p; q != nullptr; q = q->next) {
-        q->x1 = coWinX(q->x1);
-        q->y1 = coWinY(q->y1);
-        q->x2 = coWinX(q->x2);
-        q->y2 = coWinY(q->y2);
-    }
-    print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1),
-                g_VFResults.singinf_ ? CSING : CLINEATINFINITY, false, p);
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next;
-        delete q;
-        q = nullptr;
-    }
+    print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1), CLINEATINFINITY,
+                false, p);
 }
 
 void P4WinSphere::printPoincareLyapunovSphere()
 {
-    QString comment;
-    struct P4POLYLINES *p;
-    struct P4POLYLINES *q;
+    print_comment("Printing Poincare Lyapunov-Sphere (circle at infinity):");
 
-    comment = "Printing Poincare Lyapunov-Sphere (circle at infinity):";
-    print_comment(comment);
-
-    p = produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-    for (q = p; q != nullptr; q = q->next) {
-        q->x1 = coWinX(q->x1);
-        q->y1 = coWinY(q->y1);
-        q->x2 = coWinX(q->x2);
-        q->y2 = coWinY(q->y2);
+    auto p =
+        produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
+    for (auto &q : p) {
+        q.x1 = coWinX(q.x1);
+        q.y1 = coWinY(q.y1);
+        q.x2 = coWinX(q.x2);
+        q.y2 = coWinY(q.y2);
     }
-
     print_elips(coWinX(0.0), coWinY(0.0), coWinH(1.0), coWinV(1.0),
                 CLINEATINFINITY, false, p);
 
-    while (p != nullptr) {
-        q = p;
-        p = p->next;
-        delete q;
-        q = nullptr;
-    }
+    p.clear();
 
-    comment = "Printing Poincare Lyapunov-Sphere (circle of finite radius):";
-    print_comment(comment);
+    print_comment(
+        "Printing Poincare Lyapunov-Sphere (circle of finite radius):");
 
     p = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true, coWinH(RADIUS),
                        coWinV(RADIUS));
-    for (q = p; q != nullptr; q = q->next) {
-        q->x1 = coWinX(q->x1);
-        q->y1 = coWinY(q->y1);
-        q->x2 = coWinX(q->x2);
-        q->y2 = coWinY(q->y2);
+    for (auto &q : p) {
+        q.x1 = coWinX(q.x1);
+        q.y1 = coWinY(q.y1);
+        q.x2 = coWinX(q.x2);
+        q.y2 = coWinY(q.y2);
     }
-
     print_elips(coWinX(0.0), coWinY(0.0), coWinH(RADIUS), coWinV(RADIUS),
                 CLINEATINFINITY, true, p);
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next;
-        delete q;
-        q = nullptr;
-    }
 }
 
 void P4WinSphere::printLineAtInfinity()
@@ -2406,44 +2374,30 @@ void P4WinSphere::printLineAtInfinity()
             print_line(coWinX(x0_), coWinY(0.0), coWinX(x1_), coWinY(0.0),
                        CLINEATINFINITY);
         break;
-    case TYPEOFVIEW_PLANE:
-    case TYPEOFVIEW_SPHERE:
-        // should not appear
-        break;
     }
 }
 
 void P4WinSphere::printOrbits()
 {
     // inspired by DrawOrbits, except that we put comments between
-
-    struct orbits *orbit;
     QString s;
-    int i;
-    i = 1;
-
-    for (orbit = g_VFResults.first_orbit_; orbit != nullptr;
-         orbit = orbit->next_orbit) {
+    int i{1};
+    for (auto const &orbit : g_VFResults.orbits_) {
         s.sprintf("Starting orbit %d", i++);
         print_comment(s);
-        drawOrbit(this, orbit->pcoord, orbit->f_orbits, orbit->color);
+        drawOrbit(this, orbit.pcoord, orbit.points, orbit.color);
     }
 }
 
 void P4WinSphere::printLimitCycles()
 {
     // inspired by DrawOrbits, except that we put comments between
-
-    struct orbits *orbit;
     QString s;
-    int i;
-    i = 1;
-
-    for (orbit = g_VFResults.first_lim_cycle_; orbit != nullptr;
-         orbit = orbit->next_orbit) {
-        s.sprintf("Starting Limit Cycle %d", i++);
+    int i{1};
+    for (auto const &orbit : g_VFResults.limCycles_) {
+        s.sprintf("Starting limit cycle %d", i++);
         print_comment(s);
-        drawOrbit(this, orbit->pcoord, orbit->f_orbits, orbit->color);
+        drawOrbits(this, orbit.pcoord, orbit.points, orbit.color);
     }
 }
 
@@ -2458,14 +2412,12 @@ void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
 
         if (x2 >= x0_ && x2 <= x1_ && y2 >= y0_ && y2 <= y1_) {
             // both points are visible in the window
-
             wx2 = coWinX(x2);
             wy2 = coWinY(y2);
 
             print_line(wx1, wy1, wx2, wy2, color);
         } else {
             // only (x2,y2) is not visible
-
             if (lineRectangleIntersect(x1, y1, x2, y2, x0_, x1_, y0_, y1_)) {
                 wx1 = coWinX(x1);
                 wy1 = coWinY(y1);
@@ -2477,7 +2429,6 @@ void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
     } else {
         if (x2 >= x0_ && x2 <= x1_ && y2 >= y0_ && y2 <= y1_) {
             // only (x2,y2) is visible
-
             if (lineRectangleIntersect(x1, y1, x2, y2, x0_, x1_, y0_, y1_)) {
                 wx1 = coWinX(x1);
                 wy1 = coWinY(y1);
@@ -2487,7 +2438,6 @@ void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
             }
         } else {
             // both end points are invisible
-
             if (lineRectangleIntersect(x1, y1, x2, y2, x0_, x1_, y0_, y1_)) {
                 wx1 = coWinX(x1);
                 wy1 = coWinY(y1);
@@ -2513,33 +2463,26 @@ void P4WinSphere::refresh()
     update();
 }
 
-void P4WinSphere::calculateHeightFromWidth(int *width, int *height,
+void P4WinSphere::calculateHeightFromWidth(int &width, int &height,
                                            int maxheight = -1,
                                            double aspectratio = 1)
 {
-    // given an optimal width in *width, this procedure calculates the
-    // corresponding height in order to maintain the given aspectratio
-    // If however the maximum height is violated, then we choose to
-    // have the maximum height and calculate the corresponding width.
+    // given an optimal width in width, this procedure calculates the
+    // corresponding height in order to maintain the given aspectratio. If
+    // however the maximum height is violated, then we choose to have the
+    // maximum height and calculate the corresponding width.
 
-    // aspect ratio is
+    double w{static_cast<double>(width)};
+    double h{w * dy_ / dx_ * aspectratio};
 
-    double w_, h_;
-
-    w_ = (double)(*width);
-    h_ = w_ * dy_ / dx_;
-    h_ *= aspectratio;
-
-    if ((int)(h_ + 0.5) <= maxheight || maxheight == -1) {
-        *height = (int)(h_ + 0.5);
+    if (std::round(h) <= maxheight || maxheight == -1) {
+        height = std::round(h);
     } else {
-        *height = maxheight;
-
-        h_ = (double)maxheight;
-        w_ = h_ * dx_ / dy_;
-        w_ /= aspectratio;
-
-        *width = (int)(w_ + 0.5);
+        height = maxheight;
+        h = static_cast<double>(maxheight);
+        w = h * dx_ / dy_;
+        w /= aspectratio;
+        width = std::round(w);
     }
 }
 
@@ -2547,40 +2490,25 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
                                   int myresolution, double mylinewidth,
                                   double mysymbolsize)
 {
-    double aspectratio, lw, ss, hpixels, maxvpixels, pagewidth, pageheight, tx,
-        ty;
+    double pagewidth, pageheight;
+    double aspectratio{1};  // assume aspect ratio 1
 
     printMethod_ = printmethod;
 
-    aspectratio = 1;  // assume aspect ratio 1
-
     if (printmethod == P4PRINT_DEFAULT) {
-        // g_p4printer->setResolution(myresolution); we have moved this.
-        // according to documentation: set of resolution must be done BEFORE
-        // setup!
-
-        //  aspectratio = metrics.logicalDpiX()/metrics.logicalDpiY();
-        aspectratio = 1;
-
         pagewidth = g_p4printer->width();
         pageheight = g_p4printer->height();
     } else
-        pagewidth = pageheight = -1;  // will be redefined in a minut
+        pagewidth = pageheight = -1;  // will be redefined in a minute
 
-    s_p4pixmap_dpm = lw = ss = hpixels = myresolution;
-    s_p4pixmap_dpm /= 2.54;
-    hpixels *= 15;
-    hpixels /= 2.54;
+    s_p4pixmap_dpm = myresolution / 2.54;
 
-    maxvpixels = myresolution;
-    maxvpixels *= aspectratio;
-    maxvpixels *= 20;
-    maxvpixels /= 2.54;
-    maxvpixels += 0.5;
+    double hpixels{myresolution * 15 / 2.54};
+    double maxvpixels{(myresolution * aspectratio * 20) / 2.54 + 0.5};
 
     oldw_ = w_;
     oldh_ = h_;
-    w_ = (int)(hpixels + 0.5);
+    w_ = std::round(hpixels);
 
     switch (printmethod) {
     case P4PRINT_DEFAULT: /* pagewidth and height already set */
@@ -2594,105 +2522,90 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
         pageheight = -1;
         break;
     case P4PRINT_EPSIMAGE:
-        pagewidth = POSTSCRIPTPAGEWIDTH;  // see custom.cpp
-        pageheight = POSTSCRIPTPAGEHEIGHT;
-        pagewidth *= myresolution;
-        pageheight *= myresolution;
+        pagewidth = myresolution * POSTSCRIPTPAGEWIDTH;  // see custom.cpp
+        pageheight = myresolution * POSTSCRIPTPAGEHEIGHT;
         break;
     }
 
     if (w_ > pagewidth && pagewidth != -1)
-        w_ = (int)pagewidth;
+        w_ = std::round(pagewidth);
     if (maxvpixels > pageheight && pageheight != -1)
         maxvpixels = pageheight;
 
-    calculateHeightFromWidth(&w_, &h_, (int)maxvpixels, aspectratio);
+    calculateHeightFromWidth(w_, h_, std::round(maxvpixels), aspectratio);
 
-    lw /= 25.4;         // dots per mm
-    lw *= mylinewidth;  // linewidth in pixels
-    lw += 0.5;          // prepare round above
+    // 25.4 dots per mm
+    double lw{myresolution * mylinewidth / 25.4};
     if (lw < 1.0)
         lw = 1.0;
 
-    ss /= 25.4;          // dots per mm
-    ss *= mysymbolsize;  // symbolsize in pixels
-    ss += 0.5;           // prepare round above for units of 2
-    ss /= 2.0;
+    // 25.4 dots per mm
+    double ss{(myresolution * mysymbolsize / 25.4 + 0.5) / 2.0};
     if (ss < 1.0)
         ss = 1.0;
 
+    double tx, ty;
     if (pagewidth == -1 || pageheight == -1) {
         tx = 0;
         ty = 0;
     } else {
-        tx = pagewidth;
-        tx -= w_;
-        tx /= 2;
-        ty = pageheight;
-        ty -= h_;
-        ty /= 2;
+        tx = (pagewidth - w_) / 2.0;
+        ty = (pageheight - h_) / 2.0;
     }
 
     switch (printmethod) {
     case P4PRINT_EPSIMAGE:
         reverseYAxis_ = true;
-        preparePostscriptPrinting((int)(tx + 0.5), (int)(ty + 0.5), w_, h_,
-                                  iszoom_, isblackwhite, myresolution, (int)lw,
-                                  2 * (int)ss);
+        preparePostscriptPrinting(std::round(tx), std::round(ty), w_, h_,
+                                  iszoom_, isblackwhite, myresolution,
+                                  std::round(lw), 2 * std::round(ss));
         break;
     case P4PRINT_XFIGIMAGE:
         reverseYAxis_ = false;
         prepareXFigPrinting(w_, h_, iszoom_, isblackwhite, myresolution,
-                            (int)lw, 2 * (int)ss);
+                            std::round(lw), 2 * std::round(ss));
         break;
     case P4PRINT_DEFAULT:
-        staticPainter_ = new QPainter();
+        staticPainter_ = std::make_unique<QPainter>();
 
         if (!staticPainter_->begin(g_p4printer)) {
-            delete staticPainter_;
-            staticPainter_ = nullptr;
+            staticPainter_.reset();
             return;
         }
 
         staticPainter_->translate(tx, ty);
         if (iszoom_ || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p = QPen(QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)),
-                          (int)lw);
+            QPen p{QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)),
+                   std::round(lw)};
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
         }
-        //      staticPainter_->setClipRect( (int)tx, (int)ty, w_, h_ );
         reverseYAxis_ = false;  // no need for reversing axes in this case
-        prepareP4Printing(w_, h_, isblackwhite, staticPainter_, (int)lw,
-                          2 * (int)ss);
+        prepareP4Printing(w_, h_, isblackwhite, staticPainter_, std::round(lw),
+                          2 * std::round(ss));
         break;
 
     case P4PRINT_JPEGIMAGE:
-        staticPainter_ = new QPainter();
-        s_p4pixmap = new QPixmap(w_, h_);
+        staticPainter_ = std::make_unique<QPainter>();
+        s_p4pixmap = std::make_unique<QPixmap>(w_, h_);
         reverseYAxis_ = false;  // no need for reversing axes in this case
         if (s_p4pixmap->isNull()) {
             msgBar_->showMessage(
                 "Print failure (try to choose a lower resolution).");
-            delete s_p4pixmap;
-            s_p4pixmap = nullptr;
-            delete staticPainter_;
-            staticPainter_ = nullptr;
+            s_p4pixmap.reset();
+            staticPainter_.reset();
             return;
         }
         if (!staticPainter_->begin(s_p4pixmap)) {
-            delete s_p4pixmap;
-            s_p4pixmap = nullptr;
-            delete staticPainter_;
-            staticPainter_ = nullptr;
+            s_p4pixmap.reset();
+            staticPainter_.reset();
             return;
         }
 
-        prepareP4Printing(w_, h_, isblackwhite, staticPainter_, (int)lw,
-                          2 * (int)ss);
+        prepareP4Printing(w_, h_, isblackwhite, staticPainter_, std::round(lw),
+                          2 * std::round(ss));
         break;
     }
-
     msgBar_->showMessage("Printing ...");
 }
 
