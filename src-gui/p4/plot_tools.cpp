@@ -19,9 +19,9 @@
 
 #include "plot_tools.h"
 
+#include "P4WinSphere.h"
 #include "file_tab.h"
 #include "math_p4.h"
-#include "P4WinSphere.h"
 
 #include <cmath>
 
@@ -64,11 +64,11 @@ void spherePlotLine(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p1,
 
     if (MATHFUNC(sphere_to_viewcoordpair)(p1, p2, ucoord1, ucoord2, ucoord3,
                                           ucoord4)) {
-        for (auto it : sp) {
+        for (auto const &it : sp) {
             it->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
         }
     } else {
-        for (auto it : sp) {
+        for (auto const &it : sp) {
             it->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
             it->drawLine(ucoord3[0], ucoord3[1], ucoord4[0], ucoord4[1], color);
         }
@@ -82,7 +82,7 @@ void spherePlotPoint(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p,
 
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], ucoord);
 
-    for (auto it : sp) {
+    for (auto const &it : sp) {
         it->drawPoint(ucoord[0], ucoord[1], color);
     }
 }
