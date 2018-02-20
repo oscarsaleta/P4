@@ -3291,7 +3291,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
         g_VFResults.K_ = 0;
     }
 
-    for (auto &it = begin(vfRegions_); it != std::end(vfRegions_); ++it) {
+    for (auto &it = std::begin(vfRegions_); it != std::end(vfRegions_); ++it) {
         if (it->vfIndex == index) {
             it->signs.clear();
             vfRegions_.erase(it);
@@ -3560,13 +3560,13 @@ void P4InputVF::markVFRegion(int index, const double *p)
         std::vector<int> sgns;
         if (numCurves_ > 0)
             sgns.reserve(sizeof(int) * numCurves_);
-        for (auto curveResult : g_VFResults.curves_result_) {
+        for (auto const &curveResult : g_VFResults.curves_result_) {
             if (eval_curve(curveResult, p) < 0)
                 sgns.push_back(-1);
             else
                 sgns.push_back(+1);
         }
-        vfRegions_.push_back(p4InputVFRegions::vfRegion(-1, sgns));
+        vfRegions_.push_back(-1, sgns);
         numVFRegions_++;
         i = numVFRegions_ - 1;
     }
@@ -3621,7 +3621,7 @@ void P4InputVF::markCurveRegion(int index, const double *p)
         else
             signs.push_back(1);
     }
-    for (auto curve : curveRegions_) {
+    for (auto const &curve : curveRegions_) {
         if (signs == curve.signs && index == curve.index) {
             // curve mark already exists
             return;
@@ -3643,6 +3643,8 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
     if (numCurves_ == 0 || g_VFResults.curves_result_.empty())
         return;
 
+    // NOTE: aqui podriem estar fent que els signes es guardin al reves que al
+    // p5 original
     signs.reserve(sizeof(int) * numCurves_);
     for (int i = 0; i < numCurves_; i++) {
         if (i == index)
@@ -3652,13 +3654,15 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
         else
             signs.push_back(1);
     }
-    for (auto k = std::begin(curveRegions_); k != std::end(curveRegions_);
+
+    for (auto &k = std::begin(curveRegions_); k != std::end(curveRegions_);
          ++k) {
         if (signs == k->signs && index == k->curveIndex) {
             // curve mark exists
             curveRegions_.erase(k);
             numCurveRegions_--;
             resampleCurve(index);
+            break;
         }
     }
 }
@@ -3691,7 +3695,7 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
     if (numCurves_ == 0 || g_VFResults.curves_result_.empty())
         return false;
 
-    for (auto curve : curveRegions_) {
+    for (auto const &curve : curveRegions_) {
         if (curve.curveIndex != index)
             continue;
         for (k = numCurves_ - 1; k >= 0; k--) {
@@ -3738,7 +3742,7 @@ void P4InputVF::resampleGcf(int i)
     if (g_VFResults.curves_result_.empty() || g_VFResults.vf_.empty())
         return;
 
-    for (auto it = std::begin(g_VFResults.vf_[i]->gcf_points_);
+    for (auto &it = std::begin(g_VFResults.vf_[i]->gcf_points_);
          it != std::end(g_VFResults.vf_[i]->gcf_points_); ++it) {
         if (getVFIndex_sphere(it->pcoord) != i) {
             g_VFResults.vf_[i]->gcf_points_.erase(it);
