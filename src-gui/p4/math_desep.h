@@ -19,17 +19,23 @@
 
 #pragma once
 
+#include <memory>
+#include <optional>
+#include <vector>
+
+struct p4blowup::blow_up_points;
 struct p4blowup::transformations;
 struct p4singularities::degenerate;
+struct p4orbits::orbits_points;
 class P4WinSphere;
 
 void eval_blow_vec_field(const double *y, double *f);
 void make_transformations(const std::vector<p4blowup::transformations> &trans,
                           double x0, double y0, double *point);
 
-std::vector<p4orbits::orbits_points> integrate_blow_up(
+std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
     std::shared_ptr<P4WinSphere> spherewnd, double *pcoord2,
-    std::vector<p4blowup::blow_up_points> de_sep, double step, int dir,
+    std::vector<p4blowup::blow_up_points> &de_sep, double step, int dir,
     int type, int chart);
 
 void change_epsilon_de(std::shared_ptr<P4WinSphere> spherewnd, double epsilon);
