@@ -42,4 +42,5 @@ bool evalGcfContinue(int points, int prec);
 bool evalGcfFinish(void);
 bool runTask(int task, int points, int prec);
 void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
-              std::vector<p4orbits::orbits_points> sep, int color, int dashes);
+              const std::vector<p4orbits::orbits_points> &sep, int color,
+              int dashes);

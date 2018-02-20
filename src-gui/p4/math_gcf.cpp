@@ -19,13 +19,13 @@
 
 #include "math_gcf.h"
 
+#include "P4WinSphere.h"
 #include "custom.h"
 #include "file_tab.h"
 #include "file_vf.h"
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "P4WinSphere.h"
 
 #include <QFile>
 
@@ -50,10 +50,10 @@ bool evalGcfStart(std::smart_ptr<P4WinSphere> sp, int dashes, int points,
     int r;
     sp->prepareDrawing();
     for (r = 0; r < g_ThisVF->numVF_; r++) {
-        if (!g_VFResults.vf_[r]->gcf_points_.empty()) {
-            draw_gcf(sp, g_VFResults.vf_[r]->gcf_points_,
-                     bgColours::CBACKGROUND, s_GcfDashes);
-            g_VFResults.vf_[r]->gcf_points_.clear();
+        if (!g_VFResults.vf_[r].gcf_points_.empty()) {
+            draw_gcf(sp, g_VFResults.vf_[r].gcf_points_, bgColours::CBACKGROUND,
+                     s_GcfDashes);
+            g_VFResults.vf_[r].gcf_points_.clear();
         }
     }
     sp->finishDrawing();
@@ -86,7 +86,7 @@ bool evalGcfContinue(int points, int prec, int memory)
         while (1) {
             if (++s_GcfVfIndex >= g_ThisVF->numVF_)
                 break;
-            if (!g_VFResults.vf_[s_GcfVfIndex]->gcf_.empty())
+            if (!g_VFResults.vf_[s_GcfVfIndex].gcf_.empty())
                 break;
         }
         if (s_GcfVfIndex >= g_ThisVF->numVF_)
@@ -104,10 +104,10 @@ bool evalGcfContinue(int points, int prec, int memory)
         return true;
     }
 
-    return false; // still busy
+    return false;  // still busy
 }
 
-bool evalGcfFinish(void) // return false in case an error occured
+bool evalGcfFinish(void)  // return false in case an error occured
 {
     int index;
     if (s_GcfTask != EVAL_GCF_NONE) {
@@ -115,9 +115,9 @@ bool evalGcfFinish(void) // return false in case an error occured
             g_ThisVF->resampleGcf(index);
         s_GcfSphere->prepareDrawing();
         for (index = 0; index < g_ThisVF->numVF_; index++) {
-            if (!g_VFResults.vf_[index]->gcf_points_.empty())
-                draw_gcf(s_GcfSphere, g_VFResults.vf_[index]->gcf_points_,
-                         CSING, 1);
+            if (!g_VFResults.vf_[index].gcf_points_.empty())
+                draw_gcf(s_GcfSphere, g_VFResults.vf_[index].gcf_points_, CSING,
+                         1);
         }
         s_GcfSphere->finishDrawing();
 
@@ -135,7 +135,7 @@ bool runTask(int task, int points, int prec, int mem, int index)
 {
     bool value;
 
-    while (!g_VFResults.vf_[index]->gcf_.empty()) {
+    while (!g_VFResults.vf_[index].gcf_.empty()) {
         if (++index == g_ThisVF->numVF_)
             return false;
     }
@@ -143,23 +143,23 @@ bool runTask(int task, int points, int prec, int mem, int index)
 
     switch (task) {
     case EVAL_GCF_R2:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_, -1, 1, prec,
+        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_, -1, 1, prec,
                                      points);
         break;
     case EVAL_GCF_U1:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U1_, 0, 1,
-                                     prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U1_, 0, 1, prec,
+                                     points);
         break;
     case EVAL_GCF_V1:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U1_, -1, 0,
+        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U1_, -1, 0,
                                      prec, points);
         break;
     case EVAL_GCF_U2:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U2_, 0, 1,
-                                     prec, points);
+        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U2_, 0, 1, prec,
+                                     points);
         break;
     case EVAL_GCF_V2:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index]->gcf_U2_, -1, 0,
+        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U2_, -1, 0,
                                      prec, points);
         break;
     case EVAL_GCF_LYP_R2:
@@ -234,7 +234,8 @@ static bool readTaskResults(int task, int index)
 }
 
 void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
-              std::vector<p4orbits::orbits_points> sep, int color, int dashes)
+              const std::vector<p4orbits::orbits_points> &sep, int color,
+              int dashes)
 {
     double pcoord[3];
 
@@ -252,7 +253,7 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes,
 {
     int pcoord[3] = {x0, y0, z0};
 
-    g_VFResults.vf_[index]->gcf_points_.push_back(
+    g_VFResults.vf_[index].gcf_points_.push_back(
         p4orbits::orbits_point(CSING, pcoord, dashes, 0, 0));
 }
 
