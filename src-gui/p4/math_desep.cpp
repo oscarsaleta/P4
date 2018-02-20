@@ -471,7 +471,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
             if (!g_VFResults.plweights_)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V1_,
-                                  de_sep->type, point);
+                                  de_sep.type, point);
             break;
 
         case CHART_U2:
@@ -481,7 +481,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
                     dashes = false;
                     ok = true;
                 }
-                type = de_sep->type;
+                type = de_sep.type;
                 color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
                                       type, point);
             } else {
@@ -492,9 +492,9 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
                 if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
-                    type = change_type(de_sep->type);
+                    type = change_type(de_sep.type);
                 else
-                    type = de_sep->type;
+                    type = de_sep.type;
                 color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
                                       type, point);
             }
@@ -505,7 +505,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
             if (!g_VFResults.plweights_)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
             color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
-                                  de_sep->type, point);
+                                  de_sep.type, point);
             break;
         }
 
@@ -671,48 +671,44 @@ void select_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
 void plot_all_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
-                     const std::vector<p4singularity::degenerate> &point)
+                     std::vector<p4singularity::degenerate> &point)
 {
-    std::vector<p4blowup::blow_up_points> de_sep;
-    std::vector<p4orbits::orbits_points> sep;
     double p[3];
 
-    for (auto const &it1 : point) {
-        if (!isARealSingularity(it.x0, it.y0, it.chart, vfindex))
+    for (auto &it1 : point) {
+        if (!isARealSingularity(it.x0, it.y0, it.chart, vfindex) ||
+            !it.notadummy)
             continue;
 
-        if (it.notadummy) {
-            de_sep = it.blow_up;
-            // for (auto it2 = std::begin(de_sep); it2 != std::end(de_sep);
-            //     ++it2) {
-            for (auto &it2 : de_sep) {
-                if (!it2.sep_points.empty()) {
-                    sep = it2.sep_points.back();
-                    copy_x_into_y(sep.pcoord, p);
-                    if (it2.integrating_in_local_chart) {
-                        auto nextpt =
-                            integrate_blow_up(spherewnd, p, de_sep,
-                                              g_VFResults.config_currentstep,
-                                              sep.dir, sep.type, it1.chart);
+        auto &de_sep = it.blow_up;
+        // for (auto it2 = std::begin(de_sep); it2 != std::end(de_sep);
+        //     ++it2) {
+        for (auto &it2 : de_sep) {
+            if (!it2.sep_points.empty()) {
+                auto &sep = it2.sep_points.back();
+                copy_x_into_y(sep.pcoord, p);
+                if (it2.integrating_in_local_chart) {
+                    auto nextpt = integrate_blow_up(
+                        spherewnd, p, de_sep, g_VFResults.config_currentstep,
+                        sep.dir, sep.type, it1.chart);
+                    if (nextpt)
                         it2.sep_points.insert(std::end(it2.sep_points),
                                               std::begin(nextpt),
                                               std::end(nextpt));
-                    } else {
-                        auto nextpt = integrate_sep(
-                            spherewnd, p, g_VFResults.config_currentstep,
-                            sep.dir, sep.type, g_VFResults.config_intpoints);
-                        if (!nextpt.empty())
-                            it2.sep_points.insert(std::end(it2.sep_points),
-                                                  std::begin(nextpt),
-                                                  std::end(nextpt));
-                    }
                 } else {
-                    auto v =
-                        plot_sep_blow_up(spherewnd, it1.x0, it1.y0, it1.chart,
-                                         it1.epsilon, de_sep, vfindex);
-                    if (v)
-                        it2.sep_points = std::move(v);
+                    auto nextpt = integrate_sep(
+                        spherewnd, p, g_VFResults.config_currentstep, sep.dir,
+                        sep.type, g_VFResults.config_intpoints);
+                    if (!nextpt.empty())
+                        it2.sep_points.insert(std::end(it2.sep_points),
+                                              std::begin(nextpt),
+                                              std::end(nextpt));
                 }
+            } else {
+                auto v = plot_sep_blow_up(spherewnd, it1.x0, it1.y0, it1.chart,
+                                          it1.epsilon, de_sep, vfindex);
+                if (v)
+                    it2.sep_points = std::move(v);
             }
         }
     }
