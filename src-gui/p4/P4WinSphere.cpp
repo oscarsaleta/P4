@@ -157,7 +157,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // F: integrate orbit forwards in time
             data1 = std::make_unique<int>(1);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -166,14 +166,14 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // C: continue integrate orbit
             data1 = std::make_unique<int>(0);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         } else if (bs == Qt::ShiftModifier ||
                    bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+C:  continue integrating separatrice
             data1 = std::make_unique<int>(0);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -182,7 +182,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // B: integrate orbit backwards in time
             data1 = std::make_unique<int>(-1);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -191,7 +191,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // D: delete orbit
             data1 = std::make_unique<int>(2);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -200,7 +200,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // A: delete all orbits
             data1 = std::make_unique<int>(3);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -210,7 +210,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // SHIFT+N: select next separatrice
             data1 = std::make_unique<int>(3);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -220,7 +220,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // SHIFT+I: integrate next separatrice
             data1 = std::make_unique<int>(2);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -230,7 +230,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             // SHIFT+S: start integrate separatrice
             data1 = std::make_unique<int>(1);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<Qt::Type>(TYPE_SEP_EVENT), data1)};
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
             g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
@@ -872,8 +872,7 @@ int P4WinSphere::coWinY(double y)
 void P4WinSphere::mousePressEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
-        switch (e->modifiers()) {
-        case Qt::ControlModifier:
+        if (e->modifiers() == Qt::ControlModifier) {
             if (!selectingZoom_) {
                 selectingZoom_ = true;
                 zoomAnchor1_ = e->pos();
@@ -882,15 +881,11 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
                 markSelection(zoomAnchor1_.x(), zoomAnchor1_.y(),
                               zoomAnchor2_.x(), zoomAnchor2_.y(), 0);
             }
-            QWidget::mousePressEvent(e);
-            break;
-        case Qt::ShiftModifier:
+        } else if (e->modifiers() == Qt::ShiftModifier) {
             // select nearest singularity having separatrices, and open the
             // separatrices window.
             selectNearestSingularity(e->pos());
-            QWidget::mousePressEvent(e);
-            break;
-        case Qt::AltModifier:
+        } else if (e->modifiers() == Qt::AltModifier) {
             if (!selectingLCSection_) {
                 selectingLCSection_ = true;
                 lcAnchor1_ = e->pos();
@@ -899,30 +894,26 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
                 markSelection(lcAnchor1_.x(), lcAnchor1_.y(), lcAnchor2_.x(),
                               lcAnchor2_.y(), 0);
             }
-            QWidget::mousePressEvent(e);
-            break;
-        }
-
-        // normally, start integrating new orbit at the chosen point.
-        // However, when the limit cycle window is open, select the first and
-        // second point of a transverse section.
-        std::unique_ptr<DOUBLEPOINT> data1 =
-            std::make_unique<DOUBLEPOINT>{coWorldX(e->x()), coWorldY(e->y())};
-
-        double pcoord[3];
-        if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SELECT_ORBIT), data1)};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+        } else {
+            // normally, start integrating new orbit at the chosen point.
+            // However, when the limit cycle window is open, select the first
+            // and second point of a transverse section.
+            std::unique_ptr<DOUBLEPOINT> data1 = std::make_unique<DOUBLEPOINT>{
+                coWorldX(e->x()), coWorldY(e->y())};
+            double pcoord[3];
+            if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
+                std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                    static_cast<QEvent::Type>(TYPE_SELECT_ORBIT.get()),
+                    data1.get())};
+                g_p4app->postEvent(parentWnd_.get(), e1.get());
+            }
         }
     } else if (e->button() == Qt::RightButton) {
         // cancel zoom window with right mouse button
-
         if (selectingZoom_) {
             saveAnchorMap();
             selectingZoom_ = false;
         }
-
         if (selectingLCSection_) {
             saveAnchorMap();
             selectingLCSection_ = false;
@@ -935,39 +926,32 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
         // finish zoom window between zoomAnchor1_ and zoomAnchor2_
-
         if (selectingZoom_) {
             saveAnchorMap();
             selectingZoom_ = false;
-
-            double *data1 = new double[4];
+            std::unique_ptr<double[]> data1{new double[4]};
             data1[0] = coWorldX(zoomAnchor1_.x());
             data1[1] = coWorldY(zoomAnchor1_.y());
             data1[2] = coWorldX(zoomAnchor2_.x());
             data1[3] = coWorldY(zoomAnchor2_.y());
-            P4Event *e1 = new P4Event(
-                static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW), data1);
-            g_p4app->postEvent(parentWnd_, e1);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW), data1.get())};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
-
         if (selectingLCSection_) {
             saveAnchorMap();
             selectingLCSection_ = false;
 
-            double *data1 = new double[4];
+            std::unique_ptr<double[]> data1{new double[4]};
             data1[0] = coWorldX(lcAnchor1_.x());
             data1[1] = coWorldY(lcAnchor1_.y());
             data1[2] = coWorldX(lcAnchor2_.x());
             data1[3] = coWorldY(lcAnchor2_.y());
-            P4Event *e1 = new P4Event(
-                static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION), data1);
-            g_p4app->postEvent(parentWnd_, e1);
+            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION), data1.get())};
+            g_p4app->postEvent(parentWnd_.get(), e1.get());
         }
-
-        QWidget::mouseReleaseEvent(e);
-        return;
     }
-
     QWidget::mouseReleaseEvent(e);
 }
 
@@ -996,7 +980,6 @@ bool P4WinSphere::getChartPos(int chart, double x0_, double y0_, double *pos)
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
     }
-
     return true;
 }
 
@@ -1019,29 +1002,24 @@ void P4WinSphere::updatePointSelection()
            selectingPointRadius_ + selectingPointRadius_ + 1);
 }
 
-void P4WinSphere::selectNearestSingularity(QPoint winpos)
+void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
 {
-    bool result;
-    int x, y;
-    int px, py;
+    int x{winpos.x()}, y{winpos.y()};
 
-    x = winpos.x();
-    y = winpos.y();
+    sm_SphereList.back()->prepareDrawing();
+    auto result =
+        find_critical_point(sm_SphereList.back() coWorldX(x), coWorldY(y));
+    sm_SphereList.back()->finishDrawing();
 
-    (*sm_SphereList)->prepareDrawing();
-    result = find_critical_point(*sm_SphereList, coWorldX(x), coWorldY(y));
-    (*sm_SphereList)->finishDrawing();
-
-    if (result == false) {
+    if (!result) {
         msgBar_->showMessage(
             "Search nearest critical point: None with separatrices found.");
     } else {
-        px = coWinX(g_VFResults.selected_ucoord_[0]);
-        py = coWinY(g_VFResults.selected_ucoord_[1]);
+        auto px = coWinX(g_VFResults.selected_ucoord_[0]);
+        auto py = coWinY(g_VFResults.selected_ucoord_[1]);
 
-        if (selectingTimer_ != nullptr) {
-            delete selectingTimer_;
-            selectingTimer_ = nullptr;
+        if (selectingTimer_) {
+            selectingTimer_.reset();
             selectingPointStep_ = 0;
             updatePointSelection();
         }
@@ -1050,18 +1028,16 @@ void P4WinSphere::selectNearestSingularity(QPoint winpos)
         selectingX_ = px;
         selectingY_ = py;
 
-        selectingTimer_ = new QTimer();
-        connect(selectingTimer_, &QTimer::timeout, this,
-                &P4WinSphere::updatePointSelection);
+        selectingTimer_ = std::make_unique<QTimer>();
+        QObject::connect(selectingTimer_, &QTimer::timeout, this,
+                         &P4WinSphere::updatePointSelection);
         selectingTimer_->start(SELECTINGPOINTSPEED);
         msgBar_->showMessage("Search nearest critical point: Found");
 
-        int *data1;
-        data1 = new int;
-        *data1 = -1;
-        P4Event *e1 =
-            new P4Event(static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1);
-        g_p4app->postEvent(parentWnd_, e1);
+        std::unique_ptr<int> data1{std::make_unique<int>(-1)};
+        std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+            static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
+        g_p4app->postEvent(parentWnd_.get(), e1.get());
     }
 }
 
@@ -1069,276 +1045,421 @@ void P4WinSphere::selectNearestSingularity(QPoint winpos)
 //                          PLOT SINGULAR POINTS
 // -----------------------------------------------------------------------
 
-void P4WinSphere::plotPoint(struct saddle *p)
+void P4WinSphere::plotPoint(const p4singularities::saddle &p)
 {
     double pos[2];
-    int x, y;
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    getChartPos(p.chart, p.x0, p.y0, pos);
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        x = coWinX(pos[0]);
-        y = coWinY(pos[1]);
+    auto x = coWinX(pos[0]);
+    auto y = coWinY(pos[1]);
 
-        if (paintedXMin_ > x - SYMBOLWIDTH / 2)
-            paintedXMin_ = x - SYMBOLWIDTH / 2;
-        if (paintedXMax_ < x + SYMBOLWIDTH / 2)
-            paintedXMax_ = x - SYMBOLWIDTH / 2;
-        if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
-            paintedYMin_ = y - SYMBOLHEIGHT / 2;
-        if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
-            paintedYMax_ = y - SYMBOLHEIGHT / 2;
+    if (paintedXMin_ > x - SYMBOLWIDTH / 2)
+        paintedXMin_ = x - SYMBOLWIDTH / 2;
+    if (paintedXMax_ < x + SYMBOLWIDTH / 2)
+        paintedXMax_ = x - SYMBOLWIDTH / 2;
+    if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
+        paintedYMin_ = y - SYMBOLHEIGHT / 2;
+    if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
+        paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-        win_plot_saddle(staticPainter_, x, y);
+    switch (p.position) {
+    case POSITION_VIRTUAL:
+        win_plot_virtualsaddle(staticPainter_.get(), x, y);
+        break;
+    case POSITION_COINCIDING:
+        break;
+    case POSITION_COINCIDING_VIRTUAL:
+        break;
+    case POSITION_COINCIDING_MAIN:
+        win_plot_coinciding(staticPainter_.get(), x, y);
+        break;
+    default:
+        win_plot_saddle(staticPainter_.get(), x, y);
+        break;
     }
 }
 
-void P4WinSphere::plotPoint(struct node *p)
+void P4WinSphere::plotPoint(const p4singularities::node &p)
 {
     double pos[2];
-    int x, y;
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        x = coWinX(pos[0]);
-        y = coWinY(pos[1]);
+    auto x = coWinX(pos[0]);
+    auto y = coWinY(pos[1]);
 
-        if (paintedXMin_ > x - SYMBOLWIDTH / 2)
-            paintedXMin_ = x - SYMBOLWIDTH / 2;
-        if (paintedXMax_ < x + SYMBOLWIDTH / 2)
-            paintedXMax_ = x - SYMBOLWIDTH / 2;
-        if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
-            paintedYMin_ = y - SYMBOLHEIGHT / 2;
-        if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
-            paintedYMax_ = y - SYMBOLHEIGHT / 2;
+    if (paintedXMin_ > x - SYMBOLWIDTH / 2)
+        paintedXMin_ = x - SYMBOLWIDTH / 2;
+    if (paintedXMax_ < x + SYMBOLWIDTH / 2)
+        paintedXMax_ = x - SYMBOLWIDTH / 2;
+    if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
+        paintedYMin_ = y - SYMBOLHEIGHT / 2;
+    if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
+        paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-        if (p->stable == -1)
-            win_plot_stablenode(staticPainter_, x, y);
-        else
-            win_plot_unstablenode(staticPainter_, x, y);
-    }
-}
-
-void P4WinSphere::plotPoint(struct weak_focus *p)
-{
-    double pos[2];
-    int x, y;
-
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
-
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
-
-        x = coWinX(pos[0]);
-        y = coWinY(pos[1]);
-
-        if (paintedXMin_ > x - SYMBOLWIDTH / 2)
-            paintedXMin_ = x - SYMBOLWIDTH / 2;
-        if (paintedXMax_ < x + SYMBOLWIDTH / 2)
-            paintedXMax_ = x - SYMBOLWIDTH / 2;
-        if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
-            paintedYMin_ = y - SYMBOLHEIGHT / 2;
-        if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
-            paintedYMax_ = y - SYMBOLHEIGHT / 2;
-
-        switch (p->type) {
-        case FOCUSTYPE_STABLE:
-            win_plot_stableweakfocus(staticPainter_, x, y);
+    if (p.stable == -1) {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualstablenode(staticPainter_.get(), x, y);
             break;
-        case FOCUSTYPE_UNSTABLE:
-            win_plot_unstableweakfocus(staticPainter_, x, y);
+        case POSITION_COINCIDING:
             break;
-        case FOCUSTYPE_CENTER:
-            win_plot_center(staticPainter_, x, y);
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
             break;
         default:
-            win_plot_weakfocus(staticPainter_, x, y);
+            win_plot_stablenode(staticPainter_.get(), x, y);
+            break;
+        }
+    } else {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualunstablenode(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_unstablenode(staticPainter_.get(), x, y);
             break;
         }
     }
 }
 
-void P4WinSphere::plotPoint(struct strong_focus *p)
+void P4WinSphere::plotPoint(const p4singularities::weak_focus &p)
 {
     double pos[2];
-    int x, y;
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        x = coWinX(pos[0]);
-        y = coWinY(pos[1]);
+    auto x = coWinX(pos[0]);
+    auto y = coWinY(pos[1]);
 
-        if (paintedXMin_ > x - SYMBOLWIDTH / 2)
-            paintedXMin_ = x - SYMBOLWIDTH / 2;
-        if (paintedXMax_ < x + SYMBOLWIDTH / 2)
-            paintedXMax_ = x - SYMBOLWIDTH / 2;
-        if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
-            paintedYMin_ = y - SYMBOLHEIGHT / 2;
-        if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
-            paintedYMax_ = y - SYMBOLHEIGHT / 2;
+    if (paintedXMin_ > x - SYMBOLWIDTH / 2)
+        paintedXMin_ = x - SYMBOLWIDTH / 2;
+    if (paintedXMax_ < x + SYMBOLWIDTH / 2)
+        paintedXMax_ = x - SYMBOLWIDTH / 2;
+    if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
+        paintedYMin_ = y - SYMBOLHEIGHT / 2;
+    if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
+        paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-        if (p->stable == -1)
-            win_plot_stablestrongfocus(staticPainter_, x, y);
-        else
-            win_plot_unstablestrongfocus(staticPainter_, x, y);
+    switch (p.type) {
+    case SINGTYPE_STABLE:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualstableweakfocus(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_stableweakfocus(staticPainter_.get(), x, y);
+            break;
+        }
+        break;
+    case SINGTYPE_UNSTABLE:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualunstableweakfocus(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_unstableweakfocus(staticPainter_.get(), x, y);
+            break;
+        }
+        break;
+    case SINGTYPE_CENTER:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualcenter(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_center(staticPainter_.get(), x, y);
+            break;
+        }
+        break;
+    default:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualweakfocus(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_weakfocus(staticPainter_.get(), x, y);
+            break;
+        }
+        break;
     }
 }
 
-void P4WinSphere::plotPoint(struct degenerate *p)
+void P4WinSphere::plotPoint(const p4singularities::strong_focus &p)
 {
     double pos[2];
-    int x, y;
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        x = coWinX(pos[0]);
-        y = coWinY(pos[1]);
+    auto x = coWinX(pos[0]);
+    auto y = coWinY(pos[1]);
 
-        if (paintedXMin_ > x - SYMBOLWIDTH / 2)
-            paintedXMin_ = x - SYMBOLWIDTH / 2;
-        if (paintedXMax_ < x + SYMBOLWIDTH / 2)
-            paintedXMax_ = x - SYMBOLWIDTH / 2;
-        if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
-            paintedYMin_ = y - SYMBOLHEIGHT / 2;
-        if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
-            paintedYMax_ = y - SYMBOLHEIGHT / 2;
+    if (paintedXMin_ > x - SYMBOLWIDTH / 2)
+        paintedXMin_ = x - SYMBOLWIDTH / 2;
+    if (paintedXMax_ < x + SYMBOLWIDTH / 2)
+        paintedXMax_ = x - SYMBOLWIDTH / 2;
+    if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
+        paintedYMin_ = y - SYMBOLHEIGHT / 2;
+    if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
+        paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-        win_plot_degen(staticPainter_, x, y);
+    if (p.stable == -1) {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualstablestrongfocus(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_stablestrongfocus(staticPainter_.get(), x, y);
+            break;
+        }
+    } else {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            win_plot_virtualunstablestrongfocus(staticPainter_.get(), x, y);
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            win_plot_coinciding(staticPainter_.get(), x, y);
+            break;
+        default:
+            win_plot_unstablestrongfocus(staticPainter_.get(), x, y);
+            break;
+        }
     }
 }
 
-void P4WinSphere::plotPoint(struct semi_elementary *p)
+void P4WinSphere::plotPoint(const p4singularities::degenerate &p)
 {
     double pos[2];
-    int x, y;
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        x = coWinX(pos[0]);
-        y = coWinY(pos[1]);
+    auto x = coWinX(pos[0]);
+    auto y = coWinY(pos[1]);
 
-        if (paintedXMin_ > x - SYMBOLWIDTH / 2)
-            paintedXMin_ = x - SYMBOLWIDTH / 2;
-        if (paintedXMax_ < x + SYMBOLWIDTH / 2)
-            paintedXMax_ = x - SYMBOLWIDTH / 2;
-        if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
-            paintedYMin_ = y - SYMBOLHEIGHT / 2;
-        if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
-            paintedYMax_ = y - SYMBOLHEIGHT / 2;
+    if (paintedXMin_ > x - SYMBOLWIDTH / 2)
+        paintedXMin_ = x - SYMBOLWIDTH / 2;
+    if (paintedXMax_ < x + SYMBOLWIDTH / 2)
+        paintedXMax_ = x - SYMBOLWIDTH / 2;
+    if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
+        paintedYMin_ = y - SYMBOLHEIGHT / 2;
+    if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
+        paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-        switch (p->type) {
+    switch (p.position) {
+    case POSITION_VIRTUAL:
+        win_plot_virtualdegen(staticPainter_.get(), x, y);
+        break;
+    case POSITION_COINCIDING:
+        break;
+    case POSITION_COINCIDING_VIRTUAL:
+        break;
+    case POSITION_COINCIDING_MAIN:
+        win_plot_coinciding(staticPainter_.get(), x, y);
+        break;
+    default:
+        win_plot_degen(staticPainter_.get(), x, y);
+        break;
+    }
+}
+
+void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
+{
+    double pos[2];
+
+    getChartPos(p.chart, p.x0, p.y0, pos);
+
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
+
+    auto x = coWinX(pos[0]);
+    auto y = coWinY(pos[1]);
+
+    if (paintedXMin_ > x - SYMBOLWIDTH / 2)
+        paintedXMin_ = x - SYMBOLWIDTH / 2;
+    if (paintedXMax_ < x + SYMBOLWIDTH / 2)
+        paintedXMax_ = x - SYMBOLWIDTH / 2;
+    if (paintedYMin_ > y - SYMBOLHEIGHT / 2)
+        paintedYMin_ = y - SYMBOLHEIGHT / 2;
+    if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
+        paintedYMax_ = y - SYMBOLHEIGHT / 2;
+
+    switch (p.position) {
+    case POSITION_VIRTUAL:
+        switch (p.type) {
         case 1:
-            win_plot_sesaddlenode(staticPainter_, x, y);
+            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
             break;
         case 2:
-            win_plot_sesaddlenode(staticPainter_, x, y);
+            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
             break;
         case 3:
-            win_plot_sesaddlenode(staticPainter_, x, y);
+            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
             break;
         case 4:
-            win_plot_sesaddlenode(staticPainter_, x, y);
+            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
             break;
         case 5:
-            win_plot_seunstablenode(staticPainter_, x, y);
+            win_plot_virtualseunstablenode(staticPainter_.get(), x, y);
             break;
         case 6:
-            win_plot_sesaddle(staticPainter_, x, y);
+            win_plot_virtualsesaddle(staticPainter_.get(), x, y);
             break;
         case 7:
-            win_plot_sesaddle(staticPainter_, x, y);
+            win_plot_virtualsesaddle(staticPainter_.get(), x, y);
             break;
         case 8:
-            win_plot_sestablenode(staticPainter_, x, y);
+            win_plot_virtualsestablenode(staticPainter_.get(), x, y);
             break;
         }
+        break;
+    case POSITION_COINCIDING:
+        break;
+    case POSITION_COINCIDING_VIRTUAL:
+        break;
+    case POSITION_COINCIDING_MAIN:
+        win_plot_coinciding(staticPainter_.get(), x, y);
+        break;
+    default:
+        switch (p.type) {
+        case 1:
+            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            break;
+        case 2:
+            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            break;
+        case 3:
+            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            break;
+        case 4:
+            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            break;
+        case 5:
+            win_plot_seunstablenode(staticPainter_.get(), x, y);
+            break;
+        case 6:
+            win_plot_sesaddle(staticPainter_.get(), x, y);
+            break;
+        case 7:
+            win_plot_sesaddle(staticPainter_.get(), x, y);
+            break;
+        case 8:
+            win_plot_sestablenode(staticPainter_.get(), x, y);
+            break;
+        }
+        break;
     }
 }
 
 void P4WinSphere::plotPoints()
 {
-    struct saddle *sp;
-    struct node *np;
-    struct weak_focus *wfp;
-    struct strong_focus *sfp;
-    struct semi_elementary *sep;
-    struct degenerate *dp;
-
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
-         sp = sp->next_saddle)
-        plotPoint(sp);
-    for (np = g_VFResults.first_node_point_; np != nullptr; np = np->next_node)
-        plotPoint(np);
-    for (wfp = g_VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
-        plotPoint(wfp);
-    for (sfp = g_VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
-        plotPoint(sfp);
-    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
-        plotPoint(sep);
-    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
-        plotPoint(dp);
-}
-
-void P4WinSphere::plotPointSeparatrices(struct semi_elementary *p)
-{
-    struct sep *separatrice;
-
-    for (separatrice = p->separatrices; separatrice != nullptr;
-         separatrice = separatrice->next_sep)
-        draw_sep(this, separatrice->first_sep_point);
-}
-
-void P4WinSphere::plotPointSeparatrices(struct saddle *p)
-{
-    struct sep *separatrice;
-
-    for (separatrice = p->separatrices; separatrice != nullptr;
-         separatrice = separatrice->next_sep)
-        draw_sep(this, separatrice->first_sep_point);
-}
-
-void P4WinSphere::plotPointSeparatrices(struct degenerate *p)
-{
-    struct blow_up_points *blow_up;
-
-    for (blow_up = p->blow_up; blow_up != nullptr;
-         blow_up = blow_up->next_blow_up_point) {
-        draw_sep(this, blow_up->first_sep_point);
+    for (auto vf : g_VFResults.vf_) {
+        for (auto sp : vf.saddlePoints_)
+            plotPoint(sp);
+        for (auto np : vf.nodePoints_)
+            plotPoint(np);
+        for (auto wfp : vf.wfPoints_)
+            plotPoint(wfp);
+        for (auto sfp : vf.sfPoints_)
+            plotPoint(sfp);
+        for (auto sep : vf.sePoints_)
+            plotPoint(sep);
+        for (auto dp : vf.dePoints_)
+            plotPoints(dp);
     }
+}
+
+void P4WinSphere::plotPointSeparatrices(
+    const p4singularities::semi_elementary &p)
+{
+    for (auto it : p.separatrice)
+        draw_sep(this, it.sep_points);
+}
+
+void P4WinSphere::plotPointSeparatrices(const p4singularities::saddle &p)
+{
+    for (auto it : p.separatrices)
+        draw_sep(this, it.sep_points);
+}
+
+void P4WinSphere::plotPointSeparatrices(const p4singularities::degenerate &p)
+{
+    for (auto it : p.blow_up)
+        draw_sep(this, it.sep);
 }
 
 void P4WinSphere::plotSeparatrices()
 {
-    struct saddle *sp;
-    struct semi_elementary *sep;
-    struct degenerate *dp;
-
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
-         sp = sp->next_saddle)
-        plotPointSeparatrices(sp);
-    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
-        plotPointSeparatrices(sep);
-    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
-        plotPointSeparatrices(dp);
+    for (auto vf : g_VFResults.vf_) {
+        for (auto sp : vf.saddlePoints_)
+            plotPointSeparatrices(sp);
+        for (auto sep : vf.sePoints_)
+            plotPointSeparatrices(sep);
+        for (auto dp : vf.dePoints_)
+            plotPointSeparatrices(dp);
+    }
 }
 
 void P4WinSphere::plotGcf()
@@ -1346,6 +1467,7 @@ void P4WinSphere::plotGcf()
     draw_gcf(this, g_VFResults.gcf_points_, CSING, 1);
 }
 
+// FIXME
 void P4WinSphere::plotCurve()
 {
     std::vector<curves>::const_iterator it;
@@ -1354,7 +1476,7 @@ void P4WinSphere::plotCurve()
         draw_curve(this, it->points, CCURV, 1);
     }
 }
-
+// FIXME per que el nom es diferent?
 void P4WinSphere::drawIsoclines()
 {
     std::vector<isoclines>::const_iterator it;
@@ -1368,24 +1490,19 @@ void P4WinSphere::drawIsoclines()
 //                          PLOT TOOLS
 // -----------------------------------------------------------------------
 
-P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
-                                         double b, bool dotted, double resa,
-                                         double resb)
+std::vector<P4POLYLINES> P4WinSphere::produceEllipse(double cx, double cy,
+                                                     double a, double b,
+                                                     bool dotted, double resa,
+                                                     double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output
     // is stored in a list of points that is dynamically allocated.
 
-    double theta, t1, t2, e, R, x, y, c, prevx, prevy;
-    bool d;
-    bool doton;
-    int dotcount;
-    P4POLYLINES *first;
-    P4POLYLINES *last;
-
-    prevx = prevy = 0;
-    dotcount = 0;
-    first = nullptr;
-    last = nullptr;
+    double theta{0}, t1, t2, e, R, x, y, c, prevx{0}, prevy{0};
+    bool d{false};
+    bool doton{true};
+    int dotcount{0};
+    std::vector<P4POLYLINES> result;
 
     R = (resa < resb) ? resa : resb;
     if (R < 1.0)
@@ -1394,24 +1511,12 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
     if (R * sin(e) > 1.0)
         e = asin(1.0 / R);
 
-    theta = 0;
-
-    d = false;
-    doton = true;
-
-    //  FILE * fp;
-    //  fp = fopen( "C:\\test.txt", "wt" );
-
     while (theta < TWOPI) {
-        //        fprintf( fp, "%8.5g\n", (float)theta );
-        //        fflush(fp);
         c = (x0_ - cx) / a;
         if (c > -1.0 && c < 1.0) {
             t1 = acos(c);
             t2 = TWOPI - t1;
             if (theta >= t1 && theta < t2) {
-                //                fprintf( fp, "A EXCL [%8.5g %8.5g]\n",
-                //                (float)t1, (float)t2 );
                 theta = t2 + e / 4;
                 d = false;
                 continue;
@@ -1422,15 +1527,11 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             t1 = acos(c);
             t2 = TWOPI - t1;
             if (theta < t1) {
-                //                fprintf( fp, "B EXCL [-infinity %8.5g]\n",
-                //                (float)t1 );
                 theta = t1 + e / 4;
                 d = false;
                 continue;
             }
             if (theta >= t2) {
-                //                fprintf( fp, "C EXCL [%8.5g, infinity]\n",
-                //                (float)t2 );
                 theta = TWOPI + e / 4;
                 d = false;
                 break;
@@ -1444,23 +1545,17 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
                 t2 = t1 + TWOPI;
                 t1 = PI - t1;
                 if (theta >= t1 && theta < t2) {
-                    //                    fprintf( fp, "D EXCL [%8.5g %8.5g]\n",
-                    //                    (float)t1, (float)t2 );
                     theta = t2 + e / 4;
                     d = false;
                     continue;
                 }
             } else {
                 if (theta < t1) {
-                    //                    fprintf( fp, "E EXCL [-infinity
-                    //                    %8.5g]\n", (float)t1 );
                     theta = t1 + e / 4;
                     d = false;
                     continue;
                 }
                 if (theta >= t2) {
-                    //                    fprintf( fp, "F EXCL [%8.5g,
-                    //                    infinity]\n",  (float)t2 );
                     theta = TWOPI + e / 4;
                     d = false;
                     break;
@@ -1475,23 +1570,17 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
                 t2 = t1 + TWOPI;
                 t1 = PI - t1;
                 if (theta < t1) {
-                    //                    fprintf( fp, "G EXCL [-infinity
-                    //                    %8.5g]\n", (float)t1 );
                     theta = t1 + e / 4;
                     d = false;
                     continue;
                 }
                 if (theta >= t2) {
-                    //                    fprintf( fp, "H EXCL [%8.5g,
-                    //                    infinity]\n",  (float)t2 );
                     theta = TWOPI;
                     d = false;
                     break;
                 }
             } else {
                 if (theta >= t1 && theta < t2) {
-                    //                    fprintf( fp, "I EXCL [%8.5g %8.5g]\n",
-                    //                    (float)t1, (float)t2 );
                     theta = t2 + e / 4;
                     d = false;
                     continue;
@@ -1521,19 +1610,8 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             }
         } else {
             if (doton) {
-                if (first == nullptr) {
-                    last = first = new P4POLYLINES;
-                    last->next = nullptr;
-                } else {
-                    last->next = new P4POLYLINES;
-                    last = last->next;
-                    last->next = nullptr;
-                }
-
-                last->x1 = prevx;
-                last->y1 = prevy;
-                last->x2 = x;
-                last->y2 = y;
+                P4POLYLINES next{prevx, prevy, x, y};
+                result.push_back(std::move(next));
 
                 prevx = x;
                 prevy = y;
@@ -1545,49 +1623,36 @@ P4POLYLINES *P4WinSphere::produceEllipse(double cx, double cy, double a,
             }
         }
     }
-    //  fclose(fp);
-    return first;
+    return result;
 }
 
 void P4WinSphere::plotPoincareSphere()
 {
-    int color;
-    P4POLYLINES *p;
-
-    p = circleAtInfinity_;
-    color = g_VFResults.singinf_ ? CSING : CLINEATINFINITY;
+    int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    while (p != nullptr) {
-        staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                 coWinY(p->y2));
-        p = p->next;
+    for (auto it : circleAtInfinity_) {
+        staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
+                                 coWinY(it.y2));
     }
 }
 
 void P4WinSphere::plotPoincareLyapunovSphere()
 {
-    int color;
-    P4POLYLINES *p;
-
-    p = circleAtInfinity_;
-    color = g_VFResults.singinf_ ? CSING : CLINEATINFINITY;
+    int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    while (p != nullptr) {
-        staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                 coWinY(p->y2));
-        p = p->next;
+    for (auto it : circleAtInfinity_) {
+        staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
+                                 coWinY(it.y2));
     }
 
-    p = plCircle_;
     color = CLINEATINFINITY;
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    while (p != nullptr) {
-        staticPainter_->drawLine(coWinX(p->x1), coWinY(p->y1), coWinX(p->x2),
-                                 coWinY(p->y2));
-        p = p->next;
+    for (it : plCircle_) {
+        staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
+                                 coWinY(it.y2));
     }
     return;
 }
@@ -1622,7 +1687,7 @@ void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
 {
     int wx1, wy1, wx2, wy2;
 
-    if (staticPainter_ != nullptr) {
+    if (staticPainter_) {
         if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
             wx1 = coWinX(x1);
             wy1 = coWinY(y1);
@@ -1751,13 +1816,12 @@ void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
 
 void P4WinSphere::drawPoint(double x, double y, int color)
 {
-    int _x, _y;
-    if (staticPainter_ != nullptr) {
+    if (staticPainter_) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
         staticPainter_->setPen(QXFIGCOLOR(color));
-        _x = coWinX(x);
-        _y = coWinY(y);
+        auto _x = coWinX(x);
+        auto _y = coWinY(y);
 
         if (paintedXMin_ > _x)
             paintedXMin_ = _x;

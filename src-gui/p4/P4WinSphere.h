@@ -94,15 +94,15 @@ class P4WinSphere : public QWidget
 
     void signalEvaluating();
     void signalChanged();
-    void plotPoint(saddle *);
-    void plotPoint(node *);
-    void plotPoint(semi_elementary *);
-    void plotPoint(weak_focus *);
-    void plotPoint(strong_focus *);
-    void plotPoint(degenerate *);
-    void plotPointSeparatrices(semi_elementary *p);
-    void plotPointSeparatrices(saddle *p);
-    void plotPointSeparatrices(degenerate *p);
+    void plotPoint(const p4singularities::saddle &);
+    void plotPoint(const p4singularities::node &);
+    void plotPoint(const p4singularities::semi_elementary &);
+    void plotPoint(const p4singularities::weak_focus &);
+    void plotPoint(const p4singularities::strong_focus &);
+    void plotPoint(const p4singularities::degenerate &);
+    void plotPointSeparatrices(const p4singularities::semi_elementary &);
+    void plotPointSeparatrices(const p4singularities::saddle &);
+    void plotPointSeparatrices(const p4singularities::degenerate &);
     void plotPoints();
     void plotSeparatrices();
     void plotGcf();
@@ -135,7 +135,7 @@ class P4WinSphere : public QWidget
                                             double b, bool dotted, double resa,
                                             double resb);
 
-    void selectNearestSingularity(QPoint winpos);
+    void selectNearestSingularity(const QPoint &winpos);
 
     void prepareDrawing();
     void drawPoint(double x, double y, int color);
