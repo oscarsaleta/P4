@@ -38,7 +38,7 @@ P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *parent,
 
     setAttribute(Qt::WA_PaintOnScreen);
 
-    setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW); // minimum size
+    setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW);  // minimum size
     w_ = width();
     h_ = height();
     idealh_ = w_;
@@ -231,7 +231,7 @@ void P4WinInputSphere::adjustToNewSize()
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
         paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-        staticPainter_.reset(&paint); // TODO works?
+        staticPainter_.reset(&paint);  // TODO works?
 
         if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -772,7 +772,7 @@ void P4WinInputSphere::plotPoincareSphere()
     int color{CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    for (auto it : circleAtInfinity_)
+    for (auto const &it : circleAtInfinity_)
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
 }
@@ -781,11 +781,11 @@ void P4WinInputSphere::plotPoincareLyapunovSphere()
 {
     staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-    for (auto it : circleAtInfinity_)
+    for (auto const &it : circleAtInfinity_)
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
 
-    for (auto it : plCircle_)
+    for (auto const &it : plCircle_)
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
 }
@@ -810,9 +810,11 @@ void P4WinInputSphere::plotLineAtInfinity()
     }
 }
 
-std::vector<P4POLYLINES>
-P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
-                                 bool dotted, double resa, double resb)
+std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
+                                                          double a, double b,
+                                                          bool dotted,
+                                                          double resa,
+                                                          double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output is
     // stored in a list of points that is dynamically allocated.
@@ -828,7 +830,7 @@ P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
     std::vector<P4POLYLINES> result;
 
     if (R < 1.0)
-        R = 1.0; // protection
+        R = 1.0;  // protection
     e = 2 * acos(1.0 - 0.5 / R);
     if (R * sin(e) > 1.0)
         e = asin(1.0 / R);
@@ -958,7 +960,7 @@ void P4WinInputSphere::plotCurve(p4curves::curves crv, int index)
     double pcoord[3];
     std::vector<p4orbits::orbits_points> &sep{crv.points};
 
-    for (auto it : sep) {
+    for (auto const &it : sep) {
         if (it.dashes)
             plotLine(pcoord, it.pcoord, it.color);
         else
