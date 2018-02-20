@@ -24,25 +24,16 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4VFStudy::P4VFStudy(P4ParentStudy *parent) : parent_(parent)
+P4VFStudy::P4VFStudy(std::shared_ptr<P4ParentStudy> parent)
+    : parent_{parent}, singinf_{false}, dir_vec_field_{1}
 {
-    // initialize others
-    singinf_ = false;
-    dir_vec_field_ = 1;
 }
-
-// -----------------------------------------------------------------------
-//          DESTRUCTOR
-// -----------------------------------------------------------------------
-P4VFStudy::~P4VFStudy() { reset(); }
 
 // -----------------------------------------------------------------------
 //          P4VFStudy::reset
 // -----------------------------------------------------------------------
 void P4VFStudy::reset()
 {
-    parent_ = nullptr;
-
     // Delete Vector Field
     f_vec_field_0_.clear();
     f_vec_field_1_.clear();
@@ -1025,7 +1016,7 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
 //          DUMP FUNCTIONS
 // -----------------------------------------------------------------------
 
-void dumpSeparatrices(QTextEdit &m, std::vector<p4blowup::sep> separ,
+void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
                       int margin)
 {
     QString s;
@@ -1039,7 +1030,7 @@ void dumpSeparatrices(QTextEdit &m, std::vector<p4blowup::sep> separ,
         return;
     }
 
-    for (auto it : separ) {
+    for (auto const &it : separ) {
         switch (it.type) {
         case STYPE_STABLE:
             stype = "stable         ";
@@ -1069,13 +1060,14 @@ void dumpSeparatrices(QTextEdit &m, std::vector<p4blowup::sep> separ,
 }
 
 // dump saddle singularities
-void dumpSingularities(QTextEdit &m, std::vector<p4singularities::saddle> p,
+void dumpSingularities(QTextEdit &m,
+                       const std::vector<p4singularities::saddle> &p,
                        bool longversion)
 {
     const char *chart;
     QString s;
 
-    for (auto it : p) {
+    for (auto const &it : p) {
         switch (it.chart) {
         case CHART_R2:
             chart = "R2";
@@ -1117,13 +1109,14 @@ void dumpSingularities(QTextEdit &m, std::vector<p4singularities::saddle> p,
 }
 
 // dump degenerate singularities
-void dumpSingularities(QTextEdit &m, std::vector<p4singularities::degenerate> p,
+void dumpSingularities(QTextEdit &m,
+                       const std::vector<p4singularities::degenerate> &p,
                        bool longversion)
 {
     const char *chart;
     QString s;
 
-    for (auto it : p) {
+    for (auto const &it : p) {
         switch (it.chart) {
         case CHART_R2:
             chart = "R2";
@@ -1156,14 +1149,14 @@ void dumpSingularities(QTextEdit &m, std::vector<p4singularities::degenerate> p,
 
 // dump strong focus singularities
 void dumpSingularities(QTextEdit &m,
-                       std::vector<p4singularities::strong_focus> p,
+                       const std::vector<p4singularities::strong_focus> &p,
                        bool longversion)
 {
     const char *chart;
     QString s;
     QByteArray ss;
 
-    for (auto it : p) {
+    for (auto const &it : p) {
         switch (it.chart) {
         case CHART_R2:
             chart = "R2";
@@ -1202,13 +1195,14 @@ void dumpSingularities(QTextEdit &m,
 }
 
 // dump weak focus singularities
-void dumpSingularities(QTextEdit &m, std::vector<p4singularities::weak_focus> p,
+void dumpSingularities(QTextEdit &m,
+                       const std::vector<p4singularities::weak_focus> &p,
                        bool longversion)
 {
     const char *chart;
     QString s;
 
-    for (auto it : p) {
+    for (auto const &it : p) {
         switch (it.chart) {
         case CHART_R2:
             chart = "R2";
@@ -1239,14 +1233,15 @@ void dumpSingularities(QTextEdit &m, std::vector<p4singularities::weak_focus> p,
 }
 
 // dump node singularities
-void dumpSingularities(QTextEdit &m, std::vector<p4singularities::node> p,
+void dumpSingularities(QTextEdit &m,
+                       const std::vector<p4singularities::node> &p,
                        bool longversion)
 {
     const char *chart;
     QString s;
     QByteArray ss;
 
-    for (auto it : p) {
+    for (auto const &it : p) {
         switch (it.chart) {
         case CHART_R2:
             chart = "R2";
@@ -1286,14 +1281,14 @@ void dumpSingularities(QTextEdit &m, std::vector<p4singularities::node> p,
 
 // dump semi elementary singularities
 void dumpSingularities(QTextEdit &m,
-                       std::vector<p4singularities::semi_elementary> p,
+                       const std::vector<p4singularities::semi_elementary> &p,
                        bool longversion)
 {
     const char *chart;
     QString s;
     QByteArray ss;
 
-    for (auto it : p) {
+    for (auto const &it : p) {
         switch (it.chart) {
         case CHART_R2:
             chart = "R2";
@@ -1342,8 +1337,8 @@ void P4VFStudy::dump(QTextEdit &m)
 
     m.append(s.sprintf("General Info"));
     m.append(s.sprintf("------------"));
-    m.append(s.sprintf("  Line at infinity singular? %d", singinf));
-    m.append(s.sprintf("  Direction of vector field: %d", dir_vec_field));
+    m.append(s.sprintf("  Line at infinity singular? %d", singinf_));
+    m.append(s.sprintf("  Direction of vector field: %d", dir_vec_field_));
     m.append(s.sprintf(" "));
     m.append(s.sprintf("Vector Fields"));
     m.append(s.sprintf("-------------"));

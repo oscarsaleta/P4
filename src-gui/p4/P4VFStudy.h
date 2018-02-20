@@ -17,19 +17,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef P4VFSTUDY_H
-#define P4VFSTUDY_H
+#pragma once
 
 #include "file_tab.h"
 
 class P4VFStudy : public QObject
 {
-  public:
+   public:
     // Constructor and destructor
-    P4VFStudy(P4ParentStudy *parent = nullptr); // constructor
-    ~P4VFStudy();                               // destructor
+    P4VFStudy(std::shared_ptr<P4ParentStudy> parent = nullptr);  // constructor
 
-    P4ParentStudy *parent_;
+    std::shared_ptr<P4ParentStudy> parent_;
 
     // general information
 
@@ -69,19 +67,18 @@ class P4VFStudy : public QObject
     std::vector<p4polynom::term3> gcf_C_;
     std::vector<p4orbits::orbits_points> gcf_points_;
 
-    
     // isoclines
-    std::vector<isoclines> isocline_vector_;
+    std::vector<p4curves::isoclines> isocline_vector_;
 
     /* CLASS METHODS */
     void reset();
-    
+
     // reading of the Maple/Reduce results
     bool readTables(QString basename);
 
-    bool readGCF(FILE *fp); //TODO
-    bool readCurve(QString basename); //TODO
-    bool readIsoclines(QString basename); //TODO
+    bool readGCF(FILE *fp);                // TODO
+    bool readCurve(QString basename);      // TODO
+    bool readIsoclines(QString basename);  // TODO
 
     bool readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
                          std::vector<p4polynom::term2> &vf1);
@@ -101,29 +98,30 @@ class P4VFStudy : public QObject
     bool readTransformations(
         FILE *fp, std::vector<p4singularities::transformations> trans, int n);
 
-    void setupCoordinateTransformations(void); // see math_p4.cpp
+    void setupCoordinateTransformations(void);  // see math_p4.cpp
 
     void dump(QTextEdit &m);
 
-  private:
-    void dumpSeparatrices(QTextEdit &m, std::vector<p4singularities::sep> separ,
+   private:
+    void dumpSeparatrices(QTextEdit &m,
+                          const std::vector<p4singularities::sep> &separ,
                           int margin);
-    void dumpSingularities(QTextEdit &m, std::vector<p4singularities::saddle> p,
+    void dumpSingularities(QTextEdit &m,
+                           const std::vector<p4singularities::saddle> &p,
                            bool longversion);
     void dumpSingularities(QTextEdit &m,
-                           std::vector<p4singularities::degenerate> p,
+                           const std::vector<p4singularities::degenerate> &p,
                            bool longversion);
     void dumpSingularities(QTextEdit &m,
-                           std::vector<p4singularities::strong_focus> p,
+                           const std::vector<p4singularities::strong_focus> &p,
                            bool longversion);
     void dumpSingularities(QTextEdit &m,
-                           std::vector<p4singularities::weak_focus> p,
-                           bool longversion);
-    void dumpSingularities(QTextEdit &m, std::vector<p4singularities::node> p,
+                           const std::vector<p4singularities::weak_focus> &p,
                            bool longversion);
     void dumpSingularities(QTextEdit &m,
-                           std::vector < p4singularities::semi_elementary p,
+                           const std::vector<p4singularities::node> &p,
                            bool longversion);
+    void dumpSingularities(
+        QTextEdit &m, const std::vector<p4singularities::semi_elementary> &p,
+        bool longversion);
 };
-
-#endif /* P4VFSTUDY_H */
