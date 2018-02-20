@@ -30,7 +30,7 @@
 // This uses the pixel-coordinate system, i.e. any transformations should
 // be done beforehand.
 
-void win_plot_saddle(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_saddle(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CSADDLE));
     p->setBrush(QXFIGCOLOR(CSADDLE));
@@ -38,7 +38,7 @@ void win_plot_saddle(std::unique_ptr<QPainter> p, int x, int y)
                 SYMBOLHEIGHT);
 }
 
-void win_plot_virtualsaddle(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualsaddle(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -48,7 +48,7 @@ void win_plot_virtualsaddle(std::unique_ptr<QPainter> p, int x, int y)
                 SYMBOLHEIGHT);
 }
 
-void win_plot_stablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_stablenode(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CNODE_S));
     p->setBrush(QXFIGCOLOR(CNODE_S));
@@ -56,7 +56,7 @@ void win_plot_stablenode(std::unique_ptr<QPainter> p, int x, int y)
                 SYMBOLHEIGHT);
 }
 
-void win_plot_virtualstablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualstablenode(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -66,7 +66,7 @@ void win_plot_virtualstablenode(std::unique_ptr<QPainter> p, int x, int y)
                 SYMBOLHEIGHT);
 }
 
-void win_plot_unstablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_unstablenode(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CNODE_U));
     p->setBrush(QXFIGCOLOR(CNODE_U));
@@ -74,7 +74,7 @@ void win_plot_unstablenode(std::unique_ptr<QPainter> p, int x, int y)
                 SYMBOLHEIGHT);
 }
 
-void win_plot_virtualunstablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualunstablenode(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -84,7 +84,7 @@ void win_plot_virtualunstablenode(std::unique_ptr<QPainter> p, int x, int y)
                 SYMBOLHEIGHT);
 }
 
-void win_plot_weakfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_weakfocus(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CWEAK_FOCUS));
     p->setBrush(QXFIGCOLOR(CWEAK_FOCUS));
@@ -95,7 +95,7 @@ void win_plot_weakfocus(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualweakfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualweakfocus(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -108,7 +108,7 @@ void win_plot_virtualweakfocus(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_stableweakfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_stableweakfocus(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CWEAK_FOCUS_S));
     p->setBrush(QXFIGCOLOR(CWEAK_FOCUS_S));
@@ -119,7 +119,7 @@ void win_plot_stableweakfocus(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualunstableweakfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -132,7 +132,7 @@ void win_plot_virtualunstableweakfocus(std::unique_ptr<QPainter> p, int x, int y
     p->drawPolygon(qpa);
 }
 
-void win_plot_unstableweakfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_unstableweakfocus(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
     p->setBrush(QXFIGCOLOR(CWEAK_FOCUS_U));
@@ -143,7 +143,7 @@ void win_plot_unstableweakfocus(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_center(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_center(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CCENTER));
     p->setBrush(QXFIGCOLOR(CCENTER));
@@ -154,7 +154,7 @@ void win_plot_center(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualcenter(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualcenter(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -167,7 +167,7 @@ void win_plot_virtualcenter(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_stablestrongfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_stablestrongfocus(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_S));
     p->setBrush(QXFIGCOLOR(CSTRONG_FOCUS_S));
@@ -178,7 +178,7 @@ void win_plot_stablestrongfocus(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualstablestrongfocus(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -191,7 +191,7 @@ void win_plot_virtualstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y
     p->drawPolygon(qpa);
 }
 
-void win_plot_unstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_unstablestrongfocus(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_U));
     p->setBrush(QXFIGCOLOR(CSTRONG_FOCUS_U));
@@ -202,7 +202,7 @@ void win_plot_unstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualunstablestrongfocus(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualunstablestrongfocus(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -215,7 +215,7 @@ void win_plot_virtualunstablestrongfocus(std::unique_ptr<QPainter> p, int x, int
     p->drawPolygon(qpa);
 }
 
-void win_plot_sesaddlenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_sesaddlenode(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CSADDLE_NODE));
@@ -227,7 +227,7 @@ void win_plot_sesaddlenode(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualsesaddlenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualsesaddlenode(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -241,7 +241,7 @@ void win_plot_virtualsesaddlenode(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_sestablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_sestablenode(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CNODE_S));
@@ -253,7 +253,7 @@ void win_plot_sestablenode(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualsestablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualsestablenode(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -267,7 +267,7 @@ void win_plot_virtualsestablenode(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_seunstablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_seunstablenode(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CNODE_U));
@@ -279,7 +279,7 @@ void win_plot_seunstablenode(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualseunstablenode(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualseunstablenode(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -293,7 +293,7 @@ void win_plot_virtualseunstablenode(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_sesaddle(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_sesaddle(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CSADDLE));
@@ -305,7 +305,7 @@ void win_plot_sesaddle(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualsesaddle(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualsesaddle(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -319,7 +319,7 @@ void win_plot_virtualsesaddle(std::unique_ptr<QPainter> p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_degen(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_degen(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CDEGEN));
     p->drawLine(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2,
@@ -328,7 +328,7 @@ void win_plot_degen(std::unique_ptr<QPainter> p, int x, int y)
                 y + SYMBOLHEIGHT / 2);
 }
 
-void win_plot_virtualdegen(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_virtualdegen(QPainter *p, int x, int y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -339,7 +339,7 @@ void win_plot_virtualdegen(std::unique_ptr<QPainter> p, int x, int y)
                 y + SYMBOLHEIGHT / 3);
 }
 
-void win_plot_coinciding(std::unique_ptr<QPainter> p, int x, int y)
+void win_plot_coinciding(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CDEGEN));
     p->drawLine(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2,
