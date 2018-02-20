@@ -46,7 +46,7 @@ void (*select_next_sep)(std::shared_ptr<P4WinSphere>) = nullptr;
 // of this common factor to determine the plot color of the separatrice.
 //
 // The point y is a point in one of the charts.
-int findSepColor2(std::vector<p4polynom::term2> f, int type, double y[2])
+int findSepColor2(const std::vector<p4polynom::term2> &f, int type, double y[2])
 {
     int color;
 
@@ -90,7 +90,7 @@ int findSepColor2(std::vector<p4polynom::term2> f, int type, double y[2])
     return (color);
 }
 
-int findSepColor3(std::vector<p4polynom::term3> f, int type, double y[2])
+int findSepColor3(const std::vector<p4polynom::term3> &f, int type, double y[2])
 {
     int color;
 
@@ -457,7 +457,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
 // result is valid before operating on it.
 //
 // The vector field vfK need not be prepared
-std::vector<p4orbits::orbits_points> integrate_sep(
+std::optional<std::vector<p4orbits::orbits_points>> integrate_sep(
     std::shared_ptr<P4WinSphere> spherewnd, double pcoord[3], double step,
     int dir, int type, int points_to_int)
 {
@@ -475,13 +475,13 @@ std::vector<p4orbits::orbits_points> integrate_sep(
     vector field
     */
     if (!prepareVfForIntegration(pcoord))
-        return std::vector<p4orbits::orbits_points>();
+        return {};
 
     if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
         MATHFUNC(change_dir)(pcoord))
         hhi = -g_VFResults.config_step_ * dir;
     else
-        hhi = (double)dir * step;
+        hhi = static_cast<double>(dir) * step;
 
     copy_x_into_y(pcoord, pcoord2);
     for (i = 1; i <= points_to_int; ++i) {
@@ -504,7 +504,7 @@ std::vector<p4orbits::orbits_points> integrate_sep(
             (*plot_p)(spherewnd, pcoord, color);
         copy_x_into_y(pcoord, pcoord2);
 
-        orbit_result.push_back(last_orbit);
+        orbit_result.push_back(std::move(last_orbit));
 
         if (!prepareVfForIntegration(pcoord))
             break;
@@ -527,7 +527,7 @@ std::vector<p4orbits::orbits_points> integrate_sep(
 //
 // More precisely we find a t such that the Norm2^2 lies in a 1% - error
 // interval from epsilon^2
-static double findInitialSepPoint(std::vector<p4polynom::term1> sep,
+static double findInitialSepPoint(const std::vector<p4polynom::term1> &sep,
                                   double epsilon, int dir)
 {
     double t, t1, t2, r0, a, b;
@@ -600,10 +600,10 @@ static double findInitialSepPoint(std::vector<p4polynom::term1> sep,
 // At the end, a normal integration cycle is added.
 //
 // The vector field vfK needs not be prepared.
-std::vector<p4orbits::orbits_points> plot_separatrice(
+std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
     std::shared_ptr<P4WinSphere> spherewnd, double x0, double y0, double a11,
-    double a12, double a21, double a22, double epsilon, p4blowup::sep sep1,
-    short int chart, int vfindex)
+    double a12, double a21, double a22, double epsilon,
+    const p4blowup::sep &sep1, short int chart, int vfindex)
 {
     double t{0.0}, h, y;
     double pcoord[3], pcoord2[3], point[2];
@@ -630,9 +630,7 @@ std::vector<p4orbits::orbits_points> plot_separatrice(
         break;
     }
     if (!prepareVfForIntegration(pcoord))
-        // TODO: una altra forma seria passar un vector per referència i que la
-        // funció retorni bool, true si surt bé i false si hi ha algun error
-        return std::vector<p4orbits::orbits_points>{};
+        return {};
 
     /* if we have a line of singularities at infinity then we have to change
     the chart if the chart is V1 or V2 */
@@ -706,6 +704,8 @@ std::vector<p4orbits::orbits_points> plot_separatrice(
     new_orbit.color = color;
     new_orbit.dashes = 0;
     new_orbit.dir = dir;
+    new_orbit.type = type;
+    orbit_result.push_back(std::move(new_orbit));
 
     // P5 addition: check if we can start with this separatrix
 
@@ -742,11 +742,9 @@ std::vector<p4orbits::orbits_points> plot_separatrice(
         break;
     }
     if (g_ThisVF->getVFIndex_sphere(pcoord2) != vfindex)
-        return std::vector<p4orbits::orbits_points>{};
+        return {};
 
     // end of P5 addition
-
-    orbit_result.push_back(new_orbit);
 
     copy_x_into_y(pcoord, pcoord2);
     for (i = 0; i <= 99; i++) {
@@ -881,15 +879,15 @@ std::vector<p4orbits::orbits_points> plot_separatrice(
             (*plot_p)(spherewnd, pcoord, color);
         copy_x_into_y(pcoord, pcoord2);
 
-        orbit_result.push_back(new_orbit);
+        orbit_result.push_back(std::move(new_orbit));
 
         if (!prepok)
             break;
     }
 
-    auto lastpoints =
-        integrate_sep(spherewnd, pcoord, g_VFResults.config_step_,
-                      new_orbit.dir, type, g_VFResults.config_intpoints_);
+    auto lastpoints = integrate_sep(spherewnd, pcoord, g_VFResults.config_step_,
+                                    orbit_result.back().dir, type,
+                                    g_VFResults.config_intpoints_);
     if (!lastpoints.empty())
         orbit_result.insert(std::end(orbit_result), std::begin(lastpoints),
                             std::end(lastpoints));
@@ -906,10 +904,9 @@ void plot_all_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     if (!g_VFResults.vf_.empty()) {
         for (int i = 0; i < g_ThisVF->numVF_; i++) {
-            plot_all_saddle_sep(spherewnd, i,
-                                g_VFResults.vf_[i].first_saddle_point_);
-            plot_all_se_sep(spherewnd, i, g_VFResults.vf_[i].first_se_point_);
-            plot_all_de_sep(spherewnd, i, g_VFResults.vf_[i].first_de_point_);
+            plot_all_saddle_sep(spherewnd, i, g_VFResults.vf_[i].saddlePoints_);
+            plot_all_se_sep(spherewnd, i, g_VFResults.vf_[i].sePoints_);
+            plot_all_de_sep(spherewnd, i, g_VFResults.vf_[i].dePoints_);
         }
     }
 }
@@ -920,7 +917,7 @@ void plot_all_sep(std::shared_ptr<P4WinSphere> spherewnd)
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in the color according to the type and stability.
 void draw_sep(std::shared_ptr<P4WinSphere> spherewnd,
-              std::vector<p4orbits::orbits_points> sep)
+              const std::vector<p4orbits::orbits_points> &sep)
 {
     double pcoord[3];
 
@@ -941,7 +938,8 @@ void draw_sep(std::shared_ptr<P4WinSphere> spherewnd,
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in a specified color.
 void draw_selected_sep(std::shared_ptr<P4WinSphere> spherewnd,
-                       std::vector<p4orbits::orbits_points> sep, int color)
+                       const std::vector<p4orbits::orbits_points> &sep,
+                       int color)
 {
     double pcoord[3];
 

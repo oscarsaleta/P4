@@ -20,6 +20,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 class P4WinSphere;
@@ -36,12 +37,15 @@ extern void (*select_next_sep)(std::shared_ptr<P4WinSphere>);
 
 void plot_all_sep(std::shared_ptr<P4WinSphere> spherewnd);
 void draw_sep(std::shared_ptr<P4WinSphere> spherewnd,
-              std::vector<p4orbits::orbits_points> sep);
+              const std::vector<p4orbits::orbits_points> &sep);
 void draw_selected_sep(std::shared_ptr<P4WinSphere> spherewnd,
-                       std::vector<p4orbits::orbits_points> sep, int color);
+                       const std::vector<p4orbits::orbits_points> &sep,
+                       int color);
 
-int findSepColor2(std::vector<p4polynom::term2> f, int type, double y[2]);
-int findSepColor3(std::vector<p4polynom::term3> f, int type, double y[2]);
+int findSepColor2(const std::vector<p4polynom::term2> &f, int type,
+                  double y[2]);
+int findSepColor3(const std::vector<p4polynom::term3> &f, int type,
+                  double y[2]);
 
 void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                             double &hhi, int &type, int &color, int &dashes,
@@ -49,13 +53,14 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
 void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
                             double &hhi, int &type, int &color, int &dashes,
                             int &dir, double h_min, double h_max);
-std::vector<p4orbits::orbits_points> integrate_sep(
+
+std::optional<std::vector<p4orbits::orbits_points>> integrate_sep(
     std::shared_ptr<P4WinSphere> spherewnd, double pcoord[3], double step,
     int dir, int type, int points_to_int);
 
 int change_type(int type);
 
-std::vector<p4orbits::orbits_points> plot_separatrice(
+std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
     std::shared_ptr<P4WinSphere> spherewnd, double x0, double y0, double a11,
-    double a12, double a21, double a22, double epsilon, p4blowup::sep sep1,
-    short int chart);
+    double a12, double a21, double a22, double epsilon,
+    const p4blowup::sep &sep1, short int chart);
