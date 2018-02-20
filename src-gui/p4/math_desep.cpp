@@ -558,7 +558,7 @@ void change_epsilon_de(std::shared_ptr<P4WinSphere> spherewnd, double epsilon)
 void start_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 {
     int deid{g_VFResults.selectedDeSepIndex_};
-    auto &de_sep{g_VFResults.deSeps_[selectedDeSepIndex_]};
+    auto &de_sep = g_VFResults.deSeps_[selectedDeSepIndex_];
     std::vector<p4orbits::orbits_points> points;
     double p[3];
 

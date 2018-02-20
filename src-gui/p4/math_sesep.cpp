@@ -82,7 +82,7 @@ void cont_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
 
     // append computed points to existing vector
     if (!nextpts.empty()) {
-        auto &seppts{g_VFResults.seps_[sepid].sep_points};
+        auto &seppts = g_VFResults.seps_[sepid].sep_points;
         seppts.insert(std::end(seppts), std::begin(nextpt), std::end(nextpt));
     }
 }
