@@ -60,12 +60,12 @@ int printColorTable(int color)
         return colorTableReverse[color];
 }
 
-static void P4Print_comment(QString s)
+static void p4Print_comment(QString s)
 {
     // do nothing
 }
 
-static void P4Print_print_saddle(double _x, double _y)
+static void p4Print_print_saddle(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -85,7 +85,7 @@ static void P4Print_print_saddle(double _x, double _y)
                                s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
-static void P4Print_virtualsaddle(double _x, double _y)
+static void p4Print_print_virtualsaddle(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -109,7 +109,7 @@ static void P4Print_virtualsaddle(double _x, double _y)
                                s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
-static void P4Print_print_stablenode(double _x, double _y)
+static void p4Print_print_stablenode(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -129,7 +129,7 @@ static void P4Print_print_stablenode(double _x, double _y)
                                s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
-static void P4Print_print_virtualstablenode(double _x, double _y)
+static void p4Print_print_virtualstablenode(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -153,7 +153,7 @@ static void P4Print_print_virtualstablenode(double _x, double _y)
                                s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
-static void P4Print_print_unstablenode(double _x, double _y)
+static void p4Print_print_unstablenode(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -173,7 +173,7 @@ static void P4Print_print_unstablenode(double _x, double _y)
                                s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
-static void P4Print_print_virtualunstablenode(double _x, double _y)
+static void p4Print_print_virtualunstablenode(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -197,7 +197,7 @@ static void P4Print_print_virtualunstablenode(double _x, double _y)
                                s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
 }
 
-static void P4Print_print_stableweakfocus(double _x, double _y)
+static void p4Print_print_stableweakfocus(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -221,7 +221,7 @@ static void P4Print_print_stableweakfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualstableweakfocus(double _x, double _y)
+static void p4Print_print_virtualstableweakfocus(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -248,7 +248,7 @@ static void P4Print_print_virtualstableweakfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_unstableweakfocus(double _x, double _y)
+static void p4Print_print_unstableweakfocus(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -271,7 +271,7 @@ static void P4Print_print_unstableweakfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualunstableweakfocus(double _x, double _y)
+static void p4Print_print_virtualunstableweakfocus(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -298,7 +298,7 @@ static void P4Print_print_virtualunstableweakfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_weakfocus(double _x, double _y)
+static void p4Print_print_weakfocus(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -321,7 +321,7 @@ static void P4Print_print_weakfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualweakfocus(double _x, double _y)
+static void p4Print_print_virtualweakfocus(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -348,7 +348,7 @@ static void P4Print_print_virtualweakfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_center(double _x, double _y)
+static void p4Print_print_center(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -371,7 +371,7 @@ static void P4Print_print_center(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualcenter(double _x, double _y)
+static void p4Print_print_virtualcenter(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -398,7 +398,7 @@ static void P4Print_print_virtualcenter(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_stablestrongfocus(double _x, double _y)
+static void p4Print_print_stablestrongfocus(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -421,7 +421,7 @@ static void P4Print_print_stablestrongfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualstablestrongfocus(double _x, double _y)
+static void p4Print_print_virtualstablestrongfocus(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -448,7 +448,7 @@ static void P4Print_print_virtualstablestrongfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_unstablestrongfocus(double _x, double _y)
+static void p4Print_print_unstablestrongfocus(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -471,7 +471,7 @@ static void P4Print_print_unstablestrongfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualunstablestrongfocus(double _x, double _y)
+static void p4Print_print_virtualunstablestrongfocus(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -498,7 +498,7 @@ static void P4Print_print_virtualunstablestrongfocus(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_sesaddle(double _x, double _y)
+static void p4Print_print_sesaddle(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -522,7 +522,7 @@ static void P4Print_print_sesaddle(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualsesaddle(double _x, double _y)
+static void p4Print_print_virtualsesaddle(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -550,7 +550,7 @@ static void P4Print_print_virtualsesaddle(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_sesaddlenode(double _x, double _y)
+static void p4Print_print_sesaddlenode(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -574,7 +574,7 @@ static void P4Print_print_sesaddlenode(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualsesaddlenode(double _x, double _y)
+static void p4Print_print_virtualsesaddlenode(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -602,7 +602,7 @@ static void P4Print_print_virtualsesaddlenode(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_sestablenode(double _x, double _y)
+static void p4Print_print_sestablenode(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -626,7 +626,7 @@ static void P4Print_print_sestablenode(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualsestablenode(double _x, double _y)
+static void p4Print_print_virtualsestablenode(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -654,7 +654,7 @@ static void P4Print_print_virtualsestablenode(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_seunstablenode(double _x, double _y)
+static void p4Print_print_seunstablenode(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -678,7 +678,7 @@ static void P4Print_print_seunstablenode(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_virtualseunstablenode(double _x, double _y)
+static void p4Print_print_virtualseunstablenode(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -706,7 +706,7 @@ static void P4Print_print_virtualseunstablenode(double _x, double _y)
     s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_degen(double _x, double _y)
+static void p4Print_print_degen(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -717,7 +717,7 @@ static void P4Print_print_degen(double _x, double _y)
     else
         color = printColorTable(CDEGEN);
 
-    QPen p = QPen(QXFIGCOLOR(color), (int)(s_P4PrintLineWidth * 26 / 20));
+    QPen p{QXFIGCOLOR(color), (int)(s_P4PrintLineWidth * 26 / 20)};
     s_P4PrintPainter->setPen(p);
 
     // print cross:
@@ -729,7 +729,7 @@ static void P4Print_print_degen(double _x, double _y)
         x - s_P4PrintSymbolWidth / 2, y + s_P4PrintSymbolWidth / 2);
 }
 
-static void P4Print_print_virtualdegen(double _x, double _y)
+static void p4Print_print_virtualdegen(double _x, double _y)
 {
     if (!g_VFResults.plotVirtualSingularities_)
         return;
@@ -755,7 +755,7 @@ static void P4Print_print_virtualdegen(double _x, double _y)
         x - s_P4PrintSymbolWidth / 2, y + s_P4PrintSymbolWidth / 2);
 }
 
-static void P4Print_print_coinciding(double _x, double _y)
+static void p4Print_print_coinciding(double _x, double _y)
 {
     int x{(int)_x};
     int y{(int)_y};
@@ -766,7 +766,7 @@ static void P4Print_print_coinciding(double _x, double _y)
     else
         color = printColorTable(CDEGEN);
 
-    QPen p = QPen(QXFIGCOLOR(color), (int)P4PrintLineWidth * 26 / 20);
+    QPen p{QXFIGCOLOR(color), (int)P4PrintLineWidth * 26 / 20};
     s_P4PrintPainter->setPen(p);
 
     // print double cross:
@@ -782,15 +782,15 @@ static void P4Print_print_coinciding(double _x, double _y)
                                x - (s_P4PrintSymbolWidth * 3) / 4, y);
 }
 
-static void P4Print_print_elips(double x0, double y0, double a, double b,
+static void p4Print_print_elips(double x0, double y0, double a, double b,
                                 int color, bool dotted,
-                                std::vector<P4POLYLINES> ellipse)
+                                const std::vector<P4POLYLINES> &ellipse)
 {
     color = printColorTable(color);
     if (s_P4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
 
-    QPen p = QPen(QXFIGCOLOR(color), s_P4PrintLineWidth);
+    QPen p{QXFIGCOLOR(color), s_P4PrintLineWidth};
     p.setCapStyle(Qt::RoundCap);
     s_P4PrintPainter->setPen(p);
 
@@ -798,13 +798,13 @@ static void P4Print_print_elips(double x0, double y0, double a, double b,
     // "precompiled" ellipse parameter.  Here, a list of lines is computed that
     // approximates the ellipse.
 
-    for (auto it : ellipse) {
+    for (auto const &it : ellipse) {
         s_P4PrintPainter->drawLine((int)(it.x1), (int)(it.y1), (int)(it.x2),
                                    (int)(it.y2));
     }
 }
 
-static void P4Print_print_line(double _x0, double _y0, double _x1, double _y1,
+static void p4Print_print_line(double _x0, double _y0, double _x1, double _y1,
                                int color)
 {
     color = printColorTable(color);
@@ -819,14 +819,14 @@ static void P4Print_print_line(double _x0, double _y0, double _x1, double _y1,
     if (x0 == x1 && y0 == y1)
         return;
 
-    QPen p = QPen(QXFIGCOLOR(color), s_P4PrintLineWidth);
+    QPen p{QXFIGCOLOR(color), s_P4PrintLineWidth};
     p.setCapStyle(Qt::RoundCap);
 
     s_P4PrintPainter->setPen(p);
     s_P4PrintPainter->drawLine(x0, y0, x1, y1);
 }
 
-static void P4Print_print_point(double _x0, double _y0, int color)
+static void p4Print_print_point(double _x0, double _y0, int color)
 {
     if (s_P4PrintBlackWhite)
         color = bgColours::CFOREGROUND;
@@ -843,7 +843,7 @@ static void P4Print_print_point(double _x0, double _y0, int color)
     s_LastP4PrintY0 = y0;
     s_LastP4Printcolor = color;
 
-    QPen p = QPen(QXFIGCOLOR(color), s_P4PrintLineWidth);
+    QPen p{QXFIGCOLOR(color), s_P4PrintLineWidth};
     p.setCapStyle(Qt::RoundCap);
 
     s_P4PrintPainter->setPen(p);
@@ -870,54 +870,54 @@ void prepareP4Printing(int w, int h, bool isblackwhite,
     plot_l = spherePrintLine;
     plot_p = spherePrintPoint;
 
-    print_saddle = P4Print_print_saddle;
-    print_virtualsaddle = P4Print_print_virtualsaddle;
+    print_saddle = p4Print_print_saddle;
+    print_virtualsaddle = p4Print_print_virtualsaddle;
 
-    print_stablenode = P4Print_print_stablenode;
-    print_virtualstablenode = P4Print_print_virtualstablenode;
+    print_stablenode = p4Print_print_stablenode;
+    print_virtualstablenode = p4Print_print_virtualstablenode;
 
-    print_unstablenode = P4Print_print_unstablenode;
-    print_virtualunstablenode = P4Print_print_virtualunstablenode;
+    print_unstablenode = p4Print_print_unstablenode;
+    print_virtualunstablenode = p4Print_print_virtualunstablenode;
 
-    print_stableweakfocus = P4Print_print_stableweakfocus;
-    print_virtualstableweakfocus = P4Print_print_virtualstableweakfocus;
+    print_stableweakfocus = p4Print_print_stableweakfocus;
+    print_virtualstableweakfocus = p4Print_print_virtualstableweakfocus;
 
-    print_unstableweakfocus = P4Print_print_unstableweakfocus;
-    print_virtualunstableweakfocus = P4Print_print_virtualunstableweakfocus;
+    print_unstableweakfocus = p4Print_print_unstableweakfocus;
+    print_virtualunstableweakfocus = p4Print_print_virtualunstableweakfocus;
 
-    print_weakfocus = P4Print_print_weakfocus;
-    print_virtualweakfocus = P4Print_print_virtualweakfocus;
+    print_weakfocus = p4Print_print_weakfocus;
+    print_virtualweakfocus = p4Print_print_virtualweakfocus;
 
-    print_stablestrongfocus = P4Print_print_stablestrongfocus;
-    print_virtualstablestrongfocus = P4Print_print_virtualstablestrongfocus;
+    print_stablestrongfocus = p4Print_print_stablestrongfocus;
+    print_virtualstablestrongfocus = p4Print_print_virtualstablestrongfocus;
 
-    print_unstablestrongfocus = P4Print_print_unstablestrongfocus;
-    print_virtualunstablestrongfocus = P4Print_print_virtualunstablestrongfocus;
+    print_unstablestrongfocus = p4Print_print_unstablestrongfocus;
+    print_virtualunstablestrongfocus = p4Print_print_virtualunstablestrongfocus;
 
-    print_sesaddle = P4Print_print_sesaddle;
-    print_virtualsesaddle = P4Print_print_virtualsesaddle;
+    print_sesaddle = p4Print_print_sesaddle;
+    print_virtualsesaddle = p4Print_print_virtualsesaddle;
 
-    print_sesaddlenode = P4Print_print_sesaddlenode;
-    print_virtualsesaddlenode = P4Print_print_virtualsesaddlenode;
+    print_sesaddlenode = p4Print_print_sesaddlenode;
+    print_virtualsesaddlenode = p4Print_print_virtualsesaddlenode;
 
-    print_sestablenode = P4Print_print_sestablenode;
-    print_virtualsestablenode = P4Print_print_virtualsestablenode;
+    print_sestablenode = p4Print_print_sestablenode;
+    print_virtualsestablenode = p4Print_print_virtualsestablenode;
 
-    print_seunstablenode = P4Print_print_seunstablenode;
-    print_virtualseunstablenode = P4Print_print_virtualseunstablenode;
+    print_seunstablenode = p4Print_print_seunstablenode;
+    print_virtualseunstablenode = p4Print_print_virtualseunstablenode;
 
-    print_degen = P4Print_print_degen;
-    print_virtualdegen = P4Print_print_virtualdegen;
+    print_degen = p4Print_print_degen;
+    print_virtualdegen = p4Print_print_virtualdegen;
 
-    print_center = P4Print_print_center;
-    print_virtualcenter = P4Print_print_virtualcenter;
+    print_center = p4Print_print_center;
+    print_virtualcenter = p4Print_print_virtualcenter;
 
-    print_coinciding = P4Print_print_coinciding;
-    print_elips = P4Print_print_elips;
-    print_point = P4Print_print_point;
-    print_line = P4Print_print_line;
-    print_comment = P4Print_comment;
-    
+    print_coinciding = p4Print_print_coinciding;
+    print_elips = p4Print_print_elips;
+    print_point = p4Print_print_point;
+    print_line = p4Print_print_line;
+    print_comment = p4Print_comment;
+
     s_LastP4Printcolor = -1;
 
     p4paint->fillRect(
@@ -929,6 +929,6 @@ void finishP4Printing(void)
 {
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
-    
+
     s_P4PrintPainter.reset();
 }

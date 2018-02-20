@@ -27,4 +27,4 @@ int printColorTable(int color);
 void prepareP4Printing(int w, int h, bool isblackwhite,
                        std::unique_ptr<QPainter> p4paint, int linewidth,
                        int symbolwidth);
-void finishP4Printing(void);
+void finishP4Printing();
