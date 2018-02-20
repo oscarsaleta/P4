@@ -427,7 +427,7 @@ bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
 // the polynomial by a rescaled one if the point lies close to infinity.
 //
 // So we first determine where the point lies.
-double eval_curve(p4curveRegions::curveResult c, const double *pcoord)
+double eval_curve(const p4curveRegions::curveResult &c, const double *pcoord)
 {
     double ucoord[2], theta;
     if (!g_VFResults.plweights_) {

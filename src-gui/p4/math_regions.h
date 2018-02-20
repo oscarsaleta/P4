@@ -55,7 +55,8 @@ bool isInsideRegion_sphere(const int *signs, const double *pcoord);
 bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
                                    double epsilon);
 
-double eval_curve(p4curveRegions::curveResult c, const double *pcoord);
+double eval_curve(const p4curveRegions::curveResult &c, const double *pcoord);
+
 QString describeRegion(double *pcoord);
 bool isInTheSameRegion(double *testpt, double *refpos);
 bool isARealSingularity(double *pcoord, int vfIndex);
