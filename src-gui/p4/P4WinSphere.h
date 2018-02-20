@@ -125,6 +125,7 @@ class P4WinSphere : public QWidget
     void printPoints();
     void printSeparatrices();
     void printGcf();
+    void printSeparatingCurves();
     void printCurve();
     void printIsoclines();
     void printPoincareSphere();

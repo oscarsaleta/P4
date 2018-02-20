@@ -1415,18 +1415,18 @@ void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
 
 void P4WinSphere::plotPoints()
 {
-    for (auto vf : g_VFResults.vf_) {
-        for (auto sp : vf.saddlePoints_)
+    for (auto const &vf : g_VFResults.vf_) {
+        for (auto const &sp : vf.saddlePoints_)
             plotPoint(sp);
-        for (auto np : vf.nodePoints_)
+        for (auto const &np : vf.nodePoints_)
             plotPoint(np);
-        for (auto wfp : vf.wfPoints_)
+        for (auto const &wfp : vf.wfPoints_)
             plotPoint(wfp);
-        for (auto sfp : vf.sfPoints_)
+        for (auto const &sfp : vf.sfPoints_)
             plotPoint(sfp);
-        for (auto sep : vf.sePoints_)
+        for (auto const &sep : vf.sePoints_)
             plotPoint(sep);
-        for (auto dp : vf.dePoints_)
+        for (auto const &dp : vf.dePoints_)
             plotPoints(dp);
     }
 }
@@ -1434,30 +1434,30 @@ void P4WinSphere::plotPoints()
 void P4WinSphere::plotPointSeparatrices(
     const p4singularities::semi_elementary &p)
 {
-    for (auto it : p.separatrice)
+    for (auto const &it : p.separatrice)
         draw_sep(this, it.sep_points);
 }
 
 void P4WinSphere::plotPointSeparatrices(const p4singularities::saddle &p)
 {
-    for (auto it : p.separatrices)
+    for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
 void P4WinSphere::plotPointSeparatrices(const p4singularities::degenerate &p)
 {
-    for (auto it : p.blow_up)
-        draw_sep(this, it.sep);
+    for (auto const &it : p.blow_up)
+        draw_sep(this, it.sep_points);
 }
 
 void P4WinSphere::plotSeparatrices()
 {
-    for (auto vf : g_VFResults.vf_) {
-        for (auto sp : vf.saddlePoints_)
+    for (auto const &vf : g_VFResults.vf_) {
+        for (auto const &sp : vf.saddlePoints_)
             plotPointSeparatrices(sp);
-        for (auto sep : vf.sePoints_)
+        for (auto const &sep : vf.sePoints_)
             plotPointSeparatrices(sep);
-        for (auto dp : vf.dePoints_)
+        for (auto const &dp : vf.dePoints_)
             plotPointSeparatrices(dp);
     }
 }
@@ -1631,7 +1631,7 @@ void P4WinSphere::plotPoincareSphere()
     int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    for (auto it : circleAtInfinity_) {
+    for (auto const &it : circleAtInfinity_) {
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
     }
@@ -1642,7 +1642,7 @@ void P4WinSphere::plotPoincareLyapunovSphere()
     int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
-    for (auto it : circleAtInfinity_) {
+    for (auto const &it : circleAtInfinity_) {
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
     }
@@ -1840,103 +1840,300 @@ void P4WinSphere::drawPoint(double x, double y, int color)
 //                  PRINTING METHODS
 //---------------------------------------------------------------------
 
-void P4WinSphere::printPoint(struct saddle *p)
+void P4WinSphere::printPoint(const p4singularities::saddle &p)
 {
     double pos[2];
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+
+    getChartPos(p.chart, p.x0, p.y0, pos);
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
+
+    switch (p.position) {
+    case POSITION_VIRTUAL:
+        print_virtualsaddle(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case POSITION_COINCIDING:
+        break;
+    case POSITION_COINCIDING_VIRTUAL:
+        break;
+    case POSITION_COINCIDING_MAIN:
+        print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    default:
         print_saddle(coWinX(pos[0]), coWinY(pos[1]));
+        break;
     }
 }
 
-void P4WinSphere::printPoint(struct node *p)
+void P4WinSphere::printPoint(const p4singularities::node &p)
 {
     double pos[2];
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        if (p->stable == -1)
-            print_stablenode(coWinX(pos[0]), coWinY(pos[1]));
-        else
-            print_unstablenode(coWinX(pos[0]), coWinY(pos[1]));
-    }
-}
-
-void P4WinSphere::printPoint(struct weak_focus *p)
-{
-    double pos[2];
-
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
-
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
-
-        switch (p->type) {
-        case FOCUSTYPE_STABLE:
-            print_stableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+    if (p.stable == -1) {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualstablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case FOCUSTYPE_UNSTABLE:
-            print_unstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+        case POSITION_COINCIDING:
             break;
-        case FOCUSTYPE_CENTER:
-            print_center(coWinX(pos[0]), coWinY(pos[1]));
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
-            print_weakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            print_stablenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
+    } else {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualunstablenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
+            print_unstablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
         }
     }
 }
 
-void P4WinSphere::printPoint(struct strong_focus *p)
+void P4WinSphere::printPoint(const p4singularities::weak_focus &p)
 {
     double pos[2];
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        if (p->stable == -1)
+    switch (p.type) {
+    case FOCUSTYPE_STABLE:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
+            print_stableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
+        break;
+    case FOCUSTYPE_UNSTABLE:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualunstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
+            print_unstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
+        break;
+    case FOCUSTYPE_CENTER:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualcenter(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
+            print_center(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
+        break;
+    default:
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualweakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
+            print_weakfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
+        break;
+    }
+}
+
+void P4WinSphere::printPoint(const p4singularities::strong_focus &p)
+{
+    double pos[2];
+
+    getChartPos(p.chart, p.x0, p.y0, pos);
+
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
+
+    if (p.stable == -1) {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
             print_stablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
-        else
+            break;
+        }
+    } else {
+        switch (p.position) {
+        case POSITION_VIRTUAL:
+            print_virtualunstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case POSITION_COINCIDING:
+            break;
+        case POSITION_COINCIDING_VIRTUAL:
+            break;
+        case POSITION_COINCIDING_MAIN:
+            print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        default:
             print_unstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
     }
 }
 
-void P4WinSphere::printPoint(struct degenerate *p)
+void P4WinSphere::printPoint(const p4singularities::degenerate &p)
 {
     double pos[2];
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
+    switch (p.position) {
+    case POSITION_VIRTUAL:
+        print_virtualdegen(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case POSITION_COINCIDING:
+        break;
+    case POSITION_COINCIDING_VIRTUAL:
+        break;
+    case POSITION_COINCIDING_MAIN:
+        print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    default:
         print_degen(coWinX(pos[0]), coWinY(pos[1]));
+        break;
     }
 }
 
-void P4WinSphere::printPoint(struct semi_elementary *p)
+void P4WinSphere::printPoint(const p4singularities::semi_elementary &p)
 {
     double pos[2];
 
-    if (p != nullptr) {
-        getChartPos(p->chart, p->x0, p->y0, pos);
+    getChartPos(p.chart, p.x0, p.y0, pos);
 
-        if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
-            return;
+    if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
+        return;
 
-        switch (p->type) {
+    switch (p.type) {
+    case 1:
+        print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 2:
+        print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 3:
+        print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 4:
+        print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 5:
+        print_seunstablenode(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 6:
+        print_sesaddle(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 7:
+        print_sesaddle(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    case 8:
+        print_sestablenode(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    }
+
+    switch (p.position) {
+    case POSITION_VIRTUAL:
+        switch (p.type) {
+        case 1:
+            print_virtualsesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 2:
+            print_virtualsesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 3:
+            print_virtualsesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 4:
+            print_virtualsesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 5:
+            print_virtualseunstablenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 6:
+            print_virtualsesaddle(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 7:
+            print_virtualsesaddle(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        case 8:
+            print_virtualsestablenode(coWinX(pos[0]), coWinY(pos[1]));
+            break;
+        }
+        break;
+    case POSITION_COINCIDING:
+        break;
+    case POSITION_COINCIDING_VIRTUAL:
+        break;
+    case POSITION_COINCIDING_MAIN:
+        print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
+        break;
+    default:
+        switch (p.type) {
         case 1:
             print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -1962,111 +2159,127 @@ void P4WinSphere::printPoint(struct semi_elementary *p)
             print_sestablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
         }
+        break;
     }
 }
 
 void P4WinSphere::printPoints()
 {
-    struct saddle *sp;
-    struct node *np;
-    struct weak_focus *wfp;
-    struct strong_focus *sfp;
-    struct semi_elementary *sep;
-    struct degenerate *dp;
-
     print_comment("Printing symbols at all singular points:");
 
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
-         sp = sp->next_saddle)
-        printPoint(sp);
-    for (np = g_VFResults.first_node_point_; np != nullptr; np = np->next_node)
-        printPoint(np);
-    for (wfp = g_VFResults.first_wf_point_; wfp != nullptr; wfp = wfp->next_wf)
-        printPoint(wfp);
-    for (sfp = g_VFResults.first_sf_point_; sfp != nullptr; sfp = sfp->next_sf)
-        printPoint(sfp);
-    for (sep = g_VFResults.first_se_point_; sep != nullptr; sep = sep->next_se)
-        printPoint(sep);
-    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de)
-        printPoint(dp);
-}
-
-void P4WinSphere::printPointSeparatrices(struct semi_elementary *p)
-{
-    struct sep *separatrice;
-
-    for (separatrice = p->separatrices; separatrice != nullptr;
-         separatrice = separatrice->next_sep) {
-        draw_sep(this, separatrice->first_sep_point);
-        if (separatrice->next_sep != nullptr) {
-            print_comment("Next separatrix of degenerate point:");
-        }
+    for (auto const &vf : g_VFResults.vf_) {
+        for (auto const &sp : vf.saddlePoints_)
+            printPoint(sp);
+        for (auto const &np : vf.nodePoints_)
+            printPoints(np);
+        for (auto const &wfp : vf.wfPoints_)
+            printPoint(wfp);
+        for (auto const &sfp : vf.sfPoints_)
+            printPoints(sfp);
+        for (auto const &sep : vf.sePoints_)
+            printPoints(sep);
+        for (auto const &dp : vf.dePoints_)
+            printPoints(dp);
     }
 }
 
-void P4WinSphere::printPointSeparatrices(struct saddle *p)
+void P4WinSphere::printPointSeparatrices(
+    const p4singularities::semi_elementary &p)
 {
-    struct sep *separatrice;
-
-    for (separatrice = p->separatrices; separatrice != nullptr;
-         separatrice = separatrice->next_sep) {
-        draw_sep(this, separatrice->first_sep_point);
-        if (separatrice->next_sep != nullptr) {
-            print_comment("Next separatrix of saddle point:");
-        }
+    for (auto const &it : p.separatrices) {
+        print_comment("Next separatrix of degenerate point:");
+        draw_sep(this, it.sep_points);
     }
 }
 
-void P4WinSphere::printPointSeparatrices(struct degenerate *p)
+void P4WinSphere::printPointSeparatrices(const p4singularities::saddle &p)
 {
-    struct blow_up_points *blow_up;
+    for (auto const &it : p.separatrices) {
+        print_comment("Next separatrix of saddle point:");
+        draw_sep(this, it.sep_points);
+    }
+}
 
-    for (blow_up = p->blow_up; blow_up != nullptr;
-         blow_up = blow_up->next_blow_up_point) {
-        draw_sep(this, blow_up->first_sep_point);
-        if (blow_up->next_blow_up_point != nullptr) {
-            print_comment("Next separatrix of degenerate point:");
-        }
+void P4WinSphere::printPointSeparatrices(const p4singularities::degenerate &p)
+{
+    for (auto const &it : p.blow_up) {
+        print_comment("Next separatrix of degenerate point:");
+        draw_sep(this, it.sep_points);
     }
 }
 
 void P4WinSphere::printSeparatrices()
 {
-    QString comment;
-    struct saddle *sp;
-    struct semi_elementary *sep;
-    struct degenerate *dp;
-
-    for (sp = g_VFResults.first_saddle_point_; sp != nullptr;
-         sp = sp->next_saddle) {
-        comment = "Printing separatrice for saddle singularity:";
-        print_comment(comment);
-        printPointSeparatrices(sp);
-    }
-    for (sep = g_VFResults.first_se_point_; sep != nullptr;
-         sep = sep->next_se) {
-        comment = "Printing separatrices for semi-hyperbolic singularity:";
-        print_comment(comment);
-        printPointSeparatrices(sep);
-    }
-    for (dp = g_VFResults.first_de_point_; dp != nullptr; dp = dp->next_de) {
-        comment = "Printing separatrices for degenerate singularity:";
-        print_comment(comment);
-        printPointSeparatrices(dp);
+    for (auto const &vf : g_VFResults.vf_) {
+        for (auto const &sp : vf.saddlePoints_) {
+            print_comment("Printing separatrice for saddle singularity:");
+            printPointSeparatrices(sp);
+        }
+        for (auto const &sep : vf.sePoints_) {
+            print_comment(
+                "Printing separatrices for semi-hyperbolic singularity:");
+            printPointSeparatrices(sep);
+        }
+        for (auto const &dp : vf.dePoints_) {
+            print_comment("Printing separatrices for degenerate singularity:");
+            printPointSeparatrices(dp);
+        }
     }
 }
 
 void P4WinSphere::printGcf()
 {
-    QString comment;
-
-    if (g_VFResults.gcf_points_ != nullptr) {
-        comment = "Printing Greatest common factor:";
-        print_comment(comment);
-        draw_gcf(this, g_VFResults.gcf_points_, CSING, 1);
+    bool isagcf{false};
+    for (auto const &vf : g_VFResults.vf_) {
+        if (!vf.gcf_points_.empty()) {
+            isagcf = true;
+            break;
+        }
+    }
+    if (isagcf) {
+        for (auto const &vf : g_VFResults.vf_) {
+            print_comment("Printing greatest common factor:");
+            draw_gcf(this, vf.gcf_points_, CSING, 1);
+        }
     }
 }
 
+void P4WinSphere::printSeparatingCurves()
+{
+    QString comment;
+    bool dashes;
+
+    if (g_ThisVF->numCurves_ > 0 && !g_VFResults.curves_result_.empty()) {
+        print_comment("Printing separating curves:");
+        for (int i = 0; i < g_ThisVF->numCurves_; i++) {
+            comment.sprintf("Curve #%d:", i + 1);
+            print_comment(comment);
+            dashes = true;
+            auto &sep = g_VFResults.curves_result_[i].sep_points;
+            for (auto it = std::begin(sep); it != std::end(sep); ++it) {
+                if (it->color == CSEPCURVE) {
+                    if (it->dashes && dashes)
+                        (*plot_l)(this, pcoord, it->pcoord, it->color);
+                    else {
+                        auto &nextpt = it + 1;
+                        if (nextpt == std::end(sep))
+                            (*plot_p)(this, it->pcoord, it->color);
+                        else if (!nexpt->dahes || nexpt->color != CSEPCURVE ||
+                                 !dashes)
+                            (*plot_p)(this,it->pcoord,it->color);
+                        // draw nothing when the next point is a dash
+                    }
+                    dashes = true;
+                } else {
+                    dashes = false;
+                }
+                copy_x_into_y(it->pcoord,pcoord);
+            }
+        }
+    }
+}
+
+// TODO:
 void P4WinSphere::printCurve()
 {
     QString comment;
@@ -2082,6 +2295,7 @@ void P4WinSphere::printCurve()
     }
 }
 
+// TODO
 void P4WinSphere::printIsoclines()
 {
     QString comment;
@@ -2100,13 +2314,16 @@ void P4WinSphere::printIsoclines()
 
 void P4WinSphere::printPoincareSphere()
 {
-    QString comment;
-    struct P4POLYLINES *p;
     struct P4POLYLINES *q;
 
-    comment = "Printing Poincare Sphere:";
-    print_comment(comment);
-    p = produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
+    print_comment("Printing Poincare Sphere:");
+    auto p = produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
+    for (auto &q : p) {
+        q.x1 = coWinX(q.x1);
+        q.y1 = coWinY(q.y1);
+        q.x2 = coWinX(q.x2);
+        q.y2
+    }
     for (q = p; q != nullptr; q = q->next) {
         q->x1 = coWinX(q->x1);
         q->y1 = coWinY(q->y1);
