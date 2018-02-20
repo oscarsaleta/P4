@@ -36,7 +36,7 @@
 double eval_term1(const std::vector<p4polynom::term1> &p, double t)
 {
     double s = 0;
-    for (auto q : p) {
+    for (auto const &q : p) {
         if (q.exp != 0)
             s += (q.coeff) * pow(t, static_cast<double>(q.exp));
         else
@@ -53,7 +53,7 @@ double eval_term1(const std::vector<p4polynom::term1> &p, double t)
 double eval_term2(const std::vector<p4polynom::term2> &f, double *value)
 {
     double s = 0;
-    for (auto it : f) {
+    for (auto const &it : f) {
         if (it.exp_x != 0 && it.exp_y != 0)
             s += it.coeff * pow(value[0], static_cast<double>(it.exp_x)) *
                  pow(value[1], static_cast<double>(it.exp_y));
@@ -82,7 +82,7 @@ double eval_term3(const std::vector<p4polynom::term3> &F, double *value)
     Co = cos(value[1]);
     Si = sin(value[1]);
 
-    for (auto it : F) {
+    for (auto const &it : F) {
         if (it.exp_r != 0)
             t = pow(value[0], static_cast<double>(it.exp_r));
         else
@@ -113,7 +113,7 @@ const char *dumpPoly1(const std::vector<p4polynom::term1> &f, const char *x)
     if (f.empty())
         return "0 (null)";
 
-    for (auto it : f) {
+    for (auto const &it : f) {
         c = it.coeff;
         cx = it.exp;
         if ((c != 1 && c != -1) || cx == 0) {
@@ -167,7 +167,7 @@ const char *dumpPoly2(const std::vector<p4polynom::term2> &f, const char *x,
     if (f.empty())
         return "0 (null)";
 
-    for (auto it : f) {
+    for (auto const &it : f) {
         c = it.coeff;
         cx = it.exp_x;
         cy = it.exp_y;
@@ -231,7 +231,7 @@ const char *dumpPoly3(const std::vector<p4polynom::term3> &f, const char *x,
     if (f.empty())
         return "0 (null)";
 
-    for (auto it : f) {
+    for (auto const &it : f) {
         c = it.coeff;
         cx = it.exp_r;
         cy = it.exp_Co;
