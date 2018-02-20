@@ -144,7 +144,7 @@ void drawOrbit(std::shared_ptr<P4WinSphere> spherewnd, double *pcoord,
     copy_x_into_y(pcoord, pcoord1);
     (*plot_p)(spherewnd, pcoord, color);
 
-    for (auto it : points) {
+    for (auto const &it : points) {
         if (points->dashes) {
             (*plot_l)(spherewnd, pcoord1, it.pcoord, color);
         } else {
@@ -161,7 +161,7 @@ void drawOrbits(std::shared_ptr<P4WinSphere> spherewnd)
 {
     orbits *orbit;
 
-    for (auto it : g_VFResults.orbits_)
+    for (auto const &it : g_VFResults.orbits_)
         drawOrbit(spherewnd, it.pcoord, it.points, it.color);
 }
 
