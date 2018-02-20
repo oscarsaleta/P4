@@ -29,4 +29,4 @@ void plot_next_se_sep(std::shared_ptr<P4WinSphere>, int);
 void select_next_se_sep(std::shared_ptr<P4WinSphere>);
 void change_epsilon_se(std::shared_ptr<P4WinSphere>, double);
 void plot_all_se_sep(std::shared_ptr<P4WinSphere>, int,
-                     const std::vector<semi_elementary> &)
+                     std::vector<semi_elementary> &)
