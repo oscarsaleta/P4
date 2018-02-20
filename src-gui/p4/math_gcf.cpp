@@ -239,7 +239,7 @@ void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
 {
     double pcoord[3];
 
-    for (auto it : sep) {
+    for (auto const &it : sep) {
         if (it.dashes && dashes)
             (*plot_l)(spherewnd, pcoord, it.pcoord, color);
         else
