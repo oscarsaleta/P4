@@ -922,7 +922,7 @@ void draw_sep(std::shared_ptr<P4WinSphere> spherewnd,
     double pcoord[3];
 
     if (!sep.empty()) {
-        for (auto it : sep) {
+        for (auto const &it : sep) {
             if (it.dashes)
                 (*plot_l)(spherewnd, it.pcoord, pcoord, it.color);
             else
@@ -944,7 +944,7 @@ void draw_selected_sep(std::shared_ptr<P4WinSphere> spherewnd,
     double pcoord[3];
 
     if (!sep.empty()) {
-        for (auto it : sep) {
+        for (auto const &it : sep) {
             if (it.dashes)
                 (*plot_l)(spherewnd, it.pcoord, pcoord, color);
             else
