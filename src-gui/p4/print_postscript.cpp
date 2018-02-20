@@ -652,8 +652,8 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
         QString s;
         if (s_PSBlackWhitePrint) {
             if (s_lastpscolor == bgColours::CFOREGROUND) {
-                s.sprintf("%d %d moveto %d %d lineto stroke\n", floor(x0),
-                          floor(y0), floor(x1), floor(y1));
+                s.sprintf("%d %d moveto %d %d lineto stroke\n", std::trunc(x0),
+                          std::trunc(y0), std::trunc(x1), std::trunc(y1));
             } else {
                 s_lastpscolor = bgColours::CFOREGROUND;
                 s.sprintf(
@@ -662,8 +662,8 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
             }
         } else {
             if (s_lastpscolor == color) {
-                s.sprintf("%d %d moveto %d %d lineto stroke\n", floor(x0),
-                          floor(y0), floor(x1), floor(y1));
+                s.sprintf("%d %d moveto %d %d lineto stroke\n", std::trunc(x0),
+                          std::trunc(y0), std::trunc(x1), std::trunc(y1));
             } else {
                 s_lastpscolor = color;
                 s.sprintf(
@@ -689,7 +689,7 @@ static void ps_print_point(double x0, double y0, int color)
         QString s;
         if (s_PSBlackWhitePrint) {
             if (s_lastpscolor == bgColours::CFOREGROUND) {
-                s.sprintf("%d %d dot\n", floor(x0), floor(y0));
+                s.sprintf("%d %d dot\n", std::trunc(x0), std::trunc(y0));
             } else {
                 s_lastpscolor = bgColours::CFOREGROUND;
                 s.sprintf("col%d %8.5g %8.5g dot\n",
@@ -697,7 +697,7 @@ static void ps_print_point(double x0, double y0, int color)
             }
         } else {
             if (s_lastpscolor == color) {
-                s.sprintf("%d %d dot\n", floor(x0), floor(y0));
+                s.sprintf("%d %d dot\n", std::trunc(x0), std::trunc(y0));
             } else {
                 s_lastpscolor = color;
                 s.sprintf("col%d %8.5g %8.5g dot\n", printColorTable(color), x0,
@@ -806,7 +806,8 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
         s.sprintf(
             "%%!PS-Adobe-3.0 EPSF-3.0\n"
             "%%%%BoundingBox: %d %d %d %d\n",
-            floor(bbx0), floor(bby0), floor(bbx1), floor(bby1));
+            std::trunc(bbx0), std::trunc(bby0), std::trunc(bbx1),
+            std::trunc(bby1));
 
         s_PSFileStream << s;
         s_PSFileStream << "%%%%Title: " << title << "\n";
