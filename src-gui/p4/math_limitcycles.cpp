@@ -19,14 +19,14 @@
 
 #include "math_limitcycles.h"
 
+#include "P4LimitCyclesDlg.h"
+#include "P4WinSphere.h"
 #include "custom.h"
 #include "file_tab.h"
 #include "math_charts.h"
 #include "math_orbits.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "P4LimitCyclesDlg.h"
-#include "P4WinSphere.h"
 
 #include <cmath>
 
@@ -399,7 +399,7 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
     LCpoints.color = CLIMIT;
     LCpoints.dashes = g_VFResults.config_dashes_;
     LC.points.push_back(LCpoints);
-    //LC.current_point_index = 0;
+    // LC.current_point_index = 0;
     if (g_VFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
@@ -414,7 +414,7 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
         LCpoints.color = CLIMIT;
         LCpoints.dashes = g_VFResults.config_dashes_;
         LC.points.push_back(LCpoints);
-        //LC.current_point_index++;
+        // LC.current_point_index++;
         if (g_VFResults.config_dashes_)
             (*plot_l)(spherewnd, p1, p2, CLIMIT);
         else
@@ -441,7 +441,7 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
         LCpoints.color = CLIMIT;
         LCpoints.dashes = g_VFResults.config_dashes_;
         LC.points.push_back(LCpoints);
-        //LC.current_point_index++;
+        // LC.current_point_index++;
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
@@ -468,11 +468,8 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
 // a repaint (but also during a print command).
 void drawLimitCycles(std::shared_ptr<P4WinSphere> spherewnd)
 {
-    std::vector<p4orbits::orbits> &orbits = g_VFResults.limCycles_;
-
-    for (auto it : orbits) {
+    for (auto const &it : g_VFResults.limCycles_)
         drawOrbit(spherewnd, it.pcoord, it.f_orbits, it.color);
-    }
 }
 
 // -----------------------------------------------------------------------
@@ -487,5 +484,5 @@ void deleteLastLimitCycle(std::shared_ptr<P4WinSphere> spherewnd)
     drawOrbit(spherewnd, orbit2.pcoord, orbit2.f_orbits,
               spherewnd->spherebgcolor_);
 
-    g_VFResults.limCycles_.pop_back();    
+    g_VFResults.limCycles_.pop_back();
 }
