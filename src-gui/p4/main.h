@@ -38,8 +38,7 @@ struct P4POLYLINES {
     double y1;
     double x2;
     double y2;
-    P4POLYLINES() {}
-    P4POLYLINES(double a1, double b1, double a2, double b2)
+    P4POLYLINES(double a1 = 0, double b1 = 0, double a2 = 0, double b2 = 0)
         : x1{a1}, y1{b1}, x2{a2}, y2{b2}
     {
     }
