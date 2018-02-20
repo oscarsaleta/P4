@@ -89,11 +89,12 @@ struct orbits {
     double pcoord[3];  // startpoint
     int color;
     std::vector<orbits_points> points;  // orbit
-    //int current_point_index;            // FIXME needed? or use front()/back()?
+    // int current_point_index;            // FIXME needed? or use
+    // front()/back()?
 
     orbits() {}
-    orbits(double pc[3], int co, std::vector<orbits_points> fo/*, int cu*/)
-        : color{co}, points{fo}//, current_point_index{cu}
+    orbits(double pc[3], int co, std::vector<orbits_points> fo /*, int cu*/)
+        : color{co}, points{fo}  //, current_point_index{cu}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
@@ -193,7 +194,7 @@ struct blow_up_points {
 
 struct sep {
     std::vector<p4orbits::orbits_points> sep_points;
-    //std::vector<p4orbits::orbits_points> last_sep_point;  // TODO. fa falta?
+    // std::vector<p4orbits::orbits_points> last_sep_point;  // TODO. fa falta?
     int type;  // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
     int direction;
     int d;
@@ -273,8 +274,8 @@ struct semi_elementary : genericsingularity {
     double epsilon;
     bool notadummy;
 
-    std::vector<p4blowup::sep>
-        separatrices;  // center sep (t,f(t)), sep (g(t),t)
+    // center sep (t,f(t)), sep (g(t),t)
+    std::vector<p4blowup::sep> separatrices;
     std::vector<p4polynom::term2> vector_field_0;  // vector field
     std::vector<p4polynom::term2> vector_field_1;  // vector field
     double a11, a12, a21, a22;                     // transformation matrix
@@ -361,10 +362,9 @@ struct weak_focus : genericsingularity {
 #define STYPE_CENSTABLE (-2)
 #define STYPE_ORBIT 3
 
-#define FOCUSTYPE_UNKNOWN 0
-#define FOCUSTYPE_UNSTABLE (1)
-#define FOCUSTYPE_STABLE (-1)
-#define FOCUSTYPE_CENTER 4
+#define SINGTYPE_UNSTABLE STYPE_UNSTABLE
+#define SINGTYPE_STABLE STYPE_STABLE
+#define SINGTYPE_CENTER 4
 
 #define SETYPE_SADDLENODE_UNSTABSEP 1
 #define SETYPE_SADDLENODE_UNSTABSEP2 2
