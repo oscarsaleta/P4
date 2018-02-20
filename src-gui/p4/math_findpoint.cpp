@@ -19,12 +19,12 @@
 
 #include "math_findpoint.h"
 
+#include "P4SepDlg.h"
+#include "P4WinSphere.h"
 #include "custom.h"
 #include "file_tab.h"
 #include "math_p4.h"
 #include "math_separatrice.h"
-#include "P4SepDlg.h"
-#include "P4WinSphere.h"
 
 #include <cmath>
 
@@ -37,31 +37,30 @@
 //
 // -----------------------------------------------------------------------
 
-static double find_distance_saddle(std::vector<p4singularities::saddle> points,
-                                   double x, double y, double distance,
-                                   int &type, double *refpos)
+static double find_distance_saddle(
+    const std::vector<p4singularities::saddle> &points, double x, double y,
+    double distance, int &type, double *refpos)
 {
     double d, pcoord[3], ucoord[2];
 
-    for (auto it = std::begin(points), int i = 0; it != std::end(points);
-         ++it, i++) {
-        if (it->position == POSITION_VIRTUAL)
+    for (auto const &it : points) {
+        if (it.position == POSITION_VIRTUAL)
             continue;
-        switch (it->chart) {
+        switch (it.chart) {
         case CHART_R2:
-            MATHFUNC(R2_to_sphere)(it->x0, it->y0, pcoord);
+            MATHFUNC(R2_to_sphere)(it.x0, it.y0, pcoord);
             break;
         case CHART_U1:
-            MATHFUNC(U1_to_sphere)(it->x0, it->y0, pcoord);
+            MATHFUNC(U1_to_sphere)(it.x0, it.y0, pcoord);
             break;
         case CHART_V1:
-            MATHFUNC(V1_to_sphere)(it->x0, it->y0, pcoord);
+            MATHFUNC(V1_to_sphere)(it.x0, it.y0, pcoord);
             break;
         case CHART_U2:
-            MATHFUNC(U2_to_sphere)(it->x0, it->y0, pcoord);
+            MATHFUNC(U2_to_sphere)(it.x0, it.y0, pcoord);
             break;
         case CHART_V2:
-            MATHFUNC(V2_to_sphere)(it->x0, it->y0, pcoord);
+            MATHFUNC(V2_to_sphere)(it.x0, it.y0, pcoord);
             break;
         }
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
@@ -84,31 +83,30 @@ static double find_distance_saddle(std::vector<p4singularities::saddle> points,
 }
 
 static double find_distance_se(
-    std::vector<p4singularities::semi_elementary> points, double x, double y,
-    double distance, int &type, double refpos[])
+    const std::vector<p4singularities::semi_elementary> &points, double x,
+    double y, double distance, int &type, double refpos[])
 {
     double d, pcoord[3], ucoord[2];
 
-    for (auto it = std::begin(points), int i = 0; it != std::end(points);
-         ++it, i++) {
-        if (it->position == POSITION_VIRTUAL)
+    for (auto const &it : points) {
+        if (it.position == POSITION_VIRTUAL)
             continue;
-        if (!(it->separatrices).empty()) {
-            switch (it->chart) {
+        if (!(it.separatrices).empty()) {
+            switch (it.chart) {
             case CHART_R2:
-                MATHFUNC(R2_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(R2_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_U1:
-                MATHFUNC(U1_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(U1_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_V1:
-                MATHFUNC(V1_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(V1_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_U2:
-                MATHFUNC(U2_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(U2_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_V2:
-                MATHFUNC(V2_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(V2_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             }
             if (!isInTheSameRegion(pcoord, refpos))
@@ -132,32 +130,31 @@ static double find_distance_se(
     return (distance);
 }
 
-static double find_distance_de(std::vector<p4singularities::degenerate> points,
-                               double x, double y, double distance, int &type,
-                               double refpos[])
+static double find_distance_de(
+    const std::vector<p4singularities::degenerate> &points, double x, double y,
+    double distance, int &type, double refpos[])
 {
     double d, pcoord[3], ucoord[2];
 
-    for (auto it = std::begin(points), int i = 0; it != std::end(points);
-         ++it, i++) {
-        if (it->position == POSITION_VIRTUAL)
+    for (auto const &it : points) {
+        if (it.position == POSITION_VIRTUAL)
             continue;
-        if (!(it->blow_up).empty()) {
-            switch (it->chart) {
+        if (!(it.blow_up).empty()) {
+            switch (it.chart) {
             case CHART_R2:
-                MATHFUNC(R2_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(R2_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_U1:
-                MATHFUNC(U1_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(U1_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_V1:
-                MATHFUNC(V1_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(V1_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_U2:
-                MATHFUNC(U2_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(U2_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             case CHART_V2:
-                MATHFUNC(V2_to_sphere)(it->x0, it->y0, pcoord);
+                MATHFUNC(V2_to_sphere)(it.x0, it.y0, pcoord);
                 break;
             }
             if (!isInTheSameRegion(pcoord, refpos))
@@ -260,17 +257,13 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         if (g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
                 .chart == CHART_R2) {
             sx.sprintf(
-                "x = %f",
-                (float)(g_VFResults
-                            .saddlePoints_[g_VFResults
-                                               .selectedSaddlePointIndex_]
-                            .x0));
+                "x = %8.5g",
+                g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                    .x0);
             sy.sprintf(
-                "y = %f",
-                (float)(g_VFResults
-                            .saddlePoints_[g_VFResults
-                                               .selectedSaddlePointIndex_]
-                            .y0));
+                "y = %8.5g",
+                g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                    .y0);
             sz = "";
         } else {
             switch (
@@ -307,12 +300,12 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
             }
 
             if (g_VFResults.plweights_ == false) {
-                sx.sprintf("X= %f", (float)(pcoord[0]));
-                sy.sprintf("Y= %f", (float)(pcoord[1]));
+                sx.sprintf("X= %8.5g", pcoord[0]);
+                sy.sprintf("Y= %8.5g", pcoord[1]);
                 sz.sprintf("Z= 0");
             } else {
-                sx.sprintf("r= %f", (float)(pcoord[1]));
-                sy.sprintf("theta= %f", (float)(pcoord[2]));
+                sx.sprintf("r= %8.5g", pcoord[1]);
+                sy.sprintf("theta= %8.5g", pcoord[2]);
                 sz = "";
             }
         }
@@ -336,13 +329,11 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         if (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].chart ==
             CHART_R2) {
             sx.sprintf(
-                "x=%f",
-                (float)(g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_]
-                            .x0));
+                "x=%8.5g",
+                g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].x0);
             sy.sprintf(
-                "y=%f",
-                (float)(g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_]
-                            .y0));
+                "y=%8.5g",
+                g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].y0);
             sz = "";
         } else {
             switch (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_]
@@ -369,12 +360,12 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                 break;
             }
             if (g_VFResults.plweights_ == false) {
-                sx.sprintf("X= %f", (float)(pcoord[0]));
-                sy.sprintf("Y= %f", (float)(pcoord[1]));
+                sx.sprintf("X= %8.5g", pcoord[0]);
+                sy.sprintf("Y= %8.5g", pcoord[1]);
                 sz.sprintf("Z= 0");
             } else {
-                sx.sprintf("r= %f", (float)(pcoord[1]));
-                sy.sprintf("theta= %f", (float)(pcoord[2]));
+                sx.sprintf("r= %8.5g", pcoord[1]);
+                sy.sprintf("theta= %8.5g", pcoord[2]);
                 sz = "";
             }
         }
@@ -399,13 +390,11 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         if (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].chart ==
             CHART_R2) {
             sx.sprintf(
-                "x=%f",
-                (float)(g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_]
-                            .x0));
+                "x=%8.5g",
+                g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].x0));
             sy.sprintf(
-                "y=%f",
-                (float)(g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_]
-                            .y0));
+                "y=%8.5g",
+                g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].y0));
             sz = "";
         } else {
             switch (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_]
@@ -432,12 +421,12 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                 break;
             }
             if (g_VFResults.plweights_ == false) {
-                sx.sprintf("X= %f", (float)(pcoord[0]));
-                sy.sprintf("Y= %f", (float)(pcoord[1]));
+                sx.sprintf("X= %8.5g", pcoord[0]);
+                sy.sprintf("Y= %8.5g", pcoord[1]);
                 sz.sprintf("Z= 0");
             } else {
-                sx.sprintf("r= %f", (float)(pcoord[1]));
-                sy.sprintf("theta= %f", (float)(pcoord[2]));
+                sx.sprintf("r= %8.5g", pcoord[1]);
+                sy.sprintf("theta= %8.5g", pcoord[2]);
                 sz = "";
             }
         }
