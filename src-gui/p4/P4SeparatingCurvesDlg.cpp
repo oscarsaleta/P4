@@ -562,7 +562,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
     double pcoord[3] = {x0, y0, z0};
     QString s;
 
-    if (gVFResults.curves_result_.empty()) {
+    if (gVFResults.separatingCurves_.empty()) {
         QMessageBox::critical(this, "P4",
                               "Please evaluate the piecewise configuration "
                               "first,\nusing the Eval button.\n");

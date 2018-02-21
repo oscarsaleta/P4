@@ -111,7 +111,7 @@ P4ParentStudy::reset()
     deSeps_.clear();
     selectedDeSepsIndex_ = -1;
 
-    curves_result_.clear();
+    separatingCurves_.clear();
 
     config_hma = DEFAULT_HMA;
     config_hmi_ = DEFAULT_HMI;
@@ -171,7 +171,7 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
 // -----------------------------------------------------------------------
 //          P4ParentStudy::readTables
 // -----------------------------------------------------------------------
-bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
+bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
                                bool onlytry)
 {
     FILE *fpvec;
@@ -199,7 +199,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
            coordinates . Plot data in 5 different charts.
         */
 
-        curves_result_.clear();
+        separatingCurves_.clear();
 
         fpcurv = fopen(QFile::encodeName(basename + "_curves.tab"), "rt");
         if (fpcurv == nullptr)
@@ -235,12 +235,12 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
 
         for (j = 0; j < gThisVF->numSeparatingCurves_; j++) {
             if (!readSeparatingCurve(fpcurv)) {
-                curves_result_.clear();
+                separatingCurves_.clear();
                 fclose(fpcurv);
                 return false;
             }
-            if (!readCurvePoints(fpcurv, curves_result_[j].sep_points, j)) {
-                curves_result_.clear();
+            if (!readCurvePoints(fpcurv, separatingCurves_[j].sep_points, j)) {
+                separatingCurves_.clear();
                 fclose(fpcurv);
                 return false;
             }
@@ -314,7 +314,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
     // read the curves
 
     for (j = 0; j < gThisVF->numSeparatingCurves_; j++) {
-        curves_result_.clear();  // TODO why do we need to clear?
+        separatingCurves_.clear();  // TODO why do we need to clear?
         if (!readSeparatingCurve(fpvec)) {
             reset();
             fclose(fpvec);
@@ -383,16 +383,15 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
 bool P4ParentStudy::readCurve(QString basename)
 {
     int N, degree_curve;
-    FILE *fp = nullptr;
     setlocale(LC_ALL, "C");
 
-    fp = fopen(QFile::encodeName(basename + "_veccurve.tab"), "rt");
+    FILE *fp = fopen(QFile::encodeName(basename + "_veccurve.tab"), "rt");
     if (fp == nullptr) {
         dump(basename, "Cannot open file " + basename + "_veccurve.tab");
         return false;
     }
 
-    curves new_curve;
+    p4curves::curves new_curve;
     if (fscanf(fp, "%d", &degree_curve) != 1 || degree_curve < 0)
         return false;
     if (degree_curve == 0)
@@ -432,7 +431,7 @@ bool P4ParentStudy::readCurve(QString basename)
         }
     }
 
-    curve_vector_.push_back(new_curve);
+    arbitraryCurve_.push_back(std::move(new_curve));
     return true;
 }
 
@@ -483,7 +482,7 @@ bool P4ParentStudy::readSeparatingCurve(FILE *fp)
             return false;
     }
 
-    curves_result_.push_back(dummy);
+    separatingCurves_.push_back(dummy);
     return true;
 }
 
@@ -717,5 +716,10 @@ void P4ParentStudy::examinePositionsOfSingularities()
 // -----------------------------------------------------------------------
 void P4ParentStudy::resetSeparatingCurveInfo(int i)
 {
-    curves_result_.erase(std::begin(curves_result_) + i);
+    separatingCurves_.erase(std::begin(separatingCurves_) + i);
 }
+
+// -----------------------------------------------------------------------
+//          P4ParentStudy::resetSeparatingCurveInfo
+// -----------------------------------------------------------------------
+void P4ParentStudy::resetSeparatingCurveInfo() { separatingCurves_.clear(); }

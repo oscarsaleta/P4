@@ -758,7 +758,7 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         }
 
-        if (!gVFResults.curves_result_.empty()) {
+        if (!gVFResults.separatingCurves_.empty()) {
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             int index{gThisVF->getVFIndex_R2(ucoord)};
             if (index < 0) {
@@ -2250,13 +2250,13 @@ void P4WinSphere::printSeparatingCurves()
     bool dashes;
 
     if (gThisVF->numSeparatingCurves_ > 0 &&
-        !gVFResults.curves_result_.empty()) {
+        !gVFResults.separatingCurves_.empty()) {
         print_comment("Printing separating curves:");
         for (int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;
-            auto &sep = gVFResults.curves_result_[i].sep_points;
+            auto &sep = gVFResults.separatingCurves_[i].sep_points;
             for (auto it = std::begin(sep); it != std::end(sep); ++it) {
                 if (it->color == CSEPCURVE) {
                     if (it->dashes && dashes)

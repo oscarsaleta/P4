@@ -410,7 +410,7 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         }
 
-        if (!gVFResults.curves_result_.empty()) {
+        if (!gVFResults.separatingCurves_.empty()) {
             QString s;
             index = gThisVF->getVFIndex_sphere(pcoord);
             if (index < 0) {
@@ -950,9 +950,9 @@ std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
 
 void P4WinInputSphere::plotCurves()
 {
-    if (!gVFResults.curves_result_.empty())
+    if (!gVFResults.separatingCurves_.empty())
         for (r = 0; r < gThisVF->numCurveS_; r++)
-            plotCurve(gVFResults.curves_result_[r], r);
+            plotCurve(gVFResults.separatingCurves_[r], r);
 }
 
 void P4WinInputSphere::plotCurve(p4curves::curves crv, int index)

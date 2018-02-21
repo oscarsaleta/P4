@@ -37,7 +37,7 @@ class P4ParentStudy : public QObject
     // K_ will be throughout the current vector field selected
     int K_;
 
-    std::vector<p4curveRegions::curveResult> curves_result_;
+    std::vector<p4curveRegions::curveResult> separatingCurves_;
 
     int typeofstudy_;
     int typeofview_;                 // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
@@ -56,7 +56,7 @@ class P4ParentStudy : public QObject
     double xmin_, xmax_, ymin_, ymax_;  // in case of local study
 
     // curves
-    std::vector<p4curves::curves> curve_vector_;
+    std::vector<p4curves::curves> arbitraryCurves_;
 
     // FIXME segurament puc canviar first_lim_cycle per lim_cycles.front() i
     // current per .back()
@@ -106,6 +106,7 @@ class P4ParentStudy : public QObject
     // void deleteOrbit(p4orbits::orbits *);
 
     void resetSeparatingCurveInfo(int);
+    void resetSeparatingCurveInfo();
 
     bool readPiecewiseData(FILE *);
     void examinePositionsOfSingularities();
