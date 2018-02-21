@@ -21,7 +21,7 @@
 
 #include <QDialog>
 
- #include <memory>
+#include <memory>
 
 class QBoxLayout;
 class QCheckBox;
@@ -35,7 +35,7 @@ class P4PrintDlg : public QDialog
 {
     Q_OBJECT
 
-  private:
+   private:
     std::unique_ptr<QPushButton> btn_default_;
     std::unique_ptr<QPushButton> btn_epsimage_;
     std::unique_ptr<QPushButton> btn_xfigimage_;
@@ -52,15 +52,15 @@ class P4PrintDlg : public QDialog
     std::unique_ptr<QLineEdit> edt_linewidth_;
     std::unique_ptr<QLineEdit> edt_symbolsize_;
 
-  public:
+   public:
     P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
 
-    static bool sm_LastBlackWhite;
-    static double sm_LastLineWidth;
-    static double sm_LastSymbolSize;
-    static int sm_LastResolution;
+    static bool sM_lastBlackWhite;
+    static double sM_lastLineWidth;
+    static double sM_lastSymbolSize;
+    static int sM_lastResolution;
 
-  public slots:
+   public slots:
     void onDefaultPrinter(void);
     void onEpsImagePrinter(void);
     void onXfigImagePrinter(void);

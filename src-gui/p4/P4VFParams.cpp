@@ -162,7 +162,7 @@ void P4VFParams::setLineEditCommonParValue(QLineEdit *, int index)
         le->setText(gThisVF->commonParValue(index));
     else
         le->setText("########");
-}
+} 
 
 void P4VFParams::getLineEditCommonParValue(QLineEdit *, int index)
 {

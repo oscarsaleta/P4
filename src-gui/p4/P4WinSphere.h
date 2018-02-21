@@ -47,8 +47,8 @@ class P4WinSphere : public QWidget
 {
     Q_OBJECT
 
-    static int sm_numSpheres;
-    static std::vector<std::shared_ptr<P4WinSphere>> sm_SphereList;
+    static int sM_numSpheres;
+    static std::vector<std::shared_ptr<P4WinSphere>> sM_sphereList;
 
    public:
     /* Constructor and destructor */
@@ -106,8 +106,8 @@ class P4WinSphere : public QWidget
     void plotPoints();
     void plotSeparatrices();
     void plotGcf();
-    void plotArbitraryCurves(); // TODO
-    void drawIsoclines(); // TODO
+    void plotArbitraryCurves();  // TODO
+    void drawIsoclines();        // TODO
     void plotPoincareSphere();
     void plotPoincareLyapunovSphere();
     void plotLineAtInfinity();
@@ -126,8 +126,8 @@ class P4WinSphere : public QWidget
     void printSeparatrices();
     void printGcf();
     void printSeparatingCurves();
-    void printArbitraryCurves(); // TODO
-    void printIsoclines(); // TODO
+    void printArbitraryCurves();  // TODO
+    void printIsoclines();        // TODO
     void printPoincareSphere();
     void printPoincareLyapunovSphere();
     void printLineAtInfinity();

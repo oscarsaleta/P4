@@ -20,9 +20,9 @@
 #include "P4WinSphere.h"
 
 #include "P4Event.h"
+#include "P4InputVF.h"
 #include "P4PrintDlg.h"
 #include "P4StartDlg.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "math_curve.h"
 #include "math_findpoint.h"
@@ -55,8 +55,8 @@ static std::unique_ptr<QPixmap> sP4pixmap{};
 static double sP4pixmapDPM{0};
 
 // TODO: canviar per vector de spheres
-int P4WinSphere::sm_numSpheres{0};
-// std::vector<std::shared_ptr<P4WinSphere>> P4WinSphere::sm_SphereList =
+int P4WinSphere::sM_numSpheres{0};
+// std::vector<std::shared_ptr<P4WinSphere>> P4WinSphere::sM_sphereList =
 // nullptr;
 
 /*
@@ -85,10 +85,10 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
     //    setAttribute( Qt::WA_PaintOnScreen );
 
     // FIXME is next needed?
-    if (!sm_SphereList.empty())
-        sm_SphereList.back()->next_ = std::make_shared<P4WinSphere>(this);
-    sm_SphereList.push_back(std::make_shared<P4WinSphere>(this));
-    sm_numSpheres++;
+    if (!sM_sphereList.empty())
+        sM_sphereList.back()->next_ = std::make_shared<P4WinSphere>(this);
+    sM_sphereList.push_back(std::make_shared<P4WinSphere>(this));
+    sM_numSpheres++;
 
     // THIS IS THE MINIMUM SIZE
     setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW);
@@ -131,19 +131,19 @@ P4WinSphere::~P4WinSphere()
 {
     int i;
 
-    for (i = 0; i < sm_numSpheres; i++) {
-        if (sm_SphereList[i] == this)
+    for (i = 0; i < sM_numSpheres; i++) {
+        if (sM_sphereList[i] == this)
             break;
     }
-    if (i == sm_numSpheres)
+    if (i == sM_numSpheres)
         return;  // error: sphere not found?
     else if (i > 0)
-        sm_SphereList[i - 1]->next_ = std::move(next_);
+        sM_sphereList[i - 1]->next_ = std::move(next_);
     else
-        (i < sm_numSpheres - 1)
-            sm_SphereList.erase(std::begin(sm_SphereList) + i);
+        (i < sM_numSpheres - 1)
+            sM_sphereList.erase(std::begin(sM_sphereList) + i);
 
-    sm_numSpheres--;
+    sM_numSpheres--;
 }
 
 /*
@@ -363,8 +363,6 @@ void P4WinSphere::setupPlot()
 
     isPainterCacheDirty_ = true;
 }
-
-
 
 void P4WinSphere::loadAnchorMap()
 {
@@ -1008,10 +1006,10 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
 {
     int x{winpos.x()}, y{winpos.y()};
 
-    sm_SphereList.back()->prepareDrawing();
+    sM_sphereList.back()->prepareDrawing();
     auto result =
-        find_critical_point(sm_SphereList.back() coWorldX(x), coWorldY(y));
-    sm_SphereList.back()->finishDrawing();
+        find_critical_point(sM_sphereList.back() coWorldX(x), coWorldY(y));
+    sM_sphereList.back()->finishDrawing();
 
     if (!result) {
         msgBar_->showMessage(
@@ -2644,8 +2642,8 @@ void P4WinSphere::finishPrinting()
         staticPainter_->end();
         staticPainter_.reset();
 
-        if (sP4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG",
-                             100) == false) {
+        if (sP4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG", 100) ==
+            false) {
             QMessageBox::critical(this, "P4",
                                   "For some reason, P4 is unable to save the "
                                   "resulting JPEG image to disc.");
@@ -2705,7 +2703,7 @@ void P4WinSphere::finishDrawing()
     if (next_)
         next_->finishDrawing();
 
-    if (staticPainter_ ) {
+    if (staticPainter_) {
         staticPainter_->end();
         staticPainter_.reset();
 
