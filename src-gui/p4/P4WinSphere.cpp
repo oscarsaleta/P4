@@ -51,8 +51,8 @@
 #include <cmath>
 #include <utility>
 
-static std::unique_ptr<QPixmap> s_p4pixmap{};
-static double s_p4pixmap_dpm{0};
+static std::unique_ptr<QPixmap> sP4pixmap{};
+static double sP4pixmapDPM{0};
 
 // TODO: canviar per vector de spheres
 int P4WinSphere::sm_numSpheres{0};
@@ -2503,7 +2503,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     } else
         pagewidth = pageheight = -1;  // will be redefined in a minute
 
-    s_p4pixmap_dpm = myresolution / 2.54;
+    sP4pixmapDPM = myresolution / 2.54;
 
     double hpixels{myresolution * 15 / 2.54};
     double maxvpixels{(myresolution * aspectratio * 20) / 2.54 + 0.5};
@@ -2589,17 +2589,17 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
     case P4PRINT_JPEGIMAGE:
         staticPainter_ = std::make_unique<QPainter>();
-        s_p4pixmap = std::make_unique<QPixmap>(w_, h_);
+        sP4pixmap = std::make_unique<QPixmap>(w_, h_);
         reverseYAxis_ = false;  // no need for reversing axes in this case
-        if (s_p4pixmap->isNull()) {
+        if (sP4pixmap->isNull()) {
             msgBar_->showMessage(
                 "Print failure (try to choose a lower resolution).");
-            s_p4pixmap.reset();
+            sP4pixmap.reset();
             staticPainter_.reset();
             return;
         }
-        if (!staticPainter_->begin(s_p4pixmap)) {
-            s_p4pixmap.reset();
+        if (!staticPainter_->begin(sP4pixmap)) {
+            sP4pixmap.reset();
             staticPainter_.reset();
             return;
         }
@@ -2632,7 +2632,7 @@ void P4WinSphere::finishPrinting()
         h_ = oldh_;
         reverseYAxis_ = false;
     } else if (printMethod_ == P4PRINT_JPEGIMAGE) {
-        if (!s_p4pixmap) {
+        if (!sP4pixmap) {
             finishP4Printing();
             w_ = oldw_;
             h_ = oldh_;
@@ -2644,14 +2644,14 @@ void P4WinSphere::finishPrinting()
         staticPainter_->end();
         staticPainter_.reset();
 
-        if (s_p4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG",
+        if (sP4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG",
                              100) == false) {
             QMessageBox::critical(this, "P4",
                                   "For some reason, P4 is unable to save the "
                                   "resulting JPEG image to disc.");
         }
 
-        s_p4pixmap.reset();
+        sP4pixmap.reset();
         reverseYAxis_ = false;
         w_ = oldw_;
         h_ = oldh_;
@@ -2661,7 +2661,7 @@ void P4WinSphere::finishPrinting()
 
 void P4WinSphere::print()
 {
-    if (printMethod_ == P4PRINT_JPEGIMAGE && !s_p4pixmap)
+    if (printMethod_ == P4PRINT_JPEGIMAGE && !sP4pixmap)
         return;
 
     if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {

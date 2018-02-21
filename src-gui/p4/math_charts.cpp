@@ -10,7 +10,7 @@
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR s_A PARTICULAR PURPOSE.  See the
+ *  MERCHANTABILITY or FITNESS FOR sA PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
  *
  *  You should have received a copy of the GNU Lesser General Public License
@@ -196,7 +196,6 @@ void psphere_to_VV1(double X, double Y, double Z, double *rcoord)
 
 void VV2_to_psphere(double z1, double z2, double *pcoord)
 {
-
     // (z1,z2) is a point on the U2 chart, but on the other side of the line at
     // infinity
 
@@ -358,31 +357,31 @@ static void U2_to_cylinder(double u, double s, double *c);
 static void V1_to_cylinder(double u, double s, double *c);
 static void V2_to_cylinder(double u, double s, double *c);
 
-static double s_U = 0.0;
+static double sU{0.0};
 
 static double func_U1(double x)
 {
     return pow(x, gVFResults.double_p_) +
-           s_U * s_U * pow(x, gVFResults.double_q_) - 1.0;
+           sU * sU * pow(x, gVFResults.double_q_) - 1.0;
 }
 
 static double dfunc_U1(double x)
 {
     return gVFResults.double_p_ * pow(x, gVFResults.double_p_minus_1_) +
-           s_U * s_U * gVFResults.double_q_ *
+           sU * sU * gVFResults.double_q_ *
                pow(x, gVFResults.double_q_minus_1_);
 }
 
 static double func_U1_s0(double theta)
 {
     /* find theta if s=0 and u<>0 */
-    return s_U * pow(cos(theta), gVFResults.double_q_) -
+    return sU * pow(cos(theta), gVFResults.double_q_) -
            pow(sin(theta), gVFResults.double_p_);
 }
 
 static double dfunc_U1_s0(double theta)
 {
-    return (-gVFResults.double_q_ * s_U *
+    return (-gVFResults.double_q_ * sU *
                 pow(cos(theta), gVFResults.double_q_minus_1_) * sin(theta) -
             gVFResults.double_p_ * cos(theta) *
                 pow(sin(theta), gVFResults.double_p_minus_1_));
@@ -399,7 +398,7 @@ static void U1_to_cylinder(double u, double s, double *c)
         c[1] = 0;
     } else if (s == 0) {
         c[0] = 0;
-        s_U = pow(u, gVFResults.double_p_);
+        sU = pow(u, gVFResults.double_p_);
         if (u > 0) {
             x[0] = 0;
             x[1] = PI / 2.0;
@@ -411,7 +410,7 @@ static void U1_to_cylinder(double u, double s, double *c)
     } else {
         x[0] = 0;
         x[1] = 1;
-        s_U = u;
+        sU = u;
         y = find_root(func_U1, dfunc_U1, x);
         c[0] = sqrt(y) * s;
         c[1] = atan(u * pow(sqrt(y), gVFResults.double_q_minus_p_));
@@ -437,7 +436,7 @@ static void V1_to_cylinder(double u, double s, double *c)
         c[1] = PI;
     } else if (s == 0) {
         c[0] = 0;
-        s_U = pow(u, gVFResults.double_p_) * __minus_one_to_q;
+        sU = pow(u, gVFResults.double_p_) * __minus_one_to_q;
         if (u > 0) {
             x[0] = PI / 2;
             x[1] = PI;
@@ -449,7 +448,7 @@ static void V1_to_cylinder(double u, double s, double *c)
     } else {
         x[0] = 0;
         x[1] = 1;
-        s_U = u;
+        sU = u;
         y = find_root(func_U1, dfunc_U1, x);
         c[0] = sqrt(y) * s;
         c[1] = atan(-u * pow(sqrt(y), gVFResults.double_q_minus_p_));
@@ -479,26 +478,26 @@ static void cylinder_to_V1( double r, double theta, double * c)
 
 static double func_U2(double x)
 {
-    return (s_U * s_U * pow(x, gVFResults.double_p_) +
+    return (sU * sU * pow(x, gVFResults.double_p_) +
             pow(x, gVFResults.double_q_) - 1.0);
 }
 
 static double dfunc_U2(double x)
 {
-    return (gVFResults.double_p_ * s_U * s_U *
+    return (gVFResults.double_p_ * sU * sU *
                 pow(x, gVFResults.double_p_minus_1_) +
             gVFResults.double_q_ * pow(x, gVFResults.double_q_minus_1_));
 }
 
 static double func_U2_s0(double theta)
 {
-    return (s_U * pow(sin(theta), gVFResults.double_p_) -
+    return (sU * pow(sin(theta), gVFResults.double_p_) -
             pow(cos(theta), gVFResults.double_q_));
 }
 
 static double dfunc_U2_s0(double theta)
 {
-    return (gVFResults.double_p_ * s_U * cos(theta) *
+    return (gVFResults.double_p_ * sU * cos(theta) *
                 pow(sin(theta), gVFResults.double_p_minus_1_) +
             gVFResults.double_q_ * sin(theta) *
                 pow(cos(theta), gVFResults.double_q_minus_1_));
@@ -515,7 +514,7 @@ static void U2_to_cylinder(double u, double s, double *c)
         c[1] = PI / 2;
     } else if (s == 0) {
         c[0] = 0;
-        s_U = pow(u, gVFResults.double_q_);
+        sU = pow(u, gVFResults.double_q_);
         if (u > 0) {
             x[0] = 0;
             x[1] = PI / 2.0;
@@ -527,7 +526,7 @@ static void U2_to_cylinder(double u, double s, double *c)
     } else {
         x[0] = 0;
         x[1] = 1;
-        s_U = u;
+        sU = u;
         y = find_root(func_U2, dfunc_U2, x);
         c[0] = sqrt(y) * s;
         c[1] = atan(pow(sqrt(y), gVFResults.double_q_minus_p_) / u);
@@ -557,7 +556,7 @@ static void V2_to_cylinder(double u, double s, double *c)
     } else {
         if (s == 0) {
             c[0] = 0;
-            s_U = pow(u, gVFResults.double_q_) * __minus_one_to_p;
+            sU = pow(u, gVFResults.double_q_) * __minus_one_to_p;
             if (u > 0) {
                 x[0] = -PI / 2;
                 x[1] = 0;
@@ -569,7 +568,7 @@ static void V2_to_cylinder(double u, double s, double *c)
         } else {
             x[0] = 0;
             x[1] = 1;
-            s_U = u;
+            sU = u;
             y = find_root(func_U2, dfunc_U2, x);
             c[0] = sqrt(y) * s;
             c[1] = atan(-pow(sqrt(y), gVFResults.double_q_minus_p_) / u);
@@ -602,11 +601,11 @@ static void cylinder_to_V2( double r, double theta, double * c)
 void annulus_plsphere(double x, double y, double *p)
 {
     if (x * x + y * y < RADIUS2) {
-        p[0] = 0; // mark it as a finite point
+        p[0] = 0;  // mark it as a finite point
         p[1] = x / RADIUS;
         p[2] = y / RADIUS;
     } else {
-        p[0] = 1; // mark it as a point near infinity
+        p[0] = 1;  // mark it as a point near infinity
         p[1] = (1.0 - x * x - y * y) / (1.0 - RADIUS2);
         p[2] = atan2(y, x);
     }
@@ -662,19 +661,19 @@ void plsphere_annulus(double x, double y, double z, double *u)
 //
 //  Once we have calculated u, we determine v using atan2.
 
-static double s_A = 0.0;
-static double s_B = 0.0;
+static double sA{0.0};
+static double sB{0.0};
 
 static double func(double z)
 {
-    return pow(z, gVFResults.double_p_) * s_A +
-           pow(z, gVFResults.double_q_) * s_B - 1.0;
+    return pow(z, gVFResults.double_p_) * sA +
+           pow(z, gVFResults.double_q_) * sB - 1.0;
 }
 
 static double dfunc(double z)
 {
-    return gVFResults.double_p_ * pow(z, gVFResults.double_p_minus_1_) * s_A +
-           gVFResults.double_q_ * pow(z, gVFResults.double_q_minus_1_) * s_B;
+    return gVFResults.double_p_ * pow(z, gVFResults.double_p_minus_1_) * sA +
+           gVFResults.double_q_ * pow(z, gVFResults.double_q_minus_1_) * sB;
 }
 
 void R2_to_plsphere(double x, double y, double *pcoord)
@@ -687,8 +686,8 @@ void R2_to_plsphere(double x, double y, double *pcoord)
         pcoord[2] = y;
     } else {
         pcoord[0] = 1.0;
-        s_A = x * x;
-        s_B = y * y;
+        sA = x * x;
+        sB = y * y;
         z[0] = 0.0;
         z[1] = 1.0;
 
@@ -814,12 +813,12 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_p); // - (-cos(y))^(-1/p)
+                a = -pow(-a, -__one_over_p);  // - (-cos(y))^(-1/p)
         } else
-            a = pow(a, -__one_over_p); // cos(y)^(-1/p)
+            a = pow(a, -__one_over_p);  // cos(y)^(-1/p)
 
         rcoord[0] =
-            sin(y) * pow(a, gVFResults.double_q_); // sin(y) * cos(y)^(-q/p)
+            sin(y) * pow(a, gVFResults.double_q_);  // sin(y) * cos(y)^(-q/p)
         rcoord[1] = x * a;                          // x * cos(y)^(-1/p)
     } else {
         if (x < 0) {
@@ -830,7 +829,7 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(-x, -__one_over_p);
         } else
-            a = pow(x, -__one_over_p); // x^(-1/p)
+            a = pow(x, -__one_over_p);  // x^(-1/p)
 
         rcoord[0] = y * pow(a, gVFResults.double_q_);
         rcoord[1] = a;
@@ -859,12 +858,12 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_q); // - (-sin(y))^(-1/q)
+                a = -pow(-a, -__one_over_q);  // - (-sin(y))^(-1/q)
         } else
-            a = pow(a, -__one_over_q); // sin(y)^(-1/q)
+            a = pow(a, -__one_over_q);  // sin(y)^(-1/q)
 
         rcoord[0] =
-            cos(y) * pow(a, gVFResults.double_p_); // cos(y) * sin(y)^(-p/q)
+            cos(y) * pow(a, gVFResults.double_p_);  // cos(y) * sin(y)^(-p/q)
         rcoord[1] = x * a;                          // x * sin(y)^(-1/q)
     } else {
         if (y < 0) {
@@ -875,7 +874,7 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(-y, -__one_over_q);
         } else
-            a = pow(y, -__one_over_q); // x^(-1/p)
+            a = pow(y, -__one_over_q);  // x^(-1/p)
 
         rcoord[0] = x * pow(a, gVFResults.double_p_);
         rcoord[1] = a;
@@ -896,12 +895,12 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_p); // - (-cos(y))^(-1/p)
+                a = -pow(-a, -__one_over_p);  // - (-cos(y))^(-1/p)
         } else
-            a = pow(a, -__one_over_p); // cos(y)^(-1/p)
+            a = pow(a, -__one_over_p);  // cos(y)^(-1/p)
 
         rcoord[0] =
-            sin(y) * pow(a, gVFResults.double_q_); // sin(y) * cos(y)^(-q/p)
+            sin(y) * pow(a, gVFResults.double_q_);  // sin(y) * cos(y)^(-q/p)
         rcoord[1] = x * a;                          // x * cos(y)^(-1/p)
     } else {
         if (x > 0) {
@@ -912,7 +911,7 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(x, -__one_over_p);
         } else
-            a = pow(-x, -__one_over_p); // x^(-1/p)
+            a = pow(-x, -__one_over_p);  // x^(-1/p)
 
         rcoord[0] = y * pow(a, gVFResults.double_q_);
         rcoord[1] = a;
@@ -941,12 +940,12 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_q); // - (-sin(y))^(-1/q)
+                a = -pow(-a, -__one_over_q);  // - (-sin(y))^(-1/q)
         } else
-            a = pow(a, -__one_over_q); // sin(y)^(-1/q)
+            a = pow(a, -__one_over_q);  // sin(y)^(-1/q)
 
         rcoord[0] =
-            cos(y) * pow(a, gVFResults.double_p_); // cos(y) * sin(y)^(-p/q)
+            cos(y) * pow(a, gVFResults.double_p_);  // cos(y) * sin(y)^(-p/q)
         rcoord[1] = x * a;                          // x * sin(y)^(-1/q)
     } else {
         if (y > 0) {
@@ -957,7 +956,7 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(y, -__one_over_q);
         } else
-            a = pow(-y, -__one_over_q); // x^(-1/p)
+            a = pow(-y, -__one_over_q);  // x^(-1/p)
 
         rcoord[0] = x * pow(a, gVFResults.double_p_);
         rcoord[1] = a;
@@ -1080,8 +1079,8 @@ bool default_sphere_to_viewcoordpair(double *p, double *q, double *u1,
     */
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
-    return true; // returns true: line piece does not undergo a discontinuity in
-                 // coordinates
+    return true;  // returns true: line piece does not undergo a discontinuity
+                  // in coordinates
 }
 
 bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
@@ -1120,8 +1119,8 @@ bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
 
-    return true; // returns true: line piece does not undergo a discontinuity in
-                 // coordinates
+    return true;  // returns true: line piece does not undergo a discontinuity
+                  // in coordinates
 }
 
 bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
@@ -1160,8 +1159,8 @@ bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
 
-    return true; // returns true: line piece does not undergo a discontinuity in
-                 // coordinates
+    return true;  // returns true: line piece does not undergo a discontinuity
+                  // in coordinates
 }
 
 bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
@@ -1184,7 +1183,7 @@ bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
         if (qx * px < 0) {
             // the line y=0 has been crossed
             t = px / (px - qx);
-            y = t * qy + (1 - t) * py; // (x,0) is an intermediate point.
+            y = t * qy + (1 - t) * py;  // (x,0) is an intermediate point.
 
             MATHFUNC(sphere_to_viewcoord)(0, px, py, u1);
             if (px < 0) {
@@ -1250,7 +1249,7 @@ bool plsphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
         if (qy * py < 0) {
             // the line y=0 has been crossed
             t = py / (py - qy);
-            x = t * qx + (1 - t) * px; // (x,0) is an intermediate point.
+            x = t * qx + (1 - t) * px;  // (x,0) is an intermediate point.
 
             MATHFUNC(sphere_to_viewcoord)(0, px, py, u1);
             if (py < 0) {

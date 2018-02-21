@@ -23,16 +23,16 @@
 #include "file_tab.h"
 #include "math_separatrice.h"
 
-static std::vector<p4polynom::term2> s_vec_field_0;
-static std::vector<p4polynom::term2> s_vec_field_1;
+static std::vector<p4polynom::term2> sVecField_0;
+static std::vector<p4polynom::term2> sVecField_1;
 
 // ---------------------------------------------------------------------------
 //          eval_blow_vec_field
 // ---------------------------------------------------------------------------
 void eval_blow_vec_field(const double *y, double *f)
 {
-    f[0] = eval_term2(s_vec_field_0, y);
-    f[1] = eval_term2(s_vec_field_1, y);
+    f[0] = eval_term2(sVecField_0, y);
+    f[1] = eval_term2(sVecField_1, y);
 }
 
 // ---------------------------------------------------------------------------
@@ -81,8 +81,8 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
     p4orbits::orbits_points last_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
 
-    s_vec_field_0 = de_sep.vector_field_0;
-    s_vec_field_1 = de_sep.vector_field_1;
+    sVecField_0 = de_sep.vector_field_0;
+    sVecField_1 = de_sep.vector_field_1;
 
     y[0] = de_sep.point[0];
     y[1] = de_sep.point[1];

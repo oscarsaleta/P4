@@ -35,8 +35,8 @@
 #include <cfloat>
 #include <cmath>
 
-static double s_PRECISION1 = 1e-16;
-static double s_PRECISION2 = 1e-8;
+static double sPrecision1 = 1e-16;
+static double sPrecision2 = 1e-8;
 
 // -----------------------------------------------------------------------
 //          bisection
@@ -82,7 +82,7 @@ static double regula_falsi(double (*f)(double), double *x, double e)
     for (;;) {
         y = x[1] - (*f)(x[1]) * ((x[1] - x[0]) / ((*f)(x[1]) - (*f)(x[0])));
 
-        if (fabs(y - x2) < e && f(y) < s_PRECISION2)
+        if (fabs(y - x2) < e && f(y) < sPrecision2)
             break;
 
         if ((*f)(x[1]) * (*f)(y) <= 0)
@@ -104,13 +104,13 @@ static double newton(double (*f)(double), double (*df)(double), double x,
 {
     double dx;
 
-    if (fabs((*f)(x)) < s_PRECISION1 && fabs((*f)(x) / (*df)(x)) < e)
+    if (fabs((*f)(x)) < sPrecision1 && fabs((*f)(x) / (*df)(x)) < e)
         return x;
 
     for (;;) {
         dx = (*f)(x) / (*df)(x);
         x -= dx;
-        if (fabs((*f)(x)) < s_PRECISION1 || fabs(dx) < e)
+        if (fabs((*f)(x)) < sPrecision1 || fabs(dx) < e)
             break;
     }
 

@@ -38,56 +38,56 @@
     Reduce Exe
 */
 
-static QString s_Settings_mathmanipulator;
-static QString s_Settings_p4path;
-static QString s_Settings_sumtablepath;
-static QString s_Settings_temppath;
-static QString s_Settings_mapleexe;
-// static QString s_Settings_reduceexe;
-static bool s_Settings_changed;
+static QString sSettingsMathManipulator;
+static QString sSettingsP4Path;
+static QString sSettingsSumtablePath;
+static QString sSettingsTempPath;
+static QString sSettingsMapleExe;
+// static QString sSettingsReduceExe;
+static bool sSettingsChanged;
 
-QString getP4Path(void) { return s_Settings_p4path; }
-QString getP4TempPath(void) { return s_Settings_temppath; }
-QString getP4SumTablePath(void) { return s_Settings_sumtablepath; }
-QString getMapleExe(void) { return s_Settings_mapleexe; }
+QString getP4Path(void) { return sSettingsP4Path; }
+QString getP4TempPath(void) { return sSettingsTempPath; }
+QString getP4SumTablePath(void) { return sSettingsSumtablePath; }
+QString getMapleExe(void) { return sSettingsMapleExe; }
 
 void setMathManipulator(QString s)
 {
-    if (s_Settings_mathmanipulator != s) {
-        s_Settings_mathmanipulator = s;
-        s_Settings_changed = true;
+    if (sSettingsMathManipulator != s) {
+        sSettingsMathManipulator = s;
+        sSettingsChanged = true;
     }
 }
 
 void setP4Path(QString s)
 {
-    if (s_Settings_p4path != s) {
-        s_Settings_p4path = s;
-        s_Settings_changed = true;
+    if (sSettingsP4Path != s) {
+        sSettingsP4Path = s;
+        sSettingsChanged = true;
     }
 }
 
 void setP4TempPath(QString s)
 {
-    if (s_Settings_temppath != s) {
-        s_Settings_temppath = s;
-        s_Settings_changed = true;
+    if (sSettingsTempPath != s) {
+        sSettingsTempPath = s;
+        sSettingsChanged = true;
     }
 }
 
 void setP4SumTablePath(QString s)
 {
-    if (s_Settings_sumtablepath != s) {
-        s_Settings_sumtablepath = s;
-        s_Settings_changed = true;
+    if (sSettingsSumtablePath != s) {
+        sSettingsSumtablePath = s;
+        sSettingsChanged = true;
     }
 }
 
 void setMapleExe(QString s)
 {
-    if (s_Settings_mapleexe != s) {
-        s_Settings_mapleexe = s;
-        s_Settings_changed = true;
+    if (sSettingsMapleExe != s) {
+        sSettingsMapleExe = s;
+        sSettingsChanged = true;
     }
 }
 
@@ -103,7 +103,7 @@ QString getP4MaplePath(void)
     return g;
 }
 
-QString getMathManipulator(void) { return s_Settings_mathmanipulator; }
+QString getMathManipulator(void) { return sSettingsMathManipulator; }
 
 int getMathPackage(void) { return PACKAGE_MAPLE; }
 
@@ -138,16 +138,16 @@ bool readP4Settings(void)
     std::unique_ptr<QSettings> p4settings{new QSettings()};
     bool _ok{false};
 
-    s_Settings_changed = false;
+    sSettingsChanged = false;
 
     if (p4settings->value("/Version").toString() == gP4version) {
         _ok = true;
-        s_Settings_p4path = p4settings->value("/InstallPath").toString();
-        s_Settings_sumtablepath = p4settings->value("/SumtablePath").toString();
-        s_Settings_temppath = p4settings->value("/TempPath").toString();
-        s_Settings_mapleexe = p4settings->value("/MapleExe").toString();
-        s_Settings_mathmanipulator = "Maple";
-        if (s_Settings_p4path == "" || (s_Settings_mapleexe == "")) {
+        sSettingsP4Path = p4settings->value("/InstallPath").toString();
+        sSettingsSumtablePath = p4settings->value("/SumtablePath").toString();
+        sSettingsTempPath = p4settings->value("/TempPath").toString();
+        sSettingsMapleExe = p4settings->value("/MapleExe").toString();
+        sSettingsMathManipulator = "Maple";
+        if (sSettingsP4Path == "" || (sSettingsMapleExe == "")) {
             _ok = false;
         }
     }
@@ -155,12 +155,12 @@ bool readP4Settings(void)
     p4settings.reset();
 
     if (!_ok) {
-        s_Settings_p4path = getDefaultP4Path();
-        s_Settings_sumtablepath = getDefaultP4SumTablePath();
-        s_Settings_temppath = getDefaultP4TempPath();
-        s_Settings_mapleexe = getDefaultMapleInstallation();
-        s_Settings_mathmanipulator = getDefaultMathManipulator();
-        s_Settings_changed = true;
+        sSettingsP4Path = getDefaultP4Path();
+        sSettingsSumtablePath = getDefaultP4SumTablePath();
+        sSettingsTempPath = getDefaultP4TempPath();
+        sSettingsMapleExe = getDefaultMapleInstallation();
+        sSettingsMathManipulator = getDefaultMathManipulator();
+        sSettingsChanged = true;
         return false;
     }
 
@@ -169,7 +169,7 @@ bool readP4Settings(void)
 
 void saveP4Settings(void)
 {
-    if (s_Settings_changed == false)
+    if (sSettingsChanged == false)
         return;
 
     std::unique_ptr<QSettings> p4settings{new QSettings()};

@@ -32,10 +32,10 @@
 #include <cmath>
 
 // static global variables
-static int s_IsoclinesTask = EVAL_ISOCLINES_NONE;
-static P4WinSphere *s_IsoclinesSphere = nullptr;
-static int s_IsoclinesDashes = 0;
-static bool s_IsoclinesError = false;
+static int sIsoclinesTask = EVAL_ISOCLINES_NONE;
+static P4WinSphere *sIsoclinesSphere = nullptr;
+static int sIsoclinesDashes = 0;
+static bool sIsoclinesError = false;
 
 // non-static global variables
 P4ORBIT gLastIsoclinesPoint = nullptr;
@@ -49,14 +49,14 @@ static bool read_isoclines(void (*chart)(double, double, double *));
 bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points)
 {
     if (gVFResults.plweights_)
-        s_IsoclinesTask = EVAL_ISOCLINES_LYP_R2;
+        sIsoclinesTask = EVAL_ISOCLINES_LYP_R2;
     else
-        s_IsoclinesTask = EVAL_ISOCLINES_R2;
+        sIsoclinesTask = EVAL_ISOCLINES_R2;
 
-    s_IsoclinesError = false;
-    s_IsoclinesSphere = sp;
-    s_IsoclinesDashes = dashes;
-    return runTaskIsoclines(s_IsoclinesTask, precision, points);
+    sIsoclinesError = false;
+    sIsoclinesSphere = sp;
+    sIsoclinesDashes = dashes;
+    return runTaskIsoclines(sIsoclinesTask, precision, points);
 }
 
 // returns true when finished. Then
@@ -64,20 +64,20 @@ bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points)
 // occurred or not
 bool evalIsoclinesContinue(int precision, int points)
 {
-    if (s_IsoclinesTask == EVAL_ISOCLINES_NONE)
+    if (sIsoclinesTask == EVAL_ISOCLINES_NONE)
         return true;
 
-    if (!readTaskResults(s_IsoclinesTask)) {
-        s_IsoclinesError = true;
+    if (!readTaskResults(sIsoclinesTask)) {
+        sIsoclinesError = true;
         return true;
     }
-    s_IsoclinesTask++;
-    if (s_IsoclinesTask == EVAL_ISOCLINES_FINISHPOINCARE ||
-        s_IsoclinesTask == EVAL_ISOCLINES_FINISHLYAPUNOV) {
+    sIsoclinesTask++;
+    if (sIsoclinesTask == EVAL_ISOCLINES_FINISHPOINCARE ||
+        sIsoclinesTask == EVAL_ISOCLINES_FINISHLYAPUNOV) {
         return true;
     }
-    if (!runTaskIsoclines(s_IsoclinesTask, precision, points)) {
-        s_IsoclinesError = true;
+    if (!runTaskIsoclines(sIsoclinesTask, precision, points)) {
+        sIsoclinesError = true;
         return true;
     }
     return false; // still busy
@@ -88,17 +88,17 @@ bool evalIsoclinesFinish() // return false in case an error occured
     int nisocs = (gVFResults.isocline_vector_.size() - 1) % 4;
     gVFResults.isocline_vector_.back().color = CISOC + nisocs;
 
-    if (s_IsoclinesTask != EVAL_ISOCLINES_NONE) {
-        s_IsoclinesSphere->prepareDrawing();
-        draw_isoclines(s_IsoclinesSphere,
+    if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
+        sIsoclinesSphere->prepareDrawing();
+        draw_isoclines(sIsoclinesSphere,
                        gVFResults.isocline_vector_.back().points,
                        gVFResults.isocline_vector_.back().color, 1);
-        s_IsoclinesSphere->finishDrawing();
+        sIsoclinesSphere->finishDrawing();
 
-        s_IsoclinesTask = EVAL_ISOCLINES_NONE;
+        sIsoclinesTask = EVAL_ISOCLINES_NONE;
 
-        if (s_IsoclinesError) {
-            s_IsoclinesError = false;
+        if (sIsoclinesError) {
+            sIsoclinesError = false;
             return false;
         }
     }
@@ -257,7 +257,7 @@ static bool read_isoclines(void (*chart)(double, double, double *))
             k++;
             chart(x, y, pcoord);
             insert_isoclines_point(pcoord[0], pcoord[1], pcoord[2], d);
-            d = s_IsoclinesDashes;
+            d = sIsoclinesDashes;
         }
         for (c = getc(fp); isspace(c);)
             c = getc(fp);

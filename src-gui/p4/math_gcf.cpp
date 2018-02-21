@@ -32,11 +32,11 @@
 #include <cmath>
 
 // static global variables
-static int s_GcfTask = EVAL_GCF_NONE;
-static std::shared_ptr<P4WinSphere> s_GcfSphere;
-static int s_GcfDashes = 0;
-static bool s_GcfError = false;
-static int s_GcfVfIndex = 0;
+static int sGcfTask = EVAL_GCF_NONE;
+static std::shared_ptr<P4WinSphere> sGcfSphere;
+static int sGcfDashes = 0;
+static bool sGcfError = false;
+static int sGcfVfIndex = 0;
 
 // static functions
 static void insert_gcf_point(double x0, double y0, double z0, int dashes);
@@ -52,55 +52,55 @@ bool evalGcfStart(std::smart_ptr<P4WinSphere> sp, int dashes, int points,
     for (r = 0; r < gThisVF->numVF_; r++) {
         if (!gVFResults.vf_[r].gcf_points_.empty()) {
             draw_gcf(sp, gVFResults.vf_[r].gcf_points_, bgColours::CBACKGROUND,
-                     s_GcfDashes);
+                     sGcfDashes);
             gVFResults.vf_[r].gcf_points_.clear();
         }
     }
     sp->finishDrawing();
 
     if (gVFResults.plweights_)
-        s_GcfTask = EVAL_GCF_LYP_R2;
+        sGcfTask = EVAL_GCF_LYP_R2;
     else
-        s_GcfTask = EVAL_GCF_R2;
+        sGcfTask = EVAL_GCF_R2;
 
-    s_GcfError = false;
-    s_GcfSphere = sp;
-    s_GcfDashes = dashes;
-    return runTask(s_GcfTask, points, precis, memory, 0);
+    sGcfError = false;
+    sGcfSphere = sp;
+    sGcfDashes = dashes;
+    return runTask(sGcfTask, points, precis, memory, 0);
 }
 
 // returns true when finished.  Then run EvalGCfFinish to see if error occurred
 // or not
 bool evalGcfContinue(int points, int prec, int memory)
 {
-    if (s_GcfTask == EVAL_GCF_NONE)
+    if (sGcfTask == EVAL_GCF_NONE)
         return true;
 
-    if (!readTaskResults(s_GcfTask, s_GcfVfIndex)) {
-        s_GcfError = true;
+    if (!readTaskResults(sGcfTask, sGcfVfIndex)) {
+        sGcfError = true;
         return true;
     }
-    s_GcfTask++;
-    if (s_GcfTask == EVAL_GCF_FINISHPOINCARE ||
-        s_GcfTask == EVAL_GCF_FINISHLYAPUNOV) {
+    sGcfTask++;
+    if (sGcfTask == EVAL_GCF_FINISHPOINCARE ||
+        sGcfTask == EVAL_GCF_FINISHLYAPUNOV) {
         while (1) {
-            if (++s_GcfVfIndex >= gThisVF->numVF_)
+            if (++sGcfVfIndex >= gThisVF->numVF_)
                 break;
-            if (!gVFResults.vf_[s_GcfVfIndex].gcf_.empty())
+            if (!gVFResults.vf_[sGcfVfIndex].gcf_.empty())
                 break;
         }
-        if (s_GcfVfIndex >= gThisVF->numVF_)
+        if (sGcfVfIndex >= gThisVF->numVF_)
             // all gcfs are evaluated
             return true;
         // retrigger new set of tasks
         if (gVFResults.plweights_)
-            s_GcfTask = EVAL_GCF_LYP_R2;
+            sGcfTask = EVAL_GCF_LYP_R2;
         else
-            s_GcfTask = EVAL_GCF_R2;
+            sGcfTask = EVAL_GCF_R2;
     }
 
-    if (!runTask(s_GcfTask, points, prec)) {
-        s_GcfError = true;
+    if (!runTask(sGcfTask, points, prec)) {
+        sGcfError = true;
         return true;
     }
 
@@ -110,21 +110,21 @@ bool evalGcfContinue(int points, int prec, int memory)
 bool evalGcfFinish(void)  // return false in case an error occured
 {
     int index;
-    if (s_GcfTask != EVAL_GCF_NONE) {
+    if (sGcfTask != EVAL_GCF_NONE) {
         for (index = 0; index < gThisVF->numVF_; index++)
             gThisVF->resampleGcf(index);
-        s_GcfSphere->prepareDrawing();
+        sGcfSphere->prepareDrawing();
         for (index = 0; index < gThisVF->numVF_; index++) {
             if (!gVFResults.vf_[index].gcf_points_.empty())
-                draw_gcf(s_GcfSphere, gVFResults.vf_[index].gcf_points_, CSING,
+                draw_gcf(sGcfSphere, gVFResults.vf_[index].gcf_points_, CSING,
                          1);
         }
-        s_GcfSphere->finishDrawing();
+        sGcfSphere->finishDrawing();
 
-        s_GcfTask = EVAL_GCF_NONE;
+        sGcfTask = EVAL_GCF_NONE;
 
-        if (s_GcfError) {
-            s_GcfError = false;
+        if (sGcfError) {
+            sGcfError = false;
             return false;
         }
     }
@@ -139,7 +139,7 @@ bool runTask(int task, int points, int prec, int mem, int index)
         if (++index == gThisVF->numVF_)
             return false;
     }
-    s_GcfVfIndex = index;
+    sGcfVfIndex = index;
 
     switch (task) {
     case EVAL_GCF_R2:
@@ -277,7 +277,7 @@ static bool read_gcf(void (*chart)(double, double, double *), int index)
             chart(x, y, pcoord);
             insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d, index);
             // d=1;
-            d = s_GcfDashes;
+            d = sGcfDashes;
         }
         for (c = getc(fp); isspace(c);)
             c = getc(fp);

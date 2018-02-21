@@ -19,9 +19,9 @@
 
 #include "print_postscript.h"
 
+#include "P4InputVF.h"
 #include "custom.h"
 #include "file_tab.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "math_p4.h"
 #include "plot_tools.h"
@@ -32,16 +32,16 @@
 #include <QTextStream>
 #include <cmath>
 
-static bool s_PSBlackWhitePrint = true;
+static bool sPSBlackWhitePrint{true};
 
-static std::unique_ptr<QFile> s_PSFile();
-static QTextStream s_PSFileStream;
-static int s_PSW = 0;
-static int s_PSH = 0;
+static std::unique_ptr<QFile> sPSFile;
+static QTextStream sPSFileStream;
+static int sPSW{0};
+static int sPSH{0};
 
-static double s_lastpsx0 = 0;
-static double s_lastpsy0 = 0;
-static int s_lastpscolor = 0;
+static double sLastPSX0{0};
+static double sLastPSY0{0};
+static int sLastPSColor{0};
 
 static void ps_print_line(double x0, double y0, double x1, double y1,
                           int color);
@@ -49,25 +49,25 @@ static void ps_print_line(double x0, double y0, double x1, double y1,
 
 static void ps_print_comment(QString s)
 {
-    if (s_PSFile) {
-        s_PSFileStream << "%% " << s << "\n";
+    if (sPSFile) {
+        sPSFileStream << "%% " << s << "\n";
     }
 }
 
 static void ps_print_saddle(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g box\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSADDLE;
+            sLastPSColor = CSADDLE;
             s.sprintf("col%d %8.5g %8.5g box\n", printColorTable(CSADDLE), x,
                       y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -75,35 +75,35 @@ static void ps_print_virtualsaddle(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vbox\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSADDLE;
+            sLastPSColor = CSADDLE;
             s.sprintf("col%d %8.5g %8.5g vbox\n", printColorTable(CSADDLE), x,
                       y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_stablenode(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g box\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_S;
+            sLastPSColor = CNODE_S;
             s.sprintf("col%d %8.5g %8.5g box\n", printColorTable(CNODE_S), x,
                       y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -111,35 +111,35 @@ static void ps_print_virtualstablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vbox\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_S;
+            sLastPSColor = CNODE_S;
             s.sprintf("col%d %8.5g %8.5g vbox\n", printColorTable(CNODE_S), x,
                       y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_unstablenode(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g box\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_U;
+            sLastPSColor = CNODE_U;
             s.sprintf("col%d %8.5g %8.5g box\n", printColorTable(CNODE_U), x,
                       y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -147,35 +147,35 @@ static void ps_print_virtualunstablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vbox\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_U;
+            sLastPSColor = CNODE_U;
             s.sprintf("col%d %8.5g %8.5g vbox\n", printColorTable(CNODE_U), x,
                       y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_stableweakfocus(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CWEAK_FOCUS_S;
+            sLastPSColor = CWEAK_FOCUS_S;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(CWEAK_FOCUS_S), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -183,35 +183,35 @@ static void ps_print_virtualstableweakfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CWEAK_FOCUS_S;
+            sLastPSColor = CWEAK_FOCUS_S;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(CWEAK_FOCUS_S), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_unstableweakfocus(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CWEAK_FOCUS_U;
+            sLastPSColor = CWEAK_FOCUS_U;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(CWEAK_FOCUS_U), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -219,35 +219,35 @@ static void ps_print_virtualunstableweakfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CWEAK_FOCUS_U;
+            sLastPSColor = CWEAK_FOCUS_U;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(CWEAK_FOCUS_U), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_weakfocus(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CWEAK_FOCUS;
+            sLastPSColor = CWEAK_FOCUS;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(CWEAK_FOCUS), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -255,35 +255,35 @@ static void ps_print_virtualweakfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CWEAK_FOCUS;
+            sLastPSColor = CWEAK_FOCUS;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(CWEAK_FOCUS), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_center(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CCENTER;
+            sLastPSColor = CCENTER;
             s.sprintf("col%d %8.5g %8.5g diamond\n", printColorTable(CCENTER),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -291,35 +291,35 @@ static void ps_print_virtualcenter(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CCENTER;
+            sLastPSColor = CCENTER;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n", printColorTable(CCENTER),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_stablestrongfocus(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSTRONG_FOCUS_S;
+            sLastPSColor = CSTRONG_FOCUS_S;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(CSTRONG_FOCUS_S), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -327,35 +327,35 @@ static void ps_print_virtualstablestrongfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSTRONG_FOCUS_S;
+            sLastPSColor = CSTRONG_FOCUS_S;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(CSTRONG_FOCUS_S), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_unstablestrongfocus(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSTRONG_FOCUS_U;
+            sLastPSColor = CSTRONG_FOCUS_U;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
                       printColorTable(CSTRONG_FOCUS_U), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -363,35 +363,35 @@ static void ps_print_virtualunstablestrongfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSTRONG_FOCUS_U;
+            sLastPSColor = CSTRONG_FOCUS_U;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
                       printColorTable(CSTRONG_FOCUS_U), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_sesaddle(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSADDLE;
+            sLastPSColor = CSADDLE;
             s.sprintf("col%d %8.5g %8.5g triangle\n", printColorTable(CSADDLE),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -399,35 +399,35 @@ static void ps_print_virtualsesaddle(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSADDLE;
+            sLastPSColor = CSADDLE;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n", printColorTable(CSADDLE),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_sesaddlenode(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSADDLE_NODE;
+            sLastPSColor = CSADDLE_NODE;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
                       printColorTable(CSADDLE_NODE), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -435,35 +435,35 @@ static void ps_print_virtualsesaddlenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CSADDLE_NODE;
+            sLastPSColor = CSADDLE_NODE;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
                       printColorTable(CSADDLE_NODE), x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_sestablenode(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_S;
+            sLastPSColor = CNODE_S;
             s.sprintf("col%d %8.5g %8.5g triangle\n", printColorTable(CNODE_S),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -471,35 +471,35 @@ static void ps_print_virtualsestablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_S;
+            sLastPSColor = CNODE_S;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n", printColorTable(CNODE_S),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_seunstablenode(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_U;
+            sLastPSColor = CNODE_U;
             s.sprintf("col%d %8.5g %8.5g triangle\n", printColorTable(CNODE_U),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -507,40 +507,40 @@ static void ps_print_virtualseunstablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
                       printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CNODE_U;
+            sLastPSColor = CNODE_U;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n", printColorTable(CNODE_U),
                       x, y);
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_degen(double x, double y)
 {
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf(
                 "LW 2.6 mul setlinewidth\n"
                 "col%d %8.5g %8.5g cross\n"
                 "LW setlinewidth\n",
                 printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CDEGEN;
+            sLastPSColor = CDEGEN;
             s.sprintf(
                 "LW 2.6 mul setlinewidth\n"
                 "col%d %8.5g %8.5g cross\n"
                 "LW setlinewidth\n",
                 printColorTable(CDEGEN), x, y);
-            s_PSFileStream << s;
+            sPSFileStream << s;
         }
     }
 }
@@ -549,23 +549,23 @@ static void ps_print_virtualdegen(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.sprintf(
                 "LW 1.3 mul setlinewidth\n"
                 "col%d %8.5g %8.5g cross\n"
                 "LW setlinewidth\n",
                 printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
-            s_lastpscolor = CDEGEN;
+            sLastPSColor = CDEGEN;
             s.sprintf(
                 "LW 1.3 mul setlinewidth\n"
                 "col%d %8.5g %8.5g cross\n"
                 "LW setlinewidth\n",
                 printColorTable(CDEGEN), x, y);
-            s_PSFileStream << s;
+            sPSFileStream << s;
         }
     }
 }
@@ -574,22 +574,22 @@ static void ps_print_coinciding(double x, double y)
 {
     if (s_PSFILE) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            s_lastpscolor = bgColours::CFOREGROUND;
+        if (sPSBlackWhitePrint) {
+            sLastPSColor = bgColours::CFOREGROUND;
             s.printf(
                 "LW 1.3 mul setlinewidth\n"
                 "col%d %8.5g %8.5g doublecross\n"
                 "LW setlinewidth\n",
                 printColorTable(bgColours::CFOREGROUND), x, y)
         } else {
-            s_lastpscolor = CDEGEN;
+            sLastPSColor = CDEGEN;
             s.printf(
                 "LW 1.3 mul setlinewidth\n"
                 "col%d %8.5g %8.5g doublecross\n"
                 "LW setlinewidth\n",
                 printColorTable(CDEGEN), x, y)
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -603,37 +603,37 @@ static void ps_print_elips(double x0, double y0, double a, double b, int color,
     // is not necessary, since the PS command for drawing ellipses works just
     // fine.
 
-    if (s_PSFile) {
+    if (sPSFile) {
         if (dotted)
-            s_PSFileStream << "gsave\n";
+            sPSFileStream << "gsave\n";
 
-        if (s_PSBlackWhitePrint)
+        if (sPSBlackWhitePrint)
             s.sprintf("col%d\n", printColorTable(bgColours::CFOREGROUND));
         else
             s.sprintf("col%d\n", printColorTable(color));
 
-        s_PSFileStream << s;
-        s_PSFileStream << "newpath\n";
+        sPSFileStream << s;
+        sPSFileStream << "newpath\n";
 
-        if (x0 - a >= 0 && x0 + a < s_PSW && y0 - b >= 0 && y0 + b < s_PSH) {
+        if (x0 - a >= 0 && x0 + a < sPSW && y0 - b >= 0 && y0 + b < sPSH) {
             // full elipse visible
             s.sprintf("%8.5g %8.5g moveto\n", (x0 + a), y0);
-            s_PSFileStream << s;
+            sPSFileStream << s;
             h = PI / 100;
             for (t = h; t < TWOPI; t += h) {
                 s.sprintf("%8.5g %8.5g lineto \n", (x0 + a * cos(t)),
                           (y0 + b * sin(t)));
-                s_PSFileStream << s;
+                sPSFileStream << s;
             }
 
-            s_PSFileStream << "closepath\n";
-            s_PSFileStream << "LW setlinewidth\n";
+            sPSFileStream << "closepath\n";
+            sPSFileStream << "LW setlinewidth\n";
             if (dotted) {
-                s_PSFileStream << "[DS ) 0 setdash\n";
+                sPSFileStream << "[DS ) 0 setdash\n";
             }
-            s_PSFileStream << "stroke\n";
+            sPSFileStream << "stroke\n";
             if (dotted) {
-                s_PSFileStream << "grestore\n";
+                sPSFileStream << "grestore\n";
             }
         } else {
             for (auto const &it : ellipse) {
@@ -648,63 +648,63 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
     if (x0 == x1 && y0 == y1)
         return;
 
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            if (s_lastpscolor == bgColours::CFOREGROUND) {
+        if (sPSBlackWhitePrint) {
+            if (sLastPSColor == bgColours::CFOREGROUND) {
                 s.sprintf("%d %d moveto %d %d lineto stroke\n", std::trunc(x0),
                           std::trunc(y0), std::trunc(x1), std::trunc(y1));
             } else {
-                s_lastpscolor = bgColours::CFOREGROUND;
+                sLastPSColor = bgColours::CFOREGROUND;
                 s.sprintf(
                     "%8.5g %8.5g moveto\n%8.5g %8.5g lineto col%d stroke\n", x0,
                     y0, x1, y1, printColorTable(bgColours::CFOREGROUND));
             }
         } else {
-            if (s_lastpscolor == color) {
+            if (sLastPSColor == color) {
                 s.sprintf("%d %d moveto %d %d lineto stroke\n", std::trunc(x0),
                           std::trunc(y0), std::trunc(x1), std::trunc(y1));
             } else {
-                s_lastpscolor = color;
+                sLastPSColor = color;
                 s.sprintf(
                     "%8.5g %8.5g moveto\n%8.5g %8.5g lineto col%d stroke\n", x0,
                     y0, x1, y1, printColorTable(color));
             }
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
 static void ps_print_point(double x0, double y0, int color)
 {
-    if (s_lastpsx0 == x0 && s_lastpsy0 == y0 && s_lastpscolor == color)
+    if (sLastPSX0 == x0 && sLastPSY0 == y0 && sLastPSColor == color)
         return;  // just a small protection against big PS files: do not
                  // print series of the same points.
 
-    s_lastpsx0 = x0;
-    s_lastpsy0 = y0;
-    s_lastpscolor = color;
+    sLastPSX0 = x0;
+    sLastPSY0 = y0;
+    sLastPSColor = color;
 
-    if (s_PSFile) {
+    if (sPSFile) {
         QString s;
-        if (s_PSBlackWhitePrint) {
-            if (s_lastpscolor == bgColours::CFOREGROUND) {
+        if (sPSBlackWhitePrint) {
+            if (sLastPSColor == bgColours::CFOREGROUND) {
                 s.sprintf("%d %d dot\n", std::trunc(x0), std::trunc(y0));
             } else {
-                s_lastpscolor = bgColours::CFOREGROUND;
+                sLastPSColor = bgColours::CFOREGROUND;
                 s.sprintf("col%d %8.5g %8.5g dot\n",
                           printColorTable(bgColours::CFOREGROUND), x0, y0);
             }
         } else {
-            if (s_lastpscolor == color) {
+            if (sLastPSColor == color) {
                 s.sprintf("%d %d dot\n", std::trunc(x0), std::trunc(y0));
             } else {
-                s_lastpscolor = color;
+                sLastPSColor = color;
                 s.sprintf("col%d %8.5g %8.5g dot\n", printColorTable(color), x0,
                           y0);
             }
         }
-        s_PSFileStream << s;
+        sPSFileStream << s;
     }
 }
 
@@ -714,8 +714,8 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                                bool isblackwhite, int resolution, int linewidth,
                                int symbolwidth)
 {
-    s_PSW = w;
-    s_PSH = h;
+    sPSW = w;
+    sPSH = h;
     QString s;
     double bbx0, bby0, bbw, bbh, bbx1, bby1;
     double scalefactor;
@@ -741,18 +741,18 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
     bbx1 = bbx0 + bbw;
     bby1 = bby0 + bbh;
 
-    s_PSBlackWhitePrint = isblackwhite;
+    sPSBlackWhitePrint = isblackwhite;
 
     s = gThisVF->getbarefilename() + ".eps";
 
-    s_PSFile.reset(new QFile(s));
-    if (s_PSFile->open(QIODevice::WriteOnly))
-        s_PSFileStream.setDevice(s_PSFile.get());
+    sPSFile.reset(new QFile(s));
+    if (sPSFile->open(QIODevice::WriteOnly))
+        sPSFileStream.setDevice(sPSFile.get());
     else {
-        s_PSFile.reset();
+        sPSFile.reset();
     }
 
-    s_lastpscolor = -1;
+    sLastPSColor = -1;
 
     plot_l = spherePrintLine;
     plot_p = spherePrintPoint;
@@ -798,7 +798,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
     if (iszoom)
         title += " (zoom window)";
 
-    if (s_PSFile) {
+    if (sPSFile) {
         // to calculate bounding box, we need to convert to point
         // measurements
         // (1 point = 1/72 inch)
@@ -809,11 +809,11 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             std::trunc(bbx0), std::trunc(bby0), std::trunc(bbx1),
             std::trunc(bby1));
 
-        s_PSFileStream << s;
-        s_PSFileStream << "%%%%Title: " << title << "\n";
-        s_PSFileStream << "%%%%Creator: P4\n";
-        s_PSFileStream << "%%%%CreationDate: " << datestring << "\n";
-        s_PSFileStream << "%%%%EndComments\n\n";
+        sPSFileStream << s;
+        sPSFileStream << "%%%%Title: " << title << "\n";
+        sPSFileStream << "%%%%Creator: P4\n";
+        sPSFileStream << "%%%%CreationDate: " << datestring << "\n";
+        sPSFileStream << "%%%%EndComments\n\n";
 
         s.sprintf(
             "%% User specified resolution = %d DPI\n"
@@ -823,7 +823,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             "%% Derived dash pattern:\n"
             "/DS %d def\n\n",
             resolution, linewidth, symbolwidth, linewidth * 6);
-        s_PSFileStream << s;
+        sPSFileStream << s;
 
         s.sprintf(
             "%% Transformation from default 72 DPI to chosen resolution, "
@@ -833,7 +833,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             "   %d %d translate}def\n\n",
             scalefactor, scalefactor, x0, y0);
 
-        s_PSFileStream << s;
+        sPSFileStream << s;
 
         s.sprintf(
             "/frame{\n"
@@ -842,51 +842,51 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             "closepath\n"
             "   clip stroke}def\n\n",
             h, w, h, w);
-        s_PSFileStream << s;
+        sPSFileStream << s;
 
-        s_PSFileStream << "%% Color table:\n"
-                          "/col-1 {} def\n"
-                          "/col0 {0.000 0.000 0.000 setrgbcolor} bind def\n"
-                          "/col1 {0.000 0.000 1.000 setrgbcolor} bind def\n"
-                          "/col2 {0.000 1.000 0.000 setrgbcolor} bind def\n"
-                          "/col3 {0.000 1.000 1.000 setrgbcolor} bind def\n"
-                          "/col4 {1.000 0.000 0.000 setrgbcolor} bind def\n"
-                          "/col5 {1.000 0.000 1.000 setrgbcolor} bind def\n"
-                          "/col6 {1.000 1.000 0.000 setrgbcolor} bind def\n"
-                          "/col7 {1.000 1.000 1.000 setrgbcolor} bind def\n"
-                          "/col8 {0.000 0.000 0.560 setrgbcolor} bind def\n"
-                          "/col9 {0.000 0.000 0.690 setrgbcolor} bind def\n"
-                          "/col10 {0.000 0.000 0.820 setrgbcolor} bind def\n"
-                          "/col11 {0.530 0.810 1.000 setrgbcolor} bind def\n"
-                          "/col12 {0.000 0.560 0.000 setrgbcolor} bind def\n"
-                          "/col13 {0.000 0.690 0.000 setrgbcolor} bind def\n"
-                          "/col14 {0.000 0.820 0.000 setrgbcolor} bind def\n"
-                          "/col15 {0.000 0.560 0.560 setrgbcolor} bind def\n"
-                          "/col16 {0.000 0.690 0.690 setrgbcolor} bind def\n"
-                          "/col17 {0.000 0.820 0.820 setrgbcolor} bind def\n"
-                          "/col18 {0.560 0.000 0.000 setrgbcolor} bind def\n"
-                          "/col19 {0.690 0.000 0.000 setrgbcolor} bind def\n"
-                          "/col20 {0.820 0.000 0.000 setrgbcolor} bind def\n"
-                          "/col21 {0.560 0.000 0.560 setrgbcolor} bind def\n"
-                          "/col22 {0.690 0.000 0.690 setrgbcolor} bind def\n"
-                          "/col23 {0.820 0.000 0.820 setrgbcolor} bind def\n"
-                          "/col24 {0.500 0.190 0.000 setrgbcolor} bind def\n"
-                          "/col25 {0.630 0.250 0.000 setrgbcolor} bind def\n"
-                          "/col26 {0.750 0.380 0.000 setrgbcolor} bind def\n"
-                          "/col27 {1.000 0.500 0.500 setrgbcolor} bind def\n"
-                          "/col28 {1.000 0.630 0.630 setrgbcolor} bind def\n"
-                          "/col29 {1.000 0.750 0.750 setrgbcolor} bind def\n"
-                          "/col30 {1.000 0.880 0.880 setrgbcolor} bind def\n"
-                          "/col31 {1.000 0.840 0.000 setrgbcolor} bind def\n";
+        sPSFileStream << "%% Color table:\n"
+                         "/col-1 {} def\n"
+                         "/col0 {0.000 0.000 0.000 setrgbcolor} bind def\n"
+                         "/col1 {0.000 0.000 1.000 setrgbcolor} bind def\n"
+                         "/col2 {0.000 1.000 0.000 setrgbcolor} bind def\n"
+                         "/col3 {0.000 1.000 1.000 setrgbcolor} bind def\n"
+                         "/col4 {1.000 0.000 0.000 setrgbcolor} bind def\n"
+                         "/col5 {1.000 0.000 1.000 setrgbcolor} bind def\n"
+                         "/col6 {1.000 1.000 0.000 setrgbcolor} bind def\n"
+                         "/col7 {1.000 1.000 1.000 setrgbcolor} bind def\n"
+                         "/col8 {0.000 0.000 0.560 setrgbcolor} bind def\n"
+                         "/col9 {0.000 0.000 0.690 setrgbcolor} bind def\n"
+                         "/col10 {0.000 0.000 0.820 setrgbcolor} bind def\n"
+                         "/col11 {0.530 0.810 1.000 setrgbcolor} bind def\n"
+                         "/col12 {0.000 0.560 0.000 setrgbcolor} bind def\n"
+                         "/col13 {0.000 0.690 0.000 setrgbcolor} bind def\n"
+                         "/col14 {0.000 0.820 0.000 setrgbcolor} bind def\n"
+                         "/col15 {0.000 0.560 0.560 setrgbcolor} bind def\n"
+                         "/col16 {0.000 0.690 0.690 setrgbcolor} bind def\n"
+                         "/col17 {0.000 0.820 0.820 setrgbcolor} bind def\n"
+                         "/col18 {0.560 0.000 0.000 setrgbcolor} bind def\n"
+                         "/col19 {0.690 0.000 0.000 setrgbcolor} bind def\n"
+                         "/col20 {0.820 0.000 0.000 setrgbcolor} bind def\n"
+                         "/col21 {0.560 0.000 0.560 setrgbcolor} bind def\n"
+                         "/col22 {0.690 0.000 0.690 setrgbcolor} bind def\n"
+                         "/col23 {0.820 0.000 0.820 setrgbcolor} bind def\n"
+                         "/col24 {0.500 0.190 0.000 setrgbcolor} bind def\n"
+                         "/col25 {0.630 0.250 0.000 setrgbcolor} bind def\n"
+                         "/col26 {0.750 0.380 0.000 setrgbcolor} bind def\n"
+                         "/col27 {1.000 0.500 0.500 setrgbcolor} bind def\n"
+                         "/col28 {1.000 0.630 0.630 setrgbcolor} bind def\n"
+                         "/col29 {1.000 0.750 0.750 setrgbcolor} bind def\n"
+                         "/col30 {1.000 0.880 0.880 setrgbcolor} bind def\n"
+                         "/col31 {1.000 0.840 0.000 setrgbcolor} bind def\n";
 
-        s_PSFileStream << "/box{ moveto\n"
-                          "SW neg 2 div SW 2 div rmoveto\n"
-                          "SW  0 rlineto\n"
-                          "0  SW neg rlineto\n"
-                          "SW neg 0 rlineto\n"
-                          "closepath\n"
-                          "fill\n"
-                          "}bind def\n\n";
+        sPSFileStream << "/box{ moveto\n"
+                         "SW neg 2 div SW 2 div rmoveto\n"
+                         "SW  0 rlineto\n"
+                         "0  SW neg rlineto\n"
+                         "SW neg 0 rlineto\n"
+                         "closepath\n"
+                         "fill\n"
+                         "}bind def\n\n";
 
         PSFileStream << "/vbox{ moveto\n"
                         "SW neg 2 div SW 2 div rmoveto\n"
@@ -897,19 +897,19 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                         "stroke\n"
                         "}bind def\n\n";
 
-        s_PSFileStream << "/dot{\n"
-                          "LW 2 div 0 360 arc fill\n"
-                          "}bind def\n\n";
+        sPSFileStream << "/dot{\n"
+                         "LW 2 div 0 360 arc fill\n"
+                         "}bind def\n\n";
 
-        s_PSFileStream << "/diamond{\n"
-                          "moveto\n"
-                          "0  SW 2 div 1.3 mul rmoveto\n"
-                          "SW 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
-                          "SW neg 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
-                          "SW neg 2 div 1.3 mul SW 2 div 1.3 mul rlineto\n"
-                          "closepath\n"
-                          "fill\n"
-                          "}bind def\n\n";
+        sPSFileStream << "/diamond{\n"
+                         "moveto\n"
+                         "0  SW 2 div 1.3 mul rmoveto\n"
+                         "SW 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
+                         "SW neg 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
+                         "SW neg 2 div 1.3 mul SW 2 div 1.3 mul rlineto\n"
+                         "closepath\n"
+                         "fill\n"
+                         "}bind def\n\n";
 
         PSFileStream << "/vdiamond{\n"
                         "moveto\n"
@@ -921,13 +921,13 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                         "stroke\n"
                         "}bind def\n\n";
 
-        s_PSFileStream << "/triangle{\n"
-                          "moveto\n"
-                          "0  SW 2 div 1.2 mul rmoveto\n"
-                          "SW 2 div 1.2 mul SW neg 1.2 mul rlineto\n"
-                          "SW 1.2 mul neg 0  rlineto\n"
-                          "fill\n"
-                          "}bind def\n\n";
+        sPSFileStream << "/triangle{\n"
+                         "moveto\n"
+                         "0  SW 2 div 1.2 mul rmoveto\n"
+                         "SW 2 div 1.2 mul SW neg 1.2 mul rlineto\n"
+                         "SW 1.2 mul neg 0  rlineto\n"
+                         "fill\n"
+                         "}bind def\n\n";
 
         PSFileStream << "/vtriangle{\n"
                         "moveto\n"
@@ -937,14 +937,14 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                         "stroke\n"
                         "}bind def\n\n";
 
-        s_PSFileStream << "/cross{\n"
-                          "moveto\n"
-                          "SW 2 div SW 2 div rmoveto\n"
-                          "SW neg SW neg rlineto\n"
-                          "0  SW rmoveto\n"
-                          "SW SW neg rlineto\n"
-                          "stroke\n"
-                          "}bind def\n\n";
+        sPSFileStream << "/cross{\n"
+                         "moveto\n"
+                         "SW 2 div SW 2 div rmoveto\n"
+                         "SW neg SW neg rlineto\n"
+                         "0  SW rmoveto\n"
+                         "SW SW neg rlineto\n"
+                         "stroke\n"
+                         "}bind def\n\n";
 
         PSFileStream << "/doublecross{\n"
                         "moveto\n"
@@ -975,7 +975,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             "scaletransformation\n"
             "[] 0 setdash\n",
             w, h);
-        s_PSFileStream << s;
+        sPSFileStream << s;
 
         if (!bgColours::PRINT_WHITE_BG) {
             s.sprintf(
@@ -989,30 +989,30 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                 "col0\n"
                 "fill\n",
                 w, w, h, h);
-            s_PSFileStream << s;
+            sPSFileStream << s;
         }
 
         if (iszoom || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            s_PSFileStream << "frame\n";
+            sPSFileStream << "frame\n";
         }
 
-        s_PSFileStream << "\n"
-                          "%% Plot the orbits\n\n"
-                          "LW setlinewidth\n";
+        sPSFileStream << "\n"
+                         "%% Plot the orbits\n\n"
+                         "LW setlinewidth\n";
     }
 }
 
 void finishPostscriptPrinting(void)
 {
-    if (s_PSFile) {
-        s_PSFileStream << "grestore\n"
-                          "showpage\n"
-                          "%%EOF\n";
+    if (sPSFile) {
+        sPSFileStream << "grestore\n"
+                         "showpage\n"
+                         "%%EOF\n";
 
-        s_PSFileStream.flush();
-        s_PSFileStream.setDevice(nullptr);
-        s_PSFile->close();
-        s_PSFile.reset();
+        sPSFileStream.flush();
+        sPSFileStream.setDevice(nullptr);
+        sPSFile->close();
+        sPSFile.reset();
     }
 
     plot_l = spherePlotLine;

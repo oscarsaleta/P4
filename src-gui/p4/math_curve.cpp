@@ -31,10 +31,10 @@
 #include <cmath>
 
 // static global variables
-static int s_CurveTask = EVAL_CURVE_NONE;
-static P4WinSphere *s_CurveSphere = nullptr;
-static int s_CurveDashes = 0;
-static bool s_CurveError = false;
+static int sCurveTask = EVAL_CURVE_NONE;
+static P4WinSphere *sCurveSphere = nullptr;
+static int sCurveDashes = 0;
+static bool sCurveError = false;
 
 // non-static global variables
 P4ORBIT gLastArbitraryCurvePoint = nullptr;
@@ -48,14 +48,14 @@ static bool read_curve(void (*chart)(double, double, double *));
 bool evalCurveStart(P4WinSphere *sp, int dashes, int precision, int points)
 {
     if (gVFResults.plweights_)
-        s_CurveTask = EVAL_CURVE_LYP_R2;
+        sCurveTask = EVAL_CURVE_LYP_R2;
     else
-        s_CurveTask = EVAL_CURVE_R2;
+        sCurveTask = EVAL_CURVE_R2;
 
-    s_CurveError = false;
-    s_CurveSphere = sp;
-    s_CurveDashes = dashes;
-    return runTaskCurve(s_CurveTask, precision, points);
+    sCurveError = false;
+    sCurveSphere = sp;
+    sCurveDashes = dashes;
+    return runTaskCurve(sCurveTask, precision, points);
 }
 
 // returns true when finished. Then
@@ -63,21 +63,21 @@ bool evalCurveStart(P4WinSphere *sp, int dashes, int precision, int points)
 // occurred or not
 bool evalCurveContinue(int precision, int points)
 {
-    if (s_CurveTask == EVAL_CURVE_NONE)
+    if (sCurveTask == EVAL_CURVE_NONE)
         return true;
 
-    if (!readTaskResults(s_CurveTask)) {
-        s_CurveError = true;
+    if (!readTaskResults(sCurveTask)) {
+        sCurveError = true;
         return true;
     }
-    s_CurveTask++;
-    if (s_CurveTask == EVAL_CURVE_FINISHPOINCARE ||
-        s_CurveTask == EVAL_CURVE_FINISHLYAPUNOV) {
+    sCurveTask++;
+    if (sCurveTask == EVAL_CURVE_FINISHPOINCARE ||
+        sCurveTask == EVAL_CURVE_FINISHLYAPUNOV) {
         return true;
     }
 
-    if (!runTaskCurve(s_CurveTask, precision, points)) {
-        s_CurveError = true;
+    if (!runTaskCurve(sCurveTask, precision, points)) {
+        sCurveError = true;
         return true;
     }
 
@@ -86,16 +86,16 @@ bool evalCurveContinue(int precision, int points)
 
 bool evalCurveFinish(void) // return false in case an error occured
 {
-    if (s_CurveTask != EVAL_CURVE_NONE) {
-        s_CurveSphere->prepareDrawing();
-        draw_curve(s_CurveSphere, gVFResults.curve_vector_.back().points,
+    if (sCurveTask != EVAL_CURVE_NONE) {
+        sCurveSphere->prepareDrawing();
+        draw_curve(sCurveSphere, gVFResults.curve_vector_.back().points,
                    CCURV, 1);
-        s_CurveSphere->finishDrawing();
+        sCurveSphere->finishDrawing();
 
-        s_CurveTask = EVAL_CURVE_NONE;
+        sCurveTask = EVAL_CURVE_NONE;
 
-        if (s_CurveError) {
-            s_CurveError = false;
+        if (sCurveError) {
+            sCurveError = false;
             return false;
         }
     }
@@ -255,7 +255,7 @@ static bool read_curve(void (*chart)(double, double, double *))
             chart(x, y, pcoord);
             insert_curve_point(pcoord[0], pcoord[1], pcoord[2], d);
             // d=1;
-            d = s_CurveDashes;
+            d = sCurveDashes;
         }
         for (c = getc(fp); isspace(c);)
             c = getc(fp);

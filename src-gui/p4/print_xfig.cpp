@@ -19,9 +19,9 @@
 
 #include "print_xfig.h"
 
+#include "P4InputVF.h"
 #include "custom.h"
 #include "file_tab.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"
@@ -30,28 +30,28 @@
 #include <QFile>
 #include <QTextStream>
 
-static std::unique_ptr<QFile> s_XFigFile();
-static QTextStream s_XFigStream;
+static std::unique_ptr<QFile> sXFigFile();
+static QTextStream sXFigStream;
 
-static bool s_XFigBlackWhitePrint = true;
-static int s_XFigSymbolWidth = 0;
-static int s_XFigLineWidth = 0;      // linewidth at 80 DPI (for xfig only)
-static int s_XFigRealLineWidth = 0;  // linewidth at chosen resolution
-static int s_XFigResolution = 0;
-static int s_XFigW = 0;
-static int s_XFigH = 0;
+static bool sXFigBlackWhitePrint = true;
+static int sXFigSymbolWidth = 0;
+static int sXFigLineWidth = 0;      // linewidth at 80 DPI (for xfig only)
+static int sXFigRealLineWidth = 0;  // linewidth at chosen resolution
+static int sXFigResolution = 0;
+static int sXFigW = 0;
+static int sXFigH = 0;
 
-static int s_LastXfigX0 = 0;
-static int s_LastXfigY0 = 0;
-static int s_LastXfigcolor = -1;
+static int sLastXFigX0 = 0;
+static int sLastXFigY0 = 0;
+static int sLastXFigColor = -1;
 
-static bool s_xfig_line_busy = false;
-static int s_xfig_line_lastx = 0;
-static int s_xfig_line_lasty = 0;
-static int s_xfig_line_color = 0;
-static int s_xfig_line_numpoints = 0;
+static bool sXFigLineBusy = false;
+static int sXFigLineLastX = 0;
+static int sXFigLineLastY = 0;
+static int sXFigLineColor = 0;
+static int sXFigLineNumPoints = 0;
 // NOTE: check if this works
-static std::unique_ptr<int[]> s_xfig_line_points;
+static std::unique_ptr<int[]> sXFigLinePoints;
 
 static void xfig_line_start(int x0, int y0, int x1, int y1, int color);
 static void xfig_line_continue(int x1, int y1);
@@ -61,28 +61,28 @@ static void xfig_line_finish(void);
 
 static void xfig_print_comment(QString s)
 {
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigFile) {
-        s_XFigStream << "# " << s << "\n";
+    if (sXFigFile) {
+        sXFigStream << "# " << s << "\n";
     }
 }
 
 static void xfig_print_box(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     /*
@@ -106,119 +106,117 @@ static void xfig_print_box(int x, int y, int color)
 
     QString s;
     s.sprintf("2 2 0 1 %d %d 0 0 46 0.0 0 0 0 0 0 5\n", color, color);
-    s_XFigStream << s;
-    s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x + s_XFigSymbolWidth / 2,
-              y - s_XFigSymbolWidth / 2, x + s_XFigSymbolWidth / 2,
-              y + s_XFigSymbolWidth / 2, x - s_XFigSymbolWidth / 2,
-              y + s_XFigSymbolWidth / 2, x - s_XFigSymbolWidth / 2,
-              y - s_XFigSymbolWidth / 2, x + s_XFigSymbolWidth / 2,
-              y - s_XFigSymbolWidth / 2);
-    s_XFigStream << s;
+    sXFigStream << s;
+    s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x + sXFigSymbolWidth / 2,
+              y - sXFigSymbolWidth / 2, x + sXFigSymbolWidth / 2,
+              y + sXFigSymbolWidth / 2, x - sXFigSymbolWidth / 2,
+              y + sXFigSymbolWidth / 2, x - sXFigSymbolWidth / 2,
+              y - sXFigSymbolWidth / 2, x + sXFigSymbolWidth / 2,
+              y - sXFigSymbolWidth / 2);
+    sXFigStream << s;
 }
 
 static void xfig_print_box2(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     QString s;
     s.sprintf("2 2 0 1 %d %d 0 0 -1 0.0 0 0 0 0 0 5\n", color, -1);
-    s_XFigStream << s;
+    sXFigStream << s;
     s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x + XFigSymbolWidth / 2,
               y - XFigSymbolWidth / 2, x + XFigSymbolWidth / 2,
               y + XFigSymbolWidth / 2, x - XFigSymbolWidth / 2,
               y + XFigSymbolWidth / 2, x - XFigSymbolWidth / 2,
               y - XFigSymbolWidth / 2, x + XFigSymbolWidth / 2,
               y - XFigSymbolWidth / 2);
-    s_XFigStream << s;
+    sXFigStream << s;
 }
 
 static void xfig_print_diamond(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // structure info: see xfig_print_box
     // sub-type = 3 (polygon)
 
     QString s;
     s.sprintf("2 3 0 1 %d %d -1 0 46 0.0 0 0 0 0 0 5\n", color, color);
-    s_XFigStream << s;
+    sXFigStream << s;
     s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x,
-              y - s_XFigSymbolWidth * 13 / 20, x + s_XFigSymbolWidth * 13 / 20,
-              y, x, y + s_XFigSymbolWidth * 13 / 20,
-              x - s_XFigSymbolWidth * 13 / 20, y, x,
-              y - s_XFigSymbolWidth * 13 / 20);
-    s_XFigStream << s;
+              y - sXFigSymbolWidth * 13 / 20, x + sXFigSymbolWidth * 13 / 20, y,
+              x, y + sXFigSymbolWidth * 13 / 20, x - sXFigSymbolWidth * 13 / 20,
+              y, x, y - sXFigSymbolWidth * 13 / 20);
+    sXFigStream << s;
 }
 
 static void xfig_print_diamond2(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // structure info: see xfig_print_box
     // sub-type = 3 (polygon)
 
     QString s;
     s.sprintf("2 3 0 1 %d %d -1 0 -1 0.0 0 0 0 0 0 5\n", color, -1);
-    s_XFigStream << s;
+    sXFigStream << s;
     s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x,
-              y - s_XFigSymbolWidth * 13 / 20, x + s_XFigSymbolWidth * 13 / 20,
-              y, x, y + s_XFigSymbolWidth * 13 / 20,
-              x - s_XFigSymbolWidth * 13 / 20, y, x,
-              y - s_XFigSymbolWidth * 13 / 20);
-    s_XFigStream << s;
+              y - sXFigSymbolWidth * 13 / 20, x + sXFigSymbolWidth * 13 / 20, y,
+              x, y + sXFigSymbolWidth * 13 / 20, x - sXFigSymbolWidth * 13 / 20,
+              y, x, y - sXFigSymbolWidth * 13 / 20);
+    sXFigStream << s;
 }
 
 static void xfig_print_triangle(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // structure info: see xfig_print_box (except that here: npoints = 4 instead
     // of 5)
@@ -227,30 +225,29 @@ static void xfig_print_triangle(int x, int y, int color)
     QString s;
     // TODO check this -1 (is 0 in p5)
     s.sprintf("2 3 0 1 %d %d -1 0 46 0.0 0 0 0 0 0 4\n", color, color);
-    s_XFigStream << s;
-    s.sprintf("    %d %d %d %d %d %d %d %d\n", x + s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20, x,
-              y - s_XFigSymbolWidth * 12 / 20, x - s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20, x + s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20);
-    s_XFigStream << s;
+    sXFigStream << s;
+    s.sprintf("    %d %d %d %d %d %d %d %d\n", x + sXFigSymbolWidth * 12 / 20,
+              y + sXFigSymbolWidth * 12 / 20, x, y - sXFigSymbolWidth * 12 / 20,
+              x - sXFigSymbolWidth * 12 / 20, y + sXFigSymbolWidth * 12 / 20,
+              x + sXFigSymbolWidth * 12 / 20, y + sXFigSymbolWidth * 12 / 20);
+    sXFigStream << s;
 }
 
 static void xfig_print_triangle2(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // structure info: see xfig_print_box (except that here: npoints = 4 instead
     // of 5)
@@ -258,143 +255,142 @@ static void xfig_print_triangle2(int x, int y, int color)
 
     QString s;
     s.sprintf("2 3 0 1 %d %d -1 0 -1 0.0 0 0 0 0 0 4\n", color, -1);
-    s_XFigStream << s;
-    s.sprintf("    %d %d %d %d %d %d %d %d\n", x + s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20, x,
-              y - s_XFigSymbolWidth * 12 / 20, x - s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20, x + s_XFigSymbolWidth * 12 / 20,
-              y + s_XFigSymbolWidth * 12 / 20);
-    s_XFigStream << s;
+    sXFigStream << s;
+    s.sprintf("    %d %d %d %d %d %d %d %d\n", x + sXFigSymbolWidth * 12 / 20,
+              y + sXFigSymbolWidth * 12 / 20, x, y - sXFigSymbolWidth * 12 / 20,
+              x - sXFigSymbolWidth * 12 / 20, y + sXFigSymbolWidth * 12 / 20,
+              x + sXFigSymbolWidth * 12 / 20, y + sXFigSymbolWidth * 12 / 20);
+    sXFigStream << s;
 }
 
 static void xfig_print_cross(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // cross is made with linewidth * 2.6
 
-    int lw{s_XFigLineWidth};
+    int lw{sXFigLineWidth};
     lw *= 26;
     lw += 10;
     lw /= 20;
 
     QString s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x - s_XFigSymbolWidth / 2, y - s_XFigSymbolWidth / 2,
-              x + s_XFigSymbolWidth / 2, y + s_XFigSymbolWidth / 2);
-    s_XFigStream << s;
+              color, x - sXFigSymbolWidth / 2, y - sXFigSymbolWidth / 2,
+              x + sXFigSymbolWidth / 2, y + sXFigSymbolWidth / 2);
+    sXFigStream << s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x + s_XFigSymbolWidth / 2, y - s_XFigSymbolWidth / 2,
-              x - s_XFigSymbolWidth / 2, y + s_XFigSymbolWidth / 2);
-    s_XFigStream << s;
+              color, x + sXFigSymbolWidth / 2, y - sXFigSymbolWidth / 2,
+              x - sXFigSymbolWidth / 2, y + sXFigSymbolWidth / 2);
+    sXFigStream << s;
 }
 
 static void xfig_print_cross2(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // cross is made with linewidth * 2.6
 
-    int lw{s_XFigLineWidth};
+    int lw{sXFigLineWidth};
     lw *= 26;
     lw += 10;
     lw /= 20;
 
     QString s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x - s_XFigSymbolWidth / 3, y - s_XFigSymbolWidth / 3,
-              x + s_XFigSymbolWidth / 3, y + s_XFigSymbolWidth / 3);
-    s_XFigStream << s;
+              color, x - sXFigSymbolWidth / 3, y - sXFigSymbolWidth / 3,
+              x + sXFigSymbolWidth / 3, y + sXFigSymbolWidth / 3);
+    sXFigStream << s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x + s_XFigSymbolWidth / 3, y - s_XFigSymbolWidth / 3,
-              x - s_XFigSymbolWidth / 3, y + s_XFigSymbolWidth / 3);
-    s_XFigStream << s;
+              color, x + sXFigSymbolWidth / 3, y - sXFigSymbolWidth / 3,
+              x - sXFigSymbolWidth / 3, y + sXFigSymbolWidth / 3);
+    sXFigStream << s;
 }
 
 void xfig_print_doublecross(int x, int y, int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     x *= 1200;
-    x /= s_XFigResolution;
+    x /= sXFigResolution;
     y *= 1200;
-    y /= s_XFigResolution;
+    y /= sXFigResolution;
 
     // cross is made with linewidth * 2.6
 
-    int lw{s_XFigLineWidth};
+    int lw{sXFigLineWidth};
     lw *= 13;
     lw += 10;
     lw /= 20;
 
     QString s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x - s_XFigSymbolWidth / 2, y - s_XFigSymbolWidth / 2,
-              x + s_XFigSymbolWidth / 2, y + s_XFigSymbolWidth / 2);
-    s_XFigStream << s;
+              color, x - sXFigSymbolWidth / 2, y - sXFigSymbolWidth / 2,
+              x + sXFigSymbolWidth / 2, y + sXFigSymbolWidth / 2);
+    sXFigStream << s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x + s_XFigSymbolWidth / 2, y - s_XFigSymbolWidth / 2,
-              x - s_XFigSymbolWidth / 2, y + s_XFigSymbolWidth / 2);
-    s_XFigStream << s;
+              color, x + sXFigSymbolWidth / 2, y - sXFigSymbolWidth / 2,
+              x - sXFigSymbolWidth / 2, y + sXFigSymbolWidth / 2);
+    sXFigStream << s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x, y - (s_XFigSymbolWidth * 3) / 4, x,
-              y + (s_XFigSymbolWidth * 3) / 4);
-    s_XFigStream << s;
+              color, x, y - (sXFigSymbolWidth * 3) / 4, x,
+              y + (sXFigSymbolWidth * 3) / 4);
+    sXFigStream << s;
     s.sprintf("2 1 0 %d %d 7 0 0 -1 0.0 0 0 0 0 0 2\n    %d %d %d %d\n", lw,
-              color, x + (s_XFigSymbolWidth * 3) / 4, y,
-              x - (s_XFigSymbolWidth * 3) / 4, y);
-    s_XFigStream << s;
+              color, x + (sXFigSymbolWidth * 3) / 4, y,
+              x - (sXFigSymbolWidth * 3) / 4, y);
+    sXFigStream << s;
 }
 
 static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
                             int color)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
     _x0 *= 1200;
-    _x0 /= s_XFigResolution;
+    _x0 /= sXFigResolution;
     _y0 *= 1200;
-    _y0 /= s_XFigResolution;
+    _y0 /= sXFigResolution;
 
     _x1 *= 1200;
-    _x1 /= s_XFigResolution;
+    _x1 /= sXFigResolution;
     _y1 *= 1200;
-    _y1 /= s_XFigResolution;
+    _y1 /= sXFigResolution;
 
     color = printColorTable(color);
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     int x0{(int)_x0};
@@ -404,11 +400,11 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
     if (x0 == x1 && y0 == y1)
         return;
 
-    if (s_xfig_line_busy && s_xfig_line_lastx == x0 &&
-        s_xfig_line_lasty == y0 && s_xfig_line_color == color) {
+    if (sXFigLineBusy && sXFigLineLastX == x0 && sXFigLineLastY == y0 &&
+        sXFigLineColor == color) {
         xfig_line_continue(x1, y1);
     } else {
-        if (s_xfig_line_busy)
+        if (sXFigLineBusy)
             xfig_line_finish();
 
         xfig_line_start(x0, y0, x1, y1, color);
@@ -419,23 +415,23 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
                              int color, bool dotted,
                              const std::vector<P4POLYLINES> &ellipse)
 {
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
     x0 *= 1200;
-    x0 /= s_XFigResolution;
+    x0 /= sXFigResolution;
     y0 *= 1200;
-    y0 /= s_XFigResolution;
+    y0 /= sXFigResolution;
 
     a *= 1200;
-    a /= s_XFigResolution;
+    a /= sXFigResolution;
     b *= 1200;
-    b /= s_XFigResolution;
+    b /= sXFigResolution;
 
-    if (x0 - a >= 0 && x0 + a < s_XFigW && y0 - b >= 0 && y0 + b < s_XFigH) {
+    if (x0 - a >= 0 && x0 + a < sXFigW && y0 - b >= 0 && y0 + b < sXFigH) {
         // full ellipse is visible
 
         /*
@@ -468,7 +464,7 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
         if (dotted) {
             linestyle = 1;  // dashed
             // style_val = on/off length (in 1/80 of inch) = 8*linestyle
-            styleval = s_XFigLineWidth * 4;
+            styleval = sXFigLineWidth * 4;
         } else {
             linestyle = 0;
             styleval = 0.0;
@@ -476,11 +472,11 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
 
         QString s;
         s.sprintf("1 1 %d %d %d %d 50 0 -1 %g 1 0.0 %d %d %d %d %d %d %d %d\n",
-                  linestyle, s_XFigLineWidth / 2, printColorTable(color),
+                  linestyle, sXFigLineWidth / 2, printColorTable(color),
                   printColorTable(color), (float)styleval, (int)x0, (int)y0,
                   (int)a, (int)b, (int)x0, (int)y0, ((int)x0) + ((int)a),
                   (int)y0);
-        s_XFigStream << s;
+        sXFigStream << s;
     } else {
         // ellipse is only partially visible, so emulate with polygon.
         for (auto const &it : ellipse) {
@@ -491,28 +487,27 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
 
 static void xfig_line_start(int x0, int y0, int x1, int y1, int color)
 {
-    s_xfig_line_busy = true;
-    s_xfig_line_points[0] = x0;
-    s_xfig_line_points[1] = y0;
-    s_xfig_line_points[2] = x1;
-    s_xfig_line_points[3] = y1;
-    s_xfig_line_numpoints = 2;
-    s_xfig_line_lastx = x1;
-    s_xfig_line_lasty = y1;
-    s_xfig_line_color = color;
+    sXFigLineBusy = true;
+    sXFigLinePoints[0] = x0;
+    sXFigLinePoints[1] = y0;
+    sXFigLinePoints[2] = x1;
+    sXFigLinePoints[3] = y1;
+    sXFigLineNumPoints = 2;
+    sXFigLineLastX = x1;
+    sXFigLineLastY = y1;
+    sXFigLineColor = color;
 }
 
 static void xfig_line_continue(int x1, int y1)
 {
-    if (s_xfig_line_numpoints < XFIG_LINE_MAXPOINTS) {
-        s_xfig_line_points[2 * s_xfig_line_numpoints] = s_xfig_line_lastx = x1;
-        s_xfig_line_points[2 * s_xfig_line_numpoints + 1] = s_xfig_line_lasty =
-            y1;
-        s_xfig_line_numpoints++;
+    if (sXFigLineNumPoints < XFIG_LINE_MAXPOINTS) {
+        sXFigLinePoints[2 * sXFigLineNumPoints] = sXFigLineLastX = x1;
+        sXFigLinePoints[2 * sXFigLineNumPoints + 1] = sXFigLineLastY = y1;
+        sXFigLineNumPoints++;
     } else {
-        int x0{s_xfig_line_lastx};
-        int y0{s_xfig_line_lasty};
-        int color{s_xfig_line_color};
+        int x0{sXFigLineLastX};
+        int y0{sXFigLineLastY};
+        int color{sXFigLineColor};
 
         xfig_line_finish();
         xfig_line_start(x0, y0, x1, y1, color);
@@ -521,10 +516,10 @@ static void xfig_line_continue(int x1, int y1)
 
 static void xfig_line_finish(void)
 {
-    if (!s_xfig_line_busy)
+    if (!sXFigLineBusy)
         return;
 
-    s_xfig_line_busy = false;
+    sXFigLineBusy = false;
 
     /*
         object type     2   (=polyline)
@@ -547,57 +542,56 @@ static void xfig_line_finish(void)
 
     int k;
 
-    if (s_XFigFile) {
+    if (sXFigFile) {
         QString s;
         s.sprintf("2 1 0 %d %d 7 50 0 -1 0.0 0 1 -1 0 0 %d\n   ",
-                  s_XFigLineWidth / 2, s_xfig_line_color,
-                  s_xfig_line_numpoints);
-        s_XFigStream << s;
-        for (int i = 0; i < s_xfig_line_numpoints; i += 8) {
-            k = 2 * (s_xfig_line_numpoints - i);
+                  sXFigLineWidth / 2, sXFigLineColor, sXFigLineNumPoints);
+        sXFigStream << s;
+        for (int i = 0; i < sXFigLineNumPoints; i += 8) {
+            k = 2 * (sXFigLineNumPoints - i);
             if (k >= 16)
                 k = 16;
 
             for (int j = 0; j < k; j++) {
-                s.sprintf(" %d", s_xfig_line_points[2 * i + j]);
-                s_XFigStream << s;
+                s.sprintf(" %d", sXFigLinePoints[2 * i + j]);
+                sXFigStream << s;
             }
 
-            if (i + 8 < s_xfig_line_numpoints)
-                s_XFigStream << "\n   ";
+            if (i + 8 < sXFigLineNumPoints)
+                sXFigStream << "\n   ";
             else
-                s_XFigStream << "\n";
+                sXFigStream << "\n";
         }
     }
 }
 
 static void xfig_print_point(double _x0, double _y0, int color)
 {
-    if (s_xfig_line_busy)
+    if (sXFigLineBusy)
         xfig_line_finish();
 
     _x0 *= 1200;
-    _x0 /= s_XFigResolution;
+    _x0 /= sXFigResolution;
     _y0 *= 1200;
-    _y0 /= s_XFigResolution;
+    _y0 /= sXFigResolution;
 
-    if (!s_XFigFile)
+    if (!sXFigFile)
         return;
 
     color = printColorTable(color);
 
-    if (s_XFigBlackWhitePrint)
+    if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
     int x0{(int)_x0};
     int y0{(int)_y0};
 
-    if (x0 == s_LastXfigX0 && y0 == s_LastXfigY0 && color == s_LastXfigcolor)
+    if (x0 == sLastXFigX0 && y0 == sLastXFigY0 && color == sLastXFigColor)
         return;
 
-    s_LastXfigX0 = x0;
-    s_LastXfigY0 = y0;
-    s_LastXfigcolor = color;
+    sLastXFigX0 = x0;
+    sLastXFigY0 = y0;
+    sLastXFigColor = color;
 
     /*
         object type     1   (=ellipse)
@@ -625,9 +619,9 @@ static void xfig_print_point(double _x0, double _y0, int color)
 
     QString s;
     s.sprintf("1 3 0 1 %d %d 50 0 46 0.0 1 0.0 %d %d %d %d %d %d %d %d\n",
-              color, color, x0, y0, s_XFigRealLineWidth / 2,
-              s_XFigRealLineWidth / 2, x0, y0, x0 + s_XFigRealLineWidth, y0);
-    s_XFigStream << s;
+              color, color, x0, y0, sXFigRealLineWidth / 2,
+              sXFigRealLineWidth / 2, x0, y0, x0 + sXFigRealLineWidth, y0);
+    sXFigStream << s;
 }
 
 static void xfig_print_saddle(double x, double y)
@@ -794,46 +788,46 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
 {
     QString s;
 
-    s_XFigBlackWhitePrint = isblackwhite;
-    s_XFigRealLineWidth = linewidth;
-    s_XFigLineWidth = linewidth;
-    s_XFigSymbolWidth = symbolwidth;
-    s_XFigResolution = resolution;
+    sXFigBlackWhitePrint = isblackwhite;
+    sXFigRealLineWidth = linewidth;
+    sXFigLineWidth = linewidth;
+    sXFigSymbolWidth = symbolwidth;
+    sXFigResolution = resolution;
     // since XFIG always reads the file at 1200 DPI, we rescale points in this
     // module. by multiplying x and y coordinates with (1200 / resolution), just
     // before coordinates are printed.
 
-    s_XFigSymbolWidth *= 1200;
-    s_XFigSymbolWidth /= resolution;
-    s_XFigLineWidth *= 1200;
-    s_XFigLineWidth /= resolution;
-    s_XFigRealLineWidth *= 1200;
-    s_XFigRealLineWidth /= resolution;
+    sXFigSymbolWidth *= 1200;
+    sXFigSymbolWidth /= resolution;
+    sXFigLineWidth *= 1200;
+    sXFigLineWidth /= resolution;
+    sXFigRealLineWidth *= 1200;
+    sXFigRealLineWidth /= resolution;
 
     // make sure it is even, and nonzero:
-    s_XFigRealLineWidth /= 2;
-    if (s_XFigRealLineWidth == 0)
-        s_XFigRealLineWidth = 1;
-    s_XFigRealLineWidth *= 2;
+    sXFigRealLineWidth /= 2;
+    if (sXFigRealLineWidth == 0)
+        sXFigRealLineWidth = 1;
+    sXFigRealLineWidth *= 2;
 
     // XFIG Line width is always at 80 DPI, regardless of resolution
-    s_XFigLineWidth *= 80;
-    s_XFigLineWidth =
-        (s_XFigLineWidth + (resolution / 2)) / resolution;  // divide + round up
+    sXFigLineWidth *= 80;
+    sXFigLineWidth =
+        (sXFigLineWidth + (resolution / 2)) / resolution;  // divide + round up
 
     // make sure it is even, and nonzero
-    s_XFigLineWidth /= 2;
-    if (s_XFigLineWidth == 0)
-        s_XFigLineWidth = 1;  // minimal line width = 1
-    s_XFigLineWidth *= 2;
+    sXFigLineWidth /= 2;
+    if (sXFigLineWidth == 0)
+        sXFigLineWidth = 1;  // minimal line width = 1
+    sXFigLineWidth *= 2;
 
     s = gThisVF->getbarefilename() + ".fig";
 
-    s_XFigFile.reset(new QFile(s));
-    if (s_XFigFile->open(QIODevice::WriteOnly)) {
-        s_XFigStream.setDevice(s_XFigFile);
+    sXFigFile.reset(new QFile(s));
+    if (sXFigFile->open(QIODevice::WriteOnly)) {
+        sXFigStream.setDevice(sXFigFile);
     } else {
-        s_XFigFile.reset();
+        sXFigFile.reset();
     }
 
     plot_l = spherePrintLine;
@@ -873,19 +867,18 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     print_virtualcenter = xfig_print_virtualcenter;
     print_coinciding = xfig_print_coinciding;
 
-    s_LastXfigcolor = -1;
+    sLastXFigColor = -1;
 
-    s_xfig_line_busy = false;
-    s_xfig_line_points =
-        std::make_unique<int[]>(new int[XFIG_LINE_MAXPOINTS * 2]);
+    sXFigLineBusy = false;
+    sXFigLinePoints = std::make_unique<int[]>(new int[XFIG_LINE_MAXPOINTS * 2]);
 
-    s_XFigW = w * 1200;
-    s_XFigW /= resolution;
-    s_XFigH = h * 1200;
-    s_XFigH /= resolution;
+    sXFigW = w * 1200;
+    sXFigW /= resolution;
+    sXFigH = h * 1200;
+    sXFigH /= resolution;
 
-    if (s_XFigFile) {
-        s_XFigStream
+    if (sXFigFile) {
+        sXFigStream
             << "#FIG 3.1\n"  // XFIG version 3.1 file format
                "Portrait\n"  // portrait orientation
                "Center\n"    // center on page
@@ -915,8 +908,8 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
             s.sprintf(
                 "2 2 0 1 0 7 999 -1 0 0.0000000 0 0 0 0 0 5\n"
                 "    %d %d %d %d %d %d %d %d %d %d\n",
-                0, 0, s_XFigW, 0, s_XFigW, s_XFigH, 0, s_XFigH, 0, 0);
-            s_XFigStream << s;
+                0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
+            sXFigStream << s;
         }
         if (gVFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
             /*
@@ -941,26 +934,26 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
             s.sprintf(
                 "2 2 0 1 0 7 998 0 -1 0.0000000 0 0 0 0 0 5\n"
                 "    %d %d %d %d %d %d %d %d %d %d\n",
-                0, 0, s_XFigW, 0, s_XFigW, s_XFigH, 0, s_XFigH, 0, 0);
-            s_XFigStream << s;
+                0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
+            sXFigStream << s;
         }
     }
 }
 
 void finishXFigPrinting(void)
 {
-    if (s_XFigFile) {
-        s_XFigStream.flush();
-        s_XFigStream.setDevice(nullptr);
-        s_XFigFile->close();
-        s_XFigFile.reset();
+    if (sXFigFile) {
+        sXFigStream.flush();
+        sXFigStream.setDevice(nullptr);
+        sXFigFile->close();
+        sXFigFile.reset();
     }
 
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
 
-    if (s_xfig_line_points != nullptr) {
-        delete[] s_xfig_line_points;
-        s_xfig_line_points = nullptr;
+    if (sXFigLinePoints != nullptr) {
+        delete[] sXFigLinePoints;
+        sXFigLinePoints = nullptr;
     }
 }

@@ -39,9 +39,9 @@
 
 bool gLCWindowIsUp{false}; // see definition in main.h
 
-static std::unique_ptr<QProgressDialog> s_LCprogressDlg{};
-static int s_LCprogressCount{1};
-static int s_LCmaxProgressCount{0};
+static std::unique_ptr<QProgressDialog> sLCProgressDlg{};
+static int sLCProgressCount{1};
+static int sLCMaxProgressCount{0};
 
 P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd> plt,
                                    std::unique_ptr<P4WinSphere> sp)
@@ -233,15 +233,15 @@ void P4LimitCyclesDlg::onbtn_start(void)
     }
 
     // SEARCH FOR LIMIT CYCLES:
-    s_LCmaxProgressCount = (int)(d + 0.5);
-    s_LCprogressDlg.reset(new QProgressDialog("Searching for limit cycles...",
+    sLCMaxProgressCount = (int)(d + 0.5);
+    sLCProgressDlg.reset(new QProgressDialog("Searching for limit cycles...",
                                               "Stop search", 0,
-                                              s_LCmaxProgressCount, this, 0));
-    s_LCprogressDlg->setAutoReset(false);
-    s_LCprogressDlg->setAutoClose(false);
-    s_LCprogressDlg->setMinimumDuration(0);
-    s_LCprogressDlg->setValue(s_LCprogressCount = 0);
-    setP4WindowTitle(s_LCprogressDlg, "Searching for limit cycles...");
+                                              sLCMaxProgressCount, this, 0));
+    sLCProgressDlg->setAutoReset(false);
+    sLCProgressDlg->setAutoClose(false);
+    sLCProgressDlg->setMinimumDuration(0);
+    sLCProgressDlg->setValue(sLCProgressCount = 0);
+    setP4WindowTitle(sLCProgressDlg, "Searching for limit cycles...");
 
     searchLimitCycle(mainSphere_, selected_x0_, selected_y0_, selected_x1_,
                      selected_y1_, selected_grid_);
@@ -256,8 +256,8 @@ void P4LimitCyclesDlg::onbtn_start(void)
     }
 
     gP4app->processEvents();
-    delete s_LCprogressDlg;
-    s_LCprogressDlg = nullptr;
+    delete sLCProgressDlg;
+    sLCProgressDlg = nullptr;
 }
 
 void P4LimitCyclesDlg::onbtn_cancel(void)
@@ -339,7 +339,7 @@ void P4LimitCyclesDlg::onbtn_dellast(void)
 bool stop_search_limit(void)
 {
     gP4app->processEvents();
-    if (s_LCprogressDlg->wasCanceled())
+    if (sLCProgressDlg->wasCanceled())
         return true;
 
     return false;
@@ -347,8 +347,8 @@ bool stop_search_limit(void)
 
 void write_to_limit_window(double x, double y)
 {
-    s_LCprogressCount++;
+    sLCProgressCount++;
 
-    if (!(s_LCprogressDlg->wasCanceled()))
-        s_LCprogressDlg->setValue(s_LCprogressCount);
+    if (!(sLCProgressDlg->wasCanceled()))
+        sLCProgressDlg->setValue(sLCProgressCount);
 }
