@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <QWidget>
+
 #include "custom.h"
 
 class P4VectorFieldDlg;
@@ -34,32 +36,35 @@ class P4VFParams : public QWidget
 {
     Q_OBJECT
 
-  public:
+   public:
     P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb);
-    ~P4VFParams();
-    bool getDataFromDlg();
+
     bool updateDlgData();
 
-  private:
+   private:
     bool dataInvalid_;
     int currentNumParams_;
     int currentShownParams_;
     int currentPageIndex_;
 
-    QScrollBar *sb_params_;
-    QBoxLayout *mainLayout_;
-    QBoxLayout *superLayout_;
-    QHBoxLayout *paramLines_[MAXNUMPARAMSSHOWN];
-    QLineEdit *paramNames_[MAXNUMPARAMSSHOWN];
-    QLabel *paramLabels_[MAXNUMPARAMSSHOWN];
-    QLineEdit *paramValues_[MAXNUMPARAMSSHOWN];
+    std::unique_ptr<QScrollBar> sb_params_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QBoxLayout> superLayout_;
+    std::vector<std::unique_ptr<QHBoxLayout>> paramLines_;
+    std::vector<std::unique_ptr<QLineEdit>> paramNames_;
+    std::vector<std::unique_ptr<QLabel>> paramEqual_;
+    std::vector<std::unique_ptr<QLineEdit>> paramValues_;
 
-    QString sLabels_[MAXNUMPARAMS];
-    QString sValues_[MAXNUMPARAMS];
+    std::vector<QString> strLabels_;
+    std::vector<std::vector<QString>> strValues_;
 
-  protected:
+    bool getLineEditCommonParValue(QLineEdit *, int index);
+    void setLineEditCommonParValue(QLineEdit *, int index);
+
+   protected:
     bool focusNextPrevChild(bool next);
 
-  public slots:
+   public slots:
     void paramsSliderChanged(int);
+    void paramsEditingFinished();
 };
