@@ -37,12 +37,11 @@ class P4VFParams : public QWidget
     Q_OBJECT
 
    public:
-    P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb);
+    P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb);
 
     bool updateDlgData();
 
    private:
-    bool dataInvalid_;
     int currentNumParams_;
     int currentShownParams_;
     int currentPageIndex_;
