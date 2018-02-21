@@ -28,26 +28,19 @@
 
 /*
     THIS FILE IMPLEMENTS READING AND LOADING THE VECTOR FIELD, THE PARAMETERS
-   FOR REDUCE/MAPLE
-    AND THE OVERALL CONFIGURATION.
+   FOR REDUCE/MAPLE AND THE OVERALL CONFIGURATION.
 
     filename.inp        input vector field (read and written by P4)
-    filename.red        file read by reduce
-    filename.run        batch file written by P4, read by the operating system
-   to execute reduce/maple
 
     filename_inf.res    results of search at infinity, in text form
     filename_fin.res    results of search in the finite region, in text form
 
-
     IT DOES NOT IMPLEMENT THE READING OF THE RESULTS FROM MAPLE/REDUCE (THE .TAB
    FILES).
-
 */
 
 /*
-    Different files:
- search at the finite region, in text form
+    Different files: search at the finite region, in text form
 
     filename_inf.tab
     filename_fin.tab
@@ -90,17 +83,9 @@
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
 P4InputVF::P4InputVF()
-    : processText_{std::make_unique<QTextEdit>()},
-      terminateProcessButton_{std::make_unique<QPushButton>()},
-      clearProcessButton_{std::make_unique<QPushButton>()},
-      evalProcess_{std::make_unique<QProcess>()},
-      gcfDlg_{std::make_unique<P4GcfDlg>()},
-      findDlg_{std::make_unique<P4FindDlg>()},
-      curveDlg_{std::make_unique<P4ArbitraryCurveDlg>()},
-      isoclinesDlg_{std::make_unique<QIsoclinesDlg>()},
-      numparams_{0}, numVF_{0}, numSeparatingCurves_{0}, numVFRegions_{0},
-      numCurveRegions_{0}, numSelected_{0}, cleared_{true}, changed_{false},
-      evaluated_{false}, filename_{DEFAULTFILENAME};
+    : numparams_{0}, numVF_{0}, numSeparatingCurves_{0}, numVFRegions_{0},
+      numCurveRegions_{0}, numSelected_{0}, filename_{DEFAULTFILENAME},
+      symbolicpackage_{PACKAGE_MAPLE}
 {
     reset(1);
 }
@@ -110,6 +95,7 @@ P4InputVF::P4InputVF()
 // -----------------------------------------------------------------------
 P4InputVF::~P4InputVF()
 {
+    // TODO moure això al final de l'avaluació de les corbes/isoclines?
     // remove curve auxiliary files
     removeFile(getfilename_curvetable());
     removeFile(getfilename_curve());
@@ -118,8 +104,6 @@ P4InputVF::~P4InputVF()
     removeFile(getfilename_isoclinestable());
     removeFile(getfilename_isoclines());
     removeFile(getPrepareIsoclinesFileName());
-
-    reset(0);
 }
 
 // -----------------------------------------------------------------------
@@ -130,10 +114,8 @@ void P4InputVF::reset(int n)
     int i;
 
     gVFResults.clearVFs();
-    // gVFResults.vfK_ = nullptr;
     gVFResults.K_ = 0;
 
-    // symbolicpackage_ = PACKAGE_MAPLE;//getMathPackage();
     typeofstudy_ = DEFAULTTYPE;
     x0_ = DEFAULTX0;
     y0_ = DEFAULTY0;
@@ -154,8 +136,16 @@ void P4InputVF::reset(int n)
     ydot_.clear();
     gcf_.clear();
 
-    // refill vectors with default values
-    for (i = 0; i < n; i++) {
+    parvalue_.clear();
+    numparams_ = 0;
+    for (i = 0; i < MAXNUMPARAMS; i++)
+        parlabel_[i] = "";
+
+    isoclines_.clear()
+
+        // refill vectors with default values
+        for (i = 0; i < n; i++)
+    {
         numeric_.push_back(DEFAULTNUMERIC);
         precision_.push_back(DEFAULTPRECISION);
         epsilon_.push_back(QString(DEFAULTEPSILON));
@@ -167,52 +157,43 @@ void P4InputVF::reset(int n)
         xdot_.push_back(QString(DEFAULTXDOT));
         ydot_.push_back(QString(DEFAULTYDOT));
         gcf_.push_back(QString(DEFAULTGCF));
+        parvalue_.push_back(std::vector<QString>{});
     }
 
-    parvalue_.clear();
-    parvalue_.swap(std::vector<std::vector<QString>>());
-
-    curves_result_.clear();
-    gVFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
+    separatingCurves_.clear();
     numSeparatingCurves_ = 0;
+    numPointsSeparatingCurve_.clear();
+    gVFResults.resetSeparatingCurveInfo();
 
-    numPointsCurve_.clear();
-
-    if (n > 0) {
-        for (i = 0; i < n; i++) {
-            parvalue_.push_back(std::vector<QString>());
-        }
-    }
-
-    numparams_ = 0;
-    for (i = 0; i < MAXNUMPARAMS; i++)
-        parlabel_[i] = "";
+    curveRegions_.clear();
+    numCurveRegions_ = 0;
+    vfRegions_.clear();
+    numVFRegions_ = 0;
 
     changed_ = false;
     evaluated_ = false;
     evaluating_ = false;
-    evaluatingPiecewiseConfig_ = false;
     cleared_ = true;
-
-    curveRegions_.clear();
-    numCurveRegions_ = 0;
-
-    vfRegions_.clear();
-    numVFRegions_ = 0;
+    evaluatingGcf_ = false;
+    evaluatingArbitraryCurve_ = false;
+    evaluatingIsoclines_ = false;
+    evaluatingPiecewiseConfig_ = false;
+    processFailed_ = false;
 
     if (n > 0) {
         numSelected_ = 1;
         selected_.push_back(0);
 
         if (n == 1) {
-            p4InputVFRegions::vfRegion region(0, nullptr);
-            vfRegions_.push_back(region);
+            vfRegions_.push_back(
+                p4InputVFRegions::vfRegion{0, std::vector<int>{}});
             numVFRegions_ = 1;
         }
     } else {
         numSelected_ = 0;
-        selected_ = nullptr;
+        selected_.clear();
     }
+
     numVF_ = n;
 }
 
@@ -224,12 +205,11 @@ bool P4InputVF::load()
     emit loadSignal();
 
     FILE *fp;
-    QString fname;
     char scanbuf[2560];
     int i, k, c;
     int flag_numeric, flag_testsep, aux;
 
-    fname = getfilename();
+    QString fname{getfilename()};
     if (fname.length() == 0)
         return false;
 
@@ -256,41 +236,40 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         } else {
-            bool value;
-            value = ((flag_numeric == 0) ? false : true);
-            numeric_.push_back(value);
-            precision_.push_back(aux);
-            epsilon_.push_back(QString(scanbuf));
+            bool value{((flag_numeric == 0) ? false : true)};
+            numeric_.push_back(std::move(value));
+            precision_.push_back(std::move(aux));
+            epsilon_.push_back(QString{scanbuf});
             value = ((flag_testsep == 0) ? false : true);
-            testsep_.push_back(value);
+            testsep_.push_back(std::move(value));
         }
         if (fscanf(fp, "%d\n", &aux) != 1) {
             reset(1);
             fclose(fp);
             return false;
         } else {
-            taylorlevel_.push_back(aux);
+            taylorlevel_.push_back(std::move(aux));
         }
         if (fscanf(fp, "%d\n", &aux) != 1) {
             reset(1);
             fclose(fp);
             return false;
         } else {
-            numericlevel_.push_back(aux);
+            numericlevel_.push_back(std::move(aux));
         }
         if (fscanf(fp, "%d\n", &aux) != 1) {
             reset(1);
             fclose(fp);
             return false;
         } else {
-            maxlevel_.push_back(aux);
+            maxlevel_.push_back(std::move(aux));
         }
         if (fscanf(fp, "%d\n", &aux) != 1) {
             reset(1);
             fclose(fp);
             return false;
         } else {
-            weakness_.push_back(aux);
+            weakness_.push_back(std::move(aux));
         }
 
         if (typeofstudy_ == TYPEOFSTUDY_ONE) {
@@ -323,19 +302,19 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        xdot_.push_back(QString(scanbuf));
+        xdot_.push_back(QString{scanbuf});
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        ydot_.push_back(QString(scanbuf));
+        ydot_.push_back(QString{scanbuf});
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        gcf_.push_back(QString(scanbuf));
+        gcf_.push_back(QString{scanbuf});
 
         if (xdot_[0] == "(null)")
             xdot_[0] = "";
@@ -370,11 +349,11 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            parvalue_[0].push_back(QString(scanbuf));
+            parvalue_[0].push_back(QString{scanbuf});
         }
         for (i = numparams_; i < MAXNUMPARAMS; i++) {
-            parlabel_[i] = QString();
-            parvalue_[0][i].push_back(QString());
+            parlabel_[i] = QString{};
+            parvalue_[0][i].push_back(QString{});
         }
     } else {
         QString _x0;
@@ -431,7 +410,7 @@ bool P4InputVF::load()
         q_ = _q;
         typeofstudy_ = _typeofstudy;
 
-        gVFResults.resetCurveInfo();
+        gVFResults.resetSeparatingCurveInfo();
 
         if (fscanf(fp, "%d\n", &numSeparatingCurves_) != 1 ||
             numSeparatingCurves_ < 0) {
@@ -449,12 +428,12 @@ bool P4InputVF::load()
                     fclose(fp);
                     return false;
                 }
-                curves_result_.push_back(QString(scanbuf));
-                numPointsCurve_.push_back(npoints);
+                separatingCurves_.push_back(QString{scanbuf});
+                numPointsSeparatingCurve_.push_back(std::move(npoints));
             }
         } else {
-            curves_result_.clear();
-            numPointsCurve_.clear();
+            separatingCurves_.clear();
+            numPointsSeparatingCurve_.clear();
         }
 
         if (fscanf(fp, "%d\n", &numparams_) != 1 || numparams_ < 0 ||
@@ -469,17 +448,16 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            parlabel_[i] = scanbuf;
+            parlabel_[i] = QString{scanbuf};
         }
         for (i = numparams_; i < MAXNUMPARAMS; i++)
-            parlabel_[i] = QString();
+            parlabel_[i] = QString{};
 
         if (fscanf(fp, "%d\n", &numVFRegions_) != 1 || numVFRegions_ < 0) {
             reset(1);
             fclose(fp);
             return false;
         }
-        vfRegions_.clear();
         for (i = 0; i < numVFRegions_; i++) {
             // read index
             int indx;
@@ -497,11 +475,11 @@ bool P4InputVF::load()
                     fclose(fp);
                     return false;
                 }
-                sgns.push_back(aux);
+                sgns.push_back(std::move(aux));
             }
             // sgns could be an empty list
-            p4InputVFRegions::vfRegion region(indx, sgns);
-            vfRegions_.push_back(region);
+            vfRegions_.push_back(
+                p4InputVFRegions::vfRegion{indx, std::move(sgns)});
         }
 
         if (fscanf(fp, "%d\n", &numCurveRegions_) != 1 ||
@@ -510,7 +488,6 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        curveRegions_.clear();
         for (i = 0; i < numCurveRegions_; i++) {
             // read index
             int indx;
@@ -529,11 +506,11 @@ bool P4InputVF::load()
                     fclose(fp);
                     return false;
                 }
-                sgns.push_back(aux);
+                sgns.push_back(std::move(aux));
             }
             // sgns could be an empty list
-            p4InputVFRegions::curveRegion region(indx, sgns);
-            curveRegions_.push_back(region);
+            curveRegions_.push_back(
+                p4InputVFRegions::curveRegion{indx, std::move(sgns)});
         }
 
         for (k = 0; k < numVF_; k++) {
@@ -545,41 +522,40 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             } else {
-                bool value;
-                value = ((flag_numeric == 0) ? false : true);
-                numeric_.push_back(value);
-                precision_.push_back(aux);
-                epsilon_.push_back(QString(scanbuf));
+                bool value{(flag_numeric == 0) ? false : true};
+                numeric_.push_back(std::move(value));
+                precision_.push_back(std::move(aux));
+                epsilon_.push_back(QString{scanbuf});
                 value = ((flag_testsep == 0) ? false : true);
-                testsep_.push_back(value);
+                testsep_.push_back(std::move(value));
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                taylorlevel_.push_back(aux);
+                taylorlevel_.push_back(std::move(aux));
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                numericlevel_.push_back(aux);
+                numericlevel_.push_back(std::move(aux));
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                maxlevel_.push_back(aux);
+                maxlevel_.push_back(std::move(aux));
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                weakness_.push_back(aux);
+                weakness_.push_back(std::move(aux));
             }
 
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
@@ -587,19 +563,19 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            xdot_.push_back(QString(scanbuf));
+            xdot_.push_back(QString{scanbuf});
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            ydot_.push_back(QString(scanbuf));
+            ydot_.push_back(QString{scanbuf});
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            gcf_.push_back(QString(scanbuf));
+            gcf_.push_back(QString{scanbuf});
 
             if (xdot_[k] == "(null)")
                 xdot_[k] = "";
@@ -616,10 +592,10 @@ bool P4InputVF::load()
                     fclose(fp);
                     return false;
                 }
-                parvalue_[k].push_back(QString(scanbuf));
+                parvalue_[k].push_back(QString{scanbuf});
             }
             for (i = numparams_; i < MAXNUMPARAMS; i++)
-                parvalue_[k].push_back(QString());
+                parvalue_[k].push_back(QString{});
         }
     }
 
@@ -639,75 +615,37 @@ bool P4InputVF::checkevaluated()
     // if the evaluate files are already found on disc, then set the flag to
     // true.
 
-    // TODO: do these need to be pointers?
-    QFileInfo *fi;
-    QFileInfo *fifin;
-    QFileInfo *fiinf;
-    QFileInfo *fivec;
-
-    QDateTime dt;
-    QDateTime dtfin;
-    QDateTime dtinf;
-    QDateTime dtvec;
-
-    fi = new QFileInfo(getfilename());
-    dt = fi->lastModified();
-    delete fi;
-    fi = nullptr;
-
-    fivec = new QFileInfo(getbarefilename() + "_vec.tab");
-    if (fivec->isFile() == false) {
-        delete fivec;
-        fivec = nullptr;
+    std::unique_ptr<QFileInfo> fi{std::make_unique<QFileInfo>(getfilename())};
+    if (!fi->exists())
         return false;
-    }
-    dtvec = fivec->lastModified();
+    QDateTime dt{fi->lastModified()};
+
+    std::unique_ptr<QFileInfo> fivec{
+        std::make_unique<QFileInfo>(getbarefilename() + "_vec.tab")};
+    if (!fivec->exists())
+        return false;
+    QDateTime dtvec{fivec->lastModified()};
     if (dtvec.secsTo(dt) > 0 || dtvec.daysTo(dt) > 0)
         return false;
 
     if (typeofstudy_ != TYPEOFSTUDY_INF) {
-        fifin = new QFileInfo(getbarefilename() + "_fin.tab");
-        if (fifin->isFile() == false) {
-            delete fifin;
-            fifin = nullptr;
+        std::unique_ptr<QFileInfo> fifin{
+            std::unique_ptr<QFileInfo>(getbarefilename() + "_fin.tab")};
+        if (!fifin->exists())
             return false;
-        }
-        dtfin = fifin->lastModified();
-        delete fifin;
-        fifin = nullptr;
+        QDateTime dtfin{fifin->lastModified()};
         if (dtfin.secsTo(dt) > 0 || dtfin.daysTo(dt) > 0)
             return false;
     }
 
     if (typeofstudy_ == TYPEOFSTUDY_INF || typeofstudy_ == TYPEOFSTUDY_ALL) {
-        fiinf = new QFileInfo(getbarefilename() + "_inf.tab");
-        if (fiinf->isFile() == false) {
-            delete fiinf;
-            fiinf = nullptr;
+        std::unique_ptr<QFileInfo> fiinf{
+            std::make_unique<QFileInfo>(getbarefilename() + "_inf.tab")};
+        if (!fiinf->exists())
             return false;
-        }
-        dtinf = fiinf->lastModified();
-        delete fiinf;
-        fiinf = nullptr;
+        QDateTime dtinf{fiinf->lastModified()};
         if (dtinf.secsTo(dt) > 0 || dtinf.daysTo(dt) > 0)
             return false;
-    }
-
-    if (fi != nullptr) {
-        delete fi;
-        fi = nullptr;
-    }
-    if (fifin != nullptr) {
-        delete fifin;
-        fifin = nullptr;
-    }
-    if (fiinf != nullptr) {
-        delete fiinf;
-        fiinf = nullptr;
-    }
-    if (fivec != nullptr) {
-        delete fivec;
-        fivec = nullptr;
     }
 
     return true;
@@ -728,9 +666,10 @@ bool P4InputVF::save()
     QString fname = getfilename();
     if (fname.isEmpty())
         return false;
-    QFile file(QFile::encodeName(getfilename()));
+
+    QFile file{QFile::encodeName(getfilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
-        QTextStream out(&file);
+        QTextStream out{&file};
 
         out << "P5\n";
         out << typeofstudy_ << "\n";
@@ -751,11 +690,11 @@ bool P4InputVF::save()
         out << numVF_ << "\n";
         out << numSeparatingCurves_ << "\n";
         for (i = 0; i < numSeparatingCurves_; i++) {
-            if (curves_result_[i].isEmpty())
+            if (separatingCurves_[i].isEmpty())
                 out << "(null)\n";
             else
-                out << curves_result_[i] << "\n";
-            out << numPointsCurve_[i] << "\n";
+                out << separatingCurves_[i] << "\n";
+            out << numPointsSeparatingCurve_[i] << "\n";
         }
 
         out << numparams_ << "\n";
@@ -831,13 +770,10 @@ QString P4InputVF::getbarefilename() const
     int slash2;
     int slash3;
     int dot;
-    QString fname;
+    QString fname{filename_.trimmed()};
 
-    fname = filename.trimmed();
-
-    if (fname.length() == 0) {
+    if (fname.isEmpty())
         return "";
-    }
 
     slash1 = fname.lastIndexOf('/');
     slash2 = fname.lastIndexOf('\\');
@@ -862,23 +798,23 @@ QString P4InputVF::getfilename() const
     int slash2;
     int slash3;
     int dot;
-    QString fname;
+    QString fname{filename_.trimmed()};
 
-    fname = filename.trimmed();
+    if (fname.isEmpty())
+        return "";
 
-    if (fname.length() != 0) {
-        slash1 = fname.lastIndexOf('/');
-        slash2 = fname.lastIndexOf('\\');
-        slash3 = fname.lastIndexOf(':');
-        dot = fname.lastIndexOf('.');
+    slash1 = fname.lastIndexOf('/');
+    slash2 = fname.lastIndexOf('\\');
+    slash3 = fname.lastIndexOf(':');
+    dot = fname.lastIndexOf('.');
 
-        if (dot <= slash1 && dot <= slash2 && dot <= slash3) {
-            // there is no dot present, or at least not in the
-            // last part of the file name.
+    if (dot <= slash1 && dot <= slash2 && dot <= slash3) {
+        // there is no dot present, or at least not in the
+        // last part of the file name.
 
-            return fname.append(".inp");
-        }
+        return fname.append(".inp");
     }
+
     return fname;
 }
 
@@ -889,91 +825,87 @@ QString P4InputVF::getfilename_finresults() const
 {
     return getbarefilename().append("_fin.res");
 }
+
 QString P4InputVF::getfilename_infresults() const
 {
     return getbarefilename().append("_inf.res");
 }
+
 QString P4InputVF::getfilename_fintable() const
 {
     return getbarefilename().append("_fin.tab");
 }
+
 QString P4InputVF::getfilename_inftable() const
 {
     return getbarefilename().append("_inf.tab");
 }
+
 QString P4InputVF::getfilename_vectable() const
 {
     return getbarefilename().append("_vec.tab");
 }
+
 QString P4InputVF::getfilename_gcf() const
 {
     return getbarefilename().append("_gcf.tab");
 }
-// only used in case of reduce: contains reduce output, no gcf data and is
-// deleted immediately.
-/*QString P4InputVF::getfilename_gcfresults() const
-{
-    return getbarefilename().append("_gcf.res");
-}*/
-QString P4InputVF::getfilename_curveresults() const
-{
-    return getbarefilename().append("_curves.tab");
-}
-/*QString P4InputVF::getreducefilename() const
-{
-    return getbarefilename().append(".red");
-}*/
+
 QString P4InputVF::getmaplefilename() const
 {
     return getbarefilename().append(".txt");
 }
-QString P4InputVF::getrunfilename() const
-{
-    return getbarefilename().append(".run");
-}
+
 // curve filenames
 QString P4InputVF::getfilename_curvetable() const
 {
     return getbarefilename().append("_veccurve.tab");
 }
+
 QString P4InputVF::getfilename_curve() const
 {
     return getbarefilename().append("_curve.tab");
 }
+
 QString P4InputVF::getPrepareCurveFileName() const
 {
     return getbarefilename().append("_curve_prep.txt");
 }
+
 // isoclines filenames
 QString P4InputVF::getfilename_isoclinestable() const
 {
     return getbarefilename().append("_vecisoclines.tab");
 }
+
 QString P4InputVF::getfilename_isoclines() const
 {
     return getbarefilename().append("_isoclines.tab");
 }
+
 QString P4InputVF::getPrepareIsoclinesFileName() const
 {
     return getbarefilename().append("_isoclines_prep.txt");
 }
 
+// separating curve filenames
+QString P4InputVF::getfilename_separatingcurveresults() const
+{
+    return getbarefilename().append("_sepcurves.tab");
+}
+
 // -----------------------------------------------------------------------
 //          P4InputVF::fileExists
 // -----------------------------------------------------------------------
-bool P4InputVF::fileExists(QString fname)
+static bool P4InputVF::fileExists(QString fname) const
 {
-    QFile fp(QFile::encodeName(fname));
-    if (fp.exists())
-        return true;
-    else
-        return false;
+    QFile fp{QFile::encodeName(std::move(fname))};
+    return fp.exists();
 }
 
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleParameters
 // -----------------------------------------------------------------------
-
 void P4InputVF::prepareMapleParameters(QTextStream &fp)
 {
     QString s;
@@ -1058,13 +990,13 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp)
         s = x0.toUtf8();
         fp << "x0 := " << x0_ << ":\n";
         fp << "y0 := " << y0_ << ":\n";
-        s.sprintf("x_min := x0+(%f):\n", (float)(X_MIN));
+        s.sprintf("x_min := x0+(%8.5g):\n", X_MIN);
         fp << s;
-        s.sprintf("x_max := x0+(%f):\n", (float)(X_MAX));
+        s.sprintf("x_max := x0+(%8.5g):\n", X_MAX);
         fp << s;
-        s.sprintf("y_min := y0+(%f):\n", (float)(Y_MIN));
+        s.sprintf("y_min := y0+(%8.5g):\n", Y_MIN);
         fp << s;
-        s.sprintf("y_max := y0+(%f):\n", (float)(Y_MAX));
+        s.sprintf("y_max := y0+(%8.5g):\n", Y_MAX);
         fp << s;
     } else {
         s.sprintf("user_p := %d:\n", p_);
@@ -1079,17 +1011,13 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp)
 // -----------------------------------------------------------------------
 void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 {
-    QString myxdot;
-    QString myydot;
-    QString mygcf;
-    QString lbl;
-    QString val;
+    QString myxdot, myydot, mygcf, lbl, val;
     int k, i;
 
     fp << "user_f_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        myxdot = convertMapleUserParameterLabels(*(xdot_[i]));  // FIXME
-        myydot = convertMapleUserParameterLabels(*(ydot_[i]));
+        myxdot = convertMapleUserParameterLabels(xdot_[i]);
+        myydot = convertMapleUserParameterLabels(ydot_[i]);
         fp << "[" << myxdot << "," << myydot << "]";
         if (i == numVF_ - 1)
             fp << " ]:\n";
@@ -1099,7 +1027,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 
     fp << "user_gcf_pieces := [ ";
     for (i = 0; i < numVF_; i++) {
-        mygcf = convertMapleUserParameterLabels(*(gcf_[i]));
+        mygcf = convertMapleUserParameterLabels(gcf_[i]);
         fp << mygcf;
         if (i == numVF_ - 1)
             fp << " ]:\n";
@@ -1121,14 +1049,11 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-
         if (lbl.length() == 0)
             continue;
-
         fp << lbl << "_pieces := [ ";
-
         for (i = 0; i < numVF_; i++) {
-            val = convertMapleUserParameterLabels(*(parvalue_[i][k]));  // FIXME
+            val = convertMapleUserParameterLabels(parvalue_[i][k]);
             if (!numeric_[i])
                 fp << val;
             else
@@ -1142,9 +1067,9 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 }
 
 // -----------------------------------------------------------------------
-//          P4InputVF::prepareMapleCurves (P5 version)
+//          P4InputVF::prepareMapleSeparatingCurves
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleCurves(QTextStream &fp)
+void P4InputVF::prepareMapleSeparatingCurves(QTextStream &fp)
 {
     int i;
     QString s;
@@ -1152,7 +1077,7 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
     fp << "user_curves := [ ";
     if (numSeparatingCurves_ > 0)
         for (i = 0; i < numSeparatingCurves_; i++) {
-            s = convertMapleUserParameterLabels(curves_result_[i]);
+            s = convertMapleUserParameterLabels(separatingCurves_[i]);
             fp << s;
             if (i == numSeparatingCurves_ - 1)
                 fp << " ]:\n";
@@ -1165,7 +1090,7 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
     fp << "user_numpointscurves :=[ ";
     if (numSeparatingCurves_ > 0)
         for (i = 0; i < numSeparatingCurves_; i++) {
-            fp << numPointsCurve_[i];
+            fp << numPointsSeparatingCurve_[i];
             if (i == numSeparatingCurves_ - 1)
                 fp << " ]:\n";
             else
@@ -1176,26 +1101,22 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
 }
 
 // -----------------------------------------------------------------------
-//          P4InputVF::prepareMapleCurve (P4 version)
+//          P4InputVF::prepareMapleArbitraryCurve
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleCurve(QTextStream &fp)  // FIXME
+void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
 {
-    QString mycurve;
-    QString lbl;
-    QString val;
-    int k;
-
-    mycurve = convertMapleUserParameterLabels(arbitraryCurve_);
+    QString mycurve{convertMapleUserParameterLabels(arbitraryCurve_)};
     fp << "user_curve := " << mycurve << ":\n";
 
-    for (k = 0; k < numparams_; k++) {
+    QString lbl, val;
+    for (int k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         val = convertMapleUserParameterLabels(parvalue_[k]);
 
         if (lbl.length() == 0)
             continue;
 
-        if (!numeric_) {
+        if (!commonBool(numeric_)) {
             fp << lbl << " := " << val << ":\n";
         } else {
             fp << lbl << " := evalf( " << val << " ):\n";
@@ -1206,7 +1127,8 @@ void P4InputVF::prepareMapleCurve(QTextStream &fp)  // FIXME
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleisoclines
 // -----------------------------------------------------------------------
-// FIXME
+// FIXME ha de ser una llista. mirar el p5 a veure com son els altres parametres
+// a la gui
 void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
     QString myisoclines;
@@ -1214,8 +1136,11 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
     QString val;
     int k;
 
-    myisoclines = convertMapleUserParameterLabels(isoclines_);
-    fp << "user_isoclines := " << myisoclines << ":\n";
+    fp << "user_isoclines := [";
+    for (auto s : isoclines_) {
+        myisoclines = convertMapleUserParameterLabels(s);
+        fp << s; //FIXME
+    }
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
@@ -1283,12 +1208,12 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
 //  If the user gives a vector field with user-parameters such as "alpha" or
 //  "b", we add a suffix to these qualifier names and change them to "alpha_" or
 //  "b_", in order to avoid mixing with internal variables.
-static int indexOfWordInString(const QString *src, const QString *word,
+static int indexOfWordInString(const QString &src, const QString &word,
                                int start = 0)
 {
     int i, j;
 
-    while ((i = src->indexOf(*word, start)) != -1) {
+    while ((i = src.indexOf(word, start)) != -1) {
         // we have found word as a substring.  The index i is an index from the
         // very beginning of string (not depending of start)
 
@@ -1297,14 +1222,14 @@ static int indexOfWordInString(const QString *src, const QString *word,
         // check if the substring is the beginning of a word:
         j = i;
         if (j > 0)
-            if ((*src)[j - 1].isLetter() || (*src)[j - 1] == '_' ||
-                (*src)[j - 1].isDigit())
+            if (src[j - 1].isLetter() || src[j - 1] == '_' ||
+                src[j - 1].isDigit())
                 continue;  // no: it is part of a bigger word, so continue...
 
         // check if the substring is the end of a word;
         j = i + word->length();
         if (j < src->length())
-            if ((*src)[j].isLetter() || (*src)[j] == '_' || (*src)[j].isDigit())
+            if (src[j].isLetter() || src[j] == '_' || src[j].isDigit())
                 continue;  // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
@@ -1318,22 +1243,21 @@ static int indexOfWordInString(const QString *src, const QString *word,
 // -----------------------------------------------------------------------
 QString P4InputVF::convertMapleUserParameterLabels(QString src)
 {
-    QString s;
+    QString s{std::move(src)};
     QString t;
     QString p, newlabel;
     int i, k;
 
-    s = src;
     for (k = 0; k < numparams_; k++) {
         p = parlabel_[k];
-        newlabel = p + "_";
-
         if (p.length() == 0)
             continue;
 
+        newlabel = p + "_";
+
         t = "";
         while (1) {
-            i = indexOfWordInString(&s, &p);
+            i = indexOfWordInString(s, p);
             if (i == -1)
                 break;
 
@@ -1353,16 +1277,16 @@ QString P4InputVF::convertMapleUserParameterLabels(QString src)
 QString P4InputVF::convertMapleUserParametersLabelsToValues(QString src)
 {
     QString t, p, newlabel;
-    int i, k;
-    QString s = src;
-    for (k = 0; k < numparams_; k++) {
+    int i;
+    QString s{std::move(src)};
+    for (int k = 0; k < numparams_; k++) {
         p = parlabel_[k];
-        newlabel = parvalue_[k];
         if (p.length() == 0)
             continue;
+        newlabel = parvalue_[k];  // this is the difference: we take the value
         t = "";
         while (1) {
-            i = indexOfWordInString(&s, &p);
+            i = indexOfWordInString(s, p);
             if (i == -1)
                 break;
             t += s.left(i);
@@ -1792,14 +1716,14 @@ void P4InputVF::evaluate()
                      &P4InputVF::catchProcessError);
 #endif
 
-    processfailed_ = false;
+    processFailed_ = false;
     QString pa = "External Command: " + getMapleExe() + " " + filedotmpl;
     processText_->append(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
-        processfailed_ = true;
+        processFailed_ = true;
         delete proc;
         proc = nullptr;
         evalProcess_ = nullptr;
@@ -1875,14 +1799,14 @@ void P4InputVF::evaluateCurveTable()
                      &P4Application::catchProcessError);
 #endif
 
-    processfailed_ = false;
+    processFailed_ = false;
     QString pa = "External Command: " + getMapleExe() + " " + filedotmpl;
     processText_->append(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
-        processfailed_ = true;
+        processFailed_ = true;
         delete proc;
         proc = nullptr;
         evalProcess_ = nullptr;
@@ -1978,7 +1902,7 @@ void P4InputVF::evaluateIsoclinesTable()
 
         proc->setWorkingDirectory(QDir::currentPath());
 
-        processfailed_ = false;
+        processFailed_ = false;
         QString pa = "External Command: ";
         pa += getMapleExe();
         pa += " ";
@@ -1989,7 +1913,7 @@ void P4InputVF::evaluateIsoclinesTable()
 
         if (proc->state() != QProcess::Running &&
             proc->state() != QProcess::Starting) {
-            processfailed_ = true;
+            processFailed_ = true;
             delete proc;
             proc = nullptr;
             evalProcess_ = nullptr;
@@ -2010,7 +1934,7 @@ void P4InputVF::evaluateIsoclinesTable()
 // -----------------------------------------------------------------------
 void P4InputVF::catchProcessError(QProcess::ProcessError prerr)
 {
-    processfailed_ = true;
+    processFailed_ = true;
     switch (prerr) {
     case QProcess::FailedToStart:
         processError_ = "Failed to start";
@@ -2065,7 +1989,7 @@ void P4InputVF::finishEvaluation(int exitCode)
                     QTimer::singleShot(5000, evalProcess_, SLOT(kill()));
                     buf = "Kill signal sent to process.\n";
                 } else {
-                    if (!processfailed_)
+                    if (!processFailed_)
                         buf.sprintf("The process finished normally (%d)\n",
                                     evalProcess_->exitCode());
                     else {
@@ -2076,7 +2000,7 @@ void P4InputVF::finishEvaluation(int exitCode)
                     }
                 }
             } else {
-                if (processfailed_)
+                if (processFailed_)
                     buf =
                         "The following error occured: " + processError_ + "\n";
                 else
@@ -2128,8 +2052,8 @@ void P4InputVF::finishGcfEvaluation()
 void P4InputVF::finishCurveEvaluation()
 {
     evaluatingCurve_ = false;
-    if (curveDlg_ != nullptr) {
-        curveDlg_->finishCurveEvaluation();
+    if (arbitraryCurveDlg_ != nullptr) {
+        arbitraryCurveDlg_->finishCurveEvaluation();
     }
 }
 
@@ -2247,7 +2171,7 @@ void P4InputVF::onTerminateButton()
             QTimer::singleShot(2000, evalProcess_, SLOT(kill()));
             buf = "Kill signal sent to process.\n";
             processText_->append(buf);
-            processfailed_ = true;
+            processFailed_ = true;
             processError_ = "Terminated by user";
         }
     }
@@ -2368,7 +2292,7 @@ bool P4InputVF::evaluateGcf()
 
     proc->setWorkingDirectory(QDir::currentPath());
 
-    processfailed_ = false;
+    processFailed_ = false;
     QString pa = "External Command: ";
     pa += getMapleExe();
     pa += " ";
@@ -2377,7 +2301,7 @@ bool P4InputVF::evaluateGcf()
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
-        processfailed_ = true;
+        processFailed_ = true;
         delete proc;
         proc = nullptr;
         evalProcess_ = nullptr;
@@ -2629,7 +2553,7 @@ bool P4InputVF::evaluateCurve()
 
     proc->setWorkingDirectory(QDir::currentPath());
 
-    processfailed_ = false;
+    processFailed_ = false;
     QString pa = "External Command: ";
     pa += getMapleExe();
     pa += " ";
@@ -2638,7 +2562,7 @@ bool P4InputVF::evaluateCurve()
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
-        processfailed_ = true;
+        processFailed_ = true;
         delete proc;
         proc = nullptr;
         evalProcess_ = nullptr;
@@ -2891,7 +2815,7 @@ bool P4InputVF::evaluateIsoclines()
 
     proc->setWorkingDirectory(QDir::currentPath());
 
-    processfailed_ = false;
+    processFailed_ = false;
     QString pa = "External Command: ";
     pa += getMapleExe();
     pa += " ";
@@ -2900,7 +2824,7 @@ bool P4InputVF::evaluateIsoclines()
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
-        processfailed_ = true;
+        processFailed_ = true;
         delete proc;
         proc = nullptr;
         evalProcess_ = nullptr;
@@ -3375,17 +3299,17 @@ void P4InputVF::addSeparatingCurve()
 {
     int i, n;
 
-    if (!gVFResults.curves_result_.empty()) {
+    if (!gVFResults.separatingCurves_.empty()) {
         for (i = 0; i < numSeparatingCurves_; i++)
-            gVFResults.resetCurveInfo(i);
-        gVFResults.curves_result_.clear();
+            gVFResults.resetSeparatingCurveInfo(i);
+        gVFResults.separatingCurves_.clear();
     }
 
     n = numSeparatingCurves_;
     numSeparatingCurves_++;
 
-    curves_result_.push_back(QString());
-    numPointsCurve_.push_back(DEFAULT_CURVEPOINTS);
+    separatingCurves_.push_back(QString());
+    numPointsSeparatingCurve_.push_back(DEFAULT_CURVEPOINTS);
 
     for (i = 0; i < numVFRegions_; i++)
         vfregions[i].signs.push_back(1);
@@ -3404,18 +3328,18 @@ void P4InputVF::deleteSeparatingCurve(int index)
     if (index < 0 || index >= numSeparatingCurves_)
         return;
 
-    if (!gVFResults.curves_result_.empty()) {
+    if (!gVFResults.separatingCurves_.empty()) {
         for (i = 0; i < numSeparatingCurves_; i++)
-            gVFResults.resetCurveInfo(i);
-        gVFResults.curves_result_.clear();
+            gVFResults.resetSeparatingCurveInfo(i);
+        gVFResults.separatingCurves_.clear();
     }
 
     if (numSeparatingCurves_ == 1) {
         // special case
 
         numSeparatingCurves_ = 0;
-        curves_result_.clear();
-        numPointsCurve_.clear();
+        separatingCurves_.clear();
+        numPointsSeparatingCurve_.clear();
 
         for (i = 0; i < numVFRegions_; i++)
             vfRegions_[i].signs.clear());
@@ -3430,7 +3354,7 @@ void P4InputVF::deleteSeparatingCurve(int index)
         return;
     }
 
-    curves_result_.erase(std::begin(curves_result_) + index);
+    separatingCurves_.erase(std::begin(separatingCurves_) + index);
     numSeparatingCurves_--;
 }
 
@@ -3507,14 +3431,14 @@ bool P4InputVF::evaluateCurves()
     QObject::connect(proc, &QProcess::readyReadStandardOutput, this,
                      &P4InputVF::readProcessStdout);
 
-    processfailed_ = false;
+    processFailed_ = false;
     QString pa{"External Command: " + getMapleExe() + " " + filedotmpl};
     processText_->append(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
-        processfailed_ = true;
+        processFailed_ = true;
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
@@ -3550,7 +3474,7 @@ void P4InputVF::markVFRegion(int index, const double *p)
 {
     int i, k;
 
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return;
 
     for (i = numVFRegions_ - 1; i >= 0; i--) {
@@ -3561,7 +3485,7 @@ void P4InputVF::markVFRegion(int index, const double *p)
         std::vector<int> sgns;
         if (numSeparatingCurves_ > 0)
             sgns.reserve(sizeof(int) * numSeparatingCurves_);
-        for (auto const &curveResult : gVFResults.curves_result_) {
+        for (auto const &curveResult : gVFResults.separatingCurves_) {
             if (eval_curve(curveResult, p) < 0)
                 sgns.push_back(-1);
             else
@@ -3581,7 +3505,7 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
 {
     int i;
 
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return;
 
     for (i = numVFRegions_ - 1; i >= 0; i--) {
@@ -3611,13 +3535,13 @@ void P4InputVF::markCurveRegion(int index, const double *p)
 
     if (numSeparatingCurves_ == 0)
         return;
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return;
 
     for (i = 0; i < numSeparatingCurves_; i++) {
         if (i == index)
             signs.push_back(0);
-        else if (eval_curve(gVFResults.curves_result_[i], p) < 0)
+        else if (eval_curve(gVFResults.separatingCurves_[i], p) < 0)
             signs.push_back(-1);
         else
             signs.push_back(1);
@@ -3641,7 +3565,7 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
 {
     std::vector<int> signs;
 
-    if (numSeparatingCurves_ == 0 || gVFResults.curves_result_.empty())
+    if (numSeparatingCurves_ == 0 || gVFResults.separatingCurves_.empty())
         return;
 
     // NOTE: aqui podriem estar fent que els signes es guardin al reves que al
@@ -3650,7 +3574,7 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
     for (int i = 0; i < numSeparatingCurves_; i++) {
         if (i == index)
             signs.push_back(0);
-        else if (eval_curve(gVFResults.curves_result_[i], p) < 0)
+        else if (eval_curve(gVFResults.separatingCurves_[i], p) < 0)
             signs.push_back(-1);
         else
             signs.push_back(1);
@@ -3693,7 +3617,7 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
 {
     int k, j;
 
-    if (numSeparatingCurves_ == 0 || gVFResults.curves_result_.empty())
+    if (numSeparatingCurves_ == 0 || gVFResults.separatingCurves_.empty())
         return false;
 
     for (auto const &curve : curveRegions_) {
@@ -3703,7 +3627,7 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
             if (k == index)
                 continue;
 
-            if (eval_curve(gVFResults.curves_result_[k], pcoord) < 0) {
+            if (eval_curve(gVFResults.separatingCurves_[k], pcoord) < 0) {
                 if (curve.signs[k] > 0)
                     break;
             } else {
@@ -3724,10 +3648,10 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
 // -----------------------------------------------------------------------
 void P4InputVF::resampleCurve(int i)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return;
 
-    for (auto &sep : gVFResults.curves_result_[i].sep_points) {
+    for (auto &sep : gVFResults.separatingCurves_[i].sep_points) {
         if (isCurvePointDrawn(i, sep))
             sep.color = CSEPCURVE;
         else
@@ -3740,7 +3664,7 @@ void P4InputVF::resampleCurve(int i)
 // -----------------------------------------------------------------------
 void P4InputVF::resampleGcf(int i)
 {
-    if (gVFResults.curves_result_.empty() || gVFResults.vf_.empty())
+    if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
     for (auto &it = std::begin(gVFResults.vf_[i]->gcf_points_);
@@ -3779,7 +3703,7 @@ void P4InputVF::resampleGcf(int i)
 // and is assumed to be in a ball with small radius.
 int P4InputVF::getVFIndex_R2(const double *ucoord)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_R2(vfRegions_[i].signs, ucoord))
@@ -3887,7 +3811,7 @@ int P4InputVF::getVFIndex_plsphere(const double *pcoord)
 // is a (inverse) radial coordinate, the theta is an angular coordinate.
 int P4InputVF::getVFIndex_cyl(const double *y)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_cyl(vfRegions_[i].signs, y))
@@ -3909,7 +3833,7 @@ int P4InputVF::getVFIndex_cyl(const double *y)
 // If z2<0, we are inside the chart VV1.
 int P4InputVF::getVFIndex_U1(const double *y)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_U1(vfRegions_[i].signs, y))
@@ -3931,7 +3855,7 @@ int P4InputVF::getVFIndex_U1(const double *y)
 // If z2<0, we are inside the chart UU1.
 int P4InputVF::getVFIndex_V1(const double *y)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_V1(vfRegions_[i].signs, y))
@@ -3953,7 +3877,7 @@ int P4InputVF::getVFIndex_V1(const double *y)
 // If z2<0, we are inside the chart VV2.
 int P4InputVF::getVFIndex_U2(const double *y)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_U2(vfRegions_[i].signs, y))
@@ -3976,7 +3900,7 @@ int P4InputVF::getVFIndex_U2(const double *y)
 // If z2<0, we are inside the chart UU2.
 int P4InputVF::getVFIndex_V2(const double *y)
 {
-    if (gVFResults.curves_result_.empty())
+    if (gVFResults.separatingCurves_.empty())
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_V2(vfRegions_[i].signs, y))
