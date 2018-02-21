@@ -276,20 +276,20 @@ void P4SeparatingCurvesDlg::updateDlgData()
     lst_curves_->clear();
 
     for (i = 0; i < gThisVF->numSeparatingCurves_; i++) {
-        if (gThisVF->curves_[i].isEmpty())
+        if (gThisVF->separatingCurves_[i].isEmpty())
             itm.reset(new QListWidgetItem("polynomial", lst_curves_));
         else
-            itm.reset(
-                new QListWidgetItem(*(gThisVF->curves_[i]), lst_curves_));
+            itm.reset(new QListWidgetItem(*(gThisVF->separatingCurves_[i]),
+                                          lst_curves_));
     }
 
     if (!lst_curves_->selectedItems().isEmpty()) {
         int curveindex { lst_curves_->row(lst_curves_->selectedItems()[0]) }
         if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_ ||
-            gThisVF->numPointsCurve_.empty())
+            gThisVF->numPointsSeparatingCurve_.empty())
             v = -1;
         else
-            v = gThisVF->numPointsCurve_[curveindex];
+            v = gThisVF->numPointsSeparatingCurve_[curveindex];
     } else {
         v = -1;
     }
@@ -322,8 +322,8 @@ void P4SeparatingCurvesDlg::onCurveChanged(QListWidgetItem *itm)
     int r{lst_curves_->row(itm)};
     if (r < 0 || r >= gThisVF->numSeparatingCurves_)
         return QString s{itm->text().trimmed()};
-    if (gThisVF->curves_[r].compare(s)) {
-        gThisVF->curves_[r] = s;
+    if (gThisVF->separatingCurves_[r].compare(s)) {
+        gThisVF->separatingCurves_[r] = s;
         if (gThisVF->changed_ == false) {
             gThisVF->changed_ = true;
             gP4app->signalChanged();
@@ -350,10 +350,10 @@ void P4SeparatingCurvesDlg::onCurvesSelectionChanged()
         }
         int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
         if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_ ||
-            gThisVF->numPointsCurve_.empty())
+            gThisVF->numPointsSeparatingCurve_.empty())
             v = -1;
         else
-            v = gThisVF->numPointsCurve_[curveindex];
+            v = gThisVF->numPointsSeparatingCurve_[curveindex];
     } else
         v = -1;
 
@@ -683,13 +683,15 @@ void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
     QString s{edt_numpoints_->text()};
     bool ok;
     int v{s.toInt(&ok)};
-    if (!ok || v<=0) return;
+    if (!ok || v <= 0)
+        return;
 
-    if (v == gThisVF->numPointsCurve_[curveindex]) return;
+    if (v == gThisVF->numPointsSeparatingCurve_[curveindex])
+        return;
 
-    gThisVF->numPointsCurve_[curveindex]=v;
-    if(gThisVF->changed_==false){
-        gThisVF->changed_=true;
+    gThisVF->numPointsSeparatingCurve_[curveindex] = v;
+    if (gThisVF->changed_ == false) {
+        gThisVF->changed_ = true;
         gP4app->signalChanged();
     }
 }
