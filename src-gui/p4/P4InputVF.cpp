@@ -96,9 +96,9 @@ P4InputVF::P4InputVF()
       evalProcess_{std::make_unique<QProcess>()},
       gcfDlg_{std::make_unique<P4GcfDlg>()},
       findDlg_{std::make_unique<P4FindDlg>()},
-      curveDlg_{std::make_unique<QCurveDlg>()},
+      curveDlg_{std::make_unique<P4ArbitraryCurveDlg>()},
       isoclinesDlg_{std::make_unique<QIsoclinesDlg>()},
-      numparams_{0}, numVF_{0}, numCurves_{0}, numVFRegions_{0},
+      numparams_{0}, numVF_{0}, numSeparatingCurves_{0}, numVFRegions_{0},
       numCurveRegions_{0}, numSelected_{0}, cleared_{true}, changed_{false},
       evaluated_{false}, filename_{DEFAULTFILENAME};
 {
@@ -174,7 +174,7 @@ void P4InputVF::reset(int n)
 
     curves_result_.clear();
     gVFResults.resetCurveInfo();  // TODO: mirar si he de canviar alguna cosa
-    numCurves_ = 0;
+    numSeparatingCurves_ = 0;
 
     numPointsCurve_.clear();
 
@@ -433,15 +433,16 @@ bool P4InputVF::load()
 
         gVFResults.resetCurveInfo();
 
-        if (fscanf(fp, "%d\n", &numCurves_) != 1 || numCurves_ < 0) {
+        if (fscanf(fp, "%d\n", &numSeparatingCurves_) != 1 ||
+            numSeparatingCurves_ < 0) {
             reset(1);
             fclose(fp);
             return false;
         }
 
-        if (numCurves_ > 0) {
+        if (numSeparatingCurves_ > 0) {
             int npoints;
-            for (k = 0; k < numCurves_; k++) {
+            for (k = 0; k < numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
                     fscanf(fp, "%d\n", &npoints) != 1) {
                     reset(1);
@@ -490,7 +491,7 @@ bool P4InputVF::load()
             // read signs
             std::vector<int> sgns;
             int aux;
-            for (k = 0; k < numCurves_; k++) {
+            for (k = 0; k < numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &aux) != 1 || (aux != 1 && aux != -1)) {
                     reset(1);
                     fclose(fp);
@@ -514,7 +515,7 @@ bool P4InputVF::load()
             // read index
             int indx;
             if (fscanf(fp, "%d", &indx) != 1 || indx < 0 ||
-                indx >= numCurves_) {
+                indx >= numSeparatingCurves_) {
                 reset(1);
                 fclose(fp);
                 return false;
@@ -522,7 +523,7 @@ bool P4InputVF::load()
             // read signs
             std::vector<int> sgns;
             int aux;
-            for (k = 0; k < numCurves_; k++) {
+            for (k = 0; k < numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &aux) != 1 || aux > 1 || aux < -1) {
                     reset(1);
                     fclose(fp);
@@ -748,8 +749,8 @@ bool P4InputVF::save()
         }
 
         out << numVF_ << "\n";
-        out << numCurves_ << "\n";
-        for (i = 0; i < numCurves_; i++) {
+        out << numSeparatingCurves_ << "\n";
+        for (i = 0; i < numSeparatingCurves_; i++) {
             if (curves_result_[i].isEmpty())
                 out << "(null)\n";
             else
@@ -768,7 +769,7 @@ bool P4InputVF::save()
         out << numVFRegions_ << "\n";
         for (i = 0; i < numVFRegions_; i++) {
             out << vfRegions_[i].vfIndex;
-            for (k = 0; k < numCurves_; k++)
+            for (k = 0; k < numSeparatingCurves_; k++)
                 out << vfRegions_[i].signs[k];
             out << "\n";
         }
@@ -776,7 +777,7 @@ bool P4InputVF::save()
         out << numCurveRegions_ << "\n";
         for (i = 0; i < numCurveRegions_; i++) {
             out << curveRegions_[i].curveIndex;
-            for (k = 0; k < numCurves_; k++)
+            for (k = 0; k < numSeparatingCurves_; k++)
                 out << curveRegions_[i].signs[k];
             out << "\n";
         }
@@ -1149,11 +1150,11 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
     QString s;
 
     fp << "user_curves := [ ";
-    if (numCurves_ > 0)
-        for (i = 0; i < numCurves_; i++) {
+    if (numSeparatingCurves_ > 0)
+        for (i = 0; i < numSeparatingCurves_; i++) {
             s = convertMapleUserParameterLabels(curves_result_[i]);
             fp << s;
-            if (i == numCurves_ - 1)
+            if (i == numSeparatingCurves_ - 1)
                 fp << " ]:\n";
             else
                 fp << ", ";
@@ -1162,10 +1163,10 @@ void P4InputVF::prepareMapleCurves(QTextStream &fp)
         fp << "]:\n";
 
     fp << "user_numpointscurves :=[ ";
-    if (numCurves_ > 0)
-        for (i = 0; i < numCurves_; i++) {
+    if (numSeparatingCurves_ > 0)
+        for (i = 0; i < numSeparatingCurves_; i++) {
             fp << numPointsCurve_[i];
-            if (i == numCurves_ - 1)
+            if (i == numSeparatingCurves_ - 1)
                 fp << " ]:\n";
             else
                 fp << ", ";
@@ -1184,7 +1185,7 @@ void P4InputVF::prepareMapleCurve(QTextStream &fp)  // FIXME
     QString val;
     int k;
 
-    mycurve = convertMapleUserParameterLabels(curve_);
+    mycurve = convertMapleUserParameterLabels(arbitraryCurve_);
     fp << "user_curve := " << mycurve << ":\n";
 
     for (k = 0; k < numparams_; k++) {
@@ -1245,9 +1246,9 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
     else {
         for (i = 0; i < numVFRegions_; i++) {
             fp << "[" << vfregions[i].vfindex << ", [ ";
-            for (k = 0; k < numCurves_; k++) {
+            for (k = 0; k < numSeparatingCurves_; k++) {
                 fp << vfregions[i].signs[k];
-                if (k < numCurves_ - 1)
+                if (k < numSeparatingCurves_ - 1)
                     fp << ",";
             }
             if (i == numVFRegions_ - 1)
@@ -1263,9 +1264,9 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
     else {
         for (i = 0; i < numCurveRegions_; i++) {
             fp << "[" << curveRegions_[i].curveindex << ", [ ";
-            for (k = 0; k < numCurves_; k++) {
+            for (k = 0; k < numSeparatingCurves_; k++) {
                 fp << curveRegions_[i].signs[k];
-                if (k < numCurves_ - 1)
+                if (k < numSeparatingCurves_ - 1)
                     fp << ",";
             }
             if (i == numCurveRegions_ - 1)
@@ -3359,7 +3360,7 @@ void P4InputVF::deleteVectorField(int index)  // FIXME
         numVF_--;
     }
     // TODO: segurament innecessari
-    /*if (numVF_ == 1 && numVFRegions_ == 0 && numCurves_ == 0) {
+    /*if (numVF_ == 1 && numVFRegions_ == 0 && numSeparatingCurves_ == 0) {
         numVFRegions_ = 1;
         vfregions = (VFREGION *)malloc(sizeof(VFREGION));
         vfregions->vfindex = 0;
@@ -3375,13 +3376,13 @@ void P4InputVF::addSeparatingCurve()
     int i, n;
 
     if (!gVFResults.curves_result_.empty()) {
-        for (i = 0; i < numCurves_; i++)
+        for (i = 0; i < numSeparatingCurves_; i++)
             gVFResults.resetCurveInfo(i);
         gVFResults.curves_result_.clear();
     }
 
-    n = numCurves_;
-    numCurves_++;
+    n = numSeparatingCurves_;
+    numSeparatingCurves_++;
 
     curves_result_.push_back(QString());
     numPointsCurve_.push_back(DEFAULT_CURVEPOINTS);
@@ -3400,19 +3401,19 @@ void P4InputVF::deleteSeparatingCurve(int index)
 {
     int i;
 
-    if (index < 0 || index >= numCurves_)
+    if (index < 0 || index >= numSeparatingCurves_)
         return;
 
     if (!gVFResults.curves_result_.empty()) {
-        for (i = 0; i < numCurves_; i++)
+        for (i = 0; i < numSeparatingCurves_; i++)
             gVFResults.resetCurveInfo(i);
         gVFResults.curves_result_.clear();
     }
 
-    if (numCurves_ == 1) {
+    if (numSeparatingCurves_ == 1) {
         // special case
 
-        numCurves_ = 0;
+        numSeparatingCurves_ = 0;
         curves_result_.clear();
         numPointsCurve_.clear();
 
@@ -3430,7 +3431,7 @@ void P4InputVF::deleteSeparatingCurve(int index)
     }
 
     curves_result_.erase(std::begin(curves_result_) + index);
-    numCurves_--;
+    numSeparatingCurves_--;
 }
 
 // -----------------------------------------------------------------------
@@ -3558,8 +3559,8 @@ void P4InputVF::markVFRegion(int index, const double *p)
     }
     if (i < 0) {
         std::vector<int> sgns;
-        if (numCurves_ > 0)
-            sgns.reserve(sizeof(int) * numCurves_);
+        if (numSeparatingCurves_ > 0)
+            sgns.reserve(sizeof(int) * numSeparatingCurves_);
         for (auto const &curveResult : gVFResults.curves_result_) {
             if (eval_curve(curveResult, p) < 0)
                 sgns.push_back(-1);
@@ -3608,12 +3609,12 @@ void P4InputVF::markCurveRegion(int index, const double *p)
     int i;
     std::vector<int> signs;
 
-    if (numCurves_ == 0)
+    if (numSeparatingCurves_ == 0)
         return;
     if (gVFResults.curves_result_.empty())
         return;
 
-    for (i = 0; i < numCurves_; i++) {
+    for (i = 0; i < numSeparatingCurves_; i++) {
         if (i == index)
             signs.push_back(0);
         else if (eval_curve(gVFResults.curves_result_[i], p) < 0)
@@ -3640,13 +3641,13 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
 {
     std::vector<int> signs;
 
-    if (numCurves_ == 0 || gVFResults.curves_result_.empty())
+    if (numSeparatingCurves_ == 0 || gVFResults.curves_result_.empty())
         return;
 
     // NOTE: aqui podriem estar fent que els signes es guardin al reves que al
     // p5 original
-    signs.reserve(sizeof(int) * numCurves_);
-    for (int i = 0; i < numCurves_; i++) {
+    signs.reserve(sizeof(int) * numSeparatingCurves_);
+    for (int i = 0; i < numSeparatingCurves_; i++) {
         if (i == index)
             signs.push_back(0);
         else if (eval_curve(gVFResults.curves_result_[i], p) < 0)
@@ -3692,13 +3693,13 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
 {
     int k, j;
 
-    if (numCurves_ == 0 || gVFResults.curves_result_.empty())
+    if (numSeparatingCurves_ == 0 || gVFResults.curves_result_.empty())
         return false;
 
     for (auto const &curve : curveRegions_) {
         if (curve.curveIndex != index)
             continue;
-        for (k = numCurves_ - 1; k >= 0; k--) {
+        for (k = numSeparatingCurves_ - 1; k >= 0; k--) {
             if (k == index)
                 continue;
 

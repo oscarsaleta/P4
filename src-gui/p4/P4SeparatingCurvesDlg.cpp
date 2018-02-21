@@ -248,7 +248,7 @@ void P4SeparatingCurvesDlg::OnBtnDel()
 
     int r{lst_curves_->currentRow()};
     std::unique_ptr<QListWidgetItem> itm;
-    if (r >= 0 && r < gThisVF->numCurves_) {
+    if (r >= 0 && r < gThisVF->numSeparatingCurves_) {
         itm.reset(lst_curves_->takeItem(r));
         // lst_curves_.removeItemWidget(itm.get()); TODO necessary?
     }
@@ -275,7 +275,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     lst_curves_->clear();
 
-    for (i = 0; i < gThisVF->numCurves_; i++) {
+    for (i = 0; i < gThisVF->numSeparatingCurves_; i++) {
         if (gThisVF->curves_[i].isEmpty())
             itm.reset(new QListWidgetItem("polynomial", lst_curves_));
         else
@@ -285,7 +285,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     if (!lst_curves_->selectedItems().isEmpty()) {
         int curveindex { lst_curves_->row(lst_curves_->selectedItems()[0]) }
-        if (curveindex < 0 || curveindex >= gThisVF->numCurves_ ||
+        if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_ ||
             gThisVF->numPointsCurve_.empty())
             v = -1;
         else
@@ -320,7 +320,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
 void P4SeparatingCurvesDlg::onCurveChanged(QListWidgetItem *itm)
 {
     int r{lst_curves_->row(itm)};
-    if (r < 0 || r >= gThisVF->numCurves_)
+    if (r < 0 || r >= gThisVF->numSeparatingCurves_)
         return QString s{itm->text().trimmed()};
     if (gThisVF->curves_[r].compare(s)) {
         gThisVF->curves_[r] = s;
@@ -349,7 +349,7 @@ void P4SeparatingCurvesDlg::onCurvesSelectionChanged()
             markingvf_ = false;
         }
         int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-        if (curveindex < 0 || curveindex >= gThisVF->numCurves_ ||
+        if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_ ||
             gThisVF->numPointsCurve_.empty())
             v = -1;
         else
@@ -677,7 +677,7 @@ void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
     if (lst_curves_->selectedItems().isEmpty())
         return;
     int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-    if (curveindex < 0 || curveindex >= gThisVF->numCurves_)
+    if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_)
         return;
 
     QString s{edt_numpoints_->text()};

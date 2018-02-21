@@ -2249,9 +2249,9 @@ void P4WinSphere::printSeparatingCurves()
     QString comment;
     bool dashes;
 
-    if (gThisVF->numCurves_ > 0 && !gVFResults.curves_result_.empty()) {
+    if (gThisVF->numSeparatingCurves_ > 0 && !gVFResults.curves_result_.empty()) {
         print_comment("Printing separating curves:");
-        for (int i = 0; i < gThisVF->numCurves_; i++) {
+        for (int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;

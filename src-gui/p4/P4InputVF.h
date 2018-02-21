@@ -47,7 +47,7 @@ class QTextEdit;
 class QPushButton;
 class QTextStream;
 
-struct term2;
+struct p4polynom::term2;
 
 namespace p4InputVFRegions
 {
@@ -67,9 +67,12 @@ struct curveRegion {
 class P4InputVF : public QObject
 {
     Q_OBJECT
+
    public:
     P4InputVF();
     //~P4InputVF();
+
+    // MEMBER VARIABLES
 
     QString filename_;
 
@@ -85,6 +88,7 @@ class P4InputVF : public QObject
     std::vector<int> numericlevel_;
     std::vector<int> maxlevel_;
     std::vector<int> weakness_;
+
     QString x0_;
     QString y0_;
     int p_;
@@ -95,7 +99,7 @@ class P4InputVF : public QObject
     std::vector<QString> gcf_;
     // curve_ is the original, curves_ is P5. There is only one curve regardless
     // of how many regions we have
-    QString curve_;
+    QString arbitraryCurve_;  // TODO: change for arbitraryCurve_
     std::vector<QString> isoclines_;
     QString evalFile_;
     QString evalFile2_;
@@ -106,10 +110,14 @@ class P4InputVF : public QObject
     std::unique_ptr<QPushButton> terminateProcessButton_;
     std::unique_ptr<QPushButton> clearProcessButton_;
 
-    /* parameters list */
+    // parameters list
     int numparams_;
-    std::vector<QString> parlabel_; // FIXME
+    QString parlabel_[MAXNUMPARAMS];
     std::vector<std::vector<QString>> parvalue_;
+
+    // piecewise variables
+    int numVF_;
+    int numSeparatingCurves_;
 
     bool changed_;        // set when data needs to be saved
     bool evaluated_;      // set when data has been evaluated
@@ -123,8 +131,10 @@ class P4InputVF : public QObject
 
     std::unique_ptr<P4FindDlg> findDlg_;
     std::unique_ptr<P4GcfDlg> gcfDlg_;
-    std::unique_ptr<QCurveDlg> curveDlg_;
+    std::unique_ptr<P4ArbitraryCurveDlg> curveDlg_;
     std::unique_ptr<QIsoclinesDlg> isoclinesDlg_;
+
+    // MEMBER FUNCTIONS
 
     QString getfilename() const;             // filename.inp
     QString getbarefilename() const;         // filename
@@ -183,7 +193,7 @@ class P4InputVF : public QObject
     bool evaluateGcf();
 
     /* curve functions */
-    // called from win_curve.cpp evaluate button
+    // called from P4ArbitraryCurveDlg.cpp evaluate button
     void evaluateCurveTable();
     // called from evaluateCurveTable
     void prepareCurve();

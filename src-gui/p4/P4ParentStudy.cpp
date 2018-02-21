@@ -129,7 +129,7 @@ P4ParentStudy::reset()
 bool P4ParentStudy::readPieceWiseData(FILE *fp)
 {
     int j, k, v;
-    if (gThisVF->numCurves_ == 0)
+    if (gThisVF->numSeparatingCurves_ == 0)
         return true;
     if (fscanf(fp, "%d\n", &v) != 1)
         return false;
@@ -141,7 +141,7 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
             if (fscanf(fp, "%d" & v) != 1 ||
                 v != gThisVF->vfRegions_[j].vfIndex)
                 return false;
-            for (k = 0; k < gThisVF->numCurves_; k++) {
+            for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1 ||
                     v != gThisVF->vfRegions_[j].signs[k])
                     return false;
@@ -157,7 +157,7 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
             if (fscanf(fp, "%d", &v) != 1 ||
                 v != gThisVF->curveRegions_[j].curveIndex)
                 return false;
-            for (k = 0; k < gThisVF->numCurves_; k++) {
+            for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1 ||
                     v != gThisVF->curveRegions_[j].signs[k])
                     return false;
@@ -210,7 +210,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
             fclose(fpcurv);
             return false;
         }
-        if (numcurves != gThisVF->numCurves_ || p != ThisVF->p_ ||
+        if (numcurves != gThisVF->numSeparatingCurves_ || p != ThisVF->p_ ||
             q != ThisVF->q_) {
             if (onlytry) {
                 fclose(fpcurv);
@@ -233,7 +233,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
 
         /*P5 Store precision _prec */
 
-        for (j = 0; j < gThisVF->numCurves_; j++) {
+        for (j = 0; j < gThisVF->numSeparatingCurves_; j++) {
             if (!readSeparatingCurve(fpcurv)) {
                 curves_result_.clear();
                 fclose(fpcurv);
@@ -246,7 +246,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
             }
         }
 
-        for (j = 0; j < gThisVF->numCurves_; j++)
+        for (j = 0; j < gThisVF->numSeparatingCurves_; j++)
             gThisVF->resampleCurve(j);
 
         fclose(fpcurv);
@@ -264,7 +264,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
         fclose(fpvec);
         return false;
     }
-    if (v != gThisVF->numCurves_ || numvf != gThisVF->numVF_) {
+    if (v != gThisVF->numSeparatingCurves_ || numvf != gThisVF->numVF_) {
         fclose(fpvec);
         return false;
     }
@@ -313,7 +313,7 @@ bool P4ParentStudy::readTables(const QString& basename, bool evalpiecewisedata,
 
     // read the curves
 
-    for (j = 0; j < gThisVF->numCurves_; j++) {
+    for (j = 0; j < gThisVF->numSeparatingCurves_; j++) {
         curves_result_.clear();  // TODO why do we need to clear?
         if (!readSeparatingCurve(fpvec)) {
             reset();
@@ -634,7 +634,7 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
 {
     int j, k, v;
 
-    if (gThisVF->numCurves_ == 0)
+    if (gThisVF->numSeparatingCurves_ == 0)
         return true;
 
     if (fscanf(fp, "%d\n", &v) != 1)
@@ -650,7 +650,7 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
             if (v != gThisVF->vfregions[j]
                          .vfindex)  // TODO: quan estigui llesta file_vf.cpp
                 return false;
-            for (k = 0; k < gThisVF->numCurves_; k++) {
+            for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
                     return false;
                 if (v != gThisVF->vfregions[j].signs[k])
@@ -670,7 +670,7 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
                 return false;
             if (v != gThisVF->curveregions[j].curveindex)
                 return false;
-            for (k = 0; k < gThisVF->numCurves_; k++) {
+            for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
                     return false;
                 if (v != gThisVF->curveregions[j].signs[k])
