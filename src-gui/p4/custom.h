@@ -29,11 +29,11 @@
 #define DEFAULTYDOT "0"
 #define DEFAULTGCF "0"
 #define MAXNUMPARAMS 99
-#define MAXNUMPARAMSSHOWN 4 // when more parameters: a scroll bar is used
+#define MAXNUMPARAMSSHOWN 4  // when more parameters: a scroll bar is used
 
 // Defaults, Minima and Maxima regarding Find Parameters
 
-#define DEFAULTTYPE TYPEOFSTUDY_ALL // choose _ALL, _ONE, _FIN or _INF
+#define DEFAULTTYPE TYPEOFSTUDY_ALL  // choose _ALL, _ONE, _FIN or _INF
 #define DEFAULTNUMERIC true
 #define DEFAULTTESTSEP false
 #define DEFAULTSAVEALL false
@@ -88,105 +88,107 @@
 // method)
 // in case of a GCF: integrate using original vf
 #define DEFAULT_INTCONFIG INTCONFIG_ORIGINAL
-#define INTCONFIG_ORIGINAL 1 // integrate using original VF
-#define INTCONFIG_REDUCED 0  // integrate using reduced VF when possible
+#define INTCONFIG_ORIGINAL 1  // integrate using original VF
+#define INTCONFIG_REDUCED 0   // integrate using reduced VF when possible
 
-#define DEFAULT_HMA 1.E-1 // default value for HMA (=MAXIMUM STEP SIZE)
-#define MIN_HMA 1.E-32    // minimum value for HMA = 10^(-16)
-#define MAX_HMA 10.0      // maximum value for HMA = 10^1
+#define DEFAULT_HMA 1.E-1  // default value for HMA (=MAXIMUM STEP SIZE)
+#define MIN_HMA 1.E-32     // minimum value for HMA = 10^(-16)
+#define MAX_HMA 10.0       // maximum value for HMA = 10^1
 
-#define DEFAULT_HMI 1.E-6 // default value for HMI (=MINIMUM STEP SIZE)
-#define MIN_HMI 1.E-32    // minimum value for HMI
-#define MAX_HMI 10.0      // maximum value for HMI
+#define DEFAULT_HMI 1.E-6  // default value for HMI (=MINIMUM STEP SIZE)
+#define MIN_HMI 1.E-32     // minimum value for HMI
+#define MAX_HMI 10.0       // maximum value for HMI
 
-#define DEFAULT_BRANCHHMI                                                      \
-    1.E-3 // default value for BRANCHHMI (=minimum step size near branches of
-          // separating curves)
-#define MIN_BRANCHHMI 1.E-32 // minimum value for BRANCHHMI
-#define MAX_BRANCHHMI 10.0   // maximum value for BRANCHHMI
+#define DEFAULT_BRANCHHMI \
+    1.E-3  // default value for BRANCHHMI (=minimum step size near branches of
+           // separating curves)
+#define MIN_BRANCHHMI 1.E-32  // minimum value for BRANCHHMI
+#define MAX_BRANCHHMI 10.0    // maximum value for BRANCHHMI
 
-#define DEFAULT_STEPSIZE 0.01 // default step size
-                              // stepsize must be in between HMI and HMA
+#define DEFAULT_STEPSIZE \
+    0.01  // default step size
+          // stepsize must be in between HMI and HMA
 
-#define DEFAULT_PROJECTION -1.0 // default projection (Poincare sphere only)
-#define MIN_PROJECTION -1.E16   // projection can be VERY negative
-#define MAX_PROJECTION -1.E-32  // projection must be strictly negative
+#define DEFAULT_PROJECTION -1.0  // default projection (Poincare sphere only)
+#define MIN_PROJECTION -1.E16    // projection can be VERY negative
+#define MAX_PROJECTION -1.E-32   // projection must be strictly negative
 
-#define DEFAULT_TOLERANCE 1.E-8 // default tolerance
-#define MIN_TOLERANCE 1.E-32    // minimum tolerance
-#define MAX_TOLERANCE 1.0       // maximum tolerance
+#define DEFAULT_TOLERANCE 1.E-8  // default tolerance
+#define MIN_TOLERANCE 1.E-32     // minimum tolerance
+#define MAX_TOLERANCE 1.0        // maximum tolerance
 
-#define DEFAULT_INTPOINTS 200 // number of points during integration
+#define DEFAULT_INTPOINTS 200  // number of points during integration
 #define MIN_INTPOINTS 1
 #define MAX_INTPOINTS 32767
 
-#define DEFAULT_LINESTYLE                                                      \
-    LINESTYLE_DASHES // choose between LINESTYLE_DASHES and LINESTYLE_POINTS
+#define DEFAULT_LINESTYLE \
+    LINESTYLE_DASHES  // choose between LINESTYLE_DASHES and LINESTYLE_POINTS
 
-#define UPDATEFREQ_STEPSIZE 100 // after each 100 points of integration: update
-                                // "current step size" field in this window.
+#define UPDATEFREQ_STEPSIZE \
+    100  // after each 100 points of integration: update
+         // "current step size" field in this window.
 
 // print window
 
-#define DEFAULT_RESOLUTION 600 // default printer resolution (DPI)
-#define MIN_RESOLUTION 36      // minimum printer resolution
-#define MAX_RESOLUTION 4800    // maximum printer resolution
+#define DEFAULT_RESOLUTION 600  // default printer resolution (DPI)
+#define MIN_RESOLUTION 36       // minimum printer resolution
+#define MAX_RESOLUTION 4800     // maximum printer resolution
 
-#define DEFAULT_SYMBOLSIZE                                                     \
-    1.6 // default symbol size (mm) when printing the singularities
-#define MIN_SYMBOLSIZE 0.05 // minimum symbol size
-#define MAX_SYMBOLSIZE 30.0 // maximum symbol size
+#define DEFAULT_SYMBOLSIZE \
+    1.6  // default symbol size (mm) when printing the singularities
+#define MIN_SYMBOLSIZE 0.05  // minimum symbol size
+#define MAX_SYMBOLSIZE 30.0  // maximum symbol size
 
-#define DEFAULT_LINEWIDTH                                                      \
-    0.3                    // default line width (mm) when printing orbits etc
-#define MIN_LINEWIDTH 0.05 // minimum line width
-#define MAX_LINEWIDTH 10.0 // maximum line width
+#define DEFAULT_LINEWIDTH \
+    0.3                     // default line width (mm) when printing orbits etc
+#define MIN_LINEWIDTH 0.05  // minimum line width
+#define MAX_LINEWIDTH 10.0  // maximum line width
 
 // limit cycles window:
-#define DEFAULT_LCORBITS                                                       \
-    1 // number of orbits to integrate before progress window is updated
-#define MIN_LCORBITS 1 // when dividing transverse section length by
-#define MAX_LCORBITS                                                           \
-    32767 //  grid: number of orbits must lie between these values
+#define DEFAULT_LCORBITS \
+    1  // number of orbits to integrate before progress window is updated
+#define MIN_LCORBITS 1  // when dividing transverse section length by
+#define MAX_LCORBITS \
+    32767  //  grid: number of orbits must lie between these values
 
-#define DEFAULT_LCPOINTS 2000 // number of points to integrate EACH orbit
+#define DEFAULT_LCPOINTS 2000  // number of points to integrate EACH orbit
 #define MIN_LCPOINTS 1
 #define MAX_LCPOINTS 32767
 
-#define DEFAULT_LCGRID 0.01 // division interval for the transverse section
+#define DEFAULT_LCGRID 0.01  // division interval for the transverse section
 #define MIN_LCGRID 1.E-16
 #define MAX_LCGRID 1E16
 
 // Greatest common factor window
-#define DEFAULT_GCFPOINTS 40 // 40 horizontal and vertical points
+#define DEFAULT_GCFPOINTS 40  // 40 horizontal and vertical points
 #define MIN_GCFPOINTS 1
 #define MAX_GCFPOINTS 32767
 
-#define DEFAULT_GCFPRECIS 12 // 12 digits precision
+#define DEFAULT_GCFPRECIS 12  // 12 digits precision
 #define MIN_GCFPRECIS 1
 #define MAX_GCFPRECIS 99
 
-#define DEFAULT_GCFMEMORY 16000 // 16 MB of memory
+#define DEFAULT_GCFMEMORY 16000  // 16 MB of memory
 #define MIN_GCFMEMORY 64
 #define MAX_GCFMEMORY 512000
 
 // Curve and isoclines window
-#define DEFAULT_CURVEPOINTS 400 // 40 horizontal and vertical points
+#define DEFAULT_CURVEPOINTS 400  // 40 horizontal and vertical points
 #define MIN_CURVEPOINTS 1
 #define MAX_CURVEPOINTS 32767
 
-#define DEFAULT_CURVEPRECIS 12 // 12 digits precision
+#define DEFAULT_CURVEPRECIS 12  // 12 digits precision
 #define MIN_CURVEPRECIS 1
 #define MAX_CURVEPRECIS 99
 
-#define DEFAULT_CURVEMEMORY 16000 // 16 MB of memory
+#define DEFAULT_CURVEMEMORY 16000  // 16 MB of memory
 #define MIN_CURVEMEMORY 64
 #define MAX_CURVEMEMORY 512000
 
 // Window appearance
-#define FONTSIZE +0         // 0 points larger than system font
-#define TITLEFONTSIZE +2    // 2 points larger than system font
-#define LEGENDFONTSIZE (-1) // 1 smaller than system font
+#define FONTSIZE +0          // 0 points larger than system font
+#define TITLEFONTSIZE +2     // 2 points larger than system font
+#define LEGENDFONTSIZE (-1)  // 1 smaller than system font
 
 // main P4 help file name (under the /help subdirectory of the P4 installation)
 
@@ -208,9 +210,9 @@
 // Color of singular points:
 namespace bgColours
 {
-extern int CFOREGROUND; // foreground color
-extern int CBACKGROUND; // background color
-extern int CORBIT;      // orbits (use GREEN1 when background is white)
+extern int CFOREGROUND;  // foreground color
+extern int CBACKGROUND;  // background color
+extern int CORBIT;       // orbits (use GREEN1 when background is white)
 // IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
 // printing.
 // For example, when printing, BLACK can be reversed with WHITE, so that the
@@ -218,27 +220,27 @@ extern int CORBIT;      // orbits (use GREEN1 when background is white)
 extern bool PRINT_WHITE_BG;
 }
 
-#define CSADDLE_NODE MAGENTA                   // saddle-node
-#define CSADDLE GREEN2                         // saddle
-#define CNODE_S BLUE                           // stable node
-#define CNODE_U RED                            // unstable node
-#define CWEAK_FOCUS bgColours::CFOREGROUND     // weak focus
-#define CWEAK_FOCUS_S BLUE2                    // stable weak focus
-#define CWEAK_FOCUS_U RED2                     // unstable weak focus
-#define CSTRONG_FOCUS_S BLUE                   // stable strong focus
-#define CSTRONG_FOCUS_U RED                    // unstable strong focus
-#define CCENTER GREEN2                         // center
-#define CDEGEN bgColours::CFOREGROUND          // degenerated
-#define CLINEATINFINITY bgColours::CFOREGROUND // color of poincare sphere
+#define CSADDLE_NODE MAGENTA                    // saddle-node
+#define CSADDLE GREEN2                          // saddle
+#define CNODE_S BLUE                            // stable node
+#define CNODE_U RED                             // unstable node
+#define CWEAK_FOCUS bgColours::CFOREGROUND      // weak focus
+#define CWEAK_FOCUS_S BLUE2                     // stable weak focus
+#define CWEAK_FOCUS_U RED2                      // unstable weak focus
+#define CSTRONG_FOCUS_S BLUE                    // stable strong focus
+#define CSTRONG_FOCUS_U RED                     // unstable strong focus
+#define CCENTER GREEN2                          // center
+#define CDEGEN bgColours::CFOREGROUND           // degenerated
+#define CLINEATINFINITY bgColours::CFOREGROUND  // color of poincare sphere
 
-#define CSTABLE BLUE        // stable separatrice
-#define CUNSTABLE RED       // unstable separatrice
-#define CCENT_STABLE BLUE2  // center-stable separatrice
-#define CCENT_UNSTABLE RED1 // center-unstable separatrice
+#define CSTABLE BLUE         // stable separatrice
+#define CUNSTABLE RED        // unstable separatrice
+#define CCENT_STABLE BLUE2   // center-stable separatrice
+#define CCENT_UNSTABLE RED1  // center-unstable separatrice
 
-#define CW_SEP GOLD     // selected separatrice
-#define CLIMIT MAGENTA2 // limit cycles
-#define CSING GREEN     // curve of singularities
+#define CW_SEP GOLD      // selected separatrice
+#define CLIMIT MAGENTA2  // limit cycles
+#define CSING GREEN      // curve of singularities
 #define CCURV CYAN
 #define CISOC PINK1
 
@@ -273,8 +275,8 @@ extern bool PRINT_WHITE_BG;
 // found that radsimp contains a bug causing Maple to divide by 0 internally.
 // The construction below is a workaround for this bug:
 
-#define MAPLE_SIMPLIFY_EXPRESSIONS                                             \
-    "proc(expr) try radsimp(simplify(expr),ratdenom) catch: simplify(expr) "   \
+#define MAPLE_SIMPLIFY_EXPRESSIONS                                           \
+    "proc(expr) try radsimp(simplify(expr),ratdenom) catch: simplify(expr) " \
     "end try end";
 
 // determine when the point (in the R2-chart) of the orbit goes to infinity
@@ -283,7 +285,7 @@ extern bool PRINT_WHITE_BG;
 
 #define ZCOORD (sqrt(2) / 2)
 
-#define RADIUS 0.25 // radius for the finite points
+#define RADIUS 0.25  // radius for the finite points
 #define RADIUS2 (RADIUS * RADIUS)
 
 // PRINTING
