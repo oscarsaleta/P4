@@ -243,8 +243,10 @@ class P4InputVF : public QObject
     QString getfilename_isoclinestable() const;  // filename_vecisocline.tab
     QString getfilename_isoclines() const;  // filename_isocline.tab (tmp file)
     QString getPrepareIsoclinesFileName() const;  // filename_isocline_prep.txt
+    // separating curve filename
+    QString getfilename_separatingcurveresults() const; // filename_sepcurves.tab
     // check if a file exists
-    static bool fileExists(QString);
+    static bool fileExists(QString) const;
 
     void getDataFromDlg();
 
@@ -258,7 +260,6 @@ class P4InputVF : public QObject
     void prepareMapleParameters(QTextStream &);
     void prepareMapleVectorField(QTextStream &);
     void prepareMaplePiecewiseConfig(QTextStream &);
-    // NOTE: PrepareMapleCurves a p5
     void prepareMapleSeparatingCurves(QTextStream &);
 
     // STRING UTILITIES
@@ -298,7 +299,7 @@ class P4InputVF : public QObject
     // called from prepareCurve
     void prepareCurveFile(QTextStream &);
     // called from prepareCurveFile
-    void prepareMapleCurve(QTextStream &);
+    void prepareMapleArbitraryCurve(QTextStream &);
     // the following are called from math_curve.cpp
     bool prepareCurve(std::vector<p4polynom::term2> f, double y1, double y2,
                       int precision, int numpoints);  // FIXME
