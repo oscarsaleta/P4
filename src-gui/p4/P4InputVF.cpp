@@ -3135,9 +3135,9 @@ bool P4InputVF::hasCommonBool(const std::vector<bool> &lst)
 }
 
 // -----------------------------------------------------------------------
-//          P4InputVF::hasCommonParvalue
+//          P4InputVF::hasCommonParValue
 // -----------------------------------------------------------------------
-bool P4InputVF::hasCommonParvalue(int index)
+bool P4InputVF::hasCommonParValue(int index)
 {
     for (int i = 1; i < numSelected_; i++) {
         if (parvalue_[selected_[0]][index].compare(
@@ -3172,9 +3172,9 @@ bool P4InputVF::commonBool(const std::vector<bool> &lst)
 }
 
 // -----------------------------------------------------------------------
-//          P4InputVF::commonParvalue
+//          P4InputVF::commonParValue
 // -----------------------------------------------------------------------
-QString P4InputVF::commonParvalue(int index)
+QString P4InputVF::commonParValue(int index)
 {
     return parvalue_[selected_[0]][index];
 }
@@ -3270,8 +3270,8 @@ void P4InputVF::addVectorField()
         weakness_[numVF_] = commonInt(weakness_);
 
     for (i = 0; i < MAXNUMPARAMS; i++)
-        if (hasCommonParvalue(i))
-            parvalue_[numVF_][i] = commonParvalue(i);
+        if (hasCommonParValue(i))
+            parvalue_[numVF_][i] = commonParValue(i);
 
     numVF_++;
 }

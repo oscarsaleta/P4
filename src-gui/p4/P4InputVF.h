@@ -108,7 +108,7 @@ class P4InputVF : public QObject
 
     /* parameters list */
     int numparams_;
-    QString parlabel_[MAXNUMPARAMS];
+    std::vector<QString> parlabel_; // FIXME
     std::vector<std::vector<QString>> parvalue_;
 
     bool changed_;        // set when data needs to be saved
@@ -267,11 +267,11 @@ class P4InputVF : public QObject
     bool hasCommonString(const std::vector<QString> &);
     bool hasCommonInt(const std::vector<int> &);
     bool hasCommonBool(const std::vector<bool> &);
-    bool hasCommonParvalue(int);
+    bool hasCommonParValue(int);
     QString commonString(const std::vector<QString> &);
     int commonInt(const std::vector<int> &);
     bool commonBool(const std::vector<bool> &);
-    QString commonParvalue(int);
+    QString commonParValue(int);
     void setCommonString(std::vector<QString> &, QString);
     void setCommonInt(std::vector<int> &, int);
     void setCommonBool(std::vector<bool> &, bool);
