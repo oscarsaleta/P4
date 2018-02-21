@@ -161,7 +161,7 @@ class P4InputVF : public QObject
     // initial state, when records are clear
     bool cleared_;
     // true when evaluation is of GCF kind
-    bool evaluatinggcf_;
+    bool evaluatingGcf_;
     // true when evaluation is of arbitrary curve kind
     bool evaluatingArbitraryCurve_;
     // true when evaluation is of isocline kind
