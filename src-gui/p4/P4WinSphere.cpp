@@ -22,7 +22,7 @@
 #include "P4Event.h"
 #include "P4PrintDlg.h"
 #include "P4StartDlg.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "math_curve.h"
 #include "math_findpoint.h"

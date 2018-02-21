@@ -17,7 +17,7 @@
 
 #include "file_tab.h"
 
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "math_changedir.h"
 #include "math_charts.h"

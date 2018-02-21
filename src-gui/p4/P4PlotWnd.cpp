@@ -28,7 +28,7 @@
 #include "P4StartDlg.h"
 #include "custom.h"
 #include "file_tab.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "math_separatrice.h"
 #include "p4application.h"

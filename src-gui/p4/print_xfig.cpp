@@ -21,7 +21,7 @@
 
 #include "custom.h"
 #include "file_tab.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"

@@ -20,7 +20,7 @@
 #include "win_zoom.h"
 
 #include "custom.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "p4application.h"
 #include "plot_tools.h"

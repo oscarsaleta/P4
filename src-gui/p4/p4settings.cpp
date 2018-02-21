@@ -20,7 +20,7 @@
 #include "p4settings.h"
 
 #include "file_paths.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 
 #include <QDir>

@@ -103,7 +103,7 @@ HEADERS += win_view.h \
     win_about.h \
     p4application.h \
     math_p4.h \
-    file_vf.h \
+    P4InputVF.h \
     custom.h \
     color.h \
     win_zoom.h \

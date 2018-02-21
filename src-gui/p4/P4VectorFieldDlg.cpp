@@ -19,12 +19,12 @@
 
 #include "P4VectorFieldDlg.h"
 
+#include "P4FindDlg.h"
+#include "P4VFParams.h"
 #include "custom.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "p4application.h"
-#include "P4FindDlg.h"
- #include "P4VFParams.h"
 
 #include <QBoxLayout>
 #include <QFormLayout>
@@ -65,15 +65,19 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
     spin_numparams_->setMaximum(MAXNUMPARAMS);
 
 #ifdef TOOLTIPS
-    edt_xprime_->setToolTip("Enter your differential equations here.\n"
-                            "Use syntax conform to the symbolic manipulator.");
-    edt_yprime_->setToolTip("Enter your differential equations here.\n"
-                            "Use syntax conform to the symbolic manipulator.");
-    edt_gcf_->setToolTip("Enter greatest common factor here.\n"
-                         "Enter \"1\" if you are sure there is no GCF\n"
-                         "Enter \"0\" if you want P4 to search for a GCF");
-    spin_numparams_->setToolTip("If your vector field contains parameters,\n"
-                                "specify the number of parameters here.");
+    edt_xprime_->setToolTip(
+        "Enter your differential equations here.\n"
+        "Use syntax conform to the symbolic manipulator.");
+    edt_yprime_->setToolTip(
+        "Enter your differential equations here.\n"
+        "Use syntax conform to the symbolic manipulator.");
+    edt_gcf_->setToolTip(
+        "Enter greatest common factor here.\n"
+        "Enter \"1\" if you are sure there is no GCF\n"
+        "Enter \"0\" if you want P4 to search for a GCF");
+    spin_numparams_->setToolTip(
+        "If your vector field contains parameters,\n"
+        "specify the number of parameters here.");
 #endif
     // layout
 
@@ -258,7 +262,8 @@ void P4VectorFieldDlg::updateDlgData(void)
     }
 }
 
-P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
+P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
+    : QWidget(parent)
 {
     int i;
 
@@ -268,9 +273,9 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb) : QWidget(paren
     dataInvalid_ = false;
     sb_params_ = sb;
     currentNumParams_ = g_ThisVF->numparams_;
-    currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN) ?
-                              currentNumParams_ :
-                              MAXNUMPARAMSSHOWN;
+    currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
+                              ? currentNumParams_
+                              : MAXNUMPARAMSSHOWN;
     currentPageIndex_ = 0;
 
     for (i = 0; i < currentShownParams_; i++) {

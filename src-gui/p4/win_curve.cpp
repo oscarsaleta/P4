@@ -20,7 +20,7 @@
 #include "win_curve.h"
 
 #include "custom.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "math_curve.h"
 #include "math_polynom.h"

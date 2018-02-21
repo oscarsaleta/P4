@@ -21,7 +21,7 @@
 
 #include "P4FindDlg.h"
 #include "custom.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"

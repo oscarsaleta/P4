@@ -20,7 +20,7 @@
 #include "P4Application.h"
 
 #include "custom.h"
-#include "file_vf.h"
+#include "P4InputVF.h"
 #include "main.h"
 #include "P4Event.h"
 #include "P4FindDlg.h"
