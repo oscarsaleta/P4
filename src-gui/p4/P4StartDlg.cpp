@@ -20,14 +20,14 @@
 #include "P4StartDlg.h"
 
 #include "P4FindDlg.h"
+#include "P4InputVF.h"
+#include "P4PlotWnd.h"
 #include "custom.h"
 #include "file_tab.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "p4application.h"
 #include "p4settings.h"
 #include "win_about.h"
-#include "P4PlotWnd.h"
 
 #include <QBoxLayout>
 #include <QCloseEvent>
@@ -73,8 +73,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
     if (autofilename.length() == 0)
         edt_name_.reset(new QLineEdit(DEFAULTFILENAME, this));
     else
-        edt_name_.reset(
-            new QLineEdit(gThisVF->filename_ = autofilename, this));
+        edt_name_.reset(new QLineEdit(gThisVF->filename_ = autofilename, this));
     std::unique_ptr<QLabel> p4name{new QLabel(" &Name: ", this)};
     p4name->setBuddy(edt_name_);
     p4name->setFont(*(gP4app->boldFont_));
@@ -380,7 +379,7 @@ void P4StartDlg::signalEvaluated()
 
         fname = gThisVF->getfilename_finresults();
 
-        if (gThisVF->fileExists(fname)) {
+        if (P4InputVF::fileExists(fname)) {
             viewFiniteWindow_ =
                 showText(viewFiniteWindow_.get(),
                          "View results at the finite region", fname);
@@ -403,7 +402,7 @@ void P4StartDlg::signalEvaluated()
             findWindow_->getDataFromDlg();
 
         fname = gThisVF->getfilename_infresults();
-        if (gThisVF->fileExists(fname)) {
+        if (P4InputVF::fileExists(fname)) {
             viewInfiniteWindow_ = showText(viewInfiniteWindow_.get(),
                                            "View results at infinity", fname);
             if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
@@ -433,8 +432,8 @@ void P4StartDlg::signalEvaluated()
         // gVFResults.deleteVF();  // delete any previous result object
         // read maple/reduce results
         if (!gVFResults.readTables(gThisVF->getbarefilename(),
-                                    gThisVF->evaluatingPiecewiseConfig_,
-                                    false)) {
+                                   gThisVF->evaluatingPiecewiseConfig_,
+                                   false)) {
             if (gThisVF->evaluatingPiecewiseConfig_) {
                 // ...
             } else {
@@ -516,7 +515,7 @@ void P4StartDlg::onViewFinite()
 
     fname = gThisVF->getfilename_finresults();
 
-    if (gThisVF->fileExists(fname) == false) {
+    if (P4InputVF::fileExists(fname) == false) {
         if (gThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
             QMessageBox::critical(
                 this, "P4",
@@ -550,7 +549,7 @@ void P4StartDlg::onViewInfinite()
 
     fname = gThisVF->getfilename_infresults();
 
-    if (gThisVF->fileExists(fname) == false) {
+    if (P4InputVF::fileExists(fname) == false) {
         if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
             gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
             QMessageBox::critical(this, "P4",
