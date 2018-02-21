@@ -24,7 +24,7 @@
 #include "P4PrintDlg.h"
 #include "P4StartDlg.h"
 #include "main.h"
-#include "math_curve.h"
+#include "math_arbitrarycurve.h"
 #include "math_findpoint.h"
 #include "math_gcf.h"
 #include "math_isoclines.h"
@@ -1471,8 +1471,8 @@ void P4WinSphere::plotGcf()
 void P4WinSphere::plotCurve()
 {
     std::vector<curves>::const_iterator it;
-    for (it = gVFResults.curve_vector_.begin();
-         it != gVFResults.curve_vector_.end(); it++) {
+    for (it = gVFResults.arbitraryCurveVector_.begin();
+         it != gVFResults.arbitraryCurveVector_.end(); it++) {
         draw_curve(this, it->points, CCURV, 1);
     }
 }
@@ -2249,7 +2249,8 @@ void P4WinSphere::printSeparatingCurves()
     QString comment;
     bool dashes;
 
-    if (gThisVF->numSeparatingCurves_ > 0 && !gVFResults.curves_result_.empty()) {
+    if (gThisVF->numSeparatingCurves_ > 0 &&
+        !gVFResults.curves_result_.empty()) {
         print_comment("Printing separating curves:");
         for (int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
             comment.sprintf("Curve #%d:", i + 1);
@@ -2285,8 +2286,8 @@ void P4WinSphere::printCurve()
     QString comment;
     std::vector<curves>::const_iterator it;
     int i;
-    for (it = gVFResults.curve_vector_.begin(), i = 0;
-         it != gVFResults.curve_vector_.end(); it++, i++) {
+    for (it = gVFResults.arbitraryCurveVector_.begin(), i = 0;
+         it != gVFResults.arbitraryCurveVector_.end(); it++, i++) {
         if (it->points != nullptr) {
             comment.sprintf("Printing curve %d:", i);
             print_comment(comment);

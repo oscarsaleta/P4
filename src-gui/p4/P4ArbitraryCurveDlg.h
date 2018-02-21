@@ -17,10 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_CURVE_H
-#define WIN_CURVE_H
+#pragma once
 
 #include <QWidget>
+
+#include <memory>
 
 class P4PlotWnd;
 class P4WinSphere;
@@ -68,5 +69,3 @@ class P4ArbitraryCurveDlg : public QWidget
     void onBtnDelAll();
     void onBtnDelLast();
 };
-
-#endif /* WIN_CURVE_H */

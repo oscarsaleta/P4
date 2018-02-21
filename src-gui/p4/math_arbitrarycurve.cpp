@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_curve.h"
+#include "math_arbitrarycurve.h"
 
-#include "custom.h"
 #include "P4InputVF.h"
+#include "P4WinSphere.h"
+#include "custom.h"
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"
-#include "P4WinSphere.h"
 
 #include <QFile>
 
@@ -81,14 +81,14 @@ bool evalCurveContinue(int precision, int points)
         return true;
     }
 
-    return false; // still busy
+    return false;  // still busy
 }
 
-bool evalCurveFinish(void) // return false in case an error occured
+bool evalCurveFinish(void)  // return false in case an error occured
 {
     if (sCurveTask != EVAL_CURVE_NONE) {
         sCurveSphere->prepareDrawing();
-        draw_curve(sCurveSphere, gVFResults.curve_vector_.back().points,
+        draw_curve(sCurveSphere, gVFResults.arbitraryCurveVector_.back().points,
                    CCURV, 1);
         sCurveSphere->finishDrawing();
 
@@ -108,43 +108,48 @@ bool runTaskCurve(int task, int precision, int points)
 
     switch (task) {
     case EVAL_CURVE_R2:
-        value = gThisVF->prepareCurve(gVFResults.curve_vector_.back().r2, -1,
-                                       1, precision, points);
+        value =
+            gThisVF->prepareCurve(gVFResults.arbitraryCurveVector_.back().r2,
+                                  -1, 1, precision, points);
         break;
     case EVAL_CURVE_U1:
-        value = gThisVF->prepareCurve(gVFResults.curve_vector_.back().u1, 0,
-                                       1, precision, points);
+        value =
+            gThisVF->prepareCurve(gVFResults.arbitraryCurveVector_.back().u1, 0,
+                                  1, precision, points);
         break;
     case EVAL_CURVE_V1:
-        value = gThisVF->prepareCurve(gVFResults.curve_vector_.back().u1, -1,
-                                       0, precision, points);
+        value =
+            gThisVF->prepareCurve(gVFResults.arbitraryCurveVector_.back().u1,
+                                  -1, 0, precision, points);
         break;
     case EVAL_CURVE_U2:
-        value = gThisVF->prepareCurve(gVFResults.curve_vector_.back().u2, 0,
-                                       1, precision, points);
+        value =
+            gThisVF->prepareCurve(gVFResults.arbitraryCurveVector_.back().u2, 0,
+                                  1, precision, points);
         break;
     case EVAL_CURVE_V2:
-        value = gThisVF->prepareCurve(gVFResults.curve_vector_.back().u2, -1,
-                                       0, precision, points);
+        value =
+            gThisVF->prepareCurve(gVFResults.arbitraryCurveVector_.back().u2,
+                                  -1, 0, precision, points);
         break;
     case EVAL_CURVE_LYP_R2:
         value = gThisVF->prepareCurve_LyapunovR2(precision, points);
         break;
     case EVAL_CURVE_CYL1:
         value = gThisVF->prepareCurve_LyapunovCyl(-PI_DIV4, PI_DIV4, precision,
-                                                   points);
+                                                  points);
         break;
     case EVAL_CURVE_CYL2:
         value = gThisVF->prepareCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
-                                                   precision, points);
+                                                  precision, points);
         break;
     case EVAL_CURVE_CYL3:
         value = gThisVF->prepareCurve_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                   precision, points);
+                                                  precision, points);
         break;
     case EVAL_CURVE_CYL4:
         value = gThisVF->prepareCurve_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
-                                                   precision, points);
+                                                  precision, points);
         break;
     default:
         value = false;
@@ -218,12 +223,13 @@ void draw_curve(P4WinSphere *spherewnd, P4ORBIT sep, int color, int dashes)
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
-    if (gVFResults.curve_vector_.back().points != nullptr) {
+    if (gVFResults.arbitraryCurveVector_.back().points != nullptr) {
         gLastArbitraryCurvePoint->next_point = new orbits_points;
         gLastArbitraryCurvePoint = gLastArbitraryCurvePoint->next_point;
     } else {
         gLastArbitraryCurvePoint = new orbits_points;
-        gVFResults.curve_vector_.back().points = gLastArbitraryCurvePoint;
+        gVFResults.arbitraryCurveVector_.back().points =
+            gLastArbitraryCurvePoint;
     }
 
     gLastArbitraryCurvePoint->pcoord[0] = x0;
@@ -269,10 +275,10 @@ static bool read_curve(void (*chart)(double, double, double *))
 
 void deleteLastCurve(P4WinSphere *sp)
 {
-    if (gVFResults.curve_vector_.empty())
+    if (gVFResults.arbitraryCurveVector_.empty())
         return;
 
-    gVFResults.curve_vector_.pop_back();
+    gVFResults.arbitraryCurveVector_.pop_back();
 
     sp->refresh();
 }

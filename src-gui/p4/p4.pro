@@ -119,7 +119,7 @@ HEADERS += win_view.h \
     math_findpoint.h \
     math_gcf.h \
     math_intblowup.h \
-    math_curve.h \
+    math_arbitrarycurve.h \
     math_polynom.h \
     math_orbits.h \
     math_numerics.h \
