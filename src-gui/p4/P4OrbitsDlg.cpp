@@ -123,7 +123,7 @@ P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<P4PlotWnd> plt,
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.orbits_.empty()) {
+    if (gVFResults.orbits_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -251,7 +251,7 @@ void P4OrbitsDlg::onBtnDelAll()
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    g_VFResults.orbits_.clear();
+    gVFResults.orbits_.clear();
 
     mainSphere_->refresh();
 }
@@ -270,7 +270,7 @@ void P4OrbitsDlg::onBtnDelLast()
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.orbits_.empty()) {
+    if (gVFResults.orbits_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -307,7 +307,7 @@ void P4OrbitsDlg::reset()
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (g_VFResults.orbits_.empty()) {
+    if (gVFResults.orbits_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }

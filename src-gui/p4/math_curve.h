@@ -39,7 +39,7 @@
 class P4WinSphere;
 struct orbits_points;
 
-extern orbits_points *g_last_curve_point;
+extern orbits_points *gLastArbitraryCurvePoint;
 
 bool evalCurveStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalCurveContinue(int precision, int points);

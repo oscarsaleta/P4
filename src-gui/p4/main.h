@@ -44,28 +44,28 @@ struct P4POLYLINES {
     }
 };
 
-// (g_VFResults.p_,g_VFResults.q_) are lyapunov weights
-extern P4ParentStudy g_VFResults;
+// (gVFResults.p_,gVFResults.q_) are lyapunov weights
+extern P4ParentStudy gVFResults;
 
 // true when Limitcycles window is shown.
 // in that case, left mouse button action is redefined
 // to set set points for LC window instead of for orbits window
-extern bool g_LCWindowIsUp;
+extern bool gLCWindowIsUp;
 
-extern QString g_p4Version;
-extern QString g_p4VersionDate;
-extern QString g_p4Platform;
+extern QString gP4version;
+extern QString gP4versionDate;
+extern QString gP4platform;
 
-extern std::unique_ptr<QPixmap> g_p4smallicon;
-extern std::unique_ptr<QPrinter> g_p4printer;
+extern std::unique_ptr<QPixmap> gP4smallIcon;
+extern std::unique_ptr<QPrinter> gP4printer;
 
-extern bool g_action_OnlyPrepareFile;
-extern bool g_action_SaveAll;
+extern bool gActionOnlyPrepareFile;
+extern bool gActionSaveAll;
 
-extern QString g_cmdLine_Filename;
-extern bool g_cmdLine_AutoEvaluate;
-extern bool g_cmdLine_AutoPlot;
-extern bool g_cmdLine_AutoExit;
+extern QString gCmdLineFilename;
+extern bool gCmdLineAutoEvaluate;
+extern bool gCmdLineAutoPlot;
+extern bool gCmdLineAutoExit;
 
 void setP4WindowTitle(QWidget *win, QString title);
 

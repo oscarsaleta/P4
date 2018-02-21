@@ -49,7 +49,7 @@ bool readCurvePoints(FILE *fp, std::vector<p4orbits::orbits_points> &psep,
         polarcoord_to_plsphere, cylinder_to_plsphere, cylinder_to_plsphere,
         cylinder_to_plsphere,   cylinder_to_plsphere, nullptr};
 
-    chartindex = (g_VFResults.plweights_) ? 6 : 0;
+    chartindex = (gVFResults.plweights_) ? 6 : 0;
     while (1) {
         chart = charts[chartindex];
         if (chart == nullptr)

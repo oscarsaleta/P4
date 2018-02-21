@@ -298,4 +298,4 @@ class P4InputVF : public QObject
     void finishIsoclinesEvaluation();
 };
 
-extern std::unique_ptr<P4InputVF> g_ThisVF;
+extern std::unique_ptr<P4InputVF> gThisVF;

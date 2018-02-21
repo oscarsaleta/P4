@@ -35,10 +35,10 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::unique_ptr<P4ViewDlg> _parent)
 {
     std::unique_ptr<QLabel> p4title{
         new QLabel("Region Separating Curves:", this)};
-    p4title->setFont(*(g_p4app->titleFont_));
+    p4title->setFont(*(gP4app->titleFont_));
 
     std::unique_ptr<QLabel> p4title2{new QLabel("Vector Field List:", this)};
-    p4title2->setFont(*(g_p4app->titleFont_));
+    p4title2->setFont(*(gP4app->titleFont_));
 
     // TODO: check if i have to redeclare?
     btn_add_.reset(new QPushButton("&Add"), this);
@@ -81,8 +81,8 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::unique_ptr<P4ViewDlg> _parent)
 
     edt_numpoints_.reset(new QLineEdit("", this));
 
-    if (g_p4smallicon)
-        setWindowIcon(*g_p4smallicon);
+    if (gP4smallIcon)
+        setWindowIcon(*gP4smallIcon);
 
     // layout
     mainLayout_.reset(new QBoxLayout(QBoxLayout::LeftToRight, this));
@@ -217,9 +217,9 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::unique_ptr<P4ViewDlg> _parent)
 
 void P4SeparatingCurvesDlg::onBtnAdd()
 {
-    if (g_ThisVF->numVFRegions_ > 0 || g_ThisVF->numCurveRegions_ > 0) {
-        g_ThisVF->clearVfMarks();
-        g_ThisVF->clearCurveMarks();
+    if (gThisVF->numVFRegions_ > 0 || gThisVF->numCurveRegions_ > 0) {
+        gThisVF->clearVfMarks();
+        gThisVF->clearCurveMarks();
     }
 
     std::unique_ptr<QListWidgetItem> itm{new QListWidgetItem("polynomial")};
@@ -229,10 +229,10 @@ void P4SeparatingCurvesDlg::onBtnAdd()
     lst_curves_->scrollToItem(itm);
     lst_curves_->setCurrentItem(itm);
     lst_curves_->editItem(itm);
-    g_ThisVF->addSeparatingCurve();
-    if (g_ThisVF->changed_ == false) {
-        g_ThisVF->changed_ = true;
-        g_p4app->signalChanged();
+    gThisVF->addSeparatingCurve();
+    if (gThisVF->changed_ == false) {
+        gThisVF->changed_ = true;
+        gP4app->signalChanged();
     }
     isphere_->refresh();
 }
@@ -241,20 +241,20 @@ void P4SeparatingCurvesDlg::OnBtnDel()
 {
     if (lst_curves_->selectedItems().isEmpty())
         reeturn;
-    if (g_ThisVF->numVFRegions_ > 0 || g_ThisVF->numCurveRegions_ > 0) {
-        g_ThisVF->clearVfMarks();
-        g_ThisVF->clearCurveMarks();
+    if (gThisVF->numVFRegions_ > 0 || gThisVF->numCurveRegions_ > 0) {
+        gThisVF->clearVfMarks();
+        gThisVF->clearCurveMarks();
     }
 
     int r{lst_curves_->currentRow()};
     std::unique_ptr<QListWidgetItem> itm;
-    if (r >= 0 && r < g_ThisVF->numCurves_) {
+    if (r >= 0 && r < gThisVF->numCurves_) {
         itm.reset(lst_curves_->takeItem(r));
         // lst_curves_.removeItemWidget(itm.get()); TODO necessary?
     }
-    g_ThisVF->deleteSeparatingCurve(r);
-    if (g_ThisVF->changed_ == false) {
-        g_ThisVF->changed_ = true;
+    gThisVF->deleteSeparatingCurve(r);
+    if (gThisVF->changed_ == false) {
+        gThisVF->changed_ = true;
         p4app->signalChanged();
     }
     isphere_->refresh();
@@ -275,21 +275,21 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     lst_curves_->clear();
 
-    for (i = 0; i < g_ThisVF->numCurves_; i++) {
-        if (g_ThisVF->curves_[i].isEmpty())
+    for (i = 0; i < gThisVF->numCurves_; i++) {
+        if (gThisVF->curves_[i].isEmpty())
             itm.reset(new QListWidgetItem("polynomial", lst_curves_));
         else
             itm.reset(
-                new QListWidgetItem(*(g_ThisVF->curves_[i]), lst_curves_));
+                new QListWidgetItem(*(gThisVF->curves_[i]), lst_curves_));
     }
 
     if (!lst_curves_->selectedItems().isEmpty()) {
         int curveindex { lst_curves_->row(lst_curves_->selectedItems()[0]) }
-        if (curveindex < 0 || curveindex >= g_ThisVF->numCurves_ ||
-            g_ThisVF->numPointsCurve_.empty())
+        if (curveindex < 0 || curveindex >= gThisVF->numCurves_ ||
+            gThisVF->numPointsCurve_.empty())
             v = -1;
         else
-            v = g_ThisVF->numPointsCurve_[curveindex];
+            v = gThisVF->numPointsCurve_[curveindex];
     } else {
         v = -1;
     }
@@ -303,11 +303,11 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     lst_vfs_->clear();
 
-    for (i = 0; i < g_ThisVF->numVF_; i++) {
+    for (i = 0; i < gThisVF->numVF_; i++) {
         s = "x' = ";
-        s = s.append(*(g_ThisVF->xdot_[i]));
+        s = s.append(*(gThisVF->xdot_[i]));
         s = s.append("\ny' = ");
-        s = s.append(*(g_ThisVF->ydot_[i]));
+        s = s.append(*(gThisVF->ydot_[i]));
         s = s.append("\n");
         itm.reset(new QListWidgetItem(s, lst_vfs_));
         itm->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -320,13 +320,13 @@ void P4SeparatingCurvesDlg::updateDlgData()
 void P4SeparatingCurvesDlg::onCurveChanged(QListWidgetItem *itm)
 {
     int r{lst_curves_->row(itm)};
-    if (r < 0 || r >= g_ThisVF->numCurves_)
+    if (r < 0 || r >= gThisVF->numCurves_)
         return QString s{itm->text().trimmed()};
-    if (g_ThisVF->curves_[r].compare(s)) {
-        g_ThisVF->curves_[r] = s;
-        if (g_ThisVF->changed_ == false) {
-            g_ThisVF->changed_ = true;
-            g_p4app->signalChanged();
+    if (gThisVF->curves_[r].compare(s)) {
+        gThisVF->curves_[r] = s;
+        if (gThisVF->changed_ == false) {
+            gThisVF->changed_ = true;
+            gP4app->signalChanged();
         }
     }
 }
@@ -349,11 +349,11 @@ void P4SeparatingCurvesDlg::onCurvesSelectionChanged()
             markingvf_ = false;
         }
         int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-        if (curveindex < 0 || curveindex >= g_ThisVF->numCurves_ ||
-            g_ThisVF->numPointsCurve_.empty())
+        if (curveindex < 0 || curveindex >= gThisVF->numCurves_ ||
+            gThisVF->numPointsCurve_.empty())
             v = -1;
         else
-            v = g_ThisVF->numPointsCurve_[curveindex];
+            v = gThisVF->numPointsCurve_[curveindex];
     } else
         v = -1;
 
@@ -454,11 +454,11 @@ void P4SeparatingCurvesDlg::onBtnMarkToggled(bool c)
 void P4SeparatingCurvesDlg::onBtnResetMarks()
 {
     if (markingvf_) {
-        if (g_ThisVF->numVFRegions_ > 0) {
-            g_ThisVF->clearVfMarks();
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+        if (gThisVF->numVFRegions_ > 0) {
+            gThisVF->clearVfMarks();
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
             isphere_->refresh();
         }
@@ -466,11 +466,11 @@ void P4SeparatingCurvesDlg::onBtnResetMarks()
             "All vector field marks have been erased. Please, reassign vector "
             "fields from scratch.");
     } else {
-        if (g_ThisVF->numCurveRegions_ > 0) {
-            g_ThisVF->clearCurveMarks();
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+        if (gThisVF->numCurveRegions_ > 0) {
+            gThisVF->clearCurveMarks();
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
             isphere_->refresh();
         }
@@ -495,11 +495,11 @@ void P4SeparatingCurvesDlg::onBtnView()
 
 void P4SeparatingCurvesDlg::onBtnEval()
 {
-    if (g_ThisVF->evaluating_)
+    if (gThisVF->evaluating_)
         return;
     parent_->getDataFromDlg();
-    g_ThisVF->evaluateSeparatingCurves();  // TODO: a p5 es EvaluateCurves()
-    if (g_ThisVF->evaluating_)
+    gThisVF->evaluateSeparatingCurves();  // TODO: a p5 es EvaluateCurves()
+    if (gThisVF->evaluating_)
         btn_eval_->setEnabled(false);
     else
         QMessageBox::critical(
@@ -511,7 +511,7 @@ void P4SeparatingCurvesDlg::onBtnRefresh()
 {
     if (viewParamsWindow_->getDataFromDlg()) {
         // true when a big change occured in the view
-        g_VFResults.setupCoordinateTransformations();
+        gVFResults.setupCoordinateTransformations();
         isphere_->setupPlot();
     }
     isphere_->refresh();
@@ -520,7 +520,7 @@ void P4SeparatingCurvesDlg::onBtnRefresh()
 void P4SeparatingCurvesDlg::signalCurvesEvaluated()
 {
     btn_eval_->setEnabled(true);
-    if (!g_VFResults.readTables(g_ThisVF->getbarefilename(), true, false)) {
+    if (!gVFResults.readTables(gThisVF->getbarefilename(), true, false)) {
         QMessageBox::critical(
             this, "P4",
             "Cannot read computation results.\n"
@@ -562,7 +562,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
     double pcoord[3] = {x0, y0, z0};
     QString s;
 
-    if (g_VFResults.curves_result_.empty()) {
+    if (gVFResults.curves_result_.empty()) {
         QMessageBox::critical(this, "P4",
                               "Please evaluate the piecewise configuration "
                               "first,\nusing the Eval button.\n");
@@ -573,15 +573,15 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
         if (lst_vfs_->selectedItems().isEmpty())
             return;
         vfindex = lst_vfs_->row(lst_vfs_->selectedItems()[0]);
-        oldindex = g_ThisVF->getVFIndex_sphere(pcoord);
+        oldindex = gThisVF->getVFIndex_sphere(pcoord);
         if (marking_) {
             if (oldindex == -1) {
                 s.sprintf("Marked region with VF #%d", vfindex + 1);
                 lbl_status_->setText(s);
-                g_ThisVF->markVFRegion(vfindex, pcoord);
-                if (g_ThisVF->changed_ == false) {
-                    g_ThisVF->changed_ = true;
-                    g_p4app->signalChanged();
+                gThisVF->markVFRegion(vfindex, pcoord);
+                if (gThisVF->changed_ == false) {
+                    gThisVF->changed_ = true;
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             } else if (oldindex == vfindex) {
@@ -591,10 +591,10 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
             } else {
                 s.sprintf("Marked region with VF #%d", vfindex + 1);
                 lbl_status_->setText(s);
-                g_ThisVF->markVFRegion(vfindex, pcoord);
-                if (g_ThisVF->changed_ == false) {
-                    g_ThisVF->changed_ = true;
-                    g_p4app->signalChanged();
+                gThisVF->markVFRegion(vfindex, pcoord);
+                if (gThisVF->changed_ == false) {
+                    gThisVF->changed_ = true;
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             }
@@ -606,10 +606,10 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
             } else if (oldindex == vfindex) {
                 s.sprintf("Region has been unmarked: no VF is assigned");
                 lbl_status_->setText(s);
-                g_ThisVF->unmarkVFRegion(vfindex, pcoord);
-                if (g_ThisVF->changed_ == false) {
-                    g_ThisVF->changed = true;
-                    g_p4app->signalChanged();
+                gThisVF->unmarkVFRegion(vfindex, pcoord);
+                if (gThisVF->changed_ == false) {
+                    gThisVF->changed = true;
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             } else {
@@ -624,7 +624,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
             return;
         curveindex = lst_curves_->row(lst_curves_->selectedItems()[0]);
         if (marking_) {
-            if (!g_ThisVF->isCurvePointDrawn(curveindex, pcoord)) {
+            if (!gThisVF->isCurvePointDrawn(curveindex, pcoord)) {
                 s.sprintf(
                     "In this region, the plotting of the curve #%d was already "
                     "disabled.",
@@ -636,15 +636,15 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                     "region.",
                     curveindex + 1);
                 lbl_status_->setText(s);
-                g_ThisVF->markCurveRegion(curveindex, pcoord);
-                if (g_ThisVF->changed_ == false) {
-                    g_ThisVF->changed_ = true;
-                    g_p4app->signalChanged();
+                gThisVF->markCurveRegion(curveindex, pcoord);
+                if (gThisVF->changed_ == false) {
+                    gThisVF->changed_ = true;
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             }
         } else {
-            if (g_ThisVF->isCurvePointDrawn(curveindex, pcoord)) {
+            if (gThisVF->isCurvePointDrawn(curveindex, pcoord)) {
                 s.sprintf(
                     "In this region, the plotting of curve #%d was already "
                     "enabled.",
@@ -656,10 +656,10 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                     "The plotting of curve #%d is now enabled in this region.",
                     curveindex + 1);
                 lbl_status_->setText(s);
-                g_ThisVF->unmarkCurveRegion(curveindex, pcoord);
-                if (g_ThisVF->changed_ == false) {
-                    g_ThisVF->changed_ = true;
-                    g_p4app->signalChanged();
+                gThisVF->unmarkCurveRegion(curveindex, pcoord);
+                if (gThisVF->changed_ == false) {
+                    gThisVF->changed_ = true;
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             }
@@ -677,7 +677,7 @@ void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
     if (lst_curves_->selectedItems().isEmpty())
         return;
     int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-    if (curveindex < 0 || curveindex >= g_ThisVF->numCurves_)
+    if (curveindex < 0 || curveindex >= gThisVF->numCurves_)
         return;
 
     QString s{edt_numpoints_->text()};
@@ -685,11 +685,11 @@ void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
     int v{s.toInt(&ok)};
     if (!ok || v<=0) return;
 
-    if (v == g_ThisVF->numPointsCurve_[curveindex]) return;
+    if (v == gThisVF->numPointsCurve_[curveindex]) return;
 
-    g_ThisVF->numPointsCurve_[curveindex]=v;
-    if(g_ThisVF->changed_==false){
-        g_ThisVF->changed_=true;
-        g_p4app->signalChanged();
+    gThisVF->numPointsCurve_[curveindex]=v;
+    if(gThisVF->changed_==false){
+        gThisVF->changed_=true;
+        gP4app->signalChanged();
     }
 }

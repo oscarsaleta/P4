@@ -71,16 +71,16 @@ void P4WinInputSphere::setupPlot()
     plCircle_.clear();
 
     if (!isZoom_) {
-        switch (g_VFResults.typeofview_) {
+        switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
         case TYPEOFVIEW_U1:
         case TYPEOFVIEW_U2:
         case TYPEOFVIEW_V1:
         case TYPEOFVIEW_V2:
-            x0_ = g_VFResults.xmin_;
-            y0_ = g_VFResults.ymin_;
-            x1_ = g_VFResults.xmax_;
-            y1_ = g_VFResults.ymax_;
+            x0_ = gVFResults.xmin_;
+            y0_ = gVFResults.ymin_;
+            x1_ = gVFResults.xmax_;
+            y1_ = gVFResults.ymax_;
             break;
         case TYPEOFVIEW_SPHERE:
             x0_ = -1.1;
@@ -97,10 +97,10 @@ void P4WinInputSphere::setupPlot()
     idealhd = (idealhd / dx) * dy;
     idealh = (int)(idealhd + .5);
 
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
             produceEllipse(0., 0., 1., 1., false, coWinH(1.), coWinV(1.));
-        if (g_ThisVF->p_ != 1 || g_ThisVF->q_ != 1)
+        if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
             plCircle_ = produceEllipse(0., 0., RADIUS, RADIUS, true,
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -214,10 +214,10 @@ void P4WinInputSphere::adjustToNewSize()
     circleAtInfinity_.clear();
     plCircle_.clear();
 
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
             produceEllipse(0., 0., 1., 1., false, coWinH(1.), coWinV(1.));
-        if (g_ThisVF->p_ != 1 || g_ThisVF->q_ != 1)
+        if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
             plCircle_ = produceEllipse(0., 0., RADIUS, RADIUS, true,
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -233,9 +233,9 @@ void P4WinInputSphere::adjustToNewSize()
 
         staticPainter_.reset(&paint);  // TODO works?
 
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (g_ThisVF->p_ != 1 || g_ThisVF->q_ != 1)
+        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -273,7 +273,7 @@ void P4WinInputSphere::refreshAfterResize()
 
 void P4WinInputSphere::paintEvent(QPaintEvent *p)
 {
-    if (g_ThisVF->evaluating_)
+    if (gThisVF->evaluating_)
         return;
 
     if (!painterCache_ || isPainterCacheDirty_) {
@@ -288,9 +288,9 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
 
         staticPainter_.reset(&paint);
 
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (g_ThisVF->p_ != 1 || g_ThisVF->q_ != 1)
+        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -345,9 +345,9 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
     double wx{coWorldX(x)}, wy{coWorldY(y)};
 
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-        switch (g_VFResults.typeofview_) {
+        switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study   (x,y) = (%f,%f)", (float)wx,
                             (float)wy);
             else
@@ -356,12 +356,12 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_SPHERE:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (g_VFResults.p_ == 1 && g_VFResults.q_ == 1)
+            if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere   (x,y) = (%f,%f)",
                             (float)ucoord[0], (float)ucoord[1]);
             else
                 buf.sprintf("The P-L sphere of type (%d,%d)   (x,y) = (%f,%f)",
-                            g_VFResults.p_, g_VFResults.q_, (float)ucoord[0],
+                            gVFResults.p_, gVFResults.q_, (float)ucoord[0],
                             (float)ucoord[1]);
             break;
         case TYPEOFVIEW_U1:
@@ -375,7 +375,7 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!g_VFResults.plweights_) {
+            if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -397,7 +397,7 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!g_VFResults.plweights_) {
+            if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -410,9 +410,9 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         }
 
-        if (!g_VFResults.curves_result_.empty()) {
+        if (!gVFResults.curves_result_.empty()) {
             QString s;
-            index = g_ThisVF->getVFIndex_sphere(pcoord);
+            index = gThisVF->getVFIndex_sphere(pcoord);
             if (index < 0) {
                 buf.append("   VF: NONE");
             } else {
@@ -423,19 +423,19 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             buf += " (" + s + ")";
         }
     } else {
-        switch (g_VFResults.typeofview_) {
+        switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study");
             else
                 buf.sprintf("Planar view");
             break;
         case TYPEOFVIEW_SPHERE:
-            if (g_VFResults.p_ == 1 && g_VFResults.q_ == 1)
+            if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere");
             else
-                buf.sprintf("The P-L sphere of type (%d,%d)", g_VFResults.p_,
-                            g_VFResults.q_);
+                buf.sprintf("The P-L sphere of type (%d,%d)", gVFResults.p_,
+                            gVFResults.q_);
             break;
         case TYPEOFVIEW_U1:
             buf.sprintf("The U1 chart");
@@ -792,7 +792,7 @@ void P4WinInputSphere::plotPoincareLyapunovSphere()
 
 void P4WinInputSphere::plotLineAtInfinity()
 {
-    switch (g_VFResults.typeofview_) {
+    switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
@@ -950,9 +950,9 @@ std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
 
 void P4WinInputSphere::plotCurves()
 {
-    if (!g_VFResults.curves_result_.empty())
-        for (r = 0; r < g_ThisVF->numCurveS_; r++)
-            plotCurve(g_VFResults.curves_result_[r], r);
+    if (!gVFResults.curves_result_.empty())
+        for (r = 0; r < gThisVF->numCurveS_; r++)
+            plotCurve(gVFResults.curves_result_[r], r);
 }
 
 void P4WinInputSphere::plotCurve(p4curves::curves crv, int index)
@@ -995,5 +995,5 @@ void P4WinInputSphere::plotPoint(double *p, int color)
 
 void P4WinInputSphere::setupCoordinateTransformations()
 {
-    g_VFResults.setupCoordinateTransformations();
+    gVFResults.setupCoordinateTransformations();
 }

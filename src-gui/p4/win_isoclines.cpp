@@ -140,7 +140,7 @@ QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (!g_VFResults.isocline_vector_.empty()) {
+    if (!gVFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -158,8 +158,8 @@ void QIsoclinesDlg::onBtnEvaluate(void)
         return;
     } else {
         QString val = edt_value_->text();
-        g_ThisVF->getDataFromDlg();
-        val = g_ThisVF->convertMapleUserParametersLabelsToValues(val);
+        gThisVF->getDataFromDlg();
+        val = gThisVF->convertMapleUserParametersLabelsToValues(val);
         val.toDouble(&ok);
         if (!ok) {
             QMessageBox::information(
@@ -170,8 +170,8 @@ void QIsoclinesDlg::onBtnEvaluate(void)
             return;
         }
     }
-    if ((g_ThisVF->xdot_ == "0" || g_ThisVF->xdot_.isEmpty()) &&
-        (g_ThisVF->ydot_ == "0" || g_ThisVF->ydot_.isEmpty())) {
+    if ((gThisVF->xdot_ == "0" || gThisVF->xdot_.isEmpty()) &&
+        (gThisVF->ydot_ == "0" || gThisVF->ydot_.isEmpty())) {
         QMessageBox::information(this, "P4", "Check that the vector field is "
                                              "correctly introduced.\nIf you "
                                              "used an input file, make sure "
@@ -179,19 +179,19 @@ void QIsoclinesDlg::onBtnEvaluate(void)
         return;
     }
     if (edt_value_->text().trimmed() == "0") {
-        g_ThisVF->isoclines_ = g_ThisVF->ydot_;
+        gThisVF->isoclines_ = gThisVF->ydot_;
     } else if (edt_value_->text().trimmed().toLower() == "inf") {
-        g_ThisVF->isoclines_ = g_ThisVF->xdot_;
+        gThisVF->isoclines_ = gThisVF->xdot_;
     } else {
-        g_ThisVF->isoclines_ = "(" + g_ThisVF->ydot_ + ")-(" +
+        gThisVF->isoclines_ = "(" + gThisVF->ydot_ + ")-(" +
                                edt_value_->text().trimmed() + ")*(" +
-                               g_ThisVF->xdot_ + ")";
+                               gThisVF->xdot_ + ")";
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
-    g_ThisVF->isoclinesDlg_ = this;
-    g_ThisVF->evaluateIsoclinesTable();
+    gThisVF->isoclinesDlg_ = this;
+    gThisVF->evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
     plotwnd_->getDlgData();
 }
@@ -240,7 +240,7 @@ void QIsoclinesDlg::onBtnPlot(void)
     }
 
     // SECOND: read the resulting file and store the list
-    if (!g_VFResults.readIsoclines(g_ThisVF->getbarefilename())) {
+    if (!gVFResults.readIsoclines(gThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4", "Cannot read isoclines.\n"
                                           "Please check the input field!\n");
         return;
@@ -253,7 +253,7 @@ void QIsoclinesDlg::onBtnPlot(void)
 
     btnPlot_->setEnabled(false);
 
-    g_ThisVF->isoclinesDlg_ = this;
+    gThisVF->isoclinesDlg_ = this;
 
     result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
     if (!result) {
@@ -279,7 +279,7 @@ void QIsoclinesDlg::onBtnDelAll(void)
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    g_VFResults.isocline_vector_.clear();
+    gVFResults.isocline_vector_.clear();
 
     mainSphere_->refresh();
 }
@@ -293,7 +293,7 @@ void QIsoclinesDlg::onBtnDelLast(void)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (g_VFResults.isocline_vector_.empty()) {
+    if (gVFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -317,13 +317,13 @@ void QIsoclinesDlg::reset(void)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    // if (g_VFResults.first_isoclines_ != nullptr) {
-    if (!g_VFResults.isocline_vector_.empty()) {
+    // if (gVFResults.first_isoclines_ != nullptr) {
+    if (!gVFResults.isocline_vector_.empty()) {
         btnDelLast_->setEnabled(true);
         btnDelAll_->setEnabled(true);
     }
 
-    if (g_VFResults.config_dashes_)
+    if (gVFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();

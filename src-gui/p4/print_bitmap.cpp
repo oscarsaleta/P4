@@ -87,7 +87,7 @@ static void p4Print_print_saddle(double _x, double _y)
 
 static void p4Print_print_virtualsaddle(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -131,7 +131,7 @@ static void p4Print_print_stablenode(double _x, double _y)
 
 static void p4Print_print_virtualstablenode(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -175,7 +175,7 @@ static void p4Print_print_unstablenode(double _x, double _y)
 
 static void p4Print_print_virtualunstablenode(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -223,7 +223,7 @@ static void p4Print_print_stableweakfocus(double _x, double _y)
 
 static void p4Print_print_virtualstableweakfocus(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -273,7 +273,7 @@ static void p4Print_print_unstableweakfocus(double _x, double _y)
 
 static void p4Print_print_virtualunstableweakfocus(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -323,7 +323,7 @@ static void p4Print_print_weakfocus(double _x, double _y)
 
 static void p4Print_print_virtualweakfocus(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -373,7 +373,7 @@ static void p4Print_print_center(double _x, double _y)
 
 static void p4Print_print_virtualcenter(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -423,7 +423,7 @@ static void p4Print_print_stablestrongfocus(double _x, double _y)
 
 static void p4Print_print_virtualstablestrongfocus(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -473,7 +473,7 @@ static void p4Print_print_unstablestrongfocus(double _x, double _y)
 
 static void p4Print_print_virtualunstablestrongfocus(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -524,7 +524,7 @@ static void p4Print_print_sesaddle(double _x, double _y)
 
 static void p4Print_print_virtualsesaddle(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -576,7 +576,7 @@ static void p4Print_print_sesaddlenode(double _x, double _y)
 
 static void p4Print_print_virtualsesaddlenode(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -628,7 +628,7 @@ static void p4Print_print_sestablenode(double _x, double _y)
 
 static void p4Print_print_virtualsestablenode(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -680,7 +680,7 @@ static void p4Print_print_seunstablenode(double _x, double _y)
 
 static void p4Print_print_virtualseunstablenode(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};
@@ -731,7 +731,7 @@ static void p4Print_print_degen(double _x, double _y)
 
 static void p4Print_print_virtualdegen(double _x, double _y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
 
     int x{(int)_x};

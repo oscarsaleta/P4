@@ -40,7 +40,7 @@ void win_plot_saddle(QPainter *p, int x, int y)
 
 void win_plot_virtualsaddle(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CSADDLE));
     p->setBrush(Qt::NoBrush);
@@ -58,7 +58,7 @@ void win_plot_stablenode(QPainter *p, int x, int y)
 
 void win_plot_virtualstablenode(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CNODE_S));
     p->setBrush(Qt::NoBrush);
@@ -76,7 +76,7 @@ void win_plot_unstablenode(QPainter *p, int x, int y)
 
 void win_plot_virtualunstablenode(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CNODE_U));
     p->setBrush(Qt::NoBrush);
@@ -97,7 +97,7 @@ void win_plot_weakfocus(QPainter *p, int x, int y)
 
 void win_plot_virtualweakfocus(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CWEAK_FOCUS));
     p->setBrush(Qt::NoBrush);
@@ -121,7 +121,7 @@ void win_plot_stableweakfocus(QPainter *p, int x, int y)
 
 void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
     p->setBrush(Qt::NoBrush);
@@ -156,7 +156,7 @@ void win_plot_center(QPainter *p, int x, int y)
 
 void win_plot_virtualcenter(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CCENTER));
     p->setBrush(Qt::NoBrush);
@@ -180,7 +180,7 @@ void win_plot_stablestrongfocus(QPainter *p, int x, int y)
 
 void win_plot_virtualstablestrongfocus(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_S));
     p->setBrush(Qt::NoBrush);
@@ -204,7 +204,7 @@ void win_plot_unstablestrongfocus(QPainter *p, int x, int y)
 
 void win_plot_virtualunstablestrongfocus(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_U));
     p->setBrush(Qt::NoBrush);
@@ -229,7 +229,7 @@ void win_plot_sesaddlenode(QPainter *p, int x, int y)
 
 void win_plot_virtualsesaddlenode(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CSADDLE_NODE));
@@ -255,7 +255,7 @@ void win_plot_sestablenode(QPainter *p, int x, int y)
 
 void win_plot_virtualsestablenode(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CNODE_S));
@@ -281,7 +281,7 @@ void win_plot_seunstablenode(QPainter *p, int x, int y)
 
 void win_plot_virtualseunstablenode(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CNODE_U));
@@ -307,7 +307,7 @@ void win_plot_sesaddle(QPainter *p, int x, int y)
 
 void win_plot_virtualsesaddle(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
     p->setPen(QXFIGCOLOR(CSADDLE));
@@ -330,7 +330,7 @@ void win_plot_degen(QPainter *p, int x, int y)
 
 void win_plot_virtualdegen(QPainter *p, int x, int y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     p->setPen(QXFIGCOLOR(CDEGEN));
     p->drawLine(x - SYMBOLWIDTH / 3, y - SYMBOLHEIGHT / 3, x + SYMBOLWIDTH / 3,

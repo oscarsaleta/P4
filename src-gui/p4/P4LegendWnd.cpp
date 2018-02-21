@@ -30,7 +30,7 @@
 //                          Define Colors in RGB
 // -----------------------------------------------------------------------
 
-P4RGBITEM g_XFigToRGB[NUMXFIGCOLORS] = {
+P4RGBITEM gXFigToRGB[NUMXFIGCOLORS] = {
     // 8 pure colours:
     {0, 0, 0},       // BLACK
     {0, 0, 255},     // BLUE
@@ -88,7 +88,7 @@ P4LegendWnd::P4LegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHin
 void P4LegendWnd::paintEvent(QPaintEvent *p)
 {
     QPainter paint(this);
-    paint.setFont(*(g_p4app->legendFont_));
+    paint.setFont(*(gP4app->legendFont_));
 
     paint.setPen(QPen(QXFIGCOLOR(bgColours::CFOREGROUND)));
     paint.drawText(hmargin1_, vmargin1_, "Non-Degenerate:");
@@ -241,7 +241,7 @@ void P4LegendWnd::calculateGeometry(void)
 {
     int e, me;
 
-    QFontMetrics fm{*(g_p4app->legendFont_)};
+    QFontMetrics fm{*(gP4app->legendFont_)};
 
     QPalette palette;
     palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND));

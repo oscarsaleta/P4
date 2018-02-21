@@ -72,10 +72,10 @@ static double find_distance_saddle(
         if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
             (distance == -1)) {
             distance = d;
-            g_VFResults.selectedSaddlePointIndex_ = i;
-            g_VFResults.saddlePoints_ = points;
-            g_VFResults.selected_ucoord_[0] = ucoord[0];
-            g_VFResults.selected_ucoord_[1] = ucoord[1];
+            gVFResults.selectedSaddlePointIndex_ = i;
+            gVFResults.saddlePoints_ = points;
+            gVFResults.selected_ucoord_[0] = ucoord[0];
+            gVFResults.selected_ucoord_[1] = ucoord[1];
             type = SADDLE;
         }
     }
@@ -119,10 +119,10 @@ static double find_distance_se(
             if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
                 (distance == -1)) {
                 distance = d;
-                g_VFResults.selectedSePointIndex_ = i;
-                g_VFResults.sePoints_ = points;
-                g_VFResults.selected_ucoord_[0] = ucoord[0];
-                g_VFResults.selected_ucoord_[1] = ucoord[1];
+                gVFResults.selectedSePointIndex_ = i;
+                gVFResults.sePoints_ = points;
+                gVFResults.selected_ucoord_[0] = ucoord[0];
+                gVFResults.selected_ucoord_[1] = ucoord[1];
                 type = SEMI_HYPERBOLIC;
             }
         }
@@ -168,10 +168,10 @@ static double find_distance_de(
                 (distance == -1))
                 if ((d < distance) || (distance == -1)) {
                     distance = d;
-                    g_VFResults.selected_ucoord_[0] = ucoord[0];
-                    g_VFResults.selected_ucoord_[1] = ucoord[1];
-                    g_VFResults.dePoints_ = points;
-                    g_VFResults.selectedDePointIndex_ = i;
+                    gVFResults.selected_ucoord_[0] = ucoord[0];
+                    gVFResults.selected_ucoord_[1] = ucoord[1];
+                    gVFResults.dePoints_ = points;
+                    gVFResults.selectedDePointIndex_ = i;
                     type = NON_ELEMENTARY;
                 }
         }
@@ -189,38 +189,38 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
     std::vector<p4blowup::sep> sepc;
     int vfindex, vfindex0;
 
-    if (g_VFResults.vf_.empty())
+    if (gVFResults.vf_.empty())
         return false;
     MATHFUNC(viewcoord_to_sphere)(x, y, pcoord);
 
-    g_CurrentSingularityInfo[0] = "";
-    g_CurrentSingularityInfo[1] = "";
-    g_CurrentSingularityInfo[2] = "";
-    g_CurrentSingularityInfo[3] = "";
+    gCurrentSingularityInfo[0] = "";
+    gCurrentSingularityInfo[1] = "";
+    gCurrentSingularityInfo[2] = "";
+    gCurrentSingularityInfo[3] = "";
 
     distance = -1;
 
-    if ((vfindex0 = g_ThisVF->getVFIndex_sphere(pcoord)) == -1)
-        vfindex0 = g_ThisVF->numVF_ - 1;
+    if ((vfindex0 = gThisVF->getVFIndex_sphere(pcoord)) == -1)
+        vfindex0 = gThisVF->numVF_ - 1;
 
     for (vfindex = vfindex0; vfindex >= 0; vfindex--) {
-        distance = find_distance_saddle(g_VFResults.vf_[vfindex]->saddlePoints_,
+        distance = find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_,
                                         x, y, distance, type, pcoord);
-        distance = find_distance_se(g_VFResults.vf_[vfindex]->sePoints_, x, y,
+        distance = find_distance_se(gVFResults.vf_[vfindex]->sePoints_, x, y,
                                     distance, type, pcoord);
-        distance = find_distance_de(g_VFResults.vf_[vfindex]->dePoints_, x, y,
+        distance = find_distance_de(gVFResults.vf_[vfindex]->dePoints_, x, y,
                                     distance, type, pcoord);
         if (distance == -1)
             break;
     }
-    if (distance == -1 && vfindex0 != g_ThisVF->numVF_ - 1) {
-        for (vfindex = g_ThisVF->numVF_ - 1; vfindex > vfindex0; vfindex--) {
+    if (distance == -1 && vfindex0 != gThisVF->numVF_ - 1) {
+        for (vfindex = gThisVF->numVF_ - 1; vfindex > vfindex0; vfindex--) {
             distance =
-                find_distance_saddle(g_VFResults.vf_[vfindex]->saddlePoints_, x,
+                find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_, x,
                                      y, distance, type, pcoord);
-            distance = find_distance_se(g_VFResults.vf_[vfindex]->sePoints_, x,
+            distance = find_distance_se(gVFResults.vf_[vfindex]->sePoints_, x,
                                         y, distance, type, pcoord);
-            distance = find_distance_de(g_VFResults.vf_[vfindex]->dePoints_, x,
+            distance = find_distance_de(gVFResults.vf_[vfindex]->dePoints_, x,
                                         y, distance, type, pcoord);
             if (distance == -1)
                 break;
@@ -234,14 +234,14 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
     sz = "";
     epsilon = 0;
 
-    g_VFResults.selected_sep_vfindex_ = vfindex;
+    gVFResults.selected_sep_vfindex_ = vfindex;
 
     switch (type) {
     case SADDLE:
-        sepc = g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+        sepc = gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                    .separatrices;
-        g_VFResults.selectedSep_ = sepc;
-        g_VFResults.selectedSepIndex_ = 0;
+        gVFResults.selectedSep_ = sepc;
+        gVFResults.selectedSepIndex_ = 0;
         draw_selected_sep(spherewnd, sepc.front().sep_points.front(), CW_SEP);
 
         start_plot_sep = start_plot_saddle_sep;
@@ -250,56 +250,56 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         select_next_sep = select_next_saddle_sep;
         s = "SADDLE";
         epsilon =
-            g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+            gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                 .epsilon;
         change_epsilon = change_epsilon_saddle;
 
-        if (g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+        if (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                 .chart == CHART_R2) {
             sx.sprintf(
                 "x = %8.5g",
-                g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                     .x0);
             sy.sprintf(
                 "y = %8.5g",
-                g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                     .y0);
             sz = "";
         } else {
             switch (
-                g_VFResults.saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                     .chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (g_VFResults
-                     .saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                (gVFResults
+                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (g_VFResults
-                     .saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                (gVFResults
+                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (g_VFResults
-                     .saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                (gVFResults
+                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (g_VFResults
-                     .saddlePoints_[g_VFResults.selectedSaddlePointIndex_]
+                (gVFResults
+                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             }
 
-            if (g_VFResults.plweights_ == false) {
+            if (gVFResults.plweights_ == false) {
                 sx.sprintf("X= %8.5g", pcoord[0]);
                 sy.sprintf("Y= %8.5g", pcoord[1]);
                 sz.sprintf("Z= 0");
@@ -312,10 +312,10 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         break;
 
     case SEMI_HYPERBOLIC:
-        sepc = g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_]
+        sepc = gVFResults.sePoints_[gVFResults.selectedSePointIndex_]
                    .separatrices;
-        g_VFResults.selectedSep_ = sepc;
-        g_VFResults.selectedSepIndex_ = 0;
+        gVFResults.selectedSep_ = sepc;
+        gVFResults.selectedSepIndex_ = 0;
         draw_selected_sep(spherewnd, sepc.front().sep_points.front(), CW_SEP);
 
         start_plot_sep = start_plot_se_sep;
@@ -324,42 +324,42 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         select_next_sep = select_next_se_sep;
         s = "SEMI-HYPERBOLIC";
         epsilon =
-            g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].epsilon;
+            gVFResults.sePoints_[gVFResults.selectedSePointIndex_].epsilon;
         change_epsilon = change_epsilon_se;
-        if (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].chart ==
+        if (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].chart ==
             CHART_R2) {
             sx.sprintf(
                 "x=%8.5g",
-                g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].x0);
+                gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0);
             sy.sprintf(
                 "y=%8.5g",
-                g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].y0);
+                gVFResults.sePoints_[gVFResults.selectedSePointIndex_].y0);
             sz = "";
         } else {
-            switch (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_]
+            switch (gVFResults.sePoints_[gVFResults.selectedSePointIndex_]
                         .chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].x0,
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
                  0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].x0,
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
                  0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].x0,
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
                  0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (g_VFResults.sePoints_[g_VFResults.selectedSePointIndex_].x0,
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
                  0.0, pcoord);
                 break;
             }
-            if (g_VFResults.plweights_ == false) {
+            if (gVFResults.plweights_ == false) {
                 sx.sprintf("X= %8.5g", pcoord[0]);
                 sy.sprintf("Y= %8.5g", pcoord[1]);
                 sz.sprintf("Z= 0");
@@ -372,11 +372,11 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         break;
 
     case NON_ELEMENTARY:
-        g_VFResults.selectedDeSep_ =
-            g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].blow_up;
-        g_VFResults.selectedDeSepIndex_ = 0;
+        gVFResults.selectedDeSep_ =
+            gVFResults.dePoints_[gVFResults.selectedDePointIndex_].blow_up;
+        gVFResults.selectedDeSepIndex_ = 0;
         draw_selected_sep(spherewnd,
-                          g_VFResults.selectedDeSep_.front().sep_points.front(),
+                          gVFResults.selectedDeSep_.front().sep_points.front(),
                           CW_SEP);
 
         start_plot_sep = start_plot_de_sep;
@@ -385,42 +385,42 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         select_next_sep = select_next_de_sep;
         s = "NON-ELEMENTARY";
         epsilon =
-            g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].epsilon;
+            gVFResults.dePoints_[gVFResults.selectedDePointIndex_].epsilon;
         change_epsilon = change_epsilon_de;
-        if (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].chart ==
+        if (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].chart ==
             CHART_R2) {
             sx.sprintf(
                 "x=%8.5g",
-                g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].x0));
+                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0));
             sy.sprintf(
                 "y=%8.5g",
-                g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].y0));
+                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].y0));
             sz = "";
         } else {
-            switch (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_]
+            switch (gVFResults.dePoints_[gVFResults.selectedDePointIndex_]
                         .chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].x0,
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
                  0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].x0,
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
                  0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].x0,
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
                  0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (g_VFResults.dePoints_[g_VFResults.selectedDePointIndex_].x0,
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
                  0.0, pcoord);
                 break;
             }
-            if (g_VFResults.plweights_ == false) {
+            if (gVFResults.plweights_ == false) {
                 sx.sprintf("X= %8.5g", pcoord[0]);
                 sy.sprintf("Y= %8.5g", pcoord[1]);
                 sz.sprintf("Z= 0");
@@ -433,17 +433,17 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         break;
     }
 
-    if (g_ThisVF_->numVF_ > 1) {
+    if (gThisVF_->numVF_ > 1) {
         QString msg;
         msg.sprintf(" (VF #%d)", vfindex + 1);
         s += msg;
     }
 
-    g_CurrentSingularityInfo[0] = s;
-    g_CurrentSingularityInfo[1] = sx;
-    g_CurrentSingularityInfo[2] = sy;
-    g_CurrentSingularityInfo[3] = sz;
-    g_CurrentSeparatriceEpsilon = epsilon;
+    gCurrentSingularityInfo[0] = s;
+    gCurrentSingularityInfo[1] = sx;
+    gCurrentSingularityInfo[2] = sy;
+    gCurrentSingularityInfo[3] = sz;
+    gCurrentSeparatriceEpsilon = epsilon;
 
     return true;
 }

@@ -446,7 +446,7 @@ bool readTerm3(FILE *fp, P4POLYNOM3 p, int N);
 
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
-#define MATHFUNC(function) (*(g_VFResults.function))
+#define MATHFUNC(function) (*(gVFResults.function))
 
 #define LINESTYLE_DASHES 1
 #define LINESTYLE_POINTS 0

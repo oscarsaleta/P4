@@ -37,7 +37,7 @@
 class P4WinSphere;
 struct orbits_points;
 
-extern orbits_points *g_last_isoclines_point;
+extern orbits_points *gLastIsoclinesPoint;
 
 bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);

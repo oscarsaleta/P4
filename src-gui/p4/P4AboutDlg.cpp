@@ -36,8 +36,8 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
     // define controls
 
-    if (g_p4smallicon)
-        setWindowIcon(*g_p4smallicon);
+    if (gP4smallIcon)
+        setWindowIcon(*gP4smallIcon);
 
     btn_ok_.reset(new QPushButton("&Ok"));
     btn_settings_.reset(new QPushButton("&Main Settings"));
@@ -75,8 +75,8 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     lay00->addWidget(new QLabel(""), 9, 1);
 
     QString versionstr;
-    versionstr = " Version " + g_p4Version + "   " + g_p4VersionDate + " " +
-                 g_p4Platform;
+    versionstr = " Version " + gP4version + "   " + gP4versionDate + " " +
+                 gP4platform;
 
     lay00->addWidget(new QLabel(versionstr), 10, 1);
 

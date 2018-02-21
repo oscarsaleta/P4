@@ -136,7 +136,7 @@ QCurveDlg::QCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (g_VFResults.curve_vector_.empty()) {
+    if (gVFResults.curve_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -162,12 +162,12 @@ void QCurveDlg::reset()
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (!g_VFResults.curve_vector_.empty()) {
+    if (!gVFResults.curve_vector_.empty()) {
         btnDelAll_->setEnabled(true);
         btnDelLast_->setEnabled(true);
     }
 
-    if (g_VFResults.config_dashes_)
+    if (gVFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();
@@ -181,12 +181,12 @@ void QCurveDlg::onBtnEvaluate()
                                  "with the equation of a curve.\n");
         return;
     }
-    g_ThisVF->curve_ = edt_curve_->text().trimmed();
+    gThisVF->curve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
-    g_ThisVF->curveDlg_ = this;
-    g_ThisVF->evaluateCurveTable();
+    gThisVF->curveDlg_ = this;
+    gThisVF->evaluateCurveTable();
     btnPlot_->setEnabled(true);
 }
 
@@ -234,7 +234,7 @@ void QCurveDlg::onBtnPlot()
     }
 
     // SECOND: read the resulting file and store the list
-    if (!g_VFResults.readCurve(g_ThisVF->getbarefilename())) {
+    if (!gVFResults.readCurve(gThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4", "Cannot read curve.\n"
                                           "Please check the input field!\n");
         return;
@@ -248,7 +248,7 @@ void QCurveDlg::onBtnPlot()
 
     btnPlot_->setEnabled(false);
 
-    g_ThisVF->curveDlg_ = this;
+    gThisVF->curveDlg_ = this;
     result = evalCurveStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btnPlot_->setEnabled(true);
@@ -272,7 +272,7 @@ void QCurveDlg::onBtnDelAll()
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    g_VFResults.curve_vector_.clear();
+    gVFResults.curve_vector_.clear();
 
     mainSphere_->refresh();
 }
@@ -286,7 +286,7 @@ void QCurveDlg::onBtnDelLast()
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (g_VFResults.curve_vector_.empty()) {
+    if (gVFResults.curve_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }

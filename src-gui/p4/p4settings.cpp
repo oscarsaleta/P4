@@ -140,7 +140,7 @@ bool readP4Settings(void)
 
     s_Settings_changed = false;
 
-    if (p4settings->value("/Version").toString() == g_p4Version) {
+    if (p4settings->value("/Version").toString() == gP4version) {
         _ok = true;
         s_Settings_p4path = p4settings->value("/InstallPath").toString();
         s_Settings_sumtablepath = p4settings->value("/SumtablePath").toString();
@@ -174,8 +174,8 @@ void saveP4Settings(void)
 
     std::unique_ptr<QSettings> p4settings{new QSettings()};
 
-    p4settings->setValue("/Version", g_p4Version);
-    p4settings->setValue("/BuildDate", g_p4VersionDate);
+    p4settings->setValue("/Version", gP4version);
+    p4settings->setValue("/BuildDate", gP4versionDate);
     p4settings->setValue("/InstallPath", getP4Path());
     p4settings->setValue("/SumtablePath", getP4SumTablePath());
     p4settings->setValue("/TempPath", getP4TempPath());

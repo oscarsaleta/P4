@@ -63,9 +63,9 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 
     ok = false;
 
-    hhi = (double)dir * g_VFResults.config_step_;
-    h_max = g_VFResults.config_hma_;
-    h_min = g_VFResults.config_hmi_;
+    hhi = (double)dir * gVFResults.config_step_;
+    h_max = gVFResults.config_hma_;
+    h_min = gVFResults.config_hmi_;
     copy_x_into_y(qp, p1);
 
     if (!prepareVfForIntegration(p1))
@@ -73,7 +73,7 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 
     MATHFUNC(integrate_sphere_orbit)
     (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    for (i = 0; i <= g_VFResults.config_lc_numpoints_; i++) {
+    for (i = 0; i <= gVFResults.config_lc_numpoints_; i++) {
         copy_x_into_y(p2, p1);
         if (!prepareVfForIntegration(p1))
             return false;
@@ -99,7 +99,7 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 
     MATHFUNC(integrate_sphere_orbit)
     (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    for (i = 0; i <= g_VFResults.config_lc_numpoints_; i++) {
+    for (i = 0; i <= gVFResults.config_lc_numpoints_; i++) {
         copy_x_into_y(p2, p1);
         hhi2 = hhi;
         if (!prepareVfForIntegration(p1))
@@ -201,7 +201,7 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
     while (found) {
         found = false;  // assume not found
         while (1) {
-            if (++counter == g_VFResults.config_lc_value_) {
+            if (++counter == gVFResults.config_lc_value_) {
                 counter = 0;
                 if (stop_search_limit()) {
                     okf1 = false;
@@ -266,7 +266,7 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
                 x = x0;
                 y = y0;
                 // write_to_limit_window(x0,y0);
-                if (++counter == g_VFResults.config_lc_value_) {
+                if (++counter == gVFResults.config_lc_value_) {
                     counter = 0;
                     if (stop_search_limit()) {
                         okf1 = false;
@@ -387,9 +387,9 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
     LC.color = CLIMIT;
     (*plot_p)(spherewnd, p1, CLIMIT);
 
-    hhi = g_VFResults.config_step_;
-    h_max = g_VFResults.config_hma_;
-    h_min = g_VFResults.config_hmi_;
+    hhi = gVFResults.config_step_;
+    h_max = gVFResults.config_hma_;
+    h_min = gVFResults.config_hmi_;
     if (!prepareVfForIntegration(p1))
         return;
     MATHFUNC(integrate_sphere_orbit)
@@ -397,10 +397,10 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
 
     copy_x_into_y(p2, LCpoints.pcoord);
     LCpoints.color = CLIMIT;
-    LCpoints.dashes = g_VFResults.config_dashes_;
+    LCpoints.dashes = gVFResults.config_dashes_;
     LC.points.push_back(LCpoints);
     // LC.current_point_index = 0;
-    if (g_VFResults.config_dashes_)
+    if (gVFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
         (*plot_p)(spherewnd, p2, CLIMIT);
@@ -412,10 +412,10 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
 
         copy_x_into_y(p2, LCpoints.pcoord);
         LCpoints.color = CLIMIT;
-        LCpoints.dashes = g_VFResults.config_dashes_;
+        LCpoints.dashes = gVFResults.config_dashes_;
         LC.points.push_back(LCpoints);
         // LC.current_point_index++;
-        if (g_VFResults.config_dashes_)
+        if (gVFResults.config_dashes_)
             (*plot_l)(spherewnd, p1, p2, CLIMIT);
         else
             (*plot_p)(spherewnd, p2, CLIMIT);
@@ -439,26 +439,26 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
 
         copy_x_into_y(p2, LCpoints.pcoord);
         LCpoints.color = CLIMIT;
-        LCpoints.dashes = g_VFResults.config_dashes_;
+        LCpoints.dashes = gVFResults.config_dashes_;
         LC.points.push_back(LCpoints);
         // LC.current_point_index++;
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
             break;
-        if (g_VFResults.config_dashes_)
+        if (gVFResults.config_dashes_)
             (*plot_l)(spherewnd, p1, p2, CLIMIT);
         else
             (*plot_p)(spherewnd, p2, CLIMIT);
     }
     MATHFUNC(R2_to_sphere)(x, y, p2);
-    copy_x_into_y(p2, g_VFResults.LCpoints.pcoord);
-    if (g_VFResults.config_dashes_)
+    copy_x_into_y(p2, gVFResults.LCpoints.pcoord);
+    if (gVFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
         (*plot_p)(spherewnd, p2, CLIMIT);
 
-    g_VFResults.limCycles_.push_back(LC);
+    gVFResults.limCycles_.push_back(LC);
 }
 
 // -----------------------------------------------------------------------
@@ -468,7 +468,7 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
 // a repaint (but also during a print command).
 void drawLimitCycles(std::shared_ptr<P4WinSphere> spherewnd)
 {
-    for (auto const &it : g_VFResults.limCycles_)
+    for (auto const &it : gVFResults.limCycles_)
         drawOrbit(spherewnd, it.pcoord, it.f_orbits, it.color);
 }
 
@@ -477,12 +477,12 @@ void drawLimitCycles(std::shared_ptr<P4WinSphere> spherewnd)
 // -----------------------------------------------------------------------
 void deleteLastLimitCycle(std::shared_ptr<P4WinSphere> spherewnd)
 {
-    if (g_VFResults.limCycles_.empty())
+    if (gVFResults.limCycles_.empty())
         return;
 
-    p4orbits::orbits &orbit1 = g_VFResults.limCycles_.back();
+    p4orbits::orbits &orbit1 = gVFResults.limCycles_.back();
     drawOrbit(spherewnd, orbit2.pcoord, orbit2.f_orbits,
               spherewnd->spherebgcolor_);
 
-    g_VFResults.limCycles_.pop_back();
+    gVFResults.limCycles_.pop_back();
 }

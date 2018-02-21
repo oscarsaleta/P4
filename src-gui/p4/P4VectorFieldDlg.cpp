@@ -41,26 +41,26 @@ P4VectorFieldDlg::P4VectorFieldDlg(std::shared_ptr<P4FindDlg> finddlg)
 
     std::unique_ptr<QLabel> p4title{
         std::make_unique<QLabel>("Specify the vector field:", this)};
-    p4title->setFont(*(g_p4app->titleFont_));
+    p4title->setFont(*(gP4app->titleFont_));
 
-    edt_xprime_ = std::make_unique<QLineEdit>(g_ThisVF->xdot_, this);
+    edt_xprime_ = std::make_unique<QLineEdit>(gThisVF->xdot_, this);
     std::unique_ptr<QLabel> xlabel{std::make_unique<QLabel>("&x' = ", this)};
-    xlabel->setFont(*(g_p4app->boldFont_));
+    xlabel->setFont(*(gP4app->boldFont_));
     xlabel->setBuddy(edt_xprime_);
 
-    edt_yprime_ = std::make_unique<QLineEdit>(g_ThisVF->ydot_, this);
+    edt_yprime_ = std::make_unique<QLineEdit>(gThisVF->ydot_, this);
     std::unique_ptr<QLabel> ylabel{std::make_unique<QLabel>("&y' = ", this)};
-    ylabel->setFont(*(g_p4app->boldFont_));
+    ylabel->setFont(*(gP4app->boldFont_));
     ylabel->setBuddy(edt_yprime_);
 
-    edt_gcf_ = std::make_unique<QLineEdit>(g_ThisVF->gcf_, this);
+    edt_gcf_ = std::make_unique<QLineEdit>(gThisVF->gcf_, this);
     std::unique_ptr<QLabel> glabel{std::make_unique<QLabel>("&Gcf: ", this)};
-    glabel->setFont(*(g_p4app->boldFont_));
+    glabel->setFont(*(gP4app->boldFont_));
     glabel->setBuddy(edt_gcf_);
 
     std::unique_ptr<QLabel> plabel{
         std::make_unique<QLabel>("Number of Parameters: ", this)};
-    plabel->setFont(*(g_p4app->boldFont_));
+    plabel->setFont(*(gP4app->boldFont_));
 
     spin_numparams_ = std::make_unique<QSpinBox>(this);
     spin_numparams_->setMinimum(0);
@@ -105,17 +105,17 @@ P4VectorFieldDlg::P4VectorFieldDlg(std::shared_ptr<P4FindDlg> finddlg)
 
     setLayout(mainLayout_);
 
-    if (g_ThisVF->numparams_ != 0) {
-        if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
+    if (gThisVF->numparams_ != 0) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
-            sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+            sb_params_->setRange(0, gThisVF->numparams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
         params_ = std::make_unique<P4VFParams>(this, sb_params_);
         paramLayout_->addWidget(params_);
-        if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
             connect(sb_params_, &QScrollBar::valueChanged, params_,
                     &P4VFParams::paramsSliderChanged);
@@ -123,10 +123,10 @@ P4VectorFieldDlg::P4VectorFieldDlg(std::shared_ptr<P4FindDlg> finddlg)
                     &P4VFParams::paramsSliderChanged);
         }
         params_->show();
-        if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN)
             sb_params_->show();
 
-        spin_numparams_->setValue(g_ThisVF->numparams_);
+        spin_numparams_->setValue(gThisVF->numparams_);
     }
 
     // connections
@@ -138,7 +138,7 @@ P4VectorFieldDlg::P4VectorFieldDlg(std::shared_ptr<P4FindDlg> finddlg)
 
 void P4VectorFieldDlg::numParamsChanged(int val)
 {
-    if (val >= 0 && val <= MAXNUMPARAMS && val != g_ThisVF->numparams_) {
+    if (val >= 0 && val <= MAXNUMPARAMS && val != gThisVF->numparams_) {
         delete params_;
         params_ = nullptr;
 
@@ -148,15 +148,15 @@ void P4VectorFieldDlg::numParamsChanged(int val)
         }
 
         if (val != 0) {
-            g_ThisVF->numparams_ = val;
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+            gThisVF->numparams_ = val;
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
             if (val > MAXNUMPARAMSSHOWN) {
                 sb_params_ = new QScrollBar(Qt::Vertical, this);
                 sb_params_->setRange(0,
-                                     g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+                                     gThisVF->numparams_ - MAXNUMPARAMSSHOWN);
                 sb_params_->setSingleStep(1);
                 sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
             } else
@@ -175,11 +175,11 @@ void P4VectorFieldDlg::numParamsChanged(int val)
             if (val > MAXNUMPARAMSSHOWN)
                 sb_params_->show();
         } else {
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
-            g_ThisVF->numparams_ = val;
+            gThisVF->numparams_ = val;
         }
     }
 }
@@ -207,14 +207,14 @@ void P4VectorFieldDlg::getDataFromDlg(void)
     ydot = ydot.trimmed();
     gcf = gcf.trimmed();
 
-    if (xdot.compare(g_ThisVF->xdot_) || ydot.compare(g_ThisVF->ydot_) ||
-        gcf.compare(g_ThisVF->gcf_)) {
-        g_ThisVF->xdot_ = xdot;
-        g_ThisVF->ydot_ = ydot;
-        g_ThisVF->gcf_ = gcf;
-        if (g_ThisVF->changed_ == false) {
-            g_ThisVF->changed_ = true;
-            g_p4app->signalChanged();
+    if (xdot.compare(gThisVF->xdot_) || ydot.compare(gThisVF->ydot_) ||
+        gcf.compare(gThisVF->gcf_)) {
+        gThisVF->xdot_ = xdot;
+        gThisVF->ydot_ = ydot;
+        gThisVF->gcf_ = gcf;
+        if (gThisVF->changed_ == false) {
+            gThisVF->changed_ = true;
+            gP4app->signalChanged();
         }
     }
     if (params_ != nullptr) {
@@ -224,10 +224,10 @@ void P4VectorFieldDlg::getDataFromDlg(void)
 
 void P4VectorFieldDlg::updateDlgData(void)
 {
-    edt_xprime_->setText(g_ThisVF->xdot_);
-    edt_yprime_->setText(g_ThisVF->ydot_);
-    edt_gcf_->setText(g_ThisVF->gcf_);
-    spin_numparams_->setValue(g_ThisVF->numparams_);
+    edt_xprime_->setText(gThisVF->xdot_);
+    edt_yprime_->setText(gThisVF->ydot_);
+    edt_gcf_->setText(gThisVF->gcf_);
+    spin_numparams_->setValue(gThisVF->numparams_);
 
     if (params_ != nullptr) {
         if (!params_->updateDlgData()) {
@@ -236,10 +236,10 @@ void P4VectorFieldDlg::updateDlgData(void)
         }
     }
 
-    if (g_ThisVF->numparams_ != 0 && params_ == nullptr) {
-        if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
+    if (gThisVF->numparams_ != 0 && params_ == nullptr) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             sb_params_ = new QScrollBar(Qt::Vertical, this);
-            sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
+            sb_params_->setRange(0, gThisVF->numparams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         } else
@@ -247,7 +247,7 @@ void P4VectorFieldDlg::updateDlgData(void)
 
         params_ = new P4VFParams(this, sb_params_);
         paramLayout_->addWidget(params_);
-        if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
             connect(sb_params_, &QScrollBar::valueChanged, params_,
                     &P4VFParams::paramsSliderChanged);
@@ -255,7 +255,7 @@ void P4VectorFieldDlg::updateDlgData(void)
                     &P4VFParams::paramsSliderChanged);
         }
         params_->show();
-        if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN)
             sb_params_->show();
     }
 }

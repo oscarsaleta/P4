@@ -30,8 +30,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-QString g_CurrentSingularityInfo[4]{"", "", "", ""};
-double g_CurrentSeparatriceEpsilon{0};
+QString gCurrentSingularityInfo[4]{"", "", "", ""};
+double gCurrentSeparatriceEpsilon{0};
 
 P4SepDlg::P4SepDlg(std::shared_ptr<P4PlotWnd> plt,
                    std::shared_ptr<P4WinSphere> sp)
@@ -124,12 +124,12 @@ void P4SepDlg::setInitialPoint()
     btn_selectnext_->setEnabled(true);
     btn_intnext_->setEnabled(true);
 
-    lbl_info_0_->setText(g_CurrentSingularityInfo[0]);
-    lbl_info_1_->setText(g_CurrentSingularityInfo[1]);
-    lbl_info_2_->setText(g_CurrentSingularityInfo[2]);
-    lbl_info_3_->setText(g_CurrentSingularityInfo[3]);
+    lbl_info_0_->setText(gCurrentSingularityInfo[0]);
+    lbl_info_1_->setText(gCurrentSingularityInfo[1]);
+    lbl_info_2_->setText(gCurrentSingularityInfo[2]);
+    lbl_info_3_->setText(gCurrentSingularityInfo[3]);
 
-    buf.sprintf("%g", g_CurrentSeparatriceEpsilon);
+    buf.sprintf("%g", gCurrentSeparatriceEpsilon);
 
     edt_epsilon_->setText(buf);
     show();
@@ -170,7 +170,7 @@ void P4SepDlg::onbtn_intnext()
     btn_intnext_->setEnabled(true);
 
     mainSphere_->prepareDrawing();
-    (*plot_next_sep)(mainSphere_, g_VFResults.selected_sep_vfindex_);
+    (*plot_next_sep)(mainSphere_, gVFResults.selected_sep_vfindex_);
     mainSphere_->finishDrawing();
 }
 
@@ -188,7 +188,7 @@ void P4SepDlg::onbtn_start()
     btn_intnext_->setEnabled(true);
 
     mainSphere_->prepareDrawing();
-    (*start_plot_sep)(mainSphere_, g_VFResults.selected_sep_vfindex_);
+    (*start_plot_sep)(mainSphere_, gVFResults.selected_sep_vfindex_);
     mainSphere_->finishDrawing();
 }
 
@@ -270,7 +270,7 @@ void P4SepDlg::onepsilon_enter()
         return;
     }
 
-    g_CurrentSeparatriceEpsilon = eps;
+    gCurrentSeparatriceEpsilon = eps;
     s.sprintf("%g", (float)eps);
     edt_epsilon_->setText(s);
 

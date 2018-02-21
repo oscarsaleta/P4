@@ -188,13 +188,13 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
             dir = 1;
             psphere_to_R2(p0, p1, p2, y);
             rk78(eval_r_vec_field, y, hhi0, h_min, h_max,
-                 g_VFResults.config_tolerance_);
-            if (g_ThisVF->getVFIndex_R2(y) == g_VFResults.K_)
+                 gVFResults.config_tolerance_);
+            if (gThisVF->getVFIndex_R2(y) == gVFResults.K_)
                 break;
-            h_min = g_VFResults.config_branchhmi;
+            h_min = gVFResults.config_branchhmi;
             h_max /= 2;
             hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
-            if (fabs(hhi0) < h_min || h_max < g_VFResults.config_branchhmi) {
+            if (fabs(hhi0) < h_min || h_max < gVFResults.config_branchhmi) {
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;
@@ -203,7 +203,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
         }
         hhi = hhi0;
         R2_to_psphere(y[0], y[1], pcoord);
-        color = findSepColor2(g_VFResults.gcf_, type, y);
+        color = findSepColor2(gVFResults.gcf_, type, y);
     } else {  // infinite region (annulus)
         theta = atan2(fabs(p1), fabs(p0));
         if ((theta < PI_DIV4) && (theta > -PI_DIV4)) {
@@ -214,19 +214,19 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                     dir = 1;
                     psphere_to_U1(p0, p1, p2, y);
                     rk78(eval_U1_vec_field, y, hhi0, h_min, h_max,
-                         g_VFResults.config_tolerance_);
-                    if (y[1] >= 0 || !g_VFResults.singinf_) {
-                        if (g_ThisVF->getVFIndex_U1(y) == g_VFResults.K_)
+                         gVFResults.config_tolerance_);
+                    if (y[1] >= 0 || !gVFResults.singinf_) {
+                        if (gThisVF->getVFIndex_U1(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (g_ThisVF->getVFIndex_VV1(y) == g_VFResults.K_)
+                        if (gThisVF->getVFIndex_VV1(y) == gVFResults.K_)
                             break;
                     }
-                    h_min = g_VFResults.config_branchhmi;
+                    h_min = gVFResults.config_branchhmi;
                     h_max /= 2;
                     hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
                     if (fabs(hhi0) < h_min ||
-                        h_max < g_VFResults.config_branchhmi) {
+                        h_max < gVFResults.config_branchhmi) {
                         hhi0 = h_min;
                         if (hhi < 0)
                             hhi0 = -hhi0;
@@ -234,20 +234,20 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                     }
                 }
                 hhi = hhi0;
-                if (y[1] >= 0 || !g_VFResults.singinf_) {
+                if (y[1] >= 0 || !gVFResults.singinf_) {
                     U1_to_psphere(y[0], y[1], pcoord);
                     color = findSepColor2(
-                        g_VFResults.vf_[g_VFResults.K_].gcf_U1_, type, y);
+                        gVFResults.vf_[gVFResults.K_].gcf_U1_, type, y);
                 } else {
                     VV1_to_psphere(y[0], y[1], pcoord);
-                    if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1) {
+                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1) {
                         dir = -1;
                         hhi = -hhi;
                         type = change_type(type);
                     }
                     psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], y);
                     color = findSepColor2(
-                        g_VFResults.vf_[g_VFResults.K_].gcf_V1_, type, y);
+                        gVFResults.vf_[gVFResults.K_].gcf_V1_, type, y);
                     dashes = false;
                 }
             } else {
@@ -257,19 +257,19 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                     dir = 1;
                     psphere_to_V1(p0, p1, p2, y);
                     rk78(eval_V1_vec_field, y, hhi0, h_min, h_max,
-                         g_VFResults.config_tolerance_);
-                    if (y[1] >= 0 || !g_VFResults.singinf_) {
-                        if (g_ThisVF->getVFIndex_V1(y) == g_VFResults.K_)
+                         gVFResults.config_tolerance_);
+                    if (y[1] >= 0 || !gVFResults.singinf_) {
+                        if (gThisVF->getVFIndex_V1(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (g_ThisVF->getVFIndex_UU1(y) == g_VFResults.K_)
+                        if (gThisVF->getVFIndex_UU1(y) == gVFResults.K_)
                             break;
                     }
-                    h_min = g_VFResults.config_branchhmi;
+                    h_min = gVFResults.config_branchhmi;
                     h_max /= 2;
                     hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
                     if (fabs(hhi0) < h_min ||
-                        h_max < g_VFResults.config_branchhmi) {
+                        h_max < gVFResults.config_branchhmi) {
                         hhi0 = h_min;
                         if (hhi < 0)
                             hhi0 = -hhi0;
@@ -277,20 +277,20 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                     }
                 }
                 hhi = hhi0;
-                if (y[1] >= 0 || !g_VFResults.singinf_) {
+                if (y[1] >= 0 || !gVFResults.singinf_) {
                     V1_to_psphere(y[0], y[1], pcoord);
                     color = findSepColor2(
-                        g_VFResults.vf_[g_VFResults.K_].gcf_V1_, type, y);
+                        gVFResults.vf_[gVFResults.K_].gcf_V1_, type, y);
                 } else {
                     UU1_to_psphere(y[0], y[1], pcoord);
-                    if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1) {
+                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1) {
                         dir = -1;
                         hhi = -hhi;
                         type = change_type(type);
                     }
                     psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], y);
                     color = findSepColor2(
-                        g_VFResults.vf_[g_VFResults.K_].gcf_U1_, type, y);
+                        gVFResults.vf_[gVFResults.K_].gcf_U1_, type, y);
                     dashes = false;
                 }
             }
@@ -299,19 +299,19 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
             while (1) {
                 psphere_to_U2(p0, p1, p2, y);
                 rk78(eval_U2_vec_field, y, hhi0, h_min, h_max,
-                     g_VFResults.config_tolerance_);
-                if (y[1] >= 0 || !g_VFResults.singinf_) {
-                    if (g_ThisVF->getVFIndex_U2(y) == g_VFResults.K_)
+                     gVFResults.config_tolerance_);
+                if (y[1] >= 0 || !gVFResults.singinf_) {
+                    if (gThisVF->getVFIndex_U2(y) == gVFResults.K_)
                         break;
                 } else {
-                    if (g_ThisVF->getVFIndex_VV2(y) == g_VFResults.K_)
+                    if (gThisVF->getVFIndex_VV2(y) == gVFResults.K_)
                         break;
                 }
-                h_min = g_VFResults.config_branchhmi;
+                h_min = gVFResults.config_branchhmi;
                 h_max /= 2;
                 hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
                 if (fabs(hhi0) < h_min ||
-                    h_max < g_VFResults.config_branchhmi) {
+                    h_max < gVFResults.config_branchhmi) {
                     hhi0 = h_min;
                     if (hhi < 0)
                         hhi0 = -hhi0;
@@ -319,19 +319,19 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 }
             }
             hhi = hhi0;
-            if (y[1] >= 0 || !g_VFResults.singinf_) {
+            if (y[1] >= 0 || !gVFResults.singinf_) {
                 U2_to_psphere(y[0], y[1], pcoord);
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
                                       type, y);
             } else {
                 VV2_to_psphere(y[0], y[1], pcoord);
-                if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1) {
+                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1) {
                     dir = -1;
                     hhi = -(hhi);
                     type = change_type(type);
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], y);
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
                                       type, y);
                 dashes = false;
             }
@@ -344,19 +344,19 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 // TODO: comprovar tots els rk78 pq hhi0 era hhi al codi
                 // original pero sembla que hauria de ferse servir hhi0
                 rk78(eval_V2_vec_field, y, hhi0, h_min, h_max,
-                     g_VFResults.config_tolerance_);
-                if (y[1] >= 0 || !g_VFResults.singinf_) {
-                    if (g_ThisVF->getVFIndex_V2(y) == g_VFResults.K_)
+                     gVFResults.config_tolerance_);
+                if (y[1] >= 0 || !gVFResults.singinf_) {
+                    if (gThisVF->getVFIndex_V2(y) == gVFResults.K_)
                         break;
                 } else {
-                    if (g_ThisVF->getVFIndex_UU2(y) == g_VFResults.K_)
+                    if (gThisVF->getVFIndex_UU2(y) == gVFResults.K_)
                         break;
                 }
-                h_min = g_VFResults.config_branchhmi;
+                h_min = gVFResults.config_branchhmi;
                 h_max /= 2;
                 hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
                 if (fabs(hhi0) < h_min ||
-                    h_max < g_VFResults.config_branchhmi) {
+                    h_max < gVFResults.config_branchhmi) {
                     hhi0 = h_min;
                     if (hhi < 0)
                         hhi0 = -hhi0;
@@ -364,19 +364,19 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 }
             }
             hhi = hhi0;
-            if (y[1] >= 0 || !g_VFResults.singinf_) {
+            if (y[1] >= 0 || !gVFResults.singinf_) {
                 V2_to_psphere(y[0], y[1], pcoord);
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
                                       type, y);
             } else {
                 UU2_to_psphere(y[0], y[1], pcoord);
-                if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1) {
+                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1) {
                     dir = -1;
                     hhi = -(hhi);
                     type = change_type(type);
                 }
                 psphere_to_U2(pcoord[0], pcoord[1], pcoord[2], y);
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
                                       type, y);
                 dashes = false;
             }
@@ -404,13 +404,13 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
             y[0] = p1;
             y[1] = p2;
             rk78(eval_r_vec_field, y, hhi0, h_min, h_max,
-                 g_VFResults.config_tolerance_);
-            if (g_ThisVF->getVFIndex_R2(y) == g_VFResults.K_)
+                 gVFResults.config_tolerance_);
+            if (gThisVF->getVFIndex_R2(y) == gVFResults.K_)
                 break;
-            h_min = g_VFResults.config_branchhmi;
+            h_min = gVFResults.config_branchhmi;
             h_max /= 2;
             hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
-            if (fabs(hhi0) < h_min || h_max < g_VFResults.config_branchhmi) {
+            if (fabs(hhi0) < h_min || h_max < gVFResults.config_branchhmi) {
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;
@@ -419,7 +419,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
         }
         hhi = hhi0;
         R2_to_plsphere(y[0], y[1], pcoord);
-        color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_, type, y);
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_, type, y);
     } else {
         hhi0 = hhi;
         while (1) {
@@ -428,15 +428,15 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
             y[0] = p1;
             y[1] = p2;
             rk78(eval_vec_field_cyl, y, hhi0, h_min, h_max,
-                 g_VFResults.config_tolerance_);
+                 gVFResults.config_tolerance_);
             if (y[1] >= TWOPI)
                 y[1] -= TWOPI;
-            if (g_ThisVF->getVFIndex_cyl(y) == g_VFResults.K_)
+            if (gThisVF->getVFIndex_cyl(y) == gVFResults.K_)
                 break;
-            h_min = g_VFResults.config_branchhmi;
+            h_min = gVFResults.config_branchhmi;
             h_max /= 2;
             hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
-            if (fabs(hhi0) < h_min || h_max < g_VFResults.config_branchhmi) {
+            if (fabs(hhi0) < h_min || h_max < gVFResults.config_branchhmi) {
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;
@@ -445,7 +445,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
         }
         hhi = hhi0;
         cylinder_to_plsphere(y[0], y[1], pcoord);
-        color = findSepColor3(g_VFResults.vf_[g_VFResults.K_].gcf_C_, type, y);
+        color = findSepColor3(gVFResults.vf_[gVFResults.K_].gcf_C_, type, y);
     }
 }
 
@@ -465,7 +465,7 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_sep(
     int color, dashes;
     double hhi;
     double pcoord2[3];
-    double h_min{g_VFResults.config_hmi_}, h_max{g_VFResults.config_hma_};
+    double h_min{gVFResults.config_hmi_}, h_max{gVFResults.config_hma_};
     p4orbits::orbits_points last_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
 
@@ -477,9 +477,9 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_sep(
     if (!prepareVfForIntegration(pcoord))
         return {};
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
+    if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
         MATHFUNC(change_dir)(pcoord))
-        hhi = -g_VFResults.config_step_ * dir;
+        hhi = -gVFResults.config_step_ * dir;
     else
         hhi = static_cast<double>(dir) * step;
 
@@ -494,11 +494,11 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_sep(
 
         copy_x_into_y(pcoord, last_orbit.pcoord);
         last_orbit.color = color;
-        last_orbit.dashes = dashes && g_VFResults.config_dashes_;
+        last_orbit.dashes = dashes && gVFResults.config_dashes_;
         last_orbit.dir = d * h;
         last_orbit.type = type;
 
-        if (dashes && g_VFResults.config_dashes_)
+        if (dashes && gVFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
             (*plot_p)(spherewnd, pcoord, color);
@@ -634,7 +634,7 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
 
     /* if we have a line of singularities at infinity then we have to change
     the chart if the chart is V1 or V2 */
-    if (g_VFResults.vf_[g_VFResults.K_].singinf_) {
+    if (gVFResults.vf_[gVFResults.K_].singinf_) {
         if (chart == CHART_V1)
             chart = CHART_U1;
         else if (chart == CHART_V2)
@@ -650,31 +650,31 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
     switch (chart) {
     case CHART_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_, sep1.type,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_, sep1.type,
                               point);
         break;
     case CHART_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U1_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U1_,
                               sep1.type, point);
         break;
     case CHART_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
-        if ((g_VFResults.p_ == 1) && (g_VFResults.q_ == 1))
+        if ((gVFResults.p_ == 1) && (gVFResults.q_ == 1))
             psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V1_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
                               sep1.type, point);
         break;
     case CHART_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
                               sep1.type, point);
         break;
     case CHART_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
-        if ((g_VFResults.p_ == 1) && (g_VFResults.q_ == 1))
+        if ((gVFResults.p_ == 1) && (gVFResults.q_ == 1))
             psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
                               sep1.type, point);
         break;
     default:
@@ -723,7 +723,7 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
         MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord2);
         break;
     case CHART_U1:
-        if (point[1] >= 0 || !g_VFResults.vf_[g_VFResults.K_].singinf_)
+        if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_)
             MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord2);
         else
             VV1_to_psphere(point[0], point[1], pcoord2);
@@ -732,7 +732,7 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
         MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord2);
         break;
     case CHART_U2:
-        if (point[1] >= 0 || !g_VFResults.vf_[g_VFResults.K_].singinf_)
+        if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_)
             MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord2);
         else
             VV2_to_psphere(point[0], point[1], pcoord2);
@@ -741,7 +741,7 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
         MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord2);
         break;
     }
-    if (g_ThisVF->getVFIndex_sphere(pcoord2) != vfindex)
+    if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex)
         return {};
 
     // end of P5 addition
@@ -767,11 +767,11 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
             prepok = prepareVfForIntegration(pcoord);
             if (!prepok)
                 break;
-            color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_,
                                   sep1.type, point);
             break;
         case CHART_U1:
-            if (point[1] >= 0 || !g_VFResults.vf_[g_VFResults.K_].singinf_) {
+            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 prepok = prepareVfForIntegration(pcoord);
                 if (!prepok)
@@ -779,11 +779,11 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = sep1.type;
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U1_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U1_,
                                       type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
@@ -793,18 +793,18 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
                 prepok = prepareVfForIntegration(pcoord);
                 if (!prepok)
                     break;
-                if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
+                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
                     type = change_type(sep1.type);
                 else
                     type = sep1.type;
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V1_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
                                       type, point);
             }
             break;
@@ -813,13 +813,13 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
             prepok = prepareVfForIntegration(pcoord);
             if (!prepok)
                 break;
-            if (!g_VFResults.plweights_)
+            if (!gVFResults.plweights_)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V1_,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
                                   sep1.type, point);
             break;
         case CHART_U2:
-            if (point[1] >= 0 || !g_VFResults.vf_[g_VFResults.K_].singinf_) {
+            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 prepok = prepareVfForIntegration(pcoord);
                 if (!prepok)
@@ -827,11 +827,11 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = sep1.type;
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_U2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
                                       type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
@@ -841,15 +841,15 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-                if (g_VFResults.vf_[g_VFResults.K_].dir_vec_field_ == 1)
+                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
                     type = change_type(sep1.type);
                 else
                     type = sep1.type;
-                color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
                                       type, point);
             }
             break;
@@ -858,9 +858,9 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
             prepok = prepareVfForIntegration(pcoord);
             if (!prepok)
                 break;
-            if (!g_VFResults.plweights_)
+            if (!gVFResults.plweights_)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(g_VFResults.vf_[g_VFResults.K_].gcf_V2_,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
                                   sep1.type, point);
             break;
         default:
@@ -870,7 +870,7 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
 
         copy_x_into_y(pcoord, new_orbit.pcoord);
         new_orbit.color = color;
-        new_orbit.dashes = dashes && g_VFResults.config_dashes_;
+        new_orbit.dashes = dashes && gVFResults.config_dashes_;
         new_orbit.dir = dir;
         new_orbit.type = type;
         if (new_orbit.dashes)
@@ -885,9 +885,9 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
             break;
     }
 
-    auto lastpoints = integrate_sep(spherewnd, pcoord, g_VFResults.config_step_,
+    auto lastpoints = integrate_sep(spherewnd, pcoord, gVFResults.config_step_,
                                     orbit_result.back().dir, type,
-                                    g_VFResults.config_intpoints_);
+                                    gVFResults.config_intpoints_);
     if (!lastpoints.empty())
         orbit_result.insert(std::end(orbit_result), std::begin(lastpoints),
                             std::end(lastpoints));
@@ -902,11 +902,11 @@ std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
 // it will be started; otherwhise it will be continued.
 void plot_all_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
-    if (!g_VFResults.vf_.empty()) {
-        for (int i = 0; i < g_ThisVF->numVF_; i++) {
-            plot_all_saddle_sep(spherewnd, i, g_VFResults.vf_[i].saddlePoints_);
-            plot_all_se_sep(spherewnd, i, g_VFResults.vf_[i].sePoints_);
-            plot_all_de_sep(spherewnd, i, g_VFResults.vf_[i].dePoints_);
+    if (!gVFResults.vf_.empty()) {
+        for (int i = 0; i < gThisVF->numVF_; i++) {
+            plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i].saddlePoints_);
+            plot_all_se_sep(spherewnd, i, gVFResults.vf_[i].sePoints_);
+            plot_all_de_sep(spherewnd, i, gVFResults.vf_[i].dePoints_);
         }
     }
 }

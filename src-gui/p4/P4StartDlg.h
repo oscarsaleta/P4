@@ -114,4 +114,4 @@ class P4StartDlg : public QWidget
     bool canOpenPlot();
 };
 
-extern std::unique_ptr<P4StartDlg> g_p4StartDlg;
+extern std::unique_ptr<P4StartDlg> gP4startDlg;

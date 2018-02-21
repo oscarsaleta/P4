@@ -41,7 +41,7 @@ P4IntParamsDlg::P4IntParamsDlg()
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     std::unique_ptr<QLabel> kindlabel{new QLabel("Vector Field: ", this)};
-    kindlabel->setFont(*(g_p4app->boldFont_));
+    kindlabel->setFont(*(gP4app->boldFont_));
     std::unique_ptr<QButtonGroup> btngrp1{new QButtonGroup(this)};
     btn_org_.reset(new QRadioButton("Original", this));
     btn_red_.reset(new QRadioButton("Reduced", this));
@@ -49,7 +49,7 @@ P4IntParamsDlg::P4IntParamsDlg()
     btngrp1->addButton(btn_red_);
 
     std::unique_ptr<QLabel> typelabel{new QLabel("Appearance: ", this)};
-    typelabel->setFont(*(g_p4app->boldFont_));
+    typelabel->setFont(*(gP4app->boldFont_));
     std::unique_ptr<QButtonGroup> btngrp2{new QButtonGroup(this)};
     btn_dots_.reset(new QRadioButton("Dots", this));
     btn_dashes_.reset(new QRadioButton("Dashes", this));
@@ -57,31 +57,31 @@ P4IntParamsDlg::P4IntParamsDlg()
     btngrp2->addButton(btn_dashes_);
 
     lbl_stepsize_.reset(new QLabel("Step Size:", this));
-    lbl_stepsize_->setFont(*(g_p4app->boldFont_));
+    lbl_stepsize_->setFont(*(gP4app->boldFont_));
     edt_stepsize_.reset(new QLineEdit("0.01", this));
 
     lbl0_curstep_.reset(new QLabel("Current Step Size:", this));
-    lbl0_curstep_->setFont(*(g_p4app->boldFont_));
+    lbl0_curstep_->setFont(*(gP4app->boldFont_));
     lbl_curstep_.reset(new QLabel("0.01", this));
 
     lbl_maxstep_.reset(new QLabel("Max Step Size:", this));
-    lbl_maxstep_->setFont(*(g_p4app->boldFont_));
+    lbl_maxstep_->setFont(*(gP4app->boldFont_));
     edt_maxstep_.reset(new QLineEdit("0.1", this));
 
     lbl_minstep_.reset(new QLabel("Min Step Size:", this));
-    lbl_minstep_->setFont(*(g_p4app->boldFont_));
+    lbl_minstep_->setFont(*(gP4app->boldFont_));
     edt_minstep_.reset(new QLineEdit("1e-06", this));
 
     lbl_branchminstep_.reset(new QLabel("Branching Step Size:", this));
-    lbl_branchminstep_->setFont(*(g_p4app->boldFont_));
+    lbl_branchminstep_->setFont(*(gP4app->boldFont_));
     edt_branchminstep_.reset(new QLineEdit("1e-03", this));
 
     lbl_tolerance_.reset(new QLabel("Tolerance:", this));
-    lbl_tolerance_->setFont(*(g_p4app->boldFont_));
+    lbl_tolerance_->setFont(*(gP4app->boldFont_));
     edt_tolerance_.reset(new QLineEdit("1e-06", this));
 
     std::unique_ptr<QLabel> lbl_numpoints{new QLabel("# Points:", this)};
-    lbl_numpoints->setFont(*(g_p4app->boldFont_));
+    lbl_numpoints->setFont(*(gP4app->boldFont_));
     spin_numpoints_.reset(new QSpinBox(this));
     spin_numpoints_->setMinimum(MIN_INTPOINTS);
     spin_numpoints_->setMaximum(MAX_INTPOINTS);
@@ -247,32 +247,32 @@ void P4IntParamsDlg::getDataFromDlg(void)
     if (!changed_)
         return;
 
-    g_VFResults.config_kindvf_ =
+    gVFResults.config_kindvf_ =
         (btn_org_->isChecked()) ? INTCONFIG_ORIGINAL : INTCONFIG_REDUCED;
-    g_VFResults.config_dashes_ = (btn_dashes_->isChecked()) ? true : false;
+    gVFResults.config_dashes_ = (btn_dashes_->isChecked()) ? true : false;
 
     changed_ = false;
-    changed_ |= readFloatField(edt_tolerance_, g_VFResults.config_tolerance_,
+    changed_ |= readFloatField(edt_tolerance_, gVFResults.config_tolerance_,
                                DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
-    changed_ |= readFloatField(edt_minstep_, g_VFResults.config_hmi_,
+    changed_ |= readFloatField(edt_minstep_, gVFResults.config_hmi_,
                                DEFAULT_HMI, MIN_HMI, MAX_HMI);
-    changed_ |= readFloatField(edt_maxstep_, g_VFResults.config_hma_,
+    changed_ |= readFloatField(edt_maxstep_, gVFResults.config_hma_,
                                DEFAULT_HMA, MIN_HMA, MAX_HMA);
-    changed |= ReadFloatField(edt_branchminstep_, g_VFResults.config_branchhmi_,
+    changed |= ReadFloatField(edt_branchminstep_, gVFResults.config_branchhmi_,
                               DEFAULT_BRANCHHMI, MIN_BRANCHHMI, MAX_BRANCHHMI);
-    changed_ |= readFloatField(edt_stepsize_, g_VFResults.config_step_,
+    changed_ |= readFloatField(edt_stepsize_, gVFResults.config_step_,
                                DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
 
-    g_VFResults.config_intpoints_ = spin_numpoints_->value();
+    gVFResults.config_intpoints_ = spin_numpoints_->value();
 
     if (!changed_) {
-        if (g_VFResults.config_step_ < g_VFResults.config_hmi_ ||
-            g_VFResults.config_step_ > g_VFResults.config_hma_) {
+        if (gVFResults.config_step_ < gVFResults.config_hmi_ ||
+            gVFResults.config_step_ > gVFResults.config_hma_) {
             // error
-            g_VFResults.config_step_ = DEFAULT_STEPSIZE;
-            if (g_VFResults.config_step_ < g_VFResults.config_hmi_ ||
-                g_VFResults.config_step_ > g_VFResults.config_hma_) {
-                g_VFResults.config_step_ = g_VFResults.config_hma_;
+            gVFResults.config_step_ = DEFAULT_STEPSIZE;
+            if (gVFResults.config_step_ < gVFResults.config_hmi_ ||
+                gVFResults.config_step_ > gVFResults.config_hma_) {
+                gVFResults.config_step_ = gVFResults.config_hma_;
             }
             changed_ = true;
             markBad(edt_stepsize_);
@@ -286,38 +286,38 @@ void P4IntParamsDlg::updateDlgData(void)
 
     changed_ = false;
 
-    if (g_VFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
+    if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL)
         btn_org_->toggle();
     else
         btn_red_->toggle();
 
-    if (g_VFResults.config_dashes_)
+    if (gVFResults.config_dashes_)
         btn_dashes_->toggle();
     else
         btn_dots_->toggle();
 
-    buf.sprintf("%g", (float)(g_VFResults.config_step_));
+    buf.sprintf("%g", (float)(gVFResults.config_step_));
     edt_stepsize_->setText(buf);
 
-    buf.sprintf("%g", (float)(g_VFResults.config_currentstep_));
+    buf.sprintf("%g", (float)(gVFResults.config_currentstep_));
     lbl_curstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(g_VFResults.config_hmi_));
+    buf.sprintf("%g", (float)(gVFResults.config_hmi_));
     edt_minstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(g_VFResults.config_branchhmi_));
+    buf.sprintf("%g", (float)(gVFResults.config_branchhmi_));
     edt_branchminstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(g_VFResults.config_hma_));
+    buf.sprintf("%g", (float)(gVFResults.config_hma_));
     edt_maxstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(g_VFResults.config_tolerance_));
+    buf.sprintf("%g", (float)(gVFResults.config_tolerance_));
     edt_tolerance_->setText(buf);
 
-    spin_numpoints_->setValue(g_VFResults.config_intpoints_);
+    spin_numpoints_->setValue(gVFResults.config_intpoints_);
 
-    if (!g_VFResults.gcf_.empty() ||
-        (g_VFResults.singinf_ && g_VFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
+    if (!gVFResults.gcf_.empty() ||
+        (gVFResults.singinf_ && gVFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
         btn_org_->setEnabled(true);
         btn_red_->setEnabled(true);
     } else {
@@ -336,23 +336,23 @@ void P4IntParamsDlg::setCurrentStep(double curstep)
 void P4IntParamsDlg::on_btn_reset(void)
 {
     // maximum step size
-    g_VFResults.config_hma_ = DEFAULT_HMA;
+    gVFResults.config_hma_ = DEFAULT_HMA;
     // minimum step size
-    g_VFResults.config_hmi_ = DEFAULT_HMI;
+    gVFResults.config_hmi_ = DEFAULT_HMI;
     // step size
-    g_VFResults.config_step_ = DEFAULT_STEPSIZE;
+    gVFResults.config_step_ = DEFAULT_STEPSIZE;
     // current step size (during integration)
-    g_VFResults.config_currentstep_ = DEFAULT_STEPSIZE;
+    gVFResults.config_currentstep_ = DEFAULT_STEPSIZE;
     // tolerance
-    g_VFResults.config_tolerance_ = DEFAULT_TOLERANCE;
+    gVFResults.config_tolerance_ = DEFAULT_TOLERANCE;
     // projection in the case of Poincare sphere
-    g_VFResults.config_projection_ = DEFAULT_PROJECTION;
+    gVFResults.config_projection_ = DEFAULT_PROJECTION;
     // number of points to integrate
-    g_VFResults.config_intpoints_ = DEFAULT_INTPOINTS;
+    gVFResults.config_intpoints_ = DEFAULT_INTPOINTS;
     // line style (dashes or points)
-    g_VFResults.config_dashes_ = DEFAULT_LINESTYLE;
+    gVFResults.config_dashes_ = DEFAULT_LINESTYLE;
     // original or reduced VF
-    g_VFResults.config_kindvf_ = DEFAULT_INTCONFIG;
+    gVFResults.config_kindvf_ = DEFAULT_INTCONFIG;
 
     updateDlgData();
 }

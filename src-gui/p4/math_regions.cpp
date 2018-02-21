@@ -31,11 +31,11 @@ bool isInsideRegion_R2(const int *signs, const double *ucoord)
 {
     int k;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(g_VFResults.curves_result_[k].sep, ucoord) < 0) {
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(gVFResults.curves_result_[k].sep, ucoord) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -52,11 +52,11 @@ bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
     int k;
     double v;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(g_VFResults.curves_result_[k].sep, ucoord);
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(gVFResults.curves_result_[k].sep, ucoord);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -82,11 +82,11 @@ bool isInsideRegion_U1(const int *signs, const double *z1z2)
 {
     int k;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(g_VFResults.curves_result_[k].sep_U1, z1z2) < 0) {
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(gVFResults.curves_result_[k].sep_U1, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -103,11 +103,11 @@ bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
     int k;
     double v;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(g_VFResults.curves_result_[k].sep_U1, z1z2);
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(gVFResults.curves_result_[k].sep_U1, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -133,11 +133,11 @@ bool isInsideRegion_V1(const int *signs, const double *z1z2)
 {
     int k;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(g_VFResults.curves_result_[k].sep_V1, z1z2) < 0) {
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(gVFResults.curves_result_[k].sep_V1, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -154,11 +154,11 @@ bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
     int k;
     double v;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(g_VFResults.curves_result_[k].sep_V1, z1z2);
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(gVFResults.curves_result_[k].sep_V1, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -186,11 +186,11 @@ bool isInsideRegion_U2(const int *signs, const double *z1z2)
 {
     int k;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(g_VFResults.curves_result_[k].sep_U2, z1z2) < 0) {
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(gVFResults.curves_result_[k].sep_U2, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -207,11 +207,11 @@ bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
     int k;
     double v;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(g_VFResults.curves_result_[k].sep_U2, z1z2);
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(gVFResults.curves_result_[k].sep_U2, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -238,11 +238,11 @@ bool isInsideRegion_V2(const int *signs, const double *z1z2)
 {
     int k;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(g_VFResults.curves_result_[k].sep_V2, z1z2) < 0) {
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term2(gVFResults.curves_result_[k].sep_V2, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -259,11 +259,11 @@ bool isInsideRegion_V2_epsilon(const int *signs, const double *z1z2,
     int k;
     double v;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(g_VFResults.curves_result_[k].sep_V2, z1z2);
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term2(gVFResults.curves_result_[k].sep_V2, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -291,11 +291,11 @@ bool isInsideRegion_cyl(const int *signs, const double *rtheta)
 {
     int k;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        if (eval_term3(g_VFResults.curves_result_[k].sep_C, rtheta) < 0) {
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        if (eval_term3(gVFResults.curves_result_[k].sep_C, rtheta) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -312,11 +312,11 @@ bool isInsideRegion_cyl_epsilon(const int *signs, const double *rtheta,
     int k;
     double v;
 
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (k = g_ThisVF->numCurves_ - 1; k >= 0; k--) {
-        v = eval_term3(g_VFResults.curves_result_[k].sep_C, rtheta);
+    for (k = gThisVF->numCurves_ - 1; k >= 0; k--) {
+        v = eval_term3(gVFResults.curves_result_[k].sep_C, rtheta);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -344,7 +344,7 @@ bool isInsideRegion_sphere(const int *signs, const double *pcoord)
 {
     double ucoord[2], theta;
 
-    if (!g_VFResults.plweights_) {
+    if (!gVFResults.plweights_) {
         if (pcoord[2] > ZCOORD) {
             psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
             return isInsideRegion_R2(signs, ucoord);
@@ -384,7 +384,7 @@ bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
 {
     double ucoord[2], theta;
 
-    if (!g_VFResults.plweights_) {
+    if (!gVFResults.plweights_) {
         if (pcoord[2] > ZCOORD) {
             psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
             return isInsideRegion_R2_epsilon(signs, ucoord, epsilon);
@@ -430,7 +430,7 @@ bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
 double eval_curve(const p4curveRegions::curveResult &c, const double *pcoord)
 {
     double ucoord[2], theta;
-    if (!g_VFResults.plweights_) {
+    if (!gVFResults.plweights_) {
         if (pcoord[2] > ZCOORD) {
             psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
             return eval_term2(c.sep, ucoord);
@@ -475,8 +475,8 @@ QString describeRegion(double *pcoord)
     double v;
 
     s = "";
-    for (k = 0; k < g_ThisVF->numCurves_; k++) {
-        v = eval_curve(g_VFResults.curves_result_[k], pcoord);
+    for (k = 0; k < gThisVF->numCurves_; k++) {
+        v = eval_curve(gVFResults.curves_result_[k], pcoord);
         if (fabs(v) <= 1.e-8)
             s += "0";
         else if (v < 0)
@@ -493,15 +493,15 @@ QString describeRegion(double *pcoord)
 bool isInTheSameRegion(double *testpt, double *refpos)
 {
     int i;
-    if (refpos == nullptr || g_VFResults.curves_result_.empty())
+    if (refpos == nullptr || gVFResults.curves_result_.empty())
         return true;
 
-    for (i = g_ThisVF->numCurves_ - 1; i >= 0; i--) {
-        if (eval_curve(g_VFResults.curves_result_[i], refpos) < 0) {
-            if (eval_curve(g_VFResults.curves_result_[i], testpt) > 1e-8)
+    for (i = gThisVF->numCurves_ - 1; i >= 0; i--) {
+        if (eval_curve(gVFResults.curves_result_[i], refpos) < 0) {
+            if (eval_curve(gVFResults.curves_result_[i], testpt) > 1e-8)
                 return false;
         } else {
-            if (eval_curve(g_VFResults.curves_result_[i], testpt) < -1e-8)
+            if (eval_curve(gVFResults.curves_result_[i], testpt) < -1e-8)
                 return false;
         }
     }
@@ -513,12 +513,12 @@ bool isInTheSameRegion(double *testpt, double *refpos)
 // ---------------------------------------------------------------------
 bool isARealSingularity(double *pcoord, int vfindex)
 {
-    if (g_VFResults.curves_result_.empty())
+    if (gVFResults.curves_result_.empty())
         return false;
 
-    for (int i = g_ThisVF->numVFRegions_ - 1; i >= 0; i--) {
-        if (g_ThisVF->vfRegions_[i].vfIndex == vfindex)
-            if (isInsideRegion_sphere_epsilon(g_ThisVF->vfRegions_[i].signs,
+    for (int i = gThisVF->numVFRegions_ - 1; i >= 0; i--) {
+        if (gThisVF->vfRegions_[i].vfIndex == vfindex)
+            if (isInsideRegion_sphere_epsilon(gThisVF->vfRegions_[i].signs,
                                               pcoord, 1e-8))
                 return true;
     }

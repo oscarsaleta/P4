@@ -41,10 +41,10 @@ P4ViewDlg::P4ViewDlg(QWidget *parent)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     QLabel *p4title = new QLabel("View Parameters", this);
-    p4title->setFont(*(g_p4app->titleFont_));
+    p4title->setFont(*(gP4app->titleFont_));
 
     QLabel *kindlabel = new QLabel("Type of view: ", this);
-    kindlabel->setFont(*(g_p4app->boldFont_));
+    kindlabel->setFont(*(gP4app->boldFont_));
     QButtonGroup *btngrp = new QButtonGroup(this);
     btn_sphere_ = new QRadioButton("Spherical", this);
     btn_plane_ = new QRadioButton("Planar", this);
@@ -60,25 +60,25 @@ P4ViewDlg::P4ViewDlg(QWidget *parent)
     btngrp->addButton(btn_V2_);
 
     QLabel *lbl_projection_ = new QLabel("Projection:", this);
-    lbl_projection_->setFont(*(g_p4app->boldFont_));
+    lbl_projection_->setFont(*(gP4app->boldFont_));
     edt_projection_ = new QLineEdit("-1", this);
 
     QLabel *lbl_x0_ = new QLabel("Min. x:", this);
-    lbl_x0_->setFont(*(g_p4app->boldFont_));
+    lbl_x0_->setFont(*(gP4app->boldFont_));
     edt_x0_ = new QLineEdit("-1", this);
 
     btn_square_ = new QPushButton("&Square", this);
 
     QLabel *lbl_y0_ = new QLabel("Min. y:", this);
-    lbl_y0_->setFont(*(g_p4app->boldFont_));
+    lbl_y0_->setFont(*(gP4app->boldFont_));
     edt_y0_ = new QLineEdit("-1", this);
 
     QLabel *lbl_x1_ = new QLabel("Max. x", this);
-    lbl_x1_->setFont(*(g_p4app->boldFont_));
+    lbl_x1_->setFont(*(gP4app->boldFont_));
     edt_x1_ = new QLineEdit("1", this);
 
     QLabel *lbl_y1_ = new QLabel("Max. y", this);
-    lbl_y1_->setFont(*(g_p4app->boldFont_));
+    lbl_y1_->setFont(*(gP4app->boldFont_));
     edt_y1_ = new QLineEdit("1", this);
 
 #ifdef TOOLTIPS
@@ -380,61 +380,61 @@ bool P4ViewDlg::getDataFromDlg(void)
 
     changed_ = false;
     if (btn_sphere_->isChecked()) {
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_SPHERE) {
+        if (gVFResults.typeofview_ != TYPEOFVIEW_SPHERE) {
             changed_ = true;
-            g_VFResults.typeofview_ = TYPEOFVIEW_SPHERE;
+            gVFResults.typeofview_ = TYPEOFVIEW_SPHERE;
         }
     }
     if (btn_plane_->isChecked()) {
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             changed_ = true;
-            g_VFResults.typeofview_ = TYPEOFVIEW_PLANE;
+            gVFResults.typeofview_ = TYPEOFVIEW_PLANE;
         }
     }
     if (btn_U1_->isChecked()) {
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_U1) {
+        if (gVFResults.typeofview_ != TYPEOFVIEW_U1) {
             changed_ = true;
-            g_VFResults.typeofview_ = TYPEOFVIEW_U1;
+            gVFResults.typeofview_ = TYPEOFVIEW_U1;
         }
     }
     if (btn_U2_->isChecked()) {
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_U2) {
+        if (gVFResults.typeofview_ != TYPEOFVIEW_U2) {
             changed_ = true;
-            g_VFResults.typeofview_ = TYPEOFVIEW_U2;
+            gVFResults.typeofview_ = TYPEOFVIEW_U2;
         }
     }
     if (btn_V1_->isChecked()) {
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_V1) {
+        if (gVFResults.typeofview_ != TYPEOFVIEW_V1) {
             changed_ = true;
-            g_VFResults.typeofview_ = TYPEOFVIEW_V1;
+            gVFResults.typeofview_ = TYPEOFVIEW_V1;
         }
     }
     if (btn_V2_->isChecked()) {
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_V2) {
+        if (gVFResults.typeofview_ != TYPEOFVIEW_V2) {
             changed_ = true;
-            g_VFResults.typeofview_ = TYPEOFVIEW_V2;
+            gVFResults.typeofview_ = TYPEOFVIEW_V2;
         }
     }
 
-    double oldxmin = g_VFResults.xmin_;
-    double oldymin = g_VFResults.ymin_;
-    double oldxmax = g_VFResults.xmax_;
-    double oldymax = g_VFResults.ymax_;
+    double oldxmin = gVFResults.xmin_;
+    double oldymin = gVFResults.ymin_;
+    double oldxmax = gVFResults.xmax_;
+    double oldymax = gVFResults.ymax_;
 
     changed_ |=
-        readFloatField(edt_projection_, &(g_VFResults.config_projection_),
+        readFloatField(edt_projection_, &(gVFResults.config_projection_),
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
-    changed_ |= readFloatField(edt_x0_, &(g_VFResults.xmin_), X_MIN, MIN_FLOAT,
+    changed_ |= readFloatField(edt_x0_, &(gVFResults.xmin_), X_MIN, MIN_FLOAT,
                                MAX_FLOAT);
-    changed_ |= readFloatField(edt_y0_, &(g_VFResults.ymin_), Y_MIN, MIN_FLOAT,
+    changed_ |= readFloatField(edt_y0_, &(gVFResults.ymin_), Y_MIN, MIN_FLOAT,
                                MAX_FLOAT);
-    changed_ |= readFloatField(edt_x1_, &(g_VFResults.xmax_), X_MAX, MIN_FLOAT,
+    changed_ |= readFloatField(edt_x1_, &(gVFResults.xmax_), X_MAX, MIN_FLOAT,
                                MAX_FLOAT);
-    changed_ |= readFloatField(edt_y1_, &(g_VFResults.ymax_), Y_MAX, MIN_FLOAT,
+    changed_ |= readFloatField(edt_y1_, &(gVFResults.ymax_), Y_MAX, MIN_FLOAT,
                                MAX_FLOAT);
 
-    if (oldxmin != g_VFResults.xmin_ || oldymin != g_VFResults.ymin_ ||
-        oldxmax != g_VFResults.xmax_ || oldymax != g_VFResults.ymax_ ||
+    if (oldxmin != gVFResults.xmin_ || oldymin != gVFResults.ymin_ ||
+        oldxmax != gVFResults.xmax_ || oldymax != gVFResults.ymax_ ||
         changed_) {
         changed_ = false;
         return true;
@@ -449,38 +449,38 @@ void P4ViewDlg::updateDlgData(void)
 
     changed_ = false;
 
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_PLANE)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_PLANE)
         btn_plane_->toggle();
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE)
         btn_sphere_->toggle();
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_U1)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_U1)
         btn_U1_->toggle();
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_U2)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_U2)
         btn_U2_->toggle();
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_V1)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_V1)
         btn_V1_->toggle();
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_V2)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_V2)
         btn_V2_->toggle();
 
-    if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+    if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
         btn_sphere_->setEnabled(false);
     else
         btn_sphere_->setEnabled(true);
 
-    buf.sprintf("%g", (float)(g_VFResults.config_projection_));
+    buf.sprintf("%g", (float)(gVFResults.config_projection_));
     edt_projection_->setText(buf);
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE && !g_VFResults.plweights_)
+    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE && !gVFResults.plweights_)
         edt_projection_->setEnabled(true);
     else
         edt_projection_->setEnabled(false);
 
-    buf.sprintf("%g", (float)(g_VFResults.xmin_));
+    buf.sprintf("%g", (float)(gVFResults.xmin_));
     edt_x0_->setText(buf);
-    buf.sprintf("%g", (float)(g_VFResults.xmax_));
+    buf.sprintf("%g", (float)(gVFResults.xmax_));
     edt_x1_->setText(buf);
-    buf.sprintf("%g", (float)(g_VFResults.ymin_));
+    buf.sprintf("%g", (float)(gVFResults.ymin_));
     edt_y0_->setText(buf);
-    buf.sprintf("%g", (float)(g_VFResults.ymax_));
+    buf.sprintf("%g", (float)(gVFResults.ymax_));
     edt_y1_->setText(buf);
 
     if (btn_sphere_->isChecked() == false) {

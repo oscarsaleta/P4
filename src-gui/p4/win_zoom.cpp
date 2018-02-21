@@ -54,8 +54,8 @@ QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     //    );
     //    setPalette(palette);
 
-    if (g_p4smallicon != nullptr)
-        setWindowIcon(*g_p4smallicon);
+    if (gP4smallIcon != nullptr)
+        setWindowIcon(*gP4smallIcon);
 
     toolBar1 = new QToolBar("ZoomBar1", this);
     toolBar1->setMovable(false);
@@ -75,7 +75,7 @@ QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     connect(actPrint_, &QAction::triggered, this, &QZoomWnd::onBtnPrint);
     toolBar1->addAction(actPrint_);
 
-    connect(g_ThisVF, &QInputVF::saveSignal, this, &QZoomWnd::onSaveSignal);
+    connect(gThisVF, &QInputVF::saveSignal, this, &QZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
     actClose_->setToolTip(
@@ -93,7 +93,7 @@ QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
     sphere_->setupPlot();
 
-    //  if( g_ThisVF->evaluated_ )
+    //  if( gThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait - Zoom");
     //  else
     //      SetP4WindowTitle( this, "Phase Portrait - Zoom (*)" );
@@ -107,7 +107,7 @@ QZoomWnd::~QZoomWnd()
 
 void QZoomWnd::onSaveSignal()
 {
-    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
+    QSettings settings(gThisVF->getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
     settings.beginGroup(QString("QZoomWnd").append(zoomid_));
     settings.setValue("id", zoomid_);
@@ -148,7 +148,7 @@ void QZoomWnd::onBtnClose(void)
     *data = zoomid_;
 
     P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    g_p4app->postEvent(parent_, e1);
+    gP4app->postEvent(parent_, e1);
 }
 
 bool QZoomWnd::close(void)
@@ -157,7 +157,7 @@ bool QZoomWnd::close(void)
     *data = zoomid_;
 
     P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    g_p4app->postEvent(parent_, e1);
+    gP4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
@@ -184,11 +184,11 @@ void QZoomWnd::onBtnPrint(void)
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            g_p4printer->setResolution(res);
-            QPrintDialog dialog(g_p4printer, this);
+            gP4printer->setResolution(res);
+            QPrintDialog dialog(gP4printer, this);
             if (!dialog.exec())
                 return;
-            res = g_p4printer->resolution();
+            res = gP4printer->resolution();
         }
 
         if (result < 0)
@@ -221,7 +221,7 @@ void QZoomWnd::customEvent(QEvent *_e)
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
         P4Event *newe = new P4Event(e->type(), e->data());
-        g_p4app->postEvent(parent_, newe);
+        gP4app->postEvent(parent_, newe);
         return;
     }
 
@@ -236,7 +236,7 @@ void QZoomWnd::hideEvent(QHideEvent *h)
         *data = zoomid_;
 
         P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-        g_p4app->postEvent(parent_, e1);
+        gP4app->postEvent(parent_, e1);
     }
 }
 
@@ -250,7 +250,7 @@ void QZoomWnd::adjustHeight(void)
     w = width();
     h = height() + sphere_->idealh_ - sphere_->h_;
 
-    m = g_p4app->desktop()->height();
+    m = gP4app->desktop()->height();
     m -= m / 10; // occuppy at most 90% of the screen's height
 
     if (h > m) {
@@ -269,7 +269,7 @@ void QZoomWnd::adjustHeight(void)
 
         h += (int)(deltah + 0.5);
         w += (int)(deltaw + 0.5);
-        m = g_p4app->desktop()->width();
+        m = gP4app->desktop()->width();
         m -= m / 10;
         if (w > m)
             w = m; // occupy at most 90 % of the screen's width

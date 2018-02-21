@@ -49,16 +49,16 @@ bool evalGcfStart(std::smart_ptr<P4WinSphere> sp, int dashes, int points,
 {
     int r;
     sp->prepareDrawing();
-    for (r = 0; r < g_ThisVF->numVF_; r++) {
-        if (!g_VFResults.vf_[r].gcf_points_.empty()) {
-            draw_gcf(sp, g_VFResults.vf_[r].gcf_points_, bgColours::CBACKGROUND,
+    for (r = 0; r < gThisVF->numVF_; r++) {
+        if (!gVFResults.vf_[r].gcf_points_.empty()) {
+            draw_gcf(sp, gVFResults.vf_[r].gcf_points_, bgColours::CBACKGROUND,
                      s_GcfDashes);
-            g_VFResults.vf_[r].gcf_points_.clear();
+            gVFResults.vf_[r].gcf_points_.clear();
         }
     }
     sp->finishDrawing();
 
-    if (g_VFResults.plweights_)
+    if (gVFResults.plweights_)
         s_GcfTask = EVAL_GCF_LYP_R2;
     else
         s_GcfTask = EVAL_GCF_R2;
@@ -84,16 +84,16 @@ bool evalGcfContinue(int points, int prec, int memory)
     if (s_GcfTask == EVAL_GCF_FINISHPOINCARE ||
         s_GcfTask == EVAL_GCF_FINISHLYAPUNOV) {
         while (1) {
-            if (++s_GcfVfIndex >= g_ThisVF->numVF_)
+            if (++s_GcfVfIndex >= gThisVF->numVF_)
                 break;
-            if (!g_VFResults.vf_[s_GcfVfIndex].gcf_.empty())
+            if (!gVFResults.vf_[s_GcfVfIndex].gcf_.empty())
                 break;
         }
-        if (s_GcfVfIndex >= g_ThisVF->numVF_)
+        if (s_GcfVfIndex >= gThisVF->numVF_)
             // all gcfs are evaluated
             return true;
         // retrigger new set of tasks
-        if (g_VFResults.plweights_)
+        if (gVFResults.plweights_)
             s_GcfTask = EVAL_GCF_LYP_R2;
         else
             s_GcfTask = EVAL_GCF_R2;
@@ -111,12 +111,12 @@ bool evalGcfFinish(void)  // return false in case an error occured
 {
     int index;
     if (s_GcfTask != EVAL_GCF_NONE) {
-        for (index = 0; index < g_ThisVF->numVF_; index++)
-            g_ThisVF->resampleGcf(index);
+        for (index = 0; index < gThisVF->numVF_; index++)
+            gThisVF->resampleGcf(index);
         s_GcfSphere->prepareDrawing();
-        for (index = 0; index < g_ThisVF->numVF_; index++) {
-            if (!g_VFResults.vf_[index].gcf_points_.empty())
-                draw_gcf(s_GcfSphere, g_VFResults.vf_[index].gcf_points_, CSING,
+        for (index = 0; index < gThisVF->numVF_; index++) {
+            if (!gVFResults.vf_[index].gcf_points_.empty())
+                draw_gcf(s_GcfSphere, gVFResults.vf_[index].gcf_points_, CSING,
                          1);
         }
         s_GcfSphere->finishDrawing();
@@ -135,50 +135,50 @@ bool runTask(int task, int points, int prec, int mem, int index)
 {
     bool value;
 
-    while (!g_VFResults.vf_[index].gcf_.empty()) {
-        if (++index == g_ThisVF->numVF_)
+    while (!gVFResults.vf_[index].gcf_.empty()) {
+        if (++index == gThisVF->numVF_)
             return false;
     }
     s_GcfVfIndex = index;
 
     switch (task) {
     case EVAL_GCF_R2:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_, -1, 1, prec,
+        value = gThisVF->prepareGcf(gVFResults.vf_[index].gcf_, -1, 1, prec,
                                      points);
         break;
     case EVAL_GCF_U1:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U1_, 0, 1, prec,
+        value = gThisVF->prepareGcf(gVFResults.vf_[index].gcf_U1_, 0, 1, prec,
                                      points);
         break;
     case EVAL_GCF_V1:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U1_, -1, 0,
+        value = gThisVF->prepareGcf(gVFResults.vf_[index].gcf_U1_, -1, 0,
                                      prec, points);
         break;
     case EVAL_GCF_U2:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U2_, 0, 1, prec,
+        value = gThisVF->prepareGcf(gVFResults.vf_[index].gcf_U2_, 0, 1, prec,
                                      points);
         break;
     case EVAL_GCF_V2:
-        value = g_ThisVF->prepareGcf(g_VFResults.vf_[index].gcf_U2_, -1, 0,
+        value = gThisVF->prepareGcf(gVFResults.vf_[index].gcf_U2_, -1, 0,
                                      prec, points);
         break;
     case EVAL_GCF_LYP_R2:
-        value = g_ThisVF->prepareGcf_LyapunovR2(prec, points, index);
+        value = gThisVF->prepareGcf_LyapunovR2(prec, points, index);
         break;
     case EVAL_GCF_CYL1:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec,
+        value = gThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec,
                                                  points, index);
         break;
     case EVAL_GCF_CYL2:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
+        value = gThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
                                                  points, index);
         break;
     case EVAL_GCF_CYL3:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
+        value = gThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
                                                  prec, points, index);
         break;
     case EVAL_GCF_CYL4:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
+        value = gThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
                                                  points, index);
         break;
     default:
@@ -186,7 +186,7 @@ bool runTask(int task, int points, int prec, int mem, int index)
         break;
     }
 
-    return g_ThisVF->evaluateGcf();
+    return gThisVF->evaluateGcf();
 }
 
 static bool readTaskResults(int task, int index)
@@ -253,7 +253,7 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes,
 {
     int pcoord[3] = {x0, y0, z0};
 
-    g_VFResults.vf_[index].gcf_points_.push_back(
+    gVFResults.vf_[index].gcf_points_.push_back(
         p4orbits::orbits_point(CSING, pcoord, dashes, 0, 0));
 }
 
@@ -265,7 +265,7 @@ static bool read_gcf(void (*chart)(double, double, double *), int index)
     double pcoord[3];
     int d, c;
 
-    fp = fopen(QFile::encodeName(g_ThisVF->getfilename_gcf()), "r");
+    fp = fopen(QFile::encodeName(gThisVF->getfilename_gcf()), "r");
     if (fp == nullptr)
         return false;
 

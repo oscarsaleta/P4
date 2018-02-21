@@ -63,7 +63,7 @@
 #define DARKGRAY NUMXFIGCOLORS
 
 #define QXFIGCOLOR(x)                                                          \
-    QColor(g_XFigToRGB[x].r, g_XFigToRGB[x].g, g_XFigToRGB[x].b)
+    QColor(gXFigToRGB[x].r, gXFigToRGB[x].g, gXFigToRGB[x].b)
 
 struct P4RGBITEM {
     int r;
@@ -71,6 +71,6 @@ struct P4RGBITEM {
     int b;
 };
 
-extern struct P4RGBITEM g_XFigToRGB[NUMXFIGCOLORS]; // defined in win_legend.cpp
+extern struct P4RGBITEM gXFigToRGB[NUMXFIGCOLORS]; // defined in win_legend.cpp
 
 #endif /* COLOR_H */

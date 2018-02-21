@@ -42,85 +42,85 @@ P4ParamsDlg::P4ParamsDlg(std::shared_ptr<P4FindDlg> finddlg)
 
     std::unique_ptr<QLabel> p4title{
         std::make_unique<QLabel>("Find Singular Points Parameters", this)};
-    p4title->setFont(*(g_p4app->titleFont_));
+    p4title->setFont(*(gP4app->titleFont_));
 
     std::unique_ptr<QLabel> symlabel{
         std::make_unique<QLabel>("Calculations: ", this)};
-    symlabel->setFont(*(g_p4app->boldFont_));
+    symlabel->setFont(*(gP4app->boldFont_));
     btn_alg_ = std::make_unique<QRadioButton>("Algebraic", this);
     btn_num_ = std::make_unique<QRadioButton>("Numeric", this);
 
     std::unique_ptr<QLabel> seplabel{
         std::make_unique<QLabel>("Test Separatrices:  ", this)};
-    seplabel->setFont(*(g_p4app->boldFont_));
+    seplabel->setFont(*(gP4app->boldFont_));
     btn_sepyes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_sepno_ = std::make_unique<QRadioButton>("No", this);
 
     std::unique_ptr<QLabel> lbl_precis{
         std::make_unique<QLabel>("Accuracy:", this)};
-    lbl_precis->setFont(*(g_p4app->boldFont_));
+    lbl_precis->setFont(*(gP4app->boldFont_));
     spin_precis_ = std::make_unique<QSpinBox>(this);
     spin_precis_->setMinimum(MINPRECISION);
     spin_precis_->setMaximum(MAXPRECISION);
 
     std::unique_ptr<QLabel> lbl_precis0{
         std::make_unique<QLabel>("Precision:", this)};
-    lbl_precis0->setFont(*(g_p4app->boldFont_));
+    lbl_precis0->setFont(*(gP4app->boldFont_));
     spin_precis0_ = std::make_unique<QSpinBox>(this);
     spin_precis0_->setMinimum(MINPRECISION0);
     spin_precis0_->setMaximum(MAXPRECISION0);
 
     std::unique_ptr<QLabel> lbl_epsilon{
         std::make_unique<QLabel>("Epsilon:", this)};
-    lbl_epsilon->setFont(*(g_p4app->boldFont_));
-    edt_epsilon_ = std::make_unique<QLineEdit>(g_ThisVF->epsilon_, this);
+    lbl_epsilon->setFont(*(gP4app->boldFont_));
+    edt_epsilon_ = std::make_unique<QLineEdit>(gThisVF->epsilon_, this);
 
     std::unique_ptr<QLabel> lbl_level{
         new QLabel("Level of Approximation:", this)};
-    lbl_level->setFont(*(g_p4app->boldFont_));
+    lbl_level->setFont(*(gP4app->boldFont_));
     spin_level_ = std::make_unique<QSpinBox>(this);
     spin_level_->setMinimum(MINLEVEL);
     spin_level_->setMaximum(MAXLEVEL);
 
     std::unique_ptr<QLabel> lbl_numlevel{
         std::make_unique<QLabel>("Numeric level:", this)};
-    lbl_numlevel->setFont(*(g_p4app->boldFont_));
+    lbl_numlevel->setFont(*(gP4app->boldFont_));
     spin_numlevel_ = std::make_unique<QSpinBox>(this);
     spin_numlevel_->setMinimum(MINNUMLEVEL);
     spin_numlevel_->setMaximum(MAXNUMLEVEL);
 
     std::unique_ptr<QLabel> lbl_maxlevel{
         std::make_unique<QLabel>("Maximum level:", this)};
-    lbl_maxlevel->setFont(*(g_p4app->boldFont_));
+    lbl_maxlevel->setFont(*(gP4app->boldFont_));
     spin_maxlevel_ = std::make_unique<QSpinBox>(this);
     spin_maxlevel_->setMinimum(MINMAXLEVEL);
     spin_maxlevel_->setMaximum(MAXMAXLEVEL);
 
     std::unique_ptr<QLabel> lbl_weakness{
         new QLabel("Maximum level of weakness:", this)};
-    lbl_weakness->setFont(*(g_p4app->boldFont_));
+    lbl_weakness->setFont(*(gP4app->boldFont_));
     spin_weakness_ = std::make_unique<QSpinBox>(this);
     spin_weakness_->setMinimum(MINWEAKNESS);
     spin_weakness_->setMaximum(MAXWEAKNESS);
 
     lbl_p_ = std::make_unique<QLabel>("p:", this);
-    lbl_p_->setFont(*(g_p4app->boldFont_));
+    lbl_p_->setFont(*(gP4app->boldFont_));
     spin_p_ = std::make_unique<QSpinBox>(this);
     spin_p_->setMinimum(MINP);
     spin_p_->setMaximum(MAXP);
 
     lbl_q_ = std::make_unique<QLabel>("q:", this);
-    lbl_q_->setFont(*(g_p4app->boldFont_));
+    lbl_q_->setFont(*(gP4app->boldFont_));
     spin_q_ = std::make_unique<QSpinBox>(this);
     spin_q_->setMinimum(MINP);
     spin_q_->setMaximum(MAXP);
 
     lbl_x0_ = std::make_unique<QLabel>("x0:", this);
-    lbl_x0_->setFont(*(g_p4app->boldFont_));
+    lbl_x0_->setFont(*(gP4app->boldFont_));
     edt_x0_ = std::make_unique<QLineEdit>("", this);
 
     lbl_y0_ = std::make_unique<QLabel>("y0:", this);
-    lbl_y0_->setFont(*(g_p4app->boldFont_));
+    lbl_y0_->setFont(*(gP4app->boldFont_));
     edt_y0_ = std::make_unique<QLineEdit>("", this);
 
 #ifdef TOOLTIPS
@@ -285,12 +285,12 @@ void P4ParamsDlg::onLevelChange(int value)
 void P4ParamsDlg::btn_alg_toggled(bool on)
 {
     if (on) {
-        if (!g_ThisVF->hasCommonBool(g_ThisVF->numeric_) ||
-            g_ThisVF->commonBool(g_ThisVF->numeric_) != false) {
-            g_ThisVF->setCommonBool(g_ThisVF->numeric_, false);
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+        if (!gThisVF->hasCommonBool(gThisVF->numeric_) ||
+            gThisVF->commonBool(gThisVF->numeric_) != false) {
+            gThisVF->setCommonBool(gThisVF->numeric_, false);
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
         }
     }
@@ -299,12 +299,12 @@ void P4ParamsDlg::btn_alg_toggled(bool on)
 void P4ParamsDlg::btn_num_toggled(bool on)
 {
     if (on) {
-        if (!g_ThisVF->hasCommonBool(g_ThisVF->numeric_) ||
-            g_ThisVF->commonBool(g_ThisVF->numeric_) != true) {
-            g_ThisVF->setCommonBool(g_ThisVF->numeric_, true);
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+        if (!gThisVF->hasCommonBool(gThisVF->numeric_) ||
+            gThisVF->commonBool(gThisVF->numeric_) != true) {
+            gThisVF->setCommonBool(gThisVF->numeric_, true);
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
         }
     }
@@ -313,12 +313,12 @@ void P4ParamsDlg::btn_num_toggled(bool on)
 void P4ParamsDlg::btn_sepyes_toggled(bool on)
 {
     if (on) {
-        if (!g_ThisVF->hasCommonBool(g_ThisVF->testsep_) ||
-            g_ThisVF->commonBool(g_ThisVF->testsep_) != true) {
-            g_ThisVF->setCommonBool(g_ThisVF->testsep_, true);
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+        if (!gThisVF->hasCommonBool(gThisVF->testsep_) ||
+            gThisVF->commonBool(gThisVF->testsep_) != true) {
+            gThisVF->setCommonBool(gThisVF->testsep_, true);
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
         }
     }
@@ -327,12 +327,12 @@ void P4ParamsDlg::btn_sepyes_toggled(bool on)
 void P4ParamsDlg::btn_sepno_toggled(bool on)
 {
     if (on) {
-        if (!g_ThisVF->hasCommonBool(g_ThisVF->testsep_) ||
-            g_ThisVF->commonBool(g_ThisVF->testsep_) != false) {
-            g_ThisVF->setCommonBool(g_ThisVF->testsep_, false);
-            if (g_ThisVF->changed_ == false) {
-                g_ThisVF->changed_ = true;
-                g_p4app->signalChanged();
+        if (!gThisVF->hasCommonBool(gThisVF->testsep_) ||
+            gThisVF->commonBool(gThisVF->testsep_) != false) {
+            gThisVF->setCommonBool(gThisVF->testsep_, false);
+            if (gThisVF->changed_ == false) {
+                gThisVF->changed_ = true;
+                gP4app->signalChanged();
             }
         }
     }
@@ -341,10 +341,10 @@ void P4ParamsDlg::btn_sepno_toggled(bool on)
 void P4ParamsDlg::setSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
                                         const std::vector<int> &val, int minval)
 {
-    if (g_ThisVF->hasCommonInt(val)) {
+    if (gThisVF->hasCommonInt(val)) {
         sb->setSpecialValueText("");
         sb->setMinimum(minval);
-        sb->setValue(g_ThisVF->commonInt(val));
+        sb->setValue(gThisVF->commonInt(val));
     } else {
         sb->setMinimal(minval - 1);
         sb->setSpecialValueText("##");
@@ -363,20 +363,20 @@ bool P4ParamsDlg::getSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
         }
     }
 
-    if (g_ThisVF->hasCommonInt(newval)) {
-        if (val == g_ThisVF->commonInt(newval))
+    if (gThisVF->hasCommonInt(newval)) {
+        if (val == gThisVF->commonInt(newval))
             return false;
     }
 
-    g_ThisVF->setCommonInt(newval, val);
+    gThisVF->setCommonInt(newval, val);
     return true;
 }
 
 void P4ParamsDlg::setLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
                                          const std::vector<QString> &val)
 {
-    if (g_ThisVF->hasCommonString(val))
-        le->setText(g_ThisVF->commonString(val));
+    if (gThisVF->hasCommonString(val))
+        le->setText(gThisVF->commonString(val));
     else
         le->setText("##");
 }
@@ -386,21 +386,21 @@ bool P4ParamsDlg::getLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
 {
     QString val{le->text().trimmed()};
 
-    if (!g_ThisVF->hasCommonString(newval)) {
+    if (!gThisVF->hasCommonString(newval)) {
         for (int i = val.length() - 1; i >= 0; i--) {
             if (val[i] != '#')
                 break;
             if (i == 0)
                 return false;
         }
-        if (!val.compare(g_ThisVF->commonString(newval)))
+        if (!val.compare(gThisVF->commonString(newval)))
             return false;
     }
 
-    if (!val.compare(g_ThisVF->commonString(newval)))
+    if (!val.compare(gThisVF->commonString(newval)))
         return false;
 
-    g_ThisVF->setCommonString(newval, val);
+    gThisVF->setCommonString(newval, val);
     return true;
 }
 
@@ -411,41 +411,41 @@ void P4ParamsDlg::getDataFromDlg()
     QString y0;
     bool changed{false};
 
-    if (spin_p_->value() != g_ThisVF->p_ || spin_q_->value() != g_ThisVF->q_) {
-        g_ThisVF->p_ = spin_p_->value();
-        g_ThisVF->q_ = spin_q_->value();
+    if (spin_p_->value() != gThisVF->p_ || spin_q_->value() != gThisVF->q_) {
+        gThisVF->p_ = spin_p_->value();
+        gThisVF->q_ = spin_q_->value();
         changed = true;
     }
 
     x0 = edt_x0_->text().trimmed();
     y0 = edt_y0_->text().trimmed();
 
-    if (x0.compare(g_ThisVF->x0_) != 0 || y0.compare(g_ThisVF->y0_) != 0) {
-        g_ThisVF->x0_ = x0;
-        g_ThisVF->y0_ = y0;
+    if (x0.compare(gThisVF->x0_) != 0 || y0.compare(gThisVF->y0_) != 0) {
+        gThisVF->x0_ = x0;
+        gThisVF->y0_ = y0;
         changed = true;
     }
 
-    changed |= getSpinBoxCommonValue(spin_level_, g_ThisVF->taylorlevel_);
-    changed |= getSpinBoxCommonValue(spin_numlevel_, g_ThisVF->numericlevel_);
-    changed |= getSpinBoxCommonValue(spin_maxlevel_, g_ThisVF->maxlevel_);
-    changed |= getSpinBoxCommonValue(spin_weakness_, g_ThisVF->weakness_);
-    changed |= getSpinBoxCommonValue(spin_precis_, g_ThisVF->precision_);
-    changed |= getSpinBoxCommonValue(spin_precis0_, g_ThisVF->precision0_);
-    changed |= getLineEditCommonValue(edt_epsilon_, g_ThisVF->epsilon_);
+    changed |= getSpinBoxCommonValue(spin_level_, gThisVF->taylorlevel_);
+    changed |= getSpinBoxCommonValue(spin_numlevel_, gThisVF->numericlevel_);
+    changed |= getSpinBoxCommonValue(spin_maxlevel_, gThisVF->maxlevel_);
+    changed |= getSpinBoxCommonValue(spin_weakness_, gThisVF->weakness_);
+    changed |= getSpinBoxCommonValue(spin_precis_, gThisVF->precision_);
+    changed |= getSpinBoxCommonValue(spin_precis0_, gThisVF->precision0_);
+    changed |= getLineEditCommonValue(edt_epsilon_, gThisVF->epsilon_);
 
     if (changed) {
-        if (g_ThisVF->changed == false) {
-            g_ThisVF->changed = true;
-            g_p4app->signalChanged();
+        if (gThisVF->changed == false) {
+            gThisVF->changed = true;
+            gP4app->signalChanged();
         }
     }
 }
 
 void P4ParamsDlg::updateDlgData()
 {
-    if (g_ThisVF->hasCommonBool(g_ThisVF->numeric_)) {
-        if (g_ThisVF->commonBool(g_ThisVF->numeric_))
+    if (gThisVF->hasCommonBool(gThisVF->numeric_)) {
+        if (gThisVF->commonBool(gThisVF->numeric_))
             btn_num_->toggle();
         else
             btn_alg_->toggle();
@@ -456,8 +456,8 @@ void P4ParamsDlg::updateDlgData()
         btngrp_numeric_->setExclusive(true);
     }
 
-    if (g_ThisVF->hasCommonBool(g_ThisVF->testsep_)) {
-        if (g_ThisVF->commonBool(g_ThisVF->testsep_))
+    if (gThisVF->hasCommonBool(gThisVF->testsep_)) {
+        if (gThisVF->commonBool(gThisVF->testsep_))
             btn_sepyes_->toggle();
         else
             btn_sepno_->toggle();
@@ -468,43 +468,43 @@ void P4ParamsDlg::updateDlgData()
         btngrp_testsep_->setExclusive(true);
     }
 
-    setSpinBoxCommonValue(spin_level_, g_ThisVF->taylorlevel_, MINLEVEL);
-    setSpinBoxCommonValue(spin_numlevel_, g_ThisVF->numericlevel_, MINNUMLEVEL);
-    setSpinBoxCommonValue(spin_maxlevel_, g_ThisVF->maxlevel_, MINMAXLEVEL);
-    setSpinBoxCommonValue(spin_weakness_, g_ThisVF->weakness_, MINWEAKNESS);
-    setLineEditCommonValue(edt_epsilon_, g_ThisVF->epsilon_);
-    setSpinBoxCommonValue(spin_precis_, g_ThisVF->precision_, MINPRECISION);
-    setSpinBoxCommonValue(spin_precis0_, g_ThisVF->precision0_, MINPRECISION0);
+    setSpinBoxCommonValue(spin_level_, gThisVF->taylorlevel_, MINLEVEL);
+    setSpinBoxCommonValue(spin_numlevel_, gThisVF->numericlevel_, MINNUMLEVEL);
+    setSpinBoxCommonValue(spin_maxlevel_, gThisVF->maxlevel_, MINMAXLEVEL);
+    setSpinBoxCommonValue(spin_weakness_, gThisVF->weakness_, MINWEAKNESS);
+    setLineEditCommonValue(edt_epsilon_, gThisVF->epsilon_);
+    setSpinBoxCommonValue(spin_precis_, gThisVF->precision_, MINPRECISION);
+    setSpinBoxCommonValue(spin_precis0_, gThisVF->precision0_, MINPRECISION0);
 
-    if (g_ThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
-        edt_x0_->setText(g_ThisVF->x0_);
-        edt_y0_->setText(g_ThisVF->y0_);
-        spin_p_->setValue(g_ThisVF->p_);
-        spin_q_->setValue(g_ThisVF->q_);
+    if (gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+        edt_x0_->setText(gThisVF->x0_);
+        edt_y0_->setText(gThisVF->y0_);
+        spin_p_->setValue(gThisVF->p_);
+        spin_q_->setValue(gThisVF->q_);
 
         spin_p_->setEnabled(false);
         spin_q_->setEnabled(false);
         edt_x0_->setEnabled(true);
         edt_y0_->setEnabled(true);
 
-        lbl_x0_->setFont(*(g_p4app->boldFont_));
-        lbl_y0_->setFont(*(g_p4app->boldFont_));
-        lbl_p_->setFont(*(g_p4app->standardFont_));
-        lbl_q_->setFont(*(g_p4app->standardFont_));
+        lbl_x0_->setFont(*(gP4app->boldFont_));
+        lbl_y0_->setFont(*(gP4app->boldFont_));
+        lbl_p_->setFont(*(gP4app->standardFont_));
+        lbl_q_->setFont(*(gP4app->standardFont_));
     } else {
-        spin_p_->setValue(g_ThisVF->p_);
-        spin_q_->setValue(g_ThisVF->q_);
-        edt_x0_->setText(g_ThisVF->x0_);
-        edt_y0_->setText(g_ThisVF->y0_);
+        spin_p_->setValue(gThisVF->p_);
+        spin_q_->setValue(gThisVF->q_);
+        edt_x0_->setText(gThisVF->x0_);
+        edt_y0_->setText(gThisVF->y0_);
 
         spin_p_->setEnabled(true);
         spin_q_->setEnabled(true);
         edt_x0_->setEnabled(false);
         edt_y0_->setEnabled(false);
 
-        lbl_p_->setFont(*(g_p4app->boldFont_));
-        lbl_q_->setFont(*(g_p4app->boldFont_));
-        lbl_x0_->setFont(*(g_p4app->standardFont_));
-        lbl_y0_->setFont(*(g_p4app->standardFont_));
+        lbl_p_->setFont(*(gP4app->boldFont_));
+        lbl_q_->setFont(*(gP4app->boldFont_));
+        lbl_x0_->setFont(*(gP4app->standardFont_));
+        lbl_y0_->setFont(*(gP4app->standardFont_));
     }
 }

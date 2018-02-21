@@ -220,6 +220,6 @@ class QInputVF : public QObject
     void finishIsoclinesEvaluation();
 };
 
-extern QInputVF *g_ThisVF;
+extern QInputVF *gThisVF;
 
 #endif /* FILE_VF_H */

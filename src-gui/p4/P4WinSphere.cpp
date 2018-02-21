@@ -177,7 +177,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(1);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_C:
@@ -186,14 +186,14 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(0);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         } else if (bs == Qt::ShiftModifier ||
                    bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+C:  continue integrating separatrice
             data1 = std::make_unique<int>(0);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_B:
@@ -202,7 +202,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(-1);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_D:
@@ -211,7 +211,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(2);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_A:
@@ -220,7 +220,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(3);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_N:
@@ -230,7 +230,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(3);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_I:
@@ -240,7 +240,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(2);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     case Qt::Key_I:
@@ -250,7 +250,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(1);
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         break;
     }
@@ -303,16 +303,16 @@ void P4WinSphere::setupPlot()
     plCircle_.clear();
 
     if (!iszoom_) {
-        switch (g_VFResults.typeofview_) {
+        switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
         case TYPEOFVIEW_U1:
         case TYPEOFVIEW_U2:
         case TYPEOFVIEW_V1:
         case TYPEOFVIEW_V2:
-            x0_ = g_VFResults.xmin_;
-            y0_ = g_VFResults.ymin_;
-            x1_ = g_VFResults.xmax_;
-            y1_ = g_VFResults.ymax_;
+            x0_ = gVFResults.xmin_;
+            y0_ = gVFResults.ymin_;
+            x1_ = gVFResults.xmax_;
+            y1_ = gVFResults.ymax_;
             break;
         case TYPEOFVIEW_SPHERE:
             x0_ = -1.1;
@@ -328,7 +328,7 @@ void P4WinSphere::setupPlot()
 
     double idealhd{std::round(w_ / dx_ * dy_)};
 
-    switch (g_VFResults.typeofview_) {
+    switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_PLANE:
         chartstring_ = "";
         break;
@@ -337,26 +337,26 @@ void P4WinSphere::setupPlot()
         break;
     case TYPEOFVIEW_U1:
         chartstring_ =
-            makechartstring(g_VFResults.p_, g_VFResults.q_, true, false);
+            makechartstring(gVFResults.p_, gVFResults.q_, true, false);
         break;
     case TYPEOFVIEW_U2:
         chartstring_ =
-            makechartstring(g_VFResults.p_, g_VFResults.q_, false, false);
+            makechartstring(gVFResults.p_, gVFResults.q_, false, false);
         break;
     case TYPEOFVIEW_V1:
         chartstring_ =
-            makechartstring(g_VFResults.p_, g_VFResults.q_, true, true);
+            makechartstring(gVFResults.p_, gVFResults.q_, true, true);
         break;
     case TYPEOFVIEW_V2:
         chartstring_ =
-            makechartstring(g_VFResults.p_, g_VFResults.q_, false, true);
+            makechartstring(gVFResults.p_, gVFResults.q_, false, true);
         break;
     }
 
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-        if (g_VFResults.plweights_)
+        if (gVFResults.plweights_)
             plCircle_ = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -500,10 +500,10 @@ void P4WinSphere::adjustToNewSize()
     circleAtInfinity_.clear();
     plCircle_.clear();
 
-    if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
-        if (g_VFResults.plweights_)
+        if (gVFResults.plweights_)
             plCircle_ = produceEllipse(0.0, 0.0, RADIUS, RADIUS, true,
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -516,7 +516,7 @@ void P4WinSphere::adjustToNewSize()
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
-        if (g_VFResults.singinf_)
+        if (gVFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
         else
             paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
@@ -527,9 +527,9 @@ void P4WinSphere::adjustToNewSize()
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (g_VFResults.plweights_)
+        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (gVFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -580,7 +580,7 @@ void P4WinSphere::resizeEvent(QResizeEvent *e)
 
 void P4WinSphere::paintEvent(QPaintEvent *p)
 {
-    if (g_ThisVF->evaluating_)
+    if (gThisVF->evaluating_)
         return;
 
     if (!painterCache_ || isPainterCacheDirty_) {
@@ -592,7 +592,7 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
-        if (g_VFResults.singinf_)
+        if (gVFResults.singinf_)
             paint.setPen(QXFIGCOLOR(CSING));
         else
             paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
@@ -603,9 +603,9 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (g_VFResults.plweights_)
+        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+                if (gVFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -692,9 +692,9 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
     double pcoord[3];
 
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-        switch (g_VFResults.typeofview_) {
+        switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study   (x,y) = (%8.5g,%8.5g)", wx, wy);
             else
                 buf.sprintf("Planar view   (x,y) = (%8.5g,%8.5g)", wx, wy);
@@ -702,13 +702,13 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
         case TYPEOFVIEW_SPHERE:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
 
-            if (g_VFResults.p_ == 1 && g_VFResults.q_ == 1)
+            if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere  (x,y) = (%8.5g,%8.5g)",
                             ucoord[0], ucoord[1]);
             else
                 buf.sprintf(
                     "The P-L sphere of type (%d,%d)  (x,y) = (%8.5g,%8.5g)",
-                    g_VFResults.p_, g_VFResults.q_, ucoord[0], ucoord[1]);
+                    gVFResults.p_, gVFResults.q_, ucoord[0], ucoord[1]);
             break;
         case TYPEOFVIEW_U1:
             MATHFUNC(sphere_to_U1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
@@ -722,7 +722,7 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!g_VFResults.plweights_) {
+            if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -746,7 +746,7 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         case TYPEOFVIEW_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            if (!g_VFResults.plweights_) {
+            if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
                 ucoord[1] = -ucoord[1];
             }
@@ -760,9 +760,9 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
             break;
         }
 
-        if (!g_VFResults.curves_result_.empty()) {
+        if (!gVFResults.curves_result_.empty()) {
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            int index{g_ThisVF->getVFIndex_R2(ucoord)};
+            int index{gThisVF->getVFIndex_R2(ucoord)};
             if (index < 0) {
                 buff.append("  VF: NONE");
             } else {
@@ -772,19 +772,19 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
             }
         }
     } else {
-        switch (g_VFResults.typeofview_) {
+        switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
-            if (g_VFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
                 buf.sprintf("Local study");
             else
                 buf.sprintf("Planar view");
             break;
         case TYPEOFVIEW_SPHERE:
-            if (g_VFResults.p_ == 1 && g_VFResults.q_ == 1)
+            if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere");
             else
-                buf.sprintf("The P-L sphere of type (%d,%d)", g_VFResults.p_,
-                            g_VFResults.q_);
+                buf.sprintf("The P-L sphere of type (%d,%d)", gVFResults.p_,
+                            gVFResults.q_);
             break;
         case TYPEOFVIEW_U1:
             buf.sprintf("The U1 chart");
@@ -907,7 +907,7 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
                 std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                     static_cast<QEvent::Type>(TYPE_SELECT_ORBIT.get()),
                     data1.get())};
-                g_p4app->postEvent(parentWnd_.get(), e1.get());
+                gP4app->postEvent(parentWnd_.get(), e1.get());
             }
         }
     } else if (e->button() == Qt::RightButton) {
@@ -938,7 +938,7 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[3] = coWorldY(zoomAnchor2_.y());
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
         if (selectingLCSection_) {
             saveAnchorMap();
@@ -951,7 +951,7 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[3] = coWorldY(lcAnchor2_.y());
             std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION), data1.get())};
-            g_p4app->postEvent(parentWnd_.get(), e1.get());
+            gP4app->postEvent(parentWnd_.get(), e1.get());
         }
     }
     QWidget::mouseReleaseEvent(e);
@@ -1017,8 +1017,8 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         msgBar_->showMessage(
             "Search nearest critical point: None with separatrices found.");
     } else {
-        auto px = coWinX(g_VFResults.selected_ucoord_[0]);
-        auto py = coWinY(g_VFResults.selected_ucoord_[1]);
+        auto px = coWinX(gVFResults.selected_ucoord_[0]);
+        auto py = coWinY(gVFResults.selected_ucoord_[1]);
 
         if (selectingTimer_) {
             selectingTimer_.reset();
@@ -1039,7 +1039,7 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         std::unique_ptr<int> data1{std::make_unique<int>(-1)};
         std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-        g_p4app->postEvent(parentWnd_.get(), e1.get());
+        gP4app->postEvent(parentWnd_.get(), e1.get());
     }
 }
 
@@ -1417,7 +1417,7 @@ void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
 
 void P4WinSphere::plotPoints()
 {
-    for (auto const &vf : g_VFResults.vf_) {
+    for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf.saddlePoints_)
             plotPoint(sp);
         for (auto const &np : vf.nodePoints_)
@@ -1454,7 +1454,7 @@ void P4WinSphere::plotPointSeparatrices(const p4singularities::degenerate &p)
 
 void P4WinSphere::plotSeparatrices()
 {
-    for (auto const &vf : g_VFResults.vf_) {
+    for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf.saddlePoints_)
             plotPointSeparatrices(sp);
         for (auto const &sep : vf.sePoints_)
@@ -1466,15 +1466,15 @@ void P4WinSphere::plotSeparatrices()
 
 void P4WinSphere::plotGcf()
 {
-    draw_gcf(this, g_VFResults.gcf_points_, CSING, 1);
+    draw_gcf(this, gVFResults.gcf_points_, CSING, 1);
 }
 
 // FIXME
 void P4WinSphere::plotCurve()
 {
     std::vector<curves>::const_iterator it;
-    for (it = g_VFResults.curve_vector_.begin();
-         it != g_VFResults.curve_vector_.end(); it++) {
+    for (it = gVFResults.curve_vector_.begin();
+         it != gVFResults.curve_vector_.end(); it++) {
         draw_curve(this, it->points, CCURV, 1);
     }
 }
@@ -1482,8 +1482,8 @@ void P4WinSphere::plotCurve()
 void P4WinSphere::drawIsoclines()
 {
     std::vector<isoclines>::const_iterator it;
-    for (it = g_VFResults.isocline_vector_.begin();
-         it != g_VFResults.isocline_vector_.end(); it++) {
+    for (it = gVFResults.isocline_vector_.begin();
+         it != gVFResults.isocline_vector_.end(); it++) {
         draw_isoclines(this, it->points, it->color, 1);
     }
 }
@@ -1630,7 +1630,7 @@ std::vector<P4POLYLINES> P4WinSphere::produceEllipse(double cx, double cy,
 
 void P4WinSphere::plotPoincareSphere()
 {
-    int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
+    int color{gVFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
     for (auto const &it : circleAtInfinity_) {
@@ -1641,7 +1641,7 @@ void P4WinSphere::plotPoincareSphere()
 
 void P4WinSphere::plotPoincareLyapunovSphere()
 {
-    int color{g_VFResults.singinf_ ? CSING : CLINEATINFINITY};
+    int color{gVFResults.singinf_ ? CSING : CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
     for (auto const &it : circleAtInfinity_) {
@@ -1661,7 +1661,7 @@ void P4WinSphere::plotPoincareLyapunovSphere()
 
 void P4WinSphere::plotLineAtInfinity()
 {
-    switch (g_VFResults.typeofview_) {
+    switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
@@ -2169,7 +2169,7 @@ void P4WinSphere::printPoints()
 {
     print_comment("Printing symbols at all singular points:");
 
-    for (auto const &vf : g_VFResults.vf_) {
+    for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf.saddlePoints_)
             printPoint(sp);
         for (auto const &np : vf.nodePoints_)
@@ -2212,7 +2212,7 @@ void P4WinSphere::printPointSeparatrices(const p4singularities::degenerate &p)
 
 void P4WinSphere::printSeparatrices()
 {
-    for (auto const &vf : g_VFResults.vf_) {
+    for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf.saddlePoints_) {
             print_comment("Printing separatrice for saddle singularity:");
             printPointSeparatrices(sp);
@@ -2232,14 +2232,14 @@ void P4WinSphere::printSeparatrices()
 void P4WinSphere::printGcf()
 {
     bool isagcf{false};
-    for (auto const &vf : g_VFResults.vf_) {
+    for (auto const &vf : gVFResults.vf_) {
         if (!vf.gcf_points_.empty()) {
             isagcf = true;
             break;
         }
     }
     if (isagcf) {
-        for (auto const &vf : g_VFResults.vf_) {
+        for (auto const &vf : gVFResults.vf_) {
             print_comment("Printing greatest common factor:");
             draw_gcf(this, vf.gcf_points_, CSING, 1);
         }
@@ -2251,13 +2251,13 @@ void P4WinSphere::printSeparatingCurves()
     QString comment;
     bool dashes;
 
-    if (g_ThisVF->numCurves_ > 0 && !g_VFResults.curves_result_.empty()) {
+    if (gThisVF->numCurves_ > 0 && !gVFResults.curves_result_.empty()) {
         print_comment("Printing separating curves:");
-        for (int i = 0; i < g_ThisVF->numCurves_; i++) {
+        for (int i = 0; i < gThisVF->numCurves_; i++) {
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;
-            auto &sep = g_VFResults.curves_result_[i].sep_points;
+            auto &sep = gVFResults.curves_result_[i].sep_points;
             for (auto it = std::begin(sep); it != std::end(sep); ++it) {
                 if (it->color == CSEPCURVE) {
                     if (it->dashes && dashes)
@@ -2287,8 +2287,8 @@ void P4WinSphere::printCurve()
     QString comment;
     std::vector<curves>::const_iterator it;
     int i;
-    for (it = g_VFResults.curve_vector_.begin(), i = 0;
-         it != g_VFResults.curve_vector_.end(); it++, i++) {
+    for (it = gVFResults.curve_vector_.begin(), i = 0;
+         it != gVFResults.curve_vector_.end(); it++, i++) {
         if (it->points != nullptr) {
             comment.sprintf("Printing curve %d:", i);
             print_comment(comment);
@@ -2304,8 +2304,8 @@ void P4WinSphere::printIsoclines()
 
     std::vector<isoclines>::const_iterator it;
     int i;
-    for (it = g_VFResults.isocline_vector_.begin(), i = 0;
-         it != g_VFResults.isocline_vector_.end(); it++, i++) {
+    for (it = gVFResults.isocline_vector_.begin(), i = 0;
+         it != gVFResults.isocline_vector_.end(); it++, i++) {
         if (it->points != nullptr) {
             comment.sprintf("Printing isocline %d:", i);
             print_comment(comment);
@@ -2363,7 +2363,7 @@ void P4WinSphere::printPoincareLyapunovSphere()
 
 void P4WinSphere::printLineAtInfinity()
 {
-    switch (g_VFResults.typeofview_) {
+    switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0)
@@ -2384,7 +2384,7 @@ void P4WinSphere::printOrbits()
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
-    for (auto const &orbit : g_VFResults.orbits_) {
+    for (auto const &orbit : gVFResults.orbits_) {
         s.sprintf("Starting orbit %d", i++);
         print_comment(s);
         drawOrbit(this, orbit.pcoord, orbit.points, orbit.color);
@@ -2396,7 +2396,7 @@ void P4WinSphere::printLimitCycles()
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
-    for (auto const &orbit : g_VFResults.limCycles_) {
+    for (auto const &orbit : gVFResults.limCycles_) {
         s.sprintf("Starting limit cycle %d", i++);
         print_comment(s);
         drawOrbits(this, orbit.pcoord, orbit.points, orbit.color);
@@ -2498,8 +2498,8 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     printMethod_ = printmethod;
 
     if (printmethod == P4PRINT_DEFAULT) {
-        pagewidth = g_p4printer->width();
-        pageheight = g_p4printer->height();
+        pagewidth = gP4printer->width();
+        pageheight = gP4printer->height();
     } else
         pagewidth = pageheight = -1;  // will be redefined in a minute
 
@@ -2570,13 +2570,13 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     case P4PRINT_DEFAULT:
         staticPainter_ = std::make_unique<QPainter>();
 
-        if (!staticPainter_->begin(g_p4printer)) {
+        if (!staticPainter_->begin(gP4printer)) {
             staticPainter_.reset();
             return;
         }
 
         staticPainter_->translate(tx, ty);
-        if (iszoom_ || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
+        if (iszoom_ || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
             QPen p{QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)),
                    std::round(lw)};
             staticPainter_->setPen(p);
@@ -2644,7 +2644,7 @@ void P4WinSphere::finishPrinting()
         staticPainter_->end();
         staticPainter_.reset();
 
-        if (s_p4pixmap->save(g_ThisVF->getbarefilename() + ".jpg", "JPEG",
+        if (s_p4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG",
                              100) == false) {
             QMessageBox::critical(this, "P4",
                                   "For some reason, P4 is unable to save the "
@@ -2664,9 +2664,9 @@ void P4WinSphere::print()
     if (printMethod_ == P4PRINT_JPEGIMAGE && !s_p4pixmap)
         return;
 
-    if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-        if (g_VFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-            if (g_VFResults.plweights_)
+    if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+        if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+            if (gVFResults.plweights_)
                 printPoincareLyapunovSphere();
             else
                 printPoincareSphere();

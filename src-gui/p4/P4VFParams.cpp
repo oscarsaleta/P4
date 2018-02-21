@@ -26,20 +26,20 @@
 
 P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
     : QWidget{parent}, dataInvalid_{false}, sb_params{sb},
-      currentNumParams_{g_ThisVF->numparams_}, currentPageIndex_{0}
+      currentNumParams_{gThisVF->numparams_}, currentPageIndex_{0}
 {
     int i;
 
     std::unique_ptr<QLabel> label0{
         std::make_unique<QLabel>("Enter values for all parameters")};
-    label0->setFont(*(g_p4app->titleFont_));
+    label0->setFont(*(gP4app->titleFont_));
 
     currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
                               ? currentNumParams_
                               : MAXNUMPARAMSSHOWN;
 
-    strLabels_ = g_ThisVF->parlabel_;
-    strValues_ = g_ThisVF->parvalue_;
+    strLabels_ = gThisVF->parlabel_;
+    strValues_ = gThisVF->parvalue_;
 
     for (i = 0; i < currentShownParams_; i++) {
         // parlabel_ and parvalue_ might (or not) be filled from the input file
@@ -93,14 +93,14 @@ void P4VFParams::paramsEditingFinished()
     bool changed{false};
     QString lbl;
 
-    if (!g_ThisVF || g_ThisVF->numParams_ != currentNumParams_)
+    if (!gThisVF || gThisVF->numParams_ != currentNumParams_)
         return;
 
     for (int i = 0; i < currentShownParams_; i++) {
         lbl = paramNames_[i]->text().trimmed();
         // NOTE this might be wrong depending on parlabel_ implementation
-        if (lbl.compare(g_ThisVF->parlabel_[i + currentPageIndex_])) {
-            g_ThisVF->parlabel_[i + currentPageIndex_] = lbl;
+        if (lbl.compare(gThisVF->parlabel_[i + currentPageIndex_])) {
+            gThisVF->parlabel_[i + currentPageIndex_] = lbl;
             changed = true;
         }
         changed |=
@@ -108,9 +108,9 @@ void P4VFParams::paramsEditingFinished()
     }
 
     if (changed) {
-        if (!g_ThisVF->changed_) {
-            g_ThisVF->changed_ = true;
-            g_p4app->signalChanged();
+        if (!gThisVF->changed_) {
+            gThisVF->changed_ = true;
+            gP4app->signalChanged();
         }
     }
 }
@@ -120,11 +120,11 @@ bool P4VFParams::updateDlgData()
 {
     int i;
 
-    if (g_ThisVF->numparams_ != currentNumParams_)
+    if (gThisVF->numparams_ != currentNumParams_)
         return false;
 
     for (i = 0; i < currentShownParams_; i++) {
-        paramNames_[i]->setText(g_ThisVF->parlabel_[i + currentPageIndex_]);
+        paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
         setLineEditCommonParValue(paramValues_[i], i + currentPageIndex_);
     }
 
@@ -158,8 +158,8 @@ void P4VFParams::paramsSliderChanged(int value)
 
 void P4VFParams::setLineEditCommonParValue(QLineEdit *, int index)
 {
-    if (g_ThisVF->hasCommonParValue(index))
-        le->setText(g_ThisVF->commonParValue(index));
+    if (gThisVF->hasCommonParValue(index))
+        le->setText(gThisVF->commonParValue(index));
     else
         le->setText("########");
 }
@@ -168,17 +168,17 @@ void P4VFParams::getLineEditCommonParValue(QLineEdit *, int index)
 {
     int i;
     QString val{le->text().trimmed()};
-    if (!g_ThisVF->hasCommonParValue(index)) {
+    if (!gThisVF->hasCommonParValue(index)) {
         for (i = val.length() - 1; i >= 0; i--) {
             if (val[i] != '#')
                 break;
         }
-        if (i < 0 || !val.compare(g_ThisVF->commonParValue(index)))
+        if (i < 0 || !val.compare(gThisVF->commonParValue(index)))
             return false;
     }
-    if (!val.compare(g_ThisVF->commonParValue(index)))
+    if (!val.compare(gThisVF->commonParValue(index)))
         return false;
 
-    g_ThisVF->setCommonParValue(index, val);
+    gThisVF->setCommonParValue(index, val);
     return true;
 }

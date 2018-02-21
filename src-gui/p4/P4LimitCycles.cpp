@@ -37,7 +37,7 @@
 
 #include <cmath>
 
-bool g_LCWindowIsUp{false}; // see definition in main.h
+bool gLCWindowIsUp{false}; // see definition in main.h
 
 static std::unique_ptr<QProgressDialog> s_LCprogressDlg{};
 static int s_LCprogressCount{1};
@@ -157,7 +157,7 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd> plt,
     buf.sprintf("%g", (float)selected_grid_);
     edt_grid_->setText(buf);
 
-    if (g_VFResults.limCycles_.empty()) {
+    if (gVFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     }
@@ -247,7 +247,7 @@ void P4LimitCyclesDlg::onbtn_start(void)
                      selected_y1_, selected_grid_);
 
     // update buttons
-    if (g_VFResults.limCycles_.empty()) {
+    if (gVFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     } else {
@@ -255,7 +255,7 @@ void P4LimitCyclesDlg::onbtn_start(void)
         btn_dellast_->setEnabled(true);
     }
 
-    g_p4app->processEvents();
+    gP4app->processEvents();
     delete s_LCprogressDlg;
     s_LCprogressDlg = nullptr;
 }
@@ -288,7 +288,7 @@ void P4LimitCyclesDlg::reset(void)
     edt_grid_->setText(buf);
     spin_numpoints_->setValue(selected_numpoints_);
 
-    if (g_VFResults.limCycles_.empty()) {
+    if (gVFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     } else {
@@ -300,13 +300,13 @@ void P4LimitCyclesDlg::reset(void)
 void P4LimitCyclesDlg::showEvent(QShowEvent *se)
 {
     QWidget::showEvent(se);
-    g_LCWindowIsUp = true;
+    gLCWindowIsUp = true;
 }
 
 void P4LimitCyclesDlg::hideEvent(QHideEvent *he)
 {
     QWidget::hideEvent(he);
-    g_LCWindowIsUp = false;
+    gLCWindowIsUp = false;
 }
 
 void P4LimitCyclesDlg::onbtn_delall(void)
@@ -316,8 +316,8 @@ void P4LimitCyclesDlg::onbtn_delall(void)
     btn_delall_->setEnabled(false);
     btn_dellast_->setEnabled(false);
 
-    g_VFResults.limCycles_.clear();
-    //g_VFResults.currentLimCycleIndex_ = -1;
+    gVFResults.limCycles_.clear();
+    //gVFResults.currentLimCycleIndex_ = -1;
 
     mainSphere_->refresh();
 }
@@ -330,7 +330,7 @@ void P4LimitCyclesDlg::onbtn_dellast(void)
     deleteLastLimitCycle(mainSphere_);
     mainSphere_->finishDrawing();
 
-    if (g_VFResults.limCycles_.empty()) {
+    if (gVFResults.limCycles_.empty()) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     }
@@ -338,7 +338,7 @@ void P4LimitCyclesDlg::onbtn_dellast(void)
 
 bool stop_search_limit(void)
 {
-    g_p4app->processEvents();
+    gP4app->processEvents();
     if (s_LCprogressDlg->wasCanceled())
         return true;
 

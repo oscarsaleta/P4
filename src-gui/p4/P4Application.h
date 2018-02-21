@@ -57,4 +57,4 @@ class P4Application : public QApplication
     void catchProcessError(QProcess::ProcessError);
 };
 
-extern std::unique_ptr<P4Application> g_p4app;
+extern std::unique_ptr<P4Application> gP4app;

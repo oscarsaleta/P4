@@ -701,84 +701,84 @@ static void xfig_print_degen(double x, double y)
 
 static void xfig_print_virtualsaddle(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_box2((int)x, (int)y, printColorTable(CSADDLE));
 }
 
 static void xfig_print_virtualstablenode(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_box2((int)x, (int)y, printColorTable(CNODE_S));
 }
 static void xfig_print_virtualunstablenode(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_box2((int)x, (int)y, printColorTable(CNODE_U));
 }
 
 static void xfig_print_virtualstableweakfocus(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2((int)x, (int)y, printColorTable(CWEAK_FOCUS_S));
 }
 
 static void xfig_print_virtualunstableweakfocus(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2((int)x, (int)y, printColorTable(CWEAK_FOCUS_U));
 }
 
 static void xfig_print_virtualweakfocus(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2((int)x, (int)y, printColorTable(CWEAK_FOCUS));
 }
 
 static void xfig_print_virtualcenter(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2((int)x, (int)y, printColorTable(CCENTER));
 }
 
 static void xfig_print_virtualstablestrongfocus(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2((int)x, (int)y, printColorTable(CSTRONG_FOCUS_S));
 }
 
 static void xfig_print_virtualunstablestrongfocus(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2((int)x, (int)y, printColorTable(CSTRONG_FOCUS_U));
 }
 
 static void xfig_print_virtualsesaddle(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_triangle2((int)x, (int)y, printColorTable(CSADDLE));
 }
 
 static void xfig_print_virtualsesaddlenode(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_triangle2((int)x, (int)y, printColorTable(CSADDLE_NODE));
 }
 
 static void xfig_print_virtualsestablenode(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_triangle2((int)x, (int)y, printColorTable(CNODE_S));
 }
 
 static void xfig_print_virtualseunstablenode(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_triangle2((int)x, (int)y, printColorTable(CNODE_U));
 }
 
 static void xfig_print_virtualdegen(double x, double y)
 {
-    if (g_VFResults.plotVirtualSingularities_)
+    if (gVFResults.plotVirtualSingularities_)
         xfig_print_cross2((int)x, (int)y, printColorTable(CDEGEN));
 }
 
@@ -827,7 +827,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
         s_XFigLineWidth = 1;  // minimal line width = 1
     s_XFigLineWidth *= 2;
 
-    s = g_ThisVF->getbarefilename() + ".fig";
+    s = gThisVF->getbarefilename() + ".fig";
 
     s_XFigFile.reset(new QFile(s));
     if (s_XFigFile->open(QIODevice::WriteOnly)) {
@@ -918,7 +918,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                 0, 0, s_XFigW, 0, s_XFigW, s_XFigH, 0, s_XFigH, 0, 0);
             s_XFigStream << s;
         }
-        if (g_VFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
+        if (gVFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
             /*
                 object type     2   (=polyline)
                 subtype         2   (=box)

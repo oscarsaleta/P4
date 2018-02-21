@@ -31,8 +31,8 @@ class QLineEdit;
 class QLabel;
 class QBoxLayout;
 
-extern QString g_CurrentSingularityInfo[];
-extern double g_CurrentSeparatriceEpsilon;
+extern QString gCurrentSingularityInfo[];
+extern double gCurrentSeparatriceEpsilon;
 
 class P4SepDlg : public QWidget
 {

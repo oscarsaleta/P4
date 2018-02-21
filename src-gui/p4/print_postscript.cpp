@@ -73,7 +73,7 @@ static void ps_print_saddle(double x, double y)
 
 static void ps_print_virtualsaddle(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -109,7 +109,7 @@ static void ps_print_stablenode(double x, double y)
 
 static void ps_print_virtualstablenode(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -145,7 +145,7 @@ static void ps_print_unstablenode(double x, double y)
 
 static void ps_print_virtualunstablenode(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -181,7 +181,7 @@ static void ps_print_stableweakfocus(double x, double y)
 
 static void ps_print_virtualstableweakfocus(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -217,7 +217,7 @@ static void ps_print_unstableweakfocus(double x, double y)
 
 static void ps_print_virtualunstableweakfocus(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -253,7 +253,7 @@ static void ps_print_weakfocus(double x, double y)
 
 static void ps_print_virtualweakfocus(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -289,7 +289,7 @@ static void ps_print_center(double x, double y)
 
 static void ps_print_virtualcenter(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -325,7 +325,7 @@ static void ps_print_stablestrongfocus(double x, double y)
 
 static void ps_print_virtualstablestrongfocus(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -361,7 +361,7 @@ static void ps_print_unstablestrongfocus(double x, double y)
 
 static void ps_print_virtualunstablestrongfocus(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -397,7 +397,7 @@ static void ps_print_sesaddle(double x, double y)
 
 static void ps_print_virtualsesaddle(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -433,7 +433,7 @@ static void ps_print_sesaddlenode(double x, double y)
 
 static void ps_print_virtualsesaddlenode(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -469,7 +469,7 @@ static void ps_print_sestablenode(double x, double y)
 
 static void ps_print_virtualsestablenode(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -505,7 +505,7 @@ static void ps_print_seunstablenode(double x, double y)
 
 static void ps_print_virtualseunstablenode(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -547,7 +547,7 @@ static void ps_print_degen(double x, double y)
 
 static void ps_print_virtualdegen(double x, double y)
 {
-    if (!g_VFResults.plotVirtualSingularities_)
+    if (!gVFResults.plotVirtualSingularities_)
         return;
     if (s_PSFile) {
         QString s;
@@ -743,7 +743,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
 
     s_PSBlackWhitePrint = isblackwhite;
 
-    s = g_ThisVF->getbarefilename() + ".eps";
+    s = gThisVF->getbarefilename() + ".eps";
 
     s_PSFile.reset(new QFile(s));
     if (s_PSFile->open(QIODevice::WriteOnly))
@@ -794,7 +794,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
     QString title;
     QString datestring;
 
-    title = "Phase portrait of \"" + g_ThisVF->getbarefilename() + "\"";
+    title = "Phase portrait of \"" + gThisVF->getbarefilename() + "\"";
     if (iszoom)
         title += " (zoom window)";
 
@@ -992,7 +992,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             s_PSFileStream << s;
         }
 
-        if (iszoom || g_VFResults.typeofview_ == TYPEOFVIEW_PLANE) {
+        if (iszoom || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
             s_PSFileStream << "frame\n";
         }
 

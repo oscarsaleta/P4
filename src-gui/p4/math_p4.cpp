@@ -49,9 +49,9 @@ double eval_lc_poincare(double *pp, double a, double b, double c)
 double eval_lc_lyapunov(double *pp, double a, double b, double c)
 {
     if (pp[0])
-        return a * pow(pp[1], g_VFResults.double_q_) * cos(pp[2]) +
-               b * pow(pp[1], g_VFResults.double_p_) * sin(pp[2]) +
-               c * pow(pp[1], g_VFResults.double_p_plus_q_);
+        return a * pow(pp[1], gVFResults.double_q_) * cos(pp[2]) +
+               b * pow(pp[1], gVFResults.double_p_) * sin(pp[2]) +
+               c * pow(pp[1], gVFResults.double_p_plus_q_);
     else
         return (a * pp[1] + b * pp[2] + c);
 }
@@ -71,11 +71,11 @@ bool less_lyapunov(double *p1, double *p2)
 
 void set_current_step(double curstep)
 {
-    g_VFResults.config_currentstep_ = curstep;
+    gVFResults.config_currentstep_ = curstep;
 
-    if (g_p4StartDlg && g_p4StartDlg->plotWindow_ &&
-        g_p4StartDlg->plotWindow_->intParamsWindow_)
-        g_p4StartDlg->plotWindow_->intParamsWindow_->setCurrentStep(curstep);
+    if (gP4startDlg && gP4startDlg->plotWindow_ &&
+        gP4startDlg->plotWindow_->intParamsWindow_)
+        gP4startDlg->plotWindow_->intParamsWindow_->setCurrentStep(curstep);
 }
 
 void rplane_plsphere0(double x, double y, double *pcoord)

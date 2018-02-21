@@ -34,7 +34,7 @@ P4VFSelectDlg::P4VFSelectDlg(std::unique_ptr<P4FindDlg> finddlg)
     : QWidget(finddlg), parent_{finddlg}
 {
     std::unique_ptr<QLabel> p4title{new QLabel("Vector Fields:", this)};
-    p4title->setFont(*(g_p4app->titleFont_));
+    p4title->setFont(*(gP4app->titleFont_));
 
     cbb_vfselect_.reset(new QComboBox(this));
     btn_add_.reset(new QPushButton("Add", this));
@@ -101,39 +101,39 @@ void P4VFSelectDlg::updateDlgData()
 {
     QString s;
 
-    for (int k = 0; k < g_ThisVF->numVF_; k++) {
+    for (int k = 0; k < gThisVF->numVF_; k++) {
         s.sprintf("%d", k + 1);
         if (cbb_vfselect_->count() > k)
             cbb_vfselect_->setItemText(k, s);
         else
             cbb_vfselect_->addItem(s);
     }
-    if (g_ThisVF->numVF_ > 1) {
+    if (gThisVF->numVF_ > 1) {
         s = "Select All";
         if (cbb_vfselect_->count() > k)
             cbb_vfselect_->setItemText(k, s);
         else
             cbb_vfselect_->addItem(s);
-        while (cbb_vfselect_->count() > g_ThisVF->numVF_ + 1)
-            cbb_vfselect_->removeItem(g_ThisVF->numVF_ + 1);
+        while (cbb_vfselect_->count() > gThisVF->numVF_ + 1)
+            cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
     } else {
-        while (cbb_vfselect_->count() > g_ThisVF->numVF_ + 1)
-            cbb_vfselect_->removeItem(g_ThisVF->numVF_ + 1);
+        while (cbb_vfselect_->count() > gThisVF->numVF_ + 1)
+            cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
     }
 
-    if (g_ThisVF->numSelected_ == 1)
-        cbb_vfselect_->setCurrentIndex(g_ThisVF->selected_[0]);
+    if (gThisVF->numSelected_ == 1)
+        cbb_vfselect_->setCurrentIndex(gThisVF->selected_[0]);
     else
-        cbb_vfselect_->setCurrentIndex(g_ThisVF->numSelected_);
+        cbb_vfselect_->setCurrentIndex(gThisVF->numSelected_);
 
-    if (g_ThisVF->numVF_ > 1) {
-        if (g_ThisVF->selected_[0] == 0 && g_ThisVF->numSelected_ == 1)
+    if (gThisVF->numVF_ > 1) {
+        if (gThisVF->selected_[0] == 0 && gThisVF->numSelected_ == 1)
             btn_prev_->setEnabled(false);
         else
             btn_prev_->setEnabled(true);
 
-        if (g_ThisVF->selected_[0] =
-                g_ThisVF->numVF_ - 1 && g_ThisVF->numSelected_ == 1)
+        if (gThisVF->selected_[0] =
+                gThisVF->numVF_ - 1 && gThisVF->numSelected_ == 1)
             btn_next_->setEnabled(false);
         else
             btn_next_->setEnabled(true);
@@ -152,17 +152,17 @@ void P4VFSelectDlg::onBtnAdd()
     if (!checkPlotWindowClosed())
         return;
 
-    g_ThisVF->addVectorField();
-    if (g_ThisVF->numSelected_ > 1) {
-        g_ThisVF->selected_.clear();
-        g_ThisVF->numSelected_ = 1;
+    gThisVF->addVectorField();
+    if (gThisVF->numSelected_ > 1) {
+        gThisVF->selected_.clear();
+        gThisVF->numSelected_ = 1;
     }
-    g_ThisVF->selected_.push_back(g_ThisVF->numVF_ - 1);
+    gThisVF->selected_.push_back(gThisVF->numVF_ - 1);
 
     parent_->updateDlgData();
-    if (g_ThisVF->changed_ == false) {
-        g_ThisVF->changed = true;
-        g_p4app->signalChanged();
+    if (gThisVF->changed_ == false) {
+        gThisVF->changed = true;
+        gP4app->signalChanged();
     }
 }
 
@@ -171,63 +171,63 @@ void P4VFSelectDlg::onBtnDel()
     parent_->getDataFromDlg();
     if (!checkPlotWindowClosed())
         return;
-    while (g_ThisVF->numSelected_ > 1)
-        g_ThisVF->deleteVectorField(
-            g_ThisVF->selected_[g_ThisVF->numSelected_ - 1]);
-    g_ThisVF->deleteVectorField(g_ThisVF->selected_[0]);
+    while (gThisVF->numSelected_ > 1)
+        gThisVF->deleteVectorField(
+            gThisVF->selected_[gThisVF->numSelected_ - 1]);
+    gThisVF->deleteVectorField(gThisVF->selected_[0]);
     parent_->updateDlgData();
-    if (g_ThisVF->changed_ == false) {
-        g_ThisVF->changed_ = true;
-        g_p4app->signalChanged();
+    if (gThisVF->changed_ == false) {
+        gThisVF->changed_ = true;
+        gP4app->signalChanged();
     }
 }
 
 void P4VFSelectDlg::onBtnPrev()
 {
     parent_->getDataFromDlg();
-    int j{g_ThisVF->selected_[0]};
-    if (g_ThisVF->numSelected_ > 1) {
-        g_ThisVF->selected_.clear();
-        g_ThisVF->numSelected_ = 1;
+    int j{gThisVF->selected_[0]};
+    if (gThisVF->numSelected_ > 1) {
+        gThisVF->selected_.clear();
+        gThisVF->numSelected_ = 1;
     }
     if (--j < 0)
         j = 0;
-    g_ThisVF->selected_.push_back(j);
+    gThisVF->selected_.push_back(j);
     parent_->updateDlgData();
 }
 
 void P4VFSelectDlg::onBtnNext()
 {
     parent_->getDataFromDlg();
-    int j{g_ThisVF->selected_[0]};
-    if (g_ThisVF->numSelected_ > 1) {
-        g_ThisVF->selected_.clear();
-        g_ThisVF->numSelected_ = 1;
+    int j{gThisVF->selected_[0]};
+    if (gThisVF->numSelected_ > 1) {
+        gThisVF->selected_.clear();
+        gThisVF->numSelected_ = 1;
     }
-    if (++j >= g_ThisVF->numVF_)
-        j = g_ThisVF->numVF_ - 1;
-    g_ThisVF->selected_.push_back(j);
+    if (++j >= gThisVF->numVF_)
+        j = gThisVF->numVF_ - 1;
+    gThisVF->selected_.push_back(j);
     parent_->updateDlgData();
 }
 
 void P4VFSelectDlg::onVFSelectionChanged(int index)
 {
-    if (index < g_ThisVF->numVF_) {
-        if (index != g_ThisVF->selected_[0] || g_ThisVF->numSelected_ > 1) {
+    if (index < gThisVF->numVF_) {
+        if (index != gThisVF->selected_[0] || gThisVF->numSelected_ > 1) {
             parent_->getDataFromDlg();
-            g_ThisVF->selected_.clear();
-            g_ThisVF->selected_.push_back(index);
-            g_ThisVF->numSelected_ = 1;
+            gThisVF->selected_.clear();
+            gThisVF->selected_.push_back(index);
+            gThisVF->numSelected_ = 1;
             parent_->getDataFromDlg();
         }
-    } else if (index >= g_ThisVF->numVF_) {
+    } else if (index >= gThisVF->numVF_) {
         // selected all
-        if (g_ThisVF->numSelected_ != g_ThisVF->numVF_) {
+        if (gThisVF->numSelected_ != gThisVF->numVF_) {
             parent_->getDataFromDlg();
-            g_ThisVF->selected_.clear();
-            for (int k = 0; k < g_ThisVF->numVF_; k++)
-                g_ThisVF->selected_.push_back(k);
-            g_ThisVF->numSelected_ = g_ThisVF->numVF_;
+            gThisVF->selected_.clear();
+            for (int k = 0; k < gThisVF->numVF_; k++)
+                gThisVF->selected_.push_back(k);
+            gThisVF->numSelected_ = gThisVF->numVF_;
             parent_->updateDlgData();
         }
     }
@@ -253,7 +253,7 @@ void P4VFSelectDlg::onBtnP5Config()
         return;
 
     if (!win_curves_) {
-        g_VFResults.readTables(g_ThisVF->getbarefilename(), true, true);
+        gVFResults.readTables(gThisVF->getbarefilename(), true, true);
         win_curves_.reset(new P4SeparatingCurvesDlg(parent_));
         win_curves_->show();
     } else {

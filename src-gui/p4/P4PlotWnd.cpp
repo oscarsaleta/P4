@@ -57,8 +57,8 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     setAttribute(Qt::WA_PaintOnScreen, true);
     setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
-    if (g_p4smallicon)
-        setWindowIcon(*g_p4smallicon);
+    if (gP4smallIcon)
+        setWindowIcon(*gP4smallIcon);
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
@@ -154,9 +154,9 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(Qt::TopToolBarArea, toolBar2);
 
-    QObject::connect(g_ThisVF, &QInputVF::saveSignal, this,
+    QObject::connect(gThisVF, &QInputVF::saveSignal, this,
                      &P4PlotWnd::onSaveSignal);
-    QObject::connect(g_ThisVF, &QInputVF::loadSignal, this,
+    QObject::connect(gThisVF, &QInputVF::loadSignal, this,
                      &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
@@ -196,7 +196,7 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     gcfWindow_ = new P4GcfDlg(this, sphere_);
     curveWindow_ = new QCurveDlg(this, sphere_);
     isoclinesWindow_ = new QIsoclinesDlg(this, sphere_);
-    g_LCWindowIsUp = false;  // Limit cycles: initially hidden
+    gLCWindowIsUp = false;  // Limit cycles: initially hidden
 
     sphere_->show();
     setCentralWidget(sphere_);
@@ -210,7 +210,7 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
 
 void P4PlotWnd::onSaveSignal()
 {
-    QString fname = g_ThisVF->getbarefilename().append(".conf");
+    QString fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
     settings.setValue("P4PlotWnd/size", size());
     settings.setValue("P4PlotWnd/pos", pos());
@@ -220,7 +220,7 @@ void P4PlotWnd::onSaveSignal()
 
 void P4PlotWnd::onLoadSignal()
 {
-    QString fname = g_ThisVF->getbarefilename().append(".conf");
+    QString fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
     resize(settings.value("P4PlotWnd/size").toSize());
     move(settings.value("P4PlotWnd/pos").toPoint());
@@ -290,14 +290,14 @@ void P4PlotWnd::onBtnClose()
 {
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    g_p4app->postEvent(parent_, e1);
+    gP4app->postEvent(parent_, e1);
 }
 
 bool P4PlotWnd::close()
 {
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    g_p4app->postEvent(parent_, e1);
+    gP4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
@@ -385,13 +385,13 @@ void P4PlotWnd::onBtnPrint()
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            g_p4printer->setResolution(res);
+            gP4printer->setResolution(res);
 
-            QPrintDialog dialog(g_p4printer, this);
+            QPrintDialog dialog(gP4printer, this);
             if (!dialog.exec())
                 return;
 
-            res = g_p4printer->resolution();
+            res = gP4printer->resolution();
         }
 
         if (result < 0)
@@ -426,9 +426,9 @@ void P4PlotWnd::configure()
     sphere_->update();
 
     actGCF_->setEnabled(false);
-    if (!g_VFResults.vf_.empty()) {
-        for (int i = g_ThisVF->numVF_ - 1; i >= 0; i--) {
-            if (!g_VFResults.vf_[i].gcf_.empty()) {
+    if (!gVFResults.vf_.empty()) {
+        for (int i = gThisVF->numVF_ - 1; i >= 0; i--) {
+            if (!gVFResults.vf_[i].gcf_.empty()) {
                 actGCF_->setEnabled(true);
                 break;
             }
@@ -552,7 +552,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
     UNUSED(h);
     if (!isMinimized()) {
         P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-        g_p4app->postEvent(parent_, e1);
+        gP4app->postEvent(parent_, e1);
     }
 }
 
@@ -562,7 +562,7 @@ void P4PlotWnd::getDlgData()
     if (viewParamsWindow_->getDataFromDlg()) {
         // true when a big change occured in the view
 
-        g_VFResults.setupCoordinateTransformations();
+        gVFResults.setupCoordinateTransformations();
         configure();
     }
 }

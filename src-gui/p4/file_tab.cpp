@@ -34,7 +34,7 @@
 #include <QTextEdit>
 #include <QTextStream>
 
-QPVFStudy g_VFResults;
+QPVFStudy gVFResults;
 
 /*
     This file contains the code to read the information from reduce/maple.
