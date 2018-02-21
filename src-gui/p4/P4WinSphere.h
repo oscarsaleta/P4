@@ -106,8 +106,8 @@ class P4WinSphere : public QWidget
     void plotPoints();
     void plotSeparatrices();
     void plotGcf();
-    void plotCurve();
-    void drawIsoclines();
+    void plotArbitraryCurves(); // TODO
+    void drawIsoclines(); // TODO
     void plotPoincareSphere();
     void plotPoincareLyapunovSphere();
     void plotLineAtInfinity();
@@ -126,8 +126,8 @@ class P4WinSphere : public QWidget
     void printSeparatrices();
     void printGcf();
     void printSeparatingCurves();
-    void printCurve();
-    void printIsoclines();
+    void printArbitraryCurves(); // TODO
+    void printIsoclines(); // TODO
     void printPoincareSphere();
     void printPoincareLyapunovSphere();
     void printLineAtInfinity();
@@ -171,7 +171,7 @@ class P4WinSphere : public QWidget
     void setupPlot();
     void refresh();
     void keyPressEvent(QKeyEvent *e);
-    void calculateHeightFromWidth(int *width, int *height, int maxheight,
+    void calculateHeightFromWidth(int &width, int &height, int maxheight,
                                   double aspectratio);
     void refreshAfterResize();
     void updatePointSelection();

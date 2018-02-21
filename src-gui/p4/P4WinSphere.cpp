@@ -127,6 +127,25 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
     paintedYMax_ = h_;
 }
 
+P4WinSphere::~P4WinSphere()
+{
+    int i;
+
+    for (i = 0; i < sm_numSpheres; i++) {
+        if (sm_SphereList[i] == this)
+            break;
+    }
+    if (i == sm_numSpheres)
+        return;  // error: sphere not found?
+    else if (i > 0)
+        sm_SphereList[i - 1]->next_ = std::move(next_);
+    else
+        (i < sm_numSpheres - 1)
+            sm_SphereList.erase(std::begin(sm_SphereList) + i);
+
+    sm_numSpheres--;
+}
+
 /*
     Keyboard codes:
 
@@ -345,24 +364,7 @@ void P4WinSphere::setupPlot()
     isPainterCacheDirty_ = true;
 }
 
-P4WinSphere::~P4WinSphere()
-{
-    int i;
 
-    for (i = 0; i < sm_numSpheres; i++) {
-        if (sm_SphereList[i] == this)
-            break;
-    }
-    if (i == sm_numSpheres)
-        return;  // error: sphere not found?
-    else if (i > 0)
-        sm_SphereList[i - 1]->next_ = next_;
-    else
-        (i < sm_numSpheres - 1)
-            sm_SphereList.erase(std::begin(sm_SphereList) + i);
-
-    sm_numSpheres--;
-}
 
 void P4WinSphere::loadAnchorMap()
 {
@@ -2630,7 +2632,7 @@ void P4WinSphere::finishPrinting()
         h_ = oldh_;
         reverseYAxis_ = false;
     } else if (printMethod_ == P4PRINT_JPEGIMAGE) {
-        if (s_p4pixmap == nullptr) {
+        if (!s_p4pixmap) {
             finishP4Printing();
             w_ = oldw_;
             h_ = oldh_;
@@ -2640,19 +2642,16 @@ void P4WinSphere::finishPrinting()
 
         finishP4Printing();
         staticPainter_->end();
-        delete staticPainter_;
-        staticPainter_ = nullptr;
+        staticPainter_.reset();
 
         if (s_p4pixmap->save(g_ThisVF->getbarefilename() + ".jpg", "JPEG",
                              100) == false) {
             QMessageBox::critical(this, "P4",
-                                  "For some reason, P4 is unable "
-                                  "to save the resulting JPEG "
-                                  "image to disc.");
+                                  "For some reason, P4 is unable to save the "
+                                  "resulting JPEG image to disc.");
         }
 
-        delete s_p4pixmap;
-        s_p4pixmap = nullptr;
+        s_p4pixmap.reset();
         reverseYAxis_ = false;
         w_ = oldw_;
         h_ = oldh_;
@@ -2662,7 +2661,7 @@ void P4WinSphere::finishPrinting()
 
 void P4WinSphere::print()
 {
-    if (printMethod_ == P4PRINT_JPEGIMAGE && s_p4pixmap == nullptr)
+    if (printMethod_ == P4PRINT_JPEGIMAGE && !s_p4pixmap)
         return;
 
     if (g_VFResults.typeofview_ != TYPEOFVIEW_PLANE) {
@@ -2674,10 +2673,11 @@ void P4WinSphere::print()
         } else
             printLineAtInfinity();
     }
+    printSeparatingCurves();
     printOrbits();
     printSeparatrices();
     printGcf();
-    printCurve();
+    printArbitraryCurves();  // TODO
     printIsoclines();
     printLimitCycles();
     printPoints();
@@ -2685,30 +2685,29 @@ void P4WinSphere::print()
 
 void P4WinSphere::prepareDrawing()
 {
-    if (painterCache_ == nullptr) {
+    if (!painterCache_) {
         isPainterCacheDirty_ = true;
-        painterCache_ = new QPixmap(size());
+        painterCache_ = std::make_unique<QPixmap>(size());
     }
-    staticPainter_ = new QPainter(painterCache_);
+    staticPainter_ = std::make_unique<QPainter>(painterCache_);
 
     paintedXMin_ = width() - 1;
     paintedYMin_ = height() - 1;
     paintedXMax_ = 0;
     paintedYMax_ = 0;
 
-    if (next_ != nullptr)
+    if (next_)
         next_->prepareDrawing();
 }
 
 void P4WinSphere::finishDrawing()
 {
-    if (next_ != nullptr)
+    if (next_)
         next_->finishDrawing();
 
-    if (staticPainter_ != nullptr) {
+    if (staticPainter_ ) {
         staticPainter_->end();
-        delete staticPainter_;
-        staticPainter_ = nullptr;
+        staticPainter_.reset();
 
         if (paintedXMin_ < 0)
             paintedXMin_ = 0;

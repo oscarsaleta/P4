@@ -17,13 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_vf.h"
+#include "P4VectorFieldDlg.h"
 
 #include "custom.h"
 #include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
 #include "P4FindDlg.h"
+ #include "P4VFParams.h"
 
 #include <QBoxLayout>
 #include <QFormLayout>
@@ -33,7 +34,7 @@
 #include <QScrollBar>
 #include <QSpinBox>
 
-QVectorFieldDlg::QVectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
+P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 {
     parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -110,14 +111,14 @@ QVectorFieldDlg::QVectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
         } else
             sb_params_ = nullptr;
 
-        params_ = new QVFParams(this, sb_params_);
+        params_ = new P4VFParams(this, sb_params_);
         paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
             connect(sb_params_, &QScrollBar::valueChanged, params_,
-                    &QVFParams::paramsSliderChanged);
+                    &P4VFParams::paramsSliderChanged);
             connect(sb_params_, &QScrollBar::sliderMoved, params_,
-                    &QVFParams::paramsSliderChanged);
+                    &P4VFParams::paramsSliderChanged);
         }
         params_->show();
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
@@ -130,10 +131,10 @@ QVectorFieldDlg::QVectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 
     connect(spin_numparams_,
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-            &QVectorFieldDlg::numParamsChanged);
+            &P4VectorFieldDlg::numParamsChanged);
 }
 
-void QVectorFieldDlg::numParamsChanged(int val)
+void P4VectorFieldDlg::numParamsChanged(int val)
 {
     if (val >= 0 && val <= MAXNUMPARAMS && val != g_ThisVF->numparams_) {
         delete params_;
@@ -159,14 +160,14 @@ void QVectorFieldDlg::numParamsChanged(int val)
             } else
                 sb_params_ = nullptr;
 
-            params_ = new QVFParams(this, sb_params_);
+            params_ = new P4VFParams(this, sb_params_);
             paramLayout_->addWidget(params_);
             if (val > MAXNUMPARAMSSHOWN) {
                 paramLayout_->addWidget(sb_params_);
                 connect(sb_params_, &QScrollBar::valueChanged, params_,
-                        &QVFParams::paramsSliderChanged);
+                        &P4VFParams::paramsSliderChanged);
                 connect(sb_params_, &QScrollBar::sliderMoved, params_,
-                        &QVFParams::paramsSliderChanged);
+                        &P4VFParams::paramsSliderChanged);
             }
             params_->show();
             if (val > MAXNUMPARAMSSHOWN)
@@ -181,7 +182,7 @@ void QVectorFieldDlg::numParamsChanged(int val)
     }
 }
 
-QVectorFieldDlg::~QVectorFieldDlg()
+P4VectorFieldDlg::~P4VectorFieldDlg()
 {
     if (params_ != nullptr) {
         delete params_;
@@ -190,7 +191,7 @@ QVectorFieldDlg::~QVectorFieldDlg()
     getDataFromDlg();
 }
 
-void QVectorFieldDlg::getDataFromDlg(void)
+void P4VectorFieldDlg::getDataFromDlg(void)
 {
     QString xdot;
     QString ydot;
@@ -219,7 +220,7 @@ void QVectorFieldDlg::getDataFromDlg(void)
     }
 }
 
-void QVectorFieldDlg::updateDlgData(void)
+void P4VectorFieldDlg::updateDlgData(void)
 {
     edt_xprime_->setText(g_ThisVF->xdot_);
     edt_yprime_->setText(g_ThisVF->ydot_);
@@ -242,14 +243,14 @@ void QVectorFieldDlg::updateDlgData(void)
         } else
             sb_params_ = nullptr;
 
-        params_ = new QVFParams(this, sb_params_);
+        params_ = new P4VFParams(this, sb_params_);
         paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
             connect(sb_params_, &QScrollBar::valueChanged, params_,
-                    &QVFParams::paramsSliderChanged);
+                    &P4VFParams::paramsSliderChanged);
             connect(sb_params_, &QScrollBar::sliderMoved, params_,
-                    &QVFParams::paramsSliderChanged);
+                    &P4VFParams::paramsSliderChanged);
         }
         params_->show();
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN)
@@ -257,7 +258,7 @@ void QVectorFieldDlg::updateDlgData(void)
     }
 }
 
-QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
+P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
 {
     int i;
 
@@ -301,13 +302,13 @@ QVFParams::QVFParams(QVectorFieldDlg *parent, QScrollBar *sb) : QWidget(parent)
     setLayout(mainLayout_);
 }
 
-QVFParams::~QVFParams()
+P4VFParams::~P4VFParams()
 {
     if (!dataInvalid_)
         getDataFromDlg();
 }
 
-bool QVFParams::focusNextPrevChild(bool next)
+bool P4VFParams::focusNextPrevChild(bool next)
 {
     QWidget *p;
     p = focusWidget();
@@ -323,7 +324,7 @@ bool QVFParams::focusNextPrevChild(bool next)
     return QWidget::focusNextPrevChild(next);
 }
 
-bool QVFParams::getDataFromDlg(void)
+bool P4VFParams::getDataFromDlg(void)
 {
     int i;
     bool changed;
@@ -369,7 +370,7 @@ bool QVFParams::getDataFromDlg(void)
 
 // only called when vf is loaded, and only when numparams did not change.
 
-bool QVFParams::updateDlgData(void)
+bool P4VFParams::updateDlgData(void)
 {
     int i;
 
@@ -392,7 +393,7 @@ bool QVFParams::updateDlgData(void)
     return true;
 }
 
-void QVFParams::paramsSliderChanged(int value)
+void P4VFParams::paramsSliderChanged(int value)
 {
     int i;
     int newindex;

@@ -17,59 +17,28 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_VF_H
-#define WIN_VF_H
+#pragma once
 
 #include "custom.h"
 
-#include <QString>
-#include <QWidget>
+class P4VectorFieldDlg;
 
-class P4FindDlg;
-class QVFParams; // declare them first because both classes defined in
-                 // this file need each other
-
+class QScrollBar;
 class QBoxLayout;
 class QHBoxLayout;
-class QLabel;
 class QLineEdit;
-class QScrollBar;
-class QSpinBox;
+class QLabel;
+class QString;
 
-class QVectorFieldDlg : public QWidget
+class P4VFParams : public QWidget
 {
     Q_OBJECT
 
   public:
-    QVectorFieldDlg(P4FindDlg *startwindow);
-    ~QVectorFieldDlg();
-    void getDataFromDlg(void);
-    void updateDlgData(void);
-
-  private:
-    QBoxLayout *mainLayout_;
-    P4FindDlg *parent_;
-    QLineEdit *edt_xprime_;
-    QLineEdit *edt_yprime_;
-    QLineEdit *edt_gcf_;
-    QSpinBox *spin_numparams_;
-    QHBoxLayout *paramLayout_;
-    QScrollBar *sb_params_;
-    QVFParams *params_;
-
-  public slots:
-    void numParamsChanged(int);
-};
-
-class QVFParams : public QWidget
-{
-    Q_OBJECT
-
-  public:
-    QVFParams(QVectorFieldDlg *parent, QScrollBar *sb);
-    ~QVFParams();
-    bool getDataFromDlg(void);
-    bool updateDlgData(void);
+    P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb);
+    ~P4VFParams();
+    bool getDataFromDlg();
+    bool updateDlgData();
 
   private:
     bool dataInvalid_;
@@ -94,5 +63,3 @@ class QVFParams : public QWidget
   public slots:
     void paramsSliderChanged(int);
 };
-
-#endif /* WIN_VF_H */

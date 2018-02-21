@@ -279,7 +279,7 @@ P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
 
     // show vector field dialog
     if (!vfWindow_) {
-        vfWindow_.reset(new QVectorFieldDlg(this));
+        vfWindow_.reset(new P4VectorFieldDlg(this));
         vfWindow_->show();
         mainLayout_->addWidget(vfWindow_);
     } else {

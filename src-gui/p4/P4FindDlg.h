@@ -23,7 +23,7 @@
 #include <memory>
 
 class P4ParamsDlg;
-class QVectorFieldDlg;
+class P4VectorFieldDlg;
 class P4StartDlg;
 
 class QBoxLayout;
@@ -56,7 +56,7 @@ class P4FindDlg : public QWidget
     std::unique_ptr<QPushButton> btn_save_;
     std::unique_ptr<QPushButton> btn_eval_;
 
-    std::unique_ptr<QVectorFieldDlg> vfWindow_;
+    std::unique_ptr<P4VectorFieldDlg> vfWindow_;
     std::unique_ptr<P4ParamsDlg> paramsWindow_;
     // TODO. veure si s'ha de treballar en el layout
     std::unique_ptr<P4VFSelectDlg> vfSelectWindow_;

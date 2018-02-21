@@ -84,7 +84,7 @@ SOURCES += win_view.cpp \
     win_separatrice.cpp \
 
 HEADERS += win_view.h \
-    win_vf.h \
+    P4VectorFieldDlg.h \
     P4WinSphere.h \
     win_settings.h \
     P4PrintDlg.h \
