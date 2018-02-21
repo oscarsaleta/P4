@@ -1139,7 +1139,7 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
     fp << "user_isoclines := [";
     for (auto s : isoclines_) {
         myisoclines = convertMapleUserParameterLabels(s);
-        fp << s; //FIXME
+        fp << s;  // FIXME
     }
 
     for (k = 0; k < numparams_; k++) {
@@ -1443,7 +1443,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
     name_inftab = getfilename_inftable();
     name_finres = getfilename_finresults();
     name_infres = getfilename_infresults();
-    name_curves = getfilename_curveresults();
+    name_curves = getfilename_separatingcurveresults();
 
     if (prepareforcurves) {
         removeFile(name_curves);
@@ -1478,19 +1478,29 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
     prepareMaplePiecewiseConfig(fp);
 
     if (prepareforcurves) {
-        fp << "user_precision := 8:\ntry FindAllCurves() catch:\n"
-              "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
+        fp << "user_precision := 8:\n"
+              "try FindAllCurves() catch:\n"
+              "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
               "lastexception[2] );\n"
-              "finally: closeallfiles();\n"
-              "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
-              "try:\n";
+              "finally:\n"
+              "  closeallfiles();\n"
+              "  if normalexit=0 then\n"
+              "    `quit`(0);\n"
+              "  else\n"
+              "    `quit(1)`\n"
+              "  end if:\n"
+              "end try:\n";
     } else {
         fp << "try p5main() catch:\n"
-              "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-              "lastexception[2] );\n"
-              "finally: closeallfiles();\n"
-              "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
-              "try:\n";
+              "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], lastexception[2] );\n"
+              "finally:\n"
+              "  closeallfiles();\n"
+              "  if normalexit=0 then\n"
+              "    `quit`(0);\n"
+              "  else\n"
+              "    `quit(1)`\n"
+              "  end if:\n"
+              "end try:\n";
     }
 }
 

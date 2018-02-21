@@ -243,8 +243,8 @@ class P4InputVF : public QObject
     QString getfilename_isoclinestable() const;  // filename_vecisocline.tab
     QString getfilename_isoclines() const;  // filename_isocline.tab (tmp file)
     QString getPrepareIsoclinesFileName() const;  // filename_isocline_prep.txt
-    // separating curve filename
-    QString getfilename_separatingcurveresults() const; // filename_sepcurves.tab
+    // separating curve filename (filename_sepcurves.tab)
+    QString getfilename_separatingcurveresults() const;
     // check if a file exists
     static bool fileExists(QString) const;
 
