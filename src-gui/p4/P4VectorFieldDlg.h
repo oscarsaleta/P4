@@ -56,7 +56,7 @@ class P4VectorFieldDlg : public QWidget
     std::unique_ptr<QLineEdit> edt_gcf_;
     std::unique_ptr<QSpinBox> spin_numparams_;
     std::unique_ptr<QHBoxLayout> paramLayout_;
-    std::unique_ptr<QScrollBar> sb_params_;
+    std::shared_ptr<QScrollBar> sb_params_;
 
    public slots:
     void numParamsChanged(int);

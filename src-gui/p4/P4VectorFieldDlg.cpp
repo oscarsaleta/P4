@@ -20,9 +20,9 @@
 #include "P4VectorFieldDlg.h"
 
 #include "P4FindDlg.h"
+#include "P4InputVF.h"
 #include "P4VFParams.h"
 #include "custom.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "p4application.h"
 
@@ -34,33 +34,35 @@
 #include <QScrollBar>
 #include <QSpinBox>
 
-P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
+P4VectorFieldDlg::P4VectorFieldDlg(std::shared_ptr<P4FindDlg> finddlg)
+    : QWidget{finddlg.get()}, parent_{finddlg}
 {
-    parent_ = finddlg;
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    QLabel *p4title = new QLabel("Specify the vector field:", this);
+    std::unique_ptr<QLabel> p4title{
+        std::make_unique<QLabel>("Specify the vector field:", this)};
     p4title->setFont(*(g_p4app->titleFont_));
 
-    edt_xprime_ = new QLineEdit(g_ThisVF->xdot_, this);
-    QLabel *xlabel = new QLabel("&x' = ", this);
+    edt_xprime_ = std::make_unique<QLineEdit>(g_ThisVF->xdot_, this);
+    std::unique_ptr<QLabel> xlabel{std::make_unique<QLabel>("&x' = ", this)};
     xlabel->setFont(*(g_p4app->boldFont_));
     xlabel->setBuddy(edt_xprime_);
 
-    edt_yprime_ = new QLineEdit(g_ThisVF->ydot_, this);
-    QLabel *ylabel = new QLabel("&y' = ", this);
+    edt_yprime_ = std::make_unique<QLineEdit>(g_ThisVF->ydot_, this);
+    std::unique_ptr<QLabel> ylabel{std::make_unique<QLabel>("&y' = ", this)};
     ylabel->setFont(*(g_p4app->boldFont_));
     ylabel->setBuddy(edt_yprime_);
 
-    edt_gcf_ = new QLineEdit(g_ThisVF->gcf_, this);
-    QLabel *glabel = new QLabel("&Gcf: ", this);
+    edt_gcf_ = std::make_unique<QLineEdit>(g_ThisVF->gcf_, this);
+    std::unique_ptr<QLabel> glabel{std::make_unique<QLabel>("&Gcf: ", this)};
     glabel->setFont(*(g_p4app->boldFont_));
     glabel->setBuddy(edt_gcf_);
 
-    QLabel *plabel = new QLabel("Number of Parameters: ", this);
+    std::unique_ptr<QLabel> plabel{
+        std::make_unique<QLabel>("Number of Parameters: ", this)};
     plabel->setFont(*(g_p4app->boldFont_));
 
-    spin_numparams_ = new QSpinBox(this);
+    spin_numparams_ = std::make_unique<QSpinBox>(this);
     spin_numparams_->setMinimum(0);
     spin_numparams_->setMaximum(MAXNUMPARAMS);
 
@@ -81,21 +83,21 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 #endif
     // layout
 
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
     mainLayout_->addWidget(p4title);
 
-    QFormLayout *formLayout = new QFormLayout();
+    std::unique_ptr<QFormLayout> formLayout{std::make_unique<QFormLayout>()};
     formLayout->addRow(xlabel, edt_xprime_);
     formLayout->addRow(ylabel, edt_yprime_);
     formLayout->addRow(glabel, edt_gcf_);
 
-    QHBoxLayout *layout3 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
     layout3->addWidget(plabel);
     layout3->addWidget(spin_numparams_);
     layout3->addStretch(0);
 
-    paramLayout_ = new QHBoxLayout();
+    paramLayout_ = std::make_unique<QHBoxLayout>();
 
     mainLayout_->addLayout(formLayout);
     mainLayout_->addLayout(layout3);
@@ -103,19 +105,15 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg) : QWidget(finddlg)
 
     setLayout(mainLayout_);
 
-    sb_params_ = nullptr;
-    params_ = nullptr;
-
     if (g_ThisVF->numparams_ != 0) {
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            sb_params_ = new QScrollBar(Qt::Vertical, this);
+            sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
             sb_params_->setRange(0, g_ThisVF->numparams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
-        } else
-            sb_params_ = nullptr;
+        }
 
-        params_ = new P4VFParams(this, sb_params_);
+        params_ = std::make_unique<P4VFParams>(this, sb_params_);
         paramLayout_->addWidget(params_);
         if (g_ThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
@@ -262,164 +260,3 @@ void P4VectorFieldDlg::updateDlgData(void)
     }
 }
 
-P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
-    : QWidget(parent)
-{
-    int i;
-
-    QLabel *label0 = new QLabel("Enter values for all parameters");
-    label0->setFont(*(g_p4app->titleFont_));
-
-    dataInvalid_ = false;
-    sb_params_ = sb;
-    currentNumParams_ = g_ThisVF->numparams_;
-    currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
-                              ? currentNumParams_
-                              : MAXNUMPARAMSSHOWN;
-    currentPageIndex_ = 0;
-
-    for (i = 0; i < currentShownParams_; i++) {
-        // parlabel_ and parvalue_ might (or not) be filled from the input file
-        paramNames_[i] = new QLineEdit(g_ThisVF->parlabel_[i], this);
-        paramLabels_[i] = new QLabel(" = ", this);
-        paramValues_[i] = new QLineEdit(g_ThisVF->parvalue_[i], this);
-#ifdef TOOLTIPS
-        paramNames_[i]->setToolTip("Enter the name of the parameter");
-        paramValues_[i]->setToolTip(
-            "Enter the value of this parameter during this evaluation session");
-#endif
-    }
-
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom);
-    mainLayout_->addWidget(label0);
-    for (i = 0; i < currentShownParams_; i++) {
-        paramLines_[i] = new QHBoxLayout();
-        paramLines_[i]->addWidget(paramNames_[i]);
-        paramLines_[i]->addWidget(paramLabels_[i]);
-        paramLines_[i]->addWidget(paramValues_[i]);
-        mainLayout_->addLayout(paramLines_[i]);
-    }
-
-    for (i = 0; i < currentNumParams_; i++) {
-        sLabels_[i] = g_ThisVF->parlabel_[i];
-        sValues_[i] = g_ThisVF->parvalue_[i];
-    }
-    setLayout(mainLayout_);
-}
-
-P4VFParams::~P4VFParams()
-{
-    if (!dataInvalid_)
-        getDataFromDlg();
-}
-
-bool P4VFParams::focusNextPrevChild(bool next)
-{
-    QWidget *p;
-    p = focusWidget();
-    if (p == paramNames_[0] && currentPageIndex_ != 0 && !next) {
-        sb_params_->setValue(currentPageIndex_ - 1);
-        return focusNextPrevChild(true);
-    }
-    if (p == paramValues_[currentShownParams_ - 1] &&
-        currentPageIndex_ < currentNumParams_ - MAXNUMPARAMSSHOWN && next) {
-        sb_params_->setValue(currentPageIndex_ + 1);
-        return focusNextPrevChild(false);
-    }
-    return QWidget::focusNextPrevChild(next);
-}
-
-bool P4VFParams::getDataFromDlg(void)
-{
-    int i;
-    bool changed;
-    QString temp;
-
-    if (g_ThisVF == nullptr)
-        return false;
-
-    if (g_ThisVF->numparams_ != currentNumParams_)
-        return false;
-
-    currentNumParams_ = g_ThisVF->numparams_;
-
-    changed = false;
-
-    for (i = 0; i < currentShownParams_; i++) {
-        sLabels_[i + currentPageIndex_] = paramNames_[i]->text();
-        sValues_[i + currentPageIndex_] = paramValues_[i]->text();
-    }
-    for (i = 0; i < currentNumParams_; i++) {
-        temp = sLabels_[i];
-        temp = temp.trimmed();
-        if (temp.compare(g_ThisVF->parlabel_[i])) {
-            changed = true;
-            g_ThisVF->parlabel_[i] = temp;
-        }
-        temp = sValues_[i];
-        temp = temp.trimmed();
-        if (temp.compare(g_ThisVF->parvalue_[i])) {
-            changed = true;
-            g_ThisVF->parvalue_[i] = temp;
-        }
-    }
-
-    if (changed) {
-        if (g_ThisVF->changed_ == false) {
-            g_ThisVF->changed_ = true;
-            g_p4app->signalChanged();
-        }
-    }
-    return true;
-}
-
-// only called when vf is loaded, and only when numparams did not change.
-
-bool P4VFParams::updateDlgData(void)
-{
-    int i;
-
-    if (g_ThisVF->numparams_ != currentNumParams_) {
-        dataInvalid_ = true;
-        return false;
-
-        // when the number of parameters changed, signal it to the parent
-        // window.  This parent window will close this window and re-open it.
-        // In order to prevent data-overwriting when the window is closed,
-        // set a flag to say that the current data in this object is no longer
-        // valid.
-    }
-
-    for (i = 0; i < currentShownParams_; i++) {
-        paramNames_[i]->setText(g_ThisVF->parlabel_[i + currentPageIndex_]);
-        paramValues_[i]->setText(g_ThisVF->parvalue_[i + currentPageIndex_]);
-    }
-
-    return true;
-}
-
-void P4VFParams::paramsSliderChanged(int value)
-{
-    int i;
-    int newindex;
-
-    newindex = value;
-    if (newindex < 0)
-        newindex = 0;
-    if (newindex > currentNumParams_ - MAXNUMPARAMSSHOWN)
-        newindex = currentNumParams_ - MAXNUMPARAMSSHOWN;
-
-    if (newindex != currentPageIndex_) {
-        for (i = 0; i < currentShownParams_; i++) {
-            sLabels_[i + currentPageIndex_] = paramNames_[i]->text();
-            sValues_[i + currentPageIndex_] = paramValues_[i]->text();
-        }
-
-        currentPageIndex_ = newindex;
-
-        for (i = 0; i < currentShownParams_; i++) {
-            paramNames_[i]->setText(sLabels_[i + currentPageIndex_]);
-            paramValues_[i]->setText(sValues_[i + currentPageIndex_]);
-        }
-    }
-}
