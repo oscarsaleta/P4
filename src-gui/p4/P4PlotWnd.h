@@ -23,7 +23,7 @@
 
 #include <memory>
 
-class QCurveDlg;
+class P4ArbitraryCurveDlg;
 class P4GcfDlg;
 class QIsoclinesDlg;
 class P4IntParamsDlg;
@@ -74,7 +74,7 @@ class P4PlotWnd : public QMainWindow
     std::unique_ptr<P4SepDlg> sepWindow_;
     std::unique_ptr<P4LimitCyclesDlg> lcWindow_;
     std::unique_ptr<P4GcfDlg> gcfWindow_;
-    std::unique_ptr<QCurveDlg> curveWindow_;
+    std::unique_ptr<P4ArbitraryCurveDlg> curveWindow_;
     std::unique_ptr<QIsoclinesDlg> isoclinesWindow_;
 
     std::shared_ptr<P4WinSphere> sphere_;  // main sphere
@@ -86,7 +86,7 @@ class P4PlotWnd : public QMainWindow
     bool flagAllSepsPlotted_;
 
    public slots:
-    //void signalEvaluating();
+    // void signalEvaluating();
     void signalEvaluated();
     void signalChanged();
 
@@ -97,8 +97,8 @@ class P4PlotWnd : public QMainWindow
     void onBtnIntParams();
     void onBtnView();
     void onBtnGCF();
-    void onBtnCurve(); //FIXME
-    void onBtnIsoclines(); //FIXME
+    void onBtnCurve();      // FIXME
+    void onBtnIsoclines();  // FIXME
     void onBtnPlotSep();
     void onBtnPlotAllSeps();
     void onBtnLimitCycles();

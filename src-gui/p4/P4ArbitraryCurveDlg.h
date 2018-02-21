@@ -30,42 +30,43 @@ class QRadioButton;
 class QLineEdit;
 class QBoxLayout;
 
-class QCurveDlg : public QWidget
+class P4ArbitraryCurveDlg : public QWidget
 {
     Q_OBJECT
 
-  public:
-    QCurveDlg(P4PlotWnd *, P4WinSphere *);
-    void reset(void);
-    void finishCurveEvaluation(void);
+   public:
+    P4ArbitraryCurveDlg(std::shared_ptr<P4PlotWnd>,
+                        std::shared_ptr<P4WinSphere>);
+    void reset();
+    void finishCurveEvaluation();
 
-  private:
-    P4WinSphere *mainSphere_;
-    P4PlotWnd *plotwnd_;
+   private:
+    std::shared_ptr<P4WinSphere> mainSphere_;
+    std::shared_ptr<P4PlotWnd> plotwnd_;
 
-    QPushButton *btnEvaluate_;
-    QPushButton *btnPlot_;
-    QPushButton *btnDelLast_;
-    QPushButton *btnDelAll_;
+    std::unique_ptr<QPushButton> btnEvaluate_;
+    std::unique_ptr<QPushButton> btnPlot_;
+    std::unique_ptr<QPushButton> btnDelLast_;
+    std::unique_ptr<QPushButton> btnDelAll_;
 
-    QRadioButton *btn_dots_;
-    QRadioButton *btn_dashes_;
-    QLineEdit *edt_curve_;
-    QLineEdit *edt_points_;
-    QLineEdit *edt_precis_;
-    QLineEdit *edt_memory_;
+    std::unique_ptr<QRadioButton> btn_dots_;
+    std::unique_ptr<QRadioButton> btn_dashes_;
+    std::unique_ptr<QLineEdit> edt_curve_;
+    std::unique_ptr<QLineEdit> edt_points_;
+    std::unique_ptr<QLineEdit> edt_precis_;
+    std::unique_ptr<QLineEdit> edt_memory_;
 
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
     int evaluating_points_;
     int evaluating_memory_;
     int evaluating_precision_;
 
-  public slots:
-    void onBtnEvaluate(void);
-    void onBtnPlot(void);
-    void onBtnDelAll(void);
-    void onBtnDelLast(void);
+   public slots:
+    void onBtnEvaluate();
+    void onBtnPlot();
+    void onBtnDelAll();
+    void onBtnDelLast();
 };
 
 #endif /* WIN_CURVE_H */

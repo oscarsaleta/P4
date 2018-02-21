@@ -17,15 +17,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_curve.h"
+#include "P4ArbitraryCurveDlg.h"
 
-#include "custom.h"
 #include "P4InputVF.h"
+#include "P4PlotWnd.h"
+#include "P4WinSphere.h"
+#include "custom.h"
 #include "main.h"
 #include "math_curve.h"
 #include "math_polynom.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -35,7 +35,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-QCurveDlg::QCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
       plotwnd_(plt)
 {
@@ -80,10 +80,11 @@ QCurveDlg::QCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
                                   std::to_string(MIN_CURVEPRECIS) + " and " +
                                   std::to_string(MAX_CURVEPRECIS));
     edt_precis_->setToolTip(ttip);
-    ttip = QString::fromStdString("Maximum amount of memory (in kilobytes) "
-                                  "spent on plotting GCF.\nMust be between " +
-                                  std::to_string(MIN_CURVEMEMORY) + " and " +
-                                  std::to_string(MAX_CURVEMEMORY));
+    ttip = QString::fromStdString(
+        "Maximum amount of memory (in kilobytes) "
+        "spent on plotting GCF.\nMust be between " +
+        std::to_string(MIN_CURVEMEMORY) + " and " +
+        std::to_string(MAX_CURVEMEMORY));
     edt_memory_->setToolTip(ttip);
 #endif
 
@@ -126,10 +127,13 @@ QCurveDlg::QCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     // connections
 
     connect(btnEvaluate_, &QPushButton::clicked, this,
-            &QCurveDlg::onBtnEvaluate);
-    connect(btnPlot_, &QPushButton::clicked, this, &QCurveDlg::onBtnPlot);
-    connect(btnDelLast_, &QPushButton::clicked, this, &QCurveDlg::onBtnDelLast);
-    connect(btnDelAll_, &QPushButton::clicked, this, &QCurveDlg::onBtnDelAll);
+            &P4ArbitraryCurveDlg::onBtnEvaluate);
+    connect(btnPlot_, &QPushButton::clicked, this,
+            &P4ArbitraryCurveDlg::onBtnPlot);
+    connect(btnDelLast_, &QPushButton::clicked, this,
+            &P4ArbitraryCurveDlg::onBtnDelLast);
+    connect(btnDelAll_, &QPushButton::clicked, this,
+            &P4ArbitraryCurveDlg::onBtnDelAll);
 
     // finishing
 
@@ -144,7 +148,7 @@ QCurveDlg::QCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     setP4WindowTitle(this, "Curve plot");
 }
 
-void QCurveDlg::reset()
+void P4ArbitraryCurveDlg::reset()
 {
     QString buf;
 
@@ -173,7 +177,7 @@ void QCurveDlg::reset()
         btn_dots_->toggle();
 }
 
-void QCurveDlg::onBtnEvaluate()
+void P4ArbitraryCurveDlg::onBtnEvaluate()
 {
     if (edt_curve_->text().isNull() || edt_curve_->text().isEmpty()) {
         QMessageBox::information(this, "P4",
@@ -181,7 +185,7 @@ void QCurveDlg::onBtnEvaluate()
                                  "with the equation of a curve.\n");
         return;
     }
-    gThisVF->curve_ = edt_curve_->text().trimmed();
+    gThisVF->arbitraryCurve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of P4POLYNOM2
@@ -190,7 +194,7 @@ void QCurveDlg::onBtnEvaluate()
     btnPlot_->setEnabled(true);
 }
 
-void QCurveDlg::onBtnPlot()
+void P4ArbitraryCurveDlg::onBtnPlot()
 {
     bool dashes, result;
     int points, precis, memory;
@@ -228,15 +232,17 @@ void QCurveDlg::onBtnPlot()
 
     if (!ok) {
         QMessageBox::information(
-            this, "P4", "One of the fields has a value that is out of bounds.\n"
-                        "Please correct before continuing.\n");
+            this, "P4",
+            "One of the fields has a value that is out of bounds.\n"
+            "Please correct before continuing.\n");
         return;
     }
 
     // SECOND: read the resulting file and store the list
     if (!gVFResults.readCurve(gThisVF->getbarefilename())) {
-        QMessageBox::critical(this, "P4", "Cannot read curve.\n"
-                                          "Please check the input field!\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot read curve.\n"
+                              "Please check the input field!\n");
         return;
     }
 
@@ -252,10 +258,11 @@ void QCurveDlg::onBtnPlot()
     result = evalCurveStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btnPlot_->setEnabled(true);
-        QMessageBox::critical(this, "P4", "An error occured while plotting the "
-                                          "curve.\nThe singular locus may not "
-                                          "be visible, or may be partially "
-                                          "visible.");
+        QMessageBox::critical(this, "P4",
+                              "An error occured while plotting the "
+                              "curve.\nThe singular locus may not "
+                              "be visible, or may be partially "
+                              "visible.");
         return;
     }
 
@@ -263,7 +270,7 @@ void QCurveDlg::onBtnPlot()
     btnDelLast_->setEnabled(true);
 }
 
-void QCurveDlg::onBtnDelAll()
+void P4ArbitraryCurveDlg::onBtnDelAll()
 {
     plotwnd_->getDlgData();
 
@@ -277,7 +284,7 @@ void QCurveDlg::onBtnDelAll()
     mainSphere_->refresh();
 }
 
-void QCurveDlg::onBtnDelLast()
+void P4ArbitraryCurveDlg::onBtnDelLast()
 {
     plotwnd_->getDlgData();
 
@@ -292,23 +299,24 @@ void QCurveDlg::onBtnDelLast()
     }
 }
 
-void QCurveDlg::finishCurveEvaluation()
+void P4ArbitraryCurveDlg::finishCurveEvaluation()
 {
     bool result;
 
     if (btnPlot_->isEnabled() == true)
-        return; // not busy??
+        return;  // not busy??
 
     result = evalCurveContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
         btnPlot_->setEnabled(false);
-        result = evalCurveFinish(); // return false in case an error occured
+        result = evalCurveFinish();  // return false in case an error occured
         if (!result) {
-            QMessageBox::critical(this, "P4", "An error occured while plotting "
-                                              "the curve.\nThe singular locus "
-                                              "may not be visible, or may "
-                                              "be partially visible.");
+            QMessageBox::critical(this, "P4",
+                                  "An error occured while plotting "
+                                  "the curve.\nThe singular locus "
+                                  "may not be visible, or may "
+                                  "be partially visible.");
         }
     }
 }

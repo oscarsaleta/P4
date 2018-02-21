@@ -52,7 +52,7 @@ SOURCES += win_view.cpp \
     win_intparams.cpp \
     win_gcf.cpp \
     win_find.cpp \
-    win_curve.cpp \
+    P4ArbitraryCurveDlg.cpp \
     win_about.cpp \
     print_xfig.cpp \
     print_postscript.cpp \
@@ -99,7 +99,7 @@ HEADERS += win_view.h \
     P4GcfDlg.h \
     P4FindDlg.h \
     P4Event.h \
-    win_curve.h \
+    P4ArbitraryCurveDlg.h \
     win_about.h \
     p4application.h \
     math_p4.h \

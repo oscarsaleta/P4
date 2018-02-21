@@ -19,25 +19,25 @@
 
 #include "P4PlotWnd.h"
 
+#include "P4ArbitraryCurveDlg.h"
 #include "P4Event.h"
 #include "P4GcfDlg.h"
+#include "P4InputVF.h"
 #include "P4IntParamsDlg.h"
 #include "P4LegendWnd.h"
 #include "P4LimitCyclesDlg.h"
 #include "P4OrbitsDlg.h"
+#include "P4PrintDlg.h"
+#include "P4SepDlg.h"
 #include "P4StartDlg.h"
+#include "P4WinSphere.h"
 #include "custom.h"
 #include "file_tab.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "math_separatrice.h"
 #include "p4application.h"
 #include "plot_tools.h"
-#include "win_curve.h"
 #include "win_isoclines.h"
-#include "P4PrintDlg.h"
-#include "P4SepDlg.h"
-#include "P4WinSphere.h"
 #include "win_view.h"
 #include "win_zoom.h"
 
@@ -194,7 +194,7 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     viewParamsWindow_ = new P4ViewDlg(this);
     lcWindow_ = new P4LimitCyclesDlg(this, sphere_);
     gcfWindow_ = new P4GcfDlg(this, sphere_);
-    curveWindow_ = new QCurveDlg(this, sphere_);
+    curveWindow_ = new P4ArbitraryCurveDlg(this, sphere_);
     isoclinesWindow_ = new QIsoclinesDlg(this, sphere_);
     gLCWindowIsUp = false;  // Limit cycles: initially hidden
 
@@ -511,7 +511,7 @@ void P4PlotWnd::customEvent(QEvent *_e)
         delete p;
         break;
     case TYPE_SELECT_LCSECTION:
-        DOUBLEPOINT *p {static_cast<DOUBLEPOINT *>(e.data())};
+        DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e.data())};
         x0 = p->x;
         y0 = p->y;
         p++;
@@ -540,7 +540,7 @@ void P4PlotWnd::customEvent(QEvent *_e)
         lcWindow_->raise();
         break;
     case TYPE_SEP_EVENT:
-        int *oet {static_cast<int *>(e.data())};
+        int *oet{static_cast<int *>(e.data())};
         sepWindow_->sepEvent(*oet);
         delete oet;
         break;
