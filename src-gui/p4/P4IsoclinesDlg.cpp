@@ -37,34 +37,35 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
-      plotwnd_(plt)
+P4IsoclinesDlg::P4IsoclinesDlg(std::shared_ptr<P4PlotWnd> plt,
+                               std::shared_ptr<P4WinSphere> sp)
+    : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
+      mainSphere_{std::move(sp)}, plotwnd_{std::move(plt)}
 {
-    edt_value_ = new QLineEdit("", this);
-    QLabel *lbl0 = new QLabel("&Value = ", this);
+    edt_value_ = std::make_unique<QLineEdit>("", this);
+    auto lbl0 = std::make_unique<QLabel>("&Value = ", this);
     lbl0->setBuddy(edt_value_);
 
-    QButtonGroup *btngrp = new QButtonGroup(this);
-    btn_dots_ = new QRadioButton("Dots", this);
-    btn_dashes_ = new QRadioButton("Dashes", this);
+    auto btngrp = std::make_unique<QButtonGroup>(this);
+    btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
+    btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
     btngrp->addButton(btn_dots_);
     btngrp->addButton(btn_dashes_);
-    QLabel *lbl1 = new QLabel("Appearance: ", this);
+    auto lbl1 = std::make_unique<QLabel>("Appearance: ", this);
 
-    edt_points_ = new QLineEdit("", this);
-    QLabel *lbl2 = new QLabel("Num. Points: ", this);
+    edt_points_ = std::make_unique<QLineEdit>("", this);
+    auto lbl2 = std::make_unique<QLabel>("Num. Points: ", this);
 
-    edt_precis_ = new QLineEdit("", this);
-    QLabel *lbl3 = new QLabel("Precision: ", this);
+    edt_precis_ = std::make_unique<QLineEdit>("", this);
+    auto lbl3 = std::make_unique<QLabel>("Precision: ", this);
 
-    edt_memory_ = new QLineEdit("", this);
-    QLabel *lbl4 = new QLabel("Max. Memory: ", this);
+    edt_memory_ = std::make_unique<QLineEdit>("", this);
+    auto lbl4 = std::make_unique<QLabel>("Max. Memory: ", this);
 
-    btnEvaluate_ = new QPushButton("&Evaluate", this);
-    btnPlot_ = new QPushButton("&Plot", this);
-    btnDelLast_ = new QPushButton("&Delete Last Isocline", this);
-    btnDelAll_ = new QPushButton("Delete &All Isoclines", this);
+    btnEvaluate_ = std::make_unique<QPushButton>("&Evaluate", this);
+    btnPlot_ = std::make_unique<QPushButton>("&Plot", this);
+    btnDelLast_ = std::make_unique<QPushButton>("&Delete Last Isocline", this);
+    btnDelAll_ = std::make_unique<QPushButton>("Delete &All Isoclines", this);
 
 #ifdef TOOLTIPS
     edt_value_->setToolTip(
@@ -93,14 +94,14 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
 #endif
 
     // layout
-    mainLayout_ = new QBoxLayout(QBoxLayout::TopToBottom, this);
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    QHBoxLayout *layout0 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout0 = std::make_unique<QHBoxLayout>();
     layout0->addWidget(lbl1);
     layout0->addWidget(btn_dots_);
     layout0->addWidget(btn_dashes_);
 
-    QGridLayout *layout1 = new QGridLayout();
+    std::unique_ptr<QGridLayout> layout1{std::make_unique<QGridLayout>()};
     layout1->addWidget(lbl0, 0, 0);
     layout1->addWidget(edt_value_, 0, 1);
     layout1->addWidget(lbl2, 1, 0);
@@ -110,12 +111,12 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     layout1->addWidget(lbl4, 3, 0);
     layout1->addWidget(edt_memory_, 3, 1);
 
-    QHBoxLayout *layout2 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
     layout2->addWidget(btnEvaluate_);
     layout2->addStretch(0);
     layout2->addWidget(btnDelLast_);
 
-    QHBoxLayout *layout3 = new QHBoxLayout();
+    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
     layout3->addWidget(btnPlot_);
     layout3->addStretch(0);
     layout3->addWidget(btnDelAll_);
