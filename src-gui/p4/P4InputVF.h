@@ -46,6 +46,7 @@ class QProcess;
 class QTextEdit;
 class QPushButton;
 class QTextStream;
+class QMetaObject::Connection;  // NOTE works?
 
 struct p4polynom::term2;
 
@@ -110,6 +111,7 @@ class P4InputVF : public QObject
     QString evalFile_;
     QString evalFile2_;
     std::unique_ptr<QProcess> evalProcess_;
+    std::unique_ptr<QMetaObject::Connection> evalProcessFinishedConnection_;
 
     // QT GUI ELEMENTS FIXME need to be public?
     std::unique_ptr<QWidget> outputWindow_;
@@ -293,20 +295,23 @@ class P4InputVF : public QObject
 
     // EVALUATION: arbitrary curves
     // called from P4ArbitraryCurveDlg.cpp evaluate button
-    void evaluateCurveTable();
+    void evaluateArbitraryCurveTable();
     // called from evaluateCurveTable
-    void prepareCurve();
+    void prepareArbitraryCurve();
     // called from prepareCurve
-    void prepareCurveFile(QTextStream &);
+    void prepareArbitraryCurveFile(QTextStream &);
     // called from prepareCurveFile
     void prepareMapleArbitraryCurve(QTextStream &);
     // the following are called from math_curve.cpp
-    bool prepareCurve(std::vector<p4polynom::term2> f, double y1, double y2,
-                      int precision, int numpoints);  // FIXME
-    bool prepareCurve_LyapunovCyl(double theta1, double theta2, int precision,
-                                  int numpoints, int index);
-    bool prepareCurve_LyapunovR2(int precision, int numpoints, int index);
-    bool evaluateCurve();
+    bool prepareArbitraryCurve(std::vector<p4polynom::term2> f, double y1,
+                               double y2, int precision,
+                               int numpoints);  // FIXME
+    bool prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
+                                           int precision, int numpoints,
+                                           int index);
+    bool prepareArbitraryCurve_LyapunovR2(int precision, int numpoints,
+                                          int index);
+    bool evaluateArbitraryCurve();
 
     // EVALUATION: isoclines
     void evaluateIsoclinesTable();
@@ -330,10 +335,10 @@ class P4InputVF : public QObject
     void catchProcessError(QProcess::ProcessError);
     void readProcessStdout();
     void onTerminateButton();
-    void onClearButton();
     void finishGcfEvaluation();
-    void finishCurveEvaluation();
+    void finishArbitraryCurveEvaluation();
     void finishIsoclinesEvaluation();
+    void finishSeparatingCurvesEvaluation();
 };
 
 // NOTE this could be a shared_ptr in each class that uses it
