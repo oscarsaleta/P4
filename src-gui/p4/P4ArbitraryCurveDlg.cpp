@@ -38,7 +38,7 @@
 P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(std::shared_ptr<P4PlotWnd> plt,
                                          std::shared_ptr<P4WinSphere> sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
-      mainSphere_{sp}, plotwnd_{plt}
+      mainSphere_{std::move(sp)}, plotwnd_{std::move(plt)}
 {
     edt_curve_ = std::make_unique<QLineEdit>("", this);
     std::unique_ptr<QLabel> lbl0{std::make_unique<QLabel>("Curve: ", this)};
