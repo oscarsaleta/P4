@@ -25,7 +25,7 @@
 
 class P4ArbitraryCurveDlg;
 class P4GcfDlg;
-class QIsoclinesDlg;
+class P4IsoclinesDlg;
 class P4IntParamsDlg;
 class P4LegendWnd;
 class P4LimitCyclesDlg;
@@ -75,7 +75,7 @@ class P4PlotWnd : public QMainWindow
     std::unique_ptr<P4LimitCyclesDlg> lcWindow_;
     std::unique_ptr<P4GcfDlg> gcfWindow_;
     std::unique_ptr<P4ArbitraryCurveDlg> curveWindow_;
-    std::unique_ptr<QIsoclinesDlg> isoclinesWindow_;
+    std::unique_ptr<P4IsoclinesDlg> isoclinesWindow_;
 
     std::shared_ptr<P4WinSphere> sphere_;  // main sphere
 

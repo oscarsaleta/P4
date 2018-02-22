@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_ISOCLINES_H
-#define WIN_ISOCLINES_H
+#pragma once
 
 #include <QWidget>
 
@@ -30,32 +29,32 @@ class QRadioButton;
 class QLineEdit;
 class QBoxLayout;
 
-class QIsoclinesDlg : public QWidget
+class P4IsoclinesDlg : public QWidget
 {
     Q_OBJECT
 
-  public:
-    QIsoclinesDlg(P4PlotWnd *, P4WinSphere *);
+   public:
+    P4IsoclinesDlg(std::shared_ptr<P4PlotWnd> , std::shared_ptr<P4WinSphere> );
     void reset();
     void finishIsoclinesEvaluation();
 
-  private:
-    P4WinSphere *mainSphere_;
-    P4PlotWnd *plotwnd_;
+   private:
+    std::shared_ptr<P4WinSphere> mainSphere_;
+    std::shared_ptr<P4PlotWnd> plotwnd_;
 
-    QPushButton *btnEvaluate_;
-    QPushButton *btnPlot_;
-    QPushButton *btnDelAll_;
-    QPushButton *btnDelLast_;
+    std::unique_ptr<QPushButton> btnEvaluate_;
+    std::unique_ptr<QPushButton> btnPlot_;
+    std::unique_ptr<QPushButton> btnDelAll_;
+    std::unique_ptr<QPushButton> btnDelLast_;
 
-    QRadioButton *btn_dots_;
-    QRadioButton *btn_dashes_;
-    QLineEdit *edt_value_;
-    QLineEdit *edt_points_;
-    QLineEdit *edt_precis_;
-    QLineEdit *edt_memory_;
+    std::unique_ptr<QRadioButton> btn_dots_;
+    std::unique_ptr<QRadioButton> btn_dashes_;
+    std::unique_ptr<QLineEdit> edt_value_;
+    std::unique_ptr<QLineEdit> edt_points_;
+    std::unique_ptr<QLineEdit> edt_precis_;
+    std::unique_ptr<QLineEdit> edt_memory_;
 
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
     int evaluating_points_;
     int evaluating_memory_;
@@ -63,7 +62,7 @@ class QIsoclinesDlg : public QWidget
 
     void setValue(double v);
 
-  public slots:
+   public slots:
     void onBtnEvaluate();
     void onBtnPlot();
     void onBtnDelAll();

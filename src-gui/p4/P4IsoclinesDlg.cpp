@@ -17,17 +17,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_isoclines.h"
+#include "P4IsoclinesDlg.h"
 
+#include "P4InputVF.h"
+#include "P4PlotWnd.h"
+#include "P4WinSphere.h"
 #include "custom.h"
 #include "file_tab.h"
-#include "P4InputVF.h"
 #include "main.h"
 #include "math_gcf.h"
 #include "math_isoclines.h"
 #include "math_polynom.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -37,7 +37,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), mainSphere_(sp),
       plotwnd_(plt)
 {
@@ -67,9 +67,10 @@ QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btnDelAll_ = new QPushButton("Delete &All Isoclines", this);
 
 #ifdef TOOLTIPS
-    edt_value_->setToolTip("Value of isoclines to plot.\nCan be 0 for 0-slope "
-                           "isoclines, and \"inf\"\n(without quotes, case "
-                           "insensitive) for\ninfinite-slope isoclines.");
+    edt_value_->setToolTip(
+        "Value of isoclines to plot.\nCan be 0 for 0-slope "
+        "isoclines, and \"inf\"\n(without quotes, case "
+        "insensitive) for\ninfinite-slope isoclines.");
     btnEvaluate_->setToolTip("Evaluate isoclines at the selected value.");
     btnPlot_->setToolTip("Plot isocline.");
     btnDelLast_->setToolTip("Delete last isocline drawn");
@@ -83,10 +84,11 @@ QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
                                   std::to_string(MIN_CURVEPRECIS) + " and " +
                                   std::to_string(MAX_CURVEPRECIS));
     edt_precis_->setToolTip(ttip);
-    ttip = QString::fromStdString("Maximum amount of memory (in kilobytes) "
-                                  "spent on plotting GCF.\nMust be between " +
-                                  std::to_string(MIN_CURVEMEMORY) + " and " +
-                                  std::to_string(MAX_CURVEMEMORY));
+    ttip = QString::fromStdString(
+        "Maximum amount of memory (in kilobytes) "
+        "spent on plotting GCF.\nMust be between " +
+        std::to_string(MIN_CURVEMEMORY) + " and " +
+        std::to_string(MAX_CURVEMEMORY));
     edt_memory_->setToolTip(ttip);
 #endif
 
@@ -128,12 +130,12 @@ QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
 
     // connections
     connect(btnEvaluate_, &QPushButton::clicked, this,
-            &QIsoclinesDlg::onBtnEvaluate);
-    connect(btnPlot_, &QPushButton::clicked, this, &QIsoclinesDlg::onBtnPlot);
+            &P4IsoclinesDlg::onBtnEvaluate);
+    connect(btnPlot_, &QPushButton::clicked, this, &P4IsoclinesDlg::onBtnPlot);
     connect(btnDelAll_, &QPushButton::clicked, this,
-            &QIsoclinesDlg::onBtnDelAll);
+            &P4IsoclinesDlg::onBtnDelAll);
     connect(btnDelLast_, &QPushButton::clicked, this,
-            &QIsoclinesDlg::onBtnDelLast);
+            &P4IsoclinesDlg::onBtnDelLast);
 
     // finishing
 
@@ -148,7 +150,7 @@ QIsoclinesDlg::QIsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     setP4WindowTitle(this, "Plot Isoclines");
 }
 
-void QIsoclinesDlg::onBtnEvaluate(void)
+void P4IsoclinesDlg::onBtnEvaluate(void)
 {
     bool ok;
     if (edt_value_->text().isNull() && edt_value_->text().isEmpty()) {
@@ -172,10 +174,11 @@ void QIsoclinesDlg::onBtnEvaluate(void)
     }
     if ((gThisVF->xdot_ == "0" || gThisVF->xdot_.isEmpty()) &&
         (gThisVF->ydot_ == "0" || gThisVF->ydot_.isEmpty())) {
-        QMessageBox::information(this, "P4", "Check that the vector field is "
-                                             "correctly introduced.\nIf you "
-                                             "used an input file, make sure "
-                                             "you pressed\nthe Load button.");
+        QMessageBox::information(this, "P4",
+                                 "Check that the vector field is "
+                                 "correctly introduced.\nIf you "
+                                 "used an input file, make sure "
+                                 "you pressed\nthe Load button.");
         return;
     }
     if (edt_value_->text().trimmed() == "0") {
@@ -184,8 +187,8 @@ void QIsoclinesDlg::onBtnEvaluate(void)
         gThisVF->isoclines_ = gThisVF->xdot_;
     } else {
         gThisVF->isoclines_ = "(" + gThisVF->ydot_ + ")-(" +
-                               edt_value_->text().trimmed() + ")*(" +
-                               gThisVF->xdot_ + ")";
+                              edt_value_->text().trimmed() + ")*(" +
+                              gThisVF->xdot_ + ")";
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
@@ -196,7 +199,7 @@ void QIsoclinesDlg::onBtnEvaluate(void)
     plotwnd_->getDlgData();
 }
 
-void QIsoclinesDlg::onBtnPlot(void)
+void P4IsoclinesDlg::onBtnPlot(void)
 {
     bool dashes, result;
     int points, precis, memory;
@@ -234,15 +237,17 @@ void QIsoclinesDlg::onBtnPlot(void)
 
     if (!ok) {
         QMessageBox::information(
-            this, "P4", "One of the fields has a value that is out of bounds.\n"
-                        "Please correct before continuing.\n");
+            this, "P4",
+            "One of the fields has a value that is out of bounds.\n"
+            "Please correct before continuing.\n");
         return;
     }
 
     // SECOND: read the resulting file and store the list
     if (!gVFResults.readIsoclines(gThisVF->getbarefilename())) {
-        QMessageBox::critical(this, "P4", "Cannot read isoclines.\n"
-                                          "Please check the input field!\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot read isoclines.\n"
+                              "Please check the input field!\n");
         return;
     }
     // THIRD: evaluate isoclines with given parameters {dashes, points, memory}.
@@ -270,7 +275,7 @@ void QIsoclinesDlg::onBtnPlot(void)
     btnDelLast_->setEnabled(true);
 }
 
-void QIsoclinesDlg::onBtnDelAll(void)
+void P4IsoclinesDlg::onBtnDelAll(void)
 {
     plotwnd_->getDlgData();
 
@@ -284,7 +289,7 @@ void QIsoclinesDlg::onBtnDelAll(void)
     mainSphere_->refresh();
 }
 
-void QIsoclinesDlg::onBtnDelLast(void)
+void P4IsoclinesDlg::onBtnDelLast(void)
 {
     plotwnd_->getDlgData();
 
@@ -299,7 +304,7 @@ void QIsoclinesDlg::onBtnDelLast(void)
     }
 }
 
-void QIsoclinesDlg::reset(void)
+void P4IsoclinesDlg::reset(void)
 {
     QString buf;
 
@@ -329,18 +334,19 @@ void QIsoclinesDlg::reset(void)
         btn_dots_->toggle();
 }
 
-void QIsoclinesDlg::finishIsoclinesEvaluation()
+void P4IsoclinesDlg::finishIsoclinesEvaluation()
 {
     bool result;
 
     if (btnPlot_->isEnabled() == true)
-        return; // not busy??
+        return;  // not busy??
 
     result = evalIsoclinesContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
         btnPlot_->setEnabled(false);
-        result = evalIsoclinesFinish(); // return false in case an error occured
+        result =
+            evalIsoclinesFinish();  // return false in case an error occured
         if (!result) {
             QMessageBox::critical(this, "P4",
                                   "An error occured while plotting "

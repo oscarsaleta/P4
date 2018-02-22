@@ -24,6 +24,7 @@
 #include "P4GcfDlg.h"
 #include "P4InputVF.h"
 #include "P4IntParamsDlg.h"
+#include "P4IsoclinesDlg.h"
 #include "P4LegendWnd.h"
 #include "P4LimitCyclesDlg.h"
 #include "P4OrbitsDlg.h"
@@ -37,7 +38,6 @@
 #include "math_separatrice.h"
 #include "p4application.h"
 #include "plot_tools.h"
-#include "win_isoclines.h"
 #include "win_view.h"
 #include "win_zoom.h"
 
@@ -195,7 +195,7 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     lcWindow_ = new P4LimitCyclesDlg(this, sphere_);
     gcfWindow_ = new P4GcfDlg(this, sphere_);
     curveWindow_ = new P4ArbitraryCurveDlg(this, sphere_);
-    isoclinesWindow_ = new QIsoclinesDlg(this, sphere_);
+    isoclinesWindow_ = new P4IsoclinesDlg(this, sphere_);
     gLCWindowIsUp = false;  // Limit cycles: initially hidden
 
     sphere_->show();
