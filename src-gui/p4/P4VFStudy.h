@@ -24,8 +24,9 @@
 class P4VFStudy : public QObject
 {
    public:
-    // Constructor and destructor
-    P4VFStudy(std::shared_ptr<P4ParentStudy> parent = nullptr);  // constructor
+    // Constructor
+    P4VFStudy(std::shared_ptr<P4ParentStudy> parent =
+                  std::make_shared<P4ParentStudy>(nullptr));
 
     std::shared_ptr<P4ParentStudy> parent_;
 
