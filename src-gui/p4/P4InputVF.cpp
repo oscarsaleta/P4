@@ -3435,13 +3435,13 @@ void P4InputVF::markVFRegion(int index, const double *p)
     if (i < 0) {
         std::vector<int> sgns;
         if (numSeparatingCurves_ > 0)
-            //sgns.reserve(sizeof(int) * numSeparatingCurves_);
-        for (auto const &curveResult : gVFResults.separatingCurves_) {
-            if (eval_curve(curveResult, p) < 0)
-                sgns.push_back(-1);
-            else
-                sgns.push_back(+1);
-        }
+            // sgns.reserve(sizeof(int) * numSeparatingCurves_);
+            for (auto const &curveResult : gVFResults.separatingCurves_) {
+                if (eval_curve(curveResult, p) < 0)
+                    sgns.push_back(-1);
+                else
+                    sgns.push_back(+1);
+            }
         vfRegions_.push_back(-1, sgns);
         numVFRegions_++;
         i = numVFRegions_ - 1;
@@ -3484,9 +3484,7 @@ void P4InputVF::markCurveRegion(int index, const double *p)
     int i;
     std::vector<int> signs;
 
-    if (numSeparatingCurves_ == 0)
-        return;
-    if (gVFResults.separatingCurves_.empty())
+    if (numSeparatingCurves_ == 0 || gVFResults.separatingCurves_.empty())
         return;
 
     for (i = 0; i < numSeparatingCurves_; i++) {
@@ -3498,15 +3496,15 @@ void P4InputVF::markCurveRegion(int index, const double *p)
             signs.push_back(1);
     }
     for (auto const &curve : curveRegions_) {
-        if (signs == curve.signs && index == curve.index) {
-            // curve mark already exists
+        if (signs == curve.signs && index == curve.curveIndex) {
+            // curve mark already exist
             return;
         }
     }
 
     curveRegions_.push_back(index, signs);
     numCurveRegions_++;
-    resampleCurve(index);
+    resampleSeparatingCurve(index);
 }
 
 // -----------------------------------------------------------------------
@@ -3519,25 +3517,24 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
     if (numSeparatingCurves_ == 0 || gVFResults.separatingCurves_.empty())
         return;
 
-    // NOTE: aqui podriem estar fent que els signes es guardin al reves que al
-    // p5 original
+    // NOTE: es pot fer així? reservar i accedir com si existissin?
     signs.reserve(sizeof(int) * numSeparatingCurves_);
-    for (int i = 0; i < numSeparatingCurves_; i++) {
+    for (int i = numSeparatingCurves_ - 1; i >= 0; i--) {
         if (i == index)
-            signs.push_back(0);
+            signs[i] = 0;
         else if (eval_curve(gVFResults.separatingCurves_[i], p) < 0)
-            signs.push_back(-1);
+            signs[i] = -1;
         else
-            signs.push_back(1);
+            signs[i] = 1;
     }
 
-    for (auto &k = std::begin(curveRegions_); k != std::end(curveRegions_);
+    for (auto k = std::begin(curveRegions_); k != std::end(curveRegions_);
          ++k) {
         if (signs == k->signs && index == k->curveIndex) {
             // curve mark exists
             curveRegions_.erase(k);
             numCurveRegions_--;
-            resampleCurve(index);
+            resampleSeparatingCurve(index);
             break;
         }
     }
@@ -3566,38 +3563,36 @@ void P4InputVF::clearCurveMarks()
 // -----------------------------------------------------------------------
 bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
 {
-    int k, j;
+    int k;
 
-    if (numSeparatingCurves_ == 0 || gVFResults.separatingCurves_.empty())
-        return false;
+    if (numSeparatingCurves_ == 0)
+        return true;
+    if (gVFResults.separatingCurves_.empty())
+        return false;  // NOTE: sure? if there are no separating curves there
+                       // are no regions so all poinst should be drawn...
 
     for (auto const &curve : curveRegions_) {
-        if (curve.curveIndex != index)
-            continue;
-        for (k = numSeparatingCurves_ - 1; k >= 0; k--) {
-            if (k == index)
-                continue;
-
-            if (eval_curve(gVFResults.separatingCurves_[k], pcoord) < 0) {
-                if (curve.signs[k] > 0)
-                    break;
-            } else {
-                if (curve.signs[k] < 0)
-                    break;
+        if (curve.curveIndex == index) {
+            for (k = numSeparatingCurves_ - 1; k >= 0; k--) {
+                if (k == index)
+                    continue;
+                if (eval_curve(gVFResults.separatingCurves_[k], pcoord) < 0) {
+                    if (curve.signs[k] > 0)
+                        return false;
+                } else {
+                    if (curve.signs[k] < 0)
+                        return false;
+                }
             }
-        }
-        if (k < 0) {
-            // matching region found --> disable curve draw.
-            return false;
         }
     }
     return true;
 }
 
 // -----------------------------------------------------------------------
-//          P4InputVF::resampleCurve
+//          P4InputVF::resampleSeparatingCurve
 // -----------------------------------------------------------------------
-void P4InputVF::resampleCurve(int i)
+void P4InputVF::resampleSeparatingCurve(int i)
 {
     if (gVFResults.separatingCurves_.empty())
         return;
@@ -3613,17 +3608,38 @@ void P4InputVF::resampleCurve(int i)
 // -----------------------------------------------------------------------
 //          P4InputVF::resampleGcf
 // -----------------------------------------------------------------------
+// Erases the GCF points of a vector field that lie outside of the region where
+// this vector field is assigned
 void P4InputVF::resampleGcf(int i)
 {
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
-    for (auto &it = std::begin(gVFResults.vf_[i]->gcf_points_);
-         it != std::end(gVFResults.vf_[i]->gcf_points_); ++it) {
+    for (auto it = std::begin(gVFResults.vf_[i].gcf_points_);
+         it != std::end(gVFResults.vf_[i].gcf_points_); ++it) {
+        it->dashes = 0;
         if (getVFIndex_sphere(it->pcoord) != i) {
-            gVFResults.vf_[i]->gcf_points_.erase(it);
-            if (it + 1 != std::end(gVFResults.vf_[i]->gcf_points_))
-                (it + 1)->dashes = 0;
+            gVFResults.vf_[i].gcf_points_.erase(it);
+        }
+    }
+}
+
+// -----------------------------------------------------------------------
+//          P4InputVF::resampleIsoclines
+// -----------------------------------------------------------------------
+// Erases the isoclines points of a vector field that lie outside of the region
+// where this vector field is assigned
+void P4InputVF::resampleIsoclines(int i)
+{
+    if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
+        return;
+    for (auto &isoc : gVFResults.vf_[i].isoclines) {
+        for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
+             ++it) {
+            it->dashes = 0;
+            if (getVFIndex_sphere(it->pcoord) != i) {
+                isoc.erase(it);
+            }
         }
     }
 }

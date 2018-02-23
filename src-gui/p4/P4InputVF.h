@@ -186,7 +186,11 @@ class P4InputVF : public QObject
     // MANAGE SEPARATING CURVES
     void addSeparatingCurve();
     void deleteSeparatingCurve(int);
-    void resampleCurve(int);
+
+    // RESAMPLING
+    void resampleSeparatingCurve(int);
+    void resampleGcf(int);
+    void resampleIsoclines(int i);
 
     // GET VECTOR FIELD INDEX
     int getVFIndex_R2(const double *);
@@ -211,8 +215,6 @@ class P4InputVF : public QObject
     void clearVFMarks();
     void clearCurveMarks();
     bool isCurvePointDrawn(int, const double *);
-
-    void resampleGcf(int);
 
     // COMMON ELEMENTS BETWEEN VFs
     bool hasCommonString(const std::vector<QString> &);
