@@ -38,12 +38,13 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
                               ? currentNumParams_
                               : MAXNUMPARAMSSHOWN;
 
-    strLabels_ = gThisVF->parlabel_;
-    strValues_ = gThisVF->parvalue_;
+    // strLabels_ = gThisVF->parlabel_;
+    // strValues_ = gThisVF->parvalue_;
 
     for (i = 0; i < currentShownParams_; i++) {
         // parlabel_ and parvalue_ might (or not) be filled from the input file
-        paramNames_.push_back(std::make_unique<QLineEdit>(sLabels[i], this));
+        paramNames_.push_back(
+            std::make_unique<QLineEdit>(gThisVF->parlabel_[i], this));
         paramEqual_.push_back(std::make_unique<QLabel>(" = ", this));
         paramValues_.push_back(std::make_unique<QLineEdit>("", this));
 #ifdef TOOLTIPS
@@ -56,11 +57,11 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
     mainLayout_->addWidget(label0);
     for (i = 0; i < currentShownParams_; i++) {
-        paramLines_.push_back(std::make_unique<QHBoxLayout>());
-        paramLines_[i]->addWidget(paramNames_[i]);
-        paramLines_[i]->addWidget(paramEqual_[i]);
-        paramLines_[i]->addWidget(paramValues_[i]);
-        mainLayout_->addLayout(paramLines_[i]);
+        paramLayouts_.push_back(std::make_unique<QHBoxLayout>{});
+        paramLayouts_[i]->addWidget(paramNames_[i]);
+        paramLayouts_[i]->addWidget(paramEqual_[i]);
+        paramLayouts_[i]->addWidget(paramValues_[i]);
+        mainLayout_->addLayout(paramLayouts_[i]);
 
         QObject::connect(paramNames_[i], &QLineEdit::editingFinished, this,
                          &P4VFParams::paramsEditingFinished);
@@ -90,15 +91,14 @@ bool P4VFParams::focusNextPrevChild(bool next)
 
 void P4VFParams::paramsEditingFinished()
 {
-    bool changed{false};
-    QString lbl;
-
     if (!gThisVF || gThisVF->numParams_ != currentNumParams_)
         return;
 
+    bool changed{false};
+    QString lbl;
+
     for (int i = 0; i < currentShownParams_; i++) {
         lbl = paramNames_[i]->text().trimmed();
-        // NOTE this might be wrong depending on parlabel_ implementation
         if (lbl.compare(gThisVF->parlabel_[i + currentPageIndex_])) {
             gThisVF->parlabel_[i + currentPageIndex_] = lbl;
             changed = true;
@@ -118,12 +118,10 @@ void P4VFParams::paramsEditingFinished()
 // only called when vf is loaded, and only when numparams did not change.
 bool P4VFParams::updateDlgData()
 {
-    int i;
-
     if (gThisVF->numparams_ != currentNumParams_)
         return false;
 
-    for (i = 0; i < currentShownParams_; i++) {
+    for (int i = 0; i < currentShownParams_; i++) {
         paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
         setLineEditCommonParValue(paramValues_[i], i + currentPageIndex_);
     }
@@ -131,10 +129,9 @@ bool P4VFParams::updateDlgData()
     return true;
 }
 
-// FIXME
 void P4VFParams::paramsSliderChanged(int value)
 {
-    int newindex{value};
+    int newindex{std::move(value)};
 
     if (newindex < 0)
         newindex = 0;
@@ -142,27 +139,22 @@ void P4VFParams::paramsSliderChanged(int value)
         newindex = currentNumParams_ - MAXNUMPARAMSSHOWN;
 
     if (newindex != currentPageIndex_) {
-        for (int i = 0; i < currentShownParams_; i++) {
-            strLabels_[i + currentPageIndex_] = paramNames_[i]->text();
-            strValues_[i + currentPageIndex_] = paramValues_[i]->text();
-        }
-
         currentPageIndex_ = newindex;
 
-        for (i = 0; i < currentShownParams_; i++) {
-            paramNames_[i]->setText(strLabels_[i + currentPageIndex_]);
-            paramValues_[i]->setText(strValues_[i + currentPageIndex_]);
+        for (int i = 0; i < currentShownParams_; i++) {
+            paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
+            setLineEditCommonParValue(paramValues_[i], i + currentPageIndex_);
         }
     }
 }
 
-void P4VFParams::setLineEditCommonParValue(QLineEdit *, int index)
+void P4VFParams::setLineEditCommonParValue(QLineEdit *le, int index)
 {
     if (gThisVF->hasCommonParValue(index))
         le->setText(gThisVF->commonParValue(index));
     else
         le->setText("########");
-} 
+}
 
 void P4VFParams::getLineEditCommonParValue(QLineEdit *, int index)
 {
