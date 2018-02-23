@@ -247,7 +247,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         }
 
         for (j = 0; j < gThisVF->numSeparatingCurves_; j++)
-            gThisVF->resampleCurve(j);
+            gThisVF->resampleSeparatingCurve(j);
 
         fclose(fpcurv);
         // dump( basename );
