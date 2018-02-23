@@ -89,6 +89,8 @@ bool evalIsoclinesFinish() // return false in case an error occured
     gVFResults.isocline_vector_.back().color = CISOC + nisocs;
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
+        for (int index = 0; index < gThisVF->numVF_; index++)
+            gThisVF->resampleIsoclines(index);
         sIsoclinesSphere->prepareDrawing();
         draw_isoclines(sIsoclinesSphere,
                        gVFResults.isocline_vector_.back().points,
