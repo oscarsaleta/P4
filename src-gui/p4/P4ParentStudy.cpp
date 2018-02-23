@@ -21,6 +21,7 @@
 
 #include "math_charts.h"
 #include "math_regions.h"
+#include "math_separatingcurves.h"
 
 // -----------------------------------------------------------------------
 //                              P4ParentStudy CONSTRUCTOR
