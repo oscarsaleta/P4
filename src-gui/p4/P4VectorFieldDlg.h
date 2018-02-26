@@ -63,8 +63,5 @@ class P4VectorFieldDlg : public QWidget
 
    public slots:
     void numParamsChanged(int);
-    void xdot_editingFinished();
-    void ydot_editingFinished();
-    void gcf_editingFinished();
-
+    void editingFinished();
 };
