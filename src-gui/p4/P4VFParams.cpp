@@ -104,7 +104,7 @@ void P4VFParams::paramsEditingFinished()
             changed = true;
         }
         changed |=
-            getLineEditCommonParValue(paramValues_[i], i + currentPageIndex_);
+            getLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
     }
 
     if (changed) {
@@ -123,7 +123,7 @@ bool P4VFParams::updateDlgData()
 
     for (int i = 0; i < currentShownParams_; i++) {
         paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
-        setLineEditCommonParValue(paramValues_[i], i + currentPageIndex_);
+        setLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
     }
 
     return true;
@@ -143,7 +143,7 @@ void P4VFParams::paramsSliderChanged(int value)
 
         for (int i = 0; i < currentShownParams_; i++) {
             paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
-            setLineEditCommonParValue(paramValues_[i], i + currentPageIndex_);
+            setLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
         }
     }
 }
@@ -156,7 +156,7 @@ void P4VFParams::setLineEditCommonParValue(QLineEdit *le, int index)
         le->setText("########");
 }
 
-void P4VFParams::getLineEditCommonParValue(QLineEdit *, int index)
+void P4VFParams::getLineEditCommonParValue(QLineEdit *le, int index)
 {
     int i;
     QString val{le->text().trimmed()};
