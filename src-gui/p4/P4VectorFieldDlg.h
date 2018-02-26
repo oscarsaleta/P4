@@ -43,8 +43,11 @@ class P4VectorFieldDlg : public QWidget
    public:
     P4VectorFieldDlg(std::shared_ptr<P4FindDlg> startwindow);
     ~P4VectorFieldDlg();
+
     void getDataFromDlg();
     void updateDlgData();
+    bool getLineEditCommonValue(QLineEdit *, const std::vector<QString> &);
+    bool setLineEditCommonValue(QLineEdit *, const std::vector<QString> &)
 
    private:
     std::shared_ptr<P4FindDlg> parent_;
@@ -60,4 +63,8 @@ class P4VectorFieldDlg : public QWidget
 
    public slots:
     void numParamsChanged(int);
+    void xdot_editingFinished();
+    void ydot_editingFinished();
+    void gcf_editingFinished();
+
 };
