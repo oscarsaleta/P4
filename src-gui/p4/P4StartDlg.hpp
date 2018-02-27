@@ -26,13 +26,14 @@
 class P4PlotWnd;
 class P4FindDlg;
 
+class QBoxLayout;
 class QCloseEvent;
 class QEvent;
-class QString;
-class QBoxLayout;
-class QPushButton;
 class QLineEdit;
 class QMenu;
+class QPushButton;
+class QString;
+class QTextBrowser;
 
 #define TYPE_SIGNAL_EVALUATING (QEvent::User + 1)
 #define TYPE_SIGNAL_EVALUATED (QEvent::User + 2)
@@ -62,10 +63,9 @@ class P4StartDlg : public QWidget
   public:
     P4StartDlg(const QString &);
 
+    // FIXME no haurien de ser publics, fer metodes d'acces
     std::unique_ptr<P4FindDlg> findWindow_;
-    // FIXME all pointers in different classes that actually point to the same
-    // object will have to be shared_ptr
-    std::shared_ptr<P4PlotWnd> plotWindow_;
+    std::unique_ptr<P4PlotWnd> plotWindow_;
 
     void closeEvent(QCloseEvent *ce);
 
@@ -91,7 +91,7 @@ class P4StartDlg : public QWidget
     void onBrowse();
     void onAbout();
     void onFilenameChange(const QString &);
-    QWidget *showText(QWidget *win, QString caption, QString fname);
+    void showText(QTextEdit &win, const QString &caption, const QString &fname);
     void onSaveSignal();
     void onLoadSignal();
 
@@ -107,9 +107,9 @@ class P4StartDlg : public QWidget
     std::unique_ptr<QLineEdit> edt_name_;
     std::unique_ptr<QMenu> viewMenu_;
 
-    std::unique_ptr<QWidget> helpWindow_;
-    std::unique_ptr<QWidget> viewInfiniteWindow_;
-    std::unique_ptr<QWidget> viewFiniteWindow_;
+    std::unique_ptr<QTextBrowser> helpWindow_;
+    std::unique_ptr<QTextEdit> viewInfiniteWindow_;
+    std::unique_ptr<QTextEdit> viewFiniteWindow_;
 
     bool canOpenPlot();
 };
