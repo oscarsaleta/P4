@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_SETTINGS_H
-#define WIN_SETTINGS_H
+#pragma once
 
 #include <QDialog>
 
@@ -30,7 +29,7 @@ class QRadioButton;
 class QString;
 class QWidget;
 
-class QSettingsDlg : public QDialog
+class P4SettingsDlg : public QDialog
 {
     Q_OBJECT
 
@@ -66,7 +65,7 @@ class QSettingsDlg : public QDialog
     QBoxLayout *mainLayout_;
 
   public:
-    QSettingsDlg(QWidget *, Qt::WindowFlags);
+    P4SettingsDlg(QWidget *, Qt::WindowFlags);
     void browseForExistingPathOrFile(QLineEdit *, QString, bool);
 
   public slots:

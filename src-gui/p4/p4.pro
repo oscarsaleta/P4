@@ -40,7 +40,7 @@ DESTDIR = $$BUILD_DIR/p4/
 SOURCES += P4ViewDlg.cpp \
     win_vf.cpp \
     win_sphere.cpp \
-    win_settings.cpp \
+    P4SettingsDlg.cpp \
     win_print.cpp \
     win_plot.cpp \
     win_params.cpp \
@@ -86,7 +86,7 @@ SOURCES += P4ViewDlg.cpp \
 HEADERS += P4ViewDlg.h \
     P4VectorFieldDlg.h \
     P4WinSphere.h \
-    win_settings.h \
+    P4SettingsDlg.h \
     P4PrintDlg.h \
     P4PlotWnd.h \
     P4ParamsDlg.h \

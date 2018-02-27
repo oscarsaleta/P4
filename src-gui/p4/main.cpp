@@ -27,7 +27,7 @@
 #include "P4InputVF.h"
 #include "P4Application.h"
 #include "p4settings.h"
-#include "win_settings.h"
+#include "P4SettingsDlg.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -192,8 +192,8 @@ int main(int argc, char *argv[])
                                  "In particular, check if P4 has found the "
                                  "Command-Line Version of MAPLE.\n");
 
-        std::unique_ptr<QSettingsDlg> psettings{
-            std::make_unique<QSettingsDlg>(nullptr, 0)};
+        std::unique_ptr<P4SettingsDlg> psettings{
+            std::make_unique<P4SettingsDlg>(nullptr, 0)};
         psettings->exec();
     }
 

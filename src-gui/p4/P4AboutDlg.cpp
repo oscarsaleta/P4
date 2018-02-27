@@ -21,7 +21,7 @@
 
 #include "main.h"
 #include "p4settings.h"
-#include "win_settings.h"
+#include "P4SettingsDlg.h"
 
 #include <QBoxLayout>
 #include <QGridLayout>
@@ -112,7 +112,7 @@ void P4AboutDlg::onOk(void) { done(0); }
 void P4AboutDlg::onSettings(void)
 {
     int value;
-    std::unique_ptr<QSettingsDlg> psettings{new QSettingsDlg(this, 0)};
+    std::unique_ptr<P4SettingsDlg> psettings{new P4SettingsDlg(this, 0)};
     value = psettings->exec();
     psettings.reset();
     if (value)

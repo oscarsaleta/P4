@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_settings.h"
+#include "P4SettingsDlg.h"
 
 #include "custom.h"
 #include "file_paths.h"
@@ -80,7 +80,7 @@ static QString AddQuotes(QString p)
     return p;
 }
 
-QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
+P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
@@ -214,17 +214,17 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     setLayout(mainLayout_);
 
     connect(btn_base_, &QPushButton::clicked, this,
-            &QSettingsDlg::onBrowseBase);
-    connect(btn_sum_, &QPushButton::clicked, this, &QSettingsDlg::onBrowseSum);
+            &P4SettingsDlg::onBrowseBase);
+    connect(btn_sum_, &QPushButton::clicked, this, &P4SettingsDlg::onBrowseSum);
     connect(btn_temp_, &QPushButton::clicked, this,
-            &QSettingsDlg::onBrowseTemp);
+            &P4SettingsDlg::onBrowseTemp);
     connect(btn_maple_, &QPushButton::clicked, this,
-            &QSettingsDlg::onBrowseMaple);
+            &P4SettingsDlg::onBrowseMaple);
     // connect(btn_red, &QPushButton::clicked, this,
-    // &QSettingsDlg::OnBrowseReduce);
-    connect(btn_ok_, &QPushButton::clicked, this, &QSettingsDlg::onOk);
-    connect(btn_reset_, &QPushButton::clicked, this, &QSettingsDlg::onReset);
-    connect(btn_cancel_, &QPushButton::clicked, this, &QSettingsDlg::onCancel);
+    // &P4SettingsDlg::OnBrowseReduce);
+    connect(btn_ok_, &QPushButton::clicked, this, &P4SettingsDlg::onOk);
+    connect(btn_reset_, &QPushButton::clicked, this, &P4SettingsDlg::onReset);
+    connect(btn_cancel_, &QPushButton::clicked, this, &P4SettingsDlg::onCancel);
 
     connect(btn_bgblack_, &QRadioButton::toggled, this, [=]() {
         bgColours::CFOREGROUND = WHITE;
@@ -245,9 +245,9 @@ QSettingsDlg::QSettingsDlg(QWidget *parent, Qt::WindowFlags f)
     setP4WindowTitle(this, "Main Program Settings");
 }
 
-void QSettingsDlg::onCancel(void) { done(0); }
+void P4SettingsDlg::onCancel(void) { done(0); }
 
-void QSettingsDlg::onOk(void)
+void P4SettingsDlg::onOk(void)
 {
     QString s;
 
@@ -310,7 +310,7 @@ void QSettingsDlg::onOk(void)
     done(1);
 }
 
-void QSettingsDlg::onReset(void)
+void P4SettingsDlg::onReset(void)
 {
     edt_base_->setText(StripQuotes(getDefaultP4Path()));
     edt_sum_->setText(StripQuotes(getDefaultP4SumTablePath()));
@@ -319,34 +319,34 @@ void QSettingsDlg::onReset(void)
     // edt_red->setText(StripQuotes(getDefaultReduceInstallation()));
 }
 
-/*void QSettingsDlg::OnBrowseReduce(void)
+/*void P4SettingsDlg::OnBrowseReduce(void)
 {
     browseForExistingPathOrFile(edt_red, QString("Select reduce executable:"),
                                 true);
 }*/
 
-void QSettingsDlg::onBrowseMaple(void)
+void P4SettingsDlg::onBrowseMaple(void)
 {
     browseForExistingPathOrFile(edt_maple_, "Select maple executable:", true);
 }
 
-void QSettingsDlg::onBrowseTemp(void)
+void P4SettingsDlg::onBrowseTemp(void)
 {
     browseForExistingPathOrFile(edt_temp_, "Select temporary path:", false);
 }
 
-void QSettingsDlg::onBrowseSum(void)
+void P4SettingsDlg::onBrowseSum(void)
 {
     browseForExistingPathOrFile(edt_sum_, "Select sumtable path:", false);
 }
 
-void QSettingsDlg::onBrowseBase(void)
+void P4SettingsDlg::onBrowseBase(void)
 {
     browseForExistingPathOrFile(edt_base_,
                                 "Select P4 base installation path:", false);
 }
 
-void QSettingsDlg::browseForExistingPathOrFile(QLineEdit *edt, QString caption,
+void P4SettingsDlg::browseForExistingPathOrFile(QLineEdit *edt, QString caption,
                                                bool isfile)
 {
     // browse for an existing path if isfile = false, or for an existing file if
