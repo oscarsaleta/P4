@@ -85,5 +85,3 @@ class P4ViewDlg : public QWidget
     void btn_square_clicked();
     void plotvirtuals_stateChanged(int);
 };
-
-#endif /* WIN_VIEW_H */
