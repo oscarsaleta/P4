@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef P4SETTINGS_H
-#define P4SETTINGS_H
+#pragma once
 
 class QString;
 
@@ -44,5 +43,3 @@ int getMathPackage(void);
 
 bool readP4Settings(void);
 void saveP4Settings(void);
-
-#endif // P4SETTINGS_H
