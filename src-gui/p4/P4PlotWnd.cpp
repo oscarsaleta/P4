@@ -19,6 +19,7 @@
 
 #include "P4PlotWnd.h"
 
+#include "P4Application.h"
 #include "P4ArbitraryCurveDlg.h"
 #include "P4Event.h"
 #include "P4GcfDlg.h"
@@ -31,15 +32,14 @@
 #include "P4PrintDlg.h"
 #include "P4SepDlg.h"
 #include "P4StartDlg.h"
+#include "P4ViewDlg.h"
 #include "P4WinSphere.h"
+#include "P4ZoomWnd.h"
 #include "custom.h"
 #include "file_tab.h"
 #include "main.h"
 #include "math_separatrice.h"
-#include "P4Application.h"
 #include "plot_tools.h"
-#include "P4ViewDlg.h"
-#include "P4ZoomWnd.h"
 
 #include <QPrintDialog>
 #include <QPrinter>
@@ -236,9 +236,9 @@ void P4PlotWnd::onLoadSignal()
             double currentZoomX2 = settings.value("x2").toDouble();
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
-            thiszoom = std::make_unique<P4ZoomWnd>(this, currentZoomId,
-                                                  currentZoomX1, currentZoomY1,
-                                                  currentZoomX2, currentZoomY2);
+            thiszoom = std::make_unique<P4ZoomWnd>(
+                this, currentZoomId, currentZoomX1, currentZoomY1,
+                currentZoomX2, currentZoomY2);
             thiszoom->show();
             thiszoom->raise();
             thiszoom->adjustHeight();
@@ -265,24 +265,21 @@ void P4PlotWnd::adjustHeight()
 void P4PlotWnd::signalChanged()
 {
     sphere_->signalChanged();
-    std::vector<std::shared_ptr<P4ZoomWnd>>::const_iterator it;
-    for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
+    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
         (*it)->signalChanged();
 }
 
 void P4PlotWnd::signalEvaluating()
 {
     sphere_->signalEvaluating();
-    std::vector<std::shared_ptr<P4ZoomWnd>>::const_iterator it;
-    for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
+    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
         (*it)->signalEvaluating();
 }
 
 void P4PlotWnd::signalEvaluated()
 {
     configure();
-    std::vector<std::shared_ptr<P4ZoomWnd>>::const_iterator it;
-    for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
+    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
         (*it)->signalEvaluated();
 }
 
