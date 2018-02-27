@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
- #include <memory>
+#include <memory>
 
 class QBoxLayout;
 class QLabel;
@@ -30,19 +30,22 @@ class QPushButton;
 class QRadioButton;
 class QSpinBox;
 class QString;
+class QCheckBox;
 
 class P4ViewDlg : public QWidget
 {
     Q_OBJECT
 
-  public:
-    P4ViewDlg(QWidget *);
+   public:
+    P4ViewDlg(bool virtualchk);
     ~P4ViewDlg();
     bool getDataFromDlg();
     void updateDlgData();
 
-  private:
+   private:
     bool changed_;
+    bool haveVirtualCheckBox_;
+
     std::unique_ptr<QBoxLayout> mainLayout_;
 
     std::unique_ptr<QRadioButton> btn_sphere_;
@@ -56,7 +59,9 @@ class P4ViewDlg : public QWidget
     std::unique_ptr<QLineEdit> edt_x1_;
     std::unique_ptr<QLineEdit> edt_y0_;
     std::unique_ptr<QLineEdit> edt_y1_;
+    std::unique_ptr<QCheckBox> chk_plotvirtuals_;
     std::unique_ptr<QPushButton> btn_square_;
+
     std::unique_ptr<QLabel> lbl_projection_;
     std::unique_ptr<QLabel> lbl_x0_;
     std::unique_ptr<QLabel> lbl_x1_;
@@ -65,9 +70,10 @@ class P4ViewDlg : public QWidget
 
     std::unique_ptr<QSpinBox> spin_numpoints_;
 
-    bool readFloatField(QLineEdit *, double *, double, double, double);
+    bool readFloatField(QLineEdit *, double &, double, double,
+                        double);
 
-  public slots:
+   public slots:
     void markBad(QLineEdit *edt);
     void onFieldChange(const QString &dummy);
     void btn_sphere_toggled();
@@ -77,6 +83,7 @@ class P4ViewDlg : public QWidget
     void btn_V1_toggled();
     void btn_V2_toggled();
     void btn_square_clicked();
+    void plotvirtuals_stateChanged(int);
 };
 
 #endif /* WIN_VIEW_H */
