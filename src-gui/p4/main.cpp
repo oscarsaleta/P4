@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 //                          SETP4WINDOWTITLE
 // -----------------------------------------------------------------------
 
-void setP4WindowTitle(QWidget *win, QString title)
+void setP4WindowTitle(QWidget *win, const QString &title)
 {
     win->setWindowTitle(title);
 }

@@ -67,7 +67,7 @@ extern bool gCmdLineAutoEvaluate;
 extern bool gCmdLineAutoPlot;
 extern bool gCmdLineAutoExit;
 
-void setP4WindowTitle(QWidget *win, QString title);
+void setP4WindowTitle(QWidget *win, const QString &title);
 
 void handleCommandLineOption(char *arg);
 void handleCommandLineArgument(char *arg);
