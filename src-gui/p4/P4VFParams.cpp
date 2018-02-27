@@ -25,7 +25,7 @@
 #include <QScrollBar>
 
 P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
-    : QWidget{parent}, dataInvalid_{false}, sb_params{sb},
+    : QWidget{parent}, dataInvalid_{false}, sb_params{std::move(sb)},
       currentNumParams_{gThisVF->numparams_}, currentPageIndex_{0}
 {
     int i;
