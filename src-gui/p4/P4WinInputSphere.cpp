@@ -955,7 +955,7 @@ void P4WinInputSphere::plotCurves()
             plotCurve(gVFResults.separatingCurves_[r], r);
 }
 
-void P4WinInputSphere::plotCurve(p4curves::curves crv, int index)
+void P4WinInputSphere::plotCurve(const p4curves::curves &crv, int index)
 {
     double pcoord[3];
     std::vector<p4orbits::orbits_points> &sep{crv.points};
