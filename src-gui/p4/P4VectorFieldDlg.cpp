@@ -34,8 +34,8 @@
 #include <QScrollBar>
 #include <QSpinBox>
 
-P4VectorFieldDlg::P4VectorFieldDlg(std::shared_ptr<P4FindDlg> finddlg)
-    : QWidget{finddlg.get()}, parent_{std::move(finddlg)}
+P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg &finddlg)
+    : QWidget{finddlg.get()}, parent_{finddlg}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -268,7 +268,11 @@ void P4VectorFieldDlg::getLineEditCommonValue(
 void P4VectorFieldDlg::editingFinished()
 {
     getDataFromDlg();
-    if (parent_->vfSelectWindow_)
-        if (parent_->vfSelectWindow_->win_curves_)
-            parent_->vfSelectWindow_->win_curves_->updateDlgData();
+    // TODO: write getter for this
+    auto p = parent_.getVfSelectWindow();
+    if (p != nullptr) {
+        auto q = p->getWinCurves();
+        if (q != nullptr)
+            q->updateDlgData();
+    }
 }
