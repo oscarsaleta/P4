@@ -35,13 +35,13 @@ class P4ParamsDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4ParamsDlg(std::shared_ptr<P4FindDlg> startwindow);
+    P4ParamsDlg(P4FindDlg &startwindow);
     ~P4ParamsDlg();
     void getDataFromDlg();
     void updateDlgData();
 
   private:
-    std::shared_ptr<P4FindDlg> parent_;
+    P4FindDlg &parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QRadioButton> btn_sepyes_;
