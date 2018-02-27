@@ -401,8 +401,6 @@ void P4FindDlg::getDataFromDlg()
     if (paramsWindow_) {
         paramsWindow_->getDataFromDlg();
     }
-    if (vfSelectWindow_)
-        vfSelectWindow_.getDataFromDlg();
 }
 
 void P4FindDlg::updateDlgData()
