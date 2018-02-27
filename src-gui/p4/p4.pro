@@ -37,7 +37,7 @@ macx {
 
 DESTDIR = $$BUILD_DIR/p4/
 
-SOURCES += win_view.cpp \
+SOURCES += P4ViewDlg.cpp \
     win_vf.cpp \
     win_sphere.cpp \
     win_settings.cpp \
@@ -83,7 +83,7 @@ SOURCES += win_view.cpp \
     win_event.cpp \
     win_separatrice.cpp \
 
-HEADERS += win_view.h \
+HEADERS += P4ViewDlg.h \
     P4VectorFieldDlg.h \
     P4WinSphere.h \
     win_settings.h \

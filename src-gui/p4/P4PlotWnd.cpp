@@ -38,7 +38,7 @@
 #include "math_separatrice.h"
 #include "p4application.h"
 #include "plot_tools.h"
-#include "win_view.h"
+#include "P4ViewDlg.h"
 #include "win_zoom.h"
 
 #include <QPrintDialog>

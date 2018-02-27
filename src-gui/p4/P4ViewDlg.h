@@ -17,10 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_VIEW_H
-#define WIN_VIEW_H
+#pragma once
 
 #include <QWidget>
+
+ #include <memory>
 
 class QBoxLayout;
 class QLabel;
@@ -37,32 +38,32 @@ class P4ViewDlg : public QWidget
   public:
     P4ViewDlg(QWidget *);
     ~P4ViewDlg();
-    bool getDataFromDlg(void);
-    void updateDlgData(void);
+    bool getDataFromDlg();
+    void updateDlgData();
 
   private:
     bool changed_;
-    QBoxLayout *mainLayout_;
+    std::unique_ptr<QBoxLayout> mainLayout_;
 
-    QRadioButton *btn_sphere_;
-    QRadioButton *btn_plane_;
-    QRadioButton *btn_U1_;
-    QRadioButton *btn_V1_;
-    QRadioButton *btn_U2_;
-    QRadioButton *btn_V2_;
-    QLineEdit *edt_projection_;
-    QLineEdit *edt_x0_;
-    QLineEdit *edt_x1_;
-    QLineEdit *edt_y0_;
-    QLineEdit *edt_y1_;
-    QPushButton *btn_square_;
-    QLabel *lbl_projection_;
-    QLabel *lbl_x0_;
-    QLabel *lbl_x1_;
-    QLabel *lbl_y0_;
-    QLabel *lbl_y1_;
+    std::unique_ptr<QRadioButton> btn_sphere_;
+    std::unique_ptr<QRadioButton> btn_plane_;
+    std::unique_ptr<QRadioButton> btn_U1_;
+    std::unique_ptr<QRadioButton> btn_V1_;
+    std::unique_ptr<QRadioButton> btn_U2_;
+    std::unique_ptr<QRadioButton> btn_V2_;
+    std::unique_ptr<QLineEdit> edt_projection_;
+    std::unique_ptr<QLineEdit> edt_x0_;
+    std::unique_ptr<QLineEdit> edt_x1_;
+    std::unique_ptr<QLineEdit> edt_y0_;
+    std::unique_ptr<QLineEdit> edt_y1_;
+    std::unique_ptr<QPushButton> btn_square_;
+    std::unique_ptr<QLabel> lbl_projection_;
+    std::unique_ptr<QLabel> lbl_x0_;
+    std::unique_ptr<QLabel> lbl_x1_;
+    std::unique_ptr<QLabel> lbl_y0_;
+    std::unique_ptr<QLabel> lbl_y1_;
 
-    QSpinBox *spin_numpoints_;
+    std::unique_ptr<QSpinBox> spin_numpoints_;
 
     bool readFloatField(QLineEdit *, double *, double, double, double);
 
@@ -75,7 +76,7 @@ class P4ViewDlg : public QWidget
     void btn_U2_toggled();
     void btn_V1_toggled();
     void btn_V2_toggled();
-    void btn_square_clicked(void);
+    void btn_square_clicked();
 };
 
 #endif /* WIN_VIEW_H */

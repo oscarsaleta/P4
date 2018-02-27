@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_view.h"
+#include "P4ViewDlg.h"
 
 #include "custom.h"
 #include "file_tab.h"
