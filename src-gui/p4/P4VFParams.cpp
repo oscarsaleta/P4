@@ -43,10 +43,10 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
 
     for (i = 0; i < currentShownParams_; i++) {
         // parlabel_ and parvalue_ might (or not) be filled from the input file
-        paramNames_.push_back(
+        paramNames_.emplace_back(
             std::make_unique<QLineEdit>(gThisVF->parlabel_[i], this));
-        paramEqual_.push_back(std::make_unique<QLabel>(" = ", this));
-        paramValues_.push_back(std::make_unique<QLineEdit>("", this));
+        paramEqual_.emplace_back(std::make_unique<QLabel>(" = ", this));
+        paramValues_.emplace_back(std::make_unique<QLineEdit>("", this));
 #ifdef TOOLTIPS
         paramNames_[i]->setToolTip("Enter the name of the parameter");
         paramValues_[i]->setToolTip(
@@ -57,7 +57,7 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
     mainLayout_->addWidget(label0);
     for (i = 0; i < currentShownParams_; i++) {
-        paramLayouts_.push_back(std::make_unique<QHBoxLayout>{});
+        paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>{});
         paramLayouts_[i]->addWidget(paramNames_[i]);
         paramLayouts_[i]->addWidget(paramEqual_[i]);
         paramLayouts_[i]->addWidget(paramValues_[i]);
