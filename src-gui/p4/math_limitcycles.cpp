@@ -19,7 +19,7 @@
 
 #include "math_limitcycles.hpp"
 
-#include "P4LimitCyclesDlg.h"
+#include "P4LimitCyclesDlg.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"

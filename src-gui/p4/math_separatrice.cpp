@@ -22,7 +22,7 @@
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "math_charts.hpp"
-#include "math_intblowup.h"
+#include "math_intblowup.hpp"
 #include "math_numerics.hpp"
 #include "math_p4.hpp"
 #include "math_polynom.hpp"

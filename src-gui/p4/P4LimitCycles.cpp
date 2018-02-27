@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4LimitCyclesDlg.h"
+#include "P4LimitCyclesDlg.hpp"
 
 #include "custom.hpp"
 #include "file_tab.hpp"

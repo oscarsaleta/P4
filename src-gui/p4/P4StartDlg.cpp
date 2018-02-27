@@ -27,7 +27,7 @@
 #include "main.hpp"
 #include "P4Application.hpp"
 #include "p4settings.hpp"
-#include "win_about.h"
+#include "P4AboutDlg.h"
 
 #include <QBoxLayout>
 #include <QCloseEvent>
