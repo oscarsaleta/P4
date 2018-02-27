@@ -268,8 +268,6 @@ void P4SeparatingCurvesDlg::onBtnEdit()
     lst_curves_->editItem(lst_curves_->currentItem());
 }
 
-void P4SeparatingCurvesDlg::getDataFromDlg() {}
-
 void P4SeparatingCurvesDlg::updateDlgData()
 {
     std::unique_ptr<QListWidgetItem> itm;
