@@ -38,22 +38,23 @@ macx {
 DESTDIR = $$BUILD_DIR/p4/
 
 SOURCES += P4ViewDlg.cpp \
-    win_vf.cpp \
-    win_sphere.cpp \
+    P4VectorFieldDlg.cpp \
+    P4VFParams.cpp \
+    P4WinSphere.cpp \
     P4SettingsDlg.cpp \
-    win_print.cpp \
-    win_plot.cpp \
-    win_params.cpp \
-    win_orbits.cpp \
-    win_main.cpp \
-    win_limitcycles.cpp \
-    win_legend.cpp \
-    win_isoclines.cpp \
-    win_intparams.cpp \
-    win_gcf.cpp \
-    win_find.cpp \
+    P4PrintDlg.cpp \
+    P4PlotWnd.cpp \
+    P4ParamsDlg.cpp \
+    P4OrbitsDlg.cpp \
+    P4StartDlg.cpp \
+    P4LimitCyclesDlg.cpp \
+    P4LegendWnd.cpp \
+    P4IsoclinesDlg.cpp \
+    P4IntParamsDlg.cpp \
+    P4GcfDlg.cpp \
+    P4FindDlg.cpp \
     P4ArbitraryCurveDlg.cpp \
-    win_about.cpp \
+    P4AboutDlg.cpp \
     print_xfig.cpp \
     print_postscript.cpp \
     print_points.cpp \
@@ -71,7 +72,8 @@ SOURCES += P4ViewDlg.cpp \
     math_intblowup.cpp \
     math_gcf.cpp \
     math_findpoint.cpp \
-    math_curve.cpp \
+    math_arbitrarycurve.cpp \
+    math_separatingcurves.cpp \
     math_charts.cpp \
     math_changedir.cpp \
     main.cpp \
@@ -80,55 +82,65 @@ SOURCES += P4ViewDlg.cpp \
     file_paths.cpp \
     P4ZoomWnd.cpp \
     P4Application.cpp \
-    win_event.cpp \
-    win_separatrice.cpp \
+    P4Event.cpp \
+    P4SepDlg.cpp \
 
-HEADERS += P4ViewDlg.h \
-    P4VectorFieldDlg.h \
-    P4WinSphere.h \
-    P4SettingsDlg.h \
-    P4PrintDlg.h \
-    P4PlotWnd.h \
-    P4ParamsDlg.h \
-    P4OrbitsDlg.h \
-    P4StartDlg.h \
-    P4LimitCyclesDlg.h \
-    P4LegendWnd.h \
-    P4IsoclinesDlg.h \
-    P4IntParamsDlg.h \
-    P4GcfDlg.h \
-    P4FindDlg.h \
-    P4Event.h \
-    P4ArbitraryCurveDlg.h \
-    win_about.h \
-    P4Application.h \
-    math_p4.h \
-    P4InputVF.h \
-    custom.h \
+HEADERS +=  ../version.h \
     color.hpp \
-    P4ZoomWnd.h \
-    ../version.h \
-    file_paths.h \
-    p4settings.h \
-    main.h \
-    file_tab.h \
-    math_changedir.h \
-    math_charts.h \
-    math_separatrice.h \
-    P4SepDlg.h \
-    math_findpoint.h \
-    math_gcf.h \
-    math_intblowup.h \
-    math_arbitrarycurve.h \
-    math_polynom.h \
-    math_orbits.h \
-    math_numerics.h \
-    math_limitcycles.h \
-    math_isoclines.h \
-    plot_tools.h \
-    plot_points.h \
-    print_points.h \
-    print_bitmap.h \
-    print_postscript.h \
-    print_xfig.h
+    custom.hpp \
+    file_paths.hpp \
+    file_tab.hpp \
+    main.hpp \
+    math_arbitrarycurve.hpp \
+    math_changedir.hpp \
+    math_charts.hpp \
+    math_desep.hpp \
+    math_findpoint.hpp \
+    math_gcf.hpp \
+    math_isoclines.hpp \
+    math_limitcycles.hpp \
+    math_numerics.hpp \
+    math_orbits.hpp \
+    math_p4.hpp \
+    math_polynom.hpp \
+    math_regions.hpp \
+    math_saddlesep.hpp \
+    math_separatingcurves.hpp \
+    math_separatrice.hpp \
+    math_sesep.hpp \
+    P4AboutDlg.hpp \
+    P4Application.hpp \
+    P4ArbitraryCurveDlg.hpp \
+    P4Event.hpp \
+    P4FindDlg.hpp \
+    P4GcfDlg.hpp \
+    P4InputVF.hpp \
+    P4IntParamsDlg.hpp \
+    P4IsoclinesDlg.hpp \
+    P4LegendWnd.hpp \
+    P4LimitCycles.hpp \
+    P4OrbitsDlg.hpp \
+    P4ParamsDlg.hpp \
+    P4ParentStudy.hpp \
+    P4PlotWnd.hpp \
+    P4PrintDlg.hpp \
+    P4SeparatingCurvesDlg.hpp \
+    P4SepDlg.hpp \
+    p4settings.hpp \
+    P4SettingsDlg.hpp \
+    P4StartDlg.hpp \
+    P4VectorFieldDlg.hpp \
+    P4VFParams.hpp \
+    P4VFSelectDlg.hpp \
+    P4VFStudy.hpp \
+    P4ViewDlg.hpp \
+    P4WinInputSphere.hpp \
+    P4WinSphere.hpp \
+    P4ZoomWnd.hpp \
+    plot_points.hpp \
+    plot_tools.hpp \
+    print_bitmap.hpp \
+    print_points.hpp \
+    print_postscript.hpp \
+    print_xfig.hpp 
 RC_FILE = p4.rc
