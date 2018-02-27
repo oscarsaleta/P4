@@ -37,7 +37,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 
-P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
+P4ZoomWnd::P4ZoomWnd(P4PlotWnd &main, int id, double x1, double y1, double x2,
                      double y2)
     : QMainWindow(), parent_{main}, zoomid_{id}, x1_{x1}, x2_{x2}, y1_{y1},
       y2_{y2}
@@ -120,7 +120,7 @@ void P4ZoomWnd::onBtnClose()
     std::unique_ptr<int> data{std::make_unique<int>(zoomid_)};
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.get())};
-    gP4app->postEvent(parent_, e1.get());
+    gP4app->postEvent(&parent_, e1.get());
 }
 
 bool P4ZoomWnd::close()
@@ -131,7 +131,7 @@ bool P4ZoomWnd::close()
 
 void P4ZoomWnd::onBtnRefresh()
 {
-    parent_->getDlgData();
+    parent_.getDlgData();
     sphere_->refresh();
 }
 
@@ -185,7 +185,7 @@ void P4ZoomWnd::customEvent(QEvent *_e)
         e->type() == TYPE_SELECT_LCSECTION) {
         std::unique_ptr<P4Event> newe{
             std::make_unique<P4Event>(e->type(), e->data())};
-        gP4app->postEvent(parent_, newe.get());
+        gP4app->postEvent(&parent_, newe.get());
         return;
     }
 
@@ -198,7 +198,7 @@ void P4ZoomWnd::hideEvent(QHideEvent *h)
         std::unique_ptr<int> data{std::make_unique<int>(zoomid_)};
         std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.get())};
-        gP4app->postEvent(parent_, e1.get());
+        gP4app->postEvent(&parent_, e1.get());
     }
 }
 
