@@ -49,8 +49,7 @@
 
 #include <utility>
 
-P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
-    : QMainWindow(), parent_{std::move(main)}
+P4PlotWnd::P4PlotWnd(P4StartDlg &main) : QMainWindow(), parent_{main}
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 
@@ -154,9 +153,9 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(Qt::TopToolBarArea, toolBar2);
 
-    QObject::connect(gThisVF, &QInputVF::saveSignal, this,
+    QObject::connect(gThisVF.get(), &QInputVF::saveSignal, this,
                      &P4PlotWnd::onSaveSignal);
-    QObject::connect(gThisVF, &QInputVF::loadSignal, this,
+    QObject::connect(gThisVF.get(), &QInputVF::loadSignal, this,
                      &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
@@ -186,16 +185,16 @@ P4PlotWnd::P4PlotWnd(std::shared<P4StartDlg> main)
     statusBar()->showMessage("Ready");
 
     sphere_ =
-        std::make_shared<P4WinSphere>(this, statusBar(), false, 0, 0, 0, 0);
-    legendWindow_ = new P4LegendWnd();
-    orbitsWindow_ = new P4OrbitsDlg(this, sphere_);
-    sepWindow_ = new P4SepDlg(this, sphere_);
-    intParamsWindow_ = new P4IntParamsDlg();
-    viewParamsWindow_ = new P4ViewDlg(this);
-    lcWindow_ = new P4LimitCyclesDlg(this, sphere_);
-    gcfWindow_ = new P4GcfDlg(this, sphere_);
-    curveWindow_ = new P4ArbitraryCurveDlg(this, sphere_);
-    isoclinesWindow_ = new P4IsoclinesDlg(this, sphere_);
+        std::make_unique<P4WinSphere>(this, statusBar(), false, 0, 0, 0, 0);
+    legendWindow_ = std::make_unique<P4LegendWnd>();
+    orbitsWindow_ = std::make_unique<P4OrbitsDlg>(this, sphere_);
+    sepWindow_ = std::make_unique<P4SepDlg>(this, sphere_);
+    intParamsWindow_ = std::make_unique<P4IntParamsDlg>();
+    viewParamsWindow_ = std::make_unique<P4ViewDlg>(this);
+    lcWindow_ = std::make_unique<P4LimitCyclesDlg>(this, sphere_);
+    gcfWindow_ = std::make_unique<P4GcfDlg>(this, sphere_);
+    curveWindow_ = std::make_unique<P4ArbitraryCurveDlg>(this, sphere_);
+    isoclinesWindow_ = std::make_unique<P4IsoclinesDlg>(this, sphere_);
     gLCWindowIsUp = false;  // Limit cycles: initially hidden
 
     sphere_->show();
@@ -287,14 +286,14 @@ void P4PlotWnd::onBtnClose()
 {
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    gP4app->postEvent(parent_, e1);
+    gP4app->postEvent(&parent_, e1);
 }
 
 bool P4PlotWnd::close()
 {
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    gP4app->postEvent(parent_, e1);
+    gP4app->postEvent(&parent_, e1);
 
     return QMainWindow::close();
 }
@@ -547,7 +546,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
     UNUSED(h);
     if (!isMinimized()) {
         P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-        gP4app->postEvent(parent_, e1);
+        gP4app->postEvent(&parent_, e1);
     }
 }
 

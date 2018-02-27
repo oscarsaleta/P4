@@ -46,13 +46,13 @@ class P4PlotWnd : public QMainWindow
     Q_OBJECT
 
   public:
-    P4PlotWnd(std::shared_ptr<P4StartDlg>);
+    P4PlotWnd(P4StartDlg &);
 
     std::shared_ptr<P4IntParamsDlg> intParamsWindow_;
     std::shared_ptr<P4ViewDlg> viewParamsWindow_;
 
   private:
-    std::shared_ptr<P4StartDlg> parent_;
+    P4StartDlg &parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QAction> actClose_;
@@ -77,7 +77,7 @@ class P4PlotWnd : public QMainWindow
     std::unique_ptr<P4ArbitraryCurveDlg> curveWindow_;
     std::unique_ptr<P4IsoclinesDlg> isoclinesWindow_;
 
-    std::shared_ptr<P4WinSphere> sphere_;  // main sphere
+    std::unique_ptr<P4WinSphere> sphere_;  // main sphere
 
     int numZooms_;
     int lastZoomIdentifier_;
