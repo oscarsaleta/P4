@@ -39,13 +39,11 @@ class P4SeparatingCurvesDlg : public QWidget
 
    public:
     P4SeparatingCurvesDlg(std::unique_ptr<P4FindDlg> startwindow);
-    void getDataFromDlg();
     void updateDlgData();
     void signalSeparatingCurvesEvaluated();
 
    private:
-    // TODO: how many of these pointers are really needed?...
-    std::unique_ptr<P4FindDlg> parent_;
+    std::shared_ptr<P4FindDlg> parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
