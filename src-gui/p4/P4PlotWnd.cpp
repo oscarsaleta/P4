@@ -237,7 +237,7 @@ void P4PlotWnd::onLoadSignal()
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
             thiszoom = std::make_unique<P4ZoomWnd>(
-                this, currentZoomId, currentZoomX1, currentZoomY1,
+                *this, currentZoomId, currentZoomX1, currentZoomY1,
                 currentZoomX2, currentZoomY2);
             thiszoom->show();
             thiszoom->raise();
@@ -444,7 +444,7 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
         return;
 
     std::unique_ptr<P4ZoomWnd> newZoom{std::make_unique<P4ZoomWnd>(
-        this, ++lastZoomIdentifier_, x1, y1, x2, y2)};
+        *this, ++lastZoomIdentifier_, x1, y1, x2, y2)};
     newZoom->show();
     newZoom->raise();
     newZoom->adjustHeight();
