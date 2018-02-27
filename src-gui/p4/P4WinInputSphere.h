@@ -110,7 +110,7 @@ class P4WinInputSphere : public QWidget
     void markSelection(int x1, int y1, int x2, int y2);
 
     void plotCurves();
-    void plotCurve(std::vector<p4curves::curves>, int);
+    void plotCurve(const p4curves::curves &, int);
     void plotLine(double *, double *, int);
     void plotPoint(double *, int);
     void setupCoordinateTransformations();
@@ -125,7 +125,7 @@ class P4WinInputSphere : public QWidget
 
   private:
     std::unique_ptr<QPainter> staticPainter_;
-    std::unique_ptr<QSeparatingCurvesDlg> parentWnd_;
+    std::shared_ptr<QSeparatingCurvesDlg> parentWnd_;
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
     std::unique_ptr<QTimer> refreshTimeout_;
