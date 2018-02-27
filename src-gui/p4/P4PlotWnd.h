@@ -34,7 +34,7 @@ class P4SepDlg;
 class P4StartDlg;
 class P4ViewDlg;
 class P4WinSphere;
-class QZoomWnd;
+class P4ZoomWnd;
 
 class QAction;
 class QBoxLayout;
@@ -81,7 +81,7 @@ class P4PlotWnd : public QMainWindow
 
     int numZooms_;
     int lastZoomIdentifier_;
-    std::vector<std::unique_ptr<QZoomWnd>> zoomWindows_;
+    std::vector<std::unique_ptr<P4ZoomWnd>> zoomWindows_;
 
     bool flagAllSepsPlotted_;
 

@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "win_zoom.h"
+#include "P4ZoomWnd.h"
 
 #include "custom.h"
 #include "P4InputVF.h"
@@ -37,7 +37,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 
-QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
+P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                    double y2)
     : QMainWindow()
 {
@@ -62,20 +62,20 @@ QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
 
     actClose_ = new QAction("Close", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(actClose_, &QAction::triggered, this, &QZoomWnd::onBtnClose);
+    connect(actClose_, &QAction::triggered, this, &P4ZoomWnd::onBtnClose);
     toolBar1->addAction(actClose_);
 
     actRefresh_ = new QAction("Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(actRefresh_, &QAction::triggered, this, &QZoomWnd::onBtnRefresh);
+    connect(actRefresh_, &QAction::triggered, this, &P4ZoomWnd::onBtnRefresh);
     toolBar1->addAction(actRefresh_);
 
     actPrint_ = new QAction("Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(actPrint_, &QAction::triggered, this, &QZoomWnd::onBtnPrint);
+    connect(actPrint_, &QAction::triggered, this, &P4ZoomWnd::onBtnPrint);
     toolBar1->addAction(actPrint_);
 
-    connect(gThisVF, &QInputVF::saveSignal, this, &QZoomWnd::onSaveSignal);
+    connect(gThisVF, &QInputVF::saveSignal, this, &P4ZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
     actClose_->setToolTip(
@@ -99,17 +99,17 @@ QZoomWnd::QZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     //      SetP4WindowTitle( this, "Phase Portrait - Zoom (*)" );
 }
 
-QZoomWnd::~QZoomWnd()
+P4ZoomWnd::~P4ZoomWnd()
 {
     delete sphere_;
     sphere_ = nullptr;
 }
 
-void QZoomWnd::onSaveSignal()
+void P4ZoomWnd::onSaveSignal()
 {
     QSettings settings(gThisVF->getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
-    settings.beginGroup(QString("QZoomWnd").append(zoomid_));
+    settings.beginGroup(QString("P4ZoomWnd").append(zoomid_));
     settings.setValue("id", zoomid_);
     settings.setValue("x1", x1_);
     settings.setValue("y1", y1_);
@@ -121,28 +121,28 @@ void QZoomWnd::onSaveSignal()
     settings.endGroup();
 }
 
-void QZoomWnd::signalChanged(void)
+void P4ZoomWnd::signalChanged(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalChanged();
 }
 
-void QZoomWnd::signalEvaluating(void)
+void P4ZoomWnd::signalEvaluating(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalEvaluating();
 }
 
-void QZoomWnd::signalEvaluated(void)
+void P4ZoomWnd::signalEvaluated(void)
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
 }
 
-void QZoomWnd::onBtnClose(void)
+void P4ZoomWnd::onBtnClose(void)
 {
     int *data = new int;
     *data = zoomid_;
@@ -151,7 +151,7 @@ void QZoomWnd::onBtnClose(void)
     gP4app->postEvent(parent_, e1);
 }
 
-bool QZoomWnd::close(void)
+bool P4ZoomWnd::close(void)
 {
     int *data = new int;
     *data = zoomid_;
@@ -162,13 +162,13 @@ bool QZoomWnd::close(void)
     return QMainWindow::close();
 }
 
-void QZoomWnd::onBtnRefresh(void)
+void P4ZoomWnd::onBtnRefresh(void)
 {
     parent_->getDlgData();
     sphere_->refresh();
 }
 
-void QZoomWnd::onBtnPrint(void)
+void P4ZoomWnd::onBtnPrint(void)
 {
     int res;
     double lw, ss;
@@ -200,7 +200,7 @@ void QZoomWnd::onBtnPrint(void)
     }
 }
 
-void QZoomWnd::configure(void)
+void P4ZoomWnd::configure(void)
 {
     statusBar()->showMessage("Ready"); // reset status bar
     plot_l = spherePlotLine; // setup line/plot pointing to routines of the
@@ -212,7 +212,7 @@ void QZoomWnd::configure(void)
     // delete xfig window
 }
 
-void QZoomWnd::customEvent(QEvent *_e)
+void P4ZoomWnd::customEvent(QEvent *_e)
 {
     P4Event *e;
     e = (P4Event *)_e;
@@ -228,7 +228,7 @@ void QZoomWnd::customEvent(QEvent *_e)
     QMainWindow::customEvent(e);
 }
 
-void QZoomWnd::hideEvent(QHideEvent *h)
+void P4ZoomWnd::hideEvent(QHideEvent *h)
 {
     UNUSED(h);
     if (!isMinimized()) {
@@ -240,7 +240,7 @@ void QZoomWnd::hideEvent(QHideEvent *h)
     }
 }
 
-void QZoomWnd::adjustHeight(void)
+void P4ZoomWnd::adjustHeight(void)
 {
     int w, h, m;
     double deltaw, deltah;

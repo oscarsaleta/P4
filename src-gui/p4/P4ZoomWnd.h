@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef WIN_ZOOM_H
-#define WIN_ZOOM_H
+#pragma once
 
 #include <QMainWindow>
 
@@ -30,25 +29,26 @@ class QBoxLayout;
 class QEvent;
 class QHideEvent;
 
-class QZoomWnd : public QMainWindow
+class P4ZoomWnd : public QMainWindow
 {
     Q_OBJECT
 
   public:
-    QZoomWnd(P4PlotWnd *, int, double x1, double y1, double x2, double y2);
-    ~QZoomWnd();
+    P4ZoomWnd(P4PlotWnd *, int, double x1, double y1, double x2, double y2);
+    ~P4ZoomWnd();
 
     int zoomid_;
 
   private:
-    P4PlotWnd *parent_;
-    QBoxLayout *mainLayout_;
-    QAction *actClose_;
-    QAction *actRefresh_;
-    QAction *actPrint_;
-    double x1_, x2_, y1_, y2_;
+    std::shared_ptr<P4PlotWnd> parent_;
+    std::shared_ptr<P4WinSphere> sphere_;  // main sphere
 
-    P4WinSphere *sphere_; // main sphere
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QAction> actClose_;
+    std::unique_ptr<QAction> actRefresh_;
+    std::unique_ptr<QAction> actPrint_;
+
+    double x1_, x2_, y1_, y2_;
 
   public slots:
     // TODO: maybe change these 3 to actual signals?
@@ -68,5 +68,3 @@ class QZoomWnd : public QMainWindow
 
     void onSaveSignal();
 };
-
-#endif /* WIN_ZOOM_H */

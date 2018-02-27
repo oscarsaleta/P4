@@ -78,7 +78,7 @@ SOURCES += P4ViewDlg.cpp \
     file_vf.cpp \
     file_tab.cpp \
     file_paths.cpp \
-    win_zoom.cpp \
+    P4ZoomWnd.cpp \
     P4Application.cpp \
     win_event.cpp \
     win_separatrice.cpp \
@@ -106,7 +106,7 @@ HEADERS += P4ViewDlg.h \
     P4InputVF.h \
     custom.h \
     color.h \
-    win_zoom.h \
+    P4ZoomWnd.h \
     ../version.h \
     file_paths.h \
     p4settings.h \

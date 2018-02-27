@@ -39,7 +39,7 @@
 #include "P4Application.h"
 #include "plot_tools.h"
 #include "P4ViewDlg.h"
-#include "win_zoom.h"
+#include "P4ZoomWnd.h"
 
 #include <QPrintDialog>
 #include <QPrinter>
@@ -227,16 +227,16 @@ void P4PlotWnd::onLoadSignal()
 
     numZooms_ = settings.value("P4PlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
-        std::unique_ptr<QZoomWnd> thiszoom;
+        std::unique_ptr<P4ZoomWnd> thiszoom;
         for (int i = 1; i <= numZooms_; i++) {
-            QString zoomName = QString("QZoomWnd").append(i);
+            QString zoomName = QString("P4ZoomWnd").append(i);
             settings.beginGroup(zoomName);
             int currentZoomId = settings.value("id").toInt();
             double currentZoomX1 = settings.value("x1").toDouble();
             double currentZoomX2 = settings.value("x2").toDouble();
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
-            thiszoom = std::make_unique<QZoomWnd>(this, currentZoomId,
+            thiszoom = std::make_unique<P4ZoomWnd>(this, currentZoomId,
                                                   currentZoomX1, currentZoomY1,
                                                   currentZoomX2, currentZoomY2);
             thiszoom->show();
@@ -265,7 +265,7 @@ void P4PlotWnd::adjustHeight()
 void P4PlotWnd::signalChanged()
 {
     sphere_->signalChanged();
-    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<P4ZoomWnd>>::const_iterator it;
     for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
         (*it)->signalChanged();
 }
@@ -273,7 +273,7 @@ void P4PlotWnd::signalChanged()
 void P4PlotWnd::signalEvaluating()
 {
     sphere_->signalEvaluating();
-    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<P4ZoomWnd>>::const_iterator it;
     for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
         (*it)->signalEvaluating();
 }
@@ -281,7 +281,7 @@ void P4PlotWnd::signalEvaluating()
 void P4PlotWnd::signalEvaluated()
 {
     configure();
-    std::vector<std::shared_ptr<QZoomWnd>>::const_iterator it;
+    std::vector<std::shared_ptr<P4ZoomWnd>>::const_iterator it;
     for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
         (*it)->signalEvaluated();
 }
@@ -446,7 +446,7 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     if (x1 == x2 || y1 == y2)
         return;
 
-    std::unique_ptr<QZoomWnd> newZoom{std::make_unique<QZoomWnd>(
+    std::unique_ptr<P4ZoomWnd> newZoom{std::make_unique<P4ZoomWnd>(
         this, ++lastZoomIdentifier_, x1, y1, x2, y2)};
     newZoom->show();
     newZoom->raise();
@@ -457,7 +457,7 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
 
 void P4PlotWnd::closeZoomWindow(int id)
 {
-    std::vector<std::unique_ptr<QZoomWnd>>::iterator it;
+    std::vector<std::unique_ptr<P4ZoomWnd>>::iterator it;
     for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++) {
         if ((*it)->zoomid_ == id) {
             zoomWindows_.erase(it);
