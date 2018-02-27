@@ -32,7 +32,7 @@
 #include "math_orbits.h"
 #include "math_p4.h"
 #include "math_separatrice.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "plot_points.h"
 #include "plot_tools.h"
 #include "print_bitmap.h"

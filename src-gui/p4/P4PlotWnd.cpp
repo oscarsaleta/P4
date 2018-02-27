@@ -36,7 +36,7 @@
 #include "file_tab.h"
 #include "main.h"
 #include "math_separatrice.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "plot_tools.h"
 #include "P4ViewDlg.h"
 #include "win_zoom.h"

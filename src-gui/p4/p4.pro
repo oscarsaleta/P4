@@ -79,7 +79,7 @@ SOURCES += P4ViewDlg.cpp \
     file_tab.cpp \
     file_paths.cpp \
     win_zoom.cpp \
-    p4application.cpp \
+    P4Application.cpp \
     win_event.cpp \
     win_separatrice.cpp \
 
@@ -101,7 +101,7 @@ HEADERS += P4ViewDlg.h \
     P4Event.h \
     P4ArbitraryCurveDlg.h \
     win_about.h \
-    p4application.h \
+    P4Application.h \
     math_p4.h \
     P4InputVF.h \
     custom.h \

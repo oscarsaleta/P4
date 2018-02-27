@@ -21,7 +21,7 @@
 
 #include "custom.h"
 #include "main.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "plot_points.h"
 
 #include <QPainter>

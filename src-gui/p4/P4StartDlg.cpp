@@ -25,7 +25,7 @@
 #include "custom.h"
 #include "file_tab.h"
 #include "main.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "p4settings.h"
 #include "win_about.h"
 

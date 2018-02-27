@@ -22,7 +22,7 @@
 #include "custom.h"
 #include "P4InputVF.h"
 #include "main.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "plot_tools.h"
 #include "P4Event.h"
 #include "P4StartDlg.h"

@@ -22,7 +22,7 @@
 #include "P4InputVF.h"
 #include "P4ParentStudy.h"
 #include "main.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "p4settings.h"
 #include "P4StartDlg.h"
 #include "P4ParamsDlg.h"

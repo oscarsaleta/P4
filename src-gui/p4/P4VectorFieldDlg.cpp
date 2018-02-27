@@ -24,7 +24,7 @@
 #include "P4VFParams.h"
 #include "custom.h"
 #include "main.h"
-#include "p4application.h"
+#include "P4Application.h"
 
 #include <QBoxLayout>
 #include <QFormLayout>

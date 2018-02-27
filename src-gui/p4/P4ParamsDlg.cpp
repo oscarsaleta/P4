@@ -23,7 +23,7 @@
 #include "custom.h"
 #include "P4InputVF.h"
 #include "main.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "p4settings.h"
 
 #include <QBoxLayout>

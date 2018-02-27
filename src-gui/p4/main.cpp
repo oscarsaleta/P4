@@ -25,7 +25,7 @@
 #include "P4FindDlg.h"
 #include "P4StartDlg.h"
 #include "P4InputVF.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "p4settings.h"
 #include "win_settings.h"
 

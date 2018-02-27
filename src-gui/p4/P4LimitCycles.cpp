@@ -23,7 +23,7 @@
 #include "file_tab.h"
 #include "main.h"
 #include "math_limitcycles.h"
-#include "p4application.h"
+#include "P4Application.h"
 #include "P4PlotWnd.h"
 #include "P4WinSphere.h"
 
