@@ -21,7 +21,7 @@
 
 #include "P4Application.h"
 #include "P4ViewDlg.h"
-#include "QWinInputSphere.h"
+#include "P4WinInputSphere.h"
 
 #include <QBoxLayout>
 #include <QHBoxLayout>
@@ -30,71 +30,74 @@
 #include <QListWidget>
 #include <QPushButton>
 
-P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::unique_ptr<P4ViewDlg> _parent)
-    : QWidget(), parent{_parent}
+P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::shared_ptr<P4ViewDlg> parent)
+    : QWidget{}, parent_{std::move(parent)}
 {
     std::unique_ptr<QLabel> p4title{
-        new QLabel("Region Separating Curves:", this)};
+        std::make_unique<QLabel>("Region Separating Curves:", this)};
     p4title->setFont(*(gP4app->titleFont_));
 
-    std::unique_ptr<QLabel> p4title2{new QLabel("Vector Field List:", this)};
+    std::unique_ptr<QLabel> p4title2{
+        std::make_unique<QLabel>("Vector Field List:", this)};
     p4title2->setFont(*(gP4app->titleFont_));
 
     // TODO: check if i have to redeclare?
-    btn_add_.reset(new QPushButton("&Add"), this);
-    btn_del_.reset(new QPushButton("&Del", this));
-    btn_edit_.reset(new QPushButton("E&dit", this));
-    btn_zoomout_.reset(new QPushButton("&Zoom out", this));
-    btn_refresh_.reset(new QPushButton("&Refresh", this));
-    btn_eval_.reset(new QPushButton("&Eval", this));
-    btn_mark_.reset(new QPushButton("&Mark", this));
+    btn_add_ = std::make_unique< QPushButton>("&Add"), this);
+    btn_del_ = std::make_unique<QPushButton>("&Del", this);
+    btn_edit_ = std::make_unique<QPushButton>("E&dit", this);
+    btn_zoomout_ = std::make_unique<QPushButton>("&Zoom out", this);
+    btn_refresh_ = std::make_unique<QPushButton>("&Refresh", this);
+    btn_eval_ = std::make_unique<QPushButton>("&Eval", this);
+    btn_mark_ = std::make_unique<QPushButton>("&Mark", this);
     btn_mark_->setCheckable(true);
     btn_mark_->setChecked(marking_ = true);
-    btn_unmark_.reset(new QPushButton("&Unmark", this));
+    btn_unmark_ = std::make_unique<QPushButton>("&Unmark", this);
     btn_unmark_->setCheckable(true);
-    btn_resetmarks_.reset(new QPushButton("&Reset Marks", this));
-    btn_view_.reset(new QPushButton("&View", this));
+    btn_resetmarks_ = std::make_unique<QPushButton>("&Reset Marks", this);
+    btn_view_ = std::make_unique<QPushButton>("&View", this);
 
     markingvf_ = true;
 
-    lbl_vf_or_curves_.reset(new QLabel("Curves:", this));
+    lbl_vf_or_curves_ = std::make_unique<QLabel>("Curves:", this);
     lbl_vf_or_curves_->setFont(*(p4app->titleFont_));
     lbl_vf_or_curves_->setMinimumSize(lbl_vf_or_curves_->sizeHint());
     lbl_vf_or_curves_->setMaximumSize(lbl_vf_or_curves_->sizeHint());
     lbl_vf_or_curves_->setText("VF:");
-    lbl_numpoints.reset(new QLabel("# curve points:", this));
-    lbl_status_.reset(
-        new QLabel("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", this));
+    lbl_numpoints = std::make_unique<QLabel>("# curve points:", this);
+    lbl_status_ = std::make_unique<QLabel>(
+        "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM", this);
     lbl_status_->setMaximumSize(lbl_status_->sizeHint());
     lbl_status_->setText("Ready");
-    lbl_info_.reset(new QLabel(
-        "Click on a region to assign the selected vector field", this));
+    lbl_info_ = std::make_unique<QLabel>(
+        "Click on a region to assign the selected vector field", this);
 
-    lst_curves_.reset(new QListWidget(this));
-    lst_vfs_.reset(new QListWidget(this));
+    lst_curves_ = std::make_unique<QListWidget>(this);
+    lst_vfs_ = std::make_unique<QListWidget>(this);
 
-    isphere_.reset(new QWinInputSphere(this, lbl_status_));
+    // FIXME: punter a pare en P4WinInputSphere destruiria el pare quan el fill
+    // fos destruit
+    isphere_ = std::make_unique<P4WinInputSphere>(this, lbl_status_);
     isphere_->setupPlot();
 
-    viewParamsWindow_.reset(new P4ViewDlg(this, false));
+    viewParamsWindow_ = std::make_unique<P4ViewDlg>(this, false);
     viewParamsWindow_->updateDlgData();
 
-    edt_numpoints_.reset(new QLineEdit("", this));
+    edt_numpoints_ = std::make_unique<QLineEdit>("", this);
 
     if (gP4smallIcon)
         setWindowIcon(*gP4smallIcon);
 
     // layout
-    mainLayout_.reset(new QBoxLayout(QBoxLayout::LeftToRight, this));
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::LeftToRight, this);
     std::unique_ptr<QBoxLayout> layoutA{
-        new QBoxLayout(QBoxLayout::TopToBottom, this)};
+        std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this)};
     std::unique_ptr<QBoxLayout> layoutB{
-        new QBoxLayout(QBoxLayout::TopToBottom, this)};
-    layoutA->addWidget(p4title);
-    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
+        std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this)};
+    layoutA->addWidget(p4title.get());
+    std::unique_ptr<QHBoxLayout> layout1{std::make_unique<QHBoxLayout>()};
     layout1->addWidget(btn_add_);
     layout1->addWidget(btn_del_);
-    std::unique_ptr<QHBoxLayout> layout1a{new QHBoxLayout()};
+    std::unique_ptr<QHBoxLayout> layout1a{std::make_unique<QHBoxLayout>()};
     layout1a->addWidget(lbl_numpoints_);
     layout1a->addWidget(edt_numpoints_);
 
@@ -105,7 +108,7 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::unique_ptr<P4ViewDlg> _parent)
     layoutA->addWidget(p4title2);
     layoutA->addWidget(lst_vfs_);
 
-    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
+    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
     layout2->addWidget(lbl_vf_or_curves_);
     layout2->addWidget(btn_mark_);
     layout2->addWidget(btn_unmark_);
@@ -277,10 +280,10 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     for (i = 0; i < gThisVF->numSeparatingCurves_; i++) {
         if (gThisVF->separatingCurves_[i].isEmpty())
-            itm.reset(new QListWidgetItem("polynomial", lst_curves_));
+            itm = std::make_unique<QListWidgetItem>("polynomial", lst_curves_);
         else
-            itm.reset(new QListWidgetItem(*(gThisVF->separatingCurves_[i]),
-                                          lst_curves_));
+            itm = std::make_unique<QListWidgetItem>(
+                *(gThisVF->separatingCurves_[i]), lst_curves_);
     }
 
     if (!lst_curves_->selectedItems().isEmpty()) {
@@ -309,7 +312,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
         s = s.append("\ny' = ");
         s = s.append(*(gThisVF->ydot_[i]));
         s = s.append("\n");
-        itm.reset(new QListWidgetItem(s, lst_vfs_));
+        itm = std::make_unique< QListWidgetItem>(s, lst_vfs_));
         itm->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
 
@@ -498,7 +501,7 @@ void P4SeparatingCurvesDlg::onBtnEval()
     if (gThisVF->evaluating_)
         return;
     parent_->getDataFromDlg();
-    gThisVF->evaluateSeparatingCurves();  // TODO: a p5 es EvaluateCurves()
+    gThisVF->evaluateSeparatingCurves(); // TODO: a p5 es EvaluateCurves()
     if (gThisVF->evaluating_)
         btn_eval_->setEnabled(false);
     else
