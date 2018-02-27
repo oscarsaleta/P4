@@ -21,8 +21,8 @@
 
 #include "P4SepDlg.h"
 #include "P4WinSphere.h"
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "math_p4.h"
 #include "math_separatrice.h"
 

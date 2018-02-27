@@ -19,8 +19,8 @@
 
 #include "math_separatrice.h"
 
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "math_charts.h"
 #include "math_intblowup.h"
 #include "math_numerics.h"

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "file_tab.h"
+#include "file_tab.hpp"
 
 class P4VFStudy : public QObject
 {

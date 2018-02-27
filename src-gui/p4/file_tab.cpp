@@ -15,10 +15,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "file_tab.h"
+#include "file_tab.hpp"
 
 #include "P4InputVF.h"
-#include "main.h"
+#include "main.hpp"
 #include "math_changedir.h"
 #include "math_charts.h"
 #include "math_orbits.h"

@@ -20,8 +20,8 @@
 #include "P4SepDlg.h"
 
 #include "P4PlotWnd.h"
-#include "custom.h"
-#include "main.h"
+#include "custom.hpp"
+#include "main.hpp"
 #include "math_separatrice.h"
 #include "P4WinSphere.h"
 

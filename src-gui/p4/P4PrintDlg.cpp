@@ -19,8 +19,8 @@
 
 #include "P4PrintDlg.h"
 
-#include "custom.h"
-#include "main.h"
+#include "custom.hpp"
+#include "main.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>

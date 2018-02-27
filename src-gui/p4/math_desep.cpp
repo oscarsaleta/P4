@@ -19,8 +19,8 @@
 
 #include "math_desep.h"
 
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "math_separatrice.h"
 
 static std::vector<p4polynom::term2> sVecField_0;

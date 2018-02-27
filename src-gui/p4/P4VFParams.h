@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-#include "custom.h"
+#include "custom.hpp"
 
 class P4VectorFieldDlg;
 

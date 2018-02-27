@@ -20,9 +20,9 @@
 #include "P4ParamsDlg.h"
 
 #include "P4FindDlg.h"
-#include "custom.h"
+#include "custom.hpp"
 #include "P4InputVF.h"
-#include "main.h"
+#include "main.hpp"
 #include "P4Application.h"
 #include "p4settings.h"
 

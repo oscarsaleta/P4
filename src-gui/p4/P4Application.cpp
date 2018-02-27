@@ -19,9 +19,9 @@
 
 #include "P4Application.h"
 
-#include "custom.h"
+#include "custom.hpp"
 #include "P4InputVF.h"
-#include "main.h"
+#include "main.hpp"
 #include "P4Event.h"
 #include "P4FindDlg.h"
 #include "P4StartDlg.h"

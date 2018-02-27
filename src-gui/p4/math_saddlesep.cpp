@@ -19,7 +19,7 @@
 
 #include "math_saddlesep.h"
 
-#include "file_tab.h"
+#include "file_tab.hpp"
 #include "math_orbits.h"
 #include "math_regions.h"
 #include "math_separatrice.h"

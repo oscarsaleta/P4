@@ -22,8 +22,8 @@
 #include "P4FindDlg.h"
 #include "P4InputVF.h"
 #include "P4VFParams.h"
-#include "custom.h"
-#include "main.h"
+#include "custom.hpp"
+#include "main.hpp"
 #include "P4Application.h"
 
 #include <QBoxLayout>

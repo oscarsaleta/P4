@@ -19,8 +19,8 @@
 
 #include "math_isoclines.h"
 
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "P4InputVF.h"
 #include "math_charts.h"
 #include "math_p4.h"

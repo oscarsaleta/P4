@@ -28,7 +28,7 @@
 
 #include "P4InputVF.h"
 #include "P4ParentStudy.h"
-#include "main.h"
+#include "main.hpp"
 
 // FIXME: hauria de posar-lo docked o no?
 P4VFSelectDlg::P4VFSelectDlg(std::shared_ptr<P4FindDlg> finddlg)

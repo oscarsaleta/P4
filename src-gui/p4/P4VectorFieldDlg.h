@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "custom.h"
+#include "custom.hpp"
 
 #include <QString>
 #include <QWidget>

@@ -19,10 +19,10 @@
 
 #include "P4GcfDlg.h"
 
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "P4InputVF.h"
-#include "main.h"
+#include "main.hpp"
 #include "math_gcf.h"
 
 #include <QBoxLayout>

@@ -21,7 +21,7 @@
 
 #include "P4InputVF.h"
 #include "P4ParentStudy.h"
-#include "main.h"
+#include "main.hpp"
 #include "P4Application.h"
 #include "p4settings.h"
 #include "P4StartDlg.h"

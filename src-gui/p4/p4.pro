@@ -105,7 +105,7 @@ HEADERS += P4ViewDlg.h \
     math_p4.h \
     P4InputVF.h \
     custom.h \
-    color.h \
+    color.hpp \
     P4ZoomWnd.h \
     ../version.h \
     file_paths.h \

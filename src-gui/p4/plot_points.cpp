@@ -19,7 +19,7 @@
 
 #include "plot_points.h"
 
-#include "custom.h"
+#include "custom.hpp"
 
 #include <QPainter>
 

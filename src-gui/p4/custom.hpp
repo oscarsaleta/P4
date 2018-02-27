@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "color.h"
+#include "color.hpp"
 
 // Defaults regarding Vector Field and Filename
 

@@ -19,9 +19,9 @@
 
 #include "P4SettingsDlg.h"
 
-#include "custom.h"
-#include "file_paths.h"
-#include "main.h"
+#include "custom.hpp"
+#include "file_paths.hpp"
+#include "main.hpp"
 #include "p4settings.h"
 
 #include <QBoxLayout>

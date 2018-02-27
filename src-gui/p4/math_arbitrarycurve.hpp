@@ -19,7 +19,7 @@
 // FIXME
 #pragma once
 
-#include "file_tab.h"
+#include "file_tab.hpp"
 
 #define EVAL_CURVE_NONE 0
 #define EVAL_CURVE_R2 1

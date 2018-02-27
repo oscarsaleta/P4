@@ -17,11 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_arbitrarycurve.h"
+#include "math_arbitrarycurve.hpp"
 
 #include "P4InputVF.h"
 #include "P4WinSphere.h"
-#include "custom.h"
+#include "custom.hpp"
 #include "math_charts.h"
 #include "math_p4.h"
 #include "plot_tools.h"

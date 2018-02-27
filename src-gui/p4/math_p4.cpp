@@ -19,7 +19,7 @@
 
 #include "math_p4.h"
 
-#include "file_tab.h"
+#include "file_tab.hpp"
 #include "math_charts.h"
 #include "P4IntParamsDlg.h"
 #include "P4StartDlg.h"

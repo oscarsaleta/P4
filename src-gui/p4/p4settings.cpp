@@ -19,9 +19,9 @@
 
 #include "p4settings.h"
 
-#include "file_paths.h"
+#include "file_paths.hpp"
 #include "P4InputVF.h"
-#include "main.h"
+#include "main.hpp"
 
 #include <QDir>
 #include <QSettings>

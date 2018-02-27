@@ -21,9 +21,9 @@
 
 #include "P4Application.h"
 #include "P4InputVF.h"
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
+#include "main.hpp"
 #include "math_p4.h"
 
 #include <QBoxLayout>

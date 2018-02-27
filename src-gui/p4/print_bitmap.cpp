@@ -19,8 +19,8 @@
 
 #include "print_bitmap.h"
 
-#include "custom.h"
-#include "main.h"
+#include "custom.hpp"
+#include "main.hpp"
 #include "plot_tools.h"
 #include "print_points.h"
 

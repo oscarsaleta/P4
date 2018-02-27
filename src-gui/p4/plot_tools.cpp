@@ -20,7 +20,7 @@
 #include "plot_tools.h"
 
 #include "P4WinSphere.h"
-#include "file_tab.h"
+#include "file_tab.hpp"
 #include "math_p4.h"
 
 #include <cmath>

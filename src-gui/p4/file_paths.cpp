@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "file_paths.h"
+#include "file_paths.hpp"
 
 #include <QApplication>
 #include <QDir>

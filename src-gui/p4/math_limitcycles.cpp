@@ -21,8 +21,8 @@
 
 #include "P4LimitCyclesDlg.h"
 #include "P4WinSphere.h"
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "math_charts.h"
 #include "math_orbits.h"
 #include "math_p4.h"

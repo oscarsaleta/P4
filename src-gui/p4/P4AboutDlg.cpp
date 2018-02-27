@@ -19,7 +19,7 @@
 
 #include "P4AboutDlg.h"
 
-#include "main.h"
+#include "main.hpp"
 #include "p4settings.h"
 #include "P4SettingsDlg.h"
 

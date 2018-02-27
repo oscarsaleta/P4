@@ -22,8 +22,8 @@
 
 #include "math_changedir.h"
 
-#include "custom.h"
-#include "file_tab.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
 #include "math_charts.h"
 #include "math_p4.h"
 #include "math_polynom.h"

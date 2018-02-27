@@ -19,9 +19,9 @@
 
 #include "P4OrbitsDlg.h"
 
-#include "custom.h"
-#include "file_tab.h"
-#include "main.h"
+#include "custom.hpp"
+#include "file_tab.hpp"
+#include "main.hpp"
 #include "math_orbits.h"
 #include "P4PlotWnd.h"
 #include "P4WinSphere.h"

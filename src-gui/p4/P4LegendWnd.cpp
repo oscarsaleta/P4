@@ -19,8 +19,8 @@
 
 #include "P4LegendWnd.h"
 
-#include "custom.h"
-#include "main.h"
+#include "custom.hpp"
+#include "main.hpp"
 #include "P4Application.h"
 #include "plot_points.h"
 

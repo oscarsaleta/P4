@@ -22,9 +22,9 @@
 #include "P4InputVF.h"
 #include "P4PlotWnd.h"
 #include "P4WinSphere.h"
-#include "custom.h"
-#include "main.h"
-#include "math_arbitrarycurve.h"
+#include "custom.hpp"
+#include "main.hpp"
+#include "math_arbitrarycurve.hpp"
 #include "math_polynom.h"
 
 #include <QBoxLayout>

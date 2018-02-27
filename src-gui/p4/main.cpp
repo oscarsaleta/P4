@@ -20,14 +20,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "main.h"
+#include "main.hpp"
 
-#include "P4FindDlg.h"
-#include "P4StartDlg.h"
-#include "P4InputVF.h"
 #include "P4Application.h"
-#include "p4settings.h"
+#include "P4FindDlg.h"
+#include "P4InputVF.h"
 #include "P4SettingsDlg.h"
+#include "P4StartDlg.h"
+#include "p4settings.h"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -54,10 +54,10 @@ QString gP4version;
 QString gP4versionDate;
 QString gP4platform;
 
-bool gActionOnlyPrepareFile =
-    false;  // in the find menu (this is not saved in the .inp file)
-bool gActionSaveAll =
-    DEFAULTSAVEALL;  // in the find menu (this is not saved in the .inp file)
+// in the find menu (this is not saved in the .inp file)
+bool gActionOnlyPrepareFile = false;
+// in the find menu (this is not saved in the .inp file)
+bool gActionSaveAll = DEFAULTSAVEALL;
 
 std::unique_ptr<QPixmap> gP4smallIcon();
 std::unique_ptr<QPrinter> gP4printer();
