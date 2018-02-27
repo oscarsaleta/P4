@@ -37,9 +37,11 @@ class P4ZoomWnd : public QMainWindow
 
   public:
     P4ZoomWnd(P4PlotWnd *, int, double x1, double y1, double x2, double y2);
-    ~P4ZoomWnd();
 
     int zoomid_;
+
+    void signalEvaluated();
+    void signalChanged();
 
   private:
     // non-owning raw pointer to parent
@@ -55,10 +57,7 @@ class P4ZoomWnd : public QMainWindow
     std::unique_ptr<P4WinSphere> sphere_;  // main sphere
 
   public slots:
-    // TODO: maybe change these 3 to actual signals?
     // void signalEvaluating();
-    void signalEvaluated();
-    void signalChanged();
 
     void onBtnClose();
     void onBtnRefresh();

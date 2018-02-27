@@ -39,7 +39,8 @@
 
 P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                      double y2)
-    : QMainWindow(), parent_{main}, zoomid_{id}, x1_{x1},x2_{x2},y1_{y1},y2_{y2}
+    : QMainWindow(), parent_{main}, zoomid_{id}, x1_{x1}, x2_{x2}, y1_{y1},
+      y2_{y2}
 {
     if (gP4smallIcon)
         setWindowIcon(*gP4smallIcon);
@@ -79,22 +80,14 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = std::make_unique<P4WinSphere>(this, statusBar(), true, x1_, y1_, x2_, y2_);
+    sphere_ = std::make_unique<P4WinSphere>(this, statusBar(), true, x1_, y1_,
+                                            x2_, y2_);
     sphere_->show();
-    setCentralWidget(sphere_);
+    setCentralWidget(sphere_.get());
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
     sphere_->setupPlot();
 
-    //  if( gThisVF->evaluated_ )
     setP4WindowTitle(this, "Phase Portrait - Zoom");
-    //  else
-    //      SetP4WindowTitle( this, "Phase Portrait - Zoom (*)" );
-}
-
-P4ZoomWnd::~P4ZoomWnd()
-{
-    delete sphere_;
-    sphere_ = nullptr;
 }
 
 void P4ZoomWnd::onSaveSignal()
@@ -113,44 +106,26 @@ void P4ZoomWnd::onSaveSignal()
     settings.endGroup();
 }
 
-void P4ZoomWnd::signalChanged()
+void P4ZoomWnd::signalChanged() { sphere_->signalChanged(); }
+
+/*void P4ZoomWnd::signalEvaluating()
 {
-    //  SetP4WindowTitle( this, "Phase Portrait (*)" );
-
-    sphere_->signalChanged();
-}
-
-void P4ZoomWnd::signalEvaluating()
-{
-    //  SetP4WindowTitle( this, "Phase Portrait (*)" );
-
     sphere_->signalEvaluating();
-}
+}*/
 
-void P4ZoomWnd::signalEvaluated()
-{
-    //  SetP4WindowTitle( this, "Phase Portrait" );
-
-    configure();
-}
+void P4ZoomWnd::signalEvaluated() { configure(); }
 
 void P4ZoomWnd::onBtnClose()
 {
-    int *data = new int;
-    *data = zoomid_;
-
-    P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    gP4app->postEvent(parent_, e1);
+    std::unique_ptr<int> data{std::make_unique<int>(zoomid_)};
+    std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.get())};
+    gP4app->postEvent(parent_, e1.get());
 }
 
 bool P4ZoomWnd::close()
 {
-    int *data = new int;
-    *data = zoomid_;
-
-    P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-    gP4app->postEvent(parent_, e1);
-
+    onBtnClose();
     return QMainWindow::close();
 }
 
@@ -164,20 +139,16 @@ void P4ZoomWnd::onBtnPrint()
 {
     int res;
     double lw, ss;
-    P4PrintDlg *pdlg;
-    pdlg = new P4PrintDlg(this, 0);
-    int result = pdlg->exec();
-    res = pdlg->getChosenResolution();
-    lw = pdlg->getChosenLineWidth();
-    ss = pdlg->getChosenSymbolSize();
-
-    delete pdlg;
-    pdlg = nullptr;
+    std::unique_ptr<P4PrintDlg> pdlg{P4PrintDlg(this, 0)};
+    int result{pdlg->exec()};
+    int res{pdlg->getChosenResolution()};
+    double lw{pdlg->getChosenLineWidth()};
+    double ss{pdlg->getChosenSymbolSize()};
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
             gP4printer->setResolution(res);
-            QPrintDialog dialog(gP4printer, this);
+            QPrintDialog dialog{gP4printer, this};
             if (!dialog.exec())
                 return;
             res = gP4printer->resolution();
@@ -194,26 +165,27 @@ void P4ZoomWnd::onBtnPrint()
 
 void P4ZoomWnd::configure()
 {
-    statusBar()->showMessage("Ready");  // reset status bar
-    plot_l = spherePlotLine;  // setup line/plot pointing to routines of the
-                              // sphere window
+    // reset status bar
+    statusBar()->showMessage("Ready");
+    // setup line/plot pointing to routines of the sphere window
+    plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
-    sphere_->setupPlot();  // setup sphere window (define pixel transformations)
+    // setup sphere window (define pixel transformations)
+    sphere_->setupPlot();
     sphere_->update();
-    // delete print window
-    // delete xfig window
 }
 
 void P4ZoomWnd::customEvent(QEvent *_e)
 {
-    P4Event *e;
-    e = (P4Event *)_e;
+    std::unique_ptr<P4Event> e{
+        std::make_unique<P4Event>(static_cast<P4Event *>(_e))};
 
     if (e->type() == TYPE_OPENZOOMWINDOW || e->type() == TYPE_ORBIT_EVENT ||
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
-        P4Event *newe = new P4Event(e->type(), e->data());
-        gP4app->postEvent(parent_, newe);
+        std::unique_ptr<P4Event> newe{
+            std::make_unique<P4Event>(e->type(), e->data())};
+        gP4app->postEvent(parent_, newe.get());
         return;
     }
 
@@ -222,45 +194,38 @@ void P4ZoomWnd::customEvent(QEvent *_e)
 
 void P4ZoomWnd::hideEvent(QHideEvent *h)
 {
-    UNUSED(h);
     if (!isMinimized()) {
-        int *data = new int;
-        *data = zoomid_;
-
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_ZOOMWINDOW, data);
-        gP4app->postEvent(parent_, e1);
+        std::unique_ptr<int> data{std::make_unique<int>(zoomid_)};
+        std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
+            static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.get())};
+        gP4app->postEvent(parent_, e1.get());
     }
 }
 
 void P4ZoomWnd::adjustHeight()
 {
-    int w, h, m;
     double deltaw, deltah;
 
     sphere_->adjustToNewSize();
 
-    w = width();
-    h = height() + sphere_->idealh_ - sphere_->h_;
+    int w{width()};
+    int h{height() + sphere_->idealh_ - sphere_->h_};
 
-    m = gP4app->desktop()->height();
+    int m{gP4app->desktop()->height()};
     m -= m / 10;  // occuppy at most 90% of the screen's height
 
     if (h > m) {
-        deltah = (double)(h - m);
-        deltaw = deltah;
-        deltaw *= sphere_->dx_;
-        deltaw /= sphere_->dy_;
+        deltah = static_cast<double>(h - m);
+        deltaw = deltah * sphere_->dx_ / sphere_->dy_;
 
-        h -= (int)(deltah + 0.5);
-        w -= (int)(deltaw + 0.5);
+        h -= std::round(deltah + 0.5);
+        w -= std::round(deltaw + 0.5);
     } else if (sphere_->idealh_ < MINHEIGHTPLOTWINDOW) {
-        deltah = (double)(MINHEIGHTPLOTWINDOW - sphere_->idealh_);
-        deltaw = deltah;
-        deltaw *= sphere_->dx_;
-        deltaw /= sphere_->dy_;
+        deltah = static_cast<double>(MINHEIGHTPLOTWINDOW - sphere_->idealh_);
+        deltaw = deltah * sphere_->dx_ / sphere_->dy_;
 
-        h += (int)(deltah + 0.5);
-        w += (int)(deltaw + 0.5);
+        h += std::round(deltah + 0.5);
+        w += std::round(deltaw + 0.5);
         m = gP4app->desktop()->width();
         m -= m / 10;
         if (w > m)
