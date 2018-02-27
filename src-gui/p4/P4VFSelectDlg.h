@@ -23,42 +23,43 @@
 #include <memory>
 
 class P4FindDlg;
+class P4SeparatingCurvesDlg;
+
 class QBoxLayout;
 class QHBoxLayout;
 class QLabel;
 class QComboBox;
 class QPushButton;
-class P4SeparatingCurvesDlg;
 
 class P4VFSelectDlg : public QWidget
 {
     Q_OBJECT
   public:
-    P4VFSelectDlg(std::unique_ptr<P4FindDlg> startwindow);
+    P4VFSelectDlg(std::shared_ptr<P4FindDlg> startwindow);
 
     std::unique_ptr<QComboBox> cbb_vfselect_;
     std::unique_ptr<QPushButton> btn_add_;
     std::unique_ptr<QPushButton> btn_del_;
     std::unique_ptr<QPushButton> btn_prev_;
     std::unique_ptr<QPushButton> btn_next_;
-    std::unique_ptr<QPushButton> btn_p5config_;
+    std::unique_ptr<QPushButton> btn_p4config_;
     std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
 
-    void getDataFromDlg(void);
-    void updateDlgData(void);
+    void getDataFromDlg();
+    void updateDlgData();
 
-    void closeConfigWindow(void);
-    bool checkPlotWindowClosed(void);
+    void closeConfigWindow();
+    bool checkPlotWindowClosed();
 
   public slots:
-    void onBtnAdd(void);
-    void onBtnDel(void);
-    void onBtnPrev(void);
-    void onBtnNext(void);
-    void onBtnP5Config(void);
+    void onBtnAdd();
+    void onBtnDel();
+    void onBtnPrev();
+    void onBtnNext();
+    void onBtnP4Config();
     void onVfSelectionChanged(int);
 
   private:
     std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<P4FindDlg> parent_;
+    std::shared_ptr<P4FindDlg> parent_;
 };
