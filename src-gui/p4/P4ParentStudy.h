@@ -28,7 +28,7 @@ class P4VFStudy;
 
 class P4ParentStudy : public QObject
 {
-   public:
+  public:
     // Constructor and destructor
     P4ParentStudy();
     //~P4ParentStudy();

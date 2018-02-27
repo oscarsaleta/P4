@@ -35,11 +35,11 @@ class P4SettingsDlg : public QDialog
 {
     Q_OBJECT
 
-   public:
+  public:
     P4SettingsDlg(QWidget *, Qt::WindowFlags);
     void browseForExistingPathOrFile(QLineEdit *, QString, bool);
 
-   private:
+  private:
     std::unique_ptr<QLabel> lbl_base_;
     std::unique_ptr<QLineEdit> edt_base_;
     std::unique_ptr<QPushButton> btn_base_;
@@ -66,7 +66,7 @@ class P4SettingsDlg : public QDialog
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
-   public slots:
+  public slots:
     void onOk();
     void onCancel();
     void onReset();

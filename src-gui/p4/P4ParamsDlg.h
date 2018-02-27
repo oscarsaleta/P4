@@ -34,13 +34,13 @@ class P4ParamsDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4ParamsDlg(std::shared_ptr<P4FindDlg> startwindow);
     ~P4ParamsDlg();
     void getDataFromDlg();
     void updateDlgData();
 
-   private:
+  private:
     std::shared_ptr<P4FindDlg> parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
@@ -77,7 +77,7 @@ class P4ParamsDlg : public QWidget
     bool getLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
                                 std::vector<QString> &newval);
 
-   public slots:
+  public slots:
     void btn_num_toggled(bool);
     void btn_alg_toggled(bool);
     void btn_sepyes_toggled(bool);

@@ -50,7 +50,7 @@ class P4WinSphere : public QWidget
     static int sM_numSpheres;
     static std::vector<std::shared_ptr<P4WinSphere>> sM_sphereList;
 
-   public:
+  public:
     /* Constructor and destructor */
     P4WinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);
     ~P4WinSphere();
@@ -163,7 +163,7 @@ class P4WinSphere : public QWidget
     int coWinV(double);
     int coWinH(double);
 
-   public slots:
+  public slots:
     void resizeEvent(QResizeEvent *e);
     void mouseMoveEvent(QMouseEvent *e);
     void mousePressEvent(QMouseEvent *e);
@@ -176,7 +176,7 @@ class P4WinSphere : public QWidget
     void refreshAfterResize();
     void updatePointSelection();
 
-   private:
+  private:
     std::shared_ptr<QWidget> parentWnd_;
     std::shared_ptr<QStatusBar> msgBar_;
     bool iszoom_;

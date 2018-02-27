@@ -37,12 +37,12 @@ class P4SeparatingCurvesDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4SeparatingCurvesDlg(std::unique_ptr<P4FindDlg> startwindow);
     void updateDlgData();
     void signalSeparatingCurvesEvaluated();
 
-   private:
+  private:
     std::shared_ptr<P4FindDlg> parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
@@ -79,7 +79,7 @@ class P4SeparatingCurvesDlg : public QWidget
     void onMouseClickLeft(double, double, double);
     void onMouseClickRight(double, double, double);
 
-   public slots:
+  public slots:
     void onBtnZoomOut();
     void onBtnAdd();
     void onBtnDel();

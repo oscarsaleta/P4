@@ -46,14 +46,14 @@ class P4WinInputSphere : public QWidget
     P4WinInputSphere(P4SeparatingCurvesDlg *, QLabel *);
 
     /* MEMBER VARIABLES */
-    double x0_, y0_; // world coordinates of upper-left corner
-    double x1_, y1_; // world coordinates of upper-right corner
-    double dx_;      // x1-x0
-    double dy_;      // y1-y0;
+    double x0_, y0_;  // world coordinates of upper-left corner
+    double x1_, y1_;  // world coordinates of upper-right corner
+    double dx_;       // x1-x0
+    double dy_;       // y1-y0;
 
-    int w_;      // width of window
-    int h_;      // height of window
-    int idealh_; // ideal height of window to get good aspect ratio
+    int w_;       // width of window
+    int h_;       // height of window
+    int idealh_;  // ideal height of window to get good aspect ratio
 
     bool isZoom_;
 
@@ -104,9 +104,9 @@ class P4WinInputSphere : public QWidget
 
     void setupPlot();
     void refresh();
-    //void calculateHeightFromWidth(int *width, int *height, int maxheight,
+    // void calculateHeightFromWidth(int *width, int *height, int maxheight,
     //                              double aspectratio);
-    //void updatePointSelection();
+    // void updatePointSelection();
     void markSelection(int x1, int y1, int x2, int y2);
 
     void plotCurves();

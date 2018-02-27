@@ -45,13 +45,13 @@ class P4PlotWnd : public QMainWindow
 {
     Q_OBJECT
 
-   public:
+  public:
     P4PlotWnd(std::shared_ptr<P4StartDlg>);
 
     std::shared_ptr<P4IntParamsDlg> intParamsWindow_;
     std::shared_ptr<P4ViewDlg> viewParamsWindow_;
 
-   private:
+  private:
     std::shared_ptr<P4StartDlg> parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
@@ -85,7 +85,7 @@ class P4PlotWnd : public QMainWindow
 
     bool flagAllSepsPlotted_;
 
-   public slots:
+  public slots:
     // void signalEvaluating();
     void signalEvaluated();
     void signalChanged();

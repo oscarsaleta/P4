@@ -23,7 +23,7 @@
 
 class P4VFStudy : public QObject
 {
-   public:
+  public:
     // Constructor
     P4VFStudy(std::shared_ptr<P4ParentStudy> parent =
                   std::make_shared<P4ParentStudy>(nullptr));
@@ -103,7 +103,7 @@ class P4VFStudy : public QObject
 
     void dump(QTextEdit &m);
 
-   private:
+  private:
     void dumpSeparatrices(QTextEdit &m,
                           const std::vector<p4singularities::sep> &separ,
                           int margin);

@@ -35,13 +35,13 @@ class P4ArbitraryCurveDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4ArbitraryCurveDlg(std::shared_ptr<P4PlotWnd>,
                         std::shared_ptr<P4WinSphere>);
     void reset();
     void finishCurveEvaluation();
 
-   private:
+  private:
     std::shared_ptr<P4WinSphere> mainSphere_;
     std::shared_ptr<P4PlotWnd> plotwnd_;
 
@@ -63,7 +63,7 @@ class P4ArbitraryCurveDlg : public QWidget
     int evaluating_memory_;
     int evaluating_precision_;
 
-   public slots:
+  public slots:
     void onBtnEvaluate();
     void onBtnPlot();
     void onBtnDelAll();

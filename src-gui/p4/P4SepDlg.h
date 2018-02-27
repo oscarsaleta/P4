@@ -38,11 +38,11 @@ class P4SepDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4SepDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<P4WinSphere>);
     void reset();
 
-   private:
+  private:
     std::shared_ptr<P4WinSphere> mainSphere_;
     std::shared_ptr<P4PlotWnd> plotWnd_;
 
@@ -61,7 +61,7 @@ class P4SepDlg : public QWidget
     bool started_;
     bool selected_;
 
-   public slots:
+  public slots:
     void onbtn_selectnext();
     void onbtn_intnext();
     void onbtn_cont();

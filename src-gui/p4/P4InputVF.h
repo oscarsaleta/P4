@@ -69,7 +69,7 @@ class P4InputVF : public QObject
 {
     Q_OBJECT
 
-   public:
+  public:
     P4InputVF();
 
     //////////////////////
@@ -328,11 +328,11 @@ class P4InputVF : public QObject
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
-   signals:
+  signals:
     void saveSignal();
     void loadSignal();
 
-   public slots:
+  public slots:
     void finishEvaluation(int);
     void catchProcessError(QProcess::ProcessError);
     void readProcessStdout();

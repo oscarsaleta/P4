@@ -36,13 +36,13 @@ class P4ViewDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4ViewDlg(bool virtualchk);
     ~P4ViewDlg();
     bool getDataFromDlg();
     void updateDlgData();
 
-   private:
+  private:
     bool changed_;
     bool haveVirtualCheckBox_;
 
@@ -70,10 +70,9 @@ class P4ViewDlg : public QWidget
 
     std::unique_ptr<QSpinBox> spin_numpoints_;
 
-    bool readFloatField(QLineEdit *, double &, double, double,
-                        double);
+    bool readFloatField(QLineEdit *, double &, double, double, double);
 
-   public slots:
+  public slots:
     void markBad(QLineEdit *edt);
     void onFieldChange(const QString &dummy);
     void btn_sphere_toggled();

@@ -59,7 +59,7 @@ class P4StartDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4StartDlg(const QString &);
 
     std::unique_ptr<P4FindDlg> findWindow_;
@@ -80,7 +80,7 @@ class P4StartDlg : public QWidget
     void customEvent(QEvent *e);
     void closePlotWindow();
 
-   public slots:
+  public slots:
     // following slots are called by QT when a button is pressed or a file name
     // is changed:
     void onQuit();
@@ -95,7 +95,7 @@ class P4StartDlg : public QWidget
     void onSaveSignal();
     void onLoadSignal();
 
-   private:
+  private:
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QPushButton> btn_quit_;
     std::unique_ptr<QPushButton> btn_find_;

@@ -33,12 +33,12 @@ class P4IsoclinesDlg : public QWidget
 {
     Q_OBJECT
 
-   public:
-    P4IsoclinesDlg(std::shared_ptr<P4PlotWnd> , std::shared_ptr<P4WinSphere> );
+  public:
+    P4IsoclinesDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<P4WinSphere>);
     void reset();
     void finishIsoclinesEvaluation();
 
-   private:
+  private:
     std::shared_ptr<P4WinSphere> mainSphere_;
     std::shared_ptr<P4PlotWnd> plotwnd_;
 
@@ -62,7 +62,7 @@ class P4IsoclinesDlg : public QWidget
 
     void setValue(double v);
 
-   public slots:
+  public slots:
     void onBtnEvaluate();
     void onBtnPlot();
     void onBtnDelAll();

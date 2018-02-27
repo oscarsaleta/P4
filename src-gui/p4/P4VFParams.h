@@ -36,12 +36,12 @@ class P4VFParams : public QWidget
 {
     Q_OBJECT
 
-   public:
+  public:
     P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb);
 
     bool updateDlgData();
 
-   private:
+  private:
     int currentNumParams_;
     int currentShownParams_;
     int currentPageIndex_;
@@ -56,16 +56,16 @@ class P4VFParams : public QWidget
     std::vector<std::unique_ptr<QLineEdit>> paramValues_;
 
     // FIXME what are these?
-    //std::vector<QString> strLabels_;
-    //std::vector<std::vector<QString>> strValues_;
+    // std::vector<QString> strLabels_;
+    // std::vector<std::vector<QString>> strValues_;
 
     bool getLineEditCommonParValue(QLineEdit *, int index);
     void setLineEditCommonParValue(QLineEdit *, int index);
 
-   protected:
+  protected:
     bool focusNextPrevChild(bool next);
 
-   public slots:
+  public slots:
     void paramsSliderChanged(int);
     void paramsEditingFinished();
 };
