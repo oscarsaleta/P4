@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_ISOCLINES_H
-#define MATH_ISOCLINES_H
+#pragma once
 
 #define EVAL_ISOCLINES_NONE 0
 #define EVAL_ISOCLINES_R2 1
@@ -43,7 +42,6 @@ bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points);
-void draw_isoclines(P4WinSphere *spherewnd, orbits_points *isoc, int color, int dashes);
+void draw_isoclines(P4WinSphere *spherewnd, orbits_points *isoc, int color,
+                    int dashes);
 void deleteLastIsocline(P4WinSphere *sp);
-
-#endif // MATH_ISOCLINES_H

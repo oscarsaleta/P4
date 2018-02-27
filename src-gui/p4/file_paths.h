@@ -17,23 +17,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FILE_PATHS_H
-#define FILE_PATHS_H
+#pragma once
 
 class QString;
 
 // Methods implemented in file_paths.cpp
 
-QString getDefaultP4Path(void);
-QString getDefaultP4TempPath(void);
-QString getDefaultP4SumTablePath(void);
-QString getDefaultMathManipulator(void);
-QString getDefaultP4HelpPath(void);
-//QString getDefaultP4ReducePath(void);
-QString getDefaultP4MaplePath(void);
-QString getDefaultP4BinPath(void);
-//QString getDefaultReduceInstallation(void);
-QString getDefaultMapleInstallation(void);
+QString getDefaultP4Path();
+QString getDefaultP4TempPath();
+QString getDefaultP4SumTablePath();
+QString getDefaultMathManipulator();
+QString getDefaultP4HelpPath();
+QString getDefaultP4MaplePath();
+QString getDefaultP4BinPath();
+QString getDefaultMapleInstallation();
 void removeFile(QString fname);
-
-#endif // FILE_PATHS_H

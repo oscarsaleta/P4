@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLOT_TOOLS_H
-#define PLOT_TOOLS_H
+#pragma once
 
 class P4WinSphere;
 
@@ -33,5 +32,3 @@ void spherePrintLine(std::shared_ptr<P4WinSphere> sp, double *p1, double *p2,
 void spherePrintPoint(std::shared_ptr<P4WinSphere> sp, double *p, int color);
 bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
                             double xmin, double xmax, double ymin, double ymax);
-
-#endif  // PLOT_TOOLS_H

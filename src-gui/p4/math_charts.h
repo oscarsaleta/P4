@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_CHARTS_H
-#define MATH_CHARTS_H
+#pragma once
 
 // -----------------------------------------------------------------------
 //                  IMPLEMENTATION OF THE POINCARE CHARTS
@@ -114,5 +113,3 @@ bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
 bool plsphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
                                               double *u2, double *u3,
                                               double *u4);
-
-#endif // MATH_CHARTS_H

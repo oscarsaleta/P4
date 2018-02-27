@@ -16,7 +16,9 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
+#pragma once
+
 #include "file_tab.h"
 
 bool readCurvePoints(FILE *fp, std::vector<p4orbits::orbits_points> &psep,

@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_P4_H
-#define MATH_P4_H
+#pragma once
 
 #define MIN_FLOAT -1.0E32
 #define MAX_FLOAT 1.0E32
@@ -42,5 +41,3 @@ void rplane_plsphere0(double x, double y, double *pcoord);
 
 bool less_poincare(double *, double *);
 bool less_lyapunov(double *, double *);
-
-#endif /* MATH_P4_H */

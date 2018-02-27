@@ -17,8 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CUSTOM_H
-#define CUSTOM_H
+#pragma once
 
 #include "color.h"
 
@@ -306,5 +305,3 @@ extern bool PRINT_WHITE_BG;
 // will appear
 
 #define TOOLTIPS
-
-#endif /* CUSTOM_H */

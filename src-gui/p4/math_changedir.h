@@ -17,10 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_CHANGEDIR_H
-#define MATH_CHANGEDIR_H
+#pragma once
 
 int change_dir_poincare(double p[3]);
 int change_dir_lyapunov(double p[3]);
-
-#endif // MATH_CHANGEDIR_H

@@ -17,12 +17,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PRINT_POSTSCRIPT_H
-#define PRINT_POSTSCRIPT_H
+#pragma once
 
 void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                                bool isblackwhite, int resolution, int linewidth,
                                int symbolwidth);
 void finishPostscriptPrinting(void);
-
-#endif // PRINT_POSTSCRIPT_H

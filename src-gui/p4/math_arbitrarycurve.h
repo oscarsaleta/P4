@@ -16,9 +16,8 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef MATH_CURVE_H
-#define MATH_CURVE_H
+// FIXME
+#pragma once
 
 #include "file_tab.h"
 
@@ -45,7 +44,6 @@ bool evalCurveStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalCurveContinue(int precision, int points);
 bool evalCurveFinish(void);
 bool runTaskCurve(int task, int precision, int points);
-void draw_curve(P4WinSphere *spherewnd, orbits_points *sep, int color, int dashes);
+void draw_curve(P4WinSphere *spherewnd, orbits_points *sep, int color,
+                int dashes);
 void deleteLastCurve(P4WinSphere *);
-
-#endif // MATH_CURVE_H
