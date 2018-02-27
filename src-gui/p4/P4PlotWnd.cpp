@@ -27,7 +27,7 @@
 #include "P4IntParamsDlg.hpp"
 #include "P4IsoclinesDlg.hpp"
 #include "P4LegendWnd.hpp"
-#include "P4LimitCyclesDlg.h"
+#include "P4LimitCyclesDlg.hpp"
 #include "P4OrbitsDlg.hpp"
 #include "P4PrintDlg.hpp"
 #include "P4SepDlg.hpp"
@@ -454,8 +454,8 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
 
 void P4PlotWnd::closeZoomWindow(int id)
 {
-    std::vector<std::unique_ptr<P4ZoomWnd>>::iterator it;
-    for (it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++) {
+    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_);
+         it++) {
         if ((*it)->zoomid_ == id) {
             zoomWindows_.erase(it);
             numZooms_--;
@@ -465,10 +465,9 @@ void P4PlotWnd::closeZoomWindow(int id)
     return;  // error, zoom window not found
 }
 
-// FIXME should think of how to
 void P4PlotWnd::customEvent(QEvent *_e)
 {
-    P4Event e{reinterpret_cast<P4Event>(*_e)};
+    P4Event e{static_cast<P4Event>(*_e)};  // NOTE other cast could be needed
     double pcoord[3];
     double ucoord[2];
     double ucoord0[2];
@@ -477,7 +476,6 @@ void P4PlotWnd::customEvent(QEvent *_e)
 
     switch (e.type()) {
     case TYPE_OPENZOOMWINDOW:
-        // FIXME quin lio
         double *data1{static_cast<double *>(e.data())};
         openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
         delete data1;
