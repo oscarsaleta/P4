@@ -24,7 +24,7 @@
 // -----------------------------------------------------------------------
 
 // Linked list of univariate terms a*x^i
-namespace p4polynom  // TODO: usar aquestes structs com vectors
+namespace p4polynom
 {
 struct term1 {
     int exp;
@@ -89,12 +89,10 @@ struct orbits {
     double pcoord[3];  // startpoint
     int color;
     std::vector<orbits_points> points;  // orbit
-    // int current_point_index;            // FIXME needed? or use
-    // front()/back()?
 
     orbits() {}
-    orbits(double pc[3], int co, std::vector<orbits_points> fo /*, int cu*/)
-        : color{co}, points{fo}  //, current_point_index{cu}
+    orbits(double pc[3], int co, std::vector<orbits_points> fo)
+        : color{co}, points{fo}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
@@ -108,7 +106,7 @@ struct orbits {
 // -----------------------------------------------------------------------
 namespace p4curves
 {
-struct curves {  // TODO: curveResult es identica, usarem aquesta
+struct curves {  // NOTE: curveResult es identica, usarem aquesta
     std::vector<p4polynom::term2> r2, u1, u2, v1, v2;
     std::vector<p4polynom::term3> c;
     std::vector<p4orbits::orbits_points> points;
