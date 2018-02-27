@@ -45,7 +45,6 @@ class P4VFSelectDlg : public QWidget
     std::unique_ptr<QPushButton> btn_p4config_;
     std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
 
-    void getDataFromDlg();
     void updateDlgData();
 
     void closeConfigWindow();

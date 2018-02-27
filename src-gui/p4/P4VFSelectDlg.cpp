@@ -94,12 +94,6 @@ P4VFSelectDlg::P4VFSelectDlg(std::shared_ptr<P4FindDlg> finddlg)
     updateDlgData();
 }
 
-void P4VFSelectDlg::getDataFromDlg()
-{
-    if (win_curves_)
-        win_curves_->getDataFromDlg();
-}
-
 void P4VFSelectDlg::updateDlgData()
 {
     QString s;
