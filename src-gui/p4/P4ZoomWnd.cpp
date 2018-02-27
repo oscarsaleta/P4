@@ -19,16 +19,16 @@
 
 #include "P4ZoomWnd.h"
 
-#include "custom.h"
-#include "P4InputVF.h"
-#include "main.h"
 #include "P4Application.h"
-#include "plot_tools.h"
 #include "P4Event.h"
-#include "P4StartDlg.h"
+#include "P4InputVF.h"
 #include "P4PlotWnd.h"
 #include "P4PrintDlg.h"
+#include "P4StartDlg.h"
 #include "P4WinSphere.h"
+#include "custom.hpp"
+#include "main.hpp"
+#include "plot_tools.h"
 
 #include <QDesktopWidget>
 #include <QPrintDialog>
@@ -38,44 +38,36 @@
 #include <QToolBar>
 
 P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
-                   double y2)
-    : QMainWindow()
+                     double y2)
+    : QMainWindow(), parent_{main}, zoomid_{id}, x1_{x1},x2_{x2},y1_{y1},y2_{y2}
 {
-    QToolBar *toolBar1;
-    parent_ = main;
-    zoomid_ = id;
-    x1_ = x1;
-    x2_ = x2;
-    y1_ = y1;
-    y2_ = y2;
-
-    //    QPalette palette;
-    //    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND)
-    //    );
-    //    setPalette(palette);
-
-    if (gP4smallIcon != nullptr)
+    if (gP4smallIcon)
         setWindowIcon(*gP4smallIcon);
 
-    toolBar1 = new QToolBar("ZoomBar1", this);
+    std::unique_ptr<QToolBar> toolBar1{
+        std::make_unique<QToolBar>("ZoomBar1", this)};
     toolBar1->setMovable(false);
 
-    actClose_ = new QAction("Close", this);
+    actClose_ = std::make_unique<QAction>("Close", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(actClose_, &QAction::triggered, this, &P4ZoomWnd::onBtnClose);
-    toolBar1->addAction(actClose_);
+    QObject::connect(actClose_.get(), &QAction::triggered, this,
+                     &P4ZoomWnd::onBtnClose);
+    toolBar1->addAction(actClose_.get());
 
-    actRefresh_ = new QAction("Refresh", this);
+    actRefresh_ = std::make_unique<QAction>("Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(actRefresh_, &QAction::triggered, this, &P4ZoomWnd::onBtnRefresh);
-    toolBar1->addAction(actRefresh_);
+    QObject::connect(actRefresh_.get(), &QAction::triggered, this,
+                     &P4ZoomWnd::onBtnRefresh);
+    toolBar1->addAction(actRefresh_.get());
 
-    actPrint_ = new QAction("Print", this);
+    actPrint_ = std::make_unique<QAction>("Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(actPrint_, &QAction::triggered, this, &P4ZoomWnd::onBtnPrint);
-    toolBar1->addAction(actPrint_);
+    QObject::connect(actPrint_.get(), &QAction::triggered, this,
+                     &P4ZoomWnd::onBtnPrint);
+    toolBar1->addAction(actPrint_.get());
 
-    connect(gThisVF, &QInputVF::saveSignal, this, &P4ZoomWnd::onSaveSignal);
+    QObject::connect(gThisVF.get(), &QInputVF::saveSignal, this,
+                     &P4ZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
     actClose_->setToolTip(
@@ -87,7 +79,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = new P4WinSphere(this, statusBar(), true, x1_, y1_, x2_, y2_);
+    sphere_ = std::make_unique<P4WinSphere>(this, statusBar(), true, x1_, y1_, x2_, y2_);
     sphere_->show();
     setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
@@ -121,28 +113,28 @@ void P4ZoomWnd::onSaveSignal()
     settings.endGroup();
 }
 
-void P4ZoomWnd::signalChanged(void)
+void P4ZoomWnd::signalChanged()
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalChanged();
 }
 
-void P4ZoomWnd::signalEvaluating(void)
+void P4ZoomWnd::signalEvaluating()
 {
     //  SetP4WindowTitle( this, "Phase Portrait (*)" );
 
     sphere_->signalEvaluating();
 }
 
-void P4ZoomWnd::signalEvaluated(void)
+void P4ZoomWnd::signalEvaluated()
 {
     //  SetP4WindowTitle( this, "Phase Portrait" );
 
     configure();
 }
 
-void P4ZoomWnd::onBtnClose(void)
+void P4ZoomWnd::onBtnClose()
 {
     int *data = new int;
     *data = zoomid_;
@@ -151,7 +143,7 @@ void P4ZoomWnd::onBtnClose(void)
     gP4app->postEvent(parent_, e1);
 }
 
-bool P4ZoomWnd::close(void)
+bool P4ZoomWnd::close()
 {
     int *data = new int;
     *data = zoomid_;
@@ -162,13 +154,13 @@ bool P4ZoomWnd::close(void)
     return QMainWindow::close();
 }
 
-void P4ZoomWnd::onBtnRefresh(void)
+void P4ZoomWnd::onBtnRefresh()
 {
     parent_->getDlgData();
     sphere_->refresh();
 }
 
-void P4ZoomWnd::onBtnPrint(void)
+void P4ZoomWnd::onBtnPrint()
 {
     int res;
     double lw, ss;
@@ -200,13 +192,13 @@ void P4ZoomWnd::onBtnPrint(void)
     }
 }
 
-void P4ZoomWnd::configure(void)
+void P4ZoomWnd::configure()
 {
-    statusBar()->showMessage("Ready"); // reset status bar
-    plot_l = spherePlotLine; // setup line/plot pointing to routines of the
-                             // sphere window
+    statusBar()->showMessage("Ready");  // reset status bar
+    plot_l = spherePlotLine;  // setup line/plot pointing to routines of the
+                              // sphere window
     plot_p = spherePlotPoint;
-    sphere_->setupPlot(); // setup sphere window (define pixel transformations)
+    sphere_->setupPlot();  // setup sphere window (define pixel transformations)
     sphere_->update();
     // delete print window
     // delete xfig window
@@ -240,7 +232,7 @@ void P4ZoomWnd::hideEvent(QHideEvent *h)
     }
 }
 
-void P4ZoomWnd::adjustHeight(void)
+void P4ZoomWnd::adjustHeight()
 {
     int w, h, m;
     double deltaw, deltah;
@@ -251,7 +243,7 @@ void P4ZoomWnd::adjustHeight(void)
     h = height() + sphere_->idealh_ - sphere_->h_;
 
     m = gP4app->desktop()->height();
-    m -= m / 10; // occuppy at most 90% of the screen's height
+    m -= m / 10;  // occuppy at most 90% of the screen's height
 
     if (h > m) {
         deltah = (double)(h - m);
@@ -272,7 +264,7 @@ void P4ZoomWnd::adjustHeight(void)
         m = gP4app->desktop()->width();
         m -= m / 10;
         if (w > m)
-            w = m; // occupy at most 90 % of the screen's width
+            w = m;  // occupy at most 90 % of the screen's width
     }
     resize(w, h);
     statusBar()->showMessage("Ready.");
