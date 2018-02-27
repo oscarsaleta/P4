@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4OrbitsDlg.h"
+#include "P4OrbitsDlg.hpp"
 
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "math_orbits.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
+#include "math_orbits.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 
 #include <QBoxLayout>
 #include <QLabel>

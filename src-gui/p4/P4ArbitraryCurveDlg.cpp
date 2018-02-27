@@ -17,15 +17,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4ArbitraryCurveDlg.h"
+#include "P4ArbitraryCurveDlg.hpp"
 
-#include "P4InputVF.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
+#include "P4InputVF.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "main.hpp"
 #include "math_arbitrarycurve.hpp"
-#include "math_polynom.h"
+#include "math_polynom.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>

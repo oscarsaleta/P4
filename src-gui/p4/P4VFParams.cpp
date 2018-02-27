@@ -17,9 +17,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4VFParams.h"
+#include "P4VFParams.hpp"
 
-#include "P4VectorFieldDlg.h"
+#include "P4VectorFieldDlg.hpp"
 
 #include <QLabel>
 #include <QScrollBar>

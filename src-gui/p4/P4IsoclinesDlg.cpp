@@ -17,17 +17,17 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4IsoclinesDlg.h"
+#include "P4IsoclinesDlg.hpp"
 
-#include "P4InputVF.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
+#include "P4InputVF.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "math_gcf.h"
-#include "math_isoclines.h"
-#include "math_polynom.h"
+#include "math_gcf.hpp"
+#include "math_isoclines.hpp"
+#include "math_polynom.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>

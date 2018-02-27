@@ -17,11 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4SeparatingCurvesDlg.h"
+#include "P4SeparatingCurvesDlg.hpp"
 
-#include "P4Application.h"
-#include "P4ViewDlg.h"
-#include "P4WinInputSphere.h"
+#include "P4Application.hpp"
+#include "P4ViewDlg.hpp"
+#include "P4WinInputSphere.hpp"
 
 #include <QBoxLayout>
 #include <QHBoxLayout>

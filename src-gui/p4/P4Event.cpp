@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4Event.h"
+#include "P4Event.hpp"
 
 P4Event::P4Event(QEvent::Type t, void *data) : QEvent(t) { customData_ = data; }
 

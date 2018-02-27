@@ -17,15 +17,15 @@
 
 #include "file_tab.hpp"
 
-#include "P4InputVF.h"
+#include "P4InputVF.hpp"
 #include "main.hpp"
-#include "math_changedir.h"
-#include "math_charts.h"
-#include "math_orbits.h"
-#include "math_p4.h"
-#include "math_polynom.h"
-#include "math_separatrice.h"
-#include "P4Application.h"
+#include "math_changedir.hpp"
+#include "math_charts.hpp"
+#include "math_orbits.hpp"
+#include "math_p4.hpp"
+#include "math_polynom.hpp"
+#include "math_separatrice.hpp"
+#include "P4Application.hpp"
 
 #include <locale.h>
 #include <iostream>

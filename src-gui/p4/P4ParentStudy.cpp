@@ -17,11 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4ParentStudy.h"
+#include "P4ParentStudy.hpp"
 
-#include "math_charts.h"
-#include "math_regions.h"
-#include "math_separatingcurves.h"
+#include "math_charts.hpp"
+#include "math_regions.hpp"
+#include "math_separatingcurves.hpp"
 
 // -----------------------------------------------------------------------
 //                              P4ParentStudy CONSTRUCTOR

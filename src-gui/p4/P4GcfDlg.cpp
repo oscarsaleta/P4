@@ -17,13 +17,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4GcfDlg.h"
+#include "P4GcfDlg.hpp"
 
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "P4InputVF.h"
+#include "P4InputVF.hpp"
 #include "main.hpp"
-#include "math_gcf.h"
+#include "math_gcf.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>

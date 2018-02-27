@@ -23,7 +23,7 @@
 //
 // -----------------------------------------------------------------------
 
-#include "math_polynom.h"
+#include "math_polynom.hpp"
 
 #include "file_tab.hpp"
 

@@ -17,11 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_desep.h"
+#include "math_desep.hpp"
 
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "math_separatrice.h"
+#include "math_separatrice.hpp"
 
 static std::vector<p4polynom::term2> sVecField_0;
 static std::vector<p4polynom::term2> sVecField_1;

@@ -17,16 +17,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "print_postscript.h"
+#include "print_postscript.hpp"
 
-#include "P4InputVF.h"
+#include "P4InputVF.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "math_p4.h"
-#include "plot_tools.h"
-#include "print_bitmap.h"
-#include "print_points.h"
+#include "math_p4.hpp"
+#include "plot_tools.hpp"
+#include "print_bitmap.hpp"
+#include "print_points.hpp"
 
 #include <QFile>
 #include <QTextStream>

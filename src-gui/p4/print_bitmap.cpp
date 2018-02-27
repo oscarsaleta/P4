@@ -17,12 +17,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "print_bitmap.h"
+#include "print_bitmap.hpp"
 
 #include "custom.hpp"
 #include "main.hpp"
-#include "plot_tools.h"
-#include "print_points.h"
+#include "plot_tools.hpp"
+#include "print_points.hpp"
 
 #include <QBrush>
 #include <QPainter>

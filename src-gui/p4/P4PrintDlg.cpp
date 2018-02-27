@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4PrintDlg.h"
+#include "P4PrintDlg.hpp"
 
 #include "custom.hpp"
 #include "main.hpp"

@@ -22,10 +22,10 @@
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "math_limitcycles.h"
-#include "P4Application.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
+#include "math_limitcycles.hpp"
+#include "P4Application.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 
 #include <QBoxLayout>
 #include <QLabel>

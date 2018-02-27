@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4ViewDlg.h"
+#include "P4ViewDlg.hpp"
 
-#include "P4Application.h"
-#include "P4InputVF.h"
+#include "P4Application.hpp"
+#include "P4InputVF.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "math_p4.h"
+#include "math_p4.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>

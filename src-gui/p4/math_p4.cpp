@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_p4.h"
+#include "math_p4.hpp"
 
 #include "file_tab.hpp"
-#include "math_charts.h"
-#include "P4IntParamsDlg.h"
-#include "P4StartDlg.h"
-#include "P4PlotWnd.h"
-#include "P4WinSphere.h"
+#include "math_charts.hpp"
+#include "P4IntParamsDlg.hpp"
+#include "P4StartDlg.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 
 #include <cmath>
 

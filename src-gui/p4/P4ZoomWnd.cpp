@@ -17,18 +17,18 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4ZoomWnd.h"
+#include "P4ZoomWnd.hpp"
 
-#include "P4Application.h"
-#include "P4Event.h"
-#include "P4InputVF.h"
-#include "P4PlotWnd.h"
-#include "P4PrintDlg.h"
-#include "P4StartDlg.h"
-#include "P4WinSphere.h"
+#include "P4Application.hpp"
+#include "P4Event.hpp"
+#include "P4InputVF.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4PrintDlg.hpp"
+#include "P4StartDlg.hpp"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "main.hpp"
-#include "plot_tools.h"
+#include "plot_tools.hpp"
 
 #include <QDesktopWidget>
 #include <QPrintDialog>

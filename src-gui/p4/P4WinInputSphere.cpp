@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4WinInputSphere.h"
+#include "P4WinInputSphere.hpp"
 
 #include <QPalette>
 
-#include "P4InputVF.h"
-#include "P4ParentStudy.h"
-#include "math_regions.h"
-#include "plot_tools.h"
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "math_regions.hpp"
+#include "plot_tools.hpp"
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 

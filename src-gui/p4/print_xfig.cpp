@@ -17,15 +17,15 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "print_xfig.h"
+#include "print_xfig.hpp"
 
-#include "P4InputVF.h"
+#include "P4InputVF.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "plot_tools.h"
-#include "print_bitmap.h"
-#include "print_points.h"
+#include "plot_tools.hpp"
+#include "print_bitmap.hpp"
+#include "print_points.hpp"
 
 #include <QFile>
 #include <QTextStream>

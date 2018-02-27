@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_regions.h"
+#include "math_regions.hpp"
 
 // ---------------------------------------------------------------------
 //  isInsideRegion_R2, isInsideRegion_R2_epsilon

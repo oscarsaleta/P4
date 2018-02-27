@@ -17,16 +17,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4StartDlg.h"
+#include "P4StartDlg.hpp"
 
-#include "P4FindDlg.h"
-#include "P4InputVF.h"
-#include "P4PlotWnd.h"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "P4PlotWnd.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
-#include "P4Application.h"
-#include "p4settings.h"
+#include "P4Application.hpp"
+#include "p4settings.hpp"
 #include "win_about.h"
 
 #include <QBoxLayout>

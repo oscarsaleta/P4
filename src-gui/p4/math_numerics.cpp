@@ -28,9 +28,9 @@
 //
 // -----------------------------------------------------------------------
 
-#include "math_numerics.h"
+#include "math_numerics.hpp"
 
-#include "math_p4.h"
+#include "math_p4.hpp"
 
 #include <cfloat>
 #include <cmath>

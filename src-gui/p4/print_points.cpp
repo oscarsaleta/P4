@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "print_points.h"
+#include "print_points.hpp"
 
 void (*print_saddle)(double, double) = nullptr;
 void (*print_stablenode)(double, double) = nullptr;

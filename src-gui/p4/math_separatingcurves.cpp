@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_separatingcurves.h"
+#include "math_separatingcurves.hpp"
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes,
                                std::vector<p4orbits::orbits_points> &lastpt)

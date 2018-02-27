@@ -17,11 +17,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4AboutDlg.h"
+#include "P4AboutDlg.hpp"
 
 #include "main.hpp"
-#include "p4settings.h"
-#include "P4SettingsDlg.h"
+#include "p4settings.hpp"
+#include "P4SettingsDlg.hpp"
 
 #include <QBoxLayout>
 #include <QGridLayout>

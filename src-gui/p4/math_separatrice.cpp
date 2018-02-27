@@ -17,16 +17,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_separatrice.h"
+#include "math_separatrice.hpp"
 
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "math_charts.h"
+#include "math_charts.hpp"
 #include "math_intblowup.h"
-#include "math_numerics.h"
-#include "math_p4.h"
-#include "math_polynom.h"
-#include "plot_tools.h"
+#include "math_numerics.hpp"
+#include "math_p4.hpp"
+#include "math_polynom.hpp"
+#include "plot_tools.hpp"
 
 #include <cmath>
 

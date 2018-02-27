@@ -20,13 +20,13 @@
 /* if we use the original vector field and we plot a separatrice then it
    is possible that we have to change the direction */
 
-#include "math_changedir.h"
+#include "math_changedir.hpp"
 
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "math_charts.h"
-#include "math_p4.h"
-#include "math_polynom.h"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "math_polynom.hpp"
 
 #include <cmath>
 

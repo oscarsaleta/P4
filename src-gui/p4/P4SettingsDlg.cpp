@@ -17,12 +17,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4SettingsDlg.h"
+#include "P4SettingsDlg.hpp"
 
 #include "custom.hpp"
 #include "file_paths.hpp"
 #include "main.hpp"
-#include "p4settings.h"
+#include "p4settings.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>

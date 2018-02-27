@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4VectorFieldDlg.h"
+#include "P4VectorFieldDlg.hpp"
 
-#include "P4FindDlg.h"
-#include "P4InputVF.h"
-#include "P4VFParams.h"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "P4VFParams.hpp"
 #include "custom.hpp"
 #include "main.hpp"
-#include "P4Application.h"
+#include "P4Application.hpp"
 
 #include <QBoxLayout>
 #include <QFormLayout>

@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4VFSelectDlg.h"
+#include "P4VFSelectDlg.hpp"
 
 #include <QBoxLayout>
 #include <QComboBox>
@@ -26,8 +26,8 @@
 #include <QMessageBox>
 #include <QPushButton>
 
-#include "P4InputVF.h"
-#include "P4ParentStudy.h"
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
 #include "main.hpp"
 
 // FIXME: hauria de posar-lo docked o no?

@@ -17,12 +17,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_saddlesep.h"
+#include "math_saddlesep.hpp"
 
 #include "file_tab.hpp"
-#include "math_orbits.h"
-#include "math_regions.h"
-#include "math_separatrice.h"
+#include "math_orbits.hpp"
+#include "math_regions.hpp"
+#include "math_separatrice.hpp"
 
 // ---------------------------------------------------------------------------
 //      start_plot_saddle_sep

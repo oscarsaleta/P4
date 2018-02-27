@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4VFStudy.h"
+#include "P4VFStudy.hpp"
 #include <QByteArray>
 #include <QString>
 

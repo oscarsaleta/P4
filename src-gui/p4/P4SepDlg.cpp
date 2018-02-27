@@ -17,13 +17,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4SepDlg.h"
+#include "P4SepDlg.hpp"
 
-#include "P4PlotWnd.h"
+#include "P4PlotWnd.hpp"
 #include "custom.hpp"
 #include "main.hpp"
-#include "math_separatrice.h"
-#include "P4WinSphere.h"
+#include "math_separatrice.hpp"
+#include "P4WinSphere.hpp"
 
 #include <QBoxLayout>
 #include <QLabel>

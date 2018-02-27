@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plot_points.h"
+#include "plot_points.hpp"
 
 #include "custom.hpp"
 

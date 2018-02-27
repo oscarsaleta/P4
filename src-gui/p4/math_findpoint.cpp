@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_findpoint.h"
+#include "math_findpoint.hpp"
 
-#include "P4SepDlg.h"
-#include "P4WinSphere.h"
+#include "P4SepDlg.hpp"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "math_p4.h"
-#include "math_separatrice.h"
+#include "math_p4.hpp"
+#include "math_separatrice.hpp"
 
 #include <cmath>
 

@@ -17,16 +17,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_limitcycles.h"
+#include "math_limitcycles.hpp"
 
 #include "P4LimitCyclesDlg.h"
-#include "P4WinSphere.h"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "math_charts.h"
-#include "math_orbits.h"
-#include "math_p4.h"
-#include "plot_tools.h"
+#include "math_charts.hpp"
+#include "math_orbits.hpp"
+#include "math_p4.hpp"
+#include "plot_tools.hpp"
 
 #include <cmath>
 

@@ -17,14 +17,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4Application.h"
+#include "P4Application.hpp"
 
 #include "custom.hpp"
-#include "P4InputVF.h"
+#include "P4InputVF.hpp"
 #include "main.hpp"
-#include "P4Event.h"
-#include "P4FindDlg.h"
-#include "P4StartDlg.h"
+#include "P4Event.hpp"
+#include "P4FindDlg.hpp"
+#include "P4StartDlg.hpp"
 
 #include <QFont>
 

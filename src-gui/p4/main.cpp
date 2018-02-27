@@ -22,12 +22,12 @@
 
 #include "main.hpp"
 
-#include "P4Application.h"
-#include "P4FindDlg.h"
-#include "P4InputVF.h"
-#include "P4SettingsDlg.h"
-#include "P4StartDlg.h"
-#include "p4settings.h"
+#include "P4Application.hpp"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "P4SettingsDlg.hpp"
+#include "P4StartDlg.hpp"
+#include "p4settings.hpp"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
