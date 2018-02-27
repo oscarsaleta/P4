@@ -19,13 +19,13 @@
 
 #include "P4FindDlg.hpp"
 
-#include "P4InputVF.hpp"
-#include "P4ParentStudy.hpp"
-#include "main.hpp"
 #include "P4Application.hpp"
-#include "p4settings.hpp"
-#include "P4StartDlg.hpp"
+#include "P4InputVF.hpp"
 #include "P4ParamsDlg.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4StartDlg.hpp"
+#include "main.hpp"
+#include "p4settings.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -36,40 +36,42 @@
 #include <QRadioButton>
 #include <QSettings>
 
-P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
-    : QWidget(startdlg.get()), parent_{startdlg}
+P4FindDlg::P4FindDlg(P4StartDlg &startdlg)
+    : QWidget{&startdlg}, parent_{startdlg}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     std::unique_ptr<QLabel> p4title{
-        new QLabel("Find and Examine Singular Points", this)};
+        std::make_unique<QLabel>("Find and Examine Singular Points", this)};
     p4title->setFont(*(gP4app->titleFont_));
 
-    std::unique_ptr<QLabel> actlabel{new QLabel("File Action:  ", this)};
+    std::unique_ptr<QLabel> actlabel{
+        std::make_unique<QLabel>("File Action:  ", this)};
     actlabel->setFont(*(gP4app->boldFont_));
-    btn_actionrun_.reset(new QRadioButton("Run File", this));
-    btn_actionprep_.reset(new QRadioButton("Prepare File", this));
+    btn_actionrun_ = std::make_unique<QRadioButton>("Run File", this);
+    btn_actionprep_ = std::make_unique<QRadioButton>("Prepare File", this);
 
     std::unique_ptr<QLabel> singpoints{
-        new QLabel("Singular points:  \n\n", this)};
+        std::make_unique<QLabel>("Singular points:  \n\n", this)};
     singpoints->setFont(*(gP4app->boldFont_));
-    btn_all_.reset(new QRadioButton("All ", this));
-    btn_fin_.reset(new QRadioButton("Finite ", this));
-    btn_inf_.reset(new QRadioButton("Infinite ", this));
-    btn_one_.reset(new QRadioButton("One ", this));
+    btn_all_ = std::make_unique<QRadioButton>("All ", this);
+    btn_fin_ = std::make_unique<QRadioButton>("Finite ", this);
+    btn_inf_ = std::make_unique<QRadioButton>("Infinite ", this);
+    btn_one_ = std::make_unique<QRadioButton>("One ", this);
 
-    std::unique_ptr<QLabel> saveall{new QLabel("Save all information: ", this)};
+    std::unique_ptr<QLabel> saveall{
+        std::make_unique<QLabel>("Save all information: ", this)};
     saveall->setFont(*(gP4app->boldFont_));
-    btn_yes_.reset(new QRadioButton("Yes", this));
-    btn_no_.reset(new QRadioButton("No", this));
+    btn_yes_ = std::make_unique<QRadioButton>("Yes", this);
+    btn_no_ = std::make_unique<QRadioButton>("No", this);
 
-    btn_load_.reset(new QPushButton("&Load", this));
-    btn_save_.reset(new QPushButton("&Save", this));
+    btn_load_ = std::make_unique<QPushButton>("&Load", this);
+    btn_save_ = std::make_unique<QPushButton>("&Save", this);
 
     if (gActionOnlyPrepareFile)
-        btn_eval_.reset(new QPushButton("Pr&epare", this));
+        btn_eval_ = std::make_unique<QPushButton>("Pr&epare", this);
     else
-        btn_eval_.reset(new QPushButton("&Evaluate", this));
+        btn_eval_ = std::make_unique<QPushButton>("&Evaluate", this);
 
 #ifdef TOOLTIPS
     btn_actionrun_->setToolTip(
@@ -81,37 +83,40 @@ P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
     btn_all_->setToolTip("Study all singularities, finite and infinite");
     btn_fin_->setToolTip("Study only singularities at the finite region");
     btn_inf_->setToolTip("Study only singularities at infinity");
-    btn_one_->setToolTip("Study one specific singularity.\n"
-                         "Do not forget to specify the coordinates.");
+    btn_one_->setToolTip(
+        "Study one specific singularity.\n"
+        "Do not forget to specify the coordinates.");
     btn_yes_->setToolTip(
         "The View/Finite and View/Infinite windows will display more details");
     btn_no_->setToolTip(
         "The View/Finite and View/Infinite windows will display no details");
     btn_load_->setToolTip("Load the vector field & parameters from disc");
     btn_save_->setToolTip("Save the vector field & parameters to disc");
-    btn_eval_->setToolTip("Prepare a file for the symbolic manipulator, and "
-                          "optionally process it");
+    btn_eval_->setToolTip(
+        "Prepare a file for the symbolic manipulator, and "
+        "optionally process it");
 #endif
 
     // layout
-    superLayout_.reset(new QBoxLayout(QBoxLayout::LeftToRight, this));
-    parLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom));
-    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom));
+    superLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::LeftToRight, this);
+    parLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
 
     mainLayout_->addSpacing(8);
     mainLayout_->addWidget(p4title);
 
-    std::unique_ptr<QHBoxLayout> actLayout{new QHBoxLayout()};
+    std::unique_ptr<QHBoxLayout> actLayout{std::make_unique<QHBoxLayout>()};
     actLayout->addWidget(actlabel);
     actLayout->addWidget(btn_actionrun_);
     actLayout->addWidget(btn_actionprep_);
     actLayout->addStretch(0);
     mainLayout_->addLayout(actLayout);
 
-    std::unique_ptr<QHBoxLayout> singlineLayout{new QHBoxLayout()};
+    std::unique_ptr<QHBoxLayout> singlineLayout{
+        std::make_unique<QHBoxLayout>()};
     singlineLayout->addWidget(singpoints, 0, Qt::AlignBottom);
 
-    std::unique_ptr<QGridLayout> singLayout{new QGridLayout()};
+    std::unique_ptr<QGridLayout> singLayout{std::make_unique<QGridLayout>()};
     singLayout->addWidget(btn_all_, 0, 0);
     singLayout->addWidget(btn_fin_, 0, 1);
     singLayout->addWidget(btn_inf_, 1, 0);
@@ -121,13 +126,13 @@ P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
 
     mainLayout_->addLayout(singlineLayout);
 
-    std::unique_ptr<QHBoxLayout> layout0{new QHBoxLayout()};
+    std::unique_ptr<QHBoxLayout> layout0{std::make_unique<QHBoxLayout>()};
     layout0->addWidget(saveall);
     layout0->addWidget(btn_yes_);
     layout0->addWidget(btn_no_);
     layout0->addStretch(0);
 
-    std::unique_ptr<QGridLayout> layout1{new QGridLayout()};
+    std::unique_ptr<QGridLayout> layout1{std::make_unique<QGridLayout>()};
     layout1->addWidget(btn_load_, 0, 0);
     layout1->addWidget(btn_save_, 0, 1);
     layout1->addWidget(btn_eval_, 1, 0, 1, 2);
@@ -142,17 +147,17 @@ P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
     setLayout(superLayout_);
 
     // connections
-    std::unique_ptr<QButtonGroup> btngrp1{new QButtonGroup(this)};
+    std::unique_ptr<QButtonGroup> btngrp1{std::make_unique<QButtonGroup>(this)};
     btngrp1->addButton(btn_all_);
     btngrp1->addButton(btn_fin_);
     btngrp1->addButton(btn_inf_);
     btngrp1->addButton(btn_one_);
 
-    std::unique_ptr<QButtonGroup> btngrp2{new QButtonGroup(this)};
+    std::unique_ptr<QButtonGroup> btngrp2{std::make_unique<QButtonGroup>(this)};
     btngrp2->addButton(btn_yes_);
     btngrp2->addButton(btn_no_);
 
-    std::unique_ptr<QButtonGroup> btngrp4{new QButtonGroup(this)};
+    std::unique_ptr<QButtonGroup> btngrp4{std::make_unique<QButtonGroup>(this)};
     btngrp4->addButton(btn_actionrun_);
     btngrp4->addButton(btn_actionprep_);
 
@@ -182,99 +187,111 @@ P4FindDlg::P4FindDlg(std::unique_ptr<P4StartDlg> startdlg)
         btn_no_->toggle();
 
     /* set evaluate as text in the run button if evaluate option is selected */
-    connect(btn_actionrun_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            gActionOnlyPrepareFile = false;
-            btn_eval_->setText("&Evaluate");
-        }
-    });
+    QObject::connect(btn_actionrun_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             gActionOnlyPrepareFile = false;
+                             btn_eval_->setText("&Evaluate");
+                         }
+                     });
 
     /* set prepare as text in the run button if prepare option is selected */
-    connect(btn_actionprep_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            gActionOnlyPrepareFile = true;
-            btn_eval_->setText("Pr&epare");
-        }
-    });
+    QObject::connect(btn_actionprep_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             gActionOnlyPrepareFile = true;
+                             btn_eval_->setText("Pr&epare");
+                         }
+                     });
 
-    connect(btn_all_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
-                if (gThisVF->changed_ == false) {
-                    gThisVF->changed_ = true;
-                    gP4app->signalChanged();
-                }
-                if (paramsWindow_) {
-                    paramsWindow_->getDataFromDlg();
-                    paramsWindow_->updateDlgData();
-                }
-            }
-        }
-    });
-    connect(btn_one_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
-                if (gThisVF->changed_ == false) {
-                    gThisVF->changed_ = true;
-                    gP4app->signalChanged();
-                }
-                if (paramsWindow_) {
-                    paramsWindow_->getDataFromDlg();
-                    paramsWindow_->updateDlgData();
-                }
-            }
-        }
-    });
-    connect(btn_fin_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
-                if (gThisVF->changed_ == false) {
-                    gThisVF->changed_ = true;
-                    gP4app->signalChanged();
-                }
-                if (paramsWindow_) {
-                    paramsWindow_->getDataFromDlg();
-                    paramsWindow_->updateDlgData();
-                }
-            }
-        }
-    });
-    connect(btn_inf_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
-                if (gThisVF->changed_ == false) {
-                    gThisVF->changed_ = true;
-                    gP4app->signalChanged();
-                }
-                if (paramsWindow_) {
-                    paramsWindow_->getDataFromDlg();
-                    paramsWindow_->updateDlgData();
-                }
-            }
-        }
-    });
-    connect(btn_yes_, &QRadioButton::toggled, this, [=](bool on) {
-        if (on) {
-            gActionSaveAll = true;
-        }
-    });
-    connect(btn_no_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_all_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
+                                     gP4app->signalChanged();
+                                 }
+                                 if (paramsWindow_) {
+                                     paramsWindow_->getDataFromDlg();
+                                     paramsWindow_->updateDlgData();
+                                 }
+                             }
+                         }
+                     });
+    QObject::connect(btn_one_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
+                                     gP4app->signalChanged();
+                                 }
+                                 if (paramsWindow_) {
+                                     paramsWindow_->getDataFromDlg();
+                                     paramsWindow_->updateDlgData();
+                                 }
+                             }
+                         }
+                     });
+    QObject::connect(btn_fin_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
+                                     gP4app->signalChanged();
+                                 }
+                                 if (paramsWindow_) {
+                                     paramsWindow_->getDataFromDlg();
+                                     paramsWindow_->updateDlgData();
+                                 }
+                             }
+                         }
+                     });
+    QObject::connect(btn_inf_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
+                                     gP4app->signalChanged();
+                                 }
+                                 if (paramsWindow_) {
+                                     paramsWindow_->getDataFromDlg();
+                                     paramsWindow_->updateDlgData();
+                                 }
+                             }
+                         }
+                     });
+    QObject::connect(btn_yes_.get(), &QRadioButton::toggled, this,
+                     [=](bool on) {
+                         if (on) {
+                             gActionSaveAll = true;
+                         }
+                     });
+    QObject::connect(btn_no_.get(), &QRadioButton::toggled, this, [=](bool on) {
         if (on) {
             gActionSaveAll = false;
         }
     });
 
-    connect(btn_load_, &QPushButton::clicked, this, &P4FindDlg::onBtnLoad);
-    connect(btn_save_, &QPushButton::clicked, this, &P4FindDlg::onBtnSave);
-    connect(btn_eval_, &QPushButton::clicked, this, &P4FindDlg::onBtnEval);
-    connect(gThisVF, &P4InputVF::saveSignal, this, &P4FindDlg::onSaveSignal);
+    QObject::connect(btn_load_.get(), &QPushButton::clicked, this,
+                     &P4FindDlg::onBtnLoad);
+    QObject::connect(btn_save_.get(), &QPushButton::clicked, this,
+                     &P4FindDlg::onBtnSave);
+    QObject::connect(btn_eval_.get(), &QPushButton::clicked, this,
+                     &P4FindDlg::onBtnEval);
+    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
+                     &P4FindDlg::onSaveSignal);
     // TODO: implement onSaveSignal slot
 
     // finishing
+    // FIXME this is wrong for sure
     gThisVF->findDlg_.reset(this);
 
     // show vector field dialog
@@ -347,14 +364,16 @@ void P4FindDlg::onBtnSave()
     if (gThisVF->changed_)
         gThisVF->cleared_ = false;
     if (gThisVF->cleared_) {
-        QMessageBox::critical(this, "P4", "No data has been entered.\n"
-                                          "Please specify vector field.\n");
+        QMessageBox::critical(this, "P4",
+                              "No data has been entered.\n"
+                              "Please specify vector field.\n");
         return;
     }
     if (gThisVF->save() == false) {
         QMessageBox::critical(
-            this, "P4", "Unable to save the input vector field.\n"
-                        "Please check permissions on the write location.\n");
+            this, "P4",
+            "Unable to save the input vector field.\n"
+            "Please check permissions on the write location.\n");
     }
 }
 
@@ -366,8 +385,9 @@ void P4FindDlg::onBtnEval()
     getDataFromDlg();
     if (gThisVF->getfilename().length() == 0) {
         // error: need to specify filename first
-        QMessageBox::critical(this, "P4", "Unable to evaluate.\n"
-                                          "Please specify a valid filename.\n");
+        QMessageBox::critical(this, "P4",
+                              "Unable to evaluate.\n"
+                              "Please specify a valid filename.\n");
         return;
     }
 
@@ -375,8 +395,9 @@ void P4FindDlg::onBtnEval()
         gThisVF->cleared_ = false;
 
     if (gThisVF->cleared_) {
-        QMessageBox::critical(this, "P4", "No data has been entered.\n"
-                                          "Please specify vector field.\n");
+        QMessageBox::critical(this, "P4",
+                              "No data has been entered.\n"
+                              "Please specify vector field.\n");
         return;
     }
 
@@ -442,3 +463,5 @@ void P4FindDlg::signalCurvesEvaluated()
             vfSelectWindow_->win_curves->signalSeparatingCurvesEvaluated();
     }
 }
+
+P4VFSelectDlg *P4FindDlg::getVfSelectWindow() { return vfSelectWindow_.get(); }

@@ -35,11 +35,13 @@ class P4FindDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4FindDlg(std::unique_ptr<P4StartDlg> startwindow);
+    P4FindDlg(P4StartDlg &startwindow);
     void getDataFromDlg();
 
+    P4VFSelectDlg *getVfSelectWindow();
+
   private:
-    std::unique_ptr<P4StartDlg> parent_;
+    P4StartDlg &parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QBoxLayout> superLayout_;
@@ -58,7 +60,6 @@ class P4FindDlg : public QWidget
 
     std::unique_ptr<P4VectorFieldDlg> vfWindow_;
     std::unique_ptr<P4ParamsDlg> paramsWindow_;
-    // TODO. veure si s'ha de treballar en el layout
     std::unique_ptr<P4VFSelectDlg> vfSelectWindow_;
 
     // void saveSettings();
