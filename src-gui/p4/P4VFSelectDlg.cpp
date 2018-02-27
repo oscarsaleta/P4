@@ -265,3 +265,7 @@ void P4VFSelectDlg::closeConfigWindow()
         win_curves_.reset();
     }
 }
+
+P4SeparatingCurvesDlg *P4VFSelectDlg::getWinCurves() {
+    return win_curves_.get();
+}

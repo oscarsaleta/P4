@@ -35,20 +35,14 @@ class P4VFSelectDlg : public QWidget
 {
     Q_OBJECT
   public:
-    P4VFSelectDlg(std::shared_ptr<P4FindDlg> startwindow);
-
-    std::unique_ptr<QComboBox> cbb_vfselect_;
-    std::unique_ptr<QPushButton> btn_add_;
-    std::unique_ptr<QPushButton> btn_del_;
-    std::unique_ptr<QPushButton> btn_prev_;
-    std::unique_ptr<QPushButton> btn_next_;
-    std::unique_ptr<QPushButton> btn_p4config_;
-    std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
+    P4VFSelectDlg(P4FindDlg &startwindow);
 
     void updateDlgData();
 
     void closeConfigWindow();
     bool checkPlotWindowClosed();
+
+    P4SeparatingCurvesDlg *getWinCurves();
 
   public slots:
     void onBtnAdd();
@@ -60,5 +54,13 @@ class P4VFSelectDlg : public QWidget
 
   private:
     std::unique_ptr<QBoxLayout> mainLayout_;
-    std::shared_ptr<P4FindDlg> parent_;
+    P4FindDlg &parent_;
+
+    std::unique_ptr<QComboBox> cbb_vfselect_;
+    std::unique_ptr<QPushButton> btn_add_;
+    std::unique_ptr<QPushButton> btn_del_;
+    std::unique_ptr<QPushButton> btn_prev_;
+    std::unique_ptr<QPushButton> btn_next_;
+    std::unique_ptr<QPushButton> btn_p4config_;
+    std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
 };
