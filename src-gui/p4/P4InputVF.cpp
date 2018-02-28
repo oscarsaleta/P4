@@ -3943,10 +3943,8 @@ P4FindDlg *P4InputVF::getFindDlgPtr()
 // ---------------------------------------------------------------------
 void P4InputVF::setFindDlg(P4FindDlg *newdlg)
 {
-    if (newdlg != nullptr) {
-        // redefining could destroy the object if it's the same
-        if (newdlg != findDlg_.get())
-            findDlg_ = std::make_unique<P4FindDlg>(newdlg);
+    if (newdlg != nullptr && newdlg != findDlg_.get()) {
+        findDlg_ = std::make_unique<P4FindDlg>(newdlg);
     } else {
         findDlg_.reset();
     }
@@ -3967,10 +3965,8 @@ P4GcfDlg *P4InputVF::getGcfDlgPtr()
 // ---------------------------------------------------------------------
 void P4InputVF::setGcfDlg(P4GcfDlg *newdlg)
 {
-    if (newdlg != nullptr) {
-        // redefining could destroy the object if it's the same
-        if (newdlg != gcfDlg_.get())
-            gcfDlg_ = std::make_unique<P4GcfDlg>(newdlg);
+    if (newdlg != nullptr && newdlg != gcfDlg_.get()) {
+        gcfDlg_ = std::make_unique<P4GcfDlg>(newdlg);
     } else {
         gcfDlg_.reset();
     }
@@ -3991,10 +3987,8 @@ P4IsoclinesDlg *P4InputVF::getIsoclinesDlgPtr()
 // ---------------------------------------------------------------------
 void P4InputVF::setIsoclinesDlg(P4IsoclinesDlg *newdlg)
 {
-    if (newdlg != nullptr) {
-        // redefining could destroy the object if it's the same
-        if (newdlg != isoclinesDlg_.get())
-            isoclinesDlg_ = std::make_unique<P4IsoclinesDlg>(newdlg);
+    if (newdlg != nullptr && newdlg != isoclinesDlg_.get()) {
+        isoclinesDlg_ = std::make_unique<P4IsoclinesDlg>(newdlg);
     } else {
         isoclinesDlg_.reset();
     }
