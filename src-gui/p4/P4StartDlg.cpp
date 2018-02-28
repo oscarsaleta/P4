@@ -692,10 +692,18 @@ void P4StartDlg::customEvent(QEvent *e)
 
 bool P4StartDlg::canOpenPlot()
 {
-    if (!findWindow_ || !(findWindow_->vfSelectWindow_))
+    if (!findWindow_) {
         return true;
-    if (findWindow_->vfSelectWindow_->win_curves_)
-        findWindow_->vfSelectWindow_->closeConfigWindow();
+    } else {
+        auto *p = findWindow_->getVFSelectWindowPtr();
+        if (p == nullptr) {
+            return true;
+        } else {
+            auto *q = p->getWinCurvesPtr();
+            if (q != nullptr)
+                q->closeConfigWindow();
+        }
+    }
 
     return true;
 }
