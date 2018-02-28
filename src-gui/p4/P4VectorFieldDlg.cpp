@@ -269,9 +269,9 @@ void P4VectorFieldDlg::editingFinished()
 {
     getDataFromDlg();
     // TODO: write getter for this
-    auto p = parent_.getVfSelectWindow();
+    auto *p = parent_.getVfSelectWindowPtr();
     if (p != nullptr) {
-        auto q = p->getWinCurves();
+        auto *q = p->getWinCurvesPtr();
         if (q != nullptr)
             q->updateDlgData();
     }
