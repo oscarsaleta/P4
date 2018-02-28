@@ -3927,3 +3927,24 @@ int P4InputVF::getVFIndex_VV2(const double *yy)
     y[1] = -yy[1];
     return getVFIndex_V2(y);
 }
+
+// ---------------------------------------------------------------------
+//          getFindDlg
+// ---------------------------------------------------------------------
+P4FindDlg *P4InputVF::getFindDlg()
+{
+    if (findDlg_)
+        return findDlg_.get();
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------
+//          setFindDlg
+// ---------------------------------------------------------------------
+void setFindDlg(P4FindDlg *newdlg) {
+    if (newdlg != nullptr) {
+        findDlg_ = std::make_unique<P4FindDlg>(newdlg);
+    } else {
+        findDlg_.reset();
+    }
+}

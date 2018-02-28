@@ -119,11 +119,7 @@ class P4InputVF : public QObject
     std::unique_ptr<QPushButton> terminateProcessButton_;
     std::unique_ptr<QPushButton> clearProcessButton_;
 
-    // P4 GUI ELEMENTS FIXME need to be shared_ptr?
-    std::unique_ptr<P4FindDlg> findDlg_;
-    std::unique_ptr<P4GcfDlg> gcfDlg_;
-    std::unique_ptr<P4ArbitraryCurveDlg> arbitraryCurveDlg_;
-    std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
+    
 
     // PARAMETER LIST
     int numparams_{0};
@@ -328,6 +324,9 @@ class P4InputVF : public QObject
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
+    P4FindDlg *getFindDlg();
+    void setFindDlg(P4FindDlg *newdlg);
+
   signals:
     void saveSignal();
     void loadSignal();
@@ -341,6 +340,13 @@ class P4InputVF : public QObject
     void finishArbitraryCurveEvaluation();
     void finishIsoclinesEvaluation();
     void finishSeparatingCurvesEvaluation();
+
+private:
+    // P4 GUI ELEMENTS
+    std::unique_ptr<P4FindDlg> findDlg_;
+    std::unique_ptr<P4GcfDlg> gcfDlg_;
+    std::unique_ptr<P4ArbitraryCurveDlg> arbitraryCurveDlg_;
+    std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
 };
 
 // NOTE this could be a shared_ptr in each class that uses it
