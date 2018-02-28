@@ -19,12 +19,12 @@
 
 #include "math_p4.hpp"
 
+#include "P4IntParamsDlg.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4StartDlg.hpp"
+#include "P4WinSphere.hpp"
 #include "file_tab.hpp"
 #include "math_charts.hpp"
-#include "P4IntParamsDlg.hpp"
-#include "P4StartDlg.hpp"
-#include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
 
 #include <cmath>
 
@@ -73,9 +73,12 @@ void set_current_step(double curstep)
 {
     gVFResults.config_currentstep_ = curstep;
 
-    if (gP4startDlg && gP4startDlg->plotWindow_ &&
-        gP4startDlg->plotWindow_->intParamsWindow_)
-        gP4startDlg->plotWindow_->intParamsWindow_->setCurrentStep(curstep);
+    if (gP4startDlg) {
+        auto *p = gP4startDlg->getPlotWindowPtr();
+        if (p != nullptr) {
+            p->getIntParamsWindowPtr()->setcurrentStep(curstep);
+        }
+    }
 }
 
 void rplane_plsphere0(double x, double y, double *pcoord)
