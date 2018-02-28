@@ -32,17 +32,16 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
                               double &hhi, int &dashes, int &dir, double h_min,
                               double h_max);
 
-void integrateOrbit(std::shared_ptr<P4WinSphere>, int);
+void integrateOrbit(P4WinSphere *, int);
 
-std::vector<p4orbits::orbits_points> integrate_orbit(
-    std::shared_ptr<P4WinSphere>, double *, double, int, int, int);
+std::vector<p4orbits::orbits_points> integrate_orbit(P4WinSphere *, double *,
+                                                     double, int, int, int);
 
-void drawOrbit(std::shared_ptr<P4WinSphere> spherewnd, double *pcoord,
-               std::vector<p4orbits::orbits_points> points, int color);
+void drawOrbit(P4WinSphere *spherewnd, double *pcoord,
+               const std::vector<p4orbits::orbits_points> &points, int color);
 
-bool startOrbit(std::shared_ptr<P4WinSphere> sphere, double x, double y,
-                bool R);
+bool startOrbit(P4WinSphere *sphere, double x, double y, bool R);
 
-void drawOrbits(std::shared_ptr<P4WinSphere> spherewnd);
+void drawOrbits(P4WinSphere *spherewnd);
 
-void deleteLastOrbit(std::shared_ptr<P4WinSphere> spherewnd);
+void deleteLastOrbit(P4WinSphere *spherewnd);
