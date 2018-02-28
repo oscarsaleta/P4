@@ -34,11 +34,11 @@ class P4OrbitsDlg : public QWidget
 
   public:
     P4OrbitsDlg(P4PlotWnd *, P4WinSphere *);
-    void reset(void);
+    void reset();
 
   private:
-    std::shared_ptr<P4WinSphere> mainSphere_;
-    std::shared_ptr<P4PlotWnd> plotWnd_;
+    P4WinSphere *mainSphere_;
+    P4PlotWnd *plotWnd_;
 
     std::unique_ptr<QPushButton> btnForwards_;
     std::unique_ptr<QPushButton> btnContinue_;
@@ -52,20 +52,20 @@ class P4OrbitsDlg : public QWidget
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
-    double selected_x0_;
-    double selected_y0_;
+    double selected_x0_{0};
+    double selected_y0_{0};
 
-    bool orbitStarted_;
-    bool orbitSelected_;
+    bool orbitStarted_{false};
+    bool orbitSelected_{false};
 
   public slots:
     void orbitEvent(int);
-    void onBtnSelect(void);
-    void onBtnBackwards(void);
-    void onBtnContinue(void);
-    void onBtnForwards(void);
-    void onBtnDelAll(void);
-    void onBtnDelLast(void);
+    void onBtnSelect();
+    void onBtnBackwards();
+    void onBtnContinue();
+    void onBtnForwards();
+    void onBtnDelAll();
+    void onBtnDelLast();
 
     void setInitialPoint(double, double);
 };

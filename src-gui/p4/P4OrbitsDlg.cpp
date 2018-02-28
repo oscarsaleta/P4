@@ -19,39 +19,38 @@
 
 #include "P4OrbitsDlg.hpp"
 
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
 #include "math_orbits.hpp"
-#include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
 
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 
-P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<P4PlotWnd> plt,
-                         std::shared_ptr<P4WinSphere> sp)
+P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    edt_x0_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl1{new QLabel("&x0.reset(", this)});
-    lbl1->setBuddy(edt_x0_);
-    edt_y0_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl2{new QLabel("&y0.reset(", this)});
-    lbl2->setBuddy(edt_y0_);
+    edt_x0_ = std::make_unique<QLineEdit>("", this);
+    auto lbl1 = std::make_unique<QLabel>("&x0 =", this);
+    lbl1->setBuddy(edt_x0_.get());
+    edt_y0_ = std::make_unique<QLineEdit>("", this);
+    auto lbl2 = std::make_unique<QLabel>("&y0 =", this);
+    lbl2->setBuddy(edt_y0_.get());
 
-    btnSelect_.reset(new QPushButton("&Select", this));
+    btnSelect_ = std::make_unique<QPushButton>("&Select", this);
 
-    btnForwards_.reset(new QPushButton("&Forwards", this));
-    btnContinue_.reset(new QPushButton("&Continue", this));
-    btnBackwards_.reset(new QPushButton("&Backwards", this));
-    btnDelLast_.reset(new QPushButton("&Delete Last Orbit", this));
-    btnDelAll_.reset(new QPushButton("Delete &All Orbits", this));
+    btnForwards_ = std::make_unique<QPushButton>("&Forwards", this);
+    btnContinue_ = std::make_unique<QPushButton>("&Continue", this);
+    btnBackwards_ = std::make_unique<QPushButton>("&Backwards", this);
+    btnDelLast_ = std::make_unique<QPushButton>("&Delete Last Orbit", this);
+    btnDelAll_ = std::make_unique<QPushButton>("Delete &All Orbits", this);
 
 #ifdef TOOLTIPS
     edt_x0_->setToolTip(
@@ -73,52 +72,49 @@ P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<P4PlotWnd> plt,
 
     // layout
 
-    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QGridLayout> lay00{new QGridLayout()};
-    lay00->addWidget(lbl1, 0, 0);
-    lay00->addWidget(edt_x0_, 0, 1);
-    lay00->addWidget(lbl2, 1, 0);
-    lay00->addWidget(edt_y0_, 1, 1);
-    lay00->addWidget(btnSelect_, 0, 2, 2, 1);
+    auto lay00 = std::make_unique<QGridLayout>();
+    lay00->addWidget(lbl1.get(), 0, 0);
+    lay00->addWidget(edt_x0_.get(), 0, 1);
+    lay00->addWidget(lbl2.get(), 1, 0);
+    lay00->addWidget(edt_y0_.get(), 1, 1);
+    lay00->addWidget(btnSelect_.get(), 0, 2, 2, 1);
 
-    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
-    layout1->addWidget(btnForwards_);
-    layout1->addWidget(btnContinue_);
-    layout1->addWidget(btnBackwards_);
+    auto layout1 = std::make_unique<QHBoxLayout>();
+    layout1->addWidget(btnForwards_.get());
+    layout1->addWidget(btnContinue_.get());
+    layout1->addWidget(btnBackwards_.get());
     layout1->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
-    layout2->addWidget(btnDelLast_);
-    layout2->addWidget(btnDelAll_);
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(btnDelLast_.get());
+    layout2->addWidget(btnDelAll_.get());
     layout2->addStretch(0);
 
-    mainLayout_->addLayout(lay00);
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(lay00.get());
+    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(layout2.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     // connections
 
-    QObject::connect(btnSelect_, &QPushButton::clicked, this,
+    QObject::connect(btnSelect_.get(), &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnSelect);
-    QObject::connect(btnForwards_, &QPushButton::clicked, this,
+    QObject::connect(btnForwards_.get(), &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnForwards);
-    QObject::connect(btnBackwards_, &QPushButton::clicked, this,
+    QObject::connect(btnBackwards_.get(), &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnBackwards);
-    QObject::connect(btnContinue_, &QPushButton::clicked, this,
+    QObject::connect(btnContinue_.get(), &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnContinue);
-    QObject::connect(btnDelAll_, &QPushButton::clicked, this,
+    QObject::connect(btnDelAll_.get(), &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnDelAll);
-    QObject::connect(btnDelLast_, &QPushButton::clicked, this,
+    QObject::connect(btnDelLast_.get(), &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnDelLast);
 
     // finishing
-    selected_x0_ = 0;
-    selected_y0_ = 0;
-
     btnForwards_->setEnabled(false);
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
@@ -127,8 +123,6 @@ P4OrbitsDlg::P4OrbitsDlg(std::shared_ptr<P4PlotWnd> plt,
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
-    orbitStarted_ = false;
-    orbitSelected_ = false;
 
     setP4WindowTitle(this, "Plot Orbits");
 }
