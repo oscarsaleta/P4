@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
                 return (-1);
             }
         }
-        gP4startDlg->findWindow_->onBtnLoad();
+        gP4startDlg->getFindWindowPtr()->onBtnLoad();
     }
 
     if (!v) {
