@@ -28,9 +28,9 @@
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 
-P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *parent,
+P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg &parent,
                                    QLabel *lbl_status)
-    : QWidget{parent}, parentWnd_{parent}, status_{lbl_status}
+    : QWidget{&parent}, parentWnd_{parent}, status_{lbl_status}
 {
     isZoom_ = false;
     isPainterCacheDirty_ = true;
@@ -527,7 +527,7 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
         double wx{coWorldX(x)};
         double wy{coWorldY(y)};
         if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord))
-            parentWnd_->onMouseClickLeft(pcoord[0], pcoord[1], pcoord[2]);
+            parentWnd_.onMouseClickLeft(pcoord[0], pcoord[1], pcoord[2]);
         return;
     }
 
@@ -546,7 +546,7 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
             double wx{coWorldX(x)};
             double wy{coWorldY(y)};
             if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-                parentWnd_->onMouseClickRight(pcoord[0], pcoord[1], pcoord[2]);
+                parentWnd_.onMouseClickRight(pcoord[0], pcoord[1], pcoord[2]);
             }
             return;
         }
@@ -569,7 +569,7 @@ void P4WinInputSphere::mouseReleaseEvent(QMouseEvent *e)
             int _x2{zoomAnchor2.x()};
             int _y2{zoomAnchor2.y()};
 
-            parentWnd_->makeZoom(coWorldX(_x1), coWorldY(_y1), coWorldX(_x2),
+            parentWnd_.makeZoom(coWorldX(_x1), coWorldY(_y1), coWorldX(_x2),
                                  coWorldY(_y2));
         }
         QWidget::mouseReleaseEvent(e);

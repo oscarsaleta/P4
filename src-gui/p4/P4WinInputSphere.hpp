@@ -42,10 +42,13 @@ class P4WinInputSphere : public QWidget
     Q_OBJECT
 
   public:
-    /* CONSTRUCTOR */
-    P4WinInputSphere(P4SeparatingCurvesDlg *, QLabel *);
+    
+    P4WinInputSphere(P4SeparatingCurvesDlg &, QLabel *);
 
-    /* MEMBER VARIABLES */
+    //////////////////////
+    // MEMBER VARIABLES //
+    //////////////////////
+
     double x0_, y0_;  // world coordinates of upper-left corner
     double x1_, y1_;  // world coordinates of upper-right corner
     double dx_;       // x1-x0
@@ -72,7 +75,10 @@ class P4WinInputSphere : public QWidget
 
     int spherebgcolor_;
 
-    /* METHODS */
+    /////////////
+    // METHODS //
+    /////////////
+
     void paintEvent(QPaintEvent *);
 
     // coordinate changes: from world to window coordinates
@@ -124,8 +130,8 @@ class P4WinInputSphere : public QWidget
     void refreshAfterResize();
 
   private:
+    QSeparatingCurvesDlg &parentWnd_;
     std::unique_ptr<QPainter> staticPainter_;
-    std::shared_ptr<QSeparatingCurvesDlg> parentWnd_;
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
     std::unique_ptr<QTimer> refreshTimeout_;
