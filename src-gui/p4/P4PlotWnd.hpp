@@ -46,13 +46,18 @@ class P4PlotWnd : public QMainWindow
     Q_OBJECT
 
   public:
-    P4PlotWnd(P4StartDlg &);
+    P4PlotWnd(P4StartDlg *);
+
+    P4IntParamsDlg *getIntParamsWindowPtr();
+    void setIntParamsWindow(P4IntParamsDlg *);
+    P4ViewDlg *getViewParamsWindowPtr();
+    void setViewParamsWindow(P4ViewDlg *);
+
+  private:
+    P4StartDlg *parent_;
 
     std::shared_ptr<P4IntParamsDlg> intParamsWindow_;
     std::shared_ptr<P4ViewDlg> viewParamsWindow_;
-
-  private:
-    P4StartDlg &parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QAction> actClose_;

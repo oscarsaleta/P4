@@ -49,7 +49,7 @@
 
 #include <utility>
 
-P4PlotWnd::P4PlotWnd(P4StartDlg &main) : QMainWindow(), parent_{main}
+P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 
@@ -286,14 +286,14 @@ void P4PlotWnd::onBtnClose()
 {
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    gP4app->postEvent(&parent_, e1);
+    gP4app->postEvent(parent_, e1);
 }
 
 bool P4PlotWnd::close()
 {
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    gP4app->postEvent(&parent_, e1);
+    gP4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
@@ -546,7 +546,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
     UNUSED(h);
     if (!isMinimized()) {
         P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-        gP4app->postEvent(&parent_, e1);
+        gP4app->postEvent(parent_, e1);
     }
 }
 
@@ -559,4 +559,34 @@ void P4PlotWnd::getDlgData()
         gVFResults.setupCoordinateTransformations();
         configure();
     }
+}
+
+P4IntParamsDlg *P4PlotWnd::getIntParamsWindowPtr()
+{
+    if (intParamsWindow_)
+        return intParamsWindow_.get();
+    return nullptr;
+}
+
+void P4PlotWnd::setIntParamsWindow(P4IntParamsDlg *newdlg)
+{
+    if (newdlg != nullptr && newdlg != intParamsWindow_.get())
+        intParamsWindow_ = std::make_unique<P4IntParamsDlg>(newdlg);
+    else
+        intParamsWindow_.reset();
+}
+
+P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr()
+{
+    if (viewParamsWindow_)
+        return viewParamsWindow_.get();
+    return nullptr;
+}
+
+void P4PlotWnd::setViewParamsWindow(P4ViewDlg *newdlg)
+{
+    if (newdlg != nullptr && newdlg != viewParamsWindow_.get())
+        viewParamsWindow_ = std::make_unique<P4ViewDlg>(newdlg);
+    else
+        viewParamsWindow_.reset();
 }
