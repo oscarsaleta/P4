@@ -704,7 +704,6 @@ bool P4StartDlg::canOpenPlot()
                 q->closeConfigWindow();
         }
     }
-
     return true;
 }
 
@@ -718,4 +717,38 @@ void P4StartDlg::closePlotWindow()
 {
     if (plotWindow_)
         plotWindow_.reset();
+}
+
+P4FindDlg *P4StartDlg::getFindWindowPtr()
+{
+    if (findWindow_)
+        return findWindow_.get();
+    return nullptr;
+}
+
+void P4StartDlg::setFindWindow(P4FindDlg *newdlg)
+{
+    if (newdlg != nullptr) {
+        if (newdlg != findWindow_.get())
+            findWindow_ = std::make_unique<P4FindDlg>(newdlg);
+    } else {
+        findWindow_.reset();
+    }
+}
+
+P4PlotWnd *P4StartDlg::getPlotWindowPtr()
+{
+    if (plotWindow_)
+        return plotWindow_.get();
+    return nullptr;
+}
+
+void P4StartDlg::setPlotWindow(P4PlotWnd *newdlg)
+{
+    if (newdlg != nullptr) {
+        if (newdlg != plotWindow_.get())
+            plotWindow_ = std::make_unique<P4PlotWnd>(newdlg);
+    } else {
+        plotWindow_.reset();
+    }
 }

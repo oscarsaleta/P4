@@ -63,11 +63,12 @@ class P4StartDlg : public QWidget
   public:
     P4StartDlg(const QString &);
 
-    // FIXME no haurien de ser publics, fer metodes d'acces
-    std::unique_ptr<P4FindDlg> findWindow_;
-    std::unique_ptr<P4PlotWnd> plotWindow_;
+    P4FindDlg *getFindWindowPtr();
+    void setFindWindowPtr(P4FindDlg *);
+    P4PlotWnd *getPlotWindowPtr();
+    void setPlotWindow(P4PlotWnd *);    
 
-    void closeEvent(QCloseEvent *ce);
+    void closeEvent(QCloseEvent *);
 
     // following functions are called by other P4 widgets when something
     // happened:
@@ -77,7 +78,7 @@ class P4StartDlg : public QWidget
     void signalLoaded();
     void signalSaved();
     bool canOpenPlot();
-    void customEvent(QEvent *e);
+    void customEvent(QEvent *);
     void closePlotWindow();
 
   public slots:
@@ -96,6 +97,9 @@ class P4StartDlg : public QWidget
     void onLoadSignal();
 
   private:
+std::unique_ptr<P4FindDlg> findWindow_;
+    std::unique_ptr<P4PlotWnd> plotWindow_;
+
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QPushButton> btn_quit_;
     std::unique_ptr<QPushButton> btn_find_;
