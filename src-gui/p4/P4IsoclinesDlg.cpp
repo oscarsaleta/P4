@@ -194,7 +194,7 @@ void P4IsoclinesDlg::onBtnEvaluate(void)
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
-    gThisVF->isoclinesDlg_ = this;
+    gThisVF->setIsoclinesDlg(this);
     gThisVF->evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
     plotwnd_->getDlgData();
@@ -259,7 +259,7 @@ void P4IsoclinesDlg::onBtnPlot(void)
 
     btnPlot_->setEnabled(false);
 
-    gThisVF->isoclinesDlg_ = this;
+    gThisVF->setIsoclinesDlg(this);
 
     result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
     if (!result) {
