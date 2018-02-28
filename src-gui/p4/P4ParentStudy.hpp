@@ -33,6 +33,10 @@ class P4ParentStudy : public QObject
     P4ParentStudy();
     //~P4ParentStudy();
 
+    ///////////////////
+    // CLASS MEMBERS //
+    ///////////////////
+
     std::vector<P4VFStudy> vf_;
     // K_ will be throughout the current vector field selected
     int K_{0};
@@ -64,14 +68,7 @@ class P4ParentStudy : public QObject
 
     // limit cycles and orbits
     std::vector<p4orbits::orbits> limCycles_;
-    // int currentLimCycleIndex_;
-    std::vector<p4orbits::orbits> orbits_;  // FIXME canviar ocurrències
-    // int currentOrbitIndex_;
-
-    // run-time when plotting
-    // FIXME remove? canviar a int indexos?
-    // std::unique_ptr<p4orbits::orbits> current_orbit_;
-    // std::unique_ptr<p4orbits::orbits> current_lim_cycle_;
+    std::vector<p4orbits::orbits> orbits_;
 
     double selected_ucoord_[2];
 
@@ -112,11 +109,10 @@ class P4ParentStudy : public QObject
     // number of points to integrate
     int config_intpoints_{DEFAULT_INTPOINTS};
 
-    // Methods
-    // void deleteOrbitPoint(P4ORBIT p);
-    // void deleteLimitCycle(p4orbits::orbits *);
-    // void deleteOrbit(p4orbits::orbits *);
-
+    ///////////////////
+    // CLASS METHODS //
+    ///////////////////
+    
     void resetSeparatingCurveInfo(int);
     void resetSeparatingCurveInfo();
 
