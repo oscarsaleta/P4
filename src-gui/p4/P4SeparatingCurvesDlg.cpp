@@ -76,7 +76,7 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg &parent)
 
     // FIXME: punter a pare en P4WinInputSphere destruiria el pare quan el fill
     // fos destruit
-    isphere_ = std::make_unique<P4WinInputSphere>(this, lbl_status_);
+    isphere_ = std::make_unique<P4WinInputSphere>(*this, lbl_status_);
     isphere_->setupPlot();
 
     viewParamsWindow_ = std::make_unique<P4ViewDlg>(false);
