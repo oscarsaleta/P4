@@ -38,12 +38,12 @@ class P4SeparatingCurvesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4SeparatingCurvesDlg(std::unique_ptr<P4FindDlg> startwindow);
+    P4SeparatingCurvesDlg(P4FindDlg &startwindow);
     void updateDlgData();
     void signalSeparatingCurvesEvaluated();
 
   private:
-    std::shared_ptr<P4FindDlg> parent_;
+    P4FindDlg &parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
@@ -68,7 +68,7 @@ class P4SeparatingCurvesDlg : public QWidget
     std::unique_ptr<QListWidget> lst_curves_;
     std::unique_ptr<QListWidget> lst_vfs_;
 
-    std::unique_ptr<QWinInputSphere> isphere_;
+    std::unique_ptr<P4WinInputSphere> isphere_;
 
     std::unique_ptr<QLineEdit> edt_numpoints_;
 

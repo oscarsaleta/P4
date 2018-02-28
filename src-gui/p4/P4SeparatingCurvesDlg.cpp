@@ -30,8 +30,8 @@
 #include <QListWidget>
 #include <QPushButton>
 
-P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::shared_ptr<P4ViewDlg> parent)
-    : QWidget{}, parent_{std::move(parent)}
+P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg &parent)
+    : QWidget{}, parent_{parent}
 {
     std::unique_ptr<QLabel> p4title{
         std::make_unique<QLabel>("Region Separating Curves:", this)};
@@ -79,7 +79,7 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(std::shared_ptr<P4ViewDlg> parent)
     isphere_ = std::make_unique<P4WinInputSphere>(this, lbl_status_);
     isphere_->setupPlot();
 
-    viewParamsWindow_ = std::make_unique<P4ViewDlg>(this, false);
+    viewParamsWindow_ = std::make_unique<P4ViewDlg>(false);
     viewParamsWindow_->updateDlgData();
 
     edt_numpoints_ = std::make_unique<QLineEdit>("", this);
@@ -498,8 +498,8 @@ void P4SeparatingCurvesDlg::onBtnEval()
 {
     if (gThisVF->evaluating_)
         return;
-    parent_->getDataFromDlg();
-    gThisVF->evaluateSeparatingCurves(); // TODO: a p5 es EvaluateCurves()
+    parent_.getDataFromDlg();
+    gThisVF->evaluateSeparatingCurves();  // TODO: a p5 es EvaluateCurves()
     if (gThisVF->evaluating_)
         btn_eval_->setEnabled(false);
     else
