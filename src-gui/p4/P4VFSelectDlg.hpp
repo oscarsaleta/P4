@@ -35,7 +35,7 @@ class P4VFSelectDlg : public QWidget
 {
     Q_OBJECT
   public:
-    P4VFSelectDlg(P4FindDlg &startwindow);
+    P4VFSelectDlg(P4FindDlg *startwindow);
 
     void updateDlgData();
 
@@ -54,7 +54,7 @@ class P4VFSelectDlg : public QWidget
 
   private:
     std::unique_ptr<QBoxLayout> mainLayout_;
-    P4FindDlg &parent_;
+    P4FindDlg *parent_;
 
     std::unique_ptr<QComboBox> cbb_vfselect_;
     std::unique_ptr<QPushButton> btn_add_;

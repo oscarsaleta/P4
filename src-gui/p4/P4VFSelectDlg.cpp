@@ -31,11 +31,10 @@
 #include "main.hpp"
 
 // FIXME: hauria de posar-lo docked o no?
-P4VFSelectDlg::P4VFSelectDlg(std::shared_ptr<P4FindDlg> finddlg)
-    : QWidget{finddlg.get()}, parent_{std::move(finddlg)}
+P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
+    : QWidget{finddlg}, parent_{finddlg}
 {
-    std::unique_ptr<QLabel> p4title{
-        std::make_unique<QLabel>("Vector Fields:", this)};
+    auto p4title =std::make_unique<QLabel>("Vector Fields:", this);
     p4title->setFont(*(gP4app->titleFont_));
 
     cbb_vfselect_ = std::make_unique<QComboBox>(this);
@@ -57,17 +56,17 @@ P4VFSelectDlg::P4VFSelectDlg(std::shared_ptr<P4FindDlg> finddlg)
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QHBoxLayout> layout1{std::make_unique<QHBoxLayout>()};
+    auto layout1 = std::make_unique<QHBoxLayout>();
     layout1->addWidget(p4title.get());
     layout1->addWidget(cbb_vfselect_.get());
     mainLayout_->addLayout(layout1.get());
 
-    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
+    auto layout2 = std::make_unique<QHBoxLayout>();
     layout2->addWidget(btn_prev_.get());
     layout2->addWidget(btn_next_.get());
     mainLayout_->addLayout(layout2.get());
 
-    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
+    auto layout3 = std::make_unique<QHBoxLayout>();
     layout3->addWidget(btn_add_.get());
     layout3->addWidget(btn_del_.get());
     mainLayout_->addLayout(layout3.get());
