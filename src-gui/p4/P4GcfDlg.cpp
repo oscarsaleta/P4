@@ -178,7 +178,7 @@ void P4GcfDlg::onbtn_evaluate()
 
     btn_evaluate_->setEnabled(false);
 
-    gThisVF->gcfDlg_ = this;
+    gThisVF->setGcfDlg(this);
     result = evalGcfStart(mainSphere_, dashes, points, precis);
     if (!result) {
         btn_evaluate_->setEnabled(true);
