@@ -19,11 +19,11 @@
 
 #include "P4ParamsDlg.hpp"
 
-#include "P4FindDlg.hpp"
-#include "custom.hpp"
-#include "P4InputVF.hpp"
-#include "main.hpp"
 #include "P4Application.hpp"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "custom.hpp"
+#include "main.hpp"
 #include "p4settings.hpp"
 
 #include <QBoxLayout>
@@ -35,69 +35,61 @@
 
 P4ParamsDlg::~P4ParamsDlg() { getDataFromDlg(); }
 
-P4ParamsDlg::P4ParamsDlg(P4FindDlg &finddlg)
-    : QWidget{&finddlg}, parent_{finddlg}
+P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
+    : QWidget{finddlg}, parent_{finddlg}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    std::unique_ptr<QLabel> p4title{
-        std::make_unique<QLabel>("Find Singular Points Parameters", this)};
+    auto p4title =
+        std::make_unique<QLabel>("Find Singular Points Parameters", this);
     p4title->setFont(*(gP4app->titleFont_));
 
-    std::unique_ptr<QLabel> symlabel{
-        std::make_unique<QLabel>("Calculations: ", this)};
+    auto symlabel = std::make_unique<QLabel>("Calculations: ", this);
     symlabel->setFont(*(gP4app->boldFont_));
     btn_alg_ = std::make_unique<QRadioButton>("Algebraic", this);
     btn_num_ = std::make_unique<QRadioButton>("Numeric", this);
 
-    std::unique_ptr<QLabel> seplabel{
-        std::make_unique<QLabel>("Test Separatrices:  ", this)};
+    auto seplabel = std::make_unique<QLabel>("Test Separatrices:  ", this);
     seplabel->setFont(*(gP4app->boldFont_));
     btn_sepyes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_sepno_ = std::make_unique<QRadioButton>("No", this);
 
-    std::unique_ptr<QLabel> lbl_precis{
-        std::make_unique<QLabel>("Accuracy:", this)};
+    auto lbl_precis = std::make_unique<QLabel>("Accuracy:", this);
     lbl_precis->setFont(*(gP4app->boldFont_));
     spin_precis_ = std::make_unique<QSpinBox>(this);
     spin_precis_->setMinimum(MINPRECISION);
     spin_precis_->setMaximum(MAXPRECISION);
 
-    std::unique_ptr<QLabel> lbl_precis0{
-        std::make_unique<QLabel>("Precision:", this)};
+    auto lbl_precis0 = std::make_unique<QLabel>("Precision:", this);
     lbl_precis0->setFont(*(gP4app->boldFont_));
     spin_precis0_ = std::make_unique<QSpinBox>(this);
     spin_precis0_->setMinimum(MINPRECISION0);
     spin_precis0_->setMaximum(MAXPRECISION0);
 
-    std::unique_ptr<QLabel> lbl_epsilon{
-        std::make_unique<QLabel>("Epsilon:", this)};
+    auto lbl_epsilon = std::make_unique<QLabel>("Epsilon:", this);
     lbl_epsilon->setFont(*(gP4app->boldFont_));
     edt_epsilon_ = std::make_unique<QLineEdit>(gThisVF->epsilon_, this);
 
-    std::unique_ptr<QLabel> lbl_level{
-        new QLabel("Level of Approximation:", this)};
+    auto lbl_level = std::make_unique<QLabel>("Level of Approximation:", this);
     lbl_level->setFont(*(gP4app->boldFont_));
     spin_level_ = std::make_unique<QSpinBox>(this);
     spin_level_->setMinimum(MINLEVEL);
     spin_level_->setMaximum(MAXLEVEL);
 
-    std::unique_ptr<QLabel> lbl_numlevel{
-        std::make_unique<QLabel>("Numeric level:", this)};
+    auto lbl_numlevel = std::make_unique<QLabel>("Numeric level:", this);
     lbl_numlevel->setFont(*(gP4app->boldFont_));
     spin_numlevel_ = std::make_unique<QSpinBox>(this);
     spin_numlevel_->setMinimum(MINNUMLEVEL);
     spin_numlevel_->setMaximum(MAXNUMLEVEL);
 
-    std::unique_ptr<QLabel> lbl_maxlevel{
-        std::make_unique<QLabel>("Maximum level:", this)};
+    auto lbl_maxlevel = std::make_unique<QLabel>("Maximum level:", this);
     lbl_maxlevel->setFont(*(gP4app->boldFont_));
     spin_maxlevel_ = std::make_unique<QSpinBox>(this);
     spin_maxlevel_->setMinimum(MINMAXLEVEL);
     spin_maxlevel_->setMaximum(MAXMAXLEVEL);
 
-    std::unique_ptr<QLabel> lbl_weakness{
-        new QLabel("Maximum level of weakness:", this)};
+    auto lbl_weakness =
+        std::make_unique<QLabel>("Maximum level of weakness:", this);
     lbl_weakness->setFont(*(gP4app->boldFont_));
     spin_weakness_ = std::make_unique<QSpinBox>(this);
     spin_weakness_->setMinimum(MINWEAKNESS);
@@ -167,101 +159,101 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg &finddlg)
 
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    mainLayout_->addWidget(p4title);
+    mainLayout_->addWidget(p4title.get());
 
-    std::unique_ptr<QHBoxLayout> symLayout{std::make_unique<QHBoxLayout>()};
-    symLayout->addWidget(symlabel);
-    symLayout->addWidget(btn_alg_);
-    symLayout->addWidget(btn_num_);
-    mainLayout_->addLayout(symLayout);
+    auto symLayout = std::make_unique<QHBoxLayout>();
+    symLayout->addWidget(symlabel.get());
+    symLayout->addWidget(btn_alg_.get());
+    symLayout->addWidget(btn_num_.get());
+    mainLayout_->addLayout(symLayout.get());
 
-    std::unique_ptr<QHBoxLayout> sepLayout{std::make_unique<QHBoxLayout>()};
-    sepLayout->addWidget(seplabel);
-    sepLayout->addWidget(btn_sepyes_);
-    sepLayout->addWidget(btn_sepno_);
-    mainLayout_->addLayout(sepLayout);
+    auto sepLayout = std::make_unique<QHBoxLayout>();
+    sepLayout->addWidget(seplabel.get());
+    sepLayout->addWidget(btn_sepyes_.get());
+    sepLayout->addWidget(btn_sepno_.get());
+    mainLayout_->addLayout(sepLayout.get());
 
-    std::unique_ptr<QHBoxLayout> layout1{std::make_unique<QHBoxLayout>()};
-    layout1->addWidget(lbl_precis);
-    layout1->addWidget(spin_precis_);
+    auto layout1 = std::make_unique<QHBoxLayout>();
+    layout1->addWidget(lbl_precis.get());
+    layout1->addWidget(spin_precis_.get());
     layout1->addStretch(0);
-    layout1->addWidget(lbl_precis0);
-    layout1->addWidget(spin_precis0_);
+    layout1->addWidget(lbl_precis0.get());
+    layout1->addWidget(spin_precis0_.get());
 
-    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
-    layout2->addWidget(lbl_epsilon);
-    layout2->addWidget(edt_epsilon_);
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(lbl_epsilon.get());
+    layout2->addWidget(edt_epsilon_.get());
     layout2->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
-    layout3->addWidget(lbl_level);
-    layout3->addWidget(spin_level_);
+    auto layout3 = std::make_unique<QHBoxLayout>();
+    layout3->addWidget(lbl_level.get());
+    layout3->addWidget(spin_level_.get());
     layout3->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout4{std::make_unique<QHBoxLayout>()};
-    layout4->addWidget(lbl_numlevel);
-    layout4->addWidget(spin_numlevel_);
+    auto layout4 = std::make_unique<QHBoxLayout>();
+    layout4->addWidget(lbl_numlevel.get());
+    layout4->addWidget(spin_numlevel_.get());
     layout4->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout5{std::make_unique<QHBoxLayout>()};
-    layout5->addWidget(lbl_maxlevel);
-    layout5->addWidget(spin_maxlevel_);
+    auto layout5 = std::make_unique<QHBoxLayout>();
+    layout5->addWidget(lbl_maxlevel.get());
+    layout5->addWidget(spin_maxlevel_.get());
     layout5->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout6{std::make_unique<QHBoxLayout>()};
-    layout6->addWidget(lbl_weakness);
-    layout6->addWidget(spin_weakness_);
+    auto layout6 = std::make_unique<QHBoxLayout>();
+    layout6->addWidget(lbl_weakness.get());
+    layout6->addWidget(spin_weakness_.get());
     layout6->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout7{std::make_unique<QHBoxLayout>()};
-    layout7->addWidget(lbl_p_);
-    layout7->addWidget(spin_p_);
-    layout7->addWidget(lbl_q_);
-    layout7->addWidget(spin_q_);
+    auto layout7 = std::make_unique<QHBoxLayout>();
+    layout7->addWidget(lbl_p_.get());
+    layout7->addWidget(spin_p_.get());
+    layout7->addWidget(lbl_q_.get());
+    layout7->addWidget(spin_q_.get());
     layout7->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout8{std::make_unique<QHBoxLayout>()};
-    layout8->addWidget(lbl_x0_);
-    layout8->addWidget(edt_x0_);
+    auto layout8 = std::make_unique<QHBoxLayout>();
+    layout8->addWidget(lbl_x0_.get());
+    layout8->addWidget(edt_x0_.get());
     layout8->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout9{std::make_unique<QHBoxLayout>()};
-    layout9->addWidget(lbl_y0_);
-    layout9->addWidget(edt_y0_);
+    auto layout9 = std::make_unique<QHBoxLayout>();
+    layout9->addWidget(lbl_y0_.get());
+    layout9->addWidget(edt_y0_.get());
     layout9->addStretch(0);
 
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout3);
-    mainLayout_->addLayout(layout4);
-    mainLayout_->addLayout(layout5);
-    mainLayout_->addLayout(layout6);
-    mainLayout_->addLayout(layout7);
-    mainLayout_->addLayout(layout8);
-    mainLayout_->addLayout(layout9);
+    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(layout2.get());
+    mainLayout_->addLayout(layout3.get());
+    mainLayout_->addLayout(layout4.get());
+    mainLayout_->addLayout(layout5.get());
+    mainLayout_->addLayout(layout6.get());
+    mainLayout_->addLayout(layout7.get());
+    mainLayout_->addLayout(layout8.get());
+    mainLayout_->addLayout(layout9.get());
 
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     btngrp_numeric_ = std::make_unique<QButtonGroup>(this);
-    btngrp_numeric_->addButton(btn_alg_);
-    btngrp_numeric_->addButton(btn_num_);
+    btngrp_numeric_->addButton(btn_alg_.get());
+    btngrp_numeric_->addButton(btn_num_.get());
 
     btngrp_testsep_ = std::make_unique<QButtonGroup>(this);
-    btngrp_testsep_->addButton(btn_sepyes_);
-    btngrp_testsep_->addButton(btn_sepno_);
+    btngrp_testsep_->addButton(btn_sepyes_.get());
+    btngrp_testsep_->addButton(btn_sepno_.get());
 
-    // connections
-    QObject::connect(btn_alg_, &QRadioButton::toggled, this,
+    // connections.
+    QObject::connect(btn_alg_.get(), &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_alg_toggled);
-    QObject::connect(btn_num_, &QRadioButton::toggled, this,
+    QObject::connect(btn_num_.get(), &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_num_toggled);
-    QObject::connect(
-        spin_level_,
-        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &P4ParamsDlg::onLevelChange);
-    QObject::connect(btn_sepno_, &QRadioButton::toggled, this,
+    QObject::connect(.get() spin_level_,
+                     static_cast<void (QSpinBox::*)(int)>(
+                         &QSpinBox::valueChanged),
+                     this, &P4ParamsDlg::onLevelChange);
+    QObject::connect(btn_sepno_.get(), &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_sepno_toggled);
-    QObject::connect(btn_sepyes_, &QRadioButton::toggled, this,
+    QObject::connect(btn_sepyes_.get(), &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_sepyes_toggled);
 
     // finishing
@@ -338,26 +330,26 @@ void P4ParamsDlg::btn_sepno_toggled(bool on)
     }
 }
 
-void P4ParamsDlg::setSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
+void P4ParamsDlg::setSpinBoxCommonValue(QSpinBox &sb,
                                         const std::vector<int> &val, int minval)
 {
     if (gThisVF->hasCommonInt(val)) {
-        sb->setSpecialValueText("");
-        sb->setMinimum(minval);
-        sb->setValue(gThisVF->commonInt(val));
+        sb.setSpecialValueText("");
+        sb.setMinimum(minval);
+        sb.setValue(gThisVF->commonInt(val));
     } else {
-        sb->setMinimal(minval - 1);
-        sb->setSpecialValueText("##");
-        sb->setValue(minval - 1);
+        sb.setMinimal(minval - 1);
+        sb.setSpecialValueText("##");
+        sb.setValue(minval - 1);
     }
 }
 
-bool P4ParamsDlg::getSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
+bool P4ParamsDlg::getSpinBoxCommonValue(const QSpinBox &sb,
                                         std::vector<int> &newval)
 {
-    int val{sb->value()};
-    if (val == sb->minimum()) {
-        if (!sb->specialValueText().isEmpty()) {
+    int val{sb.value()};
+    if (val == sb.minimum()) {
+        if (!sb.specialValueText().isEmpty()) {
             // special value: ## -> ignore change
             return false;
         }
@@ -372,19 +364,19 @@ bool P4ParamsDlg::getSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
     return true;
 }
 
-void P4ParamsDlg::setLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
+void P4ParamsDlg::setLineEditCommonValue(QLineEdit &le,
                                          const std::vector<QString> &val)
 {
     if (gThisVF->hasCommonString(val))
-        le->setText(gThisVF->commonString(val));
+        le.setText(gThisVF->commonString(val));
     else
-        le->setText("##");
+        le.setText("##");
 }
 
-bool P4ParamsDlg::getLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
+bool P4ParamsDlg::getLineEditCommonValue(const QLineEdit &le,
                                          std::vector<QString> &newval)
 {
-    QString val{le->text().trimmed()};
+    QString val{le.text().trimmed()};
 
     if (!gThisVF->hasCommonString(newval)) {
         for (int i = val.length() - 1; i >= 0; i--) {
@@ -406,9 +398,6 @@ bool P4ParamsDlg::getLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
 
 void P4ParamsDlg::getDataFromDlg()
 {
-    QString epsilon;
-    QString x0;
-    QString y0;
     bool changed{false};
 
     if (spin_p_->value() != gThisVF->p_ || spin_q_->value() != gThisVF->q_) {
@@ -417,8 +406,8 @@ void P4ParamsDlg::getDataFromDlg()
         changed = true;
     }
 
-    x0 = edt_x0_->text().trimmed();
-    y0 = edt_y0_->text().trimmed();
+    QString x0 {edt_x0_->text().trimmed()};
+    QString y0 {edt_y0_->text().trimmed()};
 
     if (x0.compare(gThisVF->x0_) != 0 || y0.compare(gThisVF->y0_) != 0) {
         gThisVF->x0_ = x0;
@@ -426,13 +415,13 @@ void P4ParamsDlg::getDataFromDlg()
         changed = true;
     }
 
-    changed |= getSpinBoxCommonValue(spin_level_, gThisVF->taylorlevel_);
-    changed |= getSpinBoxCommonValue(spin_numlevel_, gThisVF->numericlevel_);
-    changed |= getSpinBoxCommonValue(spin_maxlevel_, gThisVF->maxlevel_);
-    changed |= getSpinBoxCommonValue(spin_weakness_, gThisVF->weakness_);
-    changed |= getSpinBoxCommonValue(spin_precis_, gThisVF->precision_);
-    changed |= getSpinBoxCommonValue(spin_precis0_, gThisVF->precision0_);
-    changed |= getLineEditCommonValue(edt_epsilon_, gThisVF->epsilon_);
+    changed |= getSpinBoxCommonValue(*spin_level_, gThisVF->taylorlevel_);
+    changed |= getSpinBoxCommonValue(*spin_numlevel_, gThisVF->numericlevel_);
+    changed |= getSpinBoxCommonValue(*spin_maxlevel_, gThisVF->maxlevel_);
+    changed |= getSpinBoxCommonValue(*spin_weakness_, gThisVF->weakness_);
+    changed |= getSpinBoxCommonValue(*spin_precis_, gThisVF->precision_);
+    changed |= getSpinBoxCommonValue(*spin_precis0_, gThisVF->precision0_);
+    changed |= getLineEditCommonValue(*edt_epsilon_, gThisVF->epsilon_);
 
     if (changed) {
         if (gThisVF->changed == false) {
@@ -468,13 +457,13 @@ void P4ParamsDlg::updateDlgData()
         btngrp_testsep_->setExclusive(true);
     }
 
-    setSpinBoxCommonValue(spin_level_, gThisVF->taylorlevel_, MINLEVEL);
-    setSpinBoxCommonValue(spin_numlevel_, gThisVF->numericlevel_, MINNUMLEVEL);
-    setSpinBoxCommonValue(spin_maxlevel_, gThisVF->maxlevel_, MINMAXLEVEL);
-    setSpinBoxCommonValue(spin_weakness_, gThisVF->weakness_, MINWEAKNESS);
-    setLineEditCommonValue(edt_epsilon_, gThisVF->epsilon_);
-    setSpinBoxCommonValue(spin_precis_, gThisVF->precision_, MINPRECISION);
-    setSpinBoxCommonValue(spin_precis0_, gThisVF->precision0_, MINPRECISION0);
+    setSpinBoxCommonValue(*spin_level_, gThisVF->taylorlevel_, MINLEVEL);
+    setSpinBoxCommonValue(*spin_numlevel_, gThisVF->numericlevel_, MINNUMLEVEL);
+    setSpinBoxCommonValue(*spin_maxlevel_, gThisVF->maxlevel_, MINMAXLEVEL);
+    setSpinBoxCommonValue(*spin_weakness_, gThisVF->weakness_, MINWEAKNESS);
+    setLineEditCommonValue(*edt_epsilon_, gThisVF->epsilon_);
+    setSpinBoxCommonValue(*spin_precis_, gThisVF->precision_, MINPRECISION);
+    setSpinBoxCommonValue(*spin_precis0_, gThisVF->precision0_, MINPRECISION0);
 
     if (gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         edt_x0_->setText(gThisVF->x0_);

@@ -35,13 +35,13 @@ class P4ParamsDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4ParamsDlg(P4FindDlg &startwindow);
+    P4ParamsDlg(P4FindDlg *startwindow);
     ~P4ParamsDlg();
     void getDataFromDlg();
     void updateDlgData();
 
   private:
-    P4FindDlg &parent_;
+    P4FindDlg *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QRadioButton> btn_sepyes_;
@@ -68,13 +68,12 @@ class P4ParamsDlg : public QWidget
     std::unique_ptr<QButtonGroup> btngrp_numeric_;
     std::unique_ptr<QButtonGroup> btngrp_testsep_;
 
-    void setSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
-                               const std::vector<int> &val, int minval);
-    void getSpinBoxCommonValue(std::unique_ptr<QSpinBox> &sb,
-                               std::vector<int> &val);
-    void setLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
-                                const std::vector<QString> &val);
-    bool getLineEditCommonValue(std::unique_ptr<QLineEdit> &le,
+    // FIXME raw pointers
+    void setSpinBoxCommonValue(QSpinBox &, const std::vector<int> &val,
+                               int minval);
+    void getSpinBoxCommonValue(const QSpinBox &, std::vector<int> &val);
+    void setLineEditCommonValue(QLineEdit &le, const std::vector<QString> &val);
+    bool getLineEditCommonValue(const QLineEdit &le,
                                 std::vector<QString> &newval);
 
   public slots:
