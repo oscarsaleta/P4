@@ -66,7 +66,7 @@ P4Application::P4Application(int &argc, char **argv) : QApplication(argc, argv)
 //
 // Following signals may be called from another thread
 
-void P4Application::signalChanged(void)
+void P4Application::signalChanged()
 {
     gThisVF->evaluated_ = false;
     gThisVF->changed_ = true;
@@ -125,7 +125,7 @@ void P4Application::catchProcessError(QProcess::ProcessError qperr)
     gThisVF->catchProcessError(qperr);
 }
 
-void P4Application::signalLoaded(void)
+void P4Application::signalLoaded()
 {
     std::unique_ptr<P4Event> e{
         new P4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr)};
@@ -133,7 +133,7 @@ void P4Application::signalLoaded(void)
 
     if (gCmdLineAutoEvaluate) {
         gCmdLineAutoEvaluate = false;
-        gP4startDlg->findWindow_->onBtnEval();
+        gP4startDlg->getFindWindowPtr()->onBtnEval();
         return;
     }
     if (gCmdLineAutoPlot) {
@@ -143,7 +143,7 @@ void P4Application::signalLoaded(void)
     }
 }
 
-void P4Application::signalSaved(void)
+void P4Application::signalSaved()
 {
     std::unique_ptr<P4Event> e{
         new P4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr)};
