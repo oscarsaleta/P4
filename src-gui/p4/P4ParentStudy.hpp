@@ -35,33 +35,35 @@ class P4ParentStudy : public QObject
 
     std::vector<P4VFStudy> vf_;
     // K_ will be throughout the current vector field selected
-    int K_;
+    int K_{0};
 
     std::vector<p4curveRegions::curveResult> separatingCurves_;
 
-    int typeofstudy_;
-    int typeofview_;                 // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    bool plotVirtualSingularities_;  // true or false
-    int p_;
-    int q_;
-    bool plweights_;  // true if p<>1 or q<>1; false if p=q=1
+    int typeofstudy_{TYPEOFSTUDY_ALL};
+    // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    int typeofview_{TYPEOFVIEW_SPHERE};
+    bool plotVirtualSingularities_{DEFAULTPLOTVIRTUALSINGULARITIES};
+    int p_{1};
+    int q_{1};
+    bool plweights_{false};  // true if p<>1 or q<>1; false if p=q=1
     double config_projection_;
 
-    double double_p_;                   // shortcuts: = (double)p
-    double double_q_;                   // = (double)q
-    double double_p_plus_q_;            // = (double)(p+q)
-    double double_p_minus_1_;           // = (double)(p-1)
-    double double_q_minus_1_;           // = (double)(q-1)
-    double double_q_minus_p_;           // = (double)(q-p)
-    double xmin_, xmax_, ymin_, ymax_;  // in case of local study
+    double double_p_;          // shortcuts: = (double)p
+    double double_q_;          // = (double)q
+    double double_p_plus_q_;   // = (double)(p+q)
+    double double_p_minus_1_;  // = (double)(p-1)
+    double double_q_minus_1_;  // = (double)(q-1)
+    double double_q_minus_p_;  // = (double)(q-p)
+    double xmin_{-1.0};        // in case of local study
+    double xmax_{1.0};
+    double ymin_{-1.0};
+    double ymax_{1.0};
 
     // curves
     std::vector<p4curves::curves> arbitraryCurves_;
 
-    // FIXME segurament puc canviar first_lim_cycle per lim_cycles.front() i
-    // current per .back()
     // limit cycles and orbits
-    std::vector<p4orbits::orbits> limCycles_;  // FIXME canviar ocurrències
+    std::vector<p4orbits::orbits> limCycles_;
     // int currentLimCycleIndex_;
     std::vector<p4orbits::orbits> orbits_;  // FIXME canviar ocurrències
     // int currentOrbitIndex_;
@@ -87,18 +89,28 @@ class P4ParentStudy : public QObject
 
     int selected_sep_vfindex_;
 
-    double config_currentstep_;  // current step size (during integration)
-    bool config_dashes_;         // line style (dashes or points)
-    bool config_kindvf_;         // true for original VF, false for reduced
-    int config_lc_value_;        // number of orbits in the limit cycle window
-    int config_lc_numpoints_;    // number of points in the limit cycle window
-    double config_hma_;          // maximum step size
-    double config_hmi_;          // minimum step size
-    double config_branchhmi_;  // minimum step size near branches of separating
-                               // curves
-    double config_step_;       // step size
-    double config_tolerance_;  // tolerance
-    int config_intpoints_;     // number of points to integrate
+    // current step size (during integration)
+    double config_currentstep_{DEFAULT_STEPSIZE};
+    // line style (dashes or points)
+    bool config_dashes_{DEFAULT_LINESTYLE};
+    // true for original VF, false for reduced
+    bool config_kindvf_{DEFAULT_INTCONFIG};
+    // number of orbits in the limit cycle window
+    int config_lc_value_{DEFAULT_LCORBITS};
+    // number of points in the limit cycle window
+    int config_lc_numpoints_{DEFAULT_LCPOINTS};
+    // maximum step size
+    double config_hma_{DEFAULT_HMA};
+    // minimum step size
+    double config_hmi_{DEFAULT_HMI};
+    // minimum step size near branches of separating curves
+    double config_branchhmi_{DEFAULT_BRANCHHMI};
+    // step size
+    double config_step_{DEFAULT_STEPSIZE};
+    // tolerance
+    double config_tolerance_{DEFAULT_TOLERANCE};
+    // number of points to integrate
+    int config_intpoints_{DEFAULT_INTPOINTS};
 
     // Methods
     // void deleteOrbitPoint(P4ORBIT p);

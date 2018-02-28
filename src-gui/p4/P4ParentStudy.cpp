@@ -27,21 +27,7 @@
 //                              P4ParentStudy CONSTRUCTOR
 // -----------------------------------------------------------------------
 P4ParentStudy::P4ParentStudy()
-    : K_{0}, xmin_{-1.0}, xmax_{1.0}, ymin_{-1.0}, ymax_{1.0}, p_{1}, q_{1},
-      plweights_{false}, typeofstudy_{TYPEOFSTUDY_ALL},
-      typeofview_{TYPEOFVIEW_SPHERE}, config_lc_value_{DEFAULT_LCORBITS},
-      config_lc_numpoints_{DEFAULT_LCPOINTS},
-      config_currentstep_{DEFAULT_STEPSIZE}, config_dashes_{DEFAULT_LINESTYLE},
-      config_kindvf_{DEFAULT_INTCONFIG}, config_hma_{DEFAULT_HMA},
-      config_hmi_{DEFAULT_HMI}, config_branchhmi_{DEFAULT_BRANCHHMI},
-      config_step_{DEFAULT_STEPSIZE}, config_tolerance_{DEFAULT_TOLERANCE},
-      config_intpoints_{DEFAULT_INTPOINTS},
-      plotVirtualSingularities_{DEFAULTPLOTVIRTUALSINGULARITIES},
-      selected_sep_{std::shared_ptr<p4blowup::sep>{}},
-      selected_de_sep_{std::shared_ptr<p4blowup::blow_up_points>{}}
 {
-    // vfK_ = nullptr;
-
     selected_ucoord_[0] = selected_ucoord_[1] = 0;
 
     double_p_ = p_;
