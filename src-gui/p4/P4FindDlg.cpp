@@ -41,26 +41,23 @@ P4FindDlg::P4FindDlg(P4StartDlg &startdlg)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    std::unique_ptr<QLabel> p4title{
-        std::make_unique<QLabel>("Find and Examine Singular Points", this)};
+    auto p4title =
+        std::make_unique<QLabel>("Find and Examine Singular Points", this);
     p4title->setFont(*(gP4app->titleFont_));
 
-    std::unique_ptr<QLabel> actlabel{
-        std::make_unique<QLabel>("File Action:  ", this)};
+    auto actlabel = std::make_unique<QLabel>("File Action:  ", this);
     actlabel->setFont(*(gP4app->boldFont_));
     btn_actionrun_ = std::make_unique<QRadioButton>("Run File", this);
     btn_actionprep_ = std::make_unique<QRadioButton>("Prepare File", this);
 
-    std::unique_ptr<QLabel> singpoints{
-        std::make_unique<QLabel>("Singular points:  \n\n", this)};
+    auto singpoints = std::make_unique<QLabel>("Singular points:  \n\n", this);
     singpoints->setFont(*(gP4app->boldFont_));
     btn_all_ = std::make_unique<QRadioButton>("All ", this);
     btn_fin_ = std::make_unique<QRadioButton>("Finite ", this);
     btn_inf_ = std::make_unique<QRadioButton>("Infinite ", this);
     btn_one_ = std::make_unique<QRadioButton>("One ", this);
 
-    std::unique_ptr<QLabel> saveall{
-        std::make_unique<QLabel>("Save all information: ", this)};
+    auto saveall = std::make_unique<QLabel>("Save all information: ", this);
     saveall->setFont(*(gP4app->boldFont_));
     btn_yes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_no_ = std::make_unique<QRadioButton>("No", this);
@@ -103,63 +100,62 @@ P4FindDlg::P4FindDlg(P4StartDlg &startdlg)
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
 
     mainLayout_->addSpacing(8);
-    mainLayout_->addWidget(p4title);
+    mainLayout_->addWidget(p4title.get());
 
-    std::unique_ptr<QHBoxLayout> actLayout{std::make_unique<QHBoxLayout>()};
-    actLayout->addWidget(actlabel);
-    actLayout->addWidget(btn_actionrun_);
-    actLayout->addWidget(btn_actionprep_);
+    auto actLayout = std::make_unique<QHBoxLayout>();
+    actLayout->addWidget(actlabel.get());
+    actLayout->addWidget(btn_actionrun_.get());
+    actLayout->addWidget(btn_actionprep_.get());
     actLayout->addStretch(0);
-    mainLayout_->addLayout(actLayout);
+    mainLayout_->addLayout(actLayout.get());
 
-    std::unique_ptr<QHBoxLayout> singlineLayout{
-        std::make_unique<QHBoxLayout>()};
-    singlineLayout->addWidget(singpoints, 0, Qt::AlignBottom);
+    auto singlineLayout = std::make_unique<QHBoxLayout>();
+    singlineLayout->addWidget(singpoints.get(), 0, Qt::AlignBottom);
 
-    std::unique_ptr<QGridLayout> singLayout{std::make_unique<QGridLayout>()};
-    singLayout->addWidget(btn_all_, 0, 0);
-    singLayout->addWidget(btn_fin_, 0, 1);
-    singLayout->addWidget(btn_inf_, 1, 0);
-    singLayout->addWidget(btn_one_, 1, 1);
-    singlineLayout->addLayout(singLayout);
+    auto singLayout = std::make_unique<QGridLayout>();
+    singLayout->addWidget(btn_all_.get(), 0, 0);
+    singLayout->addWidget(btn_fin_.get(), 0, 1);
+    singLayout->addWidget(btn_inf_.get(), 1, 0);
+    singLayout->addWidget(btn_one_.get(), 1, 1);
+    singlineLayout->addLayout(singLayout.get());
     singlineLayout->addStretch(0);
 
-    mainLayout_->addLayout(singlineLayout);
+    mainLayout_->addLayout(singlineLayout.get());
 
-    std::unique_ptr<QHBoxLayout> layout0{std::make_unique<QHBoxLayout>()};
-    layout0->addWidget(saveall);
-    layout0->addWidget(btn_yes_);
-    layout0->addWidget(btn_no_);
+    auto layout0 = std::make_unique<QHBoxLayout>();
+    layout0->addWidget(saveall.get());
+    layout0->addWidget(btn_yes_.get());
+    layout0->addWidget(btn_no_.get());
     layout0->addStretch(0);
 
-    std::unique_ptr<QGridLayout> layout1{std::make_unique<QGridLayout>()};
-    layout1->addWidget(btn_load_, 0, 0);
-    layout1->addWidget(btn_save_, 0, 1);
-    layout1->addWidget(btn_eval_, 1, 0, 1, 2);
+    auto layout1 = std::make_unique<QGridLayout>();
+    layout1->addWidget(btn_load_.get(), 0, 0);
+    layout1->addWidget(btn_save_.get(), 0, 1);
+    layout1->addWidget(btn_eval_.get(), 1, 0, 1, 2);
 
-    mainLayout_->addLayout(layout0);
-    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout0.get());
+    mainLayout_->addLayout(layout1.get());
 
     //   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
     mainLayout_->addStretch(0);
-    superLayout_->addLayout(mainLayout_);
-    setLayout(superLayout_);
+    superLayout_->addLayout(mainLayout_.get());
+    setLayout(superLayout_.get());
 
     // connections
-    std::unique_ptr<QButtonGroup> btngrp1{std::make_unique<QButtonGroup>(this)};
-    btngrp1->addButton(btn_all_);
-    btngrp1->addButton(btn_fin_);
-    btngrp1->addButton(btn_inf_);
-    btngrp1->addButton(btn_one_);
+    auto btngrp1 = std::make_unique<QButtonGroup>(this);
+    btngrp1->addButton(btn_all_.get());
+    btngrp1->addButton(btn_fin_.get());
+    btngrp1->addButton(btn_inf_.get());
+    btngrp1->addButton(btn_one_.get());
 
-    std::unique_ptr<QButtonGroup> btngrp2{std::make_unique<QButtonGroup>(this)};
-    btngrp2->addButton(btn_yes_);
-    btngrp2->addButton(btn_no_);
+    auto btngrp2 = std::make_unique<QButtonGroup>(this);
+    btngrp2->addButton(btn_yes_.get());
+    btngrp2->addButton(btn_no_.get());
 
-    std::unique_ptr<QButtonGroup> btngrp4{std::make_unique<QButtonGroup>(this)};
-    btngrp4->addButton(btn_actionrun_);
-    btngrp4->addButton(btn_actionprep_);
+    auto btngrp4 = std::make_unique<QButtonGroup>(this);
+    btngrp4->addButton(btn_actionrun_.get());
+    btngrp4->addButton(btn_actionprep_.get());
 
     if (gActionOnlyPrepareFile)
         btn_actionprep_->toggle();
@@ -291,28 +287,22 @@ P4FindDlg::P4FindDlg(P4StartDlg &startdlg)
     // TODO: implement onSaveSignal slot
 
     // finishing
-    // FIXME this is wrong for sure
-    gThisVF->findDlg_.reset(this);
+    gThisVF->setFindDlg(this);
 
     // show vector field dialog
     if (!vfWindow_) {
-        vfWindow_.reset(new P4VectorFieldDlg(this));
+        vfWindow_ = std::make_unique<P4VectorFieldDlg>(*this);
         vfWindow_->show();
-        mainLayout_->addWidget(vfWindow_);
-    } else {
-        vfWindow_.reset();
+        mainLayout_->addWidget(vfWindow_.get());
     }
     // show params dialog
     if (!paramsWindow_) {
-        paramsWindow_.reset(new P4ParamsDlg(this));
-        vfSelectWindow_.reset(new P4VFSelectDlg(this));
+        paramsWindow_ = std::make_unique<P4ParamsDlg>(*this);
+        vfSelectWindow_ = std::make_unique<P4VFSelectDlg>(*this);
         paramsWindow_->show();
         vfSelectWindow_->show();
-        superLayout_->addWidget(paramsWindow_, 0, Qt::AlignTop);
-        superLayout_->addWidget(vfSelectWindow_, 0, Qt::AlignTop);
-    } else {
-        paramsWindow_.reset();
-        vfSelectWindow_.reset();
+        superLayout_->addWidget(paramsWindow_.get(), 0, Qt::AlignTop);
+        superLayout_->addWidget(vfSelectWindow_.get(), 0, Qt::AlignTop);
     }
 
     if (gThisVF->evaluating_)
@@ -464,4 +454,9 @@ void P4FindDlg::signalCurvesEvaluated()
     }
 }
 
-P4VFSelectDlg *P4FindDlg::getVfSelectWindow() { return vfSelectWindow_.get(); }
+P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr()
+{
+    if (vfSelectWindow_)
+        return vfSelectWindow_.get();
+    return nullptr;
+}
