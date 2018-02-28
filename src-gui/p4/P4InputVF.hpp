@@ -76,10 +76,10 @@ class P4InputVF : public QObject
     // MEMBER VARIABLES //
     //////////////////////
 
-    QString filename_;
+    QString filename_{DEFAULTFILENAME};
 
-    int symbolicpackage_;  // 0 for reduce, 1 for maple
-    int typeofstudy_;      // 0, 1, 2, 3 = all, inf, fin, one
+    int symbolicpackage_{PACKAGE_MAPLE};  // 0 for reduce, 1 for maple
+    int typeofstudy_;                     // 0, 1, 2, 3 = all, inf, fin, one
 
     // MAPLE EXECUTION PARAMETERS
     std::vector<bool> numeric_;
@@ -126,7 +126,7 @@ class P4InputVF : public QObject
     std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
 
     // PARAMETER LIST
-    int numparams_;
+    int numparams_{0};
     // list of parameter names
     QString parlabel_[MAXNUMPARAMS];
     // a list of parameter values for every VF (thus vector of vectors)
@@ -135,22 +135,22 @@ class P4InputVF : public QObject
     // PIECEWISE VARIABLES: vector fields
     // indicates length of P4ParentStudy::vf_ (not really necessary but too much
     // work to get rid of atm)
-    int numVF_;
+    int numVF_{0};
     // same but for this->vfRegions_
-    int numVFRegions_;
+    int numVFRegions_{0};
     std::vector<p4InputVFRegions::vfRegion> vfRegions_;
 
     // PIECEWISE VARIABLES: separating curves
     // same as above but for this->separatingCurves_
-    int numSeparatingCurves_;
+    int numSeparatingCurves_{0};
     std::vector<QString> separatingCurves_;
     std::vector<int> numPointsSeparatingCurve_;
     // same as above but for this->curveRegions_
-    int numCurveRegions_;
+    int numCurveRegions_{0};
     std::vector<p4InputVFRegions::curveRegion> curveRegions_;
 
     // PIECEWISE VARIABLES: selected regions
-    int numSelected_;
+    int numSelected_{0};
     std::vector<int> selected_;
 
     // STATUS VARIABLES

@@ -87,13 +87,7 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4InputVF::P4InputVF()
-    : numparams_{0}, numVF_{0}, numSeparatingCurves_{0}, numVFRegions_{0},
-      numCurveRegions_{0}, numSelected_{0}, filename_{DEFAULTFILENAME},
-      symbolicpackage_{PACKAGE_MAPLE}
-{
-    reset(1);
-}
+P4InputVF::P4InputVF() { reset(1); }
 
 // -----------------------------------------------------------------------
 //          DESTRUCTOR
