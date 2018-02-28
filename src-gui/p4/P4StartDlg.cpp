@@ -728,9 +728,8 @@ P4FindDlg *P4StartDlg::getFindWindowPtr()
 
 void P4StartDlg::setFindWindow(P4FindDlg *newdlg)
 {
-    if (newdlg != nullptr) {
-        if (newdlg != findWindow_.get())
-            findWindow_ = std::make_unique<P4FindDlg>(newdlg);
+    if (newdlg != nullptr && newdlg != findWindow_.get()) {
+        findWindow_ = std::make_unique<P4FindDlg>(newdlg);
     } else {
         findWindow_.reset();
     }
@@ -745,9 +744,8 @@ P4PlotWnd *P4StartDlg::getPlotWindowPtr()
 
 void P4StartDlg::setPlotWindow(P4PlotWnd *newdlg)
 {
-    if (newdlg != nullptr) {
-        if (newdlg != plotWindow_.get())
-            plotWindow_ = std::make_unique<P4PlotWnd>(newdlg);
+    if (newdlg != nullptr && newdlg != plotWindow_.get()) {
+        plotWindow_ = std::make_unique<P4PlotWnd>(newdlg);
     } else {
         plotWindow_.reset();
     }
