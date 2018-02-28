@@ -3931,7 +3931,7 @@ int P4InputVF::getVFIndex_VV2(const double *yy)
 // ---------------------------------------------------------------------
 //          getFindDlg
 // ---------------------------------------------------------------------
-P4FindDlg *P4InputVF::getFindDlg()
+P4FindDlg *P4InputVF::getFindDlgPtr()
 {
     if (findDlg_)
         return findDlg_.get();
@@ -3941,10 +3941,61 @@ P4FindDlg *P4InputVF::getFindDlg()
 // ---------------------------------------------------------------------
 //          setFindDlg
 // ---------------------------------------------------------------------
-void setFindDlg(P4FindDlg *newdlg) {
+void P4InputVF::setFindDlg(P4FindDlg *newdlg)
+{
     if (newdlg != nullptr) {
-        findDlg_ = std::make_unique<P4FindDlg>(newdlg);
+        // redefining could destroy the object if it's the same
+        if (newdlg != findDlg_.get())
+            findDlg_ = std::make_unique<P4FindDlg>(newdlg);
     } else {
         findDlg_.reset();
+    }
+}
+
+// ---------------------------------------------------------------------
+//          getGcfDlgPtr
+// ---------------------------------------------------------------------
+P4GcfDlg *P4InputVF::getGcfDlgPtr()
+{
+    if (gcfDlg_)
+        return gcfDlg_.get();
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------
+//          setGcfDlg
+// ---------------------------------------------------------------------
+void P4InputVF::setGcfDlg(P4GcfDlg *newdlg)
+{
+    if (newdlg != nullptr) {
+        // redefining could destroy the object if it's the same
+        if (newdlg != gcfDlg_.get())
+            gcfDlg_ = std::make_unique<P4GcfDlg>(newdlg);
+    } else {
+        gcfDlg_.reset();
+    }
+}
+
+// ---------------------------------------------------------------------
+//          getIsoclinesDlgPtr
+// ---------------------------------------------------------------------
+P4IsoclinesDlg *P4InputVF::getIsoclinesDlgPtr()
+{
+    if (isoclinesDlg_)
+        return isoclinesDlg_.get();
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------
+//          setIsoclinesDlg
+// ---------------------------------------------------------------------
+void P4InputVF::setIsoclinesDlg(P4IsoclinesDlg *newdlg)
+{
+    if (newdlg != nullptr) {
+        // redefining could destroy the object if it's the same
+        if (newdlg != isoclinesDlg_.get())
+            isoclinesDlg_ = std::make_unique<P4IsoclinesDlg>(newdlg);
+    } else {
+        isoclinesDlg_.reset();
     }
 }
