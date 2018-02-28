@@ -85,9 +85,10 @@ P4VFSelectDlg::P4VFSelectDlg(std::shared_ptr<P4FindDlg> finddlg)
                      &P4VFSelectDlg::onBtnDel);
     QObject::connect(btn_p4config_.get(), &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnP5Config);
-    QObject::connect(cbb_vfselect_.get(), static_cast<void (QComboBox::*)(int)>(
-                                        &QComboBox::currentIndexChanged),
-                     this, &P4VFSelectDlg::onVFSelectionChanged);
+    QObject::connect(
+        cbb_vfselect_.get(),
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &P4VFSelectDlg::onVFSelectionChanged);
 
     setP4WindowTitle(this, "P4 Vector Field Selection");
 
@@ -238,9 +239,10 @@ bool P4VFSelectDlg::checkPlotWindowClosed()
         parent_->parent_->closePlotWindow();
         return true;
     }
-    QMessageBox::critical(this, "P4", "Please close the plot window before "
-                                      "changing the piecewise "
-                                      "configuration!\n");
+    QMessageBox::critical(this, "P4",
+                          "Please close the plot window before "
+                          "changing the piecewise "
+                          "configuration!\n");
     return false;
 }
 
@@ -266,6 +268,9 @@ void P4VFSelectDlg::closeConfigWindow()
     }
 }
 
-P4SeparatingCurvesDlg *P4VFSelectDlg::getWinCurves() {
-    return win_curves_.get();
+P4SeparatingCurvesDlg *P4VFSelectDlg::getWinCurvesPtr()
+{
+    if (win_curves_)
+        return win_curves_.get();
+    return nullptr;
 }
