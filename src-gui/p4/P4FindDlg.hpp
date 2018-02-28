@@ -35,13 +35,13 @@ class P4FindDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4FindDlg(P4StartDlg &startwindow);
+    P4FindDlg(P4StartDlg *startwindow);
     void getDataFromDlg();
 
     P4VFSelectDlg *getVfSelectWindow();
 
   private:
-    P4StartDlg &parent_;
+    P4StartDlg *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QBoxLayout> superLayout_;

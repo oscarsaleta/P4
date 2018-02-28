@@ -36,8 +36,8 @@
 #include <QRadioButton>
 #include <QSettings>
 
-P4FindDlg::P4FindDlg(P4StartDlg &startdlg)
-    : QWidget{&startdlg}, parent_{startdlg}
+P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
+    : QWidget{startdlg}, parent_{startdlg}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -291,13 +291,13 @@ P4FindDlg::P4FindDlg(P4StartDlg &startdlg)
 
     // show vector field dialog
     if (!vfWindow_) {
-        vfWindow_ = std::make_unique<P4VectorFieldDlg>(*this);
+        vfWindow_ = std::make_unique<P4VectorFieldDlg>(this);
         vfWindow_->show();
         mainLayout_->addWidget(vfWindow_.get());
     }
     // show params dialog
     if (!paramsWindow_) {
-        paramsWindow_ = std::make_unique<P4ParamsDlg>(*this);
+        paramsWindow_ = std::make_unique<P4ParamsDlg>(this);
         vfSelectWindow_ = std::make_unique<P4VFSelectDlg>(*this);
         paramsWindow_->show();
         vfSelectWindow_->show();
