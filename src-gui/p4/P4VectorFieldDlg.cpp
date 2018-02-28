@@ -34,8 +34,8 @@
 #include <QScrollBar>
 #include <QSpinBox>
 
-P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg &finddlg)
-    : QWidget{&finddlg}, parent_{finddlg}
+P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
+    : QWidget{finddlg}, parent_{finddlg}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -269,7 +269,7 @@ void P4VectorFieldDlg::editingFinished()
 {
     getDataFromDlg();
     // TODO: write getter for this
-    auto *p = parent_.getVfSelectWindowPtr();
+    auto *p = parent_->getVfSelectWindowPtr();
     if (p != nullptr) {
         auto *q = p->getWinCurvesPtr();
         if (q != nullptr)
