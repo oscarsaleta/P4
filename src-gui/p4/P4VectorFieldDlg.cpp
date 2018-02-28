@@ -35,7 +35,7 @@
 #include <QSpinBox>
 
 P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg &finddlg)
-    : QWidget{finddlg.get()}, parent_{finddlg}
+    : QWidget{&finddlg}, parent_{finddlg}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
