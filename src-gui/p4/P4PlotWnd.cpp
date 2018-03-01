@@ -284,15 +284,15 @@ void P4PlotWnd::signalEvaluated()
 
 void P4PlotWnd::onBtnClose()
 {
-    auto e1 =
-        std::make_unique<P4Event>(QEvent::Type(TYPE_CLOSE_PLOTWINDOW), nullptr);
+    auto e1 = std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
     gP4app->postEvent(parent_, e1.release());
 }
 
 bool P4PlotWnd::close()
 {
-    auto e1 =
-        std::make_unique<P4Event>(QEvent::Type(TYPE_CLOSE_PLOTWINDOW), nullptr);
+    auto e1 = std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
     gP4app->postEvent(parent_, e1.release());
 
     return QMainWindow::close();
