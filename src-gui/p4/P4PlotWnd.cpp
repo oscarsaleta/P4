@@ -543,10 +543,10 @@ void P4PlotWnd::customEvent(QEvent *_e)
 
 void P4PlotWnd::hideEvent(QHideEvent *h)
 {
-    UNUSED(h);
     if (!isMinimized()) {
-        P4Event *e1 = new P4Event((QEvent::Type)TYPE_CLOSE_PLOTWINDOW, nullptr);
-        gP4app->postEvent(parent_, e1);
+        auto e1 = std::make_unique<P4Event>(
+            static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
+        gP4app->postEvent(parent_, e1.get());
     }
 }
 
