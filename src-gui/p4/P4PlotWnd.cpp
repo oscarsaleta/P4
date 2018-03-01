@@ -284,16 +284,16 @@ void P4PlotWnd::signalEvaluated()
 
 void P4PlotWnd::onBtnClose()
 {
-    std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-        static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    gP4app->postEvent(parent_, e1);
+    auto e1 =
+        std::make_unique<P4Event>(QEvent::Type(TYPE_CLOSE_PLOTWINDOW), nullptr);
+    gP4app->postEvent(parent_, e1.release());
 }
 
 bool P4PlotWnd::close()
 {
-    std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-        static_cast<QEvent::Type> TYPE_CLOSE_PLOTWINDOW, nullptr)};
-    gP4app->postEvent(parent_, e1);
+    auto e1 =
+        std::make_unique<P4Event>(QEvent::Type(TYPE_CLOSE_PLOTWINDOW), nullptr);
+    gP4app->postEvent(parent_, e1.release());
 
     return QMainWindow::close();
 }
@@ -466,14 +466,14 @@ void P4PlotWnd::closeZoomWindow(int id)
 
 void P4PlotWnd::customEvent(QEvent *_e)
 {
-    P4Event e{static_cast<P4Event>(*_e)};  // NOTE other cast could be needed
+    P4Event *e = reinterpret_cast<P4Event *>(*_e);
     double pcoord[3];
     double ucoord[2];
     double ucoord0[2];
     double ucoord1[2];
     double x, y, x0, y0, x1, y1;
 
-    switch (e.type()) {
+    switch (e->type()) {
     case TYPE_OPENZOOMWINDOW:
         double *data1{static_cast<double *>(e.data())};
         openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
@@ -491,7 +491,6 @@ void P4PlotWnd::customEvent(QEvent *_e)
         break;
     case TYPE_SELECT_ORBIT:
         DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e.data())};
-        p = (struct DOUBLEPOINT *)(e.data());
         x = p->x;
         y = p->y;
         // mouse clicked in position (x,y)  (world coordinates)
@@ -546,7 +545,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
     if (!isMinimized()) {
         auto e1 = std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-        gP4app->postEvent(parent_, e1.get());
+        gP4app->postEvent(parent_, e1.release());
     }
 }
 
