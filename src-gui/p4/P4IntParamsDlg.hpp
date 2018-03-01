@@ -44,7 +44,7 @@ class P4IntParamsDlg : public QWidget
 
   private:
     bool changed_;
-    std::unique_ptr<P4FindDlg> parent_;
+
     std::unique_ptr<QBoxLayout> mainLayout_;
 
     std::unique_ptr<QPushButton> btn_reset_;
@@ -67,8 +67,8 @@ class P4IntParamsDlg : public QWidget
     std::unique_ptr<QLabel> lbl_tolerance_;
 
     std::unique_ptr<QSpinBox> spin_numpoints_;
-    bool readFloatField(std::unique_ptr<QLineEdit>, double *, double, double,
-                        double);
+
+    bool readFloatField(QLineEdit *, double *, double, double, double);
 
   public slots:
     void markBad(QLineEdit *edt);

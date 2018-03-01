@@ -19,11 +19,11 @@
 
 #include "P4IntParamsDlg.hpp"
 
+#include "P4Application.hpp"
+#include "P4InputVF.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "P4InputVF.hpp"
 #include "main.hpp"
-#include "P4Application.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -40,59 +40,60 @@ P4IntParamsDlg::P4IntParamsDlg()
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    std::unique_ptr<QLabel> kindlabel{new QLabel("Vector Field: ", this)};
-    kindlabel->setFont(*(gP4app->boldFont_));
-    std::unique_ptr<QButtonGroup> btngrp1{new QButtonGroup(this)};
-    btn_org_.reset(new QRadioButton("Original", this));
-    btn_red_.reset(new QRadioButton("Reduced", this));
-    btngrp1->addButton(btn_org_);
-    btngrp1->addButton(btn_red_);
+    auto kindlabel = std::make_unique<QLabel>("Vector Field: ", this);
+    kindlabel->setFont(gP4app->getBoldFont());
+    auto btngrp1 = std::make_unique<QButtonGroup>(this);
+    btn_org_ = std::make_unique<QRadioButton>("Original", this);
+    btn_red_ = std::make_unique<QRadioButton>("Reduced", this);
+    btngrp1->addButton(btn_org_.get());
+    btngrp1->addButton(btn_red_.get());
 
-    std::unique_ptr<QLabel> typelabel{new QLabel("Appearance: ", this)};
-    typelabel->setFont(*(gP4app->boldFont_));
-    std::unique_ptr<QButtonGroup> btngrp2{new QButtonGroup(this)};
-    btn_dots_.reset(new QRadioButton("Dots", this));
-    btn_dashes_.reset(new QRadioButton("Dashes", this));
-    btngrp2->addButton(btn_dots_);
-    btngrp2->addButton(btn_dashes_);
+    auto typelabel = std::make_unique<QLabel>("Appearance: ", this);
+    typelabel->setFont(gP4app->getBoldFont());
+    auto btngrp2 = std::make_unique<QButtonGroup>(this);
+    btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
+    btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
+    btngrp2->addButton(btn_dots_.get());
+    btngrp2->addButton(btn_dashes_.get());
 
-    lbl_stepsize_.reset(new QLabel("Step Size:", this));
-    lbl_stepsize_->setFont(*(gP4app->boldFont_));
-    edt_stepsize_.reset(new QLineEdit("0.01", this));
+    lbl_stepsize_ = std::make_unique<QLabel>("Step Size:", this);
+    lbl_stepsize_->setFont(gP4app->getBoldFont());
+    edt_stepsize_ = std::make_unique<QLineEdit>("0.01", this);
 
-    lbl0_curstep_.reset(new QLabel("Current Step Size:", this));
-    lbl0_curstep_->setFont(*(gP4app->boldFont_));
-    lbl_curstep_.reset(new QLabel("0.01", this));
+    lbl0_curstep_ = std::make_unique<QLabel>("Current Step Size:", this);
+    lbl0_curstep_->setFont(gP4app->getBoldFont());
+    lbl_curstep_ = std::make_unique<QLabel>("0.01", this);
 
-    lbl_maxstep_.reset(new QLabel("Max Step Size:", this));
-    lbl_maxstep_->setFont(*(gP4app->boldFont_));
-    edt_maxstep_.reset(new QLineEdit("0.1", this));
+    lbl_maxstep_ = std::make_unique<QLabel>("Max Step Size:", this);
+    lbl_maxstep_->setFont(gP4app->getBoldFont());
+    edt_maxstep_ = std::make_unique<QLineEdit>("0.1", this);
 
-    lbl_minstep_.reset(new QLabel("Min Step Size:", this));
-    lbl_minstep_->setFont(*(gP4app->boldFont_));
-    edt_minstep_.reset(new QLineEdit("1e-06", this));
+    lbl_minstep_ = std::make_unique<QLabel>("Min Step Size:", this);
+    lbl_minstep_->setFont(gP4app->getBoldFont());
+    edt_minstep_ = std::make_unique<QLineEdit>("1e-06", this);
 
-    lbl_branchminstep_.reset(new QLabel("Branching Step Size:", this));
-    lbl_branchminstep_->setFont(*(gP4app->boldFont_));
-    edt_branchminstep_.reset(new QLineEdit("1e-03", this));
+    lbl_branchminstep_ = std::make_unique<QLabel>("Branching Step Size:", this);
+    lbl_branchminstep_->setFont(gP4app->getBoldFont());
+    edt_branchminstep_ = std::make_unique<QLineEdit>("1e-03", this);
 
-    lbl_tolerance_.reset(new QLabel("Tolerance:", this));
-    lbl_tolerance_->setFont(*(gP4app->boldFont_));
-    edt_tolerance_.reset(new QLineEdit("1e-06", this));
+    lbl_tolerance_ = std::make_unique<QLabel>("Tolerance:", this);
+    lbl_tolerance_->setFont(gP4app->getBoldFont());
+    edt_tolerance_ = std::make_unique<QLineEdit>("1e-06", this);
 
-    std::unique_ptr<QLabel> lbl_numpoints{new QLabel("# Points:", this)};
-    lbl_numpoints->setFont(*(gP4app->boldFont_));
-    spin_numpoints_.reset(new QSpinBox(this));
+    auto lbl_numpoints = std::make_unique<QLabel>("# Points:", this);
+    lbl_numpoints->setFont(gP4app->getBoldFont());
+    spin_numpoints_ = std::make_unique<QSpinBox>(this);
     spin_numpoints_->setMinimum(MIN_INTPOINTS);
     spin_numpoints_->setMaximum(MAX_INTPOINTS);
 
-    btn_reset_.reset(new QPushButton("&Reset", this));
+    btn_reset_ = std::make_unique<QPushButton>("&Reset", this);
 
 #ifdef TOOLTIPS
     btn_org_->setToolTip("Integrate orbits w.r.t. original vector field");
-    btn_red_->setToolTip("Integrate orbits w.r.t. reduced vector field,\n"
-                         "removing common factors.\n"
-                         "This is disabled if there are no common factors.");
+    btn_red_->setToolTip(
+        "Integrate orbits w.r.t. reduced vector field,\n"
+        "removing common factors.\n"
+        "This is disabled if there are no common factors.");
     btn_dots_->setToolTip("Plot individual points during orbit-integration");
     btn_dashes_->setToolTip(
         "Connect orbit-integration points with small line segments");
@@ -109,97 +110,100 @@ P4IntParamsDlg::P4IntParamsDlg()
 #endif
 
     // layout
-    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QHBoxLayout> kindLayout{new QHBoxLayout()};
-    kindLayout->addWidget(kindlabel);
-    kindLayout->addWidget(btn_org_);
-    kindLayout->addWidget(btn_red_);
+    auto kindLayout = std::make_unique<QHBoxLayout>();
+    kindLayout->addWidget(kindlabel.get());
+    kindLayout->addWidget(btn_org_.get());
+    kindLayout->addWidget(btn_red_.get());
 
     mainLayout_->addLayout(kindLayout);
 
-    std::unique_ptr<QHBoxLayout> typeLayout{new QHBoxLayout()};
-    typeLayout->addWidget(typelabel);
-    typeLayout->addWidget(btn_dots_);
-    typeLayout->addWidget(btn_dashes_);
+    auto typeLayout = std::make_unique<QHBoxLayout>();
+    typeLayout->addWidget(typelabel.get());
+    typeLayout->addWidget(btn_dots_.get());
+    typeLayout->addWidget(btn_dashes_.get());
     mainLayout_->addLayout(typeLayout);
 
-    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
-    layout2->addWidget(lbl_stepsize_);
-    layout2->addWidget(edt_stepsize_);
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(lbl_stepsize_.get());
+    layout2->addWidget(edt_stepsize_.get());
     layout2->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout3{new QHBoxLayout()};
-    layout3->addWidget(lbl0_curstep_);
-    layout3->addWidget(lbl_curstep_);
+    auto layout3 = std::make_unique<QHBoxLayout>();
+    layout3->addWidget(lbl0_curstep_.get());
+    layout3->addWidget(lbl_curstep_.get());
     layout3->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout4{new QHBoxLayout()};
-    layout4->addWidget(lbl_maxstep_);
-    layout4->addWidget(edt_maxstep_);
+    auto layout4 = std::make_unique<QHBoxLayout>();
+    layout4->addWidget(lbl_maxstep_.get());
+    layout4->addWidget(edt_maxstep_.get());
     layout4->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout5{new QHBoxLayout()};
-    layout5->addWidget(lbl_minstep_);
-    layout5->addWidget(edt_minstep_);
+    auto layout5 = std::make_unique<QHBoxLayout>();
+    layout5->addWidget(lbl_minstep_.get());
+    layout5->addWidget(edt_minstep_.get());
     layout5->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout5b{new QHBoxLayout()};
-    layout5b->addWidget(lbl_branchminstep_);
-    layout5b->addWidget(edt_branchminstep_);
+    auto layout5b = std::make_unique<QHBoxLayout>();
+    layout5b->addWidget(lbl_branchminstep_.get());
+    layout5b->addWidget(edt_branchminstep_.get());
     layout5b->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout6{new QHBoxLayout()};
-    layout6->addWidget(lbl_tolerance_);
-    layout6->addWidget(edt_tolerance_);
+    auto layout6 = std::make_unique<QHBoxLayout>();
+    layout6->addWidget(lbl_tolerance_.get());
+    layout6->addWidget(edt_tolerance_.get());
     layout6->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout7{new QHBoxLayout()};
-    layout7->addWidget(lbl_numpoints);
-    layout7->addWidget(spin_numpoints_);
+    auto layout7 = std::make_unique<QHBoxLayout>();
+    layout7->addWidget(lbl_numpoints.get());
+    layout7->addWidget(spin_numpoints_.get());
     layout7->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> layout8{new QHBoxLayout()};
+    auto layout8 = std::make_unique<QHBoxLayout>();
     layout8->addStretch(1);
-    layout8->addWidget(btn_reset_);
+    layout8->addWidget(btn_reset_.get());
     layout8->addStretch(1);
 
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout3);
-    mainLayout_->addLayout(layout4);
-    mainLayout_->addLayout(layout5);
-    mainLayout_->addLayout(layout5b);
-    mainLayout_->addLayout(layout6);
-    mainLayout_->addLayout(layout7);
-    mainLayout_->addLayout(layout8);
+    mainLayout_->addLayout(layout2.get());
+    mainLayout_->addLayout(layout3.get());
+    mainLayout_->addLayout(layout4.get());
+    mainLayout_->addLayout(layout5.get());
+    mainLayout_->addLayout(layout5b.get());
+    mainLayout_->addLayout(layout6.get());
+    mainLayout_->addLayout(layout7.get());
+    mainLayout_->addLayout(layout8.get());
     mainLayout_->addStretch(0);
 
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     // connections
-    connect(btn_org_, &QRadioButton::toggled, this, [=]() { changed_ = true; });
-    connect(btn_red_, &QRadioButton::toggled, this, [=]() { changed_ = true; });
-    connect(btn_dots_, &QRadioButton::toggled, this,
-            [=]() { changed_ = true; });
-    connect(btn_dashes_, &QRadioButton::toggled, this,
-            [=]() { changed_ = true; });
+    QObject::connect(btn_org_.get(), &QRadioButton::toggled, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(btn_red_.get(), &QRadioButton::toggled, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(btn_dots_.get(), &QRadioButton::toggled, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(btn_dashes_.get(), &QRadioButton::toggled, this,
+                     [=]() { changed_ = true; });
 
-    connect(edt_stepsize_, &QLineEdit::textChanged, this,
-            [=]() { changed_ = true; });
-    connect(edt_maxstep_, &QLineEdit::textChanged, this,
-            [=]() { changed_ = true; });
-    connect(edt_minstep_, &QLineEdit::textChanged, this,
-            [=]() { changed_ = true; });
-    connect(edt_branchminstep_, &QLineEdit::textChanged, this,
-            [=]() { changed_ = true; });
-    connect(edt_tolerance_, &QLineEdit::textChanged, this,
-            [=]() { changed_ = true; });
-    connect(spin_numpoints_,
-            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-            [=]() { changed_ = true; });
+    QObject::connect(edt_stepsize_.get(), &QLineEdit::textChanged, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(edt_maxstep_.get(), &QLineEdit::textChanged, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(edt_minstep_.get(), &QLineEdit::textChanged, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(edt_branchminstep_.get(), &QLineEdit::textChanged, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(edt_tolerance_.get(), &QLineEdit::textChanged, this,
+                     [=]() { changed_ = true; });
+    QObject::connect(
+        spin_numpoints_.get(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        [=]() { changed_ = true; });
 
-    connect(btn_reset_, &QPushButton::clicked, this,
-            &P4IntParamsDlg::on_btn_reset);
+    QObject::connect(btn_reset_.get(), &QPushButton::clicked, this,
+                     &P4IntParamsDlg::on_btn_reset);
 
     // finishing
     updateDlgData();
@@ -207,9 +211,9 @@ P4IntParamsDlg::P4IntParamsDlg()
     setP4WindowTitle(this, "Integration Parameters");
 }
 
-bool P4IntParamsDlg::readFloatField(std::unique_ptr<QLineEdit> edt,
-                                    double &presult, double defvalue,
-                                    double minvalue, double maxvalue)
+bool P4IntParamsDlg::readFloatField(QLineEdit *edt, double &presult,
+                                    double defvalue, double minvalue,
+                                    double maxvalue)
 {
     // returns true in case of error
     QString x;
@@ -229,7 +233,7 @@ bool P4IntParamsDlg::readFloatField(std::unique_ptr<QLineEdit> edt,
     return false;
 }
 
-void P4IntParamsDlg::markBad(std::unique_ptr<QLineEdit> edt)
+void P4IntParamsDlg::markBad(QLineEdit *edt)
 {
     QString t{edt->text()};
     int i;
@@ -242,7 +246,7 @@ void P4IntParamsDlg::markBad(std::unique_ptr<QLineEdit> edt)
     edt->setText(t);
 }
 
-void P4IntParamsDlg::getDataFromDlg(void)
+void P4IntParamsDlg::getDataFromDlg()
 {
     if (!changed_)
         return;
@@ -252,15 +256,17 @@ void P4IntParamsDlg::getDataFromDlg(void)
     gVFResults.config_dashes_ = (btn_dashes_->isChecked()) ? true : false;
 
     changed_ = false;
-    changed_ |= readFloatField(edt_tolerance_, gVFResults.config_tolerance_,
-                               DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
-    changed_ |= readFloatField(edt_minstep_, gVFResults.config_hmi_,
+    changed_ |=
+        readFloatField(edt_tolerance_.get(), gVFResults.config_tolerance_,
+                       DEFAULT_TOLERANCE, MIN_TOLERANCE, MAX_TOLERANCE);
+    changed_ |= readFloatField(edt_minstep_.get(), gVFResults.config_hmi_,
                                DEFAULT_HMI, MIN_HMI, MAX_HMI);
-    changed_ |= readFloatField(edt_maxstep_, gVFResults.config_hma_,
+    changed_ |= readFloatField(edt_maxstep_.get(), gVFResults.config_hma_,
                                DEFAULT_HMA, MIN_HMA, MAX_HMA);
-    changed |= ReadFloatField(edt_branchminstep_, gVFResults.config_branchhmi_,
-                              DEFAULT_BRANCHHMI, MIN_BRANCHHMI, MAX_BRANCHHMI);
-    changed_ |= readFloatField(edt_stepsize_, gVFResults.config_step_,
+    changed |=
+        ReadFloatField(edt_branchminstep_.get(), gVFResults.config_branchhmi_,
+                       DEFAULT_BRANCHHMI, MIN_BRANCHHMI, MAX_BRANCHHMI);
+    changed_ |= readFloatField(edt_stepsize_.get(), gVFResults.config_step_,
                                DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
 
     gVFResults.config_intpoints_ = spin_numpoints_->value();
@@ -275,12 +281,12 @@ void P4IntParamsDlg::getDataFromDlg(void)
                 gVFResults.config_step_ = gVFResults.config_hma_;
             }
             changed_ = true;
-            markBad(edt_stepsize_);
+            markBad(edt_stepsize_.get());
         }
     }
 }
 
-void P4IntParamsDlg::updateDlgData(void)
+void P4IntParamsDlg::updateDlgData()
 {
     QString buf;
 
@@ -296,22 +302,22 @@ void P4IntParamsDlg::updateDlgData(void)
     else
         btn_dots_->toggle();
 
-    buf.sprintf("%g", (float)(gVFResults.config_step_));
+    buf.sprintf("%g", gVFResults.config_step_);
     edt_stepsize_->setText(buf);
 
-    buf.sprintf("%g", (float)(gVFResults.config_currentstep_));
+    buf.sprintf("%g", gVFResults.config_currentstep_);
     lbl_curstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(gVFResults.config_hmi_));
+    buf.sprintf("%g", gVFResults.config_hmi_);
     edt_minstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(gVFResults.config_branchhmi_));
+    buf.sprintf("%g", gVFResults.config_branchhmi_);
     edt_branchminstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(gVFResults.config_hma_));
+    buf.sprintf("%g", gVFResults.config_hma_);
     edt_maxstep_->setText(buf);
 
-    buf.sprintf("%g", (float)(gVFResults.config_tolerance_));
+    buf.sprintf("%g", gVFResults.config_tolerance_);
     edt_tolerance_->setText(buf);
 
     spin_numpoints_->setValue(gVFResults.config_intpoints_);
@@ -329,11 +335,11 @@ void P4IntParamsDlg::updateDlgData(void)
 void P4IntParamsDlg::setCurrentStep(double curstep)
 {
     QString buf;
-    buf.sprintf("%g", (float)curstep);
+    buf.sprintf("%g", curstep);
     lbl_curstep_->setText(buf);
 }
 
-void P4IntParamsDlg::on_btn_reset(void)
+void P4IntParamsDlg::on_btn_reset()
 {
     // maximum step size
     gVFResults.config_hma_ = DEFAULT_HMA;
