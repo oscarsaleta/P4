@@ -35,32 +35,28 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(std::shared_ptr<P4PlotWnd> plt,
-                                         std::shared_ptr<P4WinSphere> sp)
+P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
-      mainSphere_{std::move(sp)}, plotwnd_{std::move(plt)}
+      mainSphere_{sp}, plotwnd_{plt}
 {
     edt_curve_ = std::make_unique<QLineEdit>("", this);
-    std::unique_ptr<QLabel> lbl0{std::make_unique<QLabel>("Curve: ", this)};
+    auto lbl0 = std::make_unique<QLabel>("Curve: ", this);
 
-    std::unique_ptr<QButtonGroup> btngrp{std::make_unique<QButtonGroup>(this)};
+    auto btngrp = std::make_unique<QButtonGroup>(this);
     btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
     btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
-    btngrp->addButton(btn_dots_);
-    btngrp->addButton(btn_dashes_);
-    std::unique_ptr<QLabel> lbl1{
-        std::make_unique<QLabel>("Appearance: ", this)};
+    btngrp->addButton(btn_dots_.get());
+    btngrp->addButton(btn_dashes_.get());
+    auto lbl1 = std::make_unique<QLabel>("Appearance: ", this);
 
     edt_points_ = std::make_unique<QLineEdit>("", this);
-    std::unique_ptr<QLabel> lbl2{
-        std::make_unique<QLabel>("Num. Points: ", this)};
+    auto lbl2 = std::make_unique<QLabel>("Num. Points: ", this);
 
     edt_precis_ = std::make_unique<QLineEdit>("", this);
-    std::unique_ptr<QLabel> lbl3{std::make_unique<QLabel>("Precision: ", this)};
+    auto lbl3 = std::make_unique<QLabel>("Precision: ", this);
 
     edt_memory_ = std::make_unique<QLineEdit>("", this);
-    std::unique_ptr<QLabel> lbl4{
-        std::make_unique<QLabel>("Max. Memory: ", this)};
+    auto lbl4 = std::make_unique<QLabel>("Max. Memory: ", this);
 
     btnEvaluate_ = std::make_unique<QPushButton>("Evaluate", this);
     btnPlot_ = std::make_unique<QPushButton>("&Plot", this);
@@ -76,67 +72,64 @@ P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(std::shared_ptr<P4PlotWnd> plt,
     btnPlot_->setToolTip("Plot curve (using symbolic manipulator)");
     btnDelAll_->setToolTip("Delete all curves");
     QString ttip;
-    ttip = QString::fromStdString("Number of points. Must be between " +
-                                  std::to_string(MIN_CURVEPOINTS) + " and " +
-                                  std::to_string(MAX_CURVEPOINTS));
+    ttip.sprintf("Number of points. Must be between %d and %d.",
+                 MIN_CURVEPOINTS, MAX_CURVEPOINTS);
     edt_points_->setToolTip(ttip);
-    ttip = QString::fromStdString("Required precision. Must be between " +
-                                  std::to_string(MIN_CURVEPRECIS) + " and " +
-                                  std::to_string(MAX_CURVEPRECIS));
+    ttip.sprintf("Required precision. Must be between %d and %d.",
+                 MIN_CURVEPRECIS, MAX_CURVEPRECIS);
     edt_precis_->setToolTip(ttip);
-    ttip = QString::fromStdString(
-        "Maximum amount of memory (in kilobytes) "
-        "spent on plotting GCF.\nMust be between " +
-        std::to_string(MIN_CURVEMEMORY) + " and " +
-        std::to_string(MAX_CURVEMEMORY));
+    ttip.sprintf(
+        "Maximum amount of memory (in kilobytes) spent on plotting GCF.\n"
+        "Must be between %d and %d.",
+        MIN_CURVEMEMORY, MAX_CURVEMEMORY);
     edt_memory_->setToolTip(ttip);
 #endif
 
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QHBoxLayout> layout0{std::make_unique<QHBoxLayout>()};
-    layout0->addWidget(lbl1);
-    layout0->addWidget(btn_dots_);
-    layout0->addWidget(btn_dashes_);
+    auto layout0 = std::make_unique<QHBoxLayout>();
+    layout0->addWidget(lbl1.get());
+    layout0->addWidget(btn_dots_.get());
+    layout0->addWidget(btn_dashes_.get());
 
-    std::unique_ptr<QGridLayout> layout1{std::make_unique<QGridLayout>()};
-    layout1->addWidget(lbl0, 0, 0);
-    layout1->addWidget(edt_curve_, 0, 1);
-    layout1->addWidget(lbl2, 1, 0);
-    layout1->addWidget(edt_points_, 1, 1);
-    layout1->addWidget(lbl3, 2, 0);
-    layout1->addWidget(edt_precis_, 2, 1);
-    layout1->addWidget(lbl4, 3, 0);
-    layout1->addWidget(edt_memory_, 3, 1);
+    auto layout1 = std::make_unique<QGridLayout>();
+    layout1->addWidget(lbl0.get(), 0, 0);
+    layout1->addWidget(edt_curve_.get(), 0, 1);
+    layout1->addWidget(lbl2.get(), 1, 0);
+    layout1->addWidget(edt_points_.get(), 1, 1);
+    layout1->addWidget(lbl3.get(), 2, 0);
+    layout1->addWidget(edt_precis_.get(), 2, 1);
+    layout1->addWidget(lbl4.get(), 3, 0);
+    layout1->addWidget(edt_memory_.get(), 3, 1);
 
-    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
-    layout2->addWidget(btnEvaluate_);
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(btnEvaluate_.get());
     layout2->addStretch(0);
-    layout2->addWidget(btnDelLast_);
+    layout2->addWidget(btnDelLast_.get());
 
-    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
-    layout3->addWidget(btnPlot_);
+    auto layout3 = std::make_unique<QHBoxLayout>();
+    layout3->addWidget(btnPlot_.get());
     layout3->addStretch(0);
-    layout3->addWidget(btnDelAll_);
+    layout3->addWidget(btnDelAll_.get());
 
-    mainLayout_->addLayout(layout0);
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout0.get());
+    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(layout2.get());
+    mainLayout_->addLayout(layout3.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     // connections
 
-    QObject::connect(btnEvaluate_, &QPushButton::clicked, this,
+    QObject::connect(btnEvaluate_.get(), &QPushButton::clicked, this,
                      &P4ArbitraryCurveDlg::onBtnEvaluate);
-    QObject::connect(btnPlot_, &QPushButton::clicked, this,
+    QObject::connect(btnPlot_.get(), &QPushButton::clicked, this,
                      &P4ArbitraryCurveDlg::onBtnPlot);
-    QObject::connect(btnDelLast_, &QPushButton::clicked, this,
+    QObject::connect(btnDelLast_.get(), &QPushButton::clicked, this,
                      &P4ArbitraryCurveDlg::onBtnDelLast);
-    QObject::connect(btnDelAll_, &QPushButton::clicked, this,
+    QObject::connect(btnDelAll_.get(), &QPushButton::clicked, this,
                      &P4ArbitraryCurveDlg::onBtnDelAll);
 
     // finishing
@@ -192,43 +185,38 @@ void P4ArbitraryCurveDlg::onBtnEvaluate()
     gThisVF->arbitraryCurve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
-    // a list of P4POLYNOM2
-    gThisVF->curveDlg_ = this;
+    // a list of p4polynom::term2
+    gThisVF->setArbitraryCurveDlg(this);
     gThisVF->evaluateCurveTable();
     btnPlot_->setEnabled(true);
 }
 
 void P4ArbitraryCurveDlg::onBtnPlot()
 {
-    bool dashes, result;
     int points, precis, memory;
+    bool convertok, result;
+    bool dashes{btn_dashes_->isChecked()};
+    bool ok{true};
 
-    bool ok;
-    QString buf;
-
-    dashes = btn_dashes_->isChecked();
-
-    ok = true;
-
-    buf = edt_points_->text();
-    points = buf.toInt();
-    if (points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
+    QString buf{edt_points_->text()};
+    points = buf.toInt(&convertok);
+    if (!convertok || points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
         buf += " ???";
         edt_points_->setText(buf);
         ok = false;
     }
 
     buf = edt_precis_->text();
-    precis = buf.toInt();
-    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
+    precis = buf.toInt(&convertok);
+    if (!convertok || precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
         buf += " ???";
         edt_precis_->setText(buf);
         ok = false;
     }
 
     buf = edt_memory_->text();
-    memory = buf.toInt();
-    if (memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
+    memory = buf.toInt(&convertok);
+    if (!convertok || memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
         buf += " ???";
         edt_memory_->setText(buf);
         ok = false;
@@ -258,7 +246,7 @@ void P4ArbitraryCurveDlg::onBtnPlot()
 
     btnPlot_->setEnabled(false);
 
-    gThisVF->curveDlg_ = this;
+    gThisVF->setArbitraryCurveDlg(this);
     result = evalCurveStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btnPlot_->setEnabled(true);

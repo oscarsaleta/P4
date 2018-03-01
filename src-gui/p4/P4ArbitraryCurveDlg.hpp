@@ -36,14 +36,13 @@ class P4ArbitraryCurveDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4ArbitraryCurveDlg(std::shared_ptr<P4PlotWnd>,
-                        std::shared_ptr<P4WinSphere>);
+    P4ArbitraryCurveDlg(P4PlotWnd *, P4WinSphere *);
     void reset();
     void finishCurveEvaluation();
 
   private:
-    std::shared_ptr<P4WinSphere> mainSphere_;
-    std::shared_ptr<P4PlotWnd> plotwnd_;
+    P4WinSphere *mainSphere_;
+    P4PlotWnd *plotwnd_;
 
     std::unique_ptr<QPushButton> btnEvaluate_;
     std::unique_ptr<QPushButton> btnPlot_;
@@ -59,9 +58,9 @@ class P4ArbitraryCurveDlg : public QWidget
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
-    int evaluating_points_;
-    int evaluating_memory_;
-    int evaluating_precision_;
+    int evaluating_points_{false};
+    int evaluating_memory_{false};
+    int evaluating_precision_{false};
 
   public slots:
     void onBtnEvaluate();
