@@ -43,22 +43,22 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 
     auto p4title =
         std::make_unique<QLabel>("Find and Examine Singular Points", this);
-    p4title->setFont(*(gP4app->titleFont_));
+    p4title->setFont(gP4app->getStandardFont());
 
     auto actlabel = std::make_unique<QLabel>("File Action:  ", this);
-    actlabel->setFont(*(gP4app->boldFont_));
+    actlabel->setFont(gP4app->getBoldFont());
     btn_actionrun_ = std::make_unique<QRadioButton>("Run File", this);
     btn_actionprep_ = std::make_unique<QRadioButton>("Prepare File", this);
 
     auto singpoints = std::make_unique<QLabel>("Singular points:  \n\n", this);
-    singpoints->setFont(*(gP4app->boldFont_));
+    singpoints->setFont(gP4app->getBoldFont());
     btn_all_ = std::make_unique<QRadioButton>("All ", this);
     btn_fin_ = std::make_unique<QRadioButton>("Finite ", this);
     btn_inf_ = std::make_unique<QRadioButton>("Infinite ", this);
     btn_one_ = std::make_unique<QRadioButton>("One ", this);
 
     auto saveall = std::make_unique<QLabel>("Save all information: ", this);
-    saveall->setFont(*(gP4app->boldFont_));
+    saveall->setFont(gP4app->getBoldFont());
     btn_yes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_no_ = std::make_unique<QRadioButton>("No", this);
 
