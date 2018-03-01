@@ -177,8 +177,9 @@ class P4WinSphere : public QWidget
     void updatePointSelection();
 
   private:
-    std::shared_ptr<QWidget> parentWnd_;
-    std::shared_ptr<QStatusBar> msgBar_;
+    QWidget *parentWnd_;
+    QStatusBar *msgBar_;
+    
     bool iszoom_;
     bool reverseYAxis_;  // when calculating coordinates: this determines
                          // orientation of horizontal axis.  Normally false,

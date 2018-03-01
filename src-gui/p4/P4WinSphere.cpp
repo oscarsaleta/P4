@@ -19,6 +19,7 @@
 
 #include "P4WinSphere.hpp"
 
+#include "P4Application.hpp"
 #include "P4Event.hpp"
 #include "P4InputVF.hpp"
 #include "P4PrintDlg.hpp"
@@ -32,7 +33,6 @@
 #include "math_orbits.hpp"
 #include "math_p4.hpp"
 #include "math_separatrice.hpp"
-#include "P4Application.hpp"
 #include "plot_points.hpp"
 #include "plot_tools.hpp"
 #include "print_bitmap.hpp"
@@ -76,8 +76,7 @@ int P4WinSphere::sM_numSpheres{0};
 
 P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
                          double x1, double y1, double x2, double y2)
-    : QWidget(parent), parentWnd_{std::make_shared<QWidget>(parent)},
-      msgBar_{std::make_shared<QStatusBar>(bar)}
+    : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}
 {
     reverseYAxis_ = false;
     isPainterCacheDirty_ = true;
@@ -175,52 +174,52 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // F: integrate orbit forwards in time
             data1 = std::make_unique<int>(1);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_C:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // C: continue integrate orbit
             data1 = std::make_unique<int>(0);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         } else if (bs == Qt::ShiftModifier ||
                    bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+C:  continue integrating separatrice
             data1 = std::make_unique<int>(0);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_B:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // B: integrate orbit backwards in time
             data1 = std::make_unique<int>(-1);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_D:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // D: delete orbit
             data1 = std::make_unique<int>(2);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_A:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // A: delete all orbits
             data1 = std::make_unique<int>(3);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_N:
@@ -228,9 +227,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+N: select next separatrice
             data1 = std::make_unique<int>(3);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_I:
@@ -238,9 +237,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+I: integrate next separatrice
             data1 = std::make_unique<int>(2);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_I:
@@ -248,9 +247,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+S: start integrate separatrice
             data1 = std::make_unique<int>(1);
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     }
@@ -898,14 +897,14 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
             // normally, start integrating new orbit at the chosen point.
             // However, when the limit cycle window is open, select the first
             // and second point of a transverse section.
-            std::unique_ptr<DOUBLEPOINT> data1 = std::make_unique<DOUBLEPOINT>{
-                coWorldX(e->x()), coWorldY(e->y())};
+            auto data1 = std::make_unique<DOUBLEPOINT>(coWorldX(e->x()),
+                                                       coWorldY(e->y()));
             double pcoord[3];
             if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
-                std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                    static_cast<QEvent::Type>(TYPE_SELECT_ORBIT.get()),
-                    data1.get())};
-                gP4app->postEvent(parentWnd_.get(), e1.get());
+                auto e1 = std::make_unique<P4Event>(
+                    static_cast<QEvent::Type>(TYPE_SELECT_ORBIT),
+                    data1.release());
+                gP4app->postEvent(parentWnd_, e1.release());
             }
         }
     } else if (e->button() == Qt::RightButton) {
@@ -934,9 +933,10 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(zoomAnchor1_.y());
             data1[2] = coWorldX(zoomAnchor2_.x());
             data1[3] = coWorldY(zoomAnchor2_.y());
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW),
+                data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         if (selectingLCSection_) {
             saveAnchorMap();
@@ -947,9 +947,10 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(lcAnchor1_.y());
             data1[2] = coWorldX(lcAnchor2_.x());
             data1[3] = coWorldY(lcAnchor2_.y());
-            std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION), data1.get())};
-            gP4app->postEvent(parentWnd_.get(), e1.get());
+            auto e1 = std::make_unique<P4Event>(
+                static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION),
+                data1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
     }
     QWidget::mouseReleaseEvent(e);
@@ -1034,10 +1035,10 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         selectingTimer_->start(SELECTINGPOINTSPEED);
         msgBar_->showMessage("Search nearest critical point: Found");
 
-        std::unique_ptr<int> data1{std::make_unique<int>(-1)};
-        std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
-            static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.get())};
-        gP4app->postEvent(parentWnd_.get(), e1.get());
+        auto data1 = std::make_unique<int>(-1);
+        auto e1 = std::make_unique<P4Event>(
+            static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
+        gP4app->postEvent(parentWnd_, e1.release());
     }
 }
 
