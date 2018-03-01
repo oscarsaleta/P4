@@ -560,7 +560,7 @@ void P4PlotWnd::getDlgData()
     }
 }
 
-P4IntParamsDlg *P4PlotWnd::getIntParamsWindowPtr()
+P4IntParamsDlg *P4PlotWnd::getIntParamsWindowPtr() const
 {
     if (intParamsWindow_)
         return intParamsWindow_.get();
@@ -575,7 +575,7 @@ void P4PlotWnd::setIntParamsWindow(P4IntParamsDlg *newdlg)
         intParamsWindow_.reset();
 }
 
-P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr()
+P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr() const
 {
     if (viewParamsWindow_)
         return viewParamsWindow_.get();

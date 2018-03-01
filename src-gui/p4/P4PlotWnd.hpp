@@ -48,9 +48,9 @@ class P4PlotWnd : public QMainWindow
   public:
     P4PlotWnd(P4StartDlg *);
 
-    P4IntParamsDlg *getIntParamsWindowPtr();
+    P4IntParamsDlg *getIntParamsWindowPtr() const;
     void setIntParamsWindow(P4IntParamsDlg *);
-    P4ViewDlg *getViewParamsWindowPtr();
+    P4ViewDlg *getViewParamsWindowPtr() const;
     void setViewParamsWindow(P4ViewDlg *);
 
   private:
