@@ -34,8 +34,8 @@
 P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     : QWidget{finddlg}, parent_{finddlg}
 {
-    auto p4title =std::make_unique<QLabel>("Vector Fields:", this);
-    p4title->setFont(*(gP4app->titleFont_));
+    auto p4title = std::make_unique<QLabel>("Vector Fields:", this);
+    p4title->setFont(gP4app->getTitleFont());
 
     cbb_vfselect_ = std::make_unique<QComboBox>(this);
     btn_add_ = std::make_unique<QPushButton>("Add", this);
@@ -267,7 +267,7 @@ void P4VFSelectDlg::closeConfigWindow()
     }
 }
 
-P4SeparatingCurvesDlg *P4VFSelectDlg::getWinCurvesPtr()
+P4SeparatingCurvesDlg *P4VFSelectDlg::getWinCurvesPtr() const
 {
     if (win_curves_)
         return win_curves_.get();
