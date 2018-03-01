@@ -19,12 +19,12 @@
 
 #include "P4VectorFieldDlg.hpp"
 
+#include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4VFParams.hpp"
 #include "custom.hpp"
 #include "main.hpp"
-#include "P4Application.hpp"
 
 #include <QBoxLayout>
 #include <QFormLayout>
@@ -39,55 +39,57 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    std::unique_ptr<QLabel> p4title{
-        std::make_unique<QLabel>("Specify the vector field:", this)};
-    p4title->setFont(*(gP4app->titleFont_));
+    auto p4title = std::make_unique<QLabel>("Specify the vector field:", this);
+    p4title->setFont(gP4app->getTitleFont());
 
     edt_xprime_ = std::make_unique<QLineEdit>(gThisVF->xdot_, this);
-    std::unique_ptr<QLabel> xlabel{std::make_unique<QLabel>("&x' = ", this)};
-    xlabel->setFont(*(gP4app->boldFont_));
+    auto xlabel = std::make_unique<QLabel>("&x' = ", this);
+    xlabel->setFont(gP4app->getBoldFont());
     xlabel->setBuddy(edt_xprime_.get());
 
     edt_yprime_ = std::make_unique<QLineEdit>(gThisVF->ydot_, this);
-    std::unique_ptr<QLabel> ylabel{std::make_unique<QLabel>("&y' = ", this)};
-    ylabel->setFont(*(gP4app->boldFont_));
+    auto ylabel = std::make_unique<QLabel>("&y' = ", this);
+    ylabel->setFont(gP4app->getBoldFont());
     ylabel->setBuddy(edt_yprime_.get());
 
     edt_gcf_ = std::make_unique<QLineEdit>(gThisVF->gcf_, this);
-    std::unique_ptr<QLabel> glabel{std::make_unique<QLabel>("&Gcf: ", this)};
-    glabel->setFont(*(gP4app->boldFont_));
+    auto glabel = std::make_unique<QLabel>("&Gcf: ", this);
+    glabel->setFont(gP4app->getBoldFont());
     glabel->setBuddy(edt_gcf_.get());
 
-    std::unique_ptr<QLabel> plabel{
-        std::make_unique<QLabel>("Number of Parameters: ", this)};
-    plabel->setFont(*(gP4app->boldFont_));
+    auto plabel = std::make_unique<QLabel>("Number of Parameters: ", this);
+    plabel->setFont(gP4app->getBoldFont());
 
     spin_numparams_ = std::make_unique<QSpinBox>(this);
     spin_numparams_->setMinimum(0);
     spin_numparams_->setMaximum(MAXNUMPARAMS);
 
 #ifdef TOOLTIPS
-    edt_xprime_->setToolTip("Enter your differential equations here.\n"
-                            "Use syntax conform to the symbolic manipulator.");
-    edt_yprime_->setToolTip("Enter your differential equations here.\n"
-                            "Use syntax conform to the symbolic manipulator.");
-    edt_gcf_->setToolTip("Enter greatest common factor here.\n"
-                         "Enter \"1\" if you are sure there is no GCF\n"
-                         "Enter \"0\" if you want P4 to search for a GCF");
-    spin_numparams_->setToolTip("If your vector field contains parameters,\n"
-                                "specify the number of parameters here.");
+    edt_xprime_->setToolTip(
+        "Enter your differential equations here.\n"
+        "Use syntax conform to the symbolic manipulator.");
+    edt_yprime_->setToolTip(
+        "Enter your differential equations here.\n"
+        "Use syntax conform to the symbolic manipulator.");
+    edt_gcf_->setToolTip(
+        "Enter greatest common factor here.\n"
+        "Enter \"1\" if you are sure there is no GCF\n"
+        "Enter \"0\" if you want P4 to search for a GCF");
+    spin_numparams_->setToolTip(
+        "If your vector field contains parameters,\n"
+        "specify the number of parameters here.");
 #endif
 
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
     mainLayout_->addWidget(p4title.get());
 
-    std::unique_ptr<QFormLayout> formLayout{std::make_unique<QFormLayout>()};
+    auto formLayout = std::make_unique<QFormLayout>();
     formLayout->addRow(xlabel.get(), edt_xprime_.get());
     formLayout->addRow(ylabel.get(), edt_yprime_.get());
     formLayout->addRow(glabel.get(), edt_gcf_.get());
 
-    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
+    auto layout3 = std::make_unique<QHBoxLayout>();
     layout3->addWidget(plabel.get());
     layout3->addWidget(spin_numparams_.get());
     layout3->addStretch(0);
