@@ -19,7 +19,7 @@
 
 #include "P4Event.hpp"
 
-P4Event::P4Event(QEvent::Type t, void *data) : QEvent(t) { customData_ = data; }
+P4Event::P4Event(QEvent::Type t, void *data) : QEvent{t} { customData_ = data; }
 
 void *P4Event::data() const { return customData_; }
 
