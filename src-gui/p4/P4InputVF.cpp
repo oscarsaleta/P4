@@ -3406,9 +3406,9 @@ bool P4InputVF::evaluateSeparatingCurves()
 void P4InputVF::finishSeparatingCurvesEvaluation()
 {
     evaluatingPiecewiseConfig_ = false;
-    std::unique_ptr<P4Event> e{std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_SIGNAL_CURVESEVALUATED), nullptr)};
-    gP4app->postEvent(gP4startDlg, e.get());
+    auto e = std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_SIGNAL_CURVESEVALUATED), nullptr);
+    gP4app->postEvent(gP4startDlg, e.release());
 }
 
 // -----------------------------------------------------------------------
