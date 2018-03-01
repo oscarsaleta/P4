@@ -51,7 +51,7 @@ int bgColours::CORBIT = YELLOW;
 bool bgColours::PRINT_WHITE_BG = true;
 
 P4StartDlg::P4StartDlg(const QString &autofilename)
-    : QWidget(nullptr, Qt::WA_DeleteOnClose)
+    : QWidget{nullptr, Qt::WA_DeleteOnClose}
 {
     // general initialization
 
@@ -73,9 +73,9 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
     else
         edt_name_ = std::make_unique<QLineEdit>(
             gThisVF->filename_ = autofilename, this);
-    std::unique_ptr<QLabel> p4name{std::make_unique<QLabel>(" &Name: ", this)};
+    auto p4name = std::make_unique<QLabel>(" &Name: ", this);
     p4name->setBuddy(edt_name_.get());
-    p4name->setFont(*(gP4app->boldFont_));
+    p4name->setFont(gP4app->getBoldFont());
 
     edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
@@ -100,7 +100,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
     // define placement of controls
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QHBoxLayout> buttons{std::make_unique<QHBoxLayout>()};
+    auto buttons = std::make_unique<QHBoxLayout>();
     buttons->addWidget(btn_quit_.get());
     buttons->addWidget(btn_view_.get());
     buttons->addWidget(btn_plot_.get());
@@ -108,7 +108,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
 
     mainLayout_->addLayout(buttons.get());
 
-    std::unique_ptr<QHBoxLayout> names{std::make_unique<QHBoxLayout>()};
+    auto names = std::make_unique<QHBoxLayout>();
     names->addWidget(p4name.get());
     names->addWidget(edt_name_.get());
     names->addWidget(btn_browse_.get());
@@ -122,18 +122,17 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
 
     viewMenu_ = std::make_unique<QMenu>(this);
 
-    std::unique_ptr<QAction> ActFin{std::make_unique<QAction>("Fini&te", this)};
-    ActFin->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(ActFin.get(), &QAction::triggered, this,
+    auto actFin = std::make_unique<QAction>("Fini&te", this);
+    actFin->setShortcut(Qt::ALT + Qt::Key_T);
+    QObject::connect(actFin.get(), &QAction::triggered, this,
                      &P4StartDlg::onViewFinite);
-    viewMenu_->addAction(ActFin.get());
+    viewMenu_->addAction(actFin.get());
 
-    std::unique_ptr<QAction> ActInf{
-        std::make_unique<QAction>("&Infinite", this)};
-    ActInf->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(ActInf.get(), &QAction::triggered, this,
+    auto actInf = std::make_unique<QAction>("&Infinite", this);
+    actInf->setShortcut(Qt::ALT + Qt::Key_I);
+    QObject::connect(actInf.get(), &QAction::triggered, this,
                      &P4StartDlg::onViewInfinite);
-    viewMenu_->addAction(ActInf.get());
+    viewMenu_->addAction(actInf.get());
 
     btn_view_->setMenu(viewMenu_);
 
@@ -160,7 +159,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
 
     // show find dialog
     if (!findWindow_) {
-        findWindow_ = std::make_unique<P4FindDlg>(*this);
+        findWindow_ = std::make_unique<P4FindDlg>(this);
         findWindow_->show();
         findWindow_->raise();
         mainLayout_->addWidget(findWindow_);
@@ -326,7 +325,7 @@ void P4StartDlg::onPlot()
     gVFResults.setupCoordinateTransformations();
 
     if (!plotWindow_) {
-        plotWindow_ = std::make_unique<P4PlotWnd>(*this);
+        plotWindow_ = std::make_unique<P4PlotWnd>(this);
     }
 
     plotWindow_->configure();  // configure plot window
@@ -380,7 +379,7 @@ void P4StartDlg::signalEvaluated()
     } else {
         if (viewFiniteWindow_) {
             viewFiniteWindow_->clear();
-            viewFiniteWindow_->setCurrentFont(*(gP4app->boldCourierFont_));
+            viewFiniteWindow_->setCurrentFont(gP4app->getBoldCourierFont());
             viewFiniteWindow_->insertPlainText(
                 "\nA study at the finite region is not available!");
         }
@@ -400,12 +399,12 @@ if (viewInfiniteWindow_) {
         if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
             gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
             // mark: data invalid according to vf information
-            viewInfiniteWindow_->setFont(*(gP4app->courierFont_));
+            viewInfiniteWindow_->setFont(gP4app->getCourierFont());
         }
     } else {
         if (viewInfiniteWindow_) {
             viewInfiniteWindow_->clear();
-            viewInfiniteWindow_->setCurrentFont(*(gP4app->boldCourierFont_));
+            viewInfiniteWindow_->setCurrentFont(gP4app->getBoldCourierFont());
             viewInfiniteWindow_->insertPlainText(
                 "\nA study at infinity is not available!");
         }
@@ -462,10 +461,10 @@ void P4StartDlg::signalLoaded()
 void P4StartDlg::signalChanged()
 {
     if (viewFiniteWindow_) {
-        viewFiniteWindow_->setFont(*(gP4app->courierFont_));
+        viewFiniteWindow_->setFont(gP4app->getCourierFont());
     }
     if (viewInfiniteWindow_) {
-        viewInfiniteWindow_->setFont(*(gP4app->courierFont_));
+        viewInfiniteWindow_->setFont(gP4app->getCourierFont());
     }
     if (plotWindow_) {
         plotWindow_->signalChanged();
@@ -521,7 +520,7 @@ void P4StartDlg::onViewFinite()
 
     if (gThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
         // mark: data invalid according to vf information
-        viewFiniteWindow_->setFont(*(gP4app->courierFont_));
+        viewFiniteWindow_->setFont(gP4app->getCourierFont());
         return;
     }
 }
@@ -556,7 +555,7 @@ void P4StartDlg::onViewInfinite()
     if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
         gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         // mark: data invalid according to vf information
-        viewInfiniteWindow_->setFont(*(gP4app->courierFont_));
+        viewInfiniteWindow_->setFont(gP4app->getCourierFont());
         return;
     }
 }
@@ -578,7 +577,7 @@ void P4StartDlg::showText(QTextEdit &win, const QString &caption,
         shown = true;
         win.hide();
     }
-    win.setFont(*(gP4app->courierFont_));
+    win.setFont(gP4app->getCourierFont());
     win.insertPlainText("");
     win.setReadOnly(true);
 
@@ -594,7 +593,7 @@ void P4StartDlg::showText(QTextEdit &win, const QString &caption,
     setP4WindowTitle(&win, caption);
 
     if (!gThisVF->evaluated_)
-        win.setFont(*(gP4app->courierFont_));
+        win.setFont(gP4app->getCourierFont());
 
     if (shown) {
         win.show();
