@@ -2177,28 +2177,27 @@ void P4InputVF::createProcessWindow()
     if (gP4smallIcon)
         outputWindow_->setWindowIcon(*gP4smallIcon);
 
-    std::unique_ptr<QVBoxLayout> vLayout =
-        std::make_unique<QVBoxLayout>(outputWindow_);
+    auto vLayout = std::make_unique<QVBoxLayout>(outputWindow_);
     vLayout->setSpacing(3);
     vLayout->setContentsMargins(5, 5, 5, 5);
-    std::unique_ptr<QVBoxLayout> vLayout2 = std::make_unique<QVBoxLayout>();
+    auto vLayout2 = std::make_unique<QVBoxLayout>();
     vLayout2->setSpacing(3);
 
     processText_ = std::make_unique<QTextEdit>(outputWindow_);
     processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
     processText_->setWordWrapMode(QTextOption::WrapAnywhere);
-    processText_->setFont(*(gP4app->courierFont_));
+    processText_->setFont(gP4app->getCourierFont());
     processText_->setLineWrapColumnOrWidth(82);
     processText_->setReadOnly(true);
     processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     vLayout2->addWidget(processText_);
 
-    std::unique_ptr<QHBoxLayout> hLayout = std::make_unique<QHBoxLayout>();
+    auto hLayout = std::make_unique<QHBoxLayout>();
     hLayout->setSpacing(6);
 
     hLayout->addStretch();
     terminateProcessButton_ = std::make_unique<QPushButton>("Terminate");
-    terminateProcessButton_->setFont(*(gP4app->boldFont_));
+    terminateProcessButton_->setFont(gP4app->getBoldFont());
     terminateProcessButton_->setToolTip(
         "Terminates the process.  First tries to send a "
         "safe signal to the process.\nIf this does not "
@@ -2207,7 +2206,7 @@ void P4InputVF::createProcessWindow()
     hLayout->addWidget(terminateProcessButton_);
 
     clearProcessButton_ = std::make_unique<QPushButton>("Clear");
-    clearProcessButton_->setFont(*(gP4app->boldFont_));
+    clearProcessButton_->setFont(gP4app->getBoldFont());
     clearProcessButton_->setToolTip("Clears this window");
     hLayout->addWidget(clearProcessButton_);
 
