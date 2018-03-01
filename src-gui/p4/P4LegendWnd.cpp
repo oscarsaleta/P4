@@ -19,12 +19,15 @@
 
 #include "P4LegendWnd.hpp"
 
+#include "P4Application.hpp"
 #include "custom.hpp"
 #include "main.hpp"
-#include "P4Application.hpp"
 #include "plot_points.hpp"
 
+#include <QFontMetrics>
 #include <QPainter>
+#include <QPalette>
+#include <QPen>
 
 // -----------------------------------------------------------------------
 //                          Define Colors in RGB
@@ -32,47 +35,48 @@
 
 P4RGBITEM gXFigToRGB[NUMXFIGCOLORS] = {
     // 8 pure colours:
-    {0, 0, 0},       // BLACK
-    {0, 0, 255},     // BLUE
-    {0, 255, 0},     // GREEN
-    {0, 255, 255},   // CYAN
-    {255, 0, 0},     // RED
-    {255, 0, 255},   // MAGENTA
-    {255, 255, 0},   // YELLOW
-    {255, 255, 255}, // WHITE
+    {0, 0, 0},        // BLACK
+    {0, 0, 255},      // BLUE
+    {0, 255, 0},      // GREEN
+    {0, 255, 255},    // CYAN
+    {255, 0, 0},      // RED
+    {255, 0, 255},    // MAGENTA
+    {255, 255, 0},    // YELLOW
+    {255, 255, 255},  // WHITE
 
     // shaded colours (ordered from dark to light):
-    {0, 0, 143},     // BLUE1
-    {0, 0, 176},     // BLUE2
-    {0, 0, 209},     // BLUE3
-    {135, 207, 255}, // BLUE4
-    {0, 143, 0},     // GREEN1
-    {0, 176, 0},     // GREEN2
-    {0, 209, 0},     // GREEN3
-    {0, 143, 143},   // CYAN1
-    {0, 176, 176},   // CYAN2
-    {0, 209, 209},   // CYAN3
-    {143, 0, 0},     // RED1
-    {176, 0, 0},     // RED2
-    {209, 0, 0},     // RED3
-    {143, 0, 143},   // MAGENTA1
-    {176, 0, 176},   // MAGENTA2
-    {209, 32, 209},  // MAGENTA3
-    {128, 48, 0},    // BROWN1
-    {161, 64, 0},    // BROWN2
-    {191, 97, 0},    // BROWN3
-    {255, 128, 128}, // PINK1
-    {255, 161, 161}, // PINK2
-    {255, 191, 191}, // PINK3
-    {255, 224, 224}, // PINK4
-    {255, 214, 0}    // GOLD
+    {0, 0, 143},      // BLUE1
+    {0, 0, 176},      // BLUE2
+    {0, 0, 209},      // BLUE3
+    {135, 207, 255},  // BLUE4
+    {0, 143, 0},      // GREEN1
+    {0, 176, 0},      // GREEN2
+    {0, 209, 0},      // GREEN3
+    {0, 143, 143},    // CYAN1
+    {0, 176, 176},    // CYAN2
+    {0, 209, 209},    // CYAN3
+    {143, 0, 0},      // RED1
+    {176, 0, 0},      // RED2
+    {209, 0, 0},      // RED3
+    {143, 0, 143},    // MAGENTA1
+    {176, 0, 176},    // MAGENTA2
+    {209, 32, 209},   // MAGENTA3
+    {128, 48, 0},     // BROWN1
+    {161, 64, 0},     // BROWN2
+    {191, 97, 0},     // BROWN3
+    {255, 128, 128},  // PINK1
+    {255, 161, 161},  // PINK2
+    {255, 191, 191},  // PINK3
+    {255, 224, 224},  // PINK4
+    {255, 214, 0}     // GOLD
 };
 
 // -----------------------------------------------------------------------
 //                              LEGEND
 // -----------------------------------------------------------------------
 
-P4LegendWnd::P4LegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+P4LegendWnd::P4LegendWnd()
+    : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint}
 {
     int w, h;
 
@@ -87,8 +91,8 @@ P4LegendWnd::P4LegendWnd() : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHin
 
 void P4LegendWnd::paintEvent(QPaintEvent *p)
 {
-    QPainter paint(this);
-    paint.setFont(*(gP4app->legendFont_));
+    QPainter paint{this};
+    paint.setFont(gP4app->getLegendFont());
 
     paint.setPen(QPen(QXFIGCOLOR(bgColours::CFOREGROUND)));
     paint.drawText(hmargin1_, vmargin1_, "Non-Degenerate:");
@@ -237,11 +241,11 @@ vertical margins:
     7 bottom
 */
 
-void P4LegendWnd::calculateGeometry(void)
+void P4LegendWnd::calculateGeometry()
 {
     int e, me;
 
-    QFontMetrics fm{*(gP4app->legendFont_)};
+    QFontMetrics fm{gP4app->getLegendFont()};
 
     QPalette palette;
     palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND));
@@ -306,7 +310,7 @@ void P4LegendWnd::calculateGeometry(void)
     if (me < e)
         me = e;
 
-    hmargin4_ = me + fm.maxWidth() * 3; // 3 chars intercolumn space
+    hmargin4_ = me + fm.maxWidth() * 3;  // 3 chars intercolumn space
 
     hmargin5_ = hmargin4_ + SYMBOLWIDTH + fm.maxWidth();
 

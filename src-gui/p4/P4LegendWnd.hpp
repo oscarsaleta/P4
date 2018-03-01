@@ -22,7 +22,6 @@
 #include <QWidget>
 
 class QPaintEvent;
-class QBoxLayout;
 
 class P4LegendWnd : public QWidget
 {
