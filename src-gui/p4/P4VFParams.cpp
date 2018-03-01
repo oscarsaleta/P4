@@ -24,15 +24,13 @@
 #include <QLabel>
 #include <QScrollBar>
 
-P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
-    : QWidget{parent}, dataInvalid_{false}, sb_params{std::move(sb)},
-      currentNumParams_{gThisVF->numparams_}, currentPageIndex_{0}
+P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
+    : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF->numparams_}
 {
     int i;
 
-    std::unique_ptr<QLabel> label0{
-        std::make_unique<QLabel>("Enter values for all parameters")};
-    label0->setFont(*(gP4app->titleFont_));
+    auto label0 = std::make_unique<QLabel>("Enter values for all parameters");
+    label0->setFont(gP4app->getTitleFont());
 
     currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
                               ? currentNumParams_
@@ -55,21 +53,21 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb)
     }
 
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
-    mainLayout_->addWidget(label0);
+    mainLayout_->addWidget(label0.get());
     for (i = 0; i < currentShownParams_; i++) {
         paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>{});
-        paramLayouts_[i]->addWidget(paramNames_[i]);
-        paramLayouts_[i]->addWidget(paramEqual_[i]);
-        paramLayouts_[i]->addWidget(paramValues_[i]);
-        mainLayout_->addLayout(paramLayouts_[i]);
+        paramLayouts_[i]->addWidget(paramNames_[i].get());
+        paramLayouts_[i]->addWidget(paramEqual_[i].get());
+        paramLayouts_[i]->addWidget(paramValues_[i].get());
+        mainLayout_->addLayout(paramLayouts_[i].get());
 
-        QObject::connect(paramNames_[i], &QLineEdit::editingFinished, this,
-                         &P4VFParams::paramsEditingFinished);
-        QObject::connect(paramValues_[i], &QLineEdit::editingFinished, this,
-                         &P4VFParams::paramsEditingFinished);
+        QObject::connect(paramNames_[i].get(), &QLineEdit::editingFinished,
+                         this, &P4VFParams::paramsEditingFinished);
+        QObject::connect(paramValues_[i].get(), &QLineEdit::editingFinished,
+                         this, &P4VFParams::paramsEditingFinished);
     }
 
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
     updateDlgData();
 }
 
@@ -103,8 +101,8 @@ void P4VFParams::paramsEditingFinished()
             gThisVF->parlabel_[i + currentPageIndex_] = lbl;
             changed = true;
         }
-        changed |=
-            getLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
+        changed |= getLineEditCommonParValue(paramValues_[i].get(),
+                                             i + currentPageIndex_);
     }
 
     if (changed) {
@@ -131,19 +129,18 @@ bool P4VFParams::updateDlgData()
 
 void P4VFParams::paramsSliderChanged(int value)
 {
-    int newindex{std::move(value)};
+    if (value < 0)
+        value = 0;
+    if (value > currentNumParams_ - MAXNUMPARAMSSHOWN)
+        value = currentNumParams_ - MAXNUMPARAMSSHOWN;
 
-    if (newindex < 0)
-        newindex = 0;
-    if (newindex > currentNumParams_ - MAXNUMPARAMSSHOWN)
-        newindex = currentNumParams_ - MAXNUMPARAMSSHOWN;
-
-    if (newindex != currentPageIndex_) {
-        currentPageIndex_ = newindex;
+    if (value != currentPageIndex_) {
+        currentPageIndex_ = value;
 
         for (int i = 0; i < currentShownParams_; i++) {
             paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
-            setLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
+            setLineEditCommonParValue(paramValues_[i].get(),
+                                      i + currentPageIndex_);
         }
     }
 }

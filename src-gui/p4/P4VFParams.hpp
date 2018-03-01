@@ -44,7 +44,7 @@ class P4VFParams : public QWidget
   private:
     int currentNumParams_;
     int currentShownParams_;
-    int currentPageIndex_;
+    int currentPageIndex_{0};
 
     std::unique_ptr<QScrollBar> sb_params_;
     std::unique_ptr<QBoxLayout> mainLayout_;
