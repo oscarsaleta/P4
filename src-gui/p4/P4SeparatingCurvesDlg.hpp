@@ -38,12 +38,12 @@ class P4SeparatingCurvesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4SeparatingCurvesDlg(P4FindDlg &startwindow);
+    P4SeparatingCurvesDlg(P4FindDlg *startwindow);
     void updateDlgData();
     void signalSeparatingCurvesEvaluated();
 
   private:
-    P4FindDlg &parent_;
+    P4FindDlg *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
@@ -93,11 +93,11 @@ class P4SeparatingCurvesDlg : public QWidget
     void onBtnEval();
     void onBtnRefresh();
 
-    void onCurvesClicked(std::unique_ptr<QListWidgetItem>);
-    void onVfsClicked(std::unique_ptr<QListWidgetItem>);
-    void onVfsItemActivated(std::unique_ptr<QListWidgetItem>);
-    void onCurvesItemActivated(std::unique_ptr<QListWidgetItem>);
-    void onCurveChanged(std::unique_ptr<QListWidgetItem>);
+    void onCurvesClicked(QListWidgetItem *);
+    void onVfsClicked(QListWidgetItem *);
+    void onVfsItemActivated(QListWidgetItem *);
+    void onCurvesItemActivated(QListWidgetItem *);
+    void onCurveChanged(QListWidgetItem *);
     void onCurvesSelectionChanged();
     void onVfsSelectionChanged();
 };

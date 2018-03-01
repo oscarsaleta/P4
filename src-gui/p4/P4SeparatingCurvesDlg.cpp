@@ -30,16 +30,14 @@
 #include <QListWidget>
 #include <QPushButton>
 
-P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg &parent)
+P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     : QWidget{}, parent_{parent}
 {
-    std::unique_ptr<QLabel> p4title{
-        std::make_unique<QLabel>("Region Separating Curves:", this)};
-    p4title->setFont(*(gP4app->titleFont_));
+    auto p4title = std::make_unique<QLabel>("Region Separating Curves:", this);
+    p4title->setFont(gP4app->getTitleFont());
 
-    std::unique_ptr<QLabel> p4title2{
-        std::make_unique<QLabel>("Vector Field List:", this)};
-    p4title2->setFont(*(gP4app->titleFont_));
+    auto p4title2 = std::make_unique<QLabel>("Vector Field List:", this);
+    p4title2->setFont(gP4app->getTitleFont());
 
     // TODO: check if i have to redeclare?
     btn_add_ = std::make_unique< QPushButton>("&Add"), this);
@@ -89,53 +87,52 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg &parent)
 
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::LeftToRight, this);
-    std::unique_ptr<QBoxLayout> layoutA{
-        std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this)};
-    std::unique_ptr<QBoxLayout> layoutB{
-        std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this)};
+    auto layoutA = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    auto layoutB = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
     layoutA->addWidget(p4title.get());
-    std::unique_ptr<QHBoxLayout> layout1{std::make_unique<QHBoxLayout>()};
-    layout1->addWidget(btn_add_);
-    layout1->addWidget(btn_del_);
-    std::unique_ptr<QHBoxLayout> layout1a{std::make_unique<QHBoxLayout>()};
-    layout1a->addWidget(lbl_numpoints_);
-    layout1a->addWidget(edt_numpoints_);
 
-    layout1->addWidget(btn_edit_);
-    layoutA->addLayout(layout1);
-    layoutA->addWidget(lst_curves_);
-    layoutA->addLayout(layout1a);
-    layoutA->addWidget(p4title2);
-    layoutA->addWidget(lst_vfs_);
+    auto layout1 = std::make_unique<QHBoxLayout>();
+    layout1->addWidget(btn_add_.get());
+    layout1->addWidget(btn_del_.get());
+    auto layout1a = std::make_unique<QHBoxLayout>();
+    layout1a->addWidget(lbl_numpoints_.get());
+    layout1a->addWidget(edt_numpoints_.get());
 
-    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
-    layout2->addWidget(lbl_vf_or_curves_);
-    layout2->addWidget(btn_mark_);
-    layout2->addWidget(btn_unmark_);
-    layout2->addWidget(btn_resetmarks_);
+    layout1->addWidget(btn_edit_.get());
+    layoutA->addLayout(layout1.get());
+    layoutA->addWidget(lst_curves_.get());
+    layoutA->addLayout(layout1a.get());
+    layoutA->addWidget(p4title2.get());
+    layoutA->addWidget(lst_vfs_.get());
+
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(lbl_vf_or_curves_.get());
+    layout2->addWidget(btn_mark_.get());
+    layout2->addWidget(btn_unmark_.get());
+    layout2->addWidget(btn_resetmarks_.get());
     layout2->addStretch(1);
 
-    std::unique_ptr<QHBoxLayout> layout3{new QHBoxLayout()};
-    layout3->addWidget(btn_refresh_);
-    layout3->addWidget(btn_eval_);
-    layout3->addWidget(btn_view_);
-    layout3->addWidget(btn_zoomout_);
+    auto layout3 = std::make_unique<QHBoxLayout>();
+    layout3->addWidget(btn_refresh_.get());
+    layout3->addWidget(btn_eval_.get());
+    layout3->addWidget(btn_view_.get());
+    layout3->addWidget(btn_zoomout_.get());
     layout3->addStretch(1);
 
-    layoutB->addLayout(layout2);
-    layoutB->addWidget(lbl_info_);
-    layoutB->addLayout(layout3);
-    layoutB->addWidget(isphere_);
-    layoutB->addWidget(lbl_status_);
+    layoutB->addLayout(layout2.get());
+    layoutB->addWidget(lbl_info_.get());
+    layoutB->addLayout(layout3.get());
+    layoutB->addWidget(isphere_.get());
+    layoutB->addWidget(lbl_status_.get());
 
-    layoutB->setStretchFactor(isphere_, 1);
-    layoutB->setStretchFactor(lbl_status_, 0);
+    layoutB->setStretchFactor(isphere_.get(), 1);
+    layoutB->setStretchFactor(lbl_status_.get(), 0);
 
-    mainLayout_->addLayout(layoutA);
-    mainLayout_->addLayout(layoutB);
-    mainLayout_->setStretchFactor(layoutA, 0);
-    mainLayout_->setStretchFactor(layoutB, 2);
-    setLayout(mainLayout_);
+    mainLayout_->addLayout(layoutA.get());
+    mainLayout_->addLayout(layoutB.get());
+    mainLayout_->setStretchFactor(layoutA.get(), 0);
+    mainLayout_->setStretchFactor(layoutB.get(), 2);
+    setLayout(mainLayout_.get());
 
     // connections
     QObject::connect(btn_add_.get(), &QPushButton::clicked, this,
@@ -498,7 +495,7 @@ void P4SeparatingCurvesDlg::onBtnEval()
 {
     if (gThisVF->evaluating_)
         return;
-    parent_.getDataFromDlg();
+    parent_->getDataFromDlg();
     gThisVF->evaluateSeparatingCurves();  // TODO: a p5 es EvaluateCurves()
     if (gThisVF->evaluating_)
         btn_eval_->setEnabled(false);
