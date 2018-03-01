@@ -39,12 +39,12 @@ class P4Application : public QApplication
   public:
     P4Application(int &argc, char **argv);
 
-    std::unique_ptr<QFont> standardFont_;
-    std::unique_ptr<QFont> boldFont_;
-    std::unique_ptr<QFont> courierFont_;
-    std::unique_ptr<QFont> boldCourierFont_;
-    std::unique_ptr<QFont> titleFont_;
-    std::unique_ptr<QFont> legendFont_;
+    QFont getStandardFont() const;
+    QFont getBoldFont() const;
+    QFont getCourierFont() const;
+    QFont getBoldCourierFont() const;
+    QFont getTitleFont() const;
+    QFont getLegendFont() const;
 
   public slots:
     void signalEvaluated(int);
@@ -55,6 +55,14 @@ class P4Application : public QApplication
     void signalLoaded(void);
     void signalSaved(void);
     void catchProcessError(QProcess::ProcessError);
+
+  private:
+    std::unique_ptr<QFont> standardFont_;
+    std::unique_ptr<QFont> boldFont_;
+    std::unique_ptr<QFont> courierFont_;
+    std::unique_ptr<QFont> boldCourierFont_;
+    std::unique_ptr<QFont> titleFont_;
+    std::unique_ptr<QFont> legendFont_;
 };
 
 extern std::unique_ptr<P4Application> gP4app;

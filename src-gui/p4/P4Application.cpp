@@ -19,42 +19,42 @@
 
 #include "P4Application.hpp"
 
-#include "custom.hpp"
-#include "P4InputVF.hpp"
-#include "main.hpp"
 #include "P4Event.hpp"
 #include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
 #include "P4StartDlg.hpp"
+#include "custom.hpp"
+#include "main.hpp"
 
 #include <QFont>
 
 std::unique_ptr<P4Application> gP4app{nullptr};
 
-P4Application::P4Application(int &argc, char **argv) : QApplication(argc, argv)
+P4Application::P4Application(int &argc, char **argv) : QApplication{argc, argv}
 {
-    standardFont_.reset(new QFont());
+    standardFont_ = std::make_unique<QFont>();
     standardFont_->setPointSize(standardFont_->pointSize() + FONTSIZE);
     setFont(*standardFont_);
 
-    boldFont_.reset(new QFont());
+    boldFont_ = std::make_unique<QFont>();
     boldFont_->setWeight(QFont::Bold);
 
-    titleFont_.reset(new QFont());
+    titleFont_ = std::make_unique<QFont>();
     titleFont_->setPointSize(titleFont_->pointSize() + TITLEFONTSIZE);
     titleFont_->setWeight(QFont::Bold);
 
-    courierFont_.reset(new QFont);
+    courierFont_ = std::make_unique<QFont>();
     courierFont_->setFamily("Courier");
     courierFont_->setFixedPitch(true);
     courierFont_->setPointSize(courierFont_->pointSize() + FONTSIZE);
 
-    boldCourierFont_.reset(new QFont);
+    boldCourierFont_ = std::make_unique<QFont>();
     boldCourierFont_->setFamily("Courier");
     boldCourierFont_->setFixedPitch(true);
     boldCourierFont_->setWeight(QFont::Bold);
     boldCourierFont_->setPointSize(boldCourierFont_->pointSize() + FONTSIZE);
 
-    legendFont_.reset(new QFont);
+    legendFont_ = std::make_unique<QFont>();
     legendFont_->setFamily("Courier");
     legendFont_->setFixedPitch(true);
     legendFont_->setPointSize(legendFont_->pointSize() + LEGENDFONTSIZE);
@@ -71,9 +71,9 @@ void P4Application::signalChanged()
     gThisVF->evaluated_ = false;
     gThisVF->changed_ = true;
 
-    std::unique_ptr<P4Event> e{
-        new P4Event((QEvent::Type)TYPE_SIGNAL_CHANGED, nullptr)};
-    gP4app->postEvent(gP4startDlg, e.get());
+    auto e = std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_SIGNAL_CHANGED), nullptr);
+    gP4app->postEvent(gP4startDlg, e.release());
 }
 
 void P4Application::signalEvaluated(int exitCode)
@@ -83,9 +83,9 @@ void P4Application::signalEvaluated(int exitCode)
 
     gThisVF->finishEvaluation(exitCode);
 
-    std::unique_ptr<P4Event> e{
-        new P4Event((QEvent::Type)TYPE_SIGNAL_EVALUATED, nullptr)};
-    gP4app->postEvent(gP4startDlg, e.get());
+    auto e = std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_SIGNAL_EVALUATED), nullptr);
+    gP4app->postEvent(gP4startDlg, e.release());
 
     if (gCmdLineAutoExit) {
         gCmdLineAutoPlot = false;
@@ -127,9 +127,9 @@ void P4Application::catchProcessError(QProcess::ProcessError qperr)
 
 void P4Application::signalLoaded()
 {
-    std::unique_ptr<P4Event> e{
-        new P4Event((QEvent::Type)TYPE_SIGNAL_LOADED, nullptr)};
-    gP4app->postEvent(gP4startDlg, e.get());
+    auto e = std::unique_ptr<P4Event>(
+        static_cast<QEvent::Type>(TYPE_SIGNAL_LOADED), nullptr);
+    gP4app->postEvent(gP4startDlg, e.release());
 
     if (gCmdLineAutoEvaluate) {
         gCmdLineAutoEvaluate = false;
@@ -145,7 +145,19 @@ void P4Application::signalLoaded()
 
 void P4Application::signalSaved()
 {
-    std::unique_ptr<P4Event> e{
-        new P4Event((QEvent::Type)TYPE_SIGNAL_SAVED, nullptr)};
-    gP4app->postEvent(gP4startDlg, e.get());
+    auto e = std::make_unique<P4Event>(
+        static_cast<QEvent::Type>(TYPE_SIGNAL_SAVED), nullptr);
+    gP4app->postEvent(gP4startDlg, e.release());
 }
+
+QFont P4Application::getStandardFont() const { return *standardFont_; }
+
+QFont P4Application::getBoldFont() const { return *boldFont_; }
+
+QFont P4Application::getTitleFont() const { return *titleFont_; }
+
+QFont P4Application::getCourierFont() const { return *courierFont_; }
+
+QFont P4Application::getBoldCourierFont() const { return *boldCourierFont_; }
+
+QFont P4Application::getLegendFont() const { return *legendFont_; }
