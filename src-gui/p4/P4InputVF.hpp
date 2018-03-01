@@ -324,13 +324,16 @@ class P4InputVF : public QObject
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
-    P4FindDlg *getFindDlgPtr();
+    P4FindDlg *getFindDlgPtr() const;
     void setFindDlg(P4FindDlg *);
 
-    P4GcfDlg *getGcfDlgPtr();
+    P4GcfDlg *getGcfDlgPtr() const;
     void setGcfDlg(P4GcfDlg *);
 
-    P4IsoclinesDlg *getIsoclinesDlgPtr();
+    P4ArbitraryCurveDlg *getArbitraryCurvePtr() const;
+    void setArbitraryCurveDlg(P4ArbitraryCurveDlg *);
+
+    P4IsoclinesDlg *getIsoclinesDlgPtr() const;
     void setIsoclinesDlg(P4IsoclinesDlg *);
 
   signals:

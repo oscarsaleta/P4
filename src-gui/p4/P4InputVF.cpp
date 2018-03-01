@@ -1576,8 +1576,8 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
     ba_name_curvetab = maplepathformat(name_curvetab);
     fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
 
-    prepareMapleCurve(fp);
-    prepareMapleParameters(fp);
+    prepareMapleArbitraryCurve(fp);
+    prepareMapleParameters(fp); // FIXME crear una especial per arbitrary curve
 
     fp << "try prepareArbitraryCurve() catch:\n"
           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
@@ -3968,6 +3968,28 @@ void P4InputVF::setGcfDlg(P4GcfDlg *newdlg)
         gcfDlg_ = std::make_unique<P4GcfDlg>(newdlg);
     } else {
         gcfDlg_.reset();
+    }
+}
+
+// ---------------------------------------------------------------------
+//          getArbitraryCurveDlgPtr
+// ---------------------------------------------------------------------
+P4ArbitraryCurveDlg *P4InputVF::getArbitraryCurveDlgPtr()
+{
+    if (arbitraryCurveDlg_)
+        return arbitraryCurveDlg_.get();
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------
+//          setArbitraryCurveDlg
+// ---------------------------------------------------------------------
+void P4InputVF::setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
+{
+    if (newdlg != nullptr && newdlg != arbitraryCurveDlg_.get()) {
+        arbitraryCurveDlg_ = std::make_unique<P4ArbitraryCurveDlg>(newdlg);
+    } else {
+        arbitraryCurveDlg_.reset();
     }
 }
 
