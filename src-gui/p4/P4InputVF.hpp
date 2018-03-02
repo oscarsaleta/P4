@@ -257,7 +257,7 @@ class P4InputVF : public QObject
     bool checkevaluated();
 
     // PARAMETER PREPARATION
-    void prepareMapleParameters(QTextStream &);
+    void prepareMapleParameters(QTextStream &, bool = false);
     void prepareMapleVectorField(QTextStream &);
     void prepareMaplePiecewiseConfig(QTextStream &);
     void prepareMapleSeparatingCurves(QTextStream &);
@@ -358,5 +358,5 @@ private:
     std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
 };
 
-// NOTE this could be a shared_ptr in each class that uses it
+// FIXME: this should be a plain object, not a pointer
 extern std::unique_ptr<P4InputVF> gThisVF;

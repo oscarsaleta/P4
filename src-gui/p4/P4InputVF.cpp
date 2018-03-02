@@ -905,81 +905,99 @@ static bool P4InputVF::fileExists(QString fname) const
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleParameters
 // -----------------------------------------------------------------------
-void P4InputVF::prepareMapleParameters(QTextStream &fp)
+void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
 {
     QString s;
     int i;
 
-    fp << "user_numeric_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << booleanString(numeric_[i]);
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+    if (!forArbitraryCurves) {
+        fp << "user_numeric_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << booleanString(numeric_[i]);
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "epsilon_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << epsilon_[i];
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+        fp << "epsilon_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << epsilon_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "test_sep_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << booleanString(testsep_[i]);
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+        fp << "test_sep_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << booleanString(testsep_[i]);
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "user_precision_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << precision_[i];
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+        fp << "user_precision_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << precision_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "taylor_level_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << taylorlevel_[i];
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+        fp << "taylor_level_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << taylorlevel_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "numeric_level_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << numericlevel_[i];
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+        fp << "numeric_level_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << numericlevel_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "max_level_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << maxlevel_[i];
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
-    }
+        fp << "max_level_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << maxlevel_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
 
-    fp << "weakness_level_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
-        fp << weakness_[i];
-        if (i == numVF_ - 1)
-            fp << " ]:\n";
-        else
-            fp << ", ";
+        fp << "weakness_level_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << weakness_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
+    } else {  // for curves: use only first VF for parameters
+        fp << "user_numeric := " << booleanString(numeric_[0]) << ":\n";
+        fp << "epsilon := " << epsilon_[0] << ":\n";
+        fp << "test_sep := " << booleanString(testsep_[0]) << ":\n";
+        s.sprintf("user_precision := %d:\n", precision_[0]);
+        fp << s;
+        s.sprintf("user_precision0 := %d:\n", precision0_[0]);
+        fp << s;
+        s.sprintf("taylor_level := %d:\n", taylorlevel_[0]);
+        fp << s;
+        s.sprintf("numeric_level := %d:\n", numericlevel_[0]);
+        fp << s;
+        s.sprintf("max_level := %d:\n", maxlevel_[0]);
+        fp << s;
+        s.sprintf("weakness_level := %d:\n", weakness_[0]);
+        fp << s;
     }
 
     if (typeofstudy == TYPEOFSTUDY_ONE) {
@@ -1577,7 +1595,8 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
     fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
 
     prepareMapleArbitraryCurve(fp);
-    prepareMapleParameters(fp); // FIXME crear una especial per arbitrary curve
+    // true because it is for arbitrary curve
+    prepareMapleParameters(fp, true);
 
     fp << "try prepareArbitraryCurve() catch:\n"
           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
