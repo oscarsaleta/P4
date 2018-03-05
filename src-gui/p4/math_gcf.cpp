@@ -19,10 +19,10 @@
 
 #include "math_gcf.hpp"
 
+#include "P4InputVF.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "P4InputVF.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
@@ -32,11 +32,11 @@
 #include <cmath>
 
 // static global variables
-static int sGcfTask = EVAL_GCF_NONE;
-static std::shared_ptr<P4WinSphere> sGcfSphere;
-static int sGcfDashes = 0;
-static bool sGcfError = false;
-static int sGcfVfIndex = 0;
+static int sGcfTask{EVAL_GCF_NONE};
+static P4WinSphere *sGcfSphere{nullptr};
+static int sGcfDashes{0};
+static bool sGcfError{false};
+static int sGcfVfIndex{0};
 
 // static functions
 static void insert_gcf_point(double x0, double y0, double z0, int dashes);
@@ -44,8 +44,7 @@ static bool readTaskResults(int task, int index);
 static bool read_gcf(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalGcfStart(std::smart_ptr<P4WinSphere> sp, int dashes, int points,
-                  int precis)
+bool evalGcfStart(P4WinSphere *sp, int dashes, int points, int precis)
 {
     int r;
     sp->prepareDrawing();
@@ -71,7 +70,7 @@ bool evalGcfStart(std::smart_ptr<P4WinSphere> sp, int dashes, int points,
 
 // returns true when finished.  Then run EvalGCfFinish to see if error occurred
 // or not
-bool evalGcfContinue(int points, int prec, int memory)
+bool evalGcfContinue(int points, int prec)
 {
     if (sGcfTask == EVAL_GCF_NONE)
         return true;
@@ -99,7 +98,7 @@ bool evalGcfContinue(int points, int prec, int memory)
             sGcfTask = EVAL_GCF_R2;
     }
 
-    if (!runTask(sGcfTask, points, prec)) {
+    if (!runTask(sGcfTask, points, prec, sGcfVfIndex)) {
         sGcfError = true;
         return true;
     }
@@ -144,42 +143,42 @@ bool runTask(int task, int points, int prec, int mem, int index)
     switch (task) {
     case EVAL_GCF_R2:
         value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_, -1, 1, prec,
-                                     points);
+                                   points);
         break;
     case EVAL_GCF_U1:
         value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, 0, 1, prec,
-                                     points);
+                                   points);
         break;
     case EVAL_GCF_V1:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, -1, 0,
-                                     prec, points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, -1, 0, prec,
+                                   points);
         break;
     case EVAL_GCF_U2:
         value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, 0, 1, prec,
-                                     points);
+                                   points);
         break;
     case EVAL_GCF_V2:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, -1, 0,
-                                     prec, points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, -1, 0, prec,
+                                   points);
         break;
     case EVAL_GCF_LYP_R2:
         value = gThisVF.prepareGcf_LyapunovR2(prec, points, index);
         break;
     case EVAL_GCF_CYL1:
-        value = gThisVF.prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec,
-                                                 points, index);
+        value = gThisVF.prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points,
+                                               index);
         break;
     case EVAL_GCF_CYL2:
         value = gThisVF.prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
-                                                 points, index);
+                                               points, index);
         break;
     case EVAL_GCF_CYL3:
-        value = gThisVF.prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                 prec, points, index);
+        value = gThisVF.prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4, prec,
+                                               points, index);
         break;
     case EVAL_GCF_CYL4:
         value = gThisVF.prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
-                                                 points, index);
+                                               points, index);
         break;
     default:
         value = false;
