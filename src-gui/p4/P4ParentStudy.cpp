@@ -226,7 +226,8 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
                 fclose(fpcurv);
                 return false;
             }
-            if (!readCurvePoints(fpcurv, separatingCurves_[j].sep_points, j)) {
+            if (!readArbitraryCurvePoints(fpcurv,
+                                          separatingCurves_[j].sep_points, j)) {
                 separatingCurves_.clear();
                 fclose(fpcurv);
                 return false;
@@ -261,7 +262,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
     // vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * gThisVF->numVF_);
     // vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * gThisVF->numVF_);
     for (j = 0; j < gThisVF->numVF_; j++) {
-        vf_.push_back(new P4VFStudy(this));
+        vf_.emplace_back(std::make_unique<P4VFStudy>(this));
     }
 
     if (fscanf(fpvec, "%d\n%d\n%d\n", &typeofstudy, &p, &q) != 3) {
@@ -279,12 +280,12 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
     q_ = q;
 
     plweights_ = ((p_ == 1 && q_ == 1) ? false : true);
-    double_p_ = (double)p_;
-    double_q_ = (double)q_;
-    double_p_plus_q_ = (double)(p_ + q_);
-    double_p_minus_1_ = (double)(p_ - 1);
-    double_q_minus_1_ = (double)(q_ - 1);
-    double_q_minus_p_ = (double)(q_ - p_);
+    double_p_ = static_cast<double>(p_);
+    double_q_ = static_cast<double>(q_);
+    double_p_plus_q_ = static_cast<double>(p_ + q_);
+    double_p_minus_1_ = static_cast<double>(p_ - 1);
+    double_q_minus_1_ = static_cast<double>(q_ - 1);
+    double_q_minus_p_ = static_cast<double>(q_ - p_);
 
     if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         if (fscanf(fpvec, "%lf %lf %lf %lf", &xmin_, &xmax_, &ymin_, &ymax_) !=
@@ -298,10 +299,9 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
     } else
         typeofview_ = TYPEOFVIEW_SPHERE;
 
-    // read the curves
-
+    // read the separating curves
     for (j = 0; j < gThisVF->numSeparatingCurves_; j++) {
-        separatingCurves_.clear();  // TODO why do we need to clear?
+        separatingCurves_.clear();
         if (!readSeparatingCurve(fpvec)) {
             reset();
             fclose(fpvec);
@@ -363,11 +363,10 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
 }
 
 // -----------------------------------------------------------------------
-//          P4ParentStudy::readCurve
+//          P4ParentStudy::readArbitraryCurve
 // -----------------------------------------------------------------------
 // P4 version, this is for visualizing a curve on the plane
-// FIXME: posar a readTables (P4ParentStudy)
-bool P4ParentStudy::readCurve(QString basename)
+bool P4ParentStudy::readArbitraryCurve(QString basename)
 {
     int N, degree_curve;
     setlocale(LC_ALL, "C");
@@ -469,7 +468,7 @@ bool P4ParentStudy::readSeparatingCurve(FILE *fp)
             return false;
     }
 
-    separatingCurves_.push_back(dummy);
+    separatingCurves_.push_back(std::move(dummy));
     return true;
 }
 

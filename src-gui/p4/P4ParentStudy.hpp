@@ -37,7 +37,7 @@ class P4ParentStudy : public QObject
     // CLASS MEMBERS //
     ///////////////////
 
-    std::vector<P4VFStudy> vf_;
+    std::vector<std::unique_ptr<P4VFStudy>> vf_;
     // K_ will be throughout the current vector field selected
     int K_{0};
 
@@ -112,7 +112,7 @@ class P4ParentStudy : public QObject
     ///////////////////
     // CLASS METHODS //
     ///////////////////
-    
+
     void resetSeparatingCurveInfo(int);
     void resetSeparatingCurveInfo();
 
@@ -123,6 +123,8 @@ class P4ParentStudy : public QObject
     void reset();
     void setupCoordinateTransformations();
     bool readSeparatingCurve(FILE *);
+
+    bool readArbitraryCurve(QString basename);
 
     void clearVFs();
 
