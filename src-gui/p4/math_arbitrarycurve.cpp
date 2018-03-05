@@ -213,7 +213,7 @@ void drawArbitraryCurve(P4WinSphere *spherewnd,
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
-    gVFResults.arbitraryCurves_.emplace_back(CCURV, pcoord, dashes, 0, 0);
+    gVFResults.arbitraryCurves_.points.emplace_back(CCURV, pcoord, dashes, 0, 0);
 }
 
 static bool read_curve(void (*chart)(double, double, double *))
