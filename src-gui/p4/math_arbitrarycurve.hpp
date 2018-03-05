@@ -16,7 +16,6 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-// FIXME
 #pragma once
 
 #include "file_tab.hpp"
@@ -38,13 +37,12 @@
 class P4WinSphere;
 struct p4orbits::orbits_points;
 
-// FIXME not needed probably
-extern p4orbits::orbits_points *gLastArbitraryCurvePoint;
-
-bool evalArbitraryCurveStart(P4WinSphere *sp, int dashes, int precision, int points);
+bool evalArbitraryCurveStart(P4WinSphere *sp, int dashes, int precision,
+                             int points);
 bool evalArbitraryCurveContinue(int precision, int points);
 bool evalArbitraryCurveFinish(void);
 bool runTaskArbitraryCurve(int task, int precision, int points);
-void drawArbitraryCurve(P4WinSphere *spherewnd, p4orbits::orbits_points *sep, int color,
-                int dashes);
+void drawArbitraryCurve(P4WinSphere *spherewnd,
+                        const std::vector<p4orbits::orbits_points> &sep,
+                        int color, int dashes);
 void deleteLastArbitraryCurve(P4WinSphere *);

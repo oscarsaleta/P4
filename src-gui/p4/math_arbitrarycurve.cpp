@@ -36,9 +36,6 @@ static P4WinSphere *sCurveSphere = nullptr;
 static int sCurveDashes = 0;
 static bool sCurveError = false;
 
-// non-static global variables
-p4orbits::orbits_points gLastArbitraryCurvePoint = nullptr;
-
 // static functions
 static void insert_curve_point(double x0, double y0, double z0, int dashes);
 static bool readTaskResults(int);
