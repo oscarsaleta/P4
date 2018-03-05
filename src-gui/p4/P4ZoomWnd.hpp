@@ -36,7 +36,7 @@ class P4ZoomWnd : public QMainWindow
     Q_OBJECT
 
   public:
-    P4ZoomWnd(P4PlotWnd &, int, double x1, double y1, double x2, double y2);
+    P4ZoomWnd(P4PlotWnd *, int, double x1, double y1, double x2, double y2);
 
     int zoomid_;
 
@@ -45,7 +45,7 @@ class P4ZoomWnd : public QMainWindow
 
   private:
     // non-owning raw pointer to parent
-    P4PlotWnd &parent_;
+    P4PlotWnd *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QAction> actClose_;
