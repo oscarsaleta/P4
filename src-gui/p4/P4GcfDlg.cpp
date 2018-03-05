@@ -19,9 +19,9 @@
 
 #include "P4GcfDlg.hpp"
 
+#include "P4InputVF.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
-#include "P4InputVF.hpp"
 #include "main.hpp"
 #include "math_gcf.hpp"
 
@@ -33,83 +33,81 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-P4GcfDlg::P4GcfDlg(std::unique_ptr<P4PlotWnd> plt,
-                   std::unique_ptr<P4WinSphere> sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
-      plotwnd_{plt},
+P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4WinSphere *sp)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotwnd_{plt},
       mainSphere_{sp}
 {
-    std::unique_ptr<QButtonGroup> btngrp{new QButtonGroup(this)};
-    btn_dots_.reset(QRadioButton("Dots", this));
-    btn_dashes_.reset(QRadioButton("Dashes", this));
+    auto btngrp = std::make_unique<QButtonGroup>(this);
+    btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
+    btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
     btngrp->addButton(btn_dots_);
     btngrp->addButton(btn_dashes_);
 
-    std::unique_ptr<QLabel> lbl1{new QLabel("Appearance: ", this)};
+    auto lbl1 = std::make_unique<QLabel>("Appearance: ", this);
 
-    edt_points_.reset(QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl2{new QLabel("#Points: ", this)};
+    edt_points_ = std::make_unique<QLineEdit>("", this);
+    auto lbl2 = std::make_unique<QLabel>("#Points: ", this);
 
-    edt_precis_.reset(QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl3{new QLabel("Precision: ", this)};
+    edt_precis_ = std::make_unique<QLineEdit>("", this);
+    auto lbl3 = std::make_unique<QLabel>("Precision: ", this);
 
-    edt_memory_.reset(QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl4{new QLabel("Max. Memory: ", this)};
+    edt_memory_ = std::make_unique<QLineEdit>("", this);
+    auto lbl4 = std::make_unique<QLabel>("Max. Memory: ", this);
 
-    btn_evaluate_.reset(QPushButton("&Evaluate", this));
+    btn_evaluate_ = std::make_unique<QPushButton>("&Evaluate", this);
 
 #ifdef TOOLTIPS
     btn_dots_->setToolTip(
         "Plot individual points of the curve of singularities");
-    btn_dashes_->setToolTip("Connect points of the curve of singularities with "
-                            "small line segments");
+    btn_dashes_->setToolTip(
+        "Connect points of the curve of singularities with "
+        "small line segments");
     btn_evaluate_->setToolTip("Start evaluation (using symbolic manipulator)");
-    QString ttip{QString::fromStdString(
-        "Number of points. Must be between " + std::to_string(MIN_GCFPOINTS) +
-        " and " + std::to_string(MAX_GCFPOINTS))};
+    QString ttip;
+    ttip.sprintf("Number of points. Must be between %d and %d.", MIN_GCFPOINTS,
+                 MAX_GCFPOINTS);
     edt_points_->setToolTip(ttip);
-    ttip = QString::fromStdString("Required precision. Must be between " +
-                                  std::to_string(MIN_GCFPRECIS) + " and " +
-                                  std::to_string(MAX_GCFPRECIS));
+    ttip.sprintf("Required precision. Must be between %d and %d.",
+                 MIN_GCFPRECIS, MAX_GCFPRECIS);
     edt_precis_->setToolTip(ttip);
-    ttip = QString::fromStdString("Maximum amount of memory (in kilobytes) "
-                                  "spent on plotting GCF.\nMust be between " +
-                                  std::to_string(MIN_GCFMEMORY) + " and " +
-                                  std::to_string(MAX_GCFMEMORY));
+    ttip.sprintf(
+        "Maximum amount of memory (in kilobytes) spent on plotting GCF.\n"
+        "Must be between %d and %d.",
+        MIN_GCFMEMORY, MAX_GCFMEMORY);
     edt_memory_->setToolTip(ttip);
 #endif
 
     // layout
-    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
-    layout1->addWidget(lbl1);
-    layout1->addWidget(btn_dots_);
-    layout1->addWidget(btn_dashes_);
+    auto layout1 = std::make_unique<QHBoxLayout>();
+    layout1->addWidget(lbl1.get());
+    layout1->addWidget(btn_dots_.get());
+    layout1->addWidget(btn_dashes_.get());
 
-    std::unique_ptr<QGridLayout> lay00{new QGridLayout()};
-    lay00->addWidget(lbl2, 0, 0);
-    lay00->addWidget(edt_points_, 0, 1);
-    lay00->addWidget(lbl3, 1, 0);
-    lay00->addWidget(edt_precis_, 1, 1);
-    lay00->addWidget(lbl4, 2, 0);
-    lay00->addWidget(edt_memory_, 2, 1);
+    auto lay00 = std::make_unique<QGridLayout>();
+    lay00->addWidget(lbl2.get(), 0, 0);
+    lay00->addWidget(edt_points_.get(), 0, 1);
+    lay00->addWidget(lbl3.get(), 1, 0);
+    lay00->addWidget(edt_precis_.get(), 1, 1);
+    lay00->addWidget(lbl4.get(), 2, 0);
+    lay00->addWidget(edt_memory_.get(), 2, 1);
 
-    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
+    auto layout2 = std::make_unique<QHBoxLayout>();
     layout2->addStretch(0);
-    layout2->addWidget(btn_evaluate_);
+    layout2->addWidget(btn_evaluate_.get());
     layout2->addStretch(0);
 
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(lay00);
-    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(lay00.get());
+    mainLayout_->addLayout(layout2.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     // connections
-    connect(btn_evaluate_, &QPushButton::clicked, this,
-            &P4GcfDlg::onbtn_evaluate);
+    QObject::connect(btn_evaluate_.get(), &QPushButton::clicked, this,
+                     &P4GcfDlg::onbtn_evaluate);
 
     // finishing
     setP4WindowTitle(this, "GCF Plot");
@@ -166,8 +164,9 @@ void P4GcfDlg::onbtn_evaluate()
 
     if (!ok) {
         QMessageBox::information(
-            this, "P4", "One of the fields has a value that is out of bounds.\n"
-                        "Please correct before continuing.\n");
+            this, "P4",
+            "One of the fields has a value that is out of bounds.\n"
+            "Please correct before continuing.\n");
         return;
     }
 
@@ -179,31 +178,33 @@ void P4GcfDlg::onbtn_evaluate()
     btn_evaluate_->setEnabled(false);
 
     gThisVF.setGcfDlg(this);
-    result = evalGcfStart(mainSphere_, dashes, points, precis);
+    result = evalGcfStart(mainSphere_, dashes, precis, points);
     if (!result) {
         btn_evaluate_->setEnabled(true);
-        QMessageBox::critical(this, "P4", "An error occured while plotting the "
-                                          "GCF.\nThe singular locus may not be "
-                                          "visible, or may be partially "
-                                          "visible.");
+        QMessageBox::critical(this, "P4",
+                              "An error occured while plotting the "
+                              "GCF.\nThe singular locus may not be "
+                              "visible, or may be partially "
+                              "visible.");
     }
 }
 
 void P4GcfDlg::finishGcfEvaluation()
 {
     if (btn_evaluate_->isEnabled() == true)
-        return; // not busy??
+        return;  // not busy??
 
-    bool result{evalGcfContinue(evaluating_points_, evaluating_precision_)};
+    bool result{evalGcfContinue(evaluating_precision_, evaluating_points_)};
 
     if (result) {
         btn_evaluate_->setEnabled(true);
         // return false in case an error occured
         if (!evalGcfFinish()) {
-            QMessageBox::critical(this, "P4", "An error occured while plotting "
-                                              "the GCF.\nThe singular locus "
-                                              "may not be visible, or may "
-                                              "be partially visible.");
+            QMessageBox::critical(this, "P4",
+                                  "An error occured while plotting "
+                                  "the GCF.\nThe singular locus "
+                                  "may not be visible, or may "
+                                  "be partially visible.");
         }
     }
 }
