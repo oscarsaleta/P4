@@ -315,9 +315,8 @@ class P4InputVF : public QObject
     void prepareIsoclines();
     void prepareIsoclinesFile(QTextStream &);
     void prepareMapleIsoclines(QTextStream &);
-    bool prepareIsoclines(std::vector<p4polynom::term2> f, double y1, double y2,
-                          int precision,
-                          int numpoints);  // FIXME
+    bool prepareIsoclines(const std::vector<p4polynom::term2> &f, double y1,
+                          double y2, int precision, int numpoints);  // FIXME
     bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                       int precision, int numpoints, int index);
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);

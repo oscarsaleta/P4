@@ -1722,7 +1722,7 @@ void P4InputVF::evaluate()
         outputWindow_->raise();
     }
 
-    auto proc = std::make_unique<QProcess>(this);
+    proc = std::make_unique<QProcess>(this);
     proc->setWorkingDirectory(QDir::currentPath());
 
     evalProcessFinishedConnection_ =
@@ -2837,8 +2837,9 @@ bool P4InputVF::evaluateIsoclines()
 //
 // Prepare files in case of calculating isoclines in plane/U1/U2 charts.
 // This is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareIsoclines(std::vector<p4polynom::term2> f, double y1,
-                                 double y2, int precision, int numpoints)
+bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
+                                 double y1, double y2, int precision,
+                                 int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
