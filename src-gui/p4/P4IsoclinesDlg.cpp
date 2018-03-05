@@ -37,20 +37,19 @@
 #include <QPushButton>
 #include <QRadioButton>
 
-P4IsoclinesDlg::P4IsoclinesDlg(std::shared_ptr<P4PlotWnd> plt,
-                               std::shared_ptr<P4WinSphere> sp)
+P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
-      mainSphere_{std::move(sp)}, plotwnd_{std::move(plt)}
+      mainSphere_{sp}, plotwnd_{plt}
 {
     edt_value_ = std::make_unique<QLineEdit>("", this);
     auto lbl0 = std::make_unique<QLabel>("&Value = ", this);
-    lbl0->setBuddy(edt_value_);
+    lbl0->setBuddy(edt_value_.get());
 
     auto btngrp = std::make_unique<QButtonGroup>(this);
     btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
     btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
-    btngrp->addButton(btn_dots_);
-    btngrp->addButton(btn_dashes_);
+    btngrp->addButton(btn_dots_.get());
+    btngrp->addButton(btn_dashes_.get());
     auto lbl1 = std::make_unique<QLabel>("Appearance: ", this);
 
     edt_points_ = std::make_unique<QLineEdit>("", this);
@@ -77,66 +76,64 @@ P4IsoclinesDlg::P4IsoclinesDlg(std::shared_ptr<P4PlotWnd> plt,
     btnDelLast_->setToolTip("Delete last isocline drawn");
     btnDelAll_->setToolTip("Delete all isoclines (separatrices remain)");
     QString ttip;
-    ttip = QString::fromStdString("Number of points. Must be between " +
-                                  std::to_string(MIN_CURVEPOINTS) + " and " +
-                                  std::to_string(MAX_CURVEPOINTS));
+    ttip.sprintf("Number of points. Must be between %d and %d.",
+                 MIN_CURVEPOINTS, MAX_CURVEPOINTS);
     edt_points_->setToolTip(ttip);
-    ttip = QString::fromStdString("Required precision. Must be between " +
-                                  std::to_string(MIN_CURVEPRECIS) + " and " +
-                                  std::to_string(MAX_CURVEPRECIS));
+    ttip.sprintf("Required precision. Must be between %d and %d.",
+                 MIN_CURVEPRECIS, MAX_CURVEPRECIS);
     edt_precis_->setToolTip(ttip);
-    ttip = QString::fromStdString(
-        "Maximum amount of memory (in kilobytes) "
-        "spent on plotting GCF.\nMust be between " +
-        std::to_string(MIN_CURVEMEMORY) + " and " +
-        std::to_string(MAX_CURVEMEMORY));
+    ttip.sprintf(
+        "Maximum amount of memory (in kilobytes) spent on plotting GCF.\n"
+        "Must be between %d and %d.",
+        MIN_CURVEMEMORY, MAX_CURVEMEMORY);
     edt_memory_->setToolTip(ttip);
 #endif
 
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QHBoxLayout> layout0 = std::make_unique<QHBoxLayout>();
-    layout0->addWidget(lbl1);
-    layout0->addWidget(btn_dots_);
-    layout0->addWidget(btn_dashes_);
+    auto layout0 = std::make_unique<QHBoxLayout>();
+    layout0->addWidget(lbl1.get());
+    layout0->addWidget(btn_dots_.get());
+    layout0->addWidget(btn_dashes_.get());
 
-    std::unique_ptr<QGridLayout> layout1{std::make_unique<QGridLayout>()};
-    layout1->addWidget(lbl0, 0, 0);
-    layout1->addWidget(edt_value_, 0, 1);
-    layout1->addWidget(lbl2, 1, 0);
-    layout1->addWidget(edt_points_, 1, 1);
-    layout1->addWidget(lbl3, 2, 0);
-    layout1->addWidget(edt_precis_, 2, 1);
-    layout1->addWidget(lbl4, 3, 0);
-    layout1->addWidget(edt_memory_, 3, 1);
+    auto layout1 = std::make_unique<QGridLayout>();
+    layout1->addWidget(lbl0.get(), 0, 0);
+    layout1->addWidget(edt_value_.get(), 0, 1);
+    layout1->addWidget(lbl2.get(), 1, 0);
+    layout1->addWidget(edt_points_.get(), 1, 1);
+    layout1->addWidget(lbl3.get(), 2, 0);
+    layout1->addWidget(edt_precis_.get(), 2, 1);
+    layout1->addWidget(lbl4.get(), 3, 0);
+    layout1->addWidget(edt_memory_.get(), 3, 1);
 
-    std::unique_ptr<QHBoxLayout> layout2{std::make_unique<QHBoxLayout>()};
-    layout2->addWidget(btnEvaluate_);
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(btnEvaluate_.get());
     layout2->addStretch(0);
-    layout2->addWidget(btnDelLast_);
+    layout2->addWidget(btnDelLast_.get());
 
-    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
-    layout3->addWidget(btnPlot_);
+    auto layout3 = std::make_unique<QHBoxLayout>();
+    layout3->addWidget(btnPlot_.get());
     layout3->addStretch(0);
-    layout3->addWidget(btnDelAll_);
+    layout3->addWidget(btnDelAll_.get());
 
-    mainLayout_->addLayout(layout0);
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout0.get());
+    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(layout2.get());
+    mainLayout_->addLayout(layout3.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     // connections
-    connect(btnEvaluate_, &QPushButton::clicked, this,
-            &P4IsoclinesDlg::onBtnEvaluate);
-    connect(btnPlot_, &QPushButton::clicked, this, &P4IsoclinesDlg::onBtnPlot);
-    connect(btnDelAll_, &QPushButton::clicked, this,
-            &P4IsoclinesDlg::onBtnDelAll);
-    connect(btnDelLast_, &QPushButton::clicked, this,
-            &P4IsoclinesDlg::onBtnDelLast);
+    QObject::connect(btnEvaluate_.get(), &QPushButton::clicked, this,
+                     &P4IsoclinesDlg::onBtnEvaluate);
+    QObject::connect(btnPlot_.get(), &QPushButton::clicked, this,
+                     &P4IsoclinesDlg::onBtnPlot);
+    QObject::connect(btnDelAll_.get(), &QPushButton::clicked, this,
+                     &P4IsoclinesDlg::onBtnDelAll);
+    QObject::connect(btnDelLast_.get(), &QPushButton::clicked, this,
+                     &P4IsoclinesDlg::onBtnDelLast);
 
     // finishing
 
@@ -151,7 +148,7 @@ P4IsoclinesDlg::P4IsoclinesDlg(std::shared_ptr<P4PlotWnd> plt,
     setP4WindowTitle(this, "Plot Isoclines");
 }
 
-void P4IsoclinesDlg::onBtnEvaluate(void)
+void P4IsoclinesDlg::onBtnEvaluate()
 {
     bool ok;
     if (edt_value_->text().isNull() && edt_value_->text().isEmpty()) {
@@ -188,8 +185,8 @@ void P4IsoclinesDlg::onBtnEvaluate(void)
         gThisVF.isoclines_ = gThisVF.xdot_;
     } else {
         gThisVF.isoclines_ = "(" + gThisVF.ydot_ + ")-(" +
-                              edt_value_->text().trimmed() + ")*(" +
-                              gThisVF.xdot_ + ")";
+                             edt_value_->text().trimmed() + ")*(" +
+                             gThisVF.xdot_ + ")";
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
@@ -200,7 +197,7 @@ void P4IsoclinesDlg::onBtnEvaluate(void)
     plotwnd_->getDlgData();
 }
 
-void P4IsoclinesDlg::onBtnPlot(void)
+void P4IsoclinesDlg::onBtnPlot()
 {
     bool dashes, result;
     int points, precis, memory;
@@ -276,7 +273,7 @@ void P4IsoclinesDlg::onBtnPlot(void)
     btnDelLast_->setEnabled(true);
 }
 
-void P4IsoclinesDlg::onBtnDelAll(void)
+void P4IsoclinesDlg::onBtnDelAll()
 {
     plotwnd_->getDlgData();
 
@@ -290,7 +287,7 @@ void P4IsoclinesDlg::onBtnDelAll(void)
     mainSphere_->refresh();
 }
 
-void P4IsoclinesDlg::onBtnDelLast(void)
+void P4IsoclinesDlg::onBtnDelLast()
 {
     plotwnd_->getDlgData();
 
@@ -305,7 +302,7 @@ void P4IsoclinesDlg::onBtnDelLast(void)
     }
 }
 
-void P4IsoclinesDlg::reset(void)
+void P4IsoclinesDlg::reset()
 {
     QString buf;
 

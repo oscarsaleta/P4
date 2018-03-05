@@ -34,13 +34,13 @@ class P4IsoclinesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4IsoclinesDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<P4WinSphere>);
+    P4IsoclinesDlg(P4PlotWnd *, P4WinSphere *);
     void reset();
     void finishIsoclinesEvaluation();
 
   private:
-    std::shared_ptr<P4WinSphere> mainSphere_;
-    std::shared_ptr<P4PlotWnd> plotwnd_;
+    P4WinSphere *mainSphere_;
+    P4PlotWnd *plotwnd_;
 
     std::unique_ptr<QPushButton> btnEvaluate_;
     std::unique_ptr<QPushButton> btnPlot_;
