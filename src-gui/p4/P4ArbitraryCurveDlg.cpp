@@ -147,18 +147,10 @@ P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
 
 void P4ArbitraryCurveDlg::reset()
 {
-    QString buf;
-
     edt_curve_->setText("");
-
-    buf.sprintf("%d", DEFAULT_CURVEPOINTS);
-    edt_points_->setText(buf);
-
-    buf.sprintf("%d", DEFAULT_CURVEMEMORY);
-    edt_memory_->setText(buf);
-
-    buf.sprintf("%d", DEFAULT_CURVEPRECIS);
-    edt_precis_->setText(buf);
+    edt_points_->setText(QString::number(DEFAULT_CURVEPOINTS));
+    edt_memory_->setText(QString::number(DEFAULT_CURVEMEMORY));
+    edt_precis_->setText(QString::number(DEFAULT_CURVEPRECIS));
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
@@ -194,7 +186,7 @@ void P4ArbitraryCurveDlg::onBtnEvaluate()
 void P4ArbitraryCurveDlg::onBtnPlot()
 {
     int points, precis, memory;
-    bool convertok, result;
+    bool convertok;
     bool dashes{btn_dashes_->isChecked()};
     bool ok{true};
 
@@ -231,7 +223,7 @@ void P4ArbitraryCurveDlg::onBtnPlot()
     }
 
     // SECOND: read the resulting file and store the list
-    if (!gVFResults.readCurve(gThisVF->getbarefilename())) {
+    if (!gVFResults.readArbitraryCurve(gThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4",
                               "Cannot read curve.\n"
                               "Please check the input field!\n");
@@ -247,8 +239,7 @@ void P4ArbitraryCurveDlg::onBtnPlot()
     btnPlot_->setEnabled(false);
 
     gThisVF->setArbitraryCurveDlg(this);
-    result = evalCurveStart(mainSphere_, dashes, precis, points);
-    if (!result) {
+    if (!evalArbitraryCurveStart(mainSphere_, dashes, precis, points);) {
         btnPlot_->setEnabled(true);
         QMessageBox::critical(this, "P4",
                               "An error occured while plotting the "
@@ -280,7 +271,7 @@ void P4ArbitraryCurveDlg::onBtnDelLast()
 {
     plotwnd_->getDlgData();
 
-    deleteLastCurve(mainSphere_);
+    deleteLastArbitraryCurve(mainSphere_);
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
@@ -293,17 +284,12 @@ void P4ArbitraryCurveDlg::onBtnDelLast()
 
 void P4ArbitraryCurveDlg::finishCurveEvaluation()
 {
-    bool result;
-
     if (btnPlot_->isEnabled() == true)
         return;  // not busy??
 
-    result = evalCurveContinue(evaluating_precision_, evaluating_points_);
-
-    if (result) {
+    if (evalCurveContinue(evaluating_precision_, evaluating_points_)) {
         btnPlot_->setEnabled(false);
-        result = evalCurveFinish();  // return false in case an error occured
-        if (!result) {
+        if (!evalCurveFinish()) {
             QMessageBox::critical(this, "P4",
                                   "An error occured while plotting "
                                   "the curve.\nThe singular locus "
