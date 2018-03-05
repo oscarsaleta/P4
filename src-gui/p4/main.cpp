@@ -59,8 +59,8 @@ bool gActionOnlyPrepareFile = false;
 // in the find menu (this is not saved in the .inp file)
 bool gActionSaveAll = DEFAULTSAVEALL;
 
-std::unique_ptr<QPixmap> gP4smallIcon();
-std::unique_ptr<QPrinter> gP4printer();
+std::unique_ptr<QPixmap> gP4smallIcon;
+std::unique_ptr<QPrinter> gP4printer;
 
 QString gCmdLineFilename;
 bool gCmdLineAutoEvaluate;
@@ -68,7 +68,7 @@ bool gCmdLineAutoPlot;
 bool gCmdLineAutoExit;
 
 extern P4ParentStudy gVFResults;
-extern P4InputVF *gThisVF;
+extern P4InputVF gThisVF;
 
 // -----------------------------------------------------------------------
 //          Functions for handling command line options
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 
     //  gP4app->setStyle( new QCDEStyle() );
 
-    gThisVF = std::make_shared<P4InputVF>();
+    //gThisVF = std::make_shared<P4InputVF>();
 
     gP4startDlg = std::make_shared<P4StartDlg>(gCmdLineFilename);
     if (!gCmdLineAutoExit)
