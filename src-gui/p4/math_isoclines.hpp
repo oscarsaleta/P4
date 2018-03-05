@@ -34,14 +34,13 @@
 #define EVAL_ISOCLINES_FINISHLYAPUNOV 12
 
 class P4WinSphere;
-struct orbits_points;
-
-extern orbits_points *gLastIsoclinesPoint;
+struct p4orbits::orbits_points;
 
 bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points);
-void draw_isoclines(P4WinSphere *spherewnd, orbits_points *isoc, int color,
+void draw_isoclines(P4WinSphere *spherewnd,
+                    const std::vector<p4orbits::orbits_points> &isoc, int color,
                     int dashes);
 void deleteLastIsocline(P4WinSphere *sp);
