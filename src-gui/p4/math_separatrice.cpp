@@ -30,11 +30,11 @@
 
 #include <cmath>
 
-void (*change_epsilon)(std::shared_ptr<P4WinSphere>, double) = nullptr;
-void (*start_plot_sep)(std::shared_ptr<P4WinSphere>) = nullptr;
-void (*cont_plot_sep)(std::shared_ptr<P4WinSphere>) = nullptr;
-void (*plot_next_sep)(std::shared_ptr<P4WinSphere>) = nullptr;
-void (*select_next_sep)(std::shared_ptr<P4WinSphere>) = nullptr;
+void (*change_epsilon)(P4WinSphere *, double) = nullptr;
+void (*start_plot_sep)(P4WinSphere *) = nullptr;
+void (*cont_plot_sep)(P4WinSphere *) = nullptr;
+void (*plot_next_sep)(P4WinSphere *) = nullptr;
+void (*select_next_sep)(P4WinSphere *) = nullptr;
 
 // ---------------------------------------------------------------------------
 //          findSepColor2
@@ -904,9 +904,9 @@ void plot_all_sep(std::shared_ptr<P4WinSphere> spherewnd)
 {
     if (!gVFResults.vf_.empty()) {
         for (int i = 0; i < gThisVF->numVF_; i++) {
-            plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i].saddlePoints_);
-            plot_all_se_sep(spherewnd, i, gVFResults.vf_[i].sePoints_);
-            plot_all_de_sep(spherewnd, i, gVFResults.vf_[i].dePoints_);
+            plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i]->saddlePoints_);
+            plot_all_se_sep(spherewnd, i, gVFResults.vf_[i]->sePoints_);
+            plot_all_de_sep(spherewnd, i, gVFResults.vf_[i]->dePoints_);
         }
     }
 }
