@@ -24,7 +24,7 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4VFStudy::P4VFStudy(P4ParentStudy parent) : parent_{parent} {}
+P4VFStudy::P4VFStudy(P4ParentStudy *parent) : parent_{parent} {}
 
 // -----------------------------------------------------------------------
 //          P4VFStudy::reset

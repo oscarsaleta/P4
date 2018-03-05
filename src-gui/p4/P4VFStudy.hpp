@@ -77,7 +77,7 @@ class P4VFStudy : public QObject
     bool readTables(QString basename);
 
     bool readGCF(FILE *fp);                // TODO
-    bool readCurve(QString basename);      // TODO
+    //bool readCurve(QString basename);      // TODO
     bool readIsoclines(QString basename);  // TODO
 
     bool readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
@@ -93,12 +93,12 @@ class P4VFStudy : public QObject
     bool readDegeneratePoint(FILE *fp);
     bool readNodePoint(FILE *fp);
     bool readBlowupPoints(FILE *fp,
-                          std::vector<p4singularities::blow_up_points> b,
+                          std::vector<p4singularities::blow_up_points> &b,
                           int n);
     bool readTransformations(
-        FILE *fp, std::vector<p4singularities::transformations> trans, int n);
+        FILE *fp, std::vector<p4singularities::transformations> &trans, int n);
 
-    void setupCoordinateTransformations(void);  // see math_p4.cpp
+    void setupCoordinateTransformations();  // see math_p4.cpp
 
     void dump(QTextEdit &m);
 
