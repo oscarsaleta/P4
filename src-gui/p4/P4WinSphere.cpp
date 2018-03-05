@@ -1468,22 +1468,18 @@ void P4WinSphere::plotGcf()
     draw_gcf(this, gVFResults.gcf_points_, CSING, 1);
 }
 
-// FIXME
 void P4WinSphere::plotCurve()
 {
-    std::vector<curves>::const_iterator it;
-    for (it = gVFResults.arbitraryCurveVector_.begin();
-         it != gVFResults.arbitraryCurveVector_.end(); it++) {
-        draw_curve(this, it->points, CCURV, 1);
+    for (auto const &it : gVFResults.arbitraryCurves_) {
+        drawArbitraryCurve(this, it.points, CCURV, 1);
     }
 }
+
 // FIXME per que el nom es diferent?
 void P4WinSphere::drawIsoclines()
 {
-    std::vector<isoclines>::const_iterator it;
-    for (it = gVFResults.isocline_vector_.begin();
-         it != gVFResults.isocline_vector_.end(); it++) {
-        draw_isoclines(this, it->points, it->color, 1);
+    for (auto const &it : gVFResults.isoclines_) {
+        draw_isoclines(this, it.points, it.color, 1);
     }
 }
 
@@ -2282,17 +2278,16 @@ void P4WinSphere::printSeparatingCurves()
 }
 
 // TODO:
-void P4WinSphere::printCurve()
+void P4WinSphere::printArbitraryCurves()
 {
     QString comment;
-    std::vector<curves>::const_iterator it;
     int i;
-    for (it = gVFResults.arbitraryCurveVector_.begin(), i = 0;
-         it != gVFResults.arbitraryCurveVector_.end(); it++, i++) {
+    for (auto it = gVFResults.arbitraryCurves_.begin(), i = 0;
+         it != gVFResults.arbitraryCurves_.end(); ++it, i++) {
         if (it->points != nullptr) {
             comment.sprintf("Printing curve %d:", i);
             print_comment(comment);
-            draw_curve(this, it->points, CCURV, 1);
+            drawArbitraryCurve(this, it->points, CCURV, 1);
         }
     }
 }
