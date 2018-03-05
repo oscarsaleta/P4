@@ -91,10 +91,10 @@ class P4InputVF : public QObject
     std::vector<int> numericlevel_;
     std::vector<int> maxlevel_;
     std::vector<int> weakness_;
-    QString x0_;
-    QString y0_;
-    int p_;
-    int q_;
+    QString x0_{DEFAULTX0};
+    QString y0_{DEFAULTY0};
+    int p_{DEFAULTP};
+    int q_{DEFAULTQ};
 
     // TEXT VECTOR FIELDS
     std::vector<QString> xdot_;
@@ -129,9 +129,9 @@ class P4InputVF : public QObject
     // PIECEWISE VARIABLES: vector fields
     // indicates length of P4ParentStudy::vf_ (not really necessary but too much
     // work to get rid of atm)
-    int numVF_{0};
+    int numVF_{1};
     // same but for this->vfRegions_
-    int numVFRegions_{0};
+    int numVFRegions_{1};
     std::vector<p4InputVFRegions::vfRegion> vfRegions_;
 
     // PIECEWISE VARIABLES: separating curves
@@ -234,9 +234,10 @@ class P4InputVF : public QObject
     QString getfilename_gcf() const;   // filename_gcf.tab (temporary file)
     QString getmaplefilename() const;  // filename.txt
     // curve filenames
-    QString getfilename_curvetable() const;   // filename_veccurve.tab
-    QString getfilename_curve() const;        // filename_curve.tab (tmp file)
-    QString getPrepareCurveFileName() const;  // filename_curve_prep.txt
+    QString getfilename_arbitrarycurvetable() const;  // filename_veccurve.tab
+    QString getfilename_arbitrarycurve() const;  // filename_curve.tab (tmp)
+    QString getPrepareArbitraryCurveFileName()
+        const;  // filename_curve_prep.txt
     // isoclines filenames
     QString getfilename_isoclinestable() const;  // filename_vecisocline.tab
     QString getfilename_isoclines() const;  // filename_isocline.tab (tmp file)
@@ -301,7 +302,7 @@ class P4InputVF : public QObject
     // the following are called from math_curve.cpp
     bool prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
                                double y1, double y2, int precision,
-                               int numpoints);  // FIXME
+                               int numpoints);
     bool prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
                                            int precision, int numpoints,
                                            int index);
@@ -322,6 +323,7 @@ class P4InputVF : public QObject
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
+    // get and set
     P4FindDlg *getFindDlgPtr() const;
     void setFindDlg(P4FindDlg *);
 
@@ -357,4 +359,4 @@ class P4InputVF : public QObject
 };
 
 // FIXME: this should be a plain object, not a pointer
-extern std::unique_ptr<P4InputVF> gThisVF;
+P4InputVF gThisVF;

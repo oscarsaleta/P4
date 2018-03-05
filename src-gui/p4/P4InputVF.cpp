@@ -87,7 +87,7 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4InputVF::P4InputVF() { reset(1); }
+P4InputVF::P4InputVF() { vfRegions_.emplace_back(0, std::vector<int>{}); }
 
 // -----------------------------------------------------------------------
 //          DESTRUCTOR
@@ -96,9 +96,9 @@ P4InputVF::~P4InputVF()
 {
     // TODO moure això al final de l'avaluació de les corbes/isoclines?
     // remove curve auxiliary files
-    removeFile(getfilename_curvetable());
-    removeFile(getfilename_curve());
-    removeFile(getPrepareCurveFileName());
+    removeFile(getfilename_arbitrarycurvetable());
+    removeFile(getfilename_arbitrarycurve());
+    removeFile(getPrepareArbitraryCurveFileName());
     // remove isoclines files too
     removeFile(getfilename_isoclinestable());
     removeFile(getfilename_isoclines());
@@ -140,11 +140,10 @@ void P4InputVF::reset(int n)
     for (i = 0; i < MAXNUMPARAMS; i++)
         parlabel_[i] = "";
 
-    isoclines_.clear()
+    isoclines_.clear();
 
-        // refill vectors with default values
-        for (i = 0; i < n; i++)
-    {
+    // refill vectors with default values
+    for (i = 0; i < n; i++) {
         numeric_.push_back(DEFAULTNUMERIC);
         precision_.push_back(DEFAULTPRECISION);
         epsilon_.push_back(QString(DEFAULTEPSILON));
@@ -184,8 +183,7 @@ void P4InputVF::reset(int n)
         selected_.push_back(0);
 
         if (n == 1) {
-            vfRegions_.push_back(
-                p4InputVFRegions::vfRegion{0, std::vector<int>{}});
+            vfRegions_.emplace_back(0, std::vector<int>{});
             numVFRegions_ = 1;
         }
     } else {
@@ -856,17 +854,17 @@ QString P4InputVF::getmaplefilename() const
 }
 
 // curve filenames
-QString P4InputVF::getfilename_curvetable() const
+QString P4InputVF::getfilename_arbitrarycurvetable() const
 {
     return getbarefilename().append("_veccurve.tab");
 }
 
-QString P4InputVF::getfilename_curve() const
+QString P4InputVF::getfilename_arbitrarycurve() const
 {
     return getbarefilename().append("_curve.tab");
 }
 
-QString P4InputVF::getPrepareCurveFileName() const
+QString P4InputVF::getPrepareArbitraryCurveFileName() const
 {
     return getbarefilename().append("_curve_prep.txt");
 }
@@ -1589,7 +1587,7 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
     fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
     fp << "all_crit_points := " << typeofstudy_ << ":\n";
 
-    name_curvetab = getfilename_curvetable();
+    name_curvetab = getfilename_arbitrarycurvetable();
     removeFile(name_curvetab);
     ba_name_curvetab = maplepathformat(name_curvetab);
     fp << "curve_table := \"" << ba_name_curvetab << "\":\n";
@@ -1780,7 +1778,7 @@ void P4InputVF::evaluateArbitraryCurveTable()
         evalProcess_.reset();
 
     prepareArbitraryCurve();
-    QString filedotmpl{getPrepareCurveFileName()};
+    QString filedotmpl{getPrepareArbitraryCurveFileName()};
 
     QString s{getMapleExe()};
     if (s.isEmpty())
@@ -2089,7 +2087,7 @@ void P4InputVF::prepare()
 // -----------------------------------------------------------------------
 void P4InputVF::prepareArbitraryCurve()
 {
-    QString filedotmpl{getPrepareCurveFileName()};
+    QString filedotmpl{getPrepareArbitraryCurveFileName()};
     QFile file{QFile::encodeName(filedotmpl)};
     if (file.open(QFile::WriteOnly)) {
         QTextStream fp{&file};
@@ -2582,7 +2580,6 @@ bool P4InputVF::evaluateArbitraryCurve()
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareArbitraryCurve
 // -----------------------------------------------------------------------
-//
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
 bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
@@ -2596,7 +2593,7 @@ bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
         auto ba_mainmaple = maplepathformat(mainmaple);
 
         QString user_platform{USERPLATFORM};
-        auto user_file = getfilename_curve();
+        auto user_file = getfilename_arbitrarycurve();
         auto ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
 
@@ -2653,7 +2650,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
 
         QString user_platform{USERPLATFORM};
 
-        auto user_file = getfilename_curve();
+        auto user_file = getfilename_arbitrarycurve();
         auto ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
 
@@ -2713,7 +2710,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints,
 
         QString user_platform{USERPLATFORM};
 
-        auto user_file = getfilename_curve();
+        auto user_file = getfilename_arbitrarycurve();
         auto ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
 
