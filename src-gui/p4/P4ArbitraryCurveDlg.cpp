@@ -287,7 +287,7 @@ void P4ArbitraryCurveDlg::finishCurveEvaluation()
     if (btnPlot_->isEnabled() == true)
         return;  // not busy??
 
-    if (evalCurveContinue(evaluating_precision_, evaluating_points_)) {
+    if (evalArbitraryCurveContinue(evaluating_precision_, evaluating_points_)) {
         btnPlot_->setEnabled(false);
         if (!evalCurveFinish()) {
             QMessageBox::critical(this, "P4",
