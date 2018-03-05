@@ -211,12 +211,12 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         q_ = q;
 
         plweights_ = ((p_ == 1 && q_ == 1) ? false : true);
-        double_p_ = (double)p_;
-        double_q_ = (double)q_;
-        double_p_plus_q_ = (double)(p_ + q_);
-        double_p_minus_1_ = (double)(p_ - 1);
-        double_q_minus_1_ = (double)(q_ - 1);
-        double_q_minus_p_ = (double)(q_ - p_);
+        double_p_ = static_cast<double>(p_);
+        double_q_ = static_cast<double>(q_);
+        double_p_plus_q_ = static_cast<double>(p_ + q_);
+        double_p_minus_1_ = static_cast<double>(p_ - 1);
+        double_q_minus_1_ = static_cast<double>(q_ - 1);
+        double_q_minus_p_ = static_cast<double>(q_ - p_);
 
         /*P5 Store precision _prec */
 
@@ -338,7 +338,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         fpinf = nullptr;
 
     for (j = 0; j < gThisVF.numVF_; j++) {
-        if (!vf[j]->readTables(fpvec, fpfin, fpinf)) {
+        if (!vf_[j]->readTables(fpvec, fpfin, fpinf)) {
             reset();
             if (fpinf != nullptr)
                 fclose(fpinf);
