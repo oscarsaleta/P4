@@ -65,4 +65,4 @@ class P4Application : public QApplication
     std::unique_ptr<QFont> legendFont_;
 };
 
-extern std::unique_ptr<P4Application> gP4app;
+P4Application gP4app;

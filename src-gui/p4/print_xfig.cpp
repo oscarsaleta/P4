@@ -821,7 +821,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
         sXFigLineWidth = 1;  // minimal line width = 1
     sXFigLineWidth *= 2;
 
-    s = gThisVF->getbarefilename() + ".fig";
+    s = gThisVF.getbarefilename() + ".fig";
 
     sXFigFile.reset(new QFile(s));
     if (sXFigFile->open(QIODevice::WriteOnly)) {

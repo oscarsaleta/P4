@@ -57,7 +57,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
     setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
     if (gP4smallIcon)
-        setWindowIcon(*gP4smallIcon);
+        setWindowIcon(gP4smallIcon);
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
@@ -209,7 +209,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 
 void P4PlotWnd::onSaveSignal()
 {
-    QString fname = gThisVF->getbarefilename().append(".conf");
+    QString fname = gThisVF.getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
     settings.setValue("P4PlotWnd/size", size());
     settings.setValue("P4PlotWnd/pos", pos());
@@ -219,7 +219,7 @@ void P4PlotWnd::onSaveSignal()
 
 void P4PlotWnd::onLoadSignal()
 {
-    QString fname = gThisVF->getbarefilename().append(".conf");
+    QString fname = gThisVF.getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
     resize(settings.value("P4PlotWnd/size").toSize());
     move(settings.value("P4PlotWnd/pos").toPoint());
@@ -286,14 +286,14 @@ void P4PlotWnd::onBtnClose()
 {
     auto e1 = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-    gP4app->postEvent(parent_, e1.release());
+    gP4app.postEvent(parent_, e1.release());
 }
 
 bool P4PlotWnd::close()
 {
     auto e1 = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-    gP4app->postEvent(parent_, e1.release());
+    gP4app.postEvent(parent_, e1.release());
 
     return QMainWindow::close();
 }
@@ -381,13 +381,13 @@ void P4PlotWnd::onBtnPrint()
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            gP4printer->setResolution(res);
+            gP4printer.setResolution(res);
 
             QPrintDialog dialog(gP4printer, this);
             if (!dialog.exec())
                 return;
 
-            res = gP4printer->resolution();
+            res = gP4printer.resolution();
         }
 
         if (result < 0)
@@ -423,7 +423,7 @@ void P4PlotWnd::configure()
 
     actGCF_->setEnabled(false);
     if (!gVFResults.vf_.empty()) {
-        for (int i = gThisVF->numVF_ - 1; i >= 0; i--) {
+        for (int i = gThisVF.numVF_ - 1; i >= 0; i--) {
             if (!gVFResults.vf_[i]->gcf_.empty()) {
                 actGCF_->setEnabled(true);
                 break;
@@ -545,7 +545,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
     if (!isMinimized()) {
         auto e1 = std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-        gP4app->postEvent(parent_, e1.release());
+        gP4app.postEvent(parent_, e1.release());
     }
 }
 

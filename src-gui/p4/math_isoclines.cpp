@@ -89,8 +89,8 @@ bool evalIsoclinesFinish() // return false in case an error occured
     gVFResults.isocline_vector_.back().color = CISOC + nisocs;
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
-        for (int index = 0; index < gThisVF->numVF_; index++)
-            gThisVF->resampleIsoclines(index);
+        for (int index = 0; index < gThisVF.numVF_; index++)
+            gThisVF.resampleIsoclines(index);
         sIsoclinesSphere->prepareDrawing();
         draw_isoclines(sIsoclinesSphere,
                        gVFResults.isocline_vector_.back().points,
@@ -113,42 +113,42 @@ bool runTaskIsoclines(int task, int precision, int points)
 
     switch (task) {
     case EVAL_ISOCLINES_R2:
-        value = gThisVF->prepareIsoclines(
+        value = gThisVF.prepareIsoclines(
             gVFResults.isocline_vector_.back().r2, -1, 1, precision, points);
         break;
     case EVAL_ISOCLINES_U1:
-        value = gThisVF->prepareIsoclines(
+        value = gThisVF.prepareIsoclines(
             gVFResults.isocline_vector_.back().u1, 0, 1, precision, points);
         break;
     case EVAL_ISOCLINES_V1:
-        value = gThisVF->prepareIsoclines(
+        value = gThisVF.prepareIsoclines(
             gVFResults.isocline_vector_.back().u1, -1, 0, precision, points);
         break;
     case EVAL_ISOCLINES_U2:
-        value = gThisVF->prepareIsoclines(
+        value = gThisVF.prepareIsoclines(
             gVFResults.isocline_vector_.back().u2, 0, 1, precision, points);
         break;
     case EVAL_ISOCLINES_V2:
-        value = gThisVF->prepareIsoclines(
+        value = gThisVF.prepareIsoclines(
             gVFResults.isocline_vector_.back().u2, -1, 0, precision, points);
         break;
     case EVAL_ISOCLINES_LYP_R2:
-        value = gThisVF->prepareIsoclines_LyapunovR2(precision, points);
+        value = gThisVF.prepareIsoclines_LyapunovR2(precision, points);
         break;
     case EVAL_ISOCLINES_CYL1:
-        value = gThisVF->prepareIsoclines_LyapunovCyl(-PI_DIV4, PI_DIV4,
+        value = gThisVF.prepareIsoclines_LyapunovCyl(-PI_DIV4, PI_DIV4,
                                                        precision, points);
         break;
     case EVAL_ISOCLINES_CYL2:
-        value = gThisVF->prepareIsoclines_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
+        value = gThisVF.prepareIsoclines_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
                                                        precision, points);
         break;
     case EVAL_ISOCLINES_CYL3:
-        value = gThisVF->prepareIsoclines_LyapunovCyl(
+        value = gThisVF.prepareIsoclines_LyapunovCyl(
             PI - PI_DIV4, PI + PI_DIV4, precision, points);
         break;
     case EVAL_ISOCLINES_CYL4:
-        value = gThisVF->prepareIsoclines_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
+        value = gThisVF.prepareIsoclines_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
                                                        precision, points);
         break;
     default:
@@ -157,7 +157,7 @@ bool runTaskIsoclines(int task, int precision, int points)
     }
 
     if (value)
-        return gThisVF->evaluateIsoclines();
+        return gThisVF.evaluateIsoclines();
     else
         return false;
 }
@@ -248,7 +248,7 @@ static bool read_isoclines(void (*chart)(double, double, double *))
     double pcoord[3];
     int d, c;
 
-    fp = fopen(QFile::encodeName(gThisVF->getfilename_isoclines()), "r");
+    fp = fopen(QFile::encodeName(gThisVF.getfilename_isoclines()), "r");
     if (fp == nullptr)
         return false;
 

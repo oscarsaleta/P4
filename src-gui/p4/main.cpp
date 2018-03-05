@@ -59,8 +59,8 @@ bool gActionOnlyPrepareFile = false;
 // in the find menu (this is not saved in the .inp file)
 bool gActionSaveAll = DEFAULTSAVEALL;
 
-std::unique_ptr<QPixmap> gP4smallIcon;
-std::unique_ptr<QPrinter> gP4printer;
+QPixmap gP4smallIcon;
+QPrinter gP4printer;
 
 QString gCmdLineFilename;
 bool gCmdLineAutoEvaluate;
@@ -144,22 +144,22 @@ int main(int argc, char *argv[])
         gCmdLineFilename = DEFAULTFILENAME;
 
     gP4app.reset(new QP4Application(argc, argv));
-    gP4app->setOrganizationName("P4");
-    gP4app->setOrganizationDomain("gsd.uab.cat");
-    gP4app->setApplicationName("P4");
+    gP4app.setOrganizationName("P4");
+    gP4app.setOrganizationDomain("gsd.uab.cat");
+    gP4app.setApplicationName("P4");
 
-    gP4app->addLibraryPath(gP4app->applicationDirPath());
+    gP4app.addLibraryPath(gP4app.applicationDirPath());
 
-    gP4app->setQuitOnLastWindowClosed(false);
+    gP4app.setQuitOnLastWindowClosed(false);
     v = readP4Settings();
 
     gP4printer.reset(new QPrinter(QPrinter::PrinterResolution));
     gP4smallIcon.reset(new QPixmap());
-    if (gP4smallIcon->load(getP4BinPath() + "/p4smallicon.ico") == false) {
+    if (gP4smallIcon.load(getP4BinPath() + "/p4smallicon.ico") == false) {
         gP4smallIcon.reset();
     }
 
-    //  gP4app->setStyle( new QCDEStyle() );
+    //  gP4app.setStyle( new QCDEStyle() );
 
     //gThisVF = std::make_shared<P4InputVF>();
 
@@ -167,10 +167,10 @@ int main(int argc, char *argv[])
     if (!gCmdLineAutoExit)
         gP4startDlg->show();
 
-    gP4app->setQuitOnLastWindowClosed(true);
+    gP4app.setQuitOnLastWindowClosed(true);
 
     if (gCmdLineFilename.length() != 0) {
-        if (!(gThisVF->load())) {
+        if (!(gThisVF.load())) {
             gCmdLineAutoEvaluate = false;
             gCmdLineAutoPlot = false;
             if (gCmdLineAutoExit) {
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
         psettings->exec();
     }
 
-    returnvalue = gP4app->exec();
+    returnvalue = gP4app.exec();
 
     gP4printer.reset();
 

@@ -47,7 +47,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     if (gP4smallIcon)
-        setWindowIcon(*gP4smallIcon);
+        setWindowIcon(gP4smallIcon);
 
 #ifdef USE_SYSTEM_PRINTER
     btn_default_ = std::make_unique<QPushButton>("&System printer", this);

@@ -25,24 +25,24 @@
 #include <QScrollBar>
 
 P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
-    : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF->numparams_}
+    : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF.numparams_}
 {
     int i;
 
     auto label0 = std::make_unique<QLabel>("Enter values for all parameters");
-    label0->setFont(gP4app->getTitleFont());
+    label0->setFont(gP4app.getTitleFont());
 
     currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
                               ? currentNumParams_
                               : MAXNUMPARAMSSHOWN;
 
-    // strLabels_ = gThisVF->parlabel_;
-    // strValues_ = gThisVF->parvalue_;
+    // strLabels_ = gThisVF.parlabel_;
+    // strValues_ = gThisVF.parvalue_;
 
     for (i = 0; i < currentShownParams_; i++) {
         // parlabel_ and parvalue_ might (or not) be filled from the input file
         paramNames_.emplace_back(
-            std::make_unique<QLineEdit>(gThisVF->parlabel_[i], this));
+            std::make_unique<QLineEdit>(gThisVF.parlabel_[i], this));
         paramEqual_.emplace_back(std::make_unique<QLabel>(" = ", this));
         paramValues_.emplace_back(std::make_unique<QLineEdit>("", this));
 #ifdef TOOLTIPS
@@ -89,7 +89,7 @@ bool P4VFParams::focusNextPrevChild(bool next)
 
 void P4VFParams::paramsEditingFinished()
 {
-    if (!gThisVF || gThisVF->numParams_ != currentNumParams_)
+    if (!gThisVF || gThisVF.numParams_ != currentNumParams_)
         return;
 
     bool changed{false};
@@ -97,8 +97,8 @@ void P4VFParams::paramsEditingFinished()
 
     for (int i = 0; i < currentShownParams_; i++) {
         lbl = paramNames_[i]->text().trimmed();
-        if (lbl.compare(gThisVF->parlabel_[i + currentPageIndex_])) {
-            gThisVF->parlabel_[i + currentPageIndex_] = lbl;
+        if (lbl.compare(gThisVF.parlabel_[i + currentPageIndex_])) {
+            gThisVF.parlabel_[i + currentPageIndex_] = lbl;
             changed = true;
         }
         changed |= getLineEditCommonParValue(paramValues_[i].get(),
@@ -106,9 +106,9 @@ void P4VFParams::paramsEditingFinished()
     }
 
     if (changed) {
-        if (!gThisVF->changed_) {
-            gThisVF->changed_ = true;
-            gP4app->signalChanged();
+        if (!gThisVF.changed_) {
+            gThisVF.changed_ = true;
+            gP4app.signalChanged();
         }
     }
 }
@@ -116,11 +116,11 @@ void P4VFParams::paramsEditingFinished()
 // only called when vf is loaded, and only when numparams did not change.
 bool P4VFParams::updateDlgData()
 {
-    if (gThisVF->numparams_ != currentNumParams_)
+    if (gThisVF.numparams_ != currentNumParams_)
         return false;
 
     for (int i = 0; i < currentShownParams_; i++) {
-        paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
+        paramNames_[i]->setText(gThisVF.parlabel_[i + currentPageIndex_]);
         setLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
     }
 
@@ -138,7 +138,7 @@ void P4VFParams::paramsSliderChanged(int value)
         currentPageIndex_ = value;
 
         for (int i = 0; i < currentShownParams_; i++) {
-            paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
+            paramNames_[i]->setText(gThisVF.parlabel_[i + currentPageIndex_]);
             setLineEditCommonParValue(paramValues_[i].get(),
                                       i + currentPageIndex_);
         }
@@ -147,8 +147,8 @@ void P4VFParams::paramsSliderChanged(int value)
 
 void P4VFParams::setLineEditCommonParValue(QLineEdit *le, int index)
 {
-    if (gThisVF->hasCommonParValue(index))
-        le->setText(gThisVF->commonParValue(index));
+    if (gThisVF.hasCommonParValue(index))
+        le->setText(gThisVF.commonParValue(index));
     else
         le->setText("########");
 }
@@ -157,17 +157,17 @@ void P4VFParams::getLineEditCommonParValue(QLineEdit *le, int index)
 {
     int i;
     QString val{le->text().trimmed()};
-    if (!gThisVF->hasCommonParValue(index)) {
+    if (!gThisVF.hasCommonParValue(index)) {
         for (i = val.length() - 1; i >= 0; i--) {
             if (val[i] != '#')
                 break;
         }
-        if (i < 0 || !val.compare(gThisVF->commonParValue(index)))
+        if (i < 0 || !val.compare(gThisVF.commonParValue(index)))
             return false;
     }
-    if (!val.compare(gThisVF->commonParValue(index)))
+    if (!val.compare(gThisVF.commonParValue(index)))
         return false;
 
-    gThisVF->setCommonParValue(index, val);
+    gThisVF.setCommonParValue(index, val);
     return true;
 }

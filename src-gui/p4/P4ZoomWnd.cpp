@@ -43,7 +43,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd &main, int id, double x1, double y1, double x2,
       y2_{y2}
 {
     if (gP4smallIcon)
-        setWindowIcon(*gP4smallIcon);
+        setWindowIcon(gP4smallIcon);
 
     std::unique_ptr<QToolBar> toolBar1{
         std::make_unique<QToolBar>("ZoomBar1", this)};
@@ -92,7 +92,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd &main, int id, double x1, double y1, double x2,
 
 void P4ZoomWnd::onSaveSignal()
 {
-    QSettings settings(gThisVF->getbarefilename().append(".conf"),
+    QSettings settings(gThisVF.getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
     settings.beginGroup(QString("P4ZoomWnd").append(zoomid_));
     settings.setValue("id", zoomid_);
@@ -120,7 +120,7 @@ void P4ZoomWnd::onBtnClose()
     std::unique_ptr<int> data{std::make_unique<int>(zoomid_)};
     std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.get())};
-    gP4app->postEvent(&parent_, e1.get());
+    gP4app.postEvent(&parent_, e1.get());
 }
 
 bool P4ZoomWnd::close()
@@ -147,11 +147,11 @@ void P4ZoomWnd::onBtnPrint()
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            gP4printer->setResolution(res);
+            gP4printer.setResolution(res);
             QPrintDialog dialog{gP4printer, this};
             if (!dialog.exec())
                 return;
-            res = gP4printer->resolution();
+            res = gP4printer.resolution();
         }
 
         if (result < 0)
@@ -185,7 +185,7 @@ void P4ZoomWnd::customEvent(QEvent *_e)
         e->type() == TYPE_SELECT_LCSECTION) {
         std::unique_ptr<P4Event> newe{
             std::make_unique<P4Event>(e->type(), e->data())};
-        gP4app->postEvent(&parent_, newe.get());
+        gP4app.postEvent(&parent_, newe.get());
         return;
     }
 
@@ -198,7 +198,7 @@ void P4ZoomWnd::hideEvent(QHideEvent *h)
         std::unique_ptr<int> data{std::make_unique<int>(zoomid_)};
         std::unique_ptr<P4Event> e1{std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.get())};
-        gP4app->postEvent(&parent_, e1.get());
+        gP4app.postEvent(&parent_, e1.get());
     }
 }
 
@@ -211,7 +211,7 @@ void P4ZoomWnd::adjustHeight()
     int w{width()};
     int h{height() + sphere_->idealh_ - sphere_->h_};
 
-    int m{gP4app->desktop()->height()};
+    int m{gP4app.desktop()->height()};
     m -= m / 10;  // occuppy at most 90% of the screen's height
 
     if (h > m) {
@@ -226,7 +226,7 @@ void P4ZoomWnd::adjustHeight()
 
         h += std::round(deltah + 0.5);
         w += std::round(deltaw + 0.5);
-        m = gP4app->desktop()->width();
+        m = gP4app.desktop()->width();
         m -= m / 10;
         if (w > m)
             w = m;  // occupy at most 90 % of the screen's width

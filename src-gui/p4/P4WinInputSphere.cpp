@@ -100,7 +100,7 @@ void P4WinInputSphere::setupPlot()
     if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
             produceEllipse(0., 0., 1., 1., false, coWinH(1.), coWinV(1.));
-        if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
+        if (gThisVF.p_ != 1 || gThisVF.q_ != 1)
             plCircle_ = produceEllipse(0., 0., RADIUS, RADIUS, true,
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -217,7 +217,7 @@ void P4WinInputSphere::adjustToNewSize()
     if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
             produceEllipse(0., 0., 1., 1., false, coWinH(1.), coWinV(1.));
-        if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
+        if (gThisVF.p_ != 1 || gThisVF.q_ != 1)
             plCircle_ = produceEllipse(0., 0., RADIUS, RADIUS, true,
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
@@ -235,7 +235,7 @@ void P4WinInputSphere::adjustToNewSize()
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
+                if (gThisVF.p_ != 1 || gThisVF.q_ != 1)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -273,7 +273,7 @@ void P4WinInputSphere::refreshAfterResize()
 
 void P4WinInputSphere::paintEvent(QPaintEvent *p)
 {
-    if (gThisVF->evaluating_)
+    if (gThisVF.evaluating_)
         return;
 
     if (!painterCache_ || isPainterCacheDirty_) {
@@ -290,7 +290,7 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
-                if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
+                if (gThisVF.p_ != 1 || gThisVF.q_ != 1)
                     plotPoincareLyapunovSphere();
                 else
                     plotPoincareSphere();
@@ -412,7 +412,7 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
 
         if (!gVFResults.separatingCurves_.empty()) {
             QString s;
-            index = gThisVF->getVFIndex_sphere(pcoord);
+            index = gThisVF.getVFIndex_sphere(pcoord);
             if (index < 0) {
                 buf.append("   VF: NONE");
             } else {
@@ -951,7 +951,7 @@ std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
 void P4WinInputSphere::plotCurves()
 {
     if (!gVFResults.separatingCurves_.empty())
-        for (r = 0; r < gThisVF->numCurveS_; r++)
+        for (r = 0; r < gThisVF.numCurveS_; r++)
             plotCurve(gVFResults.separatingCurves_[r], r);
 }
 

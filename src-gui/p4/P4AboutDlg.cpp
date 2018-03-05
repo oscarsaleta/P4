@@ -37,7 +37,7 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     // define controls
 
     if (gP4smallIcon)
-        setWindowIcon(*gP4smallIcon);
+        setWindowIcon(gP4smallIcon);
 
     btn_ok_.reset(new QPushButton("&Ok"));
     btn_settings_.reset(new QPushButton("&Main Settings"));

@@ -1753,7 +1753,7 @@ void P4InputVF::evaluate()
         proc.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app->signalEvaluated(-1);
+        gP4app.signalEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
     } else {
         evalProcess_ = std::move(proc);
@@ -1829,7 +1829,7 @@ void P4InputVF::evaluateArbitraryCurveTable()
         proc.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app->signalEvaluated(-1);
+        gP4app.signalEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
     } else {
         evalProcess_ = std::move(proc);
@@ -1933,7 +1933,7 @@ void P4InputVF::evaluateIsoclinesTable()
             evalProcess_.reset();
             evalFile_ = "";
             evalFile2_ = "";
-            gP4app->signalEvaluated(-1);
+            gP4app.signalEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
         } else {
             evalProcess_ = std::move(proc);
@@ -2192,7 +2192,7 @@ void P4InputVF::createProcessWindow()
     outputWindow_->setWindowTitle("Output window");
     outputWindow_->resize(530, 344);
     if (gP4smallIcon)
-        outputWindow_->setWindowIcon(*gP4smallIcon);
+        outputWindow_->setWindowIcon(gP4smallIcon);
 
     auto vLayout = std::make_unique<QVBoxLayout>(outputWindow_);
     vLayout->setSpacing(3);
@@ -2203,7 +2203,7 @@ void P4InputVF::createProcessWindow()
     processText_ = std::make_unique<QTextEdit>(outputWindow_);
     processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
     processText_->setWordWrapMode(QTextOption::WrapAnywhere);
-    processText_->setFont(gP4app->getCourierFont());
+    processText_->setFont(gP4app.getCourierFont());
     processText_->setLineWrapColumnOrWidth(82);
     processText_->setReadOnly(true);
     processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -2214,7 +2214,7 @@ void P4InputVF::createProcessWindow()
 
     hLayout->addStretch();
     terminateProcessButton_ = std::make_unique<QPushButton>("Terminate");
-    terminateProcessButton_->setFont(gP4app->getBoldFont());
+    terminateProcessButton_->setFont(gP4app.getBoldFont());
     terminateProcessButton_->setToolTip(
         "Terminates the process.  First tries to send a "
         "safe signal to the process.\nIf this does not "
@@ -2223,7 +2223,7 @@ void P4InputVF::createProcessWindow()
     hLayout->addWidget(terminateProcessButton_);
 
     clearProcessButton_ = std::make_unique<QPushButton>("Clear");
-    clearProcessButton_->setFont(gP4app->getBoldFont());
+    clearProcessButton_->setFont(gP4app.getBoldFont());
     clearProcessButton_->setToolTip("Clears this window");
     hLayout->addWidget(clearProcessButton_);
 
@@ -2306,7 +2306,7 @@ bool P4InputVF::evaluateGcf()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app->signalCurveEvaluated(-1);
+        gP4app.signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2565,7 +2565,7 @@ bool P4InputVF::evaluateArbitraryCurve()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app->signalCurveEvaluated(-1);
+        gP4app.signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2819,7 +2819,7 @@ bool P4InputVF::evaluateIsoclines()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app->signalCurveEvaluated(-1);
+        gP4app.signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -3402,7 +3402,7 @@ bool P4InputVF::evaluateSeparatingCurves()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app->signalEvaluated(-1);
+        gP4app.signalEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -3424,7 +3424,7 @@ void P4InputVF::finishSeparatingCurvesEvaluation()
     evaluatingPiecewiseConfig_ = false;
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_CURVESEVALUATED), nullptr);
-    gP4app->postEvent(gP4startDlg, e.release());
+    gP4app.postEvent(gP4startDlg, e.release());
 }
 
 // -----------------------------------------------------------------------

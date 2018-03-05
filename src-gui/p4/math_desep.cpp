@@ -156,7 +156,7 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
                 break;
             }
 
-            if (gThisVF->getVFIndex_sphere(pcoord) == gVFResults.K_)
+            if (gThisVF.getVFIndex_sphere(pcoord) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -416,7 +416,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
         break;
     }
 
-    if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex)
+    if (gThisVF.getVFIndex_sphere(pcoord2) != vfindex)
         return {};
 
     // end of P5 addition

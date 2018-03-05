@@ -161,8 +161,8 @@ void P4IsoclinesDlg::onBtnEvaluate(void)
         return;
     } else {
         QString val = edt_value_->text();
-        gThisVF->getDataFromDlg();
-        val = gThisVF->convertMapleUserParametersLabelsToValues(val);
+        gThisVF.getDataFromDlg();
+        val = gThisVF.convertMapleUserParametersLabelsToValues(val);
         val.toDouble(&ok);
         if (!ok) {
             QMessageBox::information(
@@ -173,8 +173,8 @@ void P4IsoclinesDlg::onBtnEvaluate(void)
             return;
         }
     }
-    if ((gThisVF->xdot_ == "0" || gThisVF->xdot_.isEmpty()) &&
-        (gThisVF->ydot_ == "0" || gThisVF->ydot_.isEmpty())) {
+    if ((gThisVF.xdot_ == "0" || gThisVF.xdot_.isEmpty()) &&
+        (gThisVF.ydot_ == "0" || gThisVF.ydot_.isEmpty())) {
         QMessageBox::information(this, "P4",
                                  "Check that the vector field is "
                                  "correctly introduced.\nIf you "
@@ -183,19 +183,19 @@ void P4IsoclinesDlg::onBtnEvaluate(void)
         return;
     }
     if (edt_value_->text().trimmed() == "0") {
-        gThisVF->isoclines_ = gThisVF->ydot_;
+        gThisVF.isoclines_ = gThisVF.ydot_;
     } else if (edt_value_->text().trimmed().toLower() == "inf") {
-        gThisVF->isoclines_ = gThisVF->xdot_;
+        gThisVF.isoclines_ = gThisVF.xdot_;
     } else {
-        gThisVF->isoclines_ = "(" + gThisVF->ydot_ + ")-(" +
+        gThisVF.isoclines_ = "(" + gThisVF.ydot_ + ")-(" +
                               edt_value_->text().trimmed() + ")*(" +
-                              gThisVF->xdot_ + ")";
+                              gThisVF.xdot_ + ")";
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
-    gThisVF->setIsoclinesDlg(this);
-    gThisVF->evaluateIsoclinesTable();
+    gThisVF.setIsoclinesDlg(this);
+    gThisVF.evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
     plotwnd_->getDlgData();
 }
@@ -245,7 +245,7 @@ void P4IsoclinesDlg::onBtnPlot(void)
     }
 
     // SECOND: read the resulting file and store the list
-    if (!gVFResults.readIsoclines(gThisVF->getbarefilename())) {
+    if (!gVFResults.readIsoclines(gThisVF.getbarefilename())) {
         QMessageBox::critical(this, "P4",
                               "Cannot read isoclines.\n"
                               "Please check the input field!\n");
@@ -259,7 +259,7 @@ void P4IsoclinesDlg::onBtnPlot(void)
 
     btnPlot_->setEnabled(false);
 
-    gThisVF->setIsoclinesDlg(this);
+    gThisVF.setIsoclinesDlg(this);
 
     result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
     if (!result) {
