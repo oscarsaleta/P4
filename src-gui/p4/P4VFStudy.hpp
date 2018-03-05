@@ -25,15 +25,14 @@ class P4VFStudy : public QObject
 {
   public:
     // Constructor
-    P4VFStudy(std::shared_ptr<P4ParentStudy> parent =
-                  std::make_shared<P4ParentStudy>(nullptr));
+    P4VFStudy(P4ParentStudy *parent = nullptr);
 
-    std::shared_ptr<P4ParentStudy> parent_;
+    P4ParentStudy *parent_;
 
     // general information
 
-    bool singinf_;
-    int dir_vec_field_;
+    bool singinf_{false};
+    int dir_vec_field_{1};
 
     // vector field in various charts
     // FIXME arreglar tots els llocs on s'usen

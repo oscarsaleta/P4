@@ -24,10 +24,7 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4VFStudy::P4VFStudy(std::shared_ptr<P4ParentStudy> parent)
-    : parent_{parent}, singinf_{false}, dir_vec_field_{1}
-{
-}
+P4VFStudy::P4VFStudy(P4ParentStudy parent) : parent_{parent} {}
 
 // -----------------------------------------------------------------------
 //          P4VFStudy::reset
