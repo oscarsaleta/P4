@@ -119,8 +119,6 @@ class P4InputVF : public QObject
     std::unique_ptr<QPushButton> terminateProcessButton_;
     std::unique_ptr<QPushButton> clearProcessButton_;
 
-    
-
     // PARAMETER LIST
     int numparams_{0};
     // list of parameter names
@@ -301,8 +299,8 @@ class P4InputVF : public QObject
     // called from prepareCurveFile
     void prepareMapleArbitraryCurve(QTextStream &);
     // the following are called from math_curve.cpp
-    bool prepareArbitraryCurve(std::vector<p4polynom::term2> f, double y1,
-                               double y2, int precision,
+    bool prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
+                               double y1, double y2, int precision,
                                int numpoints);  // FIXME
     bool prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
                                            int precision, int numpoints,
@@ -350,7 +348,7 @@ class P4InputVF : public QObject
     void finishIsoclinesEvaluation();
     void finishSeparatingCurvesEvaluation();
 
-private:
+  private:
     // P4 GUI ELEMENTS
     std::unique_ptr<P4FindDlg> findDlg_;
     std::unique_ptr<P4GcfDlg> gcfDlg_;

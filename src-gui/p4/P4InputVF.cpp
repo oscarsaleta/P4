@@ -2328,7 +2328,7 @@ bool P4InputVF::evaluateGcf()
 //
 // Prepare files in case of calculating GCF in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareGcf(std::vector<p4polynom::term2> f, double y1,
+bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
                            double y2, int precision, int numpoints)
 {
     int i;
@@ -2585,7 +2585,7 @@ bool P4InputVF::evaluateArbitraryCurve()
 //
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareArbitraryCurve(std::vector<p4polynom::term2> f,
+bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
                                       double y1, double y2, int precision,
                                       int numpoints)
 {
@@ -3627,11 +3627,11 @@ void P4InputVF::resampleGcf(int i)
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
-    for (auto it = std::begin(gVFResults.vf_[i].gcf_points_);
-         it != std::end(gVFResults.vf_[i].gcf_points_); ++it) {
+    for (auto it = std::begin(gVFResults.vf_[i]->gcf_points_);
+         it != std::end(gVFResults.vf_[i]->gcf_points_); ++it) {
         it->dashes = 0;
         if (getVFIndex_sphere(it->pcoord) != i) {
-            gVFResults.vf_[i].gcf_points_.erase(it);
+            gVFResults.vf_[i]->gcf_points_.erase(it);
         }
     }
 }
@@ -3645,7 +3645,7 @@ void P4InputVF::resampleIsoclines(int i)
 {
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
-    for (auto &isoc : gVFResults.vf_[i].isoclines) {
+    for (auto &isoc : gVFResults.vf_[i]->isoclines) {
         for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
              ++it) {
             it->dashes = 0;
