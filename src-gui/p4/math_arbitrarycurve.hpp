@@ -36,14 +36,15 @@
 #define EVAL_CURVE_FINISHLYAPUNOV 12
 
 class P4WinSphere;
-struct orbits_points;
+struct p4orbits::orbits_points;
 
-extern orbits_points *gLastArbitraryCurvePoint;
+// FIXME not needed probably
+extern p4orbits::orbits_points *gLastArbitraryCurvePoint;
 
-bool evalCurveStart(P4WinSphere *sp, int dashes, int precision, int points);
-bool evalCurveContinue(int precision, int points);
-bool evalCurveFinish(void);
-bool runTaskCurve(int task, int precision, int points);
-void draw_curve(P4WinSphere *spherewnd, orbits_points *sep, int color,
+bool evalArbitraryCurveStart(P4WinSphere *sp, int dashes, int precision, int points);
+bool evalArbitraryCurveContinue(int precision, int points);
+bool evalArbitraryCurveFinish(void);
+bool runTaskArbitraryCurve(int task, int precision, int points);
+void drawArbitraryCurve(P4WinSphere *spherewnd, p4orbits::orbits_points *sep, int color,
                 int dashes);
-void deleteLastCurve(P4WinSphere *);
+void deleteLastArbitraryCurve(P4WinSphere *);
