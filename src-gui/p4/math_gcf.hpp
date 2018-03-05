@@ -36,10 +36,10 @@
 class P4WinSphere;
 struct p4orbits::orbits_points;
 
-bool evalGcfStart(P4WinSphere *sp, int dashes, int points, int precis);
-bool evalGcfContinue(int points, int prec);
+bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points);
+bool evalGcfContinue(int precision, int points);
 bool evalGcfFinish();
-bool runTask(int task, int points, int prec);
+bool runTask(int task, int precision, int points, int index);
 void draw_gcf(P4WinSphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep, int color,
               int dashes);

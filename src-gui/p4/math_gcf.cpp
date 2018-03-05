@@ -41,10 +41,10 @@ static int sGcfVfIndex{0};
 // static functions
 static void insert_gcf_point(double x0, double y0, double z0, int dashes);
 static bool readTaskResults(int task, int index);
-static bool read_gcf(void (*chart)(double, double, double *));
+static bool read_gcf(void (*chart)(double, double, double *), int index);
 
 // function definitions
-bool evalGcfStart(P4WinSphere *sp, int dashes, int points, int precis)
+bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points)
 {
     int r;
     sp->prepareDrawing();
@@ -65,12 +65,12 @@ bool evalGcfStart(P4WinSphere *sp, int dashes, int points, int precis)
     sGcfError = false;
     sGcfSphere = sp;
     sGcfDashes = dashes;
-    return runTask(sGcfTask, points, precis, memory, 0);
+    return runTask(sGcfTask, precision, points, 0);
 }
 
 // returns true when finished.  Then run EvalGCfFinish to see if error occurred
 // or not
-bool evalGcfContinue(int points, int prec)
+bool evalGcfContinue(int precision, int points)
 {
     if (sGcfTask == EVAL_GCF_NONE)
         return true;
@@ -98,7 +98,7 @@ bool evalGcfContinue(int points, int prec)
             sGcfTask = EVAL_GCF_R2;
     }
 
-    if (!runTask(sGcfTask, points, prec, sGcfVfIndex)) {
+    if (!runTask(sGcfTask, precision, points, sGcfVfIndex)) {
         sGcfError = true;
         return true;
     }
@@ -106,7 +106,7 @@ bool evalGcfContinue(int points, int prec)
     return false;  // still busy
 }
 
-bool evalGcfFinish(void)  // return false in case an error occured
+bool evalGcfFinish()  // return false in case an error occured
 {
     int index;
     if (sGcfTask != EVAL_GCF_NONE) {
@@ -130,7 +130,7 @@ bool evalGcfFinish(void)  // return false in case an error occured
     return true;
 }
 
-bool runTask(int task, int points, int prec, int mem, int index)
+bool runTask(int task, int precision, int points, int index)
 {
     bool value;
 
@@ -142,43 +142,43 @@ bool runTask(int task, int points, int prec, int mem, int index)
 
     switch (task) {
     case EVAL_GCF_R2:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_, -1, 1, prec,
-                                   points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_, -1, 1,
+                                   precision, points);
         break;
     case EVAL_GCF_U1:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, 0, 1, prec,
-                                   points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, 0, 1,
+                                   precision, points);
         break;
     case EVAL_GCF_V1:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, -1, 0, prec,
-                                   points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U1_, -1, 0,
+                                   precision, points);
         break;
     case EVAL_GCF_U2:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, 0, 1, prec,
-                                   points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, 0, 1,
+                                   precision, points);
         break;
     case EVAL_GCF_V2:
-        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, -1, 0, prec,
-                                   points);
+        value = gThisVF.prepareGcf(gVFResults.vf_[index]->gcf_U2_, -1, 0,
+                                   precision, points);
         break;
     case EVAL_GCF_LYP_R2:
-        value = gThisVF.prepareGcf_LyapunovR2(prec, points, index);
+        value = gThisVF.prepareGcf_LyapunovR2(precision, points, index);
         break;
     case EVAL_GCF_CYL1:
-        value = gThisVF.prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points,
-                                               index);
+        value = gThisVF.prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, precision,
+                                               points, index);
         break;
     case EVAL_GCF_CYL2:
-        value = gThisVF.prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
+        value = gThisVF.prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, precision,
                                                points, index);
         break;
     case EVAL_GCF_CYL3:
-        value = gThisVF.prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4, prec,
-                                               points, index);
+        value = gThisVF.prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
+                                               precision, points, index);
         break;
     case EVAL_GCF_CYL4:
-        value = gThisVF.prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
-                                               points, index);
+        value = gThisVF.prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
+                                               precision, points, index);
         break;
     default:
         value = false;
@@ -232,7 +232,7 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
+void draw_gcf(P4WinSphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep, int color,
               int dashes)
 {
@@ -250,10 +250,10 @@ void draw_gcf(std::shared_ptr<P4WinSphere> spherewnd,
 static void insert_gcf_point(double x0, double y0, double z0, int dashes,
                              int index)
 {
-    int pcoord[3] = {x0, y0, z0};
+    int pcoord[3]{x0, y0, z0};
 
-    gVFResults.vf_[index]->gcf_points_.push_back(
-        p4orbits::orbits_point(CSING, pcoord, dashes, 0, 0));
+    gVFResults.vf_[index]->gcf_points_.emplace_back(CSING, pcoord, dashes, 0,
+                                                    0);
 }
 
 static bool read_gcf(void (*chart)(double, double, double *), int index)
