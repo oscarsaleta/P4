@@ -153,8 +153,8 @@ int main(int argc, char *argv[])
     gP4app->setQuitOnLastWindowClosed(false);
     v = readP4Settings();
 
-    gP4printer = std::make_unique< QPrinter>(QPrinter::PrinterResolution);
-    gP4smallIcon = std::make_unique< QPixmap>();
+    gP4printer = std::make_unique<QPrinter>(QPrinter::PrinterResolution);
+    gP4smallIcon = std::make_unique<QPixmap>();
     if (gP4smallIcon->load(getP4BinPath() + "/p4smallicon.ico") == false) {
         gP4smallIcon.reset();
     }
