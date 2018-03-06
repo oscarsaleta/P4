@@ -20,13 +20,14 @@
 #include "math_limitcycles.hpp"
 
 #include "P4LimitCyclesDlg.hpp"
+#include "P4ParentStudy.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "math_charts.hpp"
 #include "math_orbits.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
+#include "tables.hpp"
 
 #include <cmath>
 
@@ -150,18 +151,18 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 //
 // Loop to find limit cycles cutting some transverse section determined by two
 // end points.
-void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
-                      double y0, double x1, double y1, double grid)
+void searchLimitCycle(P4WinSphere *spherewnd, double x0, double y0, double x1,
+                      double y1, double grid)
 {
     double p1[3], pf1[3], pb1[3], rf1[2], rb1[2];
     double p2[3], pf2[3], pb2[3], rf2[2], rb2[2], p3[3];
     double grid_dx, grid_dy;
-    double a, b, c;  // ax+by+c=0 defines the equation of the line of the
-                     // transverse section
+    double a, b, c; // ax+by+c=0 defines the equation of the line of the
+                    // transverse section
     double x, y, z;
     bool okf1, okb1, found;
-    int counter{0};  // counter to keep steps: after so many steps, the progress
-                     // window needs to be updated
+    int counter{0}; // counter to keep steps: after so many steps, the progress
+                    // window needs to be updated
 
     // first make sure x0 < x1:
     if (x1 < x0) {
@@ -181,12 +182,12 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
     grid_dx = grid * cos(z);
     grid_dy = grid * sin(z);
     if ((z <= PI_DIV4) && (z >= -PI_DIV4)) {
-        a = (y1 - y0) / (x1 - x0);  // abs(a) <= 1
+        a = (y1 - y0) / (x1 - x0); // abs(a) <= 1
         b = -1.0;
         c = y0 - a * x0;
     } else {
         a = -1.0;
-        b = (x1 - x0) / (y1 - y0);  // abs(b) <= 1
+        b = (x1 - x0) / (y1 - y0); // abs(b) <= 1
         c = x0 - b * y0;
     }
 
@@ -199,7 +200,7 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
 
     found = true;
     while (found) {
-        found = false;  // assume not found
+        found = false; // assume not found
         while (1) {
             if (++counter == gVFResults.config_lc_value_) {
                 counter = 0;
@@ -261,7 +262,7 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
             }
             write_to_limit_window(x0, y0);
         }
-        if (okf1 || okb1) {  // note: they cannot be both true here
+        if (okf1 || okb1) { // note: they cannot be both true here
             while (1) {
                 x = x0;
                 y = y0;
@@ -318,7 +319,7 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
                         y0 = y;
                         break;
                     }
-                } else {  // okb1=true
+                } else { // okb1=true
                     MATHFUNC(sphere_to_R2)(pb1[0], pb1[1], pb1[2], rb1);
                     while (1) {
                         x = x + grid_dx;
@@ -373,8 +374,8 @@ void searchLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x0,
 // The found limit cycle is re-integrated, and stored in memory.
 // It is meanwhile drawn on the screen.
 // The limit cycle is found through forward integration.
-void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
-                     double a, double b, double c)
+void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
+                     double b, double c)
 {
     double p1[3], p2[3];
     double hhi, h_max, h_min;
@@ -441,7 +442,6 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
         LCpoints.color = CLIMIT;
         LCpoints.dashes = gVFResults.config_dashes_;
         LC.points.push_back(LCpoints);
-        // LC.current_point_index++;
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
@@ -452,7 +452,7 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
             (*plot_p)(spherewnd, p2, CLIMIT);
     }
     MATHFUNC(R2_to_sphere)(x, y, p2);
-    copy_x_into_y(p2, gVFResults.LCpoints.pcoord);
+    copy_x_into_y(p2, gVFResults.limCycles_.back().pcoord);
     if (gVFResults.config_dashes_)
         (*plot_l)(spherewnd, p1, p2, CLIMIT);
     else
@@ -466,22 +466,22 @@ void storeLimitCycle(std::shared_ptr<P4WinSphere> spherewnd, double x, double y,
 // -----------------------------------------------------------------------
 // Draw limit cycles that were calculated earlier.  This is called during
 // a repaint (but also during a print command).
-void drawLimitCycles(std::shared_ptr<P4WinSphere> spherewnd)
+void drawLimitCycles(P4WinSphere *spherewnd)
 {
     for (auto const &it : gVFResults.limCycles_)
-        drawOrbit(spherewnd, it.pcoord, it.f_orbits, it.color);
+        drawOrbit(spherewnd, it.pcoord, it.points, it.color);
 }
 
 // -----------------------------------------------------------------------
 //          deleteLastLimitCycle
 // -----------------------------------------------------------------------
-void deleteLastLimitCycle(std::shared_ptr<P4WinSphere> spherewnd)
+void deleteLastLimitCycle(P4WinSphere *spherewnd)
 {
     if (gVFResults.limCycles_.empty())
         return;
 
     p4orbits::orbits &orbit1 = gVFResults.limCycles_.back();
-    drawOrbit(spherewnd, orbit2.pcoord, orbit2.f_orbits,
+    drawOrbit(spherewnd, orbit1.pcoord, orbit1.points,
               spherewnd->spherebgcolor_);
 
     gVFResults.limCycles_.pop_back();
