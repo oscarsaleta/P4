@@ -19,14 +19,18 @@
 
 #pragma once
 
-#include <memory>
+#include <vector>
 
 class P4WinSphere;
 
-void start_plot_se_sep(std::shared_ptr<P4WinSphere>, int);
-void cont_plot_se_sep(std::shared_ptr<P4WinSphere>);
-void plot_next_se_sep(std::shared_ptr<P4WinSphere>, int);
-void select_next_se_sep(std::shared_ptr<P4WinSphere>);
-void change_epsilon_se(std::shared_ptr<P4WinSphere>, double);
-void plot_all_se_sep(std::shared_ptr<P4WinSphere>, int,
-                     std::vector<semi_elementary> &)
+namespace p4singularities {
+    struct semi_elementary;
+}
+
+void start_plot_se_sep(P4WinSphere *, int);
+void cont_plot_se_sep(P4WinSphere *);
+void plot_next_se_sep(P4WinSphere *, int);
+void select_next_se_sep(P4WinSphere *);
+void change_epsilon_se(P4WinSphere *, double);
+void plot_all_se_sep(P4WinSphere *, int,
+                     std::vector<p4singularities::semi_elementary> &)

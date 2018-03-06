@@ -19,7 +19,7 @@
 
 #include "math_sesep.hpp"
 
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "math_orbits.hpp"
 #include "math_regions.hpp"
 #include "math_separatrice.hpp"
@@ -27,7 +27,7 @@
 // ---------------------------------------------------------------------------
 //          start_plot_se_sep
 // ---------------------------------------------------------------------------
-void start_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
+void start_plot_se_sep(P4WinSphere *spherewnd, int vfindex)
 {
     double p[3];
     int sepid{gVFResults.selectedSepIndex_};
@@ -64,7 +64,7 @@ void start_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 // Continuation of the plot is done via the standard integrate_sep method,
 // and no longer depends on the type of the singularity.
-void cont_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
+void cont_plot_se_sep(P4WinSphere *spherewnd)
 {
     double p[3];
     int sepid{gVFResults.selectedSepIndex_};
@@ -90,7 +90,7 @@ void cont_plot_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
 // ---------------------------------------------------------------------------
 //          plot_next_se_sep
 // ---------------------------------------------------------------------------
-void plot_next_se_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
+void plot_next_se_sep(P4WinSphere *spherewnd, int vfindex)
 {
     int &sepid{gVFResults.selectedSepIndex_};
     int seid{gVFResults.selectedSePointIndex_};
@@ -106,7 +106,7 @@ void plot_next_se_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 //          select_next_se_sep
 // ---------------------------------------------------------------------------
-void select_next_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
+void select_next_se_sep(P4WinSphere *spherewnd)
 {
     int &sepid{gVFResults.selectedSepIndex_};
     int seid{gVFResults.selectedSePointIndex_};
@@ -123,7 +123,7 @@ void select_next_se_sep(std::shared_ptr<P4WinSphere> spherewnd)
 // ---------------------------------------------------------------------------
 //          plot_all_se_sep
 // ---------------------------------------------------------------------------
-void plot_all_se_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
+void plot_all_se_sep(P4WinSphere *spherewnd, int vfindex,
                      std::vector<p4sigularity::semi_elementary> &point)
 {
     double p[3];
@@ -158,7 +158,7 @@ void plot_all_se_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
 // ---------------------------------------------------------------------------
 //          change_epsilon_se
 // ---------------------------------------------------------------------------
-void change_epsilon_se(std::shared_ptr<P4WinSphere> spherewnd, double epsilon)
+void change_epsilon_se(P4WinSphere *spherewnd, double epsilon)
 {
     int seid{gVFResults.selectedSePointIndex_};
     p4blowup::sep &separatrice{gVFResults.sePoints_[sadid].separatrices};
