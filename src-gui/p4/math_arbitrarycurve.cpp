@@ -20,6 +20,7 @@
 #include "math_arbitrarycurve.hpp"
 
 #include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
@@ -78,10 +79,10 @@ bool evalArbitraryCurveContinue(int precision, int points)
         return true;
     }
 
-    return false;  // still busy
+    return false; // still busy
 }
 
-bool evalArbitraryCurveFinish()  // return false in case an error occured
+bool evalArbitraryCurveFinish() // return false in case an error occured
 {
     if (sCurveTask != EVAL_CURVE_NONE) {
         sCurveSphere->prepareDrawing();
@@ -129,11 +130,11 @@ bool runTaskArbitraryCurve(int task, int precision, int points)
         break;
     case EVAL_CURVE_CYL1:
         value = gThisVF.prepareArbitraryCurve_LyapunovCyl(-PI_DIV4, PI_DIV4,
-                                                           precision, points);
+                                                          precision, points);
         break;
     case EVAL_CURVE_CYL2:
-        value = gThisVF.prepareArbitraryCurve_LyapunovCyl(
-            PI_DIV4, PI - PI_DIV4, precision, points);
+        value = gThisVF.prepareArbitraryCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
+                                                          precision, points);
         break;
     case EVAL_CURVE_CYL3:
         value = gThisVF.prepareArbitraryCurve_LyapunovCyl(
@@ -149,7 +150,7 @@ bool runTaskArbitraryCurve(int task, int precision, int points)
     }
 
     if (value)
-        return gThisVF.evaluateCurve();
+        return gThisVF.evaluateArbitraryCurve();
     else
         return false;
 }
@@ -206,14 +207,16 @@ void drawArbitraryCurve(P4WinSphere *spherewnd,
         if (it.dashes && dashes)
             (*plot_l)(spherewnd, pcoord, it.pcoord, color);
         else
-            (* plot_p)(spherewnd, it.pcoord, color);
+            (*plot_p)(spherewnd, it.pcoord, color);
         copy_x_into_y(it.pcoord, pcoord);
     }
 }
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
-    gVFResults.arbitraryCurves_.points.emplace_back(CCURV, pcoord, dashes, 0, 0);
+    double pcoord[3]{x0, y0, z0};
+    gVFResults.arbitraryCurves_.back().points.emplace_back(CCURV, pcoord,
+                                                           dashes, 0, 0);
 }
 
 static bool read_curve(void (*chart)(double, double, double *))
