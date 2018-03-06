@@ -43,22 +43,22 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 
     auto p4title =
         std::make_unique<QLabel>("Find and Examine Singular Points", this);
-    p4title->setFont(gP4app.getStandardFont());
+    p4title->setFont(gP4app->getStandardFont());
 
     auto actlabel = std::make_unique<QLabel>("File Action:  ", this);
-    actlabel->setFont(gP4app.getBoldFont());
+    actlabel->setFont(gP4app->getBoldFont());
     btn_actionrun_ = std::make_unique<QRadioButton>("Run File", this);
     btn_actionprep_ = std::make_unique<QRadioButton>("Prepare File", this);
 
     auto singpoints = std::make_unique<QLabel>("Singular points:  \n\n", this);
-    singpoints->setFont(gP4app.getBoldFont());
+    singpoints->setFont(gP4app->getBoldFont());
     btn_all_ = std::make_unique<QRadioButton>("All ", this);
     btn_fin_ = std::make_unique<QRadioButton>("Finite ", this);
     btn_inf_ = std::make_unique<QRadioButton>("Infinite ", this);
     btn_one_ = std::make_unique<QRadioButton>("One ", this);
 
     auto saveall = std::make_unique<QLabel>("Save all information: ", this);
-    saveall->setFont(gP4app.getBoldFont());
+    saveall->setFont(gP4app->getBoldFont());
     btn_yes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_no_ = std::make_unique<QRadioButton>("No", this);
 
@@ -207,7 +207,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                                  gThisVF.typeofstudy_ = TYPEOFSTUDY_ALL;
                                  if (gThisVF.changed_ == false) {
                                      gThisVF.changed_ = true;
-                                     gP4app.signalChanged();
+                                     gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
                                      paramsWindow_->getDataFromDlg();
@@ -223,7 +223,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                                  gThisVF.typeofstudy_ = TYPEOFSTUDY_ONE;
                                  if (gThisVF.changed_ == false) {
                                      gThisVF.changed_ = true;
-                                     gP4app.signalChanged();
+                                     gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
                                      paramsWindow_->getDataFromDlg();
@@ -239,7 +239,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                                  gThisVF.typeofstudy_ = TYPEOFSTUDY_FIN;
                                  if (gThisVF.changed_ == false) {
                                      gThisVF.changed_ = true;
-                                     gP4app.signalChanged();
+                                     gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
                                      paramsWindow_->getDataFromDlg();
@@ -255,7 +255,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                                  gThisVF.typeofstudy_ = TYPEOFSTUDY_FIN;
                                  if (gThisVF.changed_ == false) {
                                      gThisVF.changed_ = true;
-                                     gP4app.signalChanged();
+                                     gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
                                      paramsWindow_->getDataFromDlg();
@@ -337,14 +337,14 @@ void P4FindDlg::onBtnLoad()
         updateDlgData();
         if (gThisVF.changed_ == false) {
             gThisVF.changed_ = true;
-            gP4app.signalChanged();
+            gP4app->signalChanged();
         }
 
         // then, we signal that the vector field is unchanged because a save
         // vector field is not needed when quiting.
         gThisVF.changed_ = false;
         gThisVF.evaluated_ = oldeval;
-        gP4app.signalLoaded();
+        gP4app->signalLoaded();
     }
 }
 
