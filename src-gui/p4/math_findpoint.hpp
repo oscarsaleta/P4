@@ -21,5 +21,4 @@
 
 class P4WinSphere;
 
-bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
-                         double y);
+bool find_critical_point(P4WinSphere *spherewnd, double x, double y);

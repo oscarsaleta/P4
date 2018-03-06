@@ -19,12 +19,19 @@
 
 #include "math_findpoint.hpp"
 
+#include "P4ParentStudy.hpp"
 #include "P4SepDlg.hpp"
+#include "P4VFStudy.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "math_desep.hpp"
 #include "math_p4.hpp"
+#include "math_regions.hpp"
+#include "math_saddlesep.hpp"
 #include "math_separatrice.hpp"
+#include "math_sesep.hpp"
+#include "tables.hpp"
+#include "P4InputVF.hpp"
 
 #include <cmath>
 
@@ -37,11 +44,13 @@
 //
 // -----------------------------------------------------------------------
 
-static double find_distance_saddle(
-    const std::vector<p4singularities::saddle> &points, double x, double y,
-    double distance, int &type, double *refpos)
+static double
+find_distance_saddle(const std::vector<p4singularities::saddle> &points,
+                     double x, double y, double distance, int &type,
+                     double *refpos)
 {
     double d, pcoord[3], ucoord[2];
+    int i{0};
 
     for (auto const &it : points) {
         if (it.position == POSITION_VIRTUAL)
@@ -78,16 +87,19 @@ static double find_distance_saddle(
             gVFResults.selected_ucoord_[1] = ucoord[1];
             type = SADDLE;
         }
+        i++;
     }
     return (distance);
 }
 
-static double find_distance_se(
-    const std::vector<p4singularities::semi_elementary> &points, double x,
-    double y, double distance, int &type, double refpos[])
+static double
+find_distance_se(const std::vector<p4singularities::semi_elementary> &points,
+                 double x, double y, double distance, int &type,
+                 double refpos[])
 {
     double d, pcoord[3], ucoord[2];
 
+    int i{0};
     for (auto const &it : points) {
         if (it.position == POSITION_VIRTUAL)
             continue;
@@ -126,16 +138,19 @@ static double find_distance_se(
                 type = SEMI_HYPERBOLIC;
             }
         }
+        i++;
     }
     return (distance);
 }
 
-static double find_distance_de(
-    const std::vector<p4singularities::degenerate> &points, double x, double y,
-    double distance, int &type, double refpos[])
+static double
+find_distance_de(const std::vector<p4singularities::degenerate> &points,
+                 double x, double y, double distance, int &type,
+                 double refpos[])
 {
     double d, pcoord[3], ucoord[2];
 
+    int i{0};
     for (auto const &it : points) {
         if (it.position == POSITION_VIRTUAL)
             continue;
@@ -165,7 +180,7 @@ static double find_distance_de(
             d = (x - ucoord[0]) * (x - ucoord[0]) +
                 (y - ucoord[1]) * (y - ucoord[1]);
             if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
-                (distance == -1))
+                (distance == -1)) {
                 if ((d < distance) || (distance == -1)) {
                     distance = d;
                     gVFResults.selected_ucoord_[0] = ucoord[0];
@@ -174,14 +189,15 @@ static double find_distance_de(
                     gVFResults.selectedDePointIndex_ = i;
                     type = NON_ELEMENTARY;
                 }
+            }
         }
+        i++;
     }
 
     return (distance);
 }
 
-bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
-                         double y)
+bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
 {
     int type;
     double distance, epsilon, pcoord[3];
@@ -237,21 +253,21 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
     gVFResults.selected_sep_vfindex_ = vfindex;
 
     switch (type) {
-    case SADDLE:
-        sepc = gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                   .separatrices;
-        gVFResults.selectedSep_ = sepc;
+    case SADDLE: {
+        auto &sepc =
+            gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
+                .separatrices;
+        gVFResults.seps_ = sepc;
         gVFResults.selectedSepIndex_ = 0;
-        draw_selected_sep(spherewnd, sepc.front().sep_points.front(), CW_SEP);
+        draw_selected_sep(spherewnd, sepc.front().sep_points, CW_SEP);
 
         start_plot_sep = start_plot_saddle_sep;
         cont_plot_sep = cont_plot_saddle_sep;
         plot_next_sep = plot_next_saddle_sep;
         select_next_sep = select_next_saddle_sep;
         s = "SADDLE";
-        epsilon =
-            gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                .epsilon;
+        epsilon = gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
+                      .epsilon;
         change_epsilon = change_epsilon_saddle;
 
         if (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
@@ -271,29 +287,25 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                     .chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (gVFResults
-                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
+                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (gVFResults
-                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
+                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (gVFResults
-                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
+                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (gVFResults
-                     .saddlePoints_[gVFResults.selectedSaddlePointIndex_]
+                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
                      .x0,
                  0.0, pcoord);
                 break;
@@ -309,14 +321,14 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                 sz = "";
             }
         }
-        break;
+    } break;
 
-    case SEMI_HYPERBOLIC:
-        sepc = gVFResults.sePoints_[gVFResults.selectedSePointIndex_]
-                   .separatrices;
-        gVFResults.selectedSep_ = sepc;
+    case SEMI_HYPERBOLIC: {
+        auto &sepc =
+            gVFResults.sePoints_[gVFResults.selectedSePointIndex_].separatrices;
+        gVFResults.seps_ = sepc;
         gVFResults.selectedSepIndex_ = 0;
-        draw_selected_sep(spherewnd, sepc.front().sep_points.front(), CW_SEP);
+        draw_selected_sep(spherewnd, sepc.front().sep_points, CW_SEP);
 
         start_plot_sep = start_plot_se_sep;
         cont_plot_sep = cont_plot_se_sep;
@@ -336,27 +348,27 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                 gVFResults.sePoints_[gVFResults.selectedSePointIndex_].y0);
             sz = "";
         } else {
-            switch (gVFResults.sePoints_[gVFResults.selectedSePointIndex_]
-                        .chart) {
+            switch (
+                gVFResults.sePoints_[gVFResults.selectedSePointIndex_].chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             }
             if (gVFResults.plweights_ == false) {
@@ -369,14 +381,13 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
                 sz = "";
             }
         }
-        break;
+    } break;
 
     case NON_ELEMENTARY:
-        gVFResults.selectedDeSep_ =
+        gVFResults.deSeps_ =
             gVFResults.dePoints_[gVFResults.selectedDePointIndex_].blow_up;
         gVFResults.selectedDeSepIndex_ = 0;
-        draw_selected_sep(spherewnd,
-                          gVFResults.selectedDeSep_.front().sep_points.front(),
+        draw_selected_sep(spherewnd, gVFResults.deSeps_.front().sep_points,
                           CW_SEP);
 
         start_plot_sep = start_plot_de_sep;
@@ -391,33 +402,33 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
             CHART_R2) {
             sx.sprintf(
                 "x=%8.5g",
-                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0));
+                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0);
             sy.sprintf(
                 "y=%8.5g",
-                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].y0));
+                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].y0);
             sz = "";
         } else {
-            switch (gVFResults.dePoints_[gVFResults.selectedDePointIndex_]
-                        .chart) {
+            switch (
+                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].chart) {
             case CHART_U1:
                 MATHFUNC(U1_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             case CHART_V1:
                 MATHFUNC(V1_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             case CHART_U2:
                 MATHFUNC(U2_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             case CHART_V2:
                 MATHFUNC(V2_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0,
-                 0.0, pcoord);
+                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
+                 pcoord);
                 break;
             }
             if (gVFResults.plweights_ == false) {
@@ -433,7 +444,7 @@ bool find_critical_point(std::shared_ptr<P4WinSphere> spherewnd, double x,
         break;
     }
 
-    if (gThisVF_->numVF_ > 1) {
+    if (gThisVF.numVF_ > 1) {
         QString msg;
         msg.sprintf(" (VF #%d)", vfindex + 1);
         s += msg;
