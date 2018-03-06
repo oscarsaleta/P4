@@ -19,10 +19,51 @@
 
 #pragma once
 
-#include "file_tab.hpp"
+#include <QObject>
+
+//#include "tables.hpp"
+
+class QTextEdit;
+
+class P4ParentStudy;
+
+namespace p4polynom
+{
+struct term2;
+struct term3;
+}
+
+namespace p4singularities
+{
+struct saddle;
+struct semi_elementary;
+struct node;
+struct strong_focus;
+struct weak_focus;
+struct degenerate;
+}
+
+namespace p4blowup
+{
+struct sep;
+struct transformations;
+struct blow_up_points;
+}
+
+namespace p4orbits
+{
+struct orbits_points;
+}
+
+namespace p4curves
+{
+struct isoclines;
+}
 
 class P4VFStudy : public QObject
 {
+    Q_OBJECT
+
   public:
     // Constructor
     P4VFStudy(P4ParentStudy *parent = nullptr);
@@ -74,11 +115,10 @@ class P4VFStudy : public QObject
     void reset();
 
     // reading of the Maple/Reduce results
-    bool readTables(QString basename);
+    bool readTables(FILE *, FILE *, FILE *);
 
-    bool readGCF(FILE *fp);                // TODO
-    //bool readCurve(QString basename);      // TODO
-    bool readIsoclines(QString basename);  // TODO
+    bool readGCF(FILE *fp);               // TODO
+    bool readIsoclines(QString basename); // TODO
 
     bool readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
                          std::vector<p4polynom::term2> &vf1);
@@ -92,19 +132,18 @@ class P4VFStudy : public QObject
     bool readWeakFocusPoint(FILE *fp);
     bool readDegeneratePoint(FILE *fp);
     bool readNodePoint(FILE *fp);
-    bool readBlowupPoints(FILE *fp,
-                          std::vector<p4singularities::blow_up_points> &b,
+    bool readBlowupPoints(FILE *fp, std::vector<p4blowup::blow_up_points> &b,
                           int n);
-    bool readTransformations(
-        FILE *fp, std::vector<p4singularities::transformations> &trans, int n);
+    bool readTransformations(FILE *fp,
+                             std::vector<p4blowup::transformations> &trans,
+                             int n);
 
-    void setupCoordinateTransformations();  // see math_p4.cpp
+    void setupCoordinateTransformations(); // see math_p4.cpp
 
     void dump(QTextEdit &m);
 
   private:
-    void dumpSeparatrices(QTextEdit &m,
-                          const std::vector<p4singularities::sep> &separ,
+    void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
                           int margin);
     void dumpSingularities(QTextEdit &m,
                            const std::vector<p4singularities::saddle> &p,
@@ -121,7 +160,8 @@ class P4VFStudy : public QObject
     void dumpSingularities(QTextEdit &m,
                            const std::vector<p4singularities::node> &p,
                            bool longversion);
-    void dumpSingularities(
-        QTextEdit &m, const std::vector<p4singularities::semi_elementary> &p,
-        bool longversion);
+    void
+    dumpSingularities(QTextEdit &m,
+                      const std::vector<p4singularities::semi_elementary> &p,
+                      bool longversion);
 };
