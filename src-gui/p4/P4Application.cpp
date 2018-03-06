@@ -73,7 +73,7 @@ void P4Application::signalChanged()
 
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_CHANGED), nullptr);
-    gP4app.postEvent(gP4startDlg, e.release());
+    gP4app->postEvent(gP4startDlg, e.release());
 }
 
 void P4Application::signalEvaluated(int exitCode)
@@ -85,7 +85,7 @@ void P4Application::signalEvaluated(int exitCode)
 
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_EVALUATED), nullptr);
-    gP4app.postEvent(gP4startDlg, e.release());
+    gP4app->postEvent(gP4startDlg, e.release());
 
     if (gCmdLineAutoExit) {
         gCmdLineAutoPlot = false;
@@ -129,7 +129,7 @@ void P4Application::signalLoaded()
 {
     auto e = std::unique_ptr<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_LOADED), nullptr);
-    gP4app.postEvent(gP4startDlg, e.release());
+    gP4app->postEvent(gP4startDlg, e.release());
 
     if (gCmdLineAutoEvaluate) {
         gCmdLineAutoEvaluate = false;
@@ -147,7 +147,7 @@ void P4Application::signalSaved()
 {
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_SAVED), nullptr);
-    gP4app.postEvent(gP4startDlg, e.release());
+    gP4app->postEvent(gP4startDlg, e.release());
 }
 
 QFont P4Application::getStandardFont() const { return *standardFont_; }

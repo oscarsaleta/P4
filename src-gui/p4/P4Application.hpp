@@ -51,9 +51,9 @@ class P4Application : public QApplication
     void signalGcfEvaluated(int);
     void signalCurveEvaluated(int);
     void signalSeparatingCurvesEvaluated(int);
-    void signalChanged(void);
-    void signalLoaded(void);
-    void signalSaved(void);
+    void signalChanged();
+    void signalLoaded();
+    void signalSaved();
     void catchProcessError(QProcess::ProcessError);
 
   private:
@@ -65,4 +65,4 @@ class P4Application : public QApplication
     std::unique_ptr<QFont> legendFont_;
 };
 
-P4Application gP4app;
+extern std::unique_ptr<P4Application> gP4app;
