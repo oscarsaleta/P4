@@ -21,5 +21,6 @@
 
 #include "file_tab.hpp"
 
-bool readCurvePoints(FILE *fp, std::vector<p4orbits::orbits_points> &psep,
-                     int index);
+bool readSeparatingCurvePoints(FILE *fp,
+                               std::vector<p4orbits::orbits_points> &psep,
+                               int index);

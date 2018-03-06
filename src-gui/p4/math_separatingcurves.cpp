@@ -19,6 +19,12 @@
 
 #include "math_separatingcurves.hpp"
 
+#include <vector>
+
+#include "P4ParentStudy.hpp"
+#include "custom.hpp"
+#include "math_charts.hpp"
+
 static void insert_curve_point(double x0, double y0, double z0, int dashes,
                                std::vector<p4orbits::orbits_points> &lastpt)
 {
@@ -33,8 +39,9 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes,
     lastpt.push_back(newpt);
 }
 
-bool readCurvePoints(FILE *fp, std::vector<p4orbits::orbits_points> &psep,
-                     int index)
+bool readSeparatingCurvePoints(FILE *fp,
+                               std::vector<p4orbits::orbits_points> &psep,
+                               int index)
 {
     int k;
     int numpoints;
