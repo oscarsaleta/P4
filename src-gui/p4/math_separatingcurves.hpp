@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "file_tab.hpp"
+#include "tables.hpp"
 
 bool readSeparatingCurvePoints(FILE *fp,
                                std::vector<p4orbits::orbits_points> &psep,

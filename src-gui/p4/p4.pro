@@ -89,7 +89,7 @@ HEADERS +=  ../version.h \
     color.hpp \
     custom.hpp \
     file_paths.hpp \
-    file_tab.hpp \
+    tables.hpp \
     main.hpp \
     math_arbitrarycurve.hpp \
     math_changedir.hpp \

@@ -22,7 +22,7 @@
 #include "P4PlotWnd.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "main.hpp"
 #include "math_orbits.hpp"
 
