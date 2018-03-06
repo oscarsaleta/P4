@@ -340,7 +340,7 @@ bool isInsideRegion_cyl_epsilon(const int *signs, const double *rtheta,
 // The _epsilon variant increases the region by an epsilon amount before
 // checking
 //
-bool isInsideRegion_sphere(const int *signs, const double *pcoord)
+bool isInsideRegion_sphere(const std::vector<int> &signs, const double *pcoord)
 {
     double ucoord[2], theta;
 

@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include "tables.hpp"
 
 class QString;
@@ -33,31 +35,31 @@ struct positionitem {
         pcoord[1] = p[1];
         pcoord[2] = p[2];
     }
-}
+};
 
-bool isInsideRegion_R2(const int *signs, const double *ucoord);
-bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
-                               double epsilon);
-bool isInsideRegion_U1(const int *signs, const double *z1z2);
-bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
-                               double epsilon);
-bool isInsideRegion_V1(const int *signs, const double *z1z2);
-bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
-                               double epsilon);
-bool isInsideRegion_U2(const int *signs, const double *z1z2);
-bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
-                               double epsilon);
-bool isInsideRegion_V2(const int *signs, const double *z1z2);
-bool isInsideRegion_V2_epsilon(const int *signs, const double *z1z2,
-                               double epsilon);
-bool isInsideRegion_cyl(const int *signs, const double *rtheta);
-bool isInsideRegion_cyl_epsilon(const int *signs, const double *rtheta,
-                                double epsilon);
-bool isInsideRegion_sphere(const int *signs, const double *pcoord);
-bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
-                                   double epsilon);
+bool isInsideRegion_R2(const std::vector<int> &signs, const double *ucoord);
+bool isInsideRegion_R2_epsilon(const std::vector<int> &signs,
+                               const double *ucoord, double epsilon);
+bool isInsideRegion_U1(const std::vector<int> &signs, const double *z1z2);
+bool isInsideRegion_U1_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon);
+bool isInsideRegion_V1(const std::vector<int> &signs, const double *z1z2);
+bool isInsideRegion_V1_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon);
+bool isInsideRegion_U2(const std::vector<int> &signs, const double *z1z2);
+bool isInsideRegion_U2_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon);
+bool isInsideRegion_V2(const std::vector<int> &signs, const double *z1z2);
+bool isInsideRegion_V2_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon);
+bool isInsideRegion_cyl(const std::vector<int> &signs, const double *rtheta);
+bool isInsideRegion_cyl_epsilon(const std::vector<int> &signs,
+                                const double *rtheta, double epsilon);
+bool isInsideRegion_sphere(const std::vector<int> &signs, const double *pcoord);
+bool isInsideRegion_sphere_epsilon(const std::vector<int> &signs,
+                                   const double *pcoord, double epsilon);
 
-double eval_curve(const p4curveRegions::curveResult &c, const double *pcoord);
+double eval_curve(const p4curves::curves &c, const double *pcoord);
 
 QString describeRegion(double *pcoord);
 bool isInTheSameRegion(double *testpt, double *refpos);
