@@ -25,7 +25,7 @@
 
 #include "math_polynom.hpp"
 
-#include "file_tab.hpp"
+#include "tables.hpp"
 
 #include <cmath>
 
@@ -33,7 +33,7 @@
 //          eval_term1
 // -----------------------------------------------------------------------
 // Calculates p(t) for a polynomial p and a value t.
-double eval_term1(const std::vector<p4polynom::term1> &p, double t)
+double eval_term1(const std::vector<p4polynom::term1> &p, const double t)
 {
     double s = 0;
     for (auto const &q : p) {
@@ -50,7 +50,7 @@ double eval_term1(const std::vector<p4polynom::term1> &p, double t)
 // -----------------------------------------------------------------------
 // Calculates f(x,y) for a polynomial f and values x and y.
 // value refers to an array containing x and y: value[0]=x, value[1]=y
-double eval_term2(const std::vector<p4polynom::term2> &f, double *value)
+double eval_term2(const std::vector<p4polynom::term2> &f, const double *value)
 {
     double s = 0;
     for (auto const &it : f) {
@@ -73,7 +73,7 @@ double eval_term2(const std::vector<p4polynom::term2> &f, double *value)
 // Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
 // of r and theta.
 // value refers to an array containing r and theta: value[0]=r, value[1]=theta
-double eval_term3(const std::vector<p4polynom::term3> &F, double *value)
+double eval_term3(const std::vector<p4polynom::term3> &F, const double *value)
 {
     double s = 0;
     double t;
@@ -440,3 +440,55 @@ char *printterm3(char *buf, const p4polynom::term3 &f, bool isfirst,
 
     return buf;
 }
+
+// -----------------------------------------------------------------------
+//          readTerm1
+// -----------------------------------------------------------------------
+bool readTerm1(FILE *fp, std::vector<p4polynom::term1> &p, int N)
+{
+    int exp;
+    double coeff;
+    p.clear();
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %lf", &exp, &coeff) != 2) {
+            return false;
+        }
+        p.emplace_back(exp, coeff);
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm2
+// -----------------------------------------------------------------------
+bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N)
+{
+    int xx, xy;
+    double coeff;
+    p.clear();
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %d %lf", &xx, &xy, &coeff) != 3) {
+            return false;
+        }
+        p.emplace_back(xx, xy, coeff);
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm3
+// -----------------------------------------------------------------------
+bool readTerm3(FILE *fp, std::vector<p4polynom::term3> &p, int N)
+{
+    int xr, xc, xs;
+    double coeff;
+    p.clear();
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %d %d %lf", &xr, &xc, &xs, &coeff) != 4) {
+            return false;
+        }
+        p.emplace_back(xr, xc, xs, coeff);
+    }
+    return true;
+}
+
