@@ -22,6 +22,7 @@
 #include "custom.hpp"
 
 #include <memory>
+#include <vector>
 
 #include <QObject>
 #include <QProcess>
@@ -46,23 +47,33 @@ class QProcess;
 class QTextEdit;
 class QPushButton;
 class QTextStream;
-class QMetaObject::Connection;  // NOTE works?
+class QMetaObject::Connection; // NOTE works?
 
-struct p4polynom::term2;
+class P4GcfDlg;
+class P4ArbitraryCurveDlg;
+class P4IsoclinesDlg;
+class P4FindDlg;
+
+namespace p4polynom
+{
+struct term2;
+}
 
 namespace p4InputVFRegions
 {
 struct vfRegion {
     int vfIndex;
     std::vector<int> signs;
-    vfRegion(int i, std::vector<int> s) : vfIndex{i}, signs{s} {}
-}
+    vfRegion(int i, std::vector<int> s) : vfIndex{i}, signs{std::move(s)} {}
+};
 
 struct curveRegion {
     int curveIndex;
     std::vector<int> signs;
-    curveRegion(int i, std::vector<int> s) : curveIndex{i}, signs{s} {}
-}
+    curveRegion(int i, std::vector<int> s) : curveIndex{i}, signs{std::move(s)}
+    {
+    }
+};
 }
 
 class P4InputVF : public QObject
@@ -71,6 +82,7 @@ class P4InputVF : public QObject
 
   public:
     P4InputVF();
+    ~P4InputVF();
 
     //////////////////////
     // MEMBER VARIABLES //
@@ -78,8 +90,8 @@ class P4InputVF : public QObject
 
     QString filename_{DEFAULTFILENAME};
 
-    int symbolicpackage_{PACKAGE_MAPLE};  // 0 for reduce, 1 for maple
-    int typeofstudy_;                     // 0, 1, 2, 3 = all, inf, fin, one
+    int symbolicpackage_{PACKAGE_MAPLE}; // 0 for reduce, 1 for maple
+    int typeofstudy_;                    // 0, 1, 2, 3 = all, inf, fin, one
 
     // MAPLE EXECUTION PARAMETERS
     std::vector<bool> numeric_;
@@ -214,6 +226,7 @@ class P4InputVF : public QObject
     bool hasCommonString(const std::vector<QString> &);
     bool hasCommonInt(const std::vector<int> &);
     bool hasCommonBool(const std::vector<bool> &);
+    bool hasCommonParValue(int);
     QString commonString(const std::vector<QString> &);
     int commonInt(const std::vector<int> &);
     bool commonBool(const std::vector<bool> &);
@@ -224,28 +237,27 @@ class P4InputVF : public QObject
     void setCommonParValue(int, QString);
 
     // FILENAMES
-    QString getfilename() const;             // filename.inp
-    QString getbarefilename() const;         // filename
-    QString getfilename_finresults() const;  // filename_fin.res
-    QString getfilename_infresults() const;  // filename_inf.res
-    QString getfilename_fintable() const;    // filename_fin.tab
-    QString getfilename_inftable() const;    // filename_inf.tab
-    QString getfilename_vectable() const;    // filename_vec.tab
-    QString getfilename_gcf() const;   // filename_gcf.tab (temporary file)
-    QString getmaplefilename() const;  // filename.txt
+    QString getfilename() const;            // filename.inp
+    QString getbarefilename() const;        // filename
+    QString getfilename_finresults() const; // filename_fin.res
+    QString getfilename_infresults() const; // filename_inf.res
+    QString getfilename_fintable() const;   // filename_fin.tab
+    QString getfilename_inftable() const;   // filename_inf.tab
+    QString getfilename_vectable() const;   // filename_vec.tab
+    QString getfilename_gcf() const;        // filename_gcf.tab (temporary file)
+    QString getmaplefilename() const;       // filename.txt
     // curve filenames
-    QString getfilename_arbitrarycurvetable() const;  // filename_veccurve.tab
-    QString getfilename_arbitrarycurve() const;  // filename_curve.tab (tmp)
-    QString getPrepareArbitraryCurveFileName()
-        const;  // filename_curve_prep.txt
+    QString getfilename_arbitrarycurvetable() const; // filename_veccurve.tab
+    QString getfilename_arbitrarycurve() const;      // filename_curve.tab (tmp)
+    QString getPrepareArbitraryCurveFileName() const; // filename_curve_prep.txt
     // isoclines filenames
-    QString getfilename_isoclinestable() const;  // filename_vecisocline.tab
-    QString getfilename_isoclines() const;  // filename_isocline.tab (tmp file)
-    QString getPrepareIsoclinesFileName() const;  // filename_isocline_prep.txt
+    QString getfilename_isoclinestable() const; // filename_vecisocline.tab
+    QString getfilename_isoclines() const; // filename_isocline.tab (tmp file)
+    QString getPrepareIsoclinesFileName() const; // filename_isocline_prep.txt
     // separating curve filename (filename_sepcurves.tab)
     QString getfilename_separatingcurveresults() const;
     // check if a file exists
-    static bool fileExists(QString) const;
+    static bool fileExists(QString);
 
     void getDataFromDlg();
 
@@ -273,13 +285,13 @@ class P4InputVF : public QObject
     QString convertMapleUserParametersLabelsToValues(QString);
 
     // EVALUATION: main execution
-    void prepareFile(QTextStream &);  // used by Prepare()
+    void prepareFile(QTextStream &, bool); // used by Prepare()
     void prepare();
     void evaluate();
     void createProcessWindow();
 
     // EVALUATION: gcf
-    bool prepareGcf(std::vector<p4polynom::term2> f, double y1, double y2,
+    bool prepareGcf(const std::vector<p4polynom::term2> &f, double y1, double y2,
                     int precision, int numpoints);
     bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
                                 int numpoints, int index);
@@ -288,7 +300,7 @@ class P4InputVF : public QObject
 
     // EVALUATION: separating curves
     void prepareSeparatingCurves();
-    void evaluateSeparatingCurves();
+    bool evaluateSeparatingCurves();
 
     // EVALUATION: arbitrary curves
     // called from P4ArbitraryCurveDlg.cpp evaluate button
@@ -304,10 +316,8 @@ class P4InputVF : public QObject
                                double y1, double y2, int precision,
                                int numpoints);
     bool prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
-                                           int precision, int numpoints,
-                                           int index);
-    bool prepareArbitraryCurve_LyapunovR2(int precision, int numpoints,
-                                          int index);
+                                           int precision, int numpoints);
+    bool prepareArbitraryCurve_LyapunovR2(int precision, int numpoints);
     bool evaluateArbitraryCurve();
 
     // EVALUATION: isoclines
@@ -316,7 +326,7 @@ class P4InputVF : public QObject
     void prepareIsoclinesFile(QTextStream &);
     void prepareMapleIsoclines(QTextStream &);
     bool prepareIsoclines(const std::vector<p4polynom::term2> &f, double y1,
-                          double y2, int precision, int numpoints);  // FIXME
+                          double y2, int precision, int numpoints); // FIXME
     bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                       int precision, int numpoints, int index);
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
@@ -329,7 +339,7 @@ class P4InputVF : public QObject
     P4GcfDlg *getGcfDlgPtr() const;
     void setGcfDlg(P4GcfDlg *);
 
-    P4ArbitraryCurveDlg *getArbitraryCurvePtr() const;
+    P4ArbitraryCurveDlg *getArbitraryCurveDlgPtr() const;
     void setArbitraryCurveDlg(P4ArbitraryCurveDlg *);
 
     P4IsoclinesDlg *getIsoclinesDlgPtr() const;
@@ -357,5 +367,4 @@ class P4InputVF : public QObject
     std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
 };
 
-// FIXME: this should be a plain object, not a pointer
 P4InputVF gThisVF;
