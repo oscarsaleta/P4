@@ -22,7 +22,7 @@
 // -----------------------------------------------------------------------
 //                  IMPLEMENTATION OF THE POINCARE CHARTS
 // -----------------------------------------------------------------------
-void copy_x_into_y(double *x, double *y);
+void copy_x_into_y(const double *x, double *y);
 double floatinfinity(void);
 
 void psphere_to_R2(double X, double Y, double Z, double *rcoord);
@@ -81,6 +81,8 @@ void xyrevV1_to_plsphere(double z1, double z2, double *pcoord);
 void plsphere_to_xyrevU1(double ch, double x, double y, double *rcoord);
 void plsphere_to_xyrevV1(double ch, double x, double y, double *rcoord);
 
+void polarcoord_to_plsphere(double x, double y, double *pcoord);
+
 bool isvalid_plsphereviewcoord(double u, double v, double *pcoord);
 
 // projecting the PL-sphere to a disc of radius one (u,v) coordinates:
@@ -90,12 +92,12 @@ void plsphere_to_annulus(double x, double y, double z, double *u);
 void finite_annulus(double x, double y, double *u);
 
 // vector field evaluation
-void eval_r_vec_field(double *y, double *f);
-void eval_U1_vec_field(double *y, double *f);
-void eval_U2_vec_field(double *y, double *f);
-void eval_V1_vec_field(double *y, double *f);
-void eval_V2_vec_field(double *y, double *f);
-void eval_vec_field_cyl(double *y, double *f);
+void eval_r_vec_field(const double *y, double *f);
+void eval_U1_vec_field(const double *y, double *f);
+void eval_U2_vec_field(const double *y, double *f);
+void eval_V1_vec_field(const double *y, double *f);
+void eval_V2_vec_field(const double *y, double *f);
+void eval_vec_field_cyl(const double *y, double *f);
 
 // viewcoordpair functions
 void default_finite_to_viewcoord(double x, double y, double *ucoord);

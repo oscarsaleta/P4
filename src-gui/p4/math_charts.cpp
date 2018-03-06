@@ -19,6 +19,8 @@
 
 #include "math_charts.hpp"
 
+#include "P4ParentStudy.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
 #include "main.hpp"
@@ -56,7 +58,7 @@
 //                  IMPLEMENTATION OF THE POINCARE CHARTS
 // -----------------------------------------------------------------------
 
-void copy_x_into_y(double *x, double *y)
+void copy_x_into_y(const double *x, double *y)
 {
     y[0] = x[0];
     y[1] = x[1];
@@ -601,11 +603,11 @@ static void cylinder_to_V2( double r, double theta, double * c)
 void annulus_plsphere(double x, double y, double *p)
 {
     if (x * x + y * y < RADIUS2) {
-        p[0] = 0;  // mark it as a finite point
+        p[0] = 0; // mark it as a finite point
         p[1] = x / RADIUS;
         p[2] = y / RADIUS;
     } else {
-        p[0] = 1;  // mark it as a point near infinity
+        p[0] = 1; // mark it as a point near infinity
         p[1] = (1.0 - x * x - y * y) / (1.0 - RADIUS2);
         p[2] = atan2(y, x);
     }
@@ -813,13 +815,13 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_p);  // - (-cos(y))^(-1/p)
+                a = -pow(-a, -__one_over_p); // - (-cos(y))^(-1/p)
         } else
-            a = pow(a, -__one_over_p);  // cos(y)^(-1/p)
+            a = pow(a, -__one_over_p); // cos(y)^(-1/p)
 
         rcoord[0] =
-            sin(y) * pow(a, gVFResults.double_q_);  // sin(y) * cos(y)^(-q/p)
-        rcoord[1] = x * a;                          // x * cos(y)^(-1/p)
+            sin(y) * pow(a, gVFResults.double_q_); // sin(y) * cos(y)^(-q/p)
+        rcoord[1] = x * a;                         // x * cos(y)^(-1/p)
     } else {
         if (x < 0) {
             if ((gVFResults.p_ % 2) == 0) {
@@ -829,7 +831,7 @@ void plsphere_to_U1(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(-x, -__one_over_p);
         } else
-            a = pow(x, -__one_over_p);  // x^(-1/p)
+            a = pow(x, -__one_over_p); // x^(-1/p)
 
         rcoord[0] = y * pow(a, gVFResults.double_q_);
         rcoord[1] = a;
@@ -858,13 +860,13 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_q);  // - (-sin(y))^(-1/q)
+                a = -pow(-a, -__one_over_q); // - (-sin(y))^(-1/q)
         } else
-            a = pow(a, -__one_over_q);  // sin(y)^(-1/q)
+            a = pow(a, -__one_over_q); // sin(y)^(-1/q)
 
         rcoord[0] =
-            cos(y) * pow(a, gVFResults.double_p_);  // cos(y) * sin(y)^(-p/q)
-        rcoord[1] = x * a;                          // x * sin(y)^(-1/q)
+            cos(y) * pow(a, gVFResults.double_p_); // cos(y) * sin(y)^(-p/q)
+        rcoord[1] = x * a;                         // x * sin(y)^(-1/q)
     } else {
         if (y < 0) {
             if ((gVFResults.q_ % 2) == 0) {
@@ -874,7 +876,7 @@ void plsphere_to_U2(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(-y, -__one_over_q);
         } else
-            a = pow(y, -__one_over_q);  // x^(-1/p)
+            a = pow(y, -__one_over_q); // x^(-1/p)
 
         rcoord[0] = x * pow(a, gVFResults.double_p_);
         rcoord[1] = a;
@@ -895,13 +897,13 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_p);  // - (-cos(y))^(-1/p)
+                a = -pow(-a, -__one_over_p); // - (-cos(y))^(-1/p)
         } else
-            a = pow(a, -__one_over_p);  // cos(y)^(-1/p)
+            a = pow(a, -__one_over_p); // cos(y)^(-1/p)
 
         rcoord[0] =
-            sin(y) * pow(a, gVFResults.double_q_);  // sin(y) * cos(y)^(-q/p)
-        rcoord[1] = x * a;                          // x * cos(y)^(-1/p)
+            sin(y) * pow(a, gVFResults.double_q_); // sin(y) * cos(y)^(-q/p)
+        rcoord[1] = x * a;                         // x * cos(y)^(-1/p)
     } else {
         if (x > 0) {
             if ((gVFResults.p_ % 2) == 0) {
@@ -911,7 +913,7 @@ void plsphere_to_V1(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(x, -__one_over_p);
         } else
-            a = pow(-x, -__one_over_p);  // x^(-1/p)
+            a = pow(-x, -__one_over_p); // x^(-1/p)
 
         rcoord[0] = y * pow(a, gVFResults.double_q_);
         rcoord[1] = a;
@@ -924,6 +926,11 @@ void plsphere_to_xyrevV1(double ch, double x, double y, double *rcoord)
     plsphere_to_V1(ch, x, y, _rcoord);
     rcoord[0] = _rcoord[1];
     rcoord[1] = _rcoord[0];
+}
+
+void polarcoord_to_plsphere(double x, double y, double *pcoord)
+{
+    R2_to_plsphere(x * cos(y), x * sin(y), pcoord);
 }
 
 void plsphere_to_V2(double ch, double x, double y, double *rcoord)
@@ -940,13 +947,13 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
                 rcoord[1] = floatinfinity();
                 return;
             } else
-                a = -pow(-a, -__one_over_q);  // - (-sin(y))^(-1/q)
+                a = -pow(-a, -__one_over_q); // - (-sin(y))^(-1/q)
         } else
-            a = pow(a, -__one_over_q);  // sin(y)^(-1/q)
+            a = pow(a, -__one_over_q); // sin(y)^(-1/q)
 
         rcoord[0] =
-            cos(y) * pow(a, gVFResults.double_p_);  // cos(y) * sin(y)^(-p/q)
-        rcoord[1] = x * a;                          // x * sin(y)^(-1/q)
+            cos(y) * pow(a, gVFResults.double_p_); // cos(y) * sin(y)^(-p/q)
+        rcoord[1] = x * a;                         // x * sin(y)^(-1/q)
     } else {
         if (y > 0) {
             if ((gVFResults.q_ % 2) == 0) {
@@ -956,7 +963,7 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
             } else
                 a = -pow(y, -__one_over_q);
         } else
-            a = pow(-y, -__one_over_q);  // x^(-1/p)
+            a = pow(-y, -__one_over_q); // x^(-1/p)
 
         rcoord[0] = x * pow(a, gVFResults.double_p_);
         rcoord[1] = a;
@@ -967,92 +974,92 @@ void plsphere_to_V2(double ch, double x, double y, double *rcoord)
 //                      EVALUATION OF VECTOR FIELDS
 // -----------------------------------------------------------------------
 
-void eval_r_vec_field(double *y, double *f)
+void eval_r_vec_field(const double *y, double *f)
 {
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().gcf_ != nullptr)
-        s = eval_term2(gVFResults.vf_->back().gcf_, y);
+        !gVFResults.vf_.back()->gcf_.empty())
+        s = eval_term2(gVFResults.vf_.back()->gcf_, y);
 
-    f[0] = s * eval_term2(gVFResults.vf_->back().f_vec_field_[0], y);
-    f[1] = s * eval_term2(gVFResults.vf_->back().f_vec_field_[1], y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->f_vec_field_0_, y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->f_vec_field_1_, y);
 }
 
-void eval_U1_vec_field(double *y, double *f)
+void eval_U1_vec_field(const double *y, double *f)
 {
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().gcf_U1_ != nullptr)
-        s = eval_term2(gVFResults.vf_->back().gcf_U1_, y);
+        !gVFResults.vf_.back()->gcf_U1_.empty())
+        s = eval_term2(gVFResults.vf_.back()->gcf_U1_, y);
 
-    if (gVFResults.vf_->back().config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().singinf_)
+    if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
+        gVFResults.vf_.back()->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_->back().vec_field_U1_[0], y);
-    f[1] = s * eval_term2(gVFResults.vf_->back().vec_field_U1_[1], y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_U1_0_, y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_U1_1_, y);
 }
 
-void eval_U2_vec_field(double *y, double *f)
+void eval_U2_vec_field(const double *y, double *f)
 {
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().gcf_U2_ != nullptr)
-        s = eval_term2(gVFResults.vf_->back().gcf_U2_, y);
+        !gVFResults.vf_.back()->gcf_U2_.empty())
+        s = eval_term2(gVFResults.vf_.back()->gcf_U2_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().singinf_)
+        gVFResults.vf_.back()->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_->back().vec_field_U2_[0], y);
-    f[1] = s * eval_term2(gVFResults.vf_->back().vec_field_U2_[1], y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_U2_0_, y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_U2_1_, y);
 }
 
-void eval_V1_vec_field(double *y, double *f)
+void eval_V1_vec_field(const double *y, double *f)
 {
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().gcf_V1_ != nullptr)
-        s = eval_term2(gVFResults.vf_->back().gcf_V1_, y);
+        !gVFResults.vf_.back()->gcf_V1_.empty())
+        s = eval_term2(gVFResults.vf_.back()->gcf_V1_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().singinf_)
+        gVFResults.vf_.back()->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_->back().vec_field_V1_[0], y);
-    f[1] = s * eval_term2(gVFResults.vf_->back().vec_field_V1_[1], y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_V1_0_, y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_V1_1_, y);
 }
 
-void eval_V2_vec_field(double *y, double *f)
+void eval_V2_vec_field(const double *y, double *f)
 {
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().gcf_V2_ != nullptr)
-        s = eval_term2(gVFResults.vf_->back().gcf_V2_, y);
+        !gVFResults.vf_.back()->gcf_V2_.empty())
+        s = eval_term2(gVFResults.vf_.back()->gcf_V2_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().singinf_)
+        gVFResults.vf_.back()->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_->back().vec_field_V2_[0], y);
-    f[1] = s * eval_term2(gVFResults.vf_->back().vec_field_V2_[1], y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_V2_0_, y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_V2_1_, y);
 }
 
-void eval_vec_field_cyl(double *y, double *f)
+void eval_vec_field_cyl(const double *y, double *f)
 {
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_->back().gcf_C_ != nullptr)
-        s = eval_term3(gVFResults.vf_->back().gcf_C_, y);
+        !gVFResults.vf_.back()->gcf_C_.empty())
+        s = eval_term3(gVFResults.vf_.back()->gcf_C_, y);
 
-    f[0] = s * eval_term3(gVFResults.vf_->back().vec_field_C_[0], y);
-    f[1] = s * eval_term3(gVFResults.vf_->back().vec_field_C_[1], y);
+    f[0] = s * eval_term3(gVFResults.vf_.back()->vec_field_C_0_, y);
+    f[1] = s * eval_term3(gVFResults.vf_.back()->vec_field_C_1_, y);
 }
 
 void default_finite_to_viewcoord(double x, double y, double *ucoord)
@@ -1079,8 +1086,8 @@ bool default_sphere_to_viewcoordpair(double *p, double *q, double *u1,
     */
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
-    return true;  // returns true: line piece does not undergo a discontinuity
-                  // in coordinates
+    return true; // returns true: line piece does not undergo a discontinuity
+                 // in coordinates
 }
 
 bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
@@ -1119,8 +1126,8 @@ bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
 
-    return true;  // returns true: line piece does not undergo a discontinuity
-                  // in coordinates
+    return true; // returns true: line piece does not undergo a discontinuity
+                 // in coordinates
 }
 
 bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
@@ -1159,8 +1166,8 @@ bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], u1);
     MATHFUNC(sphere_to_viewcoord)(q[0], q[1], q[2], u2);
 
-    return true;  // returns true: line piece does not undergo a discontinuity
-                  // in coordinates
+    return true; // returns true: line piece does not undergo a discontinuity
+                 // in coordinates
 }
 
 bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
@@ -1183,7 +1190,7 @@ bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
         if (qx * px < 0) {
             // the line y=0 has been crossed
             t = px / (px - qx);
-            y = t * qy + (1 - t) * py;  // (x,0) is an intermediate point.
+            y = t * qy + (1 - t) * py; // (x,0) is an intermediate point.
 
             MATHFUNC(sphere_to_viewcoord)(0, px, py, u1);
             if (px < 0) {
@@ -1249,7 +1256,7 @@ bool plsphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
         if (qy * py < 0) {
             // the line y=0 has been crossed
             t = py / (py - qy);
-            x = t * qx + (1 - t) * px;  // (x,0) is an intermediate point.
+            x = t * qx + (1 - t) * px; // (x,0) is an intermediate point.
 
             MATHFUNC(sphere_to_viewcoord)(0, px, py, u1);
             if (py < 0) {
