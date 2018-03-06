@@ -399,7 +399,7 @@ struct curveRegionResult {
     }
 };
 
-// FIXME canviar tots els CURVERESULT per p4curves::curve
+// FIXME: canviar tots els CURVERESULT per p4curves::curve
 /*struct curveResult {
     std::vector<p4polynom::term2> sep;
     std::vector<p4polynom::term2> sep_U1;
@@ -433,10 +433,6 @@ struct curveRegionResult {
     }
 };*/
 } // namespace p4curveRegions
-
-bool readTerm1(FILE *fp, p4polynom::term1 p, int N);
-bool readTerm2(FILE *fp, p4polynom::term2 p, int N);
-bool readTerm3(FILE *fp, std::vector<p4polynom::term3> p, int N);
 
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
