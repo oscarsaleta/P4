@@ -19,8 +19,14 @@
 
 #pragma once
 
+#include <vector>
+
 class P4WinSphere;
+
+namespace p4orbits
+{
 struct orbits_points;
+}
 
 bool prepareVfForIntegration(double *pcoord);
 
@@ -37,7 +43,7 @@ void integrateOrbit(P4WinSphere *, int);
 std::vector<p4orbits::orbits_points> integrate_orbit(P4WinSphere *, double *,
                                                      double, int, int, int);
 
-void drawOrbit(P4WinSphere *spherewnd, double *pcoord,
+void drawOrbit(P4WinSphere *spherewnd, const double *pcoord,
                const std::vector<p4orbits::orbits_points> &points, int color);
 
 bool startOrbit(P4WinSphere *sphere, double x, double y, bool R);
