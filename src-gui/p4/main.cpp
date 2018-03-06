@@ -59,8 +59,8 @@ bool gActionOnlyPrepareFile = false;
 // in the find menu (this is not saved in the .inp file)
 bool gActionSaveAll = DEFAULTSAVEALL;
 
-QPixmap gP4smallIcon;
-QPrinter gP4printer;
+std::unique_ptr<QPixmap> gP4smallIcon;
+std::unique_ptr<QPrinter> gP4printer;
 
 QString gCmdLineFilename;
 bool gCmdLineAutoEvaluate;
@@ -76,21 +76,21 @@ extern P4InputVF gThisVF;
 void handleCommandLineOption(char *arg)
 {
     while (*arg != 0) {
-        if (*arg == 'e' || *arg == 'E')  // auto-evaluate
+        if (*arg == 'e' || *arg == 'E') // auto-evaluate
         {
             gCmdLineAutoEvaluate = true;
             arg++;
             continue;
         }
 
-        if (*arg == 'p' || *arg == 'P')  // auto-plot
+        if (*arg == 'p' || *arg == 'P') // auto-plot
         {
             gCmdLineAutoPlot = true;
             arg++;
             continue;
         }
 
-        if (*arg == 'x' || *arg == 'X')  // auto-evaluate + exit
+        if (*arg == 'x' || *arg == 'X') // auto-evaluate + exit
         {
             gCmdLineAutoEvaluate = true;
             gCmdLineAutoExit = true;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     int v, i;
 
     gP4platform = "";
-    gP4version = VERSION;  // initialize version string
+    gP4version = VERSION; // initialize version string
     gP4versionDate = VERSIONDATE;
 
     gCmdLineFilename = "";
@@ -143,31 +143,31 @@ int main(int argc, char *argv[])
     if (gCmdLineAutoEvaluate && gCmdLineFilename.length() == 0)
         gCmdLineFilename = DEFAULTFILENAME;
 
-    gP4app.reset(new QP4Application(argc, argv));
-    gP4app.setOrganizationName("P4");
-    gP4app.setOrganizationDomain("gsd.uab.cat");
-    gP4app.setApplicationName("P4");
+    gP4app = std::make_unique<P4Application>(argc, argv);
+    gP4app->setOrganizationName("P4");
+    gP4app->setOrganizationDomain("gsd.uab.cat");
+    gP4app->setApplicationName("P4");
 
-    gP4app.addLibraryPath(gP4app.applicationDirPath());
+    gP4app->addLibraryPath(gP4app->applicationDirPath());
 
-    gP4app.setQuitOnLastWindowClosed(false);
+    gP4app->setQuitOnLastWindowClosed(false);
     v = readP4Settings();
 
-    gP4printer.reset(new QPrinter(QPrinter::PrinterResolution));
-    gP4smallIcon.reset(new QPixmap());
-    if (gP4smallIcon.load(getP4BinPath() + "/p4smallicon.ico") == false) {
+    gP4printer = std::make_unique< QPrinter>(QPrinter::PrinterResolution);
+    gP4smallIcon = std::make_unique< QPixmap>();
+    if (gP4smallIcon->load(getP4BinPath() + "/p4smallicon.ico") == false) {
         gP4smallIcon.reset();
     }
 
-    //  gP4app.setStyle( new QCDEStyle() );
+    //  gP4app->setStyle( new QCDEStyle() );
 
-    //gThisVF = std::make_shared<P4InputVF>();
+    // gThisVF = std::make_shared<P4InputVF>();
 
-    gP4startDlg = std::make_shared<P4StartDlg>(gCmdLineFilename);
+    gP4startDlg = std::make_unique<P4StartDlg>(gCmdLineFilename);
     if (!gCmdLineAutoExit)
         gP4startDlg->show();
 
-    gP4app.setQuitOnLastWindowClosed(true);
+    gP4app->setQuitOnLastWindowClosed(true);
 
     if (gCmdLineFilename.length() != 0) {
         if (!(gThisVF.load())) {
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
     }
 
     if (!v) {
-        QMessageBox::information(gP4startDlg, "P4",
+        QMessageBox::information(gP4startDlg.get(), "P4",
                                  "Welcome to P4.\n\n"
                                  "Since P4 did not find program settings, it "
                                  "assumes that this is the first time\n"
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
         psettings->exec();
     }
 
-    returnvalue = gP4app.exec();
+    returnvalue = gP4app->exec();
 
     gP4printer.reset();
 
