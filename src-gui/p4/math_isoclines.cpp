@@ -19,17 +19,19 @@
 
 #include "math_isoclines.hpp"
 
-#include "P4InputVF.hpp"
-#include "P4WinSphere.hpp"
-#include "custom.hpp"
-#include "tables.hpp"
-#include "math_charts.hpp"
-#include "math_p4.hpp"
-#include "plot_tools.hpp"
-
 #include <QFile>
 
 #include <cmath>
+
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4VFStudy.hpp"
+#include "P4WinSphere.hpp"
+#include "custom.hpp"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "plot_tools.hpp"
+#include "tables.hpp"
 
 // static global variables
 static int sIsoclinesTask{EVAL_ISOCLINES_NONE};
@@ -93,10 +95,10 @@ bool evalIsoclinesContinue(int precision, int points)
         sIsoclinesError = true;
         return true;
     }
-    return false;  // still busy
+    return false; // still busy
 }
 
-bool evalIsoclinesFinish()  // return false in case an error occured
+bool evalIsoclinesFinish() // return false in case an error occured
 {
     // set color for the last isocline of each VF
     for (auto &vf : gVFResults.vf_) {
@@ -161,23 +163,23 @@ bool runTaskIsoclines(int task, int precision, int points, int index)
                                          precision, points);
         break;
     case EVAL_ISOCLINES_LYP_R2:
-        value = gThisVF.prepareIsoclines_LyapunovR2(precision, points);
+        value = gThisVF.prepareIsoclines_LyapunovR2(precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL1:
         value = gThisVF.prepareIsoclines_LyapunovCyl(-PI_DIV4, PI_DIV4,
-                                                     precision, points);
+                                                     precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL2:
         value = gThisVF.prepareIsoclines_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
-                                                     precision, points);
+                                                     precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL3:
         value = gThisVF.prepareIsoclines_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                     precision, points);
+                                                     precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL4:
         value = gThisVF.prepareIsoclines_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
-                                                     precision, points);
+                                                     precision, points, index);
         break;
     default:
         value = false;
@@ -239,7 +241,7 @@ void draw_isoclines(P4WinSphere *spherewnd,
     double pcoord[3];
 
     for (auto const &it : isoc) {
-        if (isoc->dashes && dashes)
+        if (it.dashes && dashes)
             (*plot_l)(spherewnd, pcoord, it.pcoord, color);
         else
             (*plot_p)(spherewnd, it.pcoord, color);
@@ -252,8 +254,8 @@ static void insert_isocline_vector_point(double x0, double y0, double z0,
 {
     double pcoord[3]{x0, y0, z0};
 
-    gVFResults.vf_[index]->isoclines_vector_.points.emplace_back(CISOC, pcoord,
-                                                                 dashes, 0 0);
+    gVFResults.vf_[index]->isocline_vector_.back().points.emplace_back(
+        CISOC, pcoord, dashes, 0, 0);
 }
 
 static bool read_isoclines(void (*chart)(double, double, double *), int index)
