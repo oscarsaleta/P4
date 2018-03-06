@@ -23,7 +23,7 @@
 #include "P4PlotWnd.hpp"
 #include "P4StartDlg.hpp"
 #include "P4WinSphere.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "math_charts.hpp"
 
 #include <cmath>

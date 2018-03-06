@@ -18,7 +18,7 @@
  */
 #pragma once
 
-#include "file_tab.hpp"
+#include "tables.hpp"
 
 #define EVAL_CURVE_NONE 0
 #define EVAL_CURVE_R2 1
@@ -35,12 +35,16 @@
 #define EVAL_CURVE_FINISHLYAPUNOV 12
 
 class P4WinSphere;
-struct p4orbits::orbits_points;
+
+namespace p4orbits
+{
+struct orbits_points;
+}
 
 bool evalArbitraryCurveStart(P4WinSphere *sp, int dashes, int precision,
                              int points);
 bool evalArbitraryCurveContinue(int precision, int points);
-bool evalArbitraryCurveFinish(void);
+bool evalArbitraryCurveFinish();
 bool runTaskArbitraryCurve(int task, int precision, int points);
 void drawArbitraryCurve(P4WinSphere *spherewnd,
                         const std::vector<p4orbits::orbits_points> &sep,

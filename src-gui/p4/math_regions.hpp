@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "file_tab.hpp"
+#include "tables.hpp"
 
 class QString;
 

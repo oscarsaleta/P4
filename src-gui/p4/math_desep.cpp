@@ -24,7 +24,7 @@
 #include "P4VFStudy.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "math_charts.hpp"
 #include "math_numerics.hpp"
 #include "math_orbits.hpp"
@@ -684,7 +684,7 @@ void select_next_de_sep(P4WinSphere *spherewnd)
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
 void plot_all_de_sep(P4WinSphere *spherewnd, int vfindex,
-                     std::vector<p4singularity::degenerate> &point)
+                     std::vector<p4singularities::degenerate> &point)
 {
     double p[3];
 

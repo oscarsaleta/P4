@@ -23,7 +23,7 @@
 #include "math_changedir.hpp"
 
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
