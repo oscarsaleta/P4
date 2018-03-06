@@ -19,9 +19,18 @@
 
 #include "math_desep.hpp"
 
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4VFStudy.hpp"
+#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "file_tab.hpp"
+#include "math_charts.hpp"
+#include "math_numerics.hpp"
+#include "math_orbits.hpp"
+#include "math_polynom.hpp"
 #include "math_separatrice.hpp"
+#include "plot_tools.hpp"
 
 static std::vector<p4polynom::term2> sVecField_0;
 static std::vector<p4polynom::term2> sVecField_1;
@@ -67,9 +76,10 @@ void make_transformations(const std::vector<p4blowup::transformations> &trans,
 // ---------------------------------------------------------------------------
 //          integrate_blow_up
 // ---------------------------------------------------------------------------
-std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
-    std::shared_ptr<P4WinSphere> spherewnd, double *pcoord2,
-    p4blowup::blow_up_points &de_sep, double step, int dir, int type, int chart)
+std::optional<std::vector<p4orbits::orbits_points>>
+integrate_blow_up(P4WinSphere *spherewnd, double *pcoord2,
+                  p4blowup::blow_up_points &de_sep, double step, int dir,
+                  int type, int chart)
 {
     int i;
     double hhi, hhi0;
@@ -109,12 +119,12 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
         break;
     }
 
-    if (!prepareForIntegration(pcoord))
-        return {};
+    if (!prepareVfForIntegration(pcoord))
+        return std::vector<p4orbits::orbits_points>;
 
     if (gVFResults.plweights_ == false &&
         (chart == CHART_V1 || chart == CHART_V2))
-        dir *= gVFResults.vf_[gVFResults.K_].dir_vec_field_;
+        dir *= gVFResults.vf_[gVFResults.K_]->dir_vec_field_;
 
     hhi = static_cast<double>(dir) * step;
     y[0] = de_sep.point[0];
@@ -134,10 +144,10 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
                 de_sep.y0 + de_sep.a21 * y[0] + de_sep.a22 * y[1], point);
             switch (chart) {
             case CHART_R2:
-                MATHFUNC(R2_to_sphere)(point[0], point[1], point[2], pcoord);
+                MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
                 break;
             case CHART_U1:
-                if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_)
+                if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_)
                     MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 else
                     VV1_to_psphere(point[0], point[1], pcoord);
@@ -146,7 +156,7 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
                 MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
                 break;
             case CHART_U2:
-                if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_)
+                if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_)
                     MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 else
                     VV2_to_psphere(point[0], point[1], pcoord);
@@ -175,36 +185,36 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
         switch (chart) {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
-            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_, type,
-                                  point);
+            color =
+                findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_, type, point);
             break;
 
         case CHART_U1:
-            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_) {
+            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = de_sep.type;
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U1_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_U1_,
                                       type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                     type = change_type(de_sep.type);
                 else
                     type = de_sep.type;
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V1_,
                                       type, point);
             }
             break;
@@ -213,36 +223,36 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
             if (!gVFResults.plweights_)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_, type,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V1_, type,
                                   point);
             break;
 
         case CHART_U2:
-            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_) {
+            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
-                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                         dir *= -1;
                 }
                 type = de_sep.type;
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_U2_,
                                       type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
                 if (ok) {
                     dashes = false;
                     ok = false;
-                    if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                    if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                     type = change_type(de_sep.type);
                 else
                     type = de_sep.type;
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V2_,
                                       type, point);
             }
             break;
@@ -251,7 +261,7 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
             if (!gVFResults.plweights_)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_, type,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V2_, type,
                                   point);
             break;
 
@@ -263,10 +273,11 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
         copy_x_into_y(pcoord, last_orbit.pcoord);
         last_orbit.color = color;
         last_orbit.dashes = dashes * gVFResults.config_dashes_;
-        last_orbit.dir = ((gVFResults.plweights_ == false) &&
-                          (chart == CHART_V1 || chart == CHART_V2))
-                             ? gVFResults.dir_vec_field_ * dir
-                             : dir;
+        last_orbit.dir =
+            ((gVFResults.plweights_ == false) &&
+             (chart == CHART_V1 || chart == CHART_V2))
+                ? gVFResults.vf_[gVFResults.K_]->dir_vec_field_ * dir
+                : dir;
         last_orbit.type = type;
 
         orbit_result.push_back(std::move(last_orbit));
@@ -300,11 +311,12 @@ std::optional<std::vector<p4orbits::orbits_points>> integrate_blow_up(
 // by the user.
 //
 // At the end, a normal integration cycle is added.
-static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
-    std::shared_ptr<P4WinSphere> spherewnd, double x0, double y0, int chart,
-    double epsilon, p4blowup::blow_up_points &de_sep, int vfindex)
+static std::vector<p4orbits::orbits_points>
+plot_sep_blow_up(P4WinSphere *spherewnd, double x0, double y0,
+                 int chart, double epsilon, p4blowup::blow_up_points &de_sep,
+                 int vfindex)
 {
-    double h, t{0}, pcoord[3], pcoord2[3], point[2];
+    double h, t{0}, y, pcoord[3], pcoord2[3], point[2];
     int i, color, dir, dashes, type, ok{true};
     p4orbits::orbits_points last_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
@@ -324,15 +336,15 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
         break;
     }
     if (!prepareVfForIntegration(pcoord))
-        return {};
+        return std::vector<p4orbits::orbits_points>;
 
     /* if we have a line of singularities at infinity then we have to change the
      * chart if the chart is V1 or V2 */
-    if (gVFResults.vf_[gVFResults.K_].singinf_) {
+    if (gVFResults.vf_[gVFResults.K_]->singinf_) {
         if (chart == CHART_V1)
             chart = CHART_U1;
         else if (chart == CHART_V2)
-            chart = chart_U2;
+            chart = CHART_U2;
     }
 
     h = epsilon / 100.;
@@ -361,27 +373,27 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
     switch (chart) {
     case CHART_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_, de_sep.type,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_, de_sep.type,
                               point);
         break;
     case CHART_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U1_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_U1_,
                               de_sep.type, point);
         break;
     case CHART_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V1_,
                               de_sep.type, point);
         break;
     case CHART_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_U2_,
                               de_sep.type, point);
         break;
     case CHART_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
+        color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V2_,
                               de_sep.type, point);
         break;
     }
@@ -390,14 +402,14 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
     y = eval_term1(de_sep.sep, h * 100);
     make_transformations(
         de_sep.trans, de_sep.x0 + de_sep.a11 * h * 100 + de_sep.a12 * y,
-        de_sep.y0 + de_sep.a21 * h * 100 + de_sep * a22 * y, point);
+        de_sep.y0 + de_sep.a21 * h * 100 + de_sep.a22 * y, point);
 
     switch (chart) {
     case CHART_R2:
         MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord2);
         break;
     case CHART_U1:
-        if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_)
+        if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_)
             MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord2);
         else
             VV1_to_psphere(point[0], point[1], pcoord2);
@@ -406,7 +418,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
         MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord2);
         break;
     case CHART_U2:
-        if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_)
+        if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_)
             MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord2);
         else
             VV2_to_psphere(point[0], point[1], pcoord2);
@@ -417,14 +429,14 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
     }
 
     if (gThisVF.getVFIndex_sphere(pcoord2) != vfindex)
-        return {};
+        return std::vector<p4orbits::orbits_points>;
 
     // end of P5 addition
 
     copy_x_into_y(pcoord, last_orbit.pcoord);
     last_orbit.color = color;
     last_orbit.dashes = 0;
-    last_orbit.dir = dir;  // TODO: aixo no hi era
+    last_orbit.dir = dir; // NOTE: aixo no hi era
     copy_x_into_y(pcoord, pcoord2);
     orbit_result.push_back(std::move(last_orbit));
     for (i = 0; i <= 99; i++) {
@@ -436,19 +448,19 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
         switch (chart) {
         case CHART_R2:
             MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
-            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_,
                                   de_sep.type, point);
             break;
 
         case CHART_U1:
-            if (point[1] = > 0 || !gVFResults.vf_[gVFResults.K_].singinf_) {
+            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
                 }
                 type = de_sep.type;
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U1_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_U1_,
                                       type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
@@ -457,11 +469,11 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
                     ok = false;
                 }
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                     type = change_type(de_sep.type);
                 else
                     type = de_sep.type;
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V1_,
                                       type, point);
             }
             break;
@@ -470,19 +482,19 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
             if (!gVFResults.plweights_)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V1_,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V1_,
                                   de_sep.type, point);
             break;
 
         case CHART_U2:
-            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_].singinf_) {
+            if (point[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 if (!ok) {
                     dashes = false;
                     ok = true;
                 }
                 type = de_sep.type;
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_U2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_U2_,
                                       type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
@@ -491,11 +503,11 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
                     ok = false;
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-                if (gVFResults.vf_[gVFResults.K_].dir_vec_field_ == 1)
+                if (gVFResults.vf_[gVFResults.K_]->dir_vec_field_ == 1)
                     type = change_type(de_sep.type);
                 else
                     type = de_sep.type;
-                color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
+                color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V2_,
                                       type, point);
             }
             break;
@@ -504,7 +516,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
             if (!gVFResults.plweights_)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(gVFResults.vf_[gVFResults.K_].gcf_V2_,
+            color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V2_,
                                   de_sep.type, point);
             break;
         }
@@ -540,7 +552,7 @@ static std::optional<std::vector<p4orbits::orbits_points>> plot_sep_blow_up(
 // ---------------------------------------------------------------------------
 //          change_epsilon_de
 // ---------------------------------------------------------------------------
-void change_epsilon_de(std::shared_ptr<P4WinSphere> spherewnd, double epsilon)
+void change_epsilon_de(P4WinSphere *spherewnd, double epsilon)
 {
     int deid{gVFResults.selectedDePointIndex_};
     gVFResults.dePoints_[deid].epsilon = epsilon;
@@ -556,10 +568,10 @@ void change_epsilon_de(std::shared_ptr<P4WinSphere> spherewnd, double epsilon)
 // ---------------------------------------------------------------------------
 //          start_plot_de_sep
 // ---------------------------------------------------------------------------
-void start_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
+void start_plot_de_sep(P4WinSphere *spherewnd, int vfindex)
 {
     int deid{gVFResults.selectedDeSepIndex_};
-    auto &de_sep = gVFResults.deSeps_[selectedDeSepIndex_];
+    auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
     double p[3];
 
     draw_sep(spherewnd, de_sep.sep_points);
@@ -579,10 +591,10 @@ void start_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
         } else {
             copy_x_into_y(de_sep.sep_points.back().pcoord, p);
             // generate a vector of points by integrating the separatrice
-            auto v = integrate_sep(
-                spherewnd, p, gVFResults.config_currentstep_,
-                de_sep.sep_points.back().dir, de_sep.sep_points.back().type,
-                gVFResults.config_intpoints_);
+            auto v = integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
+                                   de_sep.sep_points.back().dir,
+                                   de_sep.sep_points.back().type,
+                                   gVFResults.config_intpoints_);
             // append this vector to the previous one in the structure
             if (v && !v.empty())
                 de_sep.sep_points.insert(std::end(de_sep), std::begin(v),
@@ -602,7 +614,7 @@ void start_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 //          cont_plot_de_sep
 // ---------------------------------------------------------------------------
-void cont_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
+void cont_plot_de_sep(P4WinSphere *spherewnd)
 {
     double p[3];
     auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
@@ -630,7 +642,7 @@ void cont_plot_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
 // ---------------------------------------------------------------------------
 //          plot_next_de_sep
 // ---------------------------------------------------------------------------
-void plot_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
+void plot_next_de_sep(P4WinSphere *spherewnd, int vfindex)
 {
     int &desepid{gVFResults.selectedDeSepIndex_};
     int depointid{gVFResults.selectedDePointIndex_};
@@ -650,7 +662,7 @@ void plot_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 //          select_next_de_sep
 // ---------------------------------------------------------------------------
-void select_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
+void select_next_de_sep(P4WinSphere *spherewnd)
 {
     int &desepid{gVFResults.selectedDeSepIndex_};
     int depointid{gVFResults.selectedDePointIndex_};
@@ -664,14 +676,14 @@ void select_next_de_sep(std::shared_ptr<P4WinSphere> spherewnd)
         desepid = 0;
     }
 
-    draw_selected_sep(spherewnd,
-                      gVFResults.deSeps_[desepid].sep_points.front(), CW_SEP);
+    draw_selected_sep(spherewnd, gVFResults.deSeps_[desepid].sep_points.front(),
+                      CW_SEP);
 }
 
 // ---------------------------------------------------------------------------
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
-void plot_all_de_sep(std::shared_ptr<P4WinSphere> spherewnd, int vfindex,
+void plot_all_de_sep(P4WinSphere *spherewnd, int vfindex,
                      std::vector<p4singularity::degenerate> &point)
 {
     double p[3];
