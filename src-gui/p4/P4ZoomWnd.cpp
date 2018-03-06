@@ -119,7 +119,7 @@ void P4ZoomWnd::onBtnClose()
     auto data = std::make_unique<int>(zoomid_);
     auto e1 = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.release());
-    gP4app.postEvent(parent_, e1.release());
+    gP4app->postEvent(parent_, e1.release());
 }
 
 bool P4ZoomWnd::close()
@@ -146,11 +146,11 @@ void P4ZoomWnd::onBtnPrint()
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            gP4printer.setResolution(res);
+            gP4printer->setResolution(res);
             QPrintDialog dialog{gP4printer, this};
             if (!dialog.exec())
                 return;
-            res = gP4printer.resolution();
+            res = gP4printer->resolution();
         }
 
         if (result < 0)
@@ -182,7 +182,7 @@ void P4ZoomWnd::customEvent(QEvent *_e)
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
         auto newe = std::make_unique<P4Event>(e->type(), e->data());
-        gP4app.postEvent(parent_, newe.release());
+        gP4app->postEvent(parent_, newe.release());
         return;
     }
 
@@ -195,7 +195,7 @@ void P4ZoomWnd::hideEvent(QHideEvent *h)
         auto data = std::make_unique<int>(zoomid_);
         auto e1 = std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.release());
-        gP4app.postEvent(parent_, e1.release());
+        gP4app->postEvent(parent_, e1.release());
     }
 }
 
@@ -208,7 +208,7 @@ void P4ZoomWnd::adjustHeight()
     int w{width()};
     int h{height() + sphere_->idealh_ - sphere_->h_};
 
-    int m{gP4app.desktop()->height()};
+    int m{gP4app->desktop()->height()};
     m -= m / 10;  // occuppy at most 90% of the screen's height
 
     if (h > m) {
@@ -223,7 +223,7 @@ void P4ZoomWnd::adjustHeight()
 
         h += std::round(deltah + 0.5);
         w += std::round(deltaw + 0.5);
-        m = gP4app.desktop()->width();
+        m = gP4app->desktop()->width();
         m -= m / 10;
         if (w > m)
             w = m;  // occupy at most 90 % of the screen's width

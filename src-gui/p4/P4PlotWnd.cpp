@@ -36,7 +36,7 @@
 #include "P4WinSphere.hpp"
 #include "P4ZoomWnd.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
 #include "plot_tools.hpp"
@@ -286,14 +286,14 @@ void P4PlotWnd::onBtnClose()
 {
     auto e1 = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-    gP4app.postEvent(parent_, e1.release());
+    gP4app->postEvent(parent_, e1.release());
 }
 
 bool P4PlotWnd::close()
 {
     auto e1 = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-    gP4app.postEvent(parent_, e1.release());
+    gP4app->postEvent(parent_, e1.release());
 
     return QMainWindow::close();
 }
@@ -381,13 +381,13 @@ void P4PlotWnd::onBtnPrint()
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
-            gP4printer.setResolution(res);
+            gP4printer->setResolution(res);
 
             QPrintDialog dialog(gP4printer, this);
             if (!dialog.exec())
                 return;
 
-            res = gP4printer.resolution();
+            res = gP4printer->resolution();
         }
 
         if (result < 0)
@@ -545,7 +545,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
     if (!isMinimized()) {
         auto e1 = std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-        gP4app.postEvent(parent_, e1.release());
+        gP4app->postEvent(parent_, e1.release());
     }
 }
 

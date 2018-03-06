@@ -35,7 +35,7 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     : QWidget{finddlg}, parent_{finddlg}
 {
     auto p4title = std::make_unique<QLabel>("Vector Fields:", this);
-    p4title->setFont(gP4app.getTitleFont());
+    p4title->setFont(gP4app->getTitleFont());
 
     cbb_vfselect_ = std::make_unique<QComboBox>(this);
     btn_add_ = std::make_unique<QPushButton>("Add", this);
@@ -159,7 +159,7 @@ void P4VFSelectDlg::onBtnAdd()
     parent_->updateDlgData();
     if (gThisVF.changed_ == false) {
         gThisVF.changed = true;
-        gP4app.signalChanged();
+        gP4app->signalChanged();
     }
 }
 
@@ -175,7 +175,7 @@ void P4VFSelectDlg::onBtnDel()
     parent_->updateDlgData();
     if (gThisVF.changed_ == false) {
         gThisVF.changed_ = true;
-        gP4app.signalChanged();
+        gP4app->signalChanged();
     }
 }
 

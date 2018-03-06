@@ -30,7 +30,7 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
     int i;
 
     auto label0 = std::make_unique<QLabel>("Enter values for all parameters");
-    label0->setFont(gP4app.getTitleFont());
+    label0->setFont(gP4app->getTitleFont());
 
     currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
                               ? currentNumParams_
@@ -108,7 +108,7 @@ void P4VFParams::paramsEditingFinished()
     if (changed) {
         if (!gThisVF.changed_) {
             gThisVF.changed_ = true;
-            gP4app.signalChanged();
+            gP4app->signalChanged();
         }
     }
 }

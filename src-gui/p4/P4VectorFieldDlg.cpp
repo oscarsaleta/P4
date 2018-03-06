@@ -40,25 +40,25 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     auto p4title = std::make_unique<QLabel>("Specify the vector field:", this);
-    p4title->setFont(gP4app.getTitleFont());
+    p4title->setFont(gP4app->getTitleFont());
 
     edt_xprime_ = std::make_unique<QLineEdit>(gThisVF.xdot_, this);
     auto xlabel = std::make_unique<QLabel>("&x' = ", this);
-    xlabel->setFont(gP4app.getBoldFont());
+    xlabel->setFont(gP4app->getBoldFont());
     xlabel->setBuddy(edt_xprime_.get());
 
     edt_yprime_ = std::make_unique<QLineEdit>(gThisVF.ydot_, this);
     auto ylabel = std::make_unique<QLabel>("&y' = ", this);
-    ylabel->setFont(gP4app.getBoldFont());
+    ylabel->setFont(gP4app->getBoldFont());
     ylabel->setBuddy(edt_yprime_.get());
 
     edt_gcf_ = std::make_unique<QLineEdit>(gThisVF.gcf_, this);
     auto glabel = std::make_unique<QLabel>("&Gcf: ", this);
-    glabel->setFont(gP4app.getBoldFont());
+    glabel->setFont(gP4app->getBoldFont());
     glabel->setBuddy(edt_gcf_.get());
 
     auto plabel = std::make_unique<QLabel>("Number of Parameters: ", this);
-    plabel->setFont(gP4app.getBoldFont());
+    plabel->setFont(gP4app->getBoldFont());
 
     spin_numparams_ = std::make_unique<QSpinBox>(this);
     spin_numparams_->setMinimum(0);
@@ -154,7 +154,7 @@ void P4VectorFieldDlg::numParamsChanged(int val)
 
     if (gThisVF.changed_ == false) {
         gThisVF.changed_ = true;
-        gP4app.signalChanged();
+        gP4app->signalChanged();
     }
     gThisVF.numparams_ = val;
 
@@ -195,7 +195,7 @@ void P4VectorFieldDlg::getDataFromDlg()
     if (changed) {
         if (!gThisVF.changed_) {
             gThisVF.changed_ = true;
-            gP4app.signalChanged();
+            gP4app->signalChanged();
         }
     }
 }

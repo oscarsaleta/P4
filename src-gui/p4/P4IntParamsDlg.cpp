@@ -22,7 +22,7 @@
 #include "P4Application.hpp"
 #include "P4InputVF.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "main.hpp"
 
 #include <QBoxLayout>
@@ -41,7 +41,7 @@ P4IntParamsDlg::P4IntParamsDlg()
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     auto kindlabel = std::make_unique<QLabel>("Vector Field: ", this);
-    kindlabel->setFont(gP4app.getBoldFont());
+    kindlabel->setFont(gP4app->getBoldFont());
     auto btngrp1 = std::make_unique<QButtonGroup>(this);
     btn_org_ = std::make_unique<QRadioButton>("Original", this);
     btn_red_ = std::make_unique<QRadioButton>("Reduced", this);
@@ -49,7 +49,7 @@ P4IntParamsDlg::P4IntParamsDlg()
     btngrp1->addButton(btn_red_.get());
 
     auto typelabel = std::make_unique<QLabel>("Appearance: ", this);
-    typelabel->setFont(gP4app.getBoldFont());
+    typelabel->setFont(gP4app->getBoldFont());
     auto btngrp2 = std::make_unique<QButtonGroup>(this);
     btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
     btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
@@ -57,31 +57,31 @@ P4IntParamsDlg::P4IntParamsDlg()
     btngrp2->addButton(btn_dashes_.get());
 
     lbl_stepsize_ = std::make_unique<QLabel>("Step Size:", this);
-    lbl_stepsize_->setFont(gP4app.getBoldFont());
+    lbl_stepsize_->setFont(gP4app->getBoldFont());
     edt_stepsize_ = std::make_unique<QLineEdit>("0.01", this);
 
     lbl0_curstep_ = std::make_unique<QLabel>("Current Step Size:", this);
-    lbl0_curstep_->setFont(gP4app.getBoldFont());
+    lbl0_curstep_->setFont(gP4app->getBoldFont());
     lbl_curstep_ = std::make_unique<QLabel>("0.01", this);
 
     lbl_maxstep_ = std::make_unique<QLabel>("Max Step Size:", this);
-    lbl_maxstep_->setFont(gP4app.getBoldFont());
+    lbl_maxstep_->setFont(gP4app->getBoldFont());
     edt_maxstep_ = std::make_unique<QLineEdit>("0.1", this);
 
     lbl_minstep_ = std::make_unique<QLabel>("Min Step Size:", this);
-    lbl_minstep_->setFont(gP4app.getBoldFont());
+    lbl_minstep_->setFont(gP4app->getBoldFont());
     edt_minstep_ = std::make_unique<QLineEdit>("1e-06", this);
 
     lbl_branchminstep_ = std::make_unique<QLabel>("Branching Step Size:", this);
-    lbl_branchminstep_->setFont(gP4app.getBoldFont());
+    lbl_branchminstep_->setFont(gP4app->getBoldFont());
     edt_branchminstep_ = std::make_unique<QLineEdit>("1e-03", this);
 
     lbl_tolerance_ = std::make_unique<QLabel>("Tolerance:", this);
-    lbl_tolerance_->setFont(gP4app.getBoldFont());
+    lbl_tolerance_->setFont(gP4app->getBoldFont());
     edt_tolerance_ = std::make_unique<QLineEdit>("1e-06", this);
 
     auto lbl_numpoints = std::make_unique<QLabel>("# Points:", this);
-    lbl_numpoints->setFont(gP4app.getBoldFont());
+    lbl_numpoints->setFont(gP4app->getBoldFont());
     spin_numpoints_ = std::make_unique<QSpinBox>(this);
     spin_numpoints_->setMinimum(MIN_INTPOINTS);
     spin_numpoints_->setMaximum(MAX_INTPOINTS);

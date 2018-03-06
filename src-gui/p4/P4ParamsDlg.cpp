@@ -42,77 +42,77 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
 
     auto p4title =
         std::make_unique<QLabel>("Find Singular Points Parameters", this);
-    p4title->setFont(gP4app.getTitleFont());
+    p4title->setFont(gP4app->getTitleFont());
 
     auto symlabel = std::make_unique<QLabel>("Calculations: ", this);
-    symlabel->setFont(gP4app.getBoldFont());
+    symlabel->setFont(gP4app->getBoldFont());
     btn_alg_ = std::make_unique<QRadioButton>("Algebraic", this);
     btn_num_ = std::make_unique<QRadioButton>("Numeric", this);
 
     auto seplabel = std::make_unique<QLabel>("Test Separatrices:  ", this);
-    seplabel->setFont(gP4app.getBoldFont());
+    seplabel->setFont(gP4app->getBoldFont());
     btn_sepyes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_sepno_ = std::make_unique<QRadioButton>("No", this);
 
     auto lbl_precis = std::make_unique<QLabel>("Accuracy:", this);
-    lbl_precis->setFont(gP4app.getBoldFont());
+    lbl_precis->setFont(gP4app->getBoldFont());
     spin_precis_ = std::make_unique<QSpinBox>(this);
     spin_precis_->setMinimum(MINPRECISION);
     spin_precis_->setMaximum(MAXPRECISION);
 
     auto lbl_precis0 = std::make_unique<QLabel>("Precision:", this);
-    lbl_precis0->setFont(gP4app.getBoldFont());
+    lbl_precis0->setFont(gP4app->getBoldFont());
     spin_precis0_ = std::make_unique<QSpinBox>(this);
     spin_precis0_->setMinimum(MINPRECISION0);
     spin_precis0_->setMaximum(MAXPRECISION0);
 
     auto lbl_epsilon = std::make_unique<QLabel>("Epsilon:", this);
-    lbl_epsilon->setFont(gP4app.getBoldFont());
+    lbl_epsilon->setFont(gP4app->getBoldFont());
     edt_epsilon_ = std::make_unique<QLineEdit>(gThisVF.epsilon_, this);
 
     auto lbl_level = std::make_unique<QLabel>("Level of Approximation:", this);
-    lbl_level->setFont(gP4app.getBoldFont());
+    lbl_level->setFont(gP4app->getBoldFont());
     spin_level_ = std::make_unique<QSpinBox>(this);
     spin_level_->setMinimum(MINLEVEL);
     spin_level_->setMaximum(MAXLEVEL);
 
     auto lbl_numlevel = std::make_unique<QLabel>("Numeric level:", this);
-    lbl_numlevel->setFont(gP4app.getBoldFont());
+    lbl_numlevel->setFont(gP4app->getBoldFont());
     spin_numlevel_ = std::make_unique<QSpinBox>(this);
     spin_numlevel_->setMinimum(MINNUMLEVEL);
     spin_numlevel_->setMaximum(MAXNUMLEVEL);
 
     auto lbl_maxlevel = std::make_unique<QLabel>("Maximum level:", this);
-    lbl_maxlevel->setFont(gP4app.getBoldFont());
+    lbl_maxlevel->setFont(gP4app->getBoldFont());
     spin_maxlevel_ = std::make_unique<QSpinBox>(this);
     spin_maxlevel_->setMinimum(MINMAXLEVEL);
     spin_maxlevel_->setMaximum(MAXMAXLEVEL);
 
     auto lbl_weakness =
         std::make_unique<QLabel>("Maximum level of weakness:", this);
-    lbl_weakness->setFont(gP4app.getBoldFont());
+    lbl_weakness->setFont(gP4app->getBoldFont());
     spin_weakness_ = std::make_unique<QSpinBox>(this);
     spin_weakness_->setMinimum(MINWEAKNESS);
     spin_weakness_->setMaximum(MAXWEAKNESS);
 
     lbl_p_ = std::make_unique<QLabel>("p:", this);
-    lbl_p_->setFont(gP4app.getBoldFont());
+    lbl_p_->setFont(gP4app->getBoldFont());
     spin_p_ = std::make_unique<QSpinBox>(this);
     spin_p_->setMinimum(MINP);
     spin_p_->setMaximum(MAXP);
 
     lbl_q_ = std::make_unique<QLabel>("q:", this);
-    lbl_q_->setFont(gP4app.getBoldFont());
+    lbl_q_->setFont(gP4app->getBoldFont());
     spin_q_ = std::make_unique<QSpinBox>(this);
     spin_q_->setMinimum(MINP);
     spin_q_->setMaximum(MAXP);
 
     lbl_x0_ = std::make_unique<QLabel>("x0:", this);
-    lbl_x0_->setFont(gP4app.getBoldFont());
+    lbl_x0_->setFont(gP4app->getBoldFont());
     edt_x0_ = std::make_unique<QLineEdit>("", this);
 
     lbl_y0_ = std::make_unique<QLabel>("y0:", this);
-    lbl_y0_->setFont(gP4app.getBoldFont());
+    lbl_y0_->setFont(gP4app->getBoldFont());
     edt_y0_ = std::make_unique<QLineEdit>("", this);
 
 #ifdef TOOLTIPS
@@ -282,7 +282,7 @@ void P4ParamsDlg::btn_alg_toggled(bool on)
             gThisVF.setCommonBool(gThisVF.numeric_, false);
             if (gThisVF.changed_ == false) {
                 gThisVF.changed_ = true;
-                gP4app.signalChanged();
+                gP4app->signalChanged();
             }
         }
     }
@@ -296,7 +296,7 @@ void P4ParamsDlg::btn_num_toggled(bool on)
             gThisVF.setCommonBool(gThisVF.numeric_, true);
             if (gThisVF.changed_ == false) {
                 gThisVF.changed_ = true;
-                gP4app.signalChanged();
+                gP4app->signalChanged();
             }
         }
     }
@@ -310,7 +310,7 @@ void P4ParamsDlg::btn_sepyes_toggled(bool on)
             gThisVF.setCommonBool(gThisVF.testsep_, true);
             if (gThisVF.changed_ == false) {
                 gThisVF.changed_ = true;
-                gP4app.signalChanged();
+                gP4app->signalChanged();
             }
         }
     }
@@ -324,7 +324,7 @@ void P4ParamsDlg::btn_sepno_toggled(bool on)
             gThisVF.setCommonBool(gThisVF.testsep_, false);
             if (gThisVF.changed_ == false) {
                 gThisVF.changed_ = true;
-                gP4app.signalChanged();
+                gP4app->signalChanged();
             }
         }
     }
@@ -426,7 +426,7 @@ void P4ParamsDlg::getDataFromDlg()
     if (changed) {
         if (gThisVF.changed == false) {
             gThisVF.changed = true;
-            gP4app.signalChanged();
+            gP4app->signalChanged();
         }
     }
 }
@@ -476,10 +476,10 @@ void P4ParamsDlg::updateDlgData()
         edt_x0_->setEnabled(true);
         edt_y0_->setEnabled(true);
 
-        lbl_x0_->setFont(gP4app.getBoldFont());
-        lbl_y0_->setFont(gP4app.getBoldFont());
-        lbl_p_->setFont(gP4app.getStandardFont());
-        lbl_q_->setFont(gP4app.getStandardFont());
+        lbl_x0_->setFont(gP4app->getBoldFont());
+        lbl_y0_->setFont(gP4app->getBoldFont());
+        lbl_p_->setFont(gP4app->getStandardFont());
+        lbl_q_->setFont(gP4app->getStandardFont());
     } else {
         spin_p_->setValue(gThisVF.p_);
         spin_q_->setValue(gThisVF.q_);
@@ -491,9 +491,9 @@ void P4ParamsDlg::updateDlgData()
         edt_x0_->setEnabled(false);
         edt_y0_->setEnabled(false);
 
-        lbl_p_->setFont(gP4app.getBoldFont());
-        lbl_q_->setFont(gP4app.getBoldFont());
-        lbl_x0_->setFont(gP4app.getStandardFont());
-        lbl_y0_->setFont(gP4app.getStandardFont());
+        lbl_p_->setFont(gP4app->getBoldFont());
+        lbl_q_->setFont(gP4app->getBoldFont());
+        lbl_x0_->setFont(gP4app->getStandardFont());
+        lbl_y0_->setFont(gP4app->getStandardFont());
     }
 }

@@ -25,7 +25,7 @@
 #include "P4InputVF.hpp"
 #include "P4PlotWnd.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "main.hpp"
 #include "p4settings.hpp"
 
@@ -75,7 +75,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename)
             gThisVF.filename_ = autofilename, this);
     auto p4name = std::make_unique<QLabel>(" &Name: ", this);
     p4name->setBuddy(edt_name_.get());
-    p4name->setFont(gP4app.getBoldFont());
+    p4name->setFont(gP4app->getBoldFont());
 
     edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
@@ -379,7 +379,7 @@ void P4StartDlg::signalEvaluated()
     } else {
         if (viewFiniteWindow_) {
             viewFiniteWindow_->clear();
-            viewFiniteWindow_->setCurrentFont(gP4app.getBoldCourierFont());
+            viewFiniteWindow_->setCurrentFont(gP4app->getBoldCourierFont());
             viewFiniteWindow_->insertPlainText(
                 "\nA study at the finite region is not available!");
         }
@@ -399,12 +399,12 @@ if (viewInfiniteWindow_) {
         if (gThisVF.typeofstudy_ == TYPEOFSTUDY_FIN ||
             gThisVF.typeofstudy_ == TYPEOFSTUDY_ONE) {
             // mark: data invalid according to vf information
-            viewInfiniteWindow_->setFont(gP4app.getCourierFont());
+            viewInfiniteWindow_->setFont(gP4app->getCourierFont());
         }
     } else {
         if (viewInfiniteWindow_) {
             viewInfiniteWindow_->clear();
-            viewInfiniteWindow_->setCurrentFont(gP4app.getBoldCourierFont());
+            viewInfiniteWindow_->setCurrentFont(gP4app->getBoldCourierFont());
             viewInfiniteWindow_->insertPlainText(
                 "\nA study at infinity is not available!");
         }
@@ -461,10 +461,10 @@ void P4StartDlg::signalLoaded()
 void P4StartDlg::signalChanged()
 {
     if (viewFiniteWindow_) {
-        viewFiniteWindow_->setFont(gP4app.getCourierFont());
+        viewFiniteWindow_->setFont(gP4app->getCourierFont());
     }
     if (viewInfiniteWindow_) {
-        viewInfiniteWindow_->setFont(gP4app.getCourierFont());
+        viewInfiniteWindow_->setFont(gP4app->getCourierFont());
     }
     if (plotWindow_) {
         plotWindow_->signalChanged();
@@ -520,7 +520,7 @@ void P4StartDlg::onViewFinite()
 
     if (gThisVF.typeofstudy_ == TYPEOFSTUDY_INF) {
         // mark: data invalid according to vf information
-        viewFiniteWindow_->setFont(gP4app.getCourierFont());
+        viewFiniteWindow_->setFont(gP4app->getCourierFont());
         return;
     }
 }
@@ -555,7 +555,7 @@ void P4StartDlg::onViewInfinite()
     if (gThisVF.typeofstudy_ == TYPEOFSTUDY_FIN ||
         gThisVF.typeofstudy_ == TYPEOFSTUDY_ONE) {
         // mark: data invalid according to vf information
-        viewInfiniteWindow_->setFont(gP4app.getCourierFont());
+        viewInfiniteWindow_->setFont(gP4app->getCourierFont());
         return;
     }
 }
@@ -577,7 +577,7 @@ void P4StartDlg::showText(QTextEdit &win, const QString &caption,
         shown = true;
         win.hide();
     }
-    win.setFont(gP4app.getCourierFont());
+    win.setFont(gP4app->getCourierFont());
     win.insertPlainText("");
     win.setReadOnly(true);
 
@@ -593,7 +593,7 @@ void P4StartDlg::showText(QTextEdit &win, const QString &caption,
     setP4WindowTitle(&win, caption);
 
     if (!gThisVF.evaluated_)
-        win.setFont(gP4app.getCourierFont());
+        win.setFont(gP4app->getCourierFont());
 
     if (shown) {
         win.show();

@@ -22,7 +22,7 @@
 #include "P4Application.hpp"
 #include "P4InputVF.hpp"
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "main.hpp"
 #include "math_p4.hpp"
 
@@ -43,10 +43,10 @@ P4ViewDlg::P4ViewDlg(bool virtualchk)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     auto p4title = std::make_unique<QLabel>("View Parameters", this);
-    p4title->setFont(gP4app.getTitleFont());
+    p4title->setFont(gP4app->getTitleFont());
 
     auto kindlabel = std::make_unique<QLabel>("Type of view: ", this);
-    kindlabel->setFont(gP4app.getBoldFont());
+    kindlabel->setFont(gP4app->getBoldFont());
 
     auto btngrp = std::make_unique<QButtonGroup>(this);
     btn_sphere_ = std::make_unique<QRadioButton>("Spherical", this);
@@ -63,25 +63,25 @@ P4ViewDlg::P4ViewDlg(bool virtualchk)
     btngrp->addButton(btn_V2_.get());
 
     auto lbl_projection_ = std::make_unique<QLabel>("Projection:", this);
-    lbl_projection_->setFont(gP4app.getBoldFont());
+    lbl_projection_->setFont(gP4app->getBoldFont());
     edt_projection_ = std::make_unique<QLineEdit>("-1", this);
 
     auto lbl_x0_ = std::make_unique<QLabel>("Min. x:", this);
-    lbl_x0_->setFont(gP4app.getBoldFont());
+    lbl_x0_->setFont(gP4app->getBoldFont());
     edt_x0_ = std::make_unique<QLineEdit>("-1", this);
 
     btn_square_ = std::make_unique<QPushButton>("&Square", this);
 
     auto lbl_y0_ = std::make_unique<QLabel>("Min. y:", this);
-    lbl_y0_->setFont(gP4app.getBoldFont());
+    lbl_y0_->setFont(gP4app->getBoldFont());
     edt_y0_ = std::make_unique<QLineEdit>("-1", this);
 
     auto lbl_x1_ = std::make_unique<QLabel>("Max. x", this);
-    lbl_x1_->setFont(gP4app.getBoldFont());
+    lbl_x1_->setFont(gP4app->getBoldFont());
     edt_x1_ = std::make_unique<QLineEdit>("1", this);
 
     auto lbl_y1_ = std::make_unique<QLabel>("Max. y", this);
-    lbl_y1_->setFont(gP4app.getBoldFont());
+    lbl_y1_->setFont(gP4app->getBoldFont());
     edt_y1_ = std::make_unique<QLineEdit>("1", this);
 
     if (haveVirtualCheckBox_)

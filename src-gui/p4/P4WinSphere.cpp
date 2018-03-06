@@ -176,7 +176,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(1);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_C:
@@ -185,14 +185,14 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(0);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         } else if (bs == Qt::ShiftModifier ||
                    bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+C:  continue integrating separatrice
             data1 = std::make_unique<int>(0);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_B:
@@ -201,7 +201,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(-1);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_D:
@@ -210,7 +210,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(2);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_A:
@@ -219,7 +219,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(3);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_N:
@@ -229,7 +229,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(3);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_I:
@@ -239,7 +239,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(2);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     case Qt::Key_I:
@@ -249,7 +249,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             data1 = std::make_unique<int>(1);
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         break;
     }
@@ -904,7 +904,7 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
                 auto e1 = std::make_unique<P4Event>(
                     static_cast<QEvent::Type>(TYPE_SELECT_ORBIT),
                     data1.release());
-                gP4app.postEvent(parentWnd_, e1.release());
+                gP4app->postEvent(parentWnd_, e1.release());
             }
         }
     } else if (e->button() == Qt::RightButton) {
@@ -936,7 +936,7 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW),
                 data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
         if (selectingLCSection_) {
             saveAnchorMap();
@@ -950,7 +950,7 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             auto e1 = std::make_unique<P4Event>(
                 static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION),
                 data1.release());
-            gP4app.postEvent(parentWnd_, e1.release());
+            gP4app->postEvent(parentWnd_, e1.release());
         }
     }
     QWidget::mouseReleaseEvent(e);
@@ -1038,7 +1038,7 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         auto data1 = std::make_unique<int>(-1);
         auto e1 = std::make_unique<P4Event>(
             static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-        gP4app.postEvent(parentWnd_, e1.release());
+        gP4app->postEvent(parentWnd_, e1.release());
     }
 }
 
@@ -2493,8 +2493,8 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     printMethod_ = printmethod;
 
     if (printmethod == P4PRINT_DEFAULT) {
-        pagewidth = gP4printer.width();
-        pageheight = gP4printer.height();
+        pagewidth = gP4printer->width();
+        pageheight = gP4printer->height();
     } else
         pagewidth = pageheight = -1;  // will be redefined in a minute
 

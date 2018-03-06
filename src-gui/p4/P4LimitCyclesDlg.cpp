@@ -20,7 +20,7 @@
 #include "P4LimitCyclesDlg.hpp"
 
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "main.hpp"
 #include "math_limitcycles.hpp"
 #include "P4Application.hpp"
@@ -255,7 +255,7 @@ void P4LimitCyclesDlg::onbtn_start(void)
         btn_dellast_->setEnabled(true);
     }
 
-    gP4app.processEvents();
+    gP4app->processEvents();
     delete sLCProgressDlg;
     sLCProgressDlg = nullptr;
 }
@@ -338,7 +338,7 @@ void P4LimitCyclesDlg::onbtn_dellast(void)
 
 bool stop_search_limit(void)
 {
-    gP4app.processEvents();
+    gP4app->processEvents();
     if (sLCProgressDlg->wasCanceled())
         return true;
 

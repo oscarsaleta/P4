@@ -34,10 +34,10 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     : QWidget{}, parent_{parent}
 {
     auto p4title = std::make_unique<QLabel>("Region Separating Curves:", this);
-    p4title->setFont(gP4app.getTitleFont());
+    p4title->setFont(gP4app->getTitleFont());
 
     auto p4title2 = std::make_unique<QLabel>("Vector Field List:", this);
-    p4title2->setFont(gP4app.getTitleFont());
+    p4title2->setFont(gP4app->getTitleFont());
 
     // TODO: check if i have to redeclare?
     btn_add_ = std::make_unique< QPushButton>("&Add"), this);
@@ -232,7 +232,7 @@ void P4SeparatingCurvesDlg::onBtnAdd()
     gThisVF.addSeparatingCurve();
     if (gThisVF.changed_ == false) {
         gThisVF.changed_ = true;
-        gP4app.signalChanged();
+        gP4app->signalChanged();
     }
     isphere_->refresh();
 }
@@ -324,7 +324,7 @@ void P4SeparatingCurvesDlg::onCurveChanged(QListWidgetItem *itm)
         gThisVF.separatingCurves_[r] = s;
         if (gThisVF.changed_ == false) {
             gThisVF.changed_ = true;
-            gP4app.signalChanged();
+            gP4app->signalChanged();
         }
     }
 }
@@ -456,7 +456,7 @@ void P4SeparatingCurvesDlg::onBtnResetMarks()
             gThisVF.clearVfMarks();
             if (gThisVF.changed_ == false) {
                 gThisVF.changed_ = true;
-                gP4app.signalChanged();
+                gP4app->signalChanged();
             }
             isphere_->refresh();
         }
@@ -468,7 +468,7 @@ void P4SeparatingCurvesDlg::onBtnResetMarks()
             gThisVF.clearCurveMarks();
             if (gThisVF.changed_ == false) {
                 gThisVF.changed_ = true;
-                gP4app.signalChanged();
+                gP4app->signalChanged();
             }
             isphere_->refresh();
         }
@@ -579,7 +579,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                 gThisVF.markVFRegion(vfindex, pcoord);
                 if (gThisVF.changed_ == false) {
                     gThisVF.changed_ = true;
-                    gP4app.signalChanged();
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             } else if (oldindex == vfindex) {
@@ -592,7 +592,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                 gThisVF.markVFRegion(vfindex, pcoord);
                 if (gThisVF.changed_ == false) {
                     gThisVF.changed_ = true;
-                    gP4app.signalChanged();
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             }
@@ -607,7 +607,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                 gThisVF.unmarkVFRegion(vfindex, pcoord);
                 if (gThisVF.changed_ == false) {
                     gThisVF.changed = true;
-                    gP4app.signalChanged();
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             } else {
@@ -637,7 +637,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                 gThisVF.markCurveRegion(curveindex, pcoord);
                 if (gThisVF.changed_ == false) {
                     gThisVF.changed_ = true;
-                    gP4app.signalChanged();
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             }
@@ -657,7 +657,7 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
                 gThisVF.unmarkCurveRegion(curveindex, pcoord);
                 if (gThisVF.changed_ == false) {
                     gThisVF.changed_ = true;
-                    gP4app.signalChanged();
+                    gP4app->signalChanged();
                 }
                 isphere_->refresh();
             }
@@ -690,6 +690,6 @@ void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
     gThisVF.numPointsSeparatingCurve_[curveindex] = v;
     if (gThisVF.changed_ == false) {
         gThisVF.changed_ = true;
-        gP4app.signalChanged();
+        gP4app->signalChanged();
     }
 }
