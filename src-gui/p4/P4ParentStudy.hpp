@@ -19,7 +19,8 @@
 
 #pragma once
 
-#include "file_tab.hpp"
+#include "tables.hpp"
+#include "P4InputVF.hpp"
 
 #include <memory>
 #include <vector>
@@ -41,7 +42,7 @@ class P4ParentStudy : public QObject
     // K_ will be throughout the current vector field selected
     int K_{0};
 
-    std::vector<p4curveRegions::curveResult> separatingCurves_;
+    std::vector<p4curves::curves> separatingCurves_;
 
     int typeofstudy_{TYPEOFSTUDY_ALL};
     // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
@@ -137,8 +138,8 @@ class P4ParentStudy : public QObject
     void (*finite_to_viewcoord)(double, double, double *);
     void (*sphere_to_viewcoord)(double, double, double, double *);
     bool (*is_valid_viewcoord)(double, double, double *);
-    void (*integrate_sphere_sep)(double, double, double, double *, double *,
-                                 int *, int *, int *, int *, double, double);
+    void (*integrate_sphere_sep)(double, double, double, double *, double &,
+                                 int &, int &, int &, int &, double, double);
     void (*U1_to_sphere)(double, double, double *);
     void (*U2_to_sphere)(double, double, double *);
     void (*V1_to_sphere)(double, double, double *);
