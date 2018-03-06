@@ -35,7 +35,7 @@ class QPushButton;
 class QString;
 class QTextBrowser;
 
-#define TYPE_SIGNAL_EVALUATING (QEvent::User + 1)
+#define TYPE_SIGNAL_CURVESEVALUATED (QEvent::User + 1)
 #define TYPE_SIGNAL_EVALUATED (QEvent::User + 2)
 #define TYPE_SIGNAL_CHANGED (QEvent::User + 3)
 #define TYPE_SIGNAL_LOADED (QEvent::User + 4)
@@ -66,7 +66,7 @@ class P4StartDlg : public QWidget
     P4FindDlg *getFindWindowPtr();
     void setFindWindowPtr(P4FindDlg *);
     P4PlotWnd *getPlotWindowPtr();
-    void setPlotWindow(P4PlotWnd *);    
+    void setPlotWindow(P4PlotWnd *);
 
     void closeEvent(QCloseEvent *);
 
@@ -97,7 +97,7 @@ class P4StartDlg : public QWidget
     void onLoadSignal();
 
   private:
-std::unique_ptr<P4FindDlg> findWindow_;
+    std::unique_ptr<P4FindDlg> findWindow_;
     std::unique_ptr<P4PlotWnd> plotWindow_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
