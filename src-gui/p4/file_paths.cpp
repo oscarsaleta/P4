@@ -110,7 +110,7 @@ QString getDefaultP4TempPath(void)
     QByteArray ba_f;
 
     f = QDir::toNativeSeparators(QDir::tempPath());
-    ba_f = Win_GetLongPathName(QFile::encodeName(f));
+    ba_f = win_GetLongPathName(QFile::encodeName(f));
     return QFile::decodeName(ba_f);
 
 #else
