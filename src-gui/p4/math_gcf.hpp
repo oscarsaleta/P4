@@ -34,7 +34,11 @@
 #define EVAL_GCF_FINISHLYAPUNOV 12
 
 class P4WinSphere;
-struct p4orbits::orbits_points;
+
+namespace p4orbits
+{
+struct orbits_points;
+}
 
 bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalGcfContinue(int precision, int points);

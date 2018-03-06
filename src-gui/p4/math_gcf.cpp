@@ -20,12 +20,14 @@
 #include "math_gcf.hpp"
 
 #include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4VFStudy.hpp"
 #include "P4WinSphere.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
+#include "tables.hpp"
 
 #include <QFile>
 
@@ -103,10 +105,10 @@ bool evalGcfContinue(int precision, int points)
         return true;
     }
 
-    return false;  // still busy
+    return false; // still busy
 }
 
-bool evalGcfFinish()  // return false in case an error occured
+bool evalGcfFinish() // return false in case an error occured
 {
     int index;
     if (sGcfTask != EVAL_GCF_NONE) {
