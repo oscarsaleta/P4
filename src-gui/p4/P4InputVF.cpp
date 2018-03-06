@@ -19,14 +19,35 @@
 
 #include "P4InputVF.hpp"
 
-#include "math_regions.hpp"
-
-#include <Connection>
+#include <QDateTime>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QLabel>
+#include <QMetaObject>
 #include <QProcess>
 #include <QPushButton>
+#include <QSettings>
+#include <QTextEdit>
 #include <QTextStream>
+#include <QTimer>
+#include <QVBoxLayout>
+
+#include "P4Application.hpp"
+#include "P4ArbitraryCurveDlg.hpp"
+#include "P4Event.hpp"
+#include "P4GcfDlg.hpp"
+#include "P4IsoclinesDlg.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4StartDlg.hpp"
+#include "P4VFStudy.hpp"
+#include "file_paths.hpp"
+#include "main.hpp"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "math_polynom.hpp"
+#include "math_regions.hpp"
+#include "p4settings.hpp"
 
 // NOTE: the code for reduce implementations can be found in older
 // versions of P4, it is removed from 7.0.2 onwards
@@ -612,35 +633,34 @@ bool P4InputVF::checkevaluated()
     // if the evaluate files are already found on disc, then set the flag to
     // true.
 
-    std::unique_ptr<QFileInfo> fi{std::make_unique<QFileInfo>(getfilename())};
+    auto fi = std::make_unique<QFileInfo>(getfilename());
     if (!fi->exists())
         return false;
-    QDateTime dt{fi->lastModified()};
+    auto dt = fi->lastModified();
 
-    std::unique_ptr<QFileInfo> fivec{
-        std::make_unique<QFileInfo>(getbarefilename() + "_vec.tab")};
+    auto fivec = std::make_unique<QFileInfo>(getbarefilename() + "_vec.tab");
     if (!fivec->exists())
         return false;
-    QDateTime dtvec{fivec->lastModified()};
+    auto dtvec = fivec->lastModified();
     if (dtvec.secsTo(dt) > 0 || dtvec.daysTo(dt) > 0)
         return false;
 
     if (typeofstudy_ != TYPEOFSTUDY_INF) {
-        std::unique_ptr<QFileInfo> fifin{
-            std::unique_ptr<QFileInfo>(getbarefilename() + "_fin.tab")};
+        auto fifin =
+            std::make_unique<QFileInfo>(getbarefilename() + "_fin.tab");
         if (!fifin->exists())
             return false;
-        QDateTime dtfin{fifin->lastModified()};
+        auto dtfin = fifin->lastModified();
         if (dtfin.secsTo(dt) > 0 || dtfin.daysTo(dt) > 0)
             return false;
     }
 
     if (typeofstudy_ == TYPEOFSTUDY_INF || typeofstudy_ == TYPEOFSTUDY_ALL) {
-        std::unique_ptr<QFileInfo> fiinf{
-            std::make_unique<QFileInfo>(getbarefilename() + "_inf.tab")};
+        auto fiinf =
+            std::make_unique<QFileInfo>(getbarefilename() + "_inf.tab");
         if (!fiinf->exists())
             return false;
-        QDateTime dtinf{fiinf->lastModified()};
+        auto dtinf = fiinf->lastModified();
         if (dtinf.secsTo(dt) > 0 || dtinf.daysTo(dt) > 0)
             return false;
     }
@@ -894,7 +914,7 @@ QString P4InputVF::getfilename_separatingcurveresults() const
 // -----------------------------------------------------------------------
 //          P4InputVF::fileExists
 // -----------------------------------------------------------------------
-static bool P4InputVF::fileExists(QString fname) const
+bool P4InputVF::fileExists(QString fname)
 {
     QFile fp{QFile::encodeName(std::move(fname))};
     return fp.exists();
@@ -980,7 +1000,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
             else
                 fp << ", ";
         }
-    } else {  // for curves: use only first VF for parameters
+    } else { // for curves: use only first VF for parameters
         fp << "user_numeric := " << booleanString(numeric_[0]) << ":\n";
         fp << "epsilon := " << epsilon_[0] << ":\n";
         fp << "test_sep := " << booleanString(testsep_[0]) << ":\n";
@@ -998,11 +1018,10 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         fp << s;
     }
 
-    if (typeofstudy == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
         fp << "user_p := 1:\n";
         fp << "user_q := 1:\n";
 
-        s = x0.toUtf8();
         fp << "x0 := " << x0_ << ":\n";
         fp << "y0 := " << y0_ << ":\n";
         s.sprintf("x_min := x0+(%8.5g):\n", X_MIN);
@@ -1126,7 +1145,8 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
     QString lbl, val;
     for (int k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-        val = convertMapleUserParameterLabels(parvalue_[k]);
+        // FIXME: s'ha d'iterar per tots els parvalues?
+        val = convertMapleUserParameterLabels(parvalue_[0][k]);
 
         if (lbl.length() == 0)
             continue;
@@ -1142,8 +1162,8 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
 // -----------------------------------------------------------------------
 //          P4InputVF::prepareMapleisoclines
 // -----------------------------------------------------------------------
-// FIXME ha de ser una llista. mirar el p5 a veure com son els altres parametres
-// a la gui
+// FIXME: ha de ser una llista. mirar el p5 a veure com son els altres
+// parametres a la gui
 void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
     QString myisoclines;
@@ -1154,17 +1174,19 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
     fp << "user_isoclines := [";
     for (auto s : isoclines_) {
         myisoclines = convertMapleUserParameterLabels(s);
-        fp << s;  // FIXME
+        fp << s; // FIXME
     }
 
     for (k = 0; k < numparams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-        val = convertMapleUserParameterLabels(parvalue_[k]);
+        // FIXME: en aquest cas segur q està malament perquè hem de fer-ho amb
+        // cada VF per separat (cada VF té les seves isoclines)
+        val = convertMapleUserParameterLabels(parvalue_[0][k]);
 
         if (lbl.length() == 0)
             continue;
 
-        if (!numeric_) {
+        if (!numeric_[0]) {
             fp << lbl << " := " << val << ":\n";
         } else {
             fp << lbl << " := evalf( " << val << " ):\n";
@@ -1185,7 +1207,7 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
         fp << "]:\n";
     else {
         for (i = 0; i < numVFRegions_; i++) {
-            fp << "[" << vfRegions_[i].vfindex << ", [ ";
+            fp << "[" << vfRegions_[i].vfIndex << ", [ ";
             for (k = 0; k < numSeparatingCurves_; k++) {
                 fp << vfRegions_[i].signs[k];
                 if (k < numSeparatingCurves_ - 1)
@@ -1203,7 +1225,7 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
         fp << "]:\n";
     else {
         for (i = 0; i < numCurveRegions_; i++) {
-            fp << "[" << curveRegions_[i].curveindex << ", [ ";
+            fp << "[" << curveRegions_[i].curveIndex << ", [ ";
             for (k = 0; k < numSeparatingCurves_; k++) {
                 fp << curveRegions_[i].signs[k];
                 if (k < numSeparatingCurves_ - 1)
@@ -1232,20 +1254,20 @@ static int indexOfWordInString(const QString &src, const QString &word,
         // we have found word as a substring.  The index i is an index from the
         // very beginning of string (not depending of start)
 
-        start = i + 1;  // do not find this substring next loop
+        start = i + 1; // do not find this substring next loop
 
         // check if the substring is the beginning of a word:
         j = i;
         if (j > 0)
             if (src[j - 1].isLetter() || src[j - 1] == '_' ||
                 src[j - 1].isDigit())
-                continue;  // no: it is part of a bigger word, so continue...
+                continue; // no: it is part of a bigger word, so continue...
 
         // check if the substring is the end of a word;
-        j = i + word->length();
-        if (j < src->length())
+        j = i + word.length();
+        if (j < src.length())
             if (src[j].isLetter() || src[j] == '_' || src[j].isDigit())
-                continue;  // no: it is part of a bigger word, so continue...
+                continue; // no: it is part of a bigger word, so continue...
 
         // ok: we have a word: stop looping.
         break;
@@ -1298,7 +1320,8 @@ QString P4InputVF::convertMapleUserParametersLabelsToValues(QString src)
         p = parlabel_[k];
         if (p.length() == 0)
             continue;
-        newlabel = parvalue_[k];  // this is the difference: we take the value
+        // FIXME: ficar un index com parametre per indicar quin VF fem servir?
+        newlabel = parvalue_[0][k]; // this is the difference: we take the value
         t = "";
         while (1) {
             i = indexOfWordInString(s, p);
@@ -1451,7 +1474,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
     fp << "user_simplify := " << user_simplify << ":\n";
     fp << "user_simplifycmd := " << user_simplifycmd << ":\n";
 
-    bsaveall = booleanString(action_SaveAll);
+    bsaveall = booleanString(gActionSaveAll);
 
     name_vectab = getfilename_vectable();
     name_fintab = getfilename_fintable();
@@ -1489,7 +1512,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
 
     prepareMapleVectorField(fp);
     prepareMapleParameters(fp);
-    prepareMapleCurves(fp);
+    prepareMapleSeparatingCurves(fp);
     prepareMaplePiecewiseConfig(fp);
 
     if (prepareforcurves) {
@@ -1728,8 +1751,8 @@ void P4InputVF::evaluate()
     evalProcessFinishedConnection_ =
         std::make_unique<QMetaObject::Connection>(QObject::connect(
             proc.get(),
-            static_cast<void (QProcess::*)(int)>(&QProcess::finished), gP4app,
-            &P4Application::signalEvaluated));
+            static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            gP4app.get(), &P4Application::signalEvaluated));
     QObject::connect(proc.get(), &QProcess::readyReadStandardOutput, this,
                      &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
@@ -1753,7 +1776,7 @@ void P4InputVF::evaluate()
         proc.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app.signalEvaluated(-1);
+        gP4app->signalEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
     } else {
         evalProcess_ = std::move(proc);
@@ -1762,10 +1785,9 @@ void P4InputVF::evaluate()
         evaluating_ = true;
         evaluatingGcf_ = false;
         evaluatingPiecewiseConfig_ = false;
-        evaluatingCurve_ = false;
+        evaluatingArbitraryCurve_ = false;
         evaluatingIsoclines_ = false;
     }
-}
 }
 
 // -----------------------------------------------------------------------
@@ -1804,17 +1826,17 @@ void P4InputVF::evaluateArbitraryCurveTable()
     evalProcessFinishedConnection_ =
         std::make_unique<QMetaObject::Connection>(QObject::connect(
             proc.get(),
-            static_cast<void (QProcess::*)(int)>(&QProcess::finished), gP4app,
-            &P4Application::signalCurveEvaluated));
+            static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            gP4app.get(), &P4Application::signalCurveEvaluated));
     QObject::connect(proc.get(), &QProcess::readyReadStandardOutput, this,
                      &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
     QObject::connect(proc.get(),
                      static_cast<void (QProcess::*)(QProcess::ProcessError)>(
                          &QProcess::error),
-                     gP4app, &P4Application::catchProcessError);
+                     gP4app.get(), &P4Application::catchProcessError);
 #else
-    QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app,
+    QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app.get(),
                      &P4Application::catchProcessError);
 #endif
 
@@ -1829,7 +1851,7 @@ void P4InputVF::evaluateArbitraryCurveTable()
         proc.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app.signalEvaluated(-1);
+        gP4app->signalEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
     } else {
         evalProcess_ = std::move(proc);
@@ -1838,10 +1860,9 @@ void P4InputVF::evaluateArbitraryCurveTable()
         evaluating_ = true;
         evaluatingGcf_ = false;
         evaluatingPiecewiseConfig_ = false;
-        evaluatingCurve_ = true;
+        evaluatingArbitraryCurve_ = true;
         evaluatingIsoclines_ = false;
     }
-}
 }
 
 // -----------------------------------------------------------------------
@@ -1850,7 +1871,7 @@ void P4InputVF::evaluateArbitraryCurveTable()
 void P4InputVF::evaluateIsoclinesTable()
 {
     evaluatingGcf_ = false;
-    evaluatingCurve_ = false;
+    evaluatingArbitraryCurve_ = false;
     evaluatingIsoclines_ = false;
     // possible clean up after last Curve evaluation
     if (evalProcess_)
@@ -1876,31 +1897,30 @@ void P4InputVF::evaluateIsoclinesTable()
         if (!outputWindow_ || !processText_)
             createProcessWindow();
         else {
-            processText_->append(
-                "\n\n--------------------------------------"
-                "-----------------------------------------"
-                "\n\n");
+            processText_->append("\n\n--------------------------------------"
+                                 "-----------------------------------------"
+                                 "\n\n");
             terminateProcessButton_->setEnabled(true);
             outputWindow_->show();
             outputWindow_->raise();
         }
 
         std::unique_ptr<QProcess> proc;
-        if (evalProcess_) {  // re-use process of last GCF
+        if (evalProcess_) { // re-use process of last GCF
             proc = std::move(evalProcess_);
-            QObject::disconnect(evalProcessFinishedConnection_);
+            QObject::disconnect(*evalProcessFinishedConnection_);
             evalProcessFinishedConnection_ =
                 std::make_unique<QMetaObject::Connection>(QObject::connect(
                     proc.get(),
                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                    gP4app, &P4Application::signalCurveEvaluated));
+                    gP4app.get(), &P4Application::signalCurveEvaluated));
         } else {
             proc = std::make_unique<QProcess>(this);
             evalProcessFinishedConnection_ =
                 std::make_unique<QMetaObject::Connection>(QObject::connect(
                     proc.get(),
                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                    gP4app, &P4Application::signalCurveEvaluated));
+                    gP4app.get(), &P4Application::signalCurveEvaluated));
             QObject::connect(proc.get(), &QProcess::readyReadStandardOutput,
                              this, &P4InputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
@@ -1908,9 +1928,9 @@ void P4InputVF::evaluateIsoclinesTable()
                 proc.get(),
                 static_cast<void (QProcess::*)(QProcess::ProcessError)>(
                     &QProcess::error),
-                gP4app, &P4Application::catchProcessError);
+                gP4app.get(), &P4Application::catchProcessError);
 #else
-            QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app,
+            QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app.get(),
                              &P4Application::catchProcessError);
 #endif
         }
@@ -1933,7 +1953,7 @@ void P4InputVF::evaluateIsoclinesTable()
             evalProcess_.reset();
             evalFile_ = "";
             evalFile2_ = "";
-            gP4app.signalEvaluated(-1);
+            gP4app->signalEvaluated(-1);
             terminateProcessButton_->setEnabled(false);
         } else {
             evalProcess_ = std::move(proc);
@@ -1946,8 +1966,7 @@ void P4InputVF::evaluateIsoclinesTable()
 // -----------------------------------------------------------------------
 //          P4InputVF::catchProcessError
 // -----------------------------------------------------------------------
-// NOTE: prova const &, si no deixa doncs passem copia
-void P4InputVF::catchProcessError(const QProcess::ProcessError &prerr)
+void P4InputVF::catchProcessError(QProcess::ProcessError prerr)
 {
     processFailed_ = true;
     switch (prerr) {
@@ -2025,7 +2044,7 @@ void P4InputVF::finishEvaluation(int exitCode)
 
     if (evaluatingGcf_)
         finishGcfEvaluation();
-    if (evaluatingCurve_)
+    if (evaluatingArbitraryCurve_)
         finishArbitraryCurveEvaluation();
     if (evaluatingIsoclines_)
         finishIsoclinesEvaluation();
@@ -2049,7 +2068,7 @@ void P4InputVF::finishGcfEvaluation()
 // -----------------------------------------------------------------------
 void P4InputVF::finishArbitraryCurveEvaluation()
 {
-    evaluatingCurve_ = false;
+    evaluatingArbitraryCurve_ = false;
     if (arbitraryCurveDlg_) {
         arbitraryCurveDlg_->finishArbitraryCurveEvaluation();
     }
@@ -2075,7 +2094,7 @@ void P4InputVF::prepare()
     QFile file{QFile::encodeName(filedotmpl)};
     if (file.open(QFile::WriteOnly)) {
         QTextStream fp{&file};
-        prepareFile(fp);
+        prepareFile(fp, false);
         fp.flush();
         file.close();
     }
@@ -2139,7 +2158,7 @@ void P4InputVF::readProcessStdout()
                 if (i == j + 1)
                     t = t.mid(j + 2);
                 else
-                    t = t.mid(j + 1);  // treat CR+LF as one lineend
+                    t = t.mid(j + 1); // treat CR+LF as one lineend
             } else {
                 line = t.left(i);
                 t = t.mid(i + 1);
@@ -2192,7 +2211,7 @@ void P4InputVF::createProcessWindow()
     outputWindow_->setWindowTitle("Output window");
     outputWindow_->resize(530, 344);
     if (gP4smallIcon)
-        outputWindow_->setWindowIcon(gP4smallIcon);
+        outputWindow_->setWindowIcon(*gP4smallIcon);
 
     auto vLayout = std::make_unique<QVBoxLayout>(outputWindow_);
     vLayout->setSpacing(3);
@@ -2203,32 +2222,32 @@ void P4InputVF::createProcessWindow()
     processText_ = std::make_unique<QTextEdit>(outputWindow_);
     processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
     processText_->setWordWrapMode(QTextOption::WrapAnywhere);
-    processText_->setFont(gP4app.getCourierFont());
+    processText_->setFont(gP4app->getCourierFont());
     processText_->setLineWrapColumnOrWidth(82);
     processText_->setReadOnly(true);
     processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    vLayout2->addWidget(processText_);
+    vLayout2->addWidget(processText_.get());
 
     auto hLayout = std::make_unique<QHBoxLayout>();
     hLayout->setSpacing(6);
 
     hLayout->addStretch();
     terminateProcessButton_ = std::make_unique<QPushButton>("Terminate");
-    terminateProcessButton_->setFont(gP4app.getBoldFont());
+    terminateProcessButton_->setFont(gP4app->getBoldFont());
     terminateProcessButton_->setToolTip(
         "Terminates the process.  First tries to send a "
         "safe signal to the process.\nIf this does not "
         "work, then after 2 seconds, the program is "
         "abruptly terminated.");
-    hLayout->addWidget(terminateProcessButton_);
+    hLayout->addWidget(terminateProcessButton_.get());
 
     clearProcessButton_ = std::make_unique<QPushButton>("Clear");
-    clearProcessButton_->setFont(gP4app.getBoldFont());
+    clearProcessButton_->setFont(gP4app->getBoldFont());
     clearProcessButton_->setToolTip("Clears this window");
-    hLayout->addWidget(clearProcessButton_);
+    hLayout->addWidget(clearProcessButton_.get());
 
-    vLayout2->addLayout(hLayout);
-    vLayout->addLayout(vLayout2);
+    vLayout2->addLayout(hLayout.get());
+    vLayout->addLayout(vLayout2.get());
 
     outputWindow_->show();
 
@@ -2253,36 +2272,36 @@ bool P4InputVF::evaluateGcf()
     if (!processText_)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     std::unique_ptr<QProcess> proc;
-    if (evalProcess_) {  // re-use process of last GCF
+    if (evalProcess_) { // re-use process of last GCF
         proc = std::move(evalProcess_);
-        QObject::disconnect(evalProcessFinishedConnection_);
-        evalProcessFinishedConnection_ = QObject::connect(
-            proc.get(),
-            static_cast<void (QProcess::*)(int)>(&QProcess::finished), gP4app,
-            &P4Application::signalCurveEvaluated);
+        QObject::disconnect(*evalProcessFinishedConnection_);
+        evalProcessFinishedConnection_ =
+            std::make_unique<QMetaObject::Connection>(QObject::connect(
+                proc.get(),
+                static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+                gP4app.get(), &P4Application::signalCurveEvaluated));
     } else {
         proc = std::make_unique<QProcess>(this);
         QObject::connect(
             proc.get(),
-            static_cast<void (QProcess::*)(int)>(&QProcess::finished), gP4app,
-            &P4Application::signalCurveEvaluated);
+            static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            gP4app.get(), &P4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
         QObject::connect(
             proc.get(),
             static_cast<void (QProcess::*)(QProcess::ProcessError)>(
                 &QProcess::error),
-            gP4app, &P4Application::catchProcessError);
+            gP4app.get(), &P4Application::catchProcessError);
 #else
-        QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app,
+        QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app.get(),
                          &P4Application::catchProcessError);
 #endif
         QObject::connect(proc.get(), &QProcess::readyReadStandardOutput, this,
@@ -2306,7 +2325,7 @@ bool P4InputVF::evaluateGcf()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app.signalCurveEvaluated(-1);
+        gP4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2329,7 +2348,6 @@ bool P4InputVF::evaluateGcf()
 bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
                            double y2, int precision, int numpoints)
 {
-    int i;
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
@@ -2355,10 +2373,13 @@ bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
         out << "user_y2 := " << y2 << ":\n";
         out << "u := x:\n";
         out << "v := y:\n";
-        out << "user_f := ");
+        out << "user_f := ";
 
-        for (i = 0, auto it = std::begin(f); it != std::end(f); ++it, i++) {
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
             out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2385,7 +2406,6 @@ bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
 bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
                                        int precision, int numpoints, int index)
 {
-    int i;
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
@@ -2414,8 +2434,13 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
         out << "u := cos(y):\n";
         out << "v := sin(y):\n";
         out << "user_f := ";
-        for (i = 0, auto it = std::begin(f); it != std::end(f); ++it, i++) {
+
+        int i{0};
+        char buf[100];
+
+        for (auto it : f) {
             out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2446,7 +2471,6 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
 
 bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
 {
-    int i;
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
@@ -2468,16 +2492,21 @@ bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
         out << "user_file := \"" << ba_user_file << "\":\n";
         out << "user_numpoints := " << numpoints << ":\n";
         out << "Digits := " << precision << ":\n";
-        out << "user_x1 := 0.0:\n", (float)0.0);
-        out << "user_x2 := 1.0:\n", (float)1.0);
-        out << "user_y1 := 0.0:\n", (float)0.0);
+        out << "user_x1 := 0.0:\n" << 0.0;
+        out << "user_x2 := 1.0:\n" << 1.0;
+        out << "user_y1 := 0.0:\n" << 0.0;
         out << "user_y2 := " << TWOPI << ":\n";
 
         out << "u := x*cos(y):\n";
         out << "v := x*sin(y):\n";
         out << "user_f := ";
-        for (i = 0, auto it = std::begin(f); it != std::end(f); ++it, i++) {
+
+        int i{0};
+        char buf[100];
+
+        for (auto it : f) {
             out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2510,9 +2539,8 @@ bool P4InputVF::evaluateArbitraryCurve()
     if (!processText_)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -2522,27 +2550,27 @@ bool P4InputVF::evaluateArbitraryCurve()
     // re-use process of last GCF
     if (evalProcess_) {
         proc = std::move(evalProcess_);
-        QObject::disconnect(evalProcessFinishedConnection_);
+        QObject::disconnect(*evalProcessFinishedConnection_);
         evalProcessFinishedConnection_ =
             std::make_unique<QMetaObject::Connection>(QObject::connect(
                 proc.get(),
                 static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                gP4app, &P4Application::signalCurveEvaluated));
+                gP4app.get(), &P4Application::signalCurveEvaluated));
     } else {
         proc = std::make_unique<QProcess>(this);
         evalProcessFinishedConnection_ =
             std::make_unique<QMetaObject::Connection>(QObject::connect(
                 proc.get(),
                 static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                gP4app, &P4Application::signalCurveEvaluated));
+                gP4app.get(), &P4Application::signalCurveEvaluated));
 #ifdef QT_QPROCESS_OLD
         QObject::connect(
             proc.get(),
             static_cast<void (QProcess::*)(QProcess::ProcessError)>(
                 &QProcess::error),
-            gP4app, &P4Application::catchProcessError);
+            gP4app.get(), &P4Application::catchProcessError);
 #else
-        QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app,
+        QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app.get(),
                          &P4Application::catchProcessError);
 #endif
         QObject::connect(proc.get(), &QProcess::readyReadStandardOutput, this,
@@ -2565,14 +2593,14 @@ bool P4InputVF::evaluateArbitraryCurve()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app.signalCurveEvaluated(-1);
+        gP4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
         evalProcess_ = std::move(proc);
         evalFile_ = std::move(filedotmpl);
         evalFile2_ = "";
-        evaluatingCurve_ = true;
+        evaluatingArbitraryCurve_ = true;
         return true;
     }
 }
@@ -2588,6 +2616,8 @@ bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
+        QTextStream out{&file};
+
         auto mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
         auto ba_mainmaple = maplepathformat(mainmaple);
@@ -2609,8 +2639,12 @@ bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
         out << "u := x:\n";
         out << "v := y:\n";
         out << "user_f := ";
-        for (int i = 0, auto it = std::begin(f); it != std::end(f); i++, ++it) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
+
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
+            out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2635,8 +2669,7 @@ bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
 // is only called in case of Poincare-Lyapunov compactification (weights (p,q)
 // !=(1,1))
 bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
-                                                  int precision, int numpoints,
-                                                  int index)
+                                                  int precision, int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
@@ -2645,7 +2678,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
         auto &f = gVFResults.arbitraryCurves_.back().c;
 
         auto mainmaple =
-            getP4MaplePath().append(QDir::separator).append(MAINMAPLEGCFFILE);
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
         auto ba_mainmaple = maplepathformat(mainmaple);
 
         QString user_platform{USERPLATFORM};
@@ -2666,8 +2699,12 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
         out << "u := cos(y):\n";
         out << "v := sin(y):\n";
         out << "user_f := ";
-        for (int i = 0, auto it = std::begin(f); it != std::end(f); i++, ++it) {
-            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
+
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
+            out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2695,8 +2732,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
 // same as preparegcf, except for the "u := " and "v := " assignments,
 // and the fact that one always refers to the same function gVFResults.gcf_,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
-bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints,
-                                                 int index)
+bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
@@ -2705,7 +2741,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints,
         auto &f = gVFResults.arbitraryCurves_.back().r2;
 
         auto mainmaple =
-            getP4MaplePath().append(QDir::separator).append(MAINMAPLEGCFFILE);
+            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
         auto ba_mainmaple = maplepathformat(mainmaple);
 
         QString user_platform{USERPLATFORM};
@@ -2726,8 +2762,12 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints,
         out << "u := x*cos(y):\n";
         out << "v := x*sin(y):\n";
         out << "user_f := ";
-        for (int i = 0, auto it = std::begin(f); it != std::end(f); i++, ++it) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
+
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
+            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2765,38 +2805,37 @@ bool P4InputVF::evaluateIsoclines()
     if (!processText_)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
 
     std::unique_ptr<QProcess> proc;
-    if (evalProcess_) {  // re-use process of last GCF
+    if (evalProcess_) { // re-use process of last GCF
         proc = std::move(evalProcess_);
-        QObject::disconnect(evalProcessFinishedConnection_);
+        QObject::disconnect(*evalProcessFinishedConnection_);
         evalProcessFinishedConnection_ =
             std::make_unique<QMetaObject::Connection>(QObject::connect(
                 proc.get(),
                 static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                gP4app, &P4Application::signalCurveEvaluated));
+                gP4app.get(), &P4Application::signalCurveEvaluated));
     } else {
         proc = std::make_unique<QProcess>(this);
         evalProcessFinishedConnection_ =
             std::make_unique<QMetaObject::Connection>(QObject::connect(
                 proc.get(),
                 static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-                gP4app, &P4Application::signalCurveEvaluated));
+                gP4app.get(), &P4Application::signalCurveEvaluated));
 #ifdef QT_QPROCESS_OLD
         QObject::connect(
             proc.get(),
             static_cast<void (QProcess::*)(QProcess::ProcessError)>(
                 &QProcess::error),
-            gP4app, &P4Application::catchProcessError);
+            gP4app.get(), &P4Application::catchProcessError);
 #else
-        QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app,
+        QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app.get(),
                          &P4Application::catchProcessError);
 #endif
         QObject::connect(proc.get(), &QProcess::readyReadStandardOutput, this,
@@ -2819,7 +2858,7 @@ bool P4InputVF::evaluateIsoclines()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app.signalCurveEvaluated(-1);
+        gP4app->signalCurveEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -2867,8 +2906,12 @@ bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
         out << "u := x:\n";
         out << "v := y:\n";
         out << "user_f := ";
-        for (int i = 0, auto it = std::begin(f); it != std::end(f); i++, ++it) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
+
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
+            out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2924,8 +2967,12 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
         out << "u := cos(y):\n";
         out << "v := sin(y):\n";
         out << "user_f := ";
-        for (int i = 0, auto it = std::begin(f); it != std::end(f); i++, ++it) {
-            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
+
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
+            out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2984,8 +3031,12 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
         out << "u := x*cos(y):\n";
         out << "v := x*sin(y):\n";
         out << "user_f := ";
-        for (int i = 0, auto it = std::begin(f); it != std::end(f); i++, ++it) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
+
+        int i{0};
+        char buf[100];
+        for (auto it : f) {
+            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -3118,10 +3169,9 @@ void P4InputVF::setCommonBool(std::vector<bool> &lst, bool val)
 // -----------------------------------------------------------------------
 //          P4InputVF::setCommonParvalue
 // -----------------------------------------------------------------------
-void P4InputVF::setCommonParvalue(int index, QString val)
+void P4InputVF::setCommonParValue(int index, QString val)
 {
     for (int i = 0; i < numSelected_; i++) {
-        j = selected_[i];
         parvalue_[selected_[i]][index] = val;
     }
 }
@@ -3252,7 +3302,7 @@ void P4InputVF::deleteVectorField(int index)
         ydot_.erase(std::begin(ydot_) + index);
         gcf_.erase(std::begin(gcf_) + index);
         epsilon_.erase(std::begin(epsilon_) + index);
-        parvalue_.erase(std::begin(parvalue_) + index);  // TODO: funcionarà?
+        parvalue_.erase(std::begin(parvalue_) + index); // TODO: funcionarà?
 
         numVF_--;
     }
@@ -3304,9 +3354,9 @@ void P4InputVF::deleteSeparatingCurve(int index)
         numPointsSeparatingCurve_.clear();
 
         for (i = 0; i < numVFRegions_; i++)
-            vfRegions_[i].signs.clear());
+            vfRegions_[i].signs.clear();
         for (i = 0; i < numCurveRegions_; i++)
-            curveRegions_[i].signs.clear());
+            curveRegions_[i].signs.clear();
         if (numVFRegions_ == 0 && numVF_ == 1) {
             numVFRegions_ = 1;
             vfRegions_.clear();
@@ -3362,9 +3412,8 @@ bool P4InputVF::evaluateSeparatingCurves()
     if (processText_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append(
-            "\n\n------------------------------------------"
-            "-------------------------------------\n\n");
+        processText_->append("\n\n------------------------------------------"
+                             "-------------------------------------\n\n");
         terminateProcessButton_->setEnabled(true);
         outputWindow_->show();
         outputWindow_->raise();
@@ -3377,15 +3426,15 @@ bool P4InputVF::evaluateSeparatingCurves()
     evalProcessFinishedConnection_ =
         std::make_unique<QMetaObject::Connection>(QObject::connect(
             proc.get(),
-            static_cast<void (QProcess::*)(int)>(&QProcess::finished), gP4app,
-            &P4Application::signalCurveEvaluated));
+            static_cast<void (QProcess::*)(int)>(&QProcess::finished),
+            gP4app.get(), &P4Application::signalCurveEvaluated));
 #ifdef QT_QPROCESS_OLD
     QObject::connect(proc.get(),
                      static_cast<void (QProcess::*)(QProcess::ProcessError)>(
                          &QProcess::error),
-                     gP4app, &P4Application::catchProcessError);
+                     gP4app.get(), &P4Application::catchProcessError);
 #else
-    QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app,
+    QObject::connect(proc.get(), &QProcess::errorOccurred, gP4app.get(),
                      &P4Application::catchProcessError);
 #endif
     QObject::connect(proc.get(), &QProcess::readyReadStandardOutput, this,
@@ -3403,7 +3452,7 @@ bool P4InputVF::evaluateSeparatingCurves()
         evalProcess_.reset();
         evalFile_ = "";
         evalFile2_ = "";
-        gP4app.signalEvaluated(-1);
+        gP4app->signalEvaluated(-1);
         terminateProcessButton_->setEnabled(false);
         return false;
     } else {
@@ -3413,8 +3462,8 @@ bool P4InputVF::evaluateSeparatingCurves()
         evaluating_ = true;
         evaluatingPiecewiseConfig_ = true;
         evaluatingGcf_ = false;
+        return true;
     }
-}
 }
 
 // -----------------------------------------------------------------------
@@ -3425,7 +3474,7 @@ void P4InputVF::finishSeparatingCurvesEvaluation()
     evaluatingPiecewiseConfig_ = false;
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_CURVESEVALUATED), nullptr);
-    gP4app.postEvent(gP4startDlg, e.release());
+    gP4app->postEvent(gP4startDlg.get(), e.release());
 }
 
 // -----------------------------------------------------------------------
@@ -3452,7 +3501,7 @@ void P4InputVF::markVFRegion(int index, const double *p)
                 else
                     sgns.push_back(+1);
             }
-        vfRegions_.push_back(-1, sgns);
+        vfRegions_.emplace_back(-1, sgns);
         numVFRegions_++;
         i = numVFRegions_ - 1;
     }
@@ -3474,10 +3523,10 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
             break;
     }
     if (i < 0)
-        return;  // region cannot be found???
+        return; // region cannot be found???
 
     if (vfRegions_[i].vfIndex != index)
-        return;  // region does not have the corresponding index
+        return; // region does not have the corresponding index
 
     vfRegions_.erase(begin(vfRegions_) + i);
     if (numVFRegions_ == 1) {
@@ -3512,7 +3561,7 @@ void P4InputVF::markCurveRegion(int index, const double *p)
         }
     }
 
-    curveRegions_.push_back(index, signs);
+    curveRegions_.emplace_back(index, signs);
     numCurveRegions_++;
     resampleSeparatingCurve(index);
 }
@@ -3578,8 +3627,8 @@ bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
     if (numSeparatingCurves_ == 0)
         return true;
     if (gVFResults.separatingCurves_.empty())
-        return false;  // NOTE: sure? if there are no separating curves there
-                       // are no regions so all poinst should be drawn...
+        return false; // NOTE: sure? if there are no separating curves there
+                      // are no regions so all poinst should be drawn...
 
     for (auto const &curve : curveRegions_) {
         if (curve.curveIndex == index) {
@@ -3607,8 +3656,8 @@ void P4InputVF::resampleSeparatingCurve(int i)
     if (gVFResults.separatingCurves_.empty())
         return;
 
-    for (auto &sep : gVFResults.separatingCurves_[i].sep_points) {
-        if (isCurvePointDrawn(i, sep))
+    for (auto &sep : gVFResults.separatingCurves_[i].points) {
+        if (isCurvePointDrawn(i, sep.pcoord))
             sep.color = CSEPCURVE;
         else
             sep.color = CSHADEDCURVE;
@@ -3643,12 +3692,13 @@ void P4InputVF::resampleIsoclines(int i)
 {
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
-    for (auto &isoc : gVFResults.vf_[i]->isoclines) {
-        for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
+    for (auto &isoc = std::begin(gVFResults.vf_[i]->isocline_vector_);
+         isoc != std::end(gVFResults.vf_[i]->isocline_vector_); ++isoc) {
+        for (auto it = std::begin(isoc->points); it != std::end(isoc->points);
              ++it) {
             it->dashes = 0;
             if (getVFIndex_sphere(it->pcoord) != i) {
-                isoc.erase(it);
+                isoc->points.erase(it);
             }
         }
     }
@@ -3814,7 +3864,7 @@ int P4InputVF::getVFIndex_U1(const double *y)
         return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_U1(vfRegions_[i].signs, y))
-            return vfRegions_.vfIndex;
+            return vfRegions_[i].vfIndex;
     }
     return -1;
 }
@@ -3947,7 +3997,7 @@ int P4InputVF::getVFIndex_VV2(const double *yy)
 // ---------------------------------------------------------------------
 //          getFindDlg
 // ---------------------------------------------------------------------
-P4FindDlg *P4InputVF::getFindDlgPtr()
+P4FindDlg *P4InputVF::getFindDlgPtr() const
 {
     if (findDlg_)
         return findDlg_.get();
@@ -3969,7 +4019,7 @@ void P4InputVF::setFindDlg(P4FindDlg *newdlg)
 // ---------------------------------------------------------------------
 //          getGcfDlgPtr
 // ---------------------------------------------------------------------
-P4GcfDlg *P4InputVF::getGcfDlgPtr()
+P4GcfDlg *P4InputVF::getGcfDlgPtr() const
 {
     if (gcfDlg_)
         return gcfDlg_.get();
@@ -3991,7 +4041,7 @@ void P4InputVF::setGcfDlg(P4GcfDlg *newdlg)
 // ---------------------------------------------------------------------
 //          getArbitraryCurveDlgPtr
 // ---------------------------------------------------------------------
-P4ArbitraryCurveDlg *P4InputVF::getArbitraryCurveDlgPtr()
+P4ArbitraryCurveDlg *P4InputVF::getArbitraryCurveDlgPtr() const
 {
     if (arbitraryCurveDlg_)
         return arbitraryCurveDlg_.get();
@@ -4013,7 +4063,7 @@ void P4InputVF::setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
 // ---------------------------------------------------------------------
 //          getIsoclinesDlgPtr
 // ---------------------------------------------------------------------
-P4IsoclinesDlg *P4InputVF::getIsoclinesDlgPtr()
+P4IsoclinesDlg *P4InputVF::getIsoclinesDlgPtr() const
 {
     if (isoclinesDlg_)
         return isoclinesDlg_.get();
