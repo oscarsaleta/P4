@@ -20,20 +20,20 @@
 #include "math_separatrice.hpp"
 
 #include "custom.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "math_charts.hpp"
-#include "math_intblowup.hpp"
 #include "math_numerics.hpp"
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
 #include "plot_tools.hpp"
+#include "P4ParentStudy.hpp"
 
 #include <cmath>
 
 void (*change_epsilon)(P4WinSphere *, double) = nullptr;
-void (*start_plot_sep)(P4WinSphere *) = nullptr;
+void (*start_plot_sep)(P4WinSphere *, int) = nullptr;
 void (*cont_plot_sep)(P4WinSphere *) = nullptr;
-void (*plot_next_sep)(P4WinSphere *) = nullptr;
+void (*plot_next_sep)(P4WinSphere *, int) = nullptr;
 void (*select_next_sep)(P4WinSphere *) = nullptr;
 
 // ---------------------------------------------------------------------------
@@ -187,14 +187,14 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
             dashes = true;
             dir = 1;
             psphere_to_R2(p0, p1, p2, y);
-            rk78(eval_r_vec_field, y, hhi0, h_min, h_max,
+            rk78(eval_r_vec_field, y, &hhi0, h_min, h_max,
                  gVFResults.config_tolerance_);
             if (gThisVF.getVFIndex_R2(y) == gVFResults.K_)
                 break;
-            h_min = gVFResults.config_branchhmi;
+            h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
             hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
-            if (fabs(hhi0) < h_min || h_max < gVFResults.config_branchhmi) {
+            if (fabs(hhi0) < h_min || h_max < gVFResults.config_branchhmi_) {
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;

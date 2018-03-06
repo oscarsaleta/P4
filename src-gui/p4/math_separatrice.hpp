@@ -20,25 +20,31 @@
 #pragma once
 
 #include <memory>
-#include <optional>
 #include <vector>
 
 class P4WinSphere;
-struct p4singularity::orbits_points;
-struct p4blowup::sep;
-struct p4polynom::term2;
-struct p4polynom::term3;
 
-extern void (*change_epsilon)(std::shared_ptr<P4WinSphere>, double);
-extern void (*start_plot_sep)(std::shared_ptr<P4WinSphere>);
-extern void (*cont_plot_sep)(std::shared_ptr<P4WinSphere>);
-extern void (*plot_next_sep)(std::shared_ptr<P4WinSphere>);
-extern void (*select_next_sep)(std::shared_ptr<P4WinSphere>);
+namespace p4polynom
+{
+struct term2;
+struct term3;
+}
 
-void plot_all_sep(std::shared_ptr<P4WinSphere> spherewnd);
-void draw_sep(std::shared_ptr<P4WinSphere> spherewnd,
+namespace p4orbits
+{
+struct orbits_points;
+}
+
+extern void (*change_epsilon)(P4WinSphere *, double);
+extern void (*start_plot_sep)(P4WinSphere *, int);
+extern void (*cont_plot_sep)(P4WinSphere *);
+extern void (*plot_next_sep)(P4WinSphere *, int);
+extern void (*select_next_sep)(P4WinSphere *);
+
+void plot_all_sep(P4WinSphere *spherewnd);
+void draw_sep(P4WinSphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep);
-void draw_selected_sep(std::shared_ptr<P4WinSphere> spherewnd,
+void draw_selected_sep(P4WinSphere *spherewnd,
                        const std::vector<p4orbits::orbits_points> &sep,
                        int color);
 
@@ -54,13 +60,14 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
                             double &hhi, int &type, int &color, int &dashes,
                             int &dir, double h_min, double h_max);
 
-std::optional<std::vector<p4orbits::orbits_points>> integrate_sep(
-    std::shared_ptr<P4WinSphere> spherewnd, double pcoord[3], double step,
-    int dir, int type, int points_to_int);
+std::vector<p4orbits::orbits_points> integrate_sep(P4WinSphere *spherewnd,
+                                                   double pcoord[3],
+                                                   double step, int dir,
+                                                   int type, int points_to_int);
 
 int change_type(int type);
 
-std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
-    std::shared_ptr<P4WinSphere> spherewnd, double x0, double y0, double a11,
-    double a12, double a21, double a22, double epsilon,
-    const p4blowup::sep &sep1, short int chart);
+std::vector<p4orbits::orbits_points>
+plot_separatrice(P4WinSphere *spherewnd, double x0, double y0, double a11,
+                 double a12, double a21, double a22, double epsilon,
+                 const p4blowup::sep &sep1, short int chart);
