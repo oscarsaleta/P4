@@ -19,9 +19,17 @@
 
 #include "P4ParentStudy.hpp"
 
+#include <QFile>
+
+#include <locale.h>
+
+#include "P4VFStudy.hpp"
 #include "math_charts.hpp"
+#include "math_polynom.hpp"
 #include "math_regions.hpp"
 #include "math_separatingcurves.hpp"
+#include "math_separatrice.hpp"
+#include "math_orbits.hpp"
 
 // -----------------------------------------------------------------------
 //                              P4ParentStudy CONSTRUCTOR
@@ -48,7 +56,7 @@ P4ParentStudy::P4ParentStudy()
 // -----------------------------------------------------------------------
 //          P4ParentStudy::reset
 // -----------------------------------------------------------------------
-P4ParentStudy::reset()
+void P4ParentStudy::reset()
 {
     int i;
     vf_.clear();
@@ -96,11 +104,11 @@ P4ParentStudy::reset()
     seps_.clear();
     selectedSepIndex_ = -1;
     deSeps_.clear();
-    selectedDeSepsIndex_ = -1;
+    selectedDeSepIndex_ = -1;
 
     separatingCurves_.clear();
 
-    config_hma = DEFAULT_HMA;
+    config_hma_ = DEFAULT_HMA;
     config_hmi_ = DEFAULT_HMI;
     config_branchhmi_ = DEFAULT_BRANCHHMI;
     config_step_ = DEFAULT_STEPSIZE;
@@ -111,9 +119,9 @@ P4ParentStudy::reset()
 }
 
 // -----------------------------------------------------------------------
-//          P4ParentStudy::readPieceWiseData
+//          P4ParentStudy::readPiecewiseData
 // -----------------------------------------------------------------------
-bool P4ParentStudy::readPieceWiseData(FILE *fp)
+bool P4ParentStudy::readPiecewiseData(FILE *fp)
 {
     int j, k, v;
     if (gThisVF.numSeparatingCurves_ == 0)
@@ -125,8 +133,7 @@ bool P4ParentStudy::readPieceWiseData(FILE *fp)
 
     if (gThisVF.numVFRegions_ > 0) {
         for (j = 0; j < gThisVF.numVFRegions_; j++) {
-            if (fscanf(fp, "%d" & v) != 1 ||
-                v != gThisVF.vfRegions_[j].vfIndex)
+            if (fscanf(fp, "%d", &v) != 1 || v != gThisVF.vfRegions_[j].vfIndex)
                 return false;
             for (k = 0; k < gThisVF.numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1 ||
@@ -197,8 +204,8 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
             fclose(fpcurv);
             return false;
         }
-        if (numcurves != gThisVF.numSeparatingCurves_ || p != ThisVF->p_ ||
-            q != ThisVF->q_) {
+        if (numcurves != gThisVF.numSeparatingCurves_ || p != gThisVF.p_ ||
+            q != gThisVF.q_) {
             if (onlytry) {
                 fclose(fpcurv);
                 return false;
@@ -226,8 +233,8 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
                 fclose(fpcurv);
                 return false;
             }
-            if (!readArbitraryCurvePoints(fpcurv,
-                                          separatingCurves_[j].sep_points, j)) {
+            if (!readSeparatingCurvePoints(fpcurv, separatingCurves_[j].points,
+                                           j)) {
                 separatingCurves_.clear();
                 fclose(fpcurv);
                 return false;
@@ -242,7 +249,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         return true;
     }
 
-    reset();  // initialize structures, delete previous vector field if any
+    reset(); // initialize structures, delete previous vector field if any
 
     fpvec = fopen(QFile::encodeName(basename + "_vec.tab"), "rt");
     if (fpvec == nullptr)
@@ -265,13 +272,13 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         vf_.emplace_back(std::make_unique<P4VFStudy>(this));
     }
 
-    if (fscanf(fpvec, "%d\n%d\n%d\n", &typeofstudy, &p, &q) != 3) {
+    if (fscanf(fpvec, "%d\n%d\n%d\n", &typeofstudy_, &p, &q) != 3) {
         reset();
         fclose(fpvec);
         return false;
     }
 
-    if (p != gThisVF.p_ || q != ThisVF->q_) {
+    if (p != gThisVF.p_ || q != gThisVF.q_) {
         reset();
         fclose(fpvec);
         return false;
@@ -355,8 +362,8 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         fclose(fpfin);
     fclose(fpvec);
 
-    readTables(basename, true, true);  // try to read the piecewise curve points
-                                       // as well if they are present on disk
+    readTables(basename, true, true); // try to read the piecewise curve points
+                                      // as well if they are present on disk
     // dump(basename);
     examinePositionsOfSingularities();
     return true;
@@ -373,7 +380,8 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
 
     FILE *fp = fopen(QFile::encodeName(basename + "_veccurve.tab"), "rt");
     if (fp == nullptr) {
-        dump(basename, "Cannot open file " + basename + "_veccurve.tab");
+        // TODO: this is the P4VFStudy::dump
+        // dump(basename, "Cannot open file " + basename + "_veccurve.tab");
         return false;
     }
 
@@ -417,7 +425,7 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
         }
     }
 
-    arbitraryCurve_.push_back(std::move(new_curve));
+    arbitraryCurves_.push_back(std::move(new_curve));
     return true;
 }
 
@@ -427,9 +435,9 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
 bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 {
     int N, degree_sep;
-    p4curveRegions::curveResult dummy;
+    p4curves::curves dummy;
 
-    setLocale(LC_ALL, "C");
+    setlocale(LC_ALL, "C");
 
     if (fscanf(fp, "%d", &degree_sep) != 1 || degree_sep < 0)
         return false;
@@ -438,33 +446,33 @@ bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-    if (!readTerm2(fp, dummy.sep, N))
+    if (!readTerm2(fp, dummy.r2, N))
         return false;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-    if (!readTerm2(fp, dummy.sep_U1, N))
+    if (!readTerm2(fp, dummy.u1, N))
         return false;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-    if (!readTerm2(fp, dummy.sep_U2, N))
+    if (!readTerm2(fp, dummy.u2, N))
         return false;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-    if (!readTerm2(fp, dummy.sep_V1, N))
+    if (!readTerm2(fp, dummy.v1, N))
         return false;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
-    if (!readTerm2(fp, dummy.sep_V2, N))
+    if (!readTerm2(fp, dummy.v2, N))
         return false;
 
     if (plweights_) {
         if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
-        if (!readTerm3(fp, dummy.sep_C, N))
+        if (!readTerm3(fp, dummy.c, N))
             return false;
     }
 
@@ -633,7 +641,7 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
             if (fscanf(fp, "%d", &v) != 1)
                 return false;
             if (v != gThisVF.vfregions[j]
-                         .vfindex)  // TODO: quan estigui llesta file_vf.cpp
+                         .vfindex) // TODO: quan estigui llesta file_vf.cpp
                 return false;
             for (k = 0; k < gThisVF.numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
