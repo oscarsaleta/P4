@@ -20,13 +20,13 @@
 #include "plot_tools.hpp"
 
 #include "P4WinSphere.hpp"
-#include "file_tab.hpp"
+#include "tables.hpp"
 #include "math_p4.hpp"
 
 #include <cmath>
 
-void (*plot_l)(std::shared_ptr<P4WinSphere>, double *, double *, int) = nullptr;
-void (*plot_p)(std::shared_ptr<P4WinSphere>, double *, int) = nullptr;
+void (*plot_l)(P4WinSphere *, const double *, const double *, int) = nullptr;
+void (*plot_p)(P4WinSphere *, const double *, int) = nullptr;
 
 /*
 void plotEllipse( QPainter * p, int cx, int cy, int a, int b, int color, bool
