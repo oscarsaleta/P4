@@ -19,14 +19,6 @@
 
 #include "P4ArbitraryCurveDlg.hpp"
 
-#include "P4InputVF.hpp"
-#include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
-#include "custom.hpp"
-#include "main.hpp"
-#include "math_arbitrarycurve.hpp"
-#include "math_polynom.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
@@ -34,6 +26,15 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
+#include "custom.hpp"
+#include "main.hpp"
+#include "math_arbitrarycurve.hpp"
+#include "math_polynom.hpp"
 
 P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
@@ -137,7 +138,7 @@ P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (gVFResults.arbitraryCurveVector_.empty()) {
+    if (gVFResults.arbitraryCurves_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -155,7 +156,7 @@ void P4ArbitraryCurveDlg::reset()
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (!gVFResults.arbitraryCurveVector_.empty()) {
+    if (!gVFResults.arbitraryCurves_.empty()) {
         btnDelAll_->setEnabled(true);
         btnDelLast_->setEnabled(true);
     }
@@ -179,7 +180,7 @@ void P4ArbitraryCurveDlg::onBtnEvaluate()
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of p4polynom::term2
     gThisVF.setArbitraryCurveDlg(this);
-    gThisVF.evaluateCurveTable();
+    gThisVF.evaluateArbitraryCurveTable();
     btnPlot_->setEnabled(true);
 }
 
@@ -239,7 +240,7 @@ void P4ArbitraryCurveDlg::onBtnPlot()
     btnPlot_->setEnabled(false);
 
     gThisVF.setArbitraryCurveDlg(this);
-    if (!evalArbitraryCurveStart(mainSphere_, dashes, precis, points);) {
+    if (!evalArbitraryCurveStart(mainSphere_, dashes, precis, points)) {
         btnPlot_->setEnabled(true);
         QMessageBox::critical(this, "P4",
                               "An error occured while plotting the "
@@ -262,7 +263,7 @@ void P4ArbitraryCurveDlg::onBtnDelAll()
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    gVFResults.arbitraryCurveVector_.clear();
+    gVFResults.arbitraryCurves_.clear();
 
     mainSphere_->refresh();
 }
@@ -276,20 +277,20 @@ void P4ArbitraryCurveDlg::onBtnDelLast()
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (gVFResults.arbitraryCurveVector_.empty()) {
+    if (gVFResults.arbitraryCurves_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
 }
 
-void P4ArbitraryCurveDlg::finishCurveEvaluation()
+void P4ArbitraryCurveDlg::finishArbitraryCurveEvaluation()
 {
     if (btnPlot_->isEnabled() == true)
-        return;  // not busy??
+        return; // not busy??
 
     if (evalArbitraryCurveContinue(evaluating_precision_, evaluating_points_)) {
         btnPlot_->setEnabled(false);
-        if (!evalCurveFinish()) {
+        if (!evalArbitraryCurveFinish()) {
             QMessageBox::critical(this, "P4",
                                   "An error occured while plotting "
                                   "the curve.\nThe singular locus "
