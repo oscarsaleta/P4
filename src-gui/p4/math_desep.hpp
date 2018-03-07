@@ -22,10 +22,22 @@
 #include <memory>
 #include <vector>
 
-struct p4blowup::blow_up_points;
-struct p4blowup::transformations;
-struct p4singularities::degenerate;
-struct p4orbits::orbits_points;
+namespace p4blowup
+{
+struct blow_up_points;
+struct transformations;
+}
+
+namespace p4singularities
+{
+struct degenerate;
+}
+
+namespace p4orbits
+{
+struct orbits_points;
+}
+
 class P4WinSphere;
 
 void eval_blow_vec_field(const double *y, double *f);
