@@ -25,9 +25,13 @@
 
 #include "math_polynom.hpp"
 
-#include "tables.hpp"
+#include <QByteArray>
+#include <QString>
 
 #include <cmath>
+#include <vector>
+
+#include "tables.hpp"
 
 // -----------------------------------------------------------------------
 //          eval_term1
@@ -107,7 +111,7 @@ const char *dumpPoly1(const std::vector<p4polynom::term1> &f, const char *x)
 
     double c;
     int cx;
-    QString s("");
+    QString s{""};
     QString t;
 
     if (f.empty())
@@ -145,7 +149,7 @@ const char *dumpPoly1(const std::vector<p4polynom::term1> &f, const char *x)
         }
     }
     _s = s.toLatin1();
-    return (const char *)_s;
+    return _s.constData();
 }
 
 // -----------------------------------------------------------------------
@@ -174,12 +178,12 @@ const char *dumpPoly2(const std::vector<p4polynom::term2> &f, const char *x,
 
         if ((c != 1 && c != -1) || (cx == 0 && cy == 0)) {
             if (s.isEmpty()) {
-                t.sprintf("%g", (float)c);
+                t.sprintf("%g", c);
             } else {
                 if (c >= 0)
-                    t.sprintf(" + %g", (float)c);
+                    t.sprintf(" + %g", c);
                 else
-                    t.sprintf(" - %g", -(float)c);
+                    t.sprintf(" - %g", -c);
             }
             s += t;
         } else {
@@ -209,7 +213,7 @@ const char *dumpPoly2(const std::vector<p4polynom::term2> &f, const char *x,
         }
     }
     _s = s.toLatin1();
-    return (const char *)_s;
+    return _s.constData();
 }
 
 // -----------------------------------------------------------------------
@@ -239,12 +243,12 @@ const char *dumpPoly3(const std::vector<p4polynom::term3> &f, const char *x,
 
         if ((c != 1 && c != -1) || (cx == 0 && cy == 0 && cz == 0)) {
             if (s.length() == 0) {
-                t.sprintf("%g", (float)c);
+                t.sprintf("%g", c);
             } else {
                 if (c >= 0)
-                    t.sprintf(" + %g", (float)c);
+                    t.sprintf(" + %g", c);
                 else
-                    t.sprintf(" - %g", -(float)c);
+                    t.sprintf(" - %g", -c);
             }
             s += t;
         } else {
@@ -281,7 +285,7 @@ const char *dumpPoly3(const std::vector<p4polynom::term3> &f, const char *x,
         }
     }
     _s = s.toLatin1();
-    return (const char *)_s;
+    return _s.constData();
 }
 
 // Following are used in preparation of GCF :
@@ -331,9 +335,9 @@ char *printterm2(char *buf, const p4polynom::term2 &f, bool isfirst,
     }
 
     if (isfirst)
-        sprintf(buf, "%g", (float)(f.coeff));
+        sprintf(buf, "%g", f.coeff);
     else
-        sprintf(buf, "%+g", (float)(f.coeff));
+        sprintf(buf, "%+g", f.coeff);
 
     if (f.exp_x != 0) {
         if (f.exp_x != 1)
@@ -491,4 +495,3 @@ bool readTerm3(FILE *fp, std::vector<p4polynom::term3> &p, int N)
     }
     return true;
 }
-

@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <vector>
-
-struct p4polynom::term1;
-struct p4polynom::term2;
-struct p4polynom::term3;
+namespace p4polynom {
+    struct term1;
+    struct term2;
+    struct term3;
+}
 
 double eval_term1(const std::vector<p4polynom::term1> &, const double);
 double eval_term2(const std::vector<p4polynom::term2> &, const double *);
