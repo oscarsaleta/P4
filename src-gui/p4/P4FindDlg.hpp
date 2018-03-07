@@ -23,8 +23,9 @@
 #include <memory>
 
 class P4ParamsDlg;
-class P4VectorFieldDlg;
 class P4StartDlg;
+class P4VectorFieldDlg;
+class P4VFSelectDlg;
 
 class QBoxLayout;
 class QPushButton;
@@ -38,12 +39,13 @@ class P4FindDlg : public QWidget
     P4FindDlg(P4StartDlg *startwindow);
     void getDataFromDlg();
 
-    P4VFSelectDlg *getVfSelectWindow();
+    P4VFSelectDlg *getVfSelectWindowPtr() const;
 
   private:
     P4StartDlg *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QBoxLayout> parLayout_;
     std::unique_ptr<QBoxLayout> superLayout_;
 
     std::unique_ptr<QRadioButton> btn_actionrun_;
