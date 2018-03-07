@@ -20,9 +20,7 @@
 #include "P4IntParamsDlg.hpp"
 
 #include "P4Application.hpp"
-#include "P4InputVF.hpp"
-#include "custom.hpp"
-#include "tables.hpp"
+#include "P4ParentStudy.hpp"
 #include "main.hpp"
 
 #include <QBoxLayout>
@@ -90,10 +88,9 @@ P4IntParamsDlg::P4IntParamsDlg()
 
 #ifdef TOOLTIPS
     btn_org_->setToolTip("Integrate orbits w.r.t. original vector field");
-    btn_red_->setToolTip(
-        "Integrate orbits w.r.t. reduced vector field,\n"
-        "removing common factors.\n"
-        "This is disabled if there are no common factors.");
+    btn_red_->setToolTip("Integrate orbits w.r.t. reduced vector field,\n"
+                         "removing common factors.\n"
+                         "This is disabled if there are no common factors.");
     btn_dots_->setToolTip("Plot individual points during orbit-integration");
     btn_dashes_->setToolTip(
         "Connect orbit-integration points with small line segments");
@@ -117,13 +114,13 @@ P4IntParamsDlg::P4IntParamsDlg()
     kindLayout->addWidget(btn_org_.get());
     kindLayout->addWidget(btn_red_.get());
 
-    mainLayout_->addLayout(kindLayout);
+    mainLayout_->addLayout(kindLayout.get());
 
     auto typeLayout = std::make_unique<QHBoxLayout>();
     typeLayout->addWidget(typelabel.get());
     typeLayout->addWidget(btn_dots_.get());
     typeLayout->addWidget(btn_dashes_.get());
-    mainLayout_->addLayout(typeLayout);
+    mainLayout_->addLayout(typeLayout.get());
 
     auto layout2 = std::make_unique<QHBoxLayout>();
     layout2->addWidget(lbl_stepsize_.get());
@@ -263,8 +260,8 @@ void P4IntParamsDlg::getDataFromDlg()
                                DEFAULT_HMI, MIN_HMI, MAX_HMI);
     changed_ |= readFloatField(edt_maxstep_.get(), gVFResults.config_hma_,
                                DEFAULT_HMA, MIN_HMA, MAX_HMA);
-    changed |=
-        ReadFloatField(edt_branchminstep_.get(), gVFResults.config_branchhmi_,
+    changed_ |=
+        readFloatField(edt_branchminstep_.get(), gVFResults.config_branchhmi_,
                        DEFAULT_BRANCHHMI, MIN_BRANCHHMI, MAX_BRANCHHMI);
     changed_ |= readFloatField(edt_stepsize_.get(), gVFResults.config_step_,
                                DEFAULT_STEPSIZE, MIN_HMI, MAX_HMA);
@@ -322,14 +319,8 @@ void P4IntParamsDlg::updateDlgData()
 
     spin_numpoints_->setValue(gVFResults.config_intpoints_);
 
-    if (!gVFResults.gcf_.empty() ||
-        (gVFResults.singinf_ && gVFResults.typeofstudy_ != TYPEOFSTUDY_ONE)) {
-        btn_org_->setEnabled(true);
-        btn_red_->setEnabled(true);
-    } else {
-        btn_org_->setEnabled(false);
-        btn_red_->setEnabled(false);
-    }
+    btn_org_->setEnabled(true);
+    btn_red_->setEnabled(true);
 }
 
 void P4IntParamsDlg::setCurrentStep(double curstep)

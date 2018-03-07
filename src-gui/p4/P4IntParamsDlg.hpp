@@ -21,15 +21,12 @@
 
 #include <QWidget>
 
-class P4FindDlg;
-
 class QBoxLayout;
 class QPushButton;
 class QRadioButton;
 class QLineEdit;
 class QLabel;
 class QSpinBox;
-class QString;
 
 class P4IntParamsDlg : public QWidget
 {
@@ -38,6 +35,7 @@ class P4IntParamsDlg : public QWidget
   public:
     P4IntParamsDlg();
     ~P4IntParamsDlg();
+
     void getDataFromDlg();
     void updateDlgData();
     void setCurrentStep(double curstep);
@@ -68,7 +66,7 @@ class P4IntParamsDlg : public QWidget
 
     std::unique_ptr<QSpinBox> spin_numpoints_;
 
-    bool readFloatField(QLineEdit *, double *, double, double, double);
+    bool readFloatField(QLineEdit *, double &, double, double, double);
 
   public slots:
     void markBad(QLineEdit *edt);
