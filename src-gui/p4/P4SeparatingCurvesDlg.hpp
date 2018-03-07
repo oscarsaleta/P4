@@ -21,17 +21,18 @@
 
 #include <memory>
 
-#include <QMainWindow>
+#include <QWidget>
 
 class QBoxLayout;
 class QLabel;
 class QPushButton;
 class QListWidget;
 class QLineEdit;
+class QListWidgetItem;
 
 class P4FindDlg;
 class P4ViewDlg;
-class QWinInputSphere;
+class P4WinInputSphere;
 
 class P4SeparatingCurvesDlg : public QWidget
 {
