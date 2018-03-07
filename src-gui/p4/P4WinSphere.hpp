@@ -48,42 +48,43 @@ class P4WinSphere : public QWidget
     Q_OBJECT
 
     static int sM_numSpheres;
-    static std::vector<std::shared_ptr<P4WinSphere>> sM_sphereList;
 
   public:
     /* Constructor and destructor */
     P4WinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);
     ~P4WinSphere();
 
+    static std::vector<std::shared_ptr<P4WinSphere>> sM_sphereList;
+
     /* Member variables */
     double horPixelsPerMM_;
     double verPixelsPerMM_;
 
-    double x0_, y0_;  // world-coordinates of upper-left corner
-    double x1_, y1_;  // world-coordinates of upper-right corner
-    double dx_;       // x1-x0
-    double dy_;       // y1-y0
+    double x0_, y0_; // world-coordinates of upper-left corner
+    double x1_, y1_; // world-coordinates of upper-right corner
+    double dx_;      // x1-x0
+    double dy_;      // y1-y0
 
     std::unique_ptr<QPixmap> painterCache_;
     bool isPainterCacheDirty_;
-    int paintedXMin_;  // to know the update rectangle after painting
-    int paintedXMax_;  // we keep to smallest rectangle enclosing
-    int paintedYMin_;  // all painted objects.
+    int paintedXMin_; // to know the update rectangle after painting
+    int paintedXMax_; // we keep to smallest rectangle enclosing
+    int paintedYMin_; // all painted objects.
     int paintedYMax_;
 
     QString chartstring_;
 
     int spherebgcolor_;
     // FIXME used?
-    std::shared_ptr<P4WinSphere> next_;  // visible to PlotWnd
+    std::shared_ptr<P4WinSphere> next_; // visible to PlotWnd
     int selectingX_, selectingY_, selectingPointStep_, selectingPointRadius_;
     std::unique_ptr<QTimer> selectingTimer_;
 
-    int oldw_;  // used while printing
+    int oldw_; // used while printing
     int oldh_;
-    int w_;       // width of window
-    int h_;       // height of window
-    int idealh_;  // ideal height of window to get good aspect ratio
+    int w_;      // width of window
+    int h_;      // height of window
+    int idealh_; // ideal height of window to get good aspect ratio
 
     /* Member functions */
 
@@ -106,8 +107,8 @@ class P4WinSphere : public QWidget
     void plotPoints();
     void plotSeparatrices();
     void plotGcf();
-    void plotArbitraryCurves();  // TODO
-    void drawIsoclines();        // TODO
+    void plotArbitraryCurves(); // TODO
+    void drawIsoclines();       // TODO
     void plotPoincareSphere();
     void plotPoincareLyapunovSphere();
     void plotLineAtInfinity();
@@ -126,8 +127,8 @@ class P4WinSphere : public QWidget
     void printSeparatrices();
     void printGcf();
     void printSeparatingCurves();
-    void printArbitraryCurves();  // TODO
-    void printIsoclines();        // TODO
+    void printArbitraryCurves(); // TODO
+    void printIsoclines();       // TODO
     void printPoincareSphere();
     void printPoincareLyapunovSphere();
     void printLineAtInfinity();
@@ -179,11 +180,11 @@ class P4WinSphere : public QWidget
   private:
     QWidget *parentWnd_;
     QStatusBar *msgBar_;
-    
+
     bool iszoom_;
-    bool reverseYAxis_;  // when calculating coordinates: this determines
-                         // orientation of horizontal axis.  Normally false,
-                         // only true when printing.
+    bool reverseYAxis_; // when calculating coordinates: this determines
+                        // orientation of horizontal axis.  Normally false,
+                        // only true when printing.
 
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
