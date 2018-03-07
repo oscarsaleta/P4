@@ -86,7 +86,7 @@ void polarcoord_to_plsphere(double x, double y, double *pcoord);
 bool isvalid_plsphereviewcoord(double u, double v, double *pcoord);
 
 // projecting the PL-sphere to a disc of radius one (u,v) coordinates:
-// FIXME change usages
+void plsphere_annulus(double x, double y, double z, double *u);
 void annulus_to_plsphere(double u, double v, double *p);
 void plsphere_to_annulus(double x, double y, double z, double *u);
 void finite_annulus(double x, double y, double *u);
