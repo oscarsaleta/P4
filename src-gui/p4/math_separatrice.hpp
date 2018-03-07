@@ -19,7 +19,6 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 
 class P4WinSphere;
@@ -33,6 +32,11 @@ struct term3;
 namespace p4orbits
 {
 struct orbits_points;
+}
+
+namespace p4blowup
+{
+struct sep;
 }
 
 extern void (*change_epsilon)(P4WinSphere *, double);
