@@ -29,6 +29,7 @@ class P4LegendWnd : public QWidget
 
   public:
     P4LegendWnd();
+
     void paintEvent(QPaintEvent *);
     void calculateGeometry();
     void loadState();
