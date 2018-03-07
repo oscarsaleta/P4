@@ -600,7 +600,7 @@ static double findInitialSepPoint(const std::vector<p4polynom::term1> &sep,
 // At the end, a normal integration cycle is added.
 //
 // The vector field vfK needs not be prepared.
-std::optional<std::vector<p4orbits::orbits_points>> plot_separatrice(
+std::vector<p4orbits::orbits_points> plot_separatrice(
     std::shared_ptr<P4WinSphere> spherewnd, double x0, double y0, double a11,
     double a12, double a21, double a22, double epsilon,
     const p4blowup::sep &sep1, short int chart, int vfindex)
