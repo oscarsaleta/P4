@@ -21,6 +21,9 @@
 
 #include <QWidget>
 
+#include <memory>
+#include <vector>
+
 class P4FindDlg;
 
 class QBoxLayout;
@@ -37,6 +40,7 @@ class P4ParamsDlg : public QWidget
   public:
     P4ParamsDlg(P4FindDlg *startwindow);
     ~P4ParamsDlg();
+
     void getDataFromDlg();
     void updateDlgData();
 
@@ -71,7 +75,7 @@ class P4ParamsDlg : public QWidget
     // FIXME raw pointers
     void setSpinBoxCommonValue(QSpinBox &, const std::vector<int> &val,
                                int minval);
-    void getSpinBoxCommonValue(const QSpinBox &, std::vector<int> &val);
+    bool getSpinBoxCommonValue(const QSpinBox &, std::vector<int> &val);
     void setLineEditCommonValue(QLineEdit &le, const std::vector<QString> &val);
     bool getLineEditCommonValue(const QLineEdit &le,
                                 std::vector<QString> &newval);

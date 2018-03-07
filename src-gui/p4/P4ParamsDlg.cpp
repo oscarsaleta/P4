@@ -19,19 +19,17 @@
 
 #include "P4ParamsDlg.hpp"
 
-#include "P4Application.hpp"
-#include "P4FindDlg.hpp"
-#include "P4InputVF.hpp"
-#include "custom.hpp"
-#include "main.hpp"
-#include "p4settings.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
 #include <QLineEdit>
 #include <QRadioButton>
 #include <QSpinBox>
+
+#include "P4Application.hpp"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "custom.hpp"
 
 P4ParamsDlg::~P4ParamsDlg() { getDataFromDlg(); }
 
@@ -121,38 +119,31 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
         "The symbolic package will automatically switch over to\n"
         "numeric calculations whenever a symbolic study is impossible.");
     btn_num_->setToolTip("Let the symbolic manipulator work in numeric mode");
-    btn_sepyes_->setToolTip(
-        "Enable numeric testing of the Taylor developments "
-        "for the separatrices");
+    btn_sepyes_->setToolTip("Enable numeric testing of the Taylor developments "
+                            "for the separatrices");
     btn_sepno_->setToolTip("Disable separatrice testing");
     spin_precis_->setToolTip(
         "Number of digits required accuracy when checking for zero");
-    spin_precis0_->setToolTip(
-        "Number of digits of numeric precision of all "
-        "calculations.  Put 0 for default double "
-        "precision");
+    spin_precis0_->setToolTip("Number of digits of numeric precision of all "
+                              "calculations.  Put 0 for default double "
+                              "precision");
     edt_epsilon_->setToolTip(
         "Default epsilon for the separatrices.\n"
         "This may be changed later when plotting individual separatrices");
-    spin_level_->setToolTip(
-        "Order of Taylor approximation\nThis order is "
-        "increased as long as the separatrix test fails.");
-    spin_numlevel_->setToolTip(
-        "Start working numerically when order of Taylor "
-        "approximation reaches this level");
-    spin_maxlevel_->setToolTip(
-        "Maximum order of Taylor approximation.  Stop "
-        "testing separatrices at this order.");
+    spin_level_->setToolTip("Order of Taylor approximation\nThis order is "
+                            "increased as long as the separatrix test fails.");
+    spin_numlevel_->setToolTip("Start working numerically when order of Taylor "
+                               "approximation reaches this level");
+    spin_maxlevel_->setToolTip("Maximum order of Taylor approximation.  Stop "
+                               "testing separatrices at this order.");
     spin_weakness_->setToolTip(
         "Maximum order of Lyapunov constants to be calculated for weak foci");
     spin_p_->setToolTip("Poincare-Lyapunov weights");
     spin_q_->setToolTip("Poincare-Lyapunov weights");
-    edt_x0_->setToolTip(
-        "Coordinates of the singular point in case of study of "
-        "ONE singularity");
-    edt_y0_->setToolTip(
-        "Coordinates of the singular point in case of study of "
-        "ONE singularity");
+    edt_x0_->setToolTip("Coordinates of the singular point in case of study of "
+                        "ONE singularity");
+    edt_y0_->setToolTip("Coordinates of the singular point in case of study of "
+                        "ONE singularity");
 #endif
 
     // layout
@@ -247,10 +238,10 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
                      &P4ParamsDlg::btn_alg_toggled);
     QObject::connect(btn_num_.get(), &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_num_toggled);
-    QObject::connect(.get() spin_level_,
-                     static_cast<void (QSpinBox::*)(int)>(
-                         &QSpinBox::valueChanged),
-                     this, &P4ParamsDlg::onLevelChange);
+    QObject::connect(
+        spin_level_.get(),
+        static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
+        &P4ParamsDlg::onLevelChange);
     QObject::connect(btn_sepno_.get(), &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_sepno_toggled);
     QObject::connect(btn_sepyes_.get(), &QRadioButton::toggled, this,
@@ -338,7 +329,7 @@ void P4ParamsDlg::setSpinBoxCommonValue(QSpinBox &sb,
         sb.setMinimum(minval);
         sb.setValue(gThisVF.commonInt(val));
     } else {
-        sb.setMinimal(minval - 1);
+        sb.setMinimum(minval - 1);
         sb.setSpecialValueText("##");
         sb.setValue(minval - 1);
     }
@@ -424,8 +415,8 @@ void P4ParamsDlg::getDataFromDlg()
     changed |= getLineEditCommonValue(*edt_epsilon_, gThisVF.epsilon_);
 
     if (changed) {
-        if (gThisVF.changed == false) {
-            gThisVF.changed = true;
+        if (gThisVF.changed_ == false) {
+            gThisVF.changed_ = true;
             gP4app->signalChanged();
         }
     }
