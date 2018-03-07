@@ -19,6 +19,13 @@
 
 #include "math_regions.hpp"
 
+#include <cmath>
+
+#include "P4ParentStudy.hpp"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "math_polynom.hpp"
+
 // ---------------------------------------------------------------------
 //  isInsideRegion_R2, isInsideRegion_R2_epsilon
 // ---------------------------------------------------------------------
@@ -27,7 +34,7 @@
 //
 // The _epsilon variant increases the region by an epsilon amount before
 // checking
-bool isInsideRegion_R2(const int *signs, const double *ucoord)
+bool isInsideRegion_R2(const std::vector<int> &signs, const double *ucoord)
 {
     int k;
 
@@ -35,7 +42,7 @@ bool isInsideRegion_R2(const int *signs, const double *ucoord)
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(gVFResults.separatingCurves_[k].sep, ucoord) < 0) {
+        if (eval_term2(gVFResults.separatingCurves_[k].r2, ucoord) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -46,7 +53,7 @@ bool isInsideRegion_R2(const int *signs, const double *ucoord)
     return true;
 }
 
-bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
+bool isInsideRegion_R2_epsilon(const std::vector<int> &signs, const double *ucoord,
                                double epsilon)
 {
     int k;
@@ -56,7 +63,7 @@ bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(gVFResults.separatingCurves_[k].sep, ucoord);
+        v = eval_term2(gVFResults.separatingCurves_[k].r2, ucoord);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -78,7 +85,7 @@ bool isInsideRegion_R2_epsilon(const int *signs, const double *ucoord,
 //
 // The _epsilon variant increases the region by an epsilon amount before
 // checking
-bool isInsideRegion_U1(const int *signs, const double *z1z2)
+bool isInsideRegion_U1(const std::vector<int> &signs, const double *z1z2)
 {
     int k;
 
@@ -86,7 +93,7 @@ bool isInsideRegion_U1(const int *signs, const double *z1z2)
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(gVFResults.separatingCurves_[k].sep_U1, z1z2) < 0) {
+        if (eval_term2(gVFResults.separatingCurves_[k].u1, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -97,8 +104,8 @@ bool isInsideRegion_U1(const int *signs, const double *z1z2)
     return true;
 }
 
-bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
-                               double epsilon)
+bool isInsideRegion_U1_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon)
 {
     int k;
     double v;
@@ -107,7 +114,7 @@ bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(gVFResults.separatingCurves_[k].sep_U1, z1z2);
+        v = eval_term2(gVFResults.separatingCurves_[k].u1, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -129,7 +136,7 @@ bool isInsideRegion_U1_epsilon(const int *signs, const double *z1z2,
 //
 // The _epsilon variant increases the region by an epsilon amount before
 // checking
-bool isInsideRegion_V1(const int *signs, const double *z1z2)
+bool isInsideRegion_V1(const std::vector<int> &signs, const double *z1z2)
 {
     int k;
 
@@ -137,7 +144,7 @@ bool isInsideRegion_V1(const int *signs, const double *z1z2)
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(gVFResults.separatingCurves_[k].sep_V1, z1z2) < 0) {
+        if (eval_term2(gVFResults.separatingCurves_[k].v1, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -148,8 +155,8 @@ bool isInsideRegion_V1(const int *signs, const double *z1z2)
     return true;
 }
 
-bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
-                               double epsilon)
+bool isInsideRegion_V1_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon)
 {
     int k;
     double v;
@@ -158,7 +165,7 @@ bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(gVFResults.separatingCurves_[k].sep_V1, z1z2);
+        v = eval_term2(gVFResults.separatingCurves_[k].v1, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -182,7 +189,7 @@ bool isInsideRegion_V1_epsilon(const int *signs, const double *z1z2,
 // checking
 //
 
-bool isInsideRegion_U2(const int *signs, const double *z1z2)
+bool isInsideRegion_U2(const std::vector<int> &signs, const double *z1z2)
 {
     int k;
 
@@ -190,7 +197,7 @@ bool isInsideRegion_U2(const int *signs, const double *z1z2)
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(gVFResults.separatingCurves_[k].sep_U2, z1z2) < 0) {
+        if (eval_term2(gVFResults.separatingCurves_[k].u2, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -201,8 +208,8 @@ bool isInsideRegion_U2(const int *signs, const double *z1z2)
     return true;
 }
 
-bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
-                               double epsilon)
+bool isInsideRegion_U2_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon)
 {
     int k;
     double v;
@@ -211,7 +218,7 @@ bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(gVFResults.separatingCurves_[k].sep_U2, z1z2);
+        v = eval_term2(gVFResults.separatingCurves_[k].u2, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -234,7 +241,7 @@ bool isInsideRegion_U2_epsilon(const int *signs, const double *z1z2,
 //
 // The _epsilon variant increases the region by an epsilon amount before
 // checking
-bool isInsideRegion_V2(const int *signs, const double *z1z2)
+bool isInsideRegion_V2(const std::vector<int> &signs, const double *z1z2)
 {
     int k;
 
@@ -242,7 +249,7 @@ bool isInsideRegion_V2(const int *signs, const double *z1z2)
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        if (eval_term2(gVFResults.separatingCurves_[k].sep_V2, z1z2) < 0) {
+        if (eval_term2(gVFResults.separatingCurves_[k].v2, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -253,8 +260,8 @@ bool isInsideRegion_V2(const int *signs, const double *z1z2)
     return true;
 }
 
-bool isInsideRegion_V2_epsilon(const int *signs, const double *z1z2,
-                               double epsilon)
+bool isInsideRegion_V2_epsilon(const std::vector<int> &signs,
+                               const double *z1z2, double epsilon)
 {
     int k;
     double v;
@@ -263,7 +270,7 @@ bool isInsideRegion_V2_epsilon(const int *signs, const double *z1z2,
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        v = eval_term2(gVFResults.separatingCurves_[k].sep_V2, z1z2);
+        v = eval_term2(gVFResults.separatingCurves_[k].v2, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -287,7 +294,7 @@ bool isInsideRegion_V2_epsilon(const int *signs, const double *z1z2,
 //
 // The _epsilon variant increases the region by an epsilon amount before
 // checking
-bool isInsideRegion_cyl(const int *signs, const double *rtheta)
+bool isInsideRegion_cyl(const std::vector<int> &signs, const double *rtheta)
 {
     int k;
 
@@ -295,7 +302,7 @@ bool isInsideRegion_cyl(const int *signs, const double *rtheta)
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        if (eval_term3(gVFResults.separatingCurves_[k].sep_C, rtheta) < 0) {
+        if (eval_term3(gVFResults.separatingCurves_[k].c, rtheta) < 0) {
             if (signs[k] > 0)
                 return false;
         } else {
@@ -306,8 +313,8 @@ bool isInsideRegion_cyl(const int *signs, const double *rtheta)
     return true;
 }
 
-bool isInsideRegion_cyl_epsilon(const int *signs, const double *rtheta,
-                                double epsilon)
+bool isInsideRegion_cyl_epsilon(const std::vector<int> &signs,
+                                const double *rtheta, double epsilon)
 {
     int k;
     double v;
@@ -316,7 +323,7 @@ bool isInsideRegion_cyl_epsilon(const int *signs, const double *rtheta,
         return false;
 
     for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
-        v = eval_term3(gVFResults.separatingCurves_[k].sep_C, rtheta);
+        v = eval_term3(gVFResults.separatingCurves_[k].c, rtheta);
         if (v < -epsilon) {
             if (signs[k] > 0)
                 return false;
@@ -379,8 +386,8 @@ bool isInsideRegion_sphere(const std::vector<int> &signs, const double *pcoord)
     }
 }
 
-bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
-                                   double epsilon)
+bool isInsideRegion_sphere_epsilon(const std::vector<int> &signs,
+                                   const double *pcoord, double epsilon)
 {
     double ucoord[2], theta;
 
@@ -427,30 +434,30 @@ bool isInsideRegion_sphere_epsilon(const int *signs, const double *pcoord,
 // the polynomial by a rescaled one if the point lies close to infinity.
 //
 // So we first determine where the point lies.
-double eval_curve(const p4curveRegions::curveResult &c, const double *pcoord)
+double eval_curve(const p4curves::curves &c, const double *pcoord)
 {
     double ucoord[2], theta;
     if (!gVFResults.plweights_) {
         if (pcoord[2] > ZCOORD) {
             psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            return eval_term2(c.sep, ucoord);
+            return eval_term2(c.r2, ucoord);
         } else {
-            theta = atan2(fabs(pcoord[1], fabs(pcoord[0])));
+            theta = atan2(fabs(pcoord[1]), fabs(pcoord[0]));
             if (theta < PI_DIV4 && theta > -PI_DIV4) {
                 if (pcoord[0] > 0) {
                     psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], ucoord);
-                    return eval_term2(c.sep_U1, ucoord);
+                    return eval_term2(c.u1, ucoord);
                 } else {
                     psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], ucoord);
-                    return eval_term2(c.sep_V1, ucoord);
+                    return eval_term2(c.v1, ucoord);
                 }
             } else {
                 if (pcoord[1] > 0) {
                     psphere_to_U2(pcoord[0], pcoord[1], pcoord[2], ucoord);
-                    return eval_term2(c.sep_U2, ucoord);
+                    return eval_term2(c.u2, ucoord);
                 } else {
                     psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], ucoord);
-                    return eval_term2(c.sep_V2, ucoord);
+                    return eval_term2(c.v2, ucoord);
                 }
             }
         }
@@ -458,9 +465,9 @@ double eval_curve(const p4curveRegions::curveResult &c, const double *pcoord)
         ucoord[0] = pcoord[1];
         ucoord[1] = pcoord[2];
         if (pcoord[0])
-            return eval_term2(c.sep, ucoord);
+            return eval_term2(c.r2, ucoord);
         else
-            return eval_term3(c.sep_C, ucoord);
+            return eval_term3(c.c, ucoord);
     }
 }
 
@@ -564,7 +571,7 @@ double pSphereDistance(double *p, double *q)
 
     if (p[2] == 0) {
         if (q[2] != 0)
-            return 1.0;  // one is finite, the other is infinite
+            return 1.0; // one is finite, the other is infinite
 
         theta1 = atan2(p[1], p[0]);
         theta2 = atan2(q[1], q[0]);
@@ -579,7 +586,7 @@ double pSphereDistance(double *p, double *q)
     }
 
     if (q[2] == 0)
-        return 1.0;  // one is finite, the other is infinite
+        return 1.0; // one is finite, the other is infinite
 
     // both are finite:
 
@@ -603,7 +610,7 @@ static double plSphereDistance(double *p, double *q)
 
     if (p[0] == 1 && p[1] == 0) {
         if (!(q[0] == 1 && q[1] == 0))
-            return 1.0;  // one is finite, the other is infinite
+            return 1.0; // one is finite, the other is infinite
 
         theta1 = p[2];
         theta2 = q[2];
@@ -618,7 +625,7 @@ static double plSphereDistance(double *p, double *q)
     }
 
     if (q[0] == 1 && q[1] == 0)
-        return 1.0;  // one is finite, the other is infinite
+        return 1.0; // one is finite, the other is infinite
 
     // both are finite:
 
@@ -630,8 +637,6 @@ static double plSphereDistance(double *p, double *q)
     return sqrt(dist);
 }
 
-// TODO: check if overload is needed or we can use implicit cast thanks to
-// struct heritance
 // ---------------------------------------------------------------------
 //          markSingularity
 // ---------------------------------------------------------------------
@@ -672,7 +677,7 @@ void markSingularity(p4singularities::saddle &s,
     }
 
     for (int k = 0; k < N; k++) {
-        if (plweights_) {
+        if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
                 //                Debug( "coinciding" );
                 s.position = POSITION_COINCIDING;
@@ -738,7 +743,7 @@ void markSingularity(p4singularities::semi_elementary s,
     }
 
     for (int k = 0; k < N; k++) {
-        if (plweights_) {
+        if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
                 //                Debug( "coinciding" );
                 s.position = POSITION_COINCIDING;
@@ -807,7 +812,7 @@ void markSingularity(p4singularities::node s, std::vector<positionitem> &plist,
     }
 
     for (int k = 0; k < N; k++) {
-        if (plweights_) {
+        if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
                 //                Debug( "coinciding" );
                 s.position = POSITION_COINCIDING;
@@ -877,7 +882,7 @@ void markSingularity(p4singularities::strong_focus s,
     }
 
     for (int k = 0; k < N; k++) {
-        if (plweights_) {
+        if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
                 //                Debug( "coinciding" );
                 s.position = POSITION_COINCIDING;
@@ -947,7 +952,7 @@ void markSingularity(p4singularities::weak_focus s,
     }
 
     for (int k = 0; k < N; k++) {
-        if (plweights_) {
+        if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
                 //                Debug( "coinciding" );
                 s.position = POSITION_COINCIDING;
@@ -1017,7 +1022,7 @@ void markSingularity(p4singularities::degenerate s,
     }
 
     for (int k = 0; k < N; k++) {
-        if (plweights_) {
+        if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
                 //                Debug( "coinciding" );
                 s.position = POSITION_COINCIDING;

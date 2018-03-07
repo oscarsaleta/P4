@@ -19,11 +19,23 @@
 
 #pragma once
 
-#include <vector>
-
-#include "tables.hpp"
-
 class QString;
+
+namespace p4singularities
+{
+struct genericsingularity;
+struct saddle;
+struct semi_elementary;
+struct node;
+struct strong_focus;
+struct weak_focus;
+struct degenerate;
+}
+
+namespace p4curves
+{
+struct curves;
+}
 
 struct positionitem {
     double pcoord[3];
