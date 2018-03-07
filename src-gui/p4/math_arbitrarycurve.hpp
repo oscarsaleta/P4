@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include "tables.hpp"
-
 #define EVAL_CURVE_NONE 0
 #define EVAL_CURVE_R2 1
 #define EVAL_CURVE_U1 2

@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include <vector>
-
 class P4WinSphere;
 
 namespace p4orbits

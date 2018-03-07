@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include <memory>
-
 #include <QString>
 
 class P4ParentStudy;
