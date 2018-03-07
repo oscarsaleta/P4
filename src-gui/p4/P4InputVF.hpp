@@ -367,4 +367,4 @@ class P4InputVF : public QObject
     std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
 };
 
-P4InputVF gThisVF;
+extern P4InputVF gThisVF;
