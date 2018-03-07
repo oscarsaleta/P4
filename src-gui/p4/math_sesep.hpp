@@ -23,8 +23,9 @@
 
 class P4WinSphere;
 
-namespace p4singularities {
-    struct semi_elementary;
+namespace p4singularities
+{
+struct semi_elementary;
 }
 
 void start_plot_se_sep(P4WinSphere *, int);
