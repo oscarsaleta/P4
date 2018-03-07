@@ -87,8 +87,7 @@ bool isvalid_plsphereviewcoord(double u, double v, double *pcoord);
 
 // projecting the PL-sphere to a disc of radius one (u,v) coordinates:
 void plsphere_annulus(double x, double y, double z, double *u);
-void annulus_to_plsphere(double u, double v, double *p);
-void plsphere_to_annulus(double x, double y, double z, double *u);
+void annulus_plsphere(double x, double y, double *p);
 void finite_annulus(double x, double y, double *u);
 
 // vector field evaluation
