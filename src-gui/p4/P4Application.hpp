@@ -20,7 +20,6 @@
 #pragma once
 
 #include <QApplication>
-#include <QProcess>
 
 #ifdef Q_OS_WIN
 #define USERPLATFORM "WINDOWS"
@@ -31,6 +30,7 @@
 #include <memory>
 
 class QFont;
+class QProcess;
 
 class P4Application : public QApplication
 {
