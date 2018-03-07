@@ -19,24 +19,24 @@
 
 #include "P4SepDlg.hpp"
 
-#include "P4PlotWnd.hpp"
-#include "custom.hpp"
-#include "main.hpp"
-#include "math_separatrice.hpp"
-#include "P4WinSphere.hpp"
-
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "P4ParentStudy.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
+#include "custom.hpp"
+#include "main.hpp"
+#include "math_separatrice.hpp"
+
 QString gCurrentSingularityInfo[4]{"", "", "", ""};
 double gCurrentSeparatriceEpsilon{0};
 
-P4SepDlg::P4SepDlg(std::shared_ptr<P4PlotWnd> plt,
-                   std::shared_ptr<P4WinSphere> sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
-      plotWnd_{std::move(plt)}, mainSphere_{std::move(sp)}
+P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
+      mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
@@ -46,7 +46,7 @@ P4SepDlg::P4SepDlg(std::shared_ptr<P4PlotWnd> plt,
     btn_selectnext_ = std::make_unique<QPushButton>("Select &Next sep", this);
 
     edt_epsilon_ = std::make_unique<QLineEdit>("", this);
-    std::unique_ptr<QLabel> lbl1{std::make_unique<QLabel>("&Epsilon = ", this)};
+    auto lbl1 = std::make_unique<QLabel>("&Epsilon = ", this);
     lbl1->setBuddy(edt_epsilon_.get());
 
     lbl_info_0_ = std::make_unique<QLabel>("", this);
@@ -63,15 +63,15 @@ P4SepDlg::P4SepDlg(std::shared_ptr<P4PlotWnd> plt,
     mainLayout_->addWidget(lbl_info_2_.get());
     mainLayout_->addWidget(lbl_info_3_.get());
 
-    std::unique_ptr<QHBoxLayout> layout3{std::make_unique<QHBoxLayout>()};
+    auto layout3 = std::make_unique<QHBoxLayout>();
     layout3->addWidget(lbl1.get());
     layout3->addWidget(edt_epsilon_.get());
 
-    std::unique_ptr<QHBoxLayout> layout4{std::make_unique<QHBoxLayout>()};
+    auto layout4 = std::make_unique<QHBoxLayout>();
     layout4->addWidget(btn_start_.get());
     layout4->addWidget(btn_cont_.get());
 
-    std::unique_ptr<QHBoxLayout> layout5{std::make_unique<QHBoxLayout>()};
+    auto layout5 = std::make_unique<QHBoxLayout>();
     layout5->addWidget(btn_intnext_.get());
     layout5->addWidget(btn_selectnext_.get());
 
@@ -266,7 +266,7 @@ void P4SepDlg::onepsilon_enter()
     s = edt_epsilon_->text();
     eps = s.toDouble(&ok);
     if (!ok || eps <= 0) {
-        markBad(edt_epsilon_);
+        markBad(edt_epsilon_.get());
         return;
     }
 

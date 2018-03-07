@@ -39,12 +39,12 @@ class P4SepDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4SepDlg(std::shared_ptr<P4PlotWnd>, std::shared_ptr<P4WinSphere>);
+    P4SepDlg(P4PlotWnd *, P4WinSphere *);
     void reset();
 
   private:
-    std::shared_ptr<P4WinSphere> mainSphere_;
-    std::shared_ptr<P4PlotWnd> plotWnd_;
+    P4WinSphere *mainSphere_;
+    P4PlotWnd *plotWnd_;
 
     std::unique_ptr<QPushButton> btn_selectnext_;
     std::unique_ptr<QPushButton> btn_intnext_;
@@ -72,5 +72,3 @@ class P4SepDlg : public QWidget
     void onepsilon_enter();
     void markBad(QLineEdit *);
 };
-
-#endif /* WIN_SEPARATRICES_H */
