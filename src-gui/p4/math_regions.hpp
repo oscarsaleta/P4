@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <vector>
+
 class QString;
 
 namespace p4singularities

@@ -33,7 +33,10 @@
 #define EVAL_ISOCLINES_CYL4 11
 #define EVAL_ISOCLINES_FINISHLYAPUNOV 12
 
+#include <vector>
+
 class P4WinSphere;
+
 namespace p4orbits
 {
 struct orbits_points;

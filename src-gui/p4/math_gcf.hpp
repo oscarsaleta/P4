@@ -33,6 +33,8 @@
 #define EVAL_GCF_CYL4 11
 #define EVAL_GCF_FINISHLYAPUNOV 12
 
+#include <vector>
+
 class P4WinSphere;
 
 namespace p4orbits

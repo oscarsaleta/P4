@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <vector>
+
 namespace p4polynom {
     struct term1;
     struct term2;

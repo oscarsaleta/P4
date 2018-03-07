@@ -19,8 +19,6 @@
 
 #include "math_separatingcurves.hpp"
 
-#include <vector>
-
 #include "P4ParentStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"

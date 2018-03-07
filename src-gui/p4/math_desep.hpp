@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <vector>
+
 namespace p4blowup
 {
 struct blow_up_points;

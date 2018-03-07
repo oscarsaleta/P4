@@ -32,6 +32,8 @@
 #define EVAL_CURVE_CYL4 11
 #define EVAL_CURVE_FINISHLYAPUNOV 12
 
+#include <vector>
+
 class P4WinSphere;
 
 namespace p4orbits

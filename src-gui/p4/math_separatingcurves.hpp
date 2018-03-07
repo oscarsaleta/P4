@@ -19,7 +19,12 @@
 
 #pragma once
 
-#include "tables.hpp"
+#include <vector>
+
+namespace p4orbits
+{
+struct orbits_points;
+}
 
 bool readSeparatingCurvePoints(FILE *fp,
                                std::vector<p4orbits::orbits_points> &psep,
