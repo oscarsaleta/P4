@@ -19,9 +19,10 @@
 
 #include "plot_tools.hpp"
 
+#include "P4ParentStudy.hpp"
 #include "P4WinSphere.hpp"
-#include "tables.hpp"
 #include "math_p4.hpp"
+#include "tables.hpp"
 
 #include <cmath>
 
@@ -54,8 +55,8 @@ WHEN ZOOMING
 }
 */
 
-void spherePlotLine(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p1,
-                    double *p2, int color)
+// FIXME: com fer que ho faci per cada sphere del vector?
+void spherePlotLine(P4WinSphere *sp, double *p1, double *p2, int color)
 {
     double ucoord1[2];
     double ucoord2[2];
@@ -64,30 +65,30 @@ void spherePlotLine(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p1,
 
     if (MATHFUNC(sphere_to_viewcoordpair)(p1, p2, ucoord1, ucoord2, ucoord3,
                                           ucoord4)) {
-        for (auto const &it : sp) {
+        for (auto const &it : sp->sM_sphereList) {
             it->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
         }
     } else {
-        for (auto const &it : sp) {
+        for (auto const &it : sp->sM_sphereList) {
             it->drawLine(ucoord1[0], ucoord1[1], ucoord2[0], ucoord2[1], color);
             it->drawLine(ucoord3[0], ucoord3[1], ucoord4[0], ucoord4[1], color);
         }
     }
 }
 
-void spherePlotPoint(std::vector<std::shared_ptr<P4WinSphere>> sp, double *p,
+void spherePlotPoint(P4WinSphere *sp, double *p,
                      int color)
 {
     double ucoord[2];
 
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], ucoord);
 
-    for (auto const &it : sp) {
+    for (auto const &it : sp->sM_sphereList) {
         it->drawPoint(ucoord[0], ucoord[1], color);
     }
 }
 
-void spherePrintLine(std::shared_ptr<P4WinSphere> sp, double *p1, double *p2,
+void spherePrintLine(P4WinSphere *sp, double *p1, double *p2,
                      int color)
 {
     double ucoord1[2];
@@ -104,7 +105,7 @@ void spherePrintLine(std::shared_ptr<P4WinSphere> sp, double *p1, double *p2,
     }
 }
 
-void spherePrintPoint(std::shared_ptr<P4WinSphere> sp, double *p, int color)
+void spherePrintPoint(P4WinSphere *sp, double *p, int color)
 {
     double ucoord[2];
 
@@ -166,14 +167,14 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
 
     if (dy > 0) {
         if (y1 > ymax)
-            return false;  // y will be increasing, and is already too large
+            return false; // y will be increasing, and is already too large
         if (y1 < ymin) {
             if (y2 + (dy / dx) / (xmax - x2) < ymin)
-                return false;  // y is increasing, but will never reach ymin
-                               // quickly enough for x in [xmin,xmax].
+                return false; // y is increasing, but will never reach ymin
+                              // quickly enough for x in [xmin,xmax].
 
             y1 = ymin;
-            x1 = x2 + dx / dy * (ymin - y2);  // calculate intersection point.
+            x1 = x2 + dx / dy * (ymin - y2); // calculate intersection point.
         }
     } else {
         if (y1 < ymin)
@@ -200,7 +201,7 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
     if (dy < 0) {
         if (y2 < ymin) {
             y2 = ymin;
-            x2 = x1 + dx / dy * (ymin - y1);  // calculate intersection point.
+            x2 = x1 + dx / dy * (ymin - y1); // calculate intersection point.
         }
     } else {
         if (y2 > ymax) {
