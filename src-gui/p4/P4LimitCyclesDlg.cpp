@@ -19,14 +19,6 @@
 
 #include "P4LimitCyclesDlg.hpp"
 
-#include "custom.hpp"
-#include "tables.hpp"
-#include "main.hpp"
-#include "math_limitcycles.hpp"
-#include "P4Application.hpp"
-#include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
-
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -37,40 +29,45 @@
 
 #include <cmath>
 
+#include "P4Application.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
+#include "main.hpp"
+#include "math_limitcycles.hpp"
+
 bool gLCWindowIsUp{false}; // see definition in main.h
 
-static std::unique_ptr<QProgressDialog> sLCProgressDlg{};
+static std::unique_ptr<QProgressDialog> sLCProgressDlg;
 static int sLCProgressCount{1};
 static int sLCMaxProgressCount{0};
 
-P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd> plt,
-                                   std::unique_ptr<P4WinSphere> sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint),
-      plotwnd_{plt},
+P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4WinSphere *sp)
+    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotwnd_{plt},
       mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    edt_x0_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl1{new QLabel("x0 = ", this)};
-    edt_y0_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl2{new QLabel("y0 = ", this)};
-    edt_x1_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl3{new QLabel("x1 = ", this)};
-    edt_y1_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl4{new QLabel("y1 = ", this)};
-    edt_grid_.reset(new QLineEdit("", this));
-    std::unique_ptr<QLabel> lbl5{new QLabel("Grid: ", this)};
+    edt_x0_ = std::make_unique<QLineEdit>("", this);
+    auto lbl1 = std::make_unique<QLabel>("x0 = ", this);
+    edt_y0_ = std::make_unique<QLineEdit>("", this);
+    auto lbl2 = std::make_unique<QLabel>("y0 = ", this);
+    edt_x1_ = std::make_unique<QLineEdit>("", this);
+    auto lbl3 = std::make_unique<QLabel>("x1 = ", this);
+    edt_y1_ = std::make_unique<QLineEdit>("", this);
+    auto lbl4 = std::make_unique<QLabel>("y1 = ", this);
+    edt_grid_ = std::make_unique<QLineEdit>("", this);
+    auto lbl5 = std::make_unique<QLabel>("Grid: ", this);
 
-    spin_numpoints_.reset(new QSpinBox(this));
+    spin_numpoints_ = std::make_unique<QSpinBox>(this);
     spin_numpoints_->setMinimum(MIN_LCPOINTS);
     spin_numpoints_->setMaximum(MAX_LCPOINTS);
-    std::unique_ptr<QLabel> lbl6{new QLabel("# Points: ", this)};
+    auto lbl6 = std::make_unique<QLabel>("# Points: ", this);
 
-    btn_start_.reset(new QPushButton("&Start", this));
-    btn_cancel_.reset(new QPushButton("&Reset setpoints", this));
-    btn_dellast_.reset(new QPushButton("&Delete Last LC", this));
-    btn_delall_.reset(new QPushButton("Delete &All LC", this));
+    btn_start_ = std::make_unique<QPushButton>("&Start", this);
+    btn_cancel_ = std::make_unique<QPushButton>("&Reset setpoints", this);
+    btn_dellast_ = std::make_unique<QPushButton>("&Delete Last LC", this);
+    btn_delall_ = std::make_unique<QPushButton>("Delete &All LC", this);
 
 #ifdef TOOLTIPS
     edt_x0_->setToolTip(
@@ -97,64 +94,57 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd> plt,
 
     // layout
 
-    mainLayout_.reset(new QBoxLayout(QBoxLayout::TopToBottom, this));
+    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    std::unique_ptr<QGridLayout> lay00{new QGridLayout()};
-    lay00->addWidget(lbl1, 0, 0);
-    lay00->addWidget(edt_x0_, 0, 1);
-    lay00->addWidget(lbl2, 0, 2);
-    lay00->addWidget(edt_y0_, 0, 3);
-    lay00->addWidget(lbl3, 1, 0);
-    lay00->addWidget(edt_x1_, 1, 1);
-    lay00->addWidget(lbl4, 1, 2);
-    lay00->addWidget(edt_y1_, 1, 3);
+    auto lay00 = std::make_unique<QGridLayout>();
+    lay00->addWidget(lbl1.get(), 0, 0);
+    lay00->addWidget(edt_x0_.get(), 0, 1);
+    lay00->addWidget(lbl2.get(), 0, 2);
+    lay00->addWidget(edt_y0_.get(), 0, 3);
+    lay00->addWidget(lbl3.get(), 1, 0);
+    lay00->addWidget(edt_x1_.get(), 1, 1);
+    lay00->addWidget(lbl4.get(), 1, 2);
+    lay00->addWidget(edt_y1_.get(), 1, 3);
 
-    std::unique_ptr<QHBoxLayout> layout1{new QHBoxLayout()};
-    layout1->addWidget(lbl5);
-    layout1->addWidget(edt_grid_);
+    auto layout1 = std::make_unique<QHBoxLayout>();
+    layout1->addWidget(lbl5.get());
+    layout1->addWidget(edt_grid_.get());
 
-    std::unique_ptr<QHBoxLayout> layout2{new QHBoxLayout()};
-    layout2->addWidget(btn_start_);
-    layout2->addWidget(btn_cancel_);
+    auto layout2 = std::make_unique<QHBoxLayout>();
+    layout2->addWidget(btn_start_.get());
+    layout2->addWidget(btn_cancel_.get());
 
-    std::unique_ptr<QHBoxLayout> layout3{new QHBoxLayout()};
-    layout3->addWidget(lbl6);
-    layout3->addWidget(spin_numpoints_);
+    auto layout3 = std::make_unique<QHBoxLayout>();
+    layout3->addWidget(lbl6.get());
+    layout3->addWidget(spin_numpoints_.get());
 
-    std::unique_ptr<QHBoxLayout> layout4{new QHBoxLayout()};
-    layout4->addWidget(btn_dellast_);
-    layout4->addWidget(btn_delall_);
+    auto layout4 = std::make_unique<QHBoxLayout>();
+    layout4->addWidget(btn_dellast_.get());
+    layout4->addWidget(btn_delall_.get());
 
-    mainLayout_->addLayout(lay00);
-    mainLayout_->addLayout(layout1);
-    mainLayout_->addLayout(layout3);
-    mainLayout_->addLayout(layout2);
-    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(lay00.get());
+    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(layout3.get());
+    mainLayout_->addLayout(layout2.get());
+    mainLayout_->addLayout(layout4.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     // connections
-    connect(btn_start_, &QPushButton::clicked, this,
-            &P4LimitCyclesDlg::onbtn_start);
-    connect(btn_cancel_, &QPushButton::clicked, this,
-            &P4LimitCyclesDlg::onbtn_cancel);
-    connect(btn_delall_, &QPushButton::clicked, this,
-            &P4LimitCyclesDlg::onbtn_delall);
-    connect(btn_dellast_, &QPushButton::clicked, this,
-            &P4LimitCyclesDlg::onbtn_dellast);
+    QObject::connect(btn_start_.get(), &QPushButton::clicked, this,
+                     &P4LimitCyclesDlg::onbtn_start);
+    QObject::connect(btn_cancel_.get(), &QPushButton::clicked, this,
+                     &P4LimitCyclesDlg::onbtn_cancel);
+    QObject::connect(btn_delall_.get(), &QPushButton::clicked, this,
+                     &P4LimitCyclesDlg::onbtn_delall);
+    QObject::connect(btn_dellast_.get(), &QPushButton::clicked, this,
+                     &P4LimitCyclesDlg::onbtn_dellast);
 
     // finishing
-    selected_x0_ = 0;
-    selected_y0_ = 0;
-    selected_x1_ = 0;
-    selected_y1_ = 0;
-    selected_grid_ = DEFAULT_LCGRID;
-    selected_numpoints_ = DEFAULT_LCPOINTS;
-
     spin_numpoints_->setValue(selected_numpoints_);
     QString buf;
-    buf.sprintf("%g", (float)selected_grid_);
+    buf.sprintf("%g", selected_grid_);
     edt_grid_->setText(buf);
 
     if (gVFResults.limCycles_.empty()) {
@@ -167,23 +157,20 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd> plt,
 
 void P4LimitCyclesDlg::setSection(double x0, double y0, double x1, double y1)
 {
-    QString buf;
-    QString bufx;
-    QString bufy;
-    bufx.sprintf("%g", (float)x0);
-    bufy.sprintf("%g", (float)y0);
+    QString buf, bufx, bufy;
+    bufx.sprintf("%g", x0);
+    bufy.sprintf("%g", y0);
     edt_x0_->setText(bufx);
     edt_y0_->setText(bufy);
 
-    bufx.sprintf("%g", (float)x1);
-    bufy.sprintf("%g", (float)y1);
+    bufx.sprintf("%g", x1);
+    bufy.sprintf("%g", y1);
     edt_x1_->setText(bufx);
     edt_y1_->setText(bufy);
 }
 
-void P4LimitCyclesDlg::onbtn_start(void)
+void P4LimitCyclesDlg::onbtn_start()
 {
-
     plotwnd_->getDlgData();
 
     QString bufx{edt_x0_->text()};
@@ -200,10 +187,11 @@ void P4LimitCyclesDlg::onbtn_start(void)
     bufy = edt_y1_->text();
     if (bufx.length() == 0 || bufy.length() == 0 || empty) {
         QMessageBox::critical(
-            this, "P4", "Please enter setpoint coordinates for the transverse "
-                        "section.\nYou can also click on the poincare sphere "
-                        "with the left mouse button\nwhile the limit cycle "
-                        "window is opened.\n");
+            this, "P4",
+            "Please enter setpoint coordinates for the transverse "
+            "section.\nYou can also click on the poincare sphere "
+            "with the left mouse button\nwhile the limit cycle "
+            "window is opened.\n");
         return;
     }
 
@@ -220,28 +208,30 @@ void P4LimitCyclesDlg::onbtn_start(void)
     d = sqrt(d);
     if (selected_grid_ > d || selected_grid_ < MIN_LCGRID ||
         selected_grid_ > MAX_LCGRID) {
-        QMessageBox::critical(this, "P4", "Grid size is either too big or too "
-                                          "small for this transverse section.");
+        QMessageBox::critical(this, "P4",
+                              "Grid size is either too big or too "
+                              "small for this transverse section.");
         return;
     }
 
     d /= selected_grid_;
     if (d < MIN_LCORBITS || d > MAX_LCORBITS) {
-        QMessageBox::critical(this, "P4", "Grid size is either too big or too "
-                                          "small for this transverse section.");
+        QMessageBox::critical(this, "P4",
+                              "Grid size is either too big or too "
+                              "small for this transverse section.");
         return;
     }
 
     // SEARCH FOR LIMIT CYCLES:
     sLCMaxProgressCount = (int)(d + 0.5);
-    sLCProgressDlg.reset(new QProgressDialog("Searching for limit cycles...",
-                                              "Stop search", 0,
-                                              sLCMaxProgressCount, this, 0));
+    sLCProgressDlg = std::make_unique<QProgressDialog>(
+        "Searching for limit cycles...", "Stop search", 0, sLCMaxProgressCount,
+        this, 0);
     sLCProgressDlg->setAutoReset(false);
     sLCProgressDlg->setAutoClose(false);
     sLCProgressDlg->setMinimumDuration(0);
     sLCProgressDlg->setValue(sLCProgressCount = 0);
-    setP4WindowTitle(sLCProgressDlg, "Searching for limit cycles...");
+    setP4WindowTitle(sLCProgressDlg.get(), "Searching for limit cycles...");
 
     searchLimitCycle(mainSphere_, selected_x0_, selected_y0_, selected_x1_,
                      selected_y1_, selected_grid_);
@@ -256,11 +246,10 @@ void P4LimitCyclesDlg::onbtn_start(void)
     }
 
     gP4app->processEvents();
-    delete sLCProgressDlg;
-    sLCProgressDlg = nullptr;
+    sLCProgressDlg.reset();
 }
 
-void P4LimitCyclesDlg::onbtn_cancel(void)
+void P4LimitCyclesDlg::onbtn_cancel()
 {
     edt_x0_->setText("");
     edt_y0_->setText("");
@@ -268,7 +257,7 @@ void P4LimitCyclesDlg::onbtn_cancel(void)
     edt_y1_->setText("");
 }
 
-void P4LimitCyclesDlg::reset(void)
+void P4LimitCyclesDlg::reset()
 {
     // finishing
     selected_x0_ = 0;
@@ -284,7 +273,7 @@ void P4LimitCyclesDlg::reset(void)
     edt_y1_->setText("");
 
     QString buf;
-    buf.sprintf("%g", (float)selected_grid_);
+    buf.sprintf("%g", selected_grid_);
     edt_grid_->setText(buf);
     spin_numpoints_->setValue(selected_numpoints_);
 
@@ -309,7 +298,7 @@ void P4LimitCyclesDlg::hideEvent(QHideEvent *he)
     gLCWindowIsUp = false;
 }
 
-void P4LimitCyclesDlg::onbtn_delall(void)
+void P4LimitCyclesDlg::onbtn_delall()
 {
     plotwnd_->getDlgData();
 
@@ -317,12 +306,12 @@ void P4LimitCyclesDlg::onbtn_delall(void)
     btn_dellast_->setEnabled(false);
 
     gVFResults.limCycles_.clear();
-    //gVFResults.currentLimCycleIndex_ = -1;
+    // gVFResults.currentLimCycleIndex_ = -1;
 
     mainSphere_->refresh();
 }
 
-void P4LimitCyclesDlg::onbtn_dellast(void)
+void P4LimitCyclesDlg::onbtn_dellast()
 {
     plotwnd_->getDlgData();
 
@@ -336,7 +325,7 @@ void P4LimitCyclesDlg::onbtn_dellast(void)
     }
 }
 
-bool stop_search_limit(void)
+bool stop_search_limit()
 {
     gP4app->processEvents();
     if (sLCProgressDlg->wasCanceled())
