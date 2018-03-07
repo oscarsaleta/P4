@@ -23,6 +23,8 @@
 
 #include <memory>
 
+#include "custom.hpp"
+
 class P4PlotWnd;
 class P4WinSphere;
 
@@ -31,7 +33,7 @@ class QLineEdit;
 class QSpinBox;
 class QBoxLayout;
 
-bool stop_search_limit(void);
+bool stop_search_limit();
 void write_to_limit_window(double x, double y);
 
 class P4LimitCyclesDlg : public QWidget
@@ -39,15 +41,15 @@ class P4LimitCyclesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4LimitCyclesDlg(std::unique_ptr<P4PlotWnd>, std::unique_ptr<P4WinSphere>);
+    P4LimitCyclesDlg(P4PlotWnd *, P4WinSphere *);
     void reset();
     void setSection(double, double, double, double);
     void showEvent(QShowEvent *);
     void hideEvent(QHideEvent *);
 
   private:
-    std::unique_ptr<P4WinSphere> mainSphere_;
-    std::unique_ptr<P4PlotWnd> plotwnd_;
+    P4WinSphere *mainSphere_;
+    P4PlotWnd *plotwnd_;
 
     std::unique_ptr<QPushButton> btn_start_;
     std::unique_ptr<QPushButton> btn_cancel_;
@@ -64,12 +66,12 @@ class P4LimitCyclesDlg : public QWidget
 
     std::unique_ptr<QBoxLayout> mainLayout_;
 
-    double selected_x0_;
-    double selected_y0_;
-    double selected_x1_;
-    double selected_y1_;
-    double selected_grid_;
-    int selected_numpoints_;
+    double selected_x0_{0};
+    double selected_y0_{0};
+    double selected_x1_{0};
+    double selected_y1_{0};
+    double selected_grid_{DEFAULT_LCGRID};
+    int selected_numpoints_{DEFAULT_LCPOINTS};
 
   public slots:
     void onbtn_start();
