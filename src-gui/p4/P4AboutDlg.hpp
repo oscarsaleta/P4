@@ -32,17 +32,17 @@ class P4AboutDlg : public QDialog
 {
     Q_OBJECT
 
-  private:
-    std::unique_ptr<QPushButton> btn_ok_;
-    std::unique_ptr<QPushButton> btn_settings_;
-
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    QPixmap p4image_;
-
   public:
     P4AboutDlg(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
   public slots:
     void onOk();
     void onSettings();
+
+  private:
+    std::unique_ptr<QPushButton> btn_ok_;
+    std::unique_ptr<QPushButton> btn_settings_;
+
+    std::unique_ptr<QBoxLayout> mainLayout_;
+    QPixmap p4image_;
 };
