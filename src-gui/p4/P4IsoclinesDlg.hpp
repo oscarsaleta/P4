@@ -21,6 +21,8 @@
 
 #include <QWidget>
 
+#include <memory>
+
 class P4PlotWnd;
 class P4WinSphere;
 
@@ -68,5 +70,3 @@ class P4IsoclinesDlg : public QWidget
     void onBtnDelAll();
     void onBtnDelLast();
 };
-
-#endif /* WIN_ISOCLINES_H */

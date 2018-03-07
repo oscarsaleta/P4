@@ -19,16 +19,6 @@
 
 #include "P4IsoclinesDlg.hpp"
 
-#include "P4InputVF.hpp"
-#include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
-#include "custom.hpp"
-#include "tables.hpp"
-#include "main.hpp"
-#include "math_gcf.hpp"
-#include "math_isoclines.hpp"
-#include "math_polynom.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
@@ -36,6 +26,11 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+
+#include "P4ParentStudy.hpp"
+#include "P4PlotWnd.hpp"
+#include "main.hpp"
+#include "math_isoclines.hpp"
 
 P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
@@ -67,10 +62,9 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btnDelAll_ = std::make_unique<QPushButton>("Delete &All Isoclines", this);
 
 #ifdef TOOLTIPS
-    edt_value_->setToolTip(
-        "Value of isoclines to plot.\nCan be 0 for 0-slope "
-        "isoclines, and \"inf\"\n(without quotes, case "
-        "insensitive) for\ninfinite-slope isoclines.");
+    edt_value_->setToolTip("Value of isoclines to plot.\nCan be 0 for 0-slope "
+                           "isoclines, and \"inf\"\n(without quotes, case "
+                           "insensitive) for\ninfinite-slope isoclines.");
     btnEvaluate_->setToolTip("Evaluate isoclines at the selected value.");
     btnPlot_->setToolTip("Plot isocline.");
     btnDelLast_->setToolTip("Delete last isocline drawn");
@@ -140,7 +134,8 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    if (!gVFResults.isocline_vector_.empty()) {
+    // FIXME: quin mirar? algun? primer? fer un flag q digui si n'hi ha?
+    if (!gVFResults.vf_[0]->isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -170,8 +165,12 @@ void P4IsoclinesDlg::onBtnEvaluate()
             return;
         }
     }
-    if ((gThisVF.xdot_ == "0" || gThisVF.xdot_.isEmpty()) &&
-        (gThisVF.ydot_ == "0" || gThisVF.ydot_.isEmpty())) {
+
+    // FIXME: això també mira només un dels camps... Passo d'aquest check? O el
+    // reescric? O miro només el primer? Si n'hi ha més d'un vol dir que estan
+    // bé?
+    if ((gThisVF.xdot_[0] == "0" || gThisVF.xdot_[0].isEmpty()) &&
+        (gThisVF.ydot_[0] == "0" || gThisVF.ydot_[0].isEmpty())) {
         QMessageBox::information(this, "P4",
                                  "Check that the vector field is "
                                  "correctly introduced.\nIf you "
@@ -184,9 +183,16 @@ void P4IsoclinesDlg::onBtnEvaluate()
     } else if (edt_value_->text().trimmed().toLower() == "inf") {
         gThisVF.isoclines_ = gThisVF.xdot_;
     } else {
-        gThisVF.isoclines_ = "(" + gThisVF.ydot_ + ")-(" +
-                             edt_value_->text().trimmed() + ")*(" +
-                             gThisVF.xdot_ + ")";
+        std::vector<QString> tmp;
+        auto &vfx = std::begin(gThisVF.xdot_);
+        auto &vfy = std::begin(gThisVF.ydot_);
+        for (; vfx != std::end(gThisVF.xdot_), vfy != std::end(gThisVF.ydot_);
+             ++vfx, ++vfy) {
+            tmp.emplace_back("(" + (*vfy) + +")-(" +
+                             edt_value_->text().trimmed() + ")*(" + (*vfx) +
+                             ")");
+        }
+        gThisVF.isoclines_ = std::move(tmp);
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
@@ -337,14 +343,13 @@ void P4IsoclinesDlg::finishIsoclinesEvaluation()
     bool result;
 
     if (btnPlot_->isEnabled() == true)
-        return;  // not busy??
+        return; // not busy??
 
     result = evalIsoclinesContinue(evaluating_precision_, evaluating_points_);
 
     if (result) {
         btnPlot_->setEnabled(false);
-        result =
-            evalIsoclinesFinish();  // return false in case an error occured
+        result = evalIsoclinesFinish(); // return false in case an error occured
         if (!result) {
             QMessageBox::critical(this, "P4",
                                   "An error occured while plotting "
