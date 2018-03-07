@@ -19,14 +19,6 @@
 
 #include "P4FindDlg.hpp"
 
-#include "P4Application.hpp"
-#include "P4InputVF.hpp"
-#include "P4ParamsDlg.hpp"
-#include "P4ParentStudy.hpp"
-#include "P4StartDlg.hpp"
-#include "main.hpp"
-#include "p4settings.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QHBoxLayout>
@@ -35,6 +27,17 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSettings>
+
+#include "P4Application.hpp"
+#include "P4InputVF.hpp"
+#include "P4ParamsDlg.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
+#include "P4StartDlg.hpp"
+#include "P4VFSelectDlg.hpp"
+#include "P4VectorFieldDlg.hpp"
+#include "main.hpp"
+#include "p4settings.hpp"
 
 P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     : QWidget{startdlg}, parent_{startdlg}
@@ -80,18 +83,16 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     btn_all_->setToolTip("Study all singularities, finite and infinite");
     btn_fin_->setToolTip("Study only singularities at the finite region");
     btn_inf_->setToolTip("Study only singularities at infinity");
-    btn_one_->setToolTip(
-        "Study one specific singularity.\n"
-        "Do not forget to specify the coordinates.");
+    btn_one_->setToolTip("Study one specific singularity.\n"
+                         "Do not forget to specify the coordinates.");
     btn_yes_->setToolTip(
         "The View/Finite and View/Infinite windows will display more details");
     btn_no_->setToolTip(
         "The View/Finite and View/Infinite windows will display no details");
     btn_load_->setToolTip("Load the vector field & parameters from disc");
     btn_save_->setToolTip("Save the vector field & parameters to disc");
-    btn_eval_->setToolTip(
-        "Prepare a file for the symbolic manipulator, and "
-        "optionally process it");
+    btn_eval_->setToolTip("Prepare a file for the symbolic manipulator, and "
+                          "optionally process it");
 #endif
 
     // layout
@@ -282,7 +283,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                      &P4FindDlg::onBtnSave);
     QObject::connect(btn_eval_.get(), &QPushButton::clicked, this,
                      &P4FindDlg::onBtnEval);
-    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
+    QObject::connect(&gThisVF, &P4InputVF::saveSignal, this,
                      &P4FindDlg::onSaveSignal);
     // TODO: implement onSaveSignal slot
 
@@ -329,7 +330,7 @@ void P4FindDlg::onBtnLoad()
         bool oldeval = gThisVF.evaluated_;
 
         if (vfSelectWindow_) {
-            if (vfSelectWindow_->win_curves_) {
+            if (vfSelectWindow_->getWinCurvesPtr() != nullptr) {
                 gVFResults.readTables(gThisVF.getbarefilename(), true, true);
             }
         }
@@ -449,12 +450,13 @@ void P4FindDlg::signalCurvesEvaluated()
 {
     btn_eval_->setEnabled(true);
     if (vfSelectWindow_) {
-        if (!vfSelectWindow_->win_curves.empty())
-            vfSelectWindow_->win_curves->signalSeparatingCurvesEvaluated();
+        if (vfSelectWindow_->getWinCurvesPtr() != nullptr)
+            vfSelectWindow_->getWinCurvesPtr()
+                ->signalSeparatingCurvesEvaluated();
     }
 }
 
-P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr()
+P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr() const
 {
     if (vfSelectWindow_)
         return vfSelectWindow_.get();
