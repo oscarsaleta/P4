@@ -20,10 +20,11 @@
 #include "P4GcfDlg.hpp"
 
 #include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "main.hpp"
 #include "math_gcf.hpp"
+#include "tables.hpp"
 
 #include <QBoxLayout>
 #include <QButtonGroup>
@@ -40,8 +41,8 @@ P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4WinSphere *sp)
     auto btngrp = std::make_unique<QButtonGroup>(this);
     btn_dots_ = std::make_unique<QRadioButton>("Dots", this);
     btn_dashes_ = std::make_unique<QRadioButton>("Dashes", this);
-    btngrp->addButton(btn_dots_);
-    btngrp->addButton(btn_dashes_);
+    btngrp->addButton(btn_dots_.get());
+    btngrp->addButton(btn_dashes_.get());
 
     auto lbl1 = std::make_unique<QLabel>("Appearance: ", this);
 
@@ -59,9 +60,8 @@ P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4WinSphere *sp)
 #ifdef TOOLTIPS
     btn_dots_->setToolTip(
         "Plot individual points of the curve of singularities");
-    btn_dashes_->setToolTip(
-        "Connect points of the curve of singularities with "
-        "small line segments");
+    btn_dashes_->setToolTip("Connect points of the curve of singularities with "
+                            "small line segments");
     btn_evaluate_->setToolTip("Start evaluation (using symbolic manipulator)");
     QString ttip;
     ttip.sprintf("Number of points. Must be between %d and %d.", MIN_GCFPOINTS,
@@ -192,7 +192,7 @@ void P4GcfDlg::onbtn_evaluate()
 void P4GcfDlg::finishGcfEvaluation()
 {
     if (btn_evaluate_->isEnabled() == true)
-        return;  // not busy??
+        return; // not busy??
 
     bool result{evalGcfContinue(evaluating_precision_, evaluating_points_)};
 

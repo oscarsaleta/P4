@@ -35,8 +35,8 @@ class P4GcfDlg : public QWidget
 
   public:
     P4GcfDlg(P4PlotWnd *, P4WinSphere *);
-    void reset(void);
-    void finishGcfEvaluation(void);
+    void reset();
+    void finishGcfEvaluation();
 
   private:
     P4WinSphere *mainSphere_;
@@ -57,5 +57,5 @@ class P4GcfDlg : public QWidget
     int evaluating_precision_;
 
   public slots:
-    void onbtn_evaluate(void);
+    void onbtn_evaluate();
 };
