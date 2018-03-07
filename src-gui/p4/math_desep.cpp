@@ -697,7 +697,7 @@ void plot_all_de_sep(P4WinSphere *spherewnd, int vfindex,
                 auto &sep = it2.sep_points.back();
                 copy_x_into_y(sep.pcoord, p);
                 if (it2.integrating_in_local_chart) {
-                    auto v = integrate_blow_up(spherewnd, p, de_sep,
+                    auto v = integrate_blow_up(spherewnd, p, it2,
                                                gVFResults.config_currentstep_,
                                                sep.dir, sep.type, it1.chart);
                     if (!v.empty())
