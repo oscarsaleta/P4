@@ -19,17 +19,16 @@
 
 #include "P4OrbitsDlg.hpp"
 
-#include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
-#include "custom.hpp"
-#include "tables.hpp"
-#include "main.hpp"
-#include "math_orbits.hpp"
-
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+
+#include "P4ParentStudy.hpp"
+#include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
+#include "main.hpp"
+#include "math_orbits.hpp"
 
 P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
@@ -45,7 +44,6 @@ P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
     lbl2->setBuddy(edt_y0_.get());
 
     btnSelect_ = std::make_unique<QPushButton>("&Select", this);
-
     btnForwards_ = std::make_unique<QPushButton>("&Forwards", this);
     btnContinue_ = std::make_unique<QPushButton>("&Continue", this);
     btnBackwards_ = std::make_unique<QPushButton>("&Backwards", this);
@@ -59,9 +57,8 @@ P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
     edt_y0_->setToolTip(
         "Start point of orbit.\n"
         "You can also click on the plot window to fill this field.");
-    btnSelect_->setToolTip(
-        "Validate your choice of (x0,y0).\n"
-        "When using the mouse, this is not necessary.");
+    btnSelect_->setToolTip("Validate your choice of (x0,y0).\n"
+                           "When using the mouse, this is not necessary.");
     btnForwards_->setToolTip("Start integrating the orbit in forward time");
     btnBackwards_->setToolTip("Start integrating the orbit in backward time");
     btnContinue_->setToolTip(

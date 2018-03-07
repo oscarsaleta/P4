@@ -21,6 +21,8 @@
 
 #include <QWidget>
 
+#include <memory>
+
 class P4WinSphere;
 class P4PlotWnd;
 
