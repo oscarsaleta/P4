@@ -19,20 +19,20 @@
 
 #pragma once
 
-#include "tables.hpp"
-#include "P4InputVF.hpp"
-
 #include <memory>
 #include <vector>
 
-class P4VFStudy;
+#include "P4InputVF.hpp"
+#include "P4VFStudy.hpp"
+#include "tables.hpp"
 
 class P4ParentStudy : public QObject
 {
+    Q_OBJECT
+
   public:
     // Constructor and destructor
     P4ParentStudy();
-    //~P4ParentStudy();
 
     ///////////////////
     // CLASS MEMBERS //
@@ -50,16 +50,16 @@ class P4ParentStudy : public QObject
     bool plotVirtualSingularities_{DEFAULTPLOTVIRTUALSINGULARITIES};
     int p_{1};
     int q_{1};
-    bool plweights_{false};  // true if p<>1 or q<>1; false if p=q=1
+    bool plweights_{false}; // true if p<>1 or q<>1; false if p=q=1
     double config_projection_;
 
-    double double_p_;          // shortcuts: = (double)p
-    double double_q_;          // = (double)q
-    double double_p_plus_q_;   // = (double)(p+q)
-    double double_p_minus_1_;  // = (double)(p-1)
-    double double_q_minus_1_;  // = (double)(q-1)
-    double double_q_minus_p_;  // = (double)(q-p)
-    double xmin_{-1.0};        // in case of local study
+    double double_p_;         // shortcuts: = (double)p
+    double double_q_;         // = (double)q
+    double double_p_plus_q_;  // = (double)(p+q)
+    double double_p_minus_1_; // = (double)(p-1)
+    double double_q_minus_1_; // = (double)(q-1)
+    double double_q_minus_p_; // = (double)(q-p)
+    double xmin_{-1.0};       // in case of local study
     double xmax_{1.0};
     double ymin_{-1.0};
     double ymax_{1.0};
@@ -152,8 +152,8 @@ class P4ParentStudy : public QObject
 
     void (*sphere_to_R2)(double, double, double, double *);
     void (*R2_to_sphere)(double, double, double *);
-    void (*integrate_sphere_orbit)(double, double, double, double *, double *,
-                                   int *, int *, double, double);
+    void (*integrate_sphere_orbit)(double, double, double, double *, double &,
+                                   int &, int &, double, double);
     double (*eval_lc)(double *, double, double, double);
     bool (*less2)(double *, double *);
     int (*change_dir)(double *);

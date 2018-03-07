@@ -24,12 +24,14 @@
 #include <locale.h>
 
 #include "P4VFStudy.hpp"
+#include "math_changedir.hpp"
 #include "math_charts.hpp"
+#include "math_orbits.hpp"
+#include "math_p4.hpp"
 #include "math_polynom.hpp"
 #include "math_regions.hpp"
 #include "math_separatingcurves.hpp"
 #include "math_separatrice.hpp"
-#include "math_orbits.hpp"
 
 // -----------------------------------------------------------------------
 //                              P4ParentStudy CONSTRUCTOR
@@ -640,13 +642,13 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
         for (j = 0; j < gThisVF.numVFRegions_; j++) {
             if (fscanf(fp, "%d", &v) != 1)
                 return false;
-            if (v != gThisVF.vfregions[j]
-                         .vfindex) // TODO: quan estigui llesta file_vf.cpp
+            if (v != gThisVF.vfRegions_[j]
+                         .vfIndex) // TODO: quan estigui llesta file_vf.cpp
                 return false;
             for (k = 0; k < gThisVF.numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
                     return false;
-                if (v != gThisVF.vfregions[j].signs[k])
+                if (v != gThisVF.vfRegions_[j].signs[k])
                     return false;
             }
             fscanf(fp, "\n");
@@ -661,12 +663,12 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
         for (j = 0; j < gThisVF.numCurveRegions_; j++) {
             if (fscanf(fp, "%d", &v) != 1)
                 return false;
-            if (v != gThisVF.curveregions[j].curveindex)
+            if (v != gThisVF.curveRegions_[j].curveIndex)
                 return false;
             for (k = 0; k < gThisVF.numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1)
                     return false;
-                if (v != gThisVF.curveregions[j].signs[k])
+                if (v != gThisVF.curveRegions_[j].signs[k])
                     return false;
             }
             fscanf(fp, "\n");
@@ -690,17 +692,17 @@ void P4ParentStudy::examinePositionsOfSingularities()
     int numpositions{0};
 
     for (i = 0; i < gThisVF.numVF_; i++) {
-        for (auto &sing : vf_[i].first_saddle_point_)
+        for (auto &sing : vf_[i]->saddlePoints_)
             markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i].first_se_point_)
+        for (auto &sing : vf_[i]->sePoints_)
             markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i].first_node_point_)
+        for (auto &sing : vf_[i]->nodePoints_)
             markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i].first_sf_point_)
+        for (auto &sing : vf_[i]->sfPoints_)
             markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i].first_wf_point_)
+        for (auto &sing : vf_[i]->wfPoints_)
             markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i].first_de_point_)
+        for (auto &sing : vf_[i]->dePoints_)
             markSingularity(sing, positions, numpositions, i, plweights_);
     }
 }
