@@ -2126,7 +2126,7 @@ void P4InputVF::prepareIsoclines()
     QFile file{QFile::encodeName(filedotmpl)};
     if (file.open(QFile::WriteOnly)) {
         QTextStream fp{&file};
-        prepareArbitraryCurveFile(fp);
+        prepareIsoclinesFile(fp);
         fp.flush();
         file.close();
     }
