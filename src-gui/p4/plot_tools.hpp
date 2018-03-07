@@ -24,9 +24,11 @@ class P4WinSphere;
 extern void (*plot_l)(P4WinSphere *, const double *, const double *, int);
 extern void (*plot_p)(P4WinSphere *, const double *, int);
 
-void spherePlotLine(P4WinSphere *sp, double *p1, double *p2, int color);
-void spherePlotPoint(P4WinSphere *sp, double *p, int color);
-void spherePrintLine(P4WinSphere *sp, double *p1, double *p2, int color);
-void spherePrintPoint(P4WinSphere *sp, double *p, int color);
+void spherePlotLine(P4WinSphere *sp, const double *p1, const double *p2,
+                    int color);
+void spherePlotPoint(P4WinSphere *sp, const double *p, int color);
+void spherePrintLine(P4WinSphere *sp, const double *p1, const double *p2,
+                     int color);
+void spherePrintPoint(P4WinSphere *sp, const double *p, int color);
 bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
                             double xmin, double xmax, double ymin, double ymax);
