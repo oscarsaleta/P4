@@ -19,6 +19,12 @@
 
 #include "P4PlotWnd.hpp"
 
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QSettings>
+#include <QStatusBar>
+#include <QToolBar>
+
 #include "P4Application.hpp"
 #include "P4ArbitraryCurveDlg.hpp"
 #include "P4Event.hpp"
@@ -29,146 +35,134 @@
 #include "P4LegendWnd.hpp"
 #include "P4LimitCyclesDlg.hpp"
 #include "P4OrbitsDlg.hpp"
+#include "P4ParentStudy.hpp"
 #include "P4PrintDlg.hpp"
 #include "P4SepDlg.hpp"
 #include "P4StartDlg.hpp"
 #include "P4ViewDlg.hpp"
 #include "P4WinSphere.hpp"
 #include "P4ZoomWnd.hpp"
-#include "custom.hpp"
-#include "tables.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
 #include "plot_tools.hpp"
-
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QSettings>
-#include <QStatusBar>
-#include <QToolBar>
-
-#include <utility>
 
 P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 
     setAttribute(Qt::WA_PaintOnScreen, true);
-    setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
+    // setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
     if (gP4smallIcon)
-        setWindowIcon(gP4smallIcon);
+        setWindowIcon(*gP4smallIcon);
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
     flagAllSepsPlotted_ = false;
 
-    std::unique_ptr<QToolBar> toolBar1{
-        std::make_unique<QToolBar>("PlotBar1", this)};
+    auto toolBar1 = std::make_unique<QToolBar>("PlotBar1", this);
     toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
 
-    std::unique_ptr<QToolBar> toolBar2{
-        std::make_unique<QToolBar>("PlotBar2", this)};
+    auto toolBar2 = std::make_unique<QToolBar>("PlotBar2", this);
     toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2->setMovable(false);
 
     actClose_ = std::make_unique<QAction>("Clos&e", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    QObject::connect(actClose_, &QAction::triggered, this,
+    QObject::connect(actClose_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnClose);
-    toolBar1->addAction(actClose_);
+    toolBar1->addAction(actClose_.get());
 
     actRefresh_ = std::make_unique<QAction>("&Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    QObject::connect(actRefresh_, &QAction::triggered, this,
+    QObject::connect(actRefresh_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnRefresh);
-    toolBar1->addAction(actRefresh_);
+    toolBar1->addAction(actRefresh_.get());
 
     actLegend_ = std::make_unique<QAction>("&Legend", this);
     actLegend_->setShortcut(Qt::ALT + Qt::Key_L);
-    QObject::connect(actLegend_, &QAction::triggered, this,
+    QObject::connect(actLegend_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnLegend);
-    toolBar1->addAction(actLegend_);
+    toolBar1->addAction(actLegend_.get());
 
     actOrbits_ = std::make_unique<QAction>("&Orbits", this);
     actOrbits_->setShortcut(Qt::ALT + Qt::Key_O);
-    QObject::connect(actOrbits_, &QAction::triggered, this,
+    QObject::connect(actOrbits_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnOrbits);
-    toolBar1->addAction(actOrbits_);
+    toolBar1->addAction(actOrbits_.get());
 
     actIntParams_ = std::make_unique<QAction>("&Integration Parameters", this);
     actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(actIntParams_, &QAction::triggered, this,
+    QObject::connect(actIntParams_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnIntParams);
-    toolBar1->addAction(actIntParams_);
+    toolBar1->addAction(actIntParams_.get());
 
     actGCF_ = std::make_unique<QAction>("&GCF", this);
     actGCF_->setShortcut(Qt::ALT + Qt::Key_G);
-    QObject::connect(actGCF_, &QAction::triggered, this, &P4PlotWnd::onBtnGCF);
-    toolBar1->addAction(actGCF_);
+    QObject::connect(actGCF_.get(), &QAction::triggered, this,
+                     &P4PlotWnd::onBtnGCF);
+    toolBar1->addAction(actGCF_.get());
 
     actCurve_ = std::make_unique<QAction>("&Curves", this);
     // actCurve_->setShortcut(Qt::ALT + Qt::Key_C);
-    QObject::connect(actCurve_, &QAction::triggered, this,
+    QObject::connect(actCurve_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnCurve);
-    toolBar1->addAction(actCurve_);
+    toolBar1->addAction(actCurve_.get());
 
     actPlotSep_ = std::make_unique<QAction>("Plot &Separatrice", this);
     actPlotSep_->setShortcut(Qt::ALT + Qt::Key_S);
-    QObject::connect(actPlotSep_, &QAction::triggered, this,
+    QObject::connect(actPlotSep_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnPlotSep);
-    toolBar2->addAction(actPlotSep_);
+    toolBar2->addAction(actPlotSep_.get());
 
     actPlotAllSeps_ = std::make_unique<QAction>("Plot All Separa&trices", this);
     actPlotAllSeps_->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(actPlotAllSeps_, &QAction::triggered, this,
+    QObject::connect(actPlotAllSeps_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnPlotAllSeps);
-    toolBar2->addAction(actPlotAllSeps_);
+    toolBar2->addAction(actPlotAllSeps_.get());
 
     actLimitCycles_ = std::make_unique<QAction>("Limit C&ycles", this);
     actLimitCycles_->setShortcut(Qt::ALT + Qt::Key_Y);
-    QObject::connect(actLimitCycles_, &QAction::triggered, this,
+    QObject::connect(actLimitCycles_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnLimitCycles);
-    toolBar2->addAction(actLimitCycles_);
+    toolBar2->addAction(actLimitCycles_.get());
 
     actIsoclines_ = std::make_unique<QAction>("Isoclines", this);
-    QObject::connect(actIsoclines_, &QAction::triggered, this,
+    QObject::connect(actIsoclines_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnIsoclines);
-    toolBar2->addAction(actIsoclines_);
+    toolBar2->addAction(actIsoclines_.get());
 
     actView_ = std::make_unique<QAction>("&View", this);
     actView_->setShortcut(Qt::ALT + Qt::Key_V);
-    QObject::connect(actView_, &QAction::triggered, this,
+    QObject::connect(actView_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnView);
-    toolBar2->addAction(actView_);
+    toolBar2->addAction(actView_.get());
 
     actPrint_ = std::make_unique<QAction>("&Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    QObject::connect(actPrint_, &QAction::triggered, this,
+    QObject::connect(actPrint_.get(), &QAction::triggered, this,
                      &P4PlotWnd::onBtnPrint);
-    toolBar2->addAction(actPrint_);
+    toolBar2->addAction(actPrint_.get());
 
-    addToolBar(Qt::TopToolBarArea, toolBar1);
+    addToolBar(Qt::TopToolBarArea, toolBar1.get());
     addToolBarBreak(Qt::TopToolBarArea);
-    addToolBar(Qt::TopToolBarArea, toolBar2);
+    addToolBar(Qt::TopToolBarArea, toolBar2.get());
 
-    QObject::connect(gThisVF.get(), &QInputVF::saveSignal, this,
+    QObject::connect(&gThisVF, &P4InputVF::saveSignal, this,
                      &P4PlotWnd::onSaveSignal);
-    QObject::connect(gThisVF.get(), &QInputVF::loadSignal, this,
+    QObject::connect(&gThisVF, &P4InputVF::loadSignal, this,
                      &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
-
     actClose_->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
     actRefresh_->setToolTip("Redraw the plot window");
     actLegend_->setToolTip("Show legend");
     actOrbits_->setToolTip("Opens \"Integrate Orbits\" window");
     actIntParams_->setToolTip("Opens \"Integration Parameters\" window");
-    actGCF_->setToolTip(
-        "Opens Greatest-Common-Factor window.\n"
-        "Disabled if there is no GCF");
+    actGCF_->setToolTip("Opens Greatest-Common-Factor window.\n"
+                        "Disabled if there is no GCF");
     actCurve_->setToolTip("Opens window for plotting arbitrary curves.");
     actPlotSep_->setToolTip("Opens \"Plot separatrices\" window");
     actPlotAllSeps_->setToolTip(
@@ -195,10 +189,10 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
     gcfWindow_ = std::make_unique<P4GcfDlg>(this, sphere_);
     curveWindow_ = std::make_unique<P4ArbitraryCurveDlg>(this, sphere_);
     isoclinesWindow_ = std::make_unique<P4IsoclinesDlg>(this, sphere_);
-    gLCWindowIsUp = false;  // Limit cycles: initially hidden
+    gLCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere_->show();
-    setCentralWidget(sphere_);
+    setCentralWidget(sphere_.get());
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
     intParamsWindow_->updateDlgData();
@@ -264,22 +258,15 @@ void P4PlotWnd::adjustHeight()
 void P4PlotWnd::signalChanged()
 {
     sphere_->signalChanged();
-    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
-        (*it)->signalChanged();
-}
-
-void P4PlotWnd::signalEvaluating()
-{
-    sphere_->signalEvaluating();
-    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
-        (*it)->signalEvaluating();
+    for (auto &it : zoomWindows_)
+        it->signalChanged();
 }
 
 void P4PlotWnd::signalEvaluated()
 {
     configure();
-    for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_); it++)
-        (*it)->signalEvaluated();
+    for (auto &it : zoomWindows_)
+        it->signalEvaluated();
 }
 
 void P4PlotWnd::onBtnClose()
@@ -359,7 +346,7 @@ void P4PlotWnd::onBtnPlotAllSeps()
 {
     getDlgData();
     sphere_->prepareDrawing();
-    plot_all_sep(sphere_);
+    plot_all_sep(sphere_.get());
     sphere_->finishDrawing();
     flagAllSepsPlotted_ = true;
 }
@@ -372,7 +359,7 @@ void P4PlotWnd::onBtnLimitCycles()
 
 void P4PlotWnd::onBtnPrint()
 {
-    std::unique_ptr<P4PrintDlg> pdlg{std::make_unique<P4PrintDlg>(this, 0)};
+    auto pdlg = std::make_unique<P4PrintDlg>(this, 0);
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
     int lw{pdlg->getChosenLineWidth()};
@@ -383,7 +370,7 @@ void P4PlotWnd::onBtnPrint()
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
             gP4printer->setResolution(res);
 
-            QPrintDialog dialog(gP4printer, this);
+            QPrintDialog dialog(gP4printer.get(), this);
             if (!dialog.exec())
                 return;
 
@@ -461,12 +448,12 @@ void P4PlotWnd::closeZoomWindow(int id)
             return;
         }
     }
-    return;  // error, zoom window not found
+    return; // error, zoom window not found
 }
 
 void P4PlotWnd::customEvent(QEvent *_e)
 {
-    P4Event *e = reinterpret_cast<P4Event *>(*_e);
+    P4Event *e = static_cast<P4Event *>(_e);
     double pcoord[3];
     double ucoord[2];
     double ucoord0[2];
@@ -475,22 +462,22 @@ void P4PlotWnd::customEvent(QEvent *_e)
 
     switch (e->type()) {
     case TYPE_OPENZOOMWINDOW:
-        double *data1{static_cast<double *>(e.data())};
+        double *data1{static_cast<double *>(e->data())};
         openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
         delete data1;
         break;
     case TYPE_CLOSE_ZOOMWINDOW:
-        int *data2{static_cast<int *>(e.data())};
-        closeZoomWindow(data2.get());
+        int *data2{static_cast<int *>(e->data())};
+        closeZoomWindow(*data2);
         delete data2;
         break;
     case TYPE_ORBIT_EVENT:
-        int *oet{static_cast<int *>(e.data())};
+        int *oet{static_cast<int *>(e->data())};
         orbitsWindow_->orbitEvent(*oet);
         delete oet;
         break;
     case TYPE_SELECT_ORBIT:
-        DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e.data())};
+        DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e->data())};
         x = p->x;
         y = p->y;
         // mouse clicked in position (x,y)  (world coordinates)
@@ -504,7 +491,7 @@ void P4PlotWnd::customEvent(QEvent *_e)
         delete p;
         break;
     case TYPE_SELECT_LCSECTION:
-        DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e.data())};
+        DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e->data())};
         x0 = p->x;
         y0 = p->y;
         p++;
@@ -533,7 +520,7 @@ void P4PlotWnd::customEvent(QEvent *_e)
         lcWindow_->raise();
         break;
     case TYPE_SEP_EVENT:
-        int *oet{static_cast<int *>(e.data())};
+        int *oet{static_cast<int *>(e->data())};
         sepWindow_->sepEvent(*oet);
         delete oet;
         break;

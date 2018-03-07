@@ -22,6 +22,7 @@
 #include <QMainWindow>
 
 #include <memory>
+#include <vector>
 
 class P4ArbitraryCurveDlg;
 class P4GcfDlg;
@@ -56,8 +57,8 @@ class P4PlotWnd : public QMainWindow
   private:
     P4StartDlg *parent_;
 
-    std::shared_ptr<P4IntParamsDlg> intParamsWindow_;
-    std::shared_ptr<P4ViewDlg> viewParamsWindow_;
+    std::unique_ptr<P4IntParamsDlg> intParamsWindow_;
+    std::unique_ptr<P4ViewDlg> viewParamsWindow_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QAction> actClose_;
@@ -82,7 +83,7 @@ class P4PlotWnd : public QMainWindow
     std::unique_ptr<P4ArbitraryCurveDlg> curveWindow_;
     std::unique_ptr<P4IsoclinesDlg> isoclinesWindow_;
 
-    std::unique_ptr<P4WinSphere> sphere_;  // main sphere
+    std::unique_ptr<P4WinSphere> sphere_; // main sphere
 
     int numZooms_;
     int lastZoomIdentifier_;
@@ -102,8 +103,8 @@ class P4PlotWnd : public QMainWindow
     void onBtnIntParams();
     void onBtnView();
     void onBtnGCF();
-    void onBtnCurve();      // FIXME
-    void onBtnIsoclines();  // FIXME
+    void onBtnCurve();     // FIXME
+    void onBtnIsoclines(); // FIXME
     void onBtnPlotSep();
     void onBtnPlotAllSeps();
     void onBtnLimitCycles();
