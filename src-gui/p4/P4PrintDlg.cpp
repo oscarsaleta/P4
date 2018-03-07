@@ -47,7 +47,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     if (gP4smallIcon)
-        setWindowIcon(gP4smallIcon);
+        setWindowIcon(*gP4smallIcon);
 
 #ifdef USE_SYSTEM_PRINTER
     btn_default_ = std::make_unique<QPushButton>("&System printer", this);
@@ -57,12 +57,10 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     btn_jpeg_ = std::make_unique<QPushButton>("&JPEG Image", this);
     btn_cancel_ = std::make_unique<QPushButton>("&Cancel", this);
 
-    std::unique_ptr<QLabel> label_1{
-        std::make_unique<QLabel>("Output resolution (in DPI): ", this)};
-    std::unique_ptr<QLabel> label_2{
-        std::make_unique<QLabel>("Line width (in mm):", this)};
-    std::unique_ptr<QLabel> label_3{
-        std::make_unique<QLabel>("Symbol size (in mm):", this)};
+    auto label_1 =
+        std::make_unique<QLabel>("Output resolution (in DPI): ", this);
+    auto label_2 = std::make_unique<QLabel>("Line width (in mm):", this);
+    auto label_3 = std::make_unique<QLabel>("Symbol size (in mm):", this);
 
     edt_resolution_ = std::make_unique<QLineEdit>("", this);
     edt_linewidth_ = std::make_unique<QLineEdit>("", this);
@@ -76,8 +74,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     btn_whitebg_ = std::make_unique<QRadioButton>("&White", this);
     btn_blackbg_ = std::make_unique<QRadioButton>("B&lack", this);
 
-    std::unique_ptr<QButtonGroup> bgcolors{
-        std::make_unique<QButtonGroup>(this)};
+    auto bgcolors = std::make_unique<QButtonGroup>(this);
     bgcolors->addButton(btn_whitebg_.get());
     bgcolors->addButton(btn_blackbg_.get());
 
@@ -88,9 +85,8 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 #ifdef TOOLTIPS
 #ifdef USE_SYSTEM_PRINTER
-    btn_default_->setToolTip(
-        "Print through default printing mechanism.\nIn "
-        "Linux, this is based on postscript printing.");
+    btn_default_->setToolTip("Print through default printing mechanism.\nIn "
+                             "Linux, this is based on postscript printing.");
 #endif
     btn_epsimage_->setToolTip(
         "Produce a \"Encapsulated Postscript\" image file");
@@ -151,8 +147,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     mainLayout_->addWidget(btn_blackwhite_.get());
     mainLayout_->addSpacing(2);
 
-    std::unique_ptr<QHBoxLayout> printColourLayout{
-        std::make_unique<QHBoxLayout>()};
+    auto printColourLayout=std::make_unique<QHBoxLayout>();
     printColourLayout->addWidget(lbl_bgcolor_.get());
     printColourLayout->addStretch(0);
     printColourLayout->addWidget(btn_whitebg_.get());
@@ -161,17 +156,17 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     mainLayout_->addLayout(printColourLayout.get());
     mainLayout_->addSpacing(2);
 
-    std::unique_ptr<QHBoxLayout> l1{std::make_unique<QHBoxLayout>()};
+    auto l1=std::make_unique<QHBoxLayout>();
     l1->addWidget(label_1.get());
     l1->addWidget(edt_resolution_.get());
     l1->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> l2{std::make_unique<QHBoxLayout>()};
+    auto l2=std::make_unique<QHBoxLayout>();
     l2->addWidget(label_2.get());
     l2->addWidget(edt_linewidth_.get());
     l2->addStretch(0);
 
-    std::unique_ptr<QHBoxLayout> l3{std::make_unique<QHBoxLayout>()};
+    auto l3=std::make_unique<QHBoxLayout>();
     l3->addWidget(label_3.get());
     l3->addWidget(edt_symbolsize_.get());
     l3->addStretch(0);
@@ -179,12 +174,12 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     mainLayout_->addLayout(l1.get());
     mainLayout_->addLayout(l2.get());
     mainLayout_->addLayout(l3.get());
-    setLayout(mainLayout_);
+    setLayout(mainLayout_.get());
 
     QString s;
-    s.sprintf("%g", (float)sM_lastLineWidth);
+    s.sprintf("%g", sM_lastLineWidth);
     edt_linewidth_->setText(s);
-    s.sprintf("%g", (float)sM_lastSymbolSize);
+    s.sprintf("%g", sM_lastSymbolSize);
     edt_symbolsize_->setText(s);
     s.sprintf("%d", sM_lastResolution);
     edt_resolution_->setText(s);

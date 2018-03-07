@@ -35,6 +35,14 @@ class P4PrintDlg : public QDialog
 {
     Q_OBJECT
 
+  public:
+    P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
+
+    static bool sM_lastBlackWhite;
+    static double sM_lastLineWidth;
+    static double sM_lastSymbolSize;
+    static int sM_lastResolution;
+
   private:
     std::unique_ptr<QPushButton> btn_default_;
     std::unique_ptr<QPushButton> btn_epsimage_;
@@ -52,29 +60,21 @@ class P4PrintDlg : public QDialog
     std::unique_ptr<QLineEdit> edt_linewidth_;
     std::unique_ptr<QLineEdit> edt_symbolsize_;
 
-  public:
-    P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
-
-    static bool sM_lastBlackWhite;
-    static double sM_lastLineWidth;
-    static double sM_lastSymbolSize;
-    static int sM_lastResolution;
-
   public slots:
-    void onDefaultPrinter(void);
-    void onEpsImagePrinter(void);
-    void onXfigImagePrinter(void);
-    void onJpegImagePrinter(void);
-    void onCancel(void);
+    void onDefaultPrinter();
+    void onEpsImagePrinter();
+    void onXfigImagePrinter();
+    void onJpegImagePrinter();
+    void onCancel();
 
-    bool readDialog(void);
-    bool readFloatField(QLineEdit *edt, double *presult, double defvalue,
+    bool readDialog();
+    bool readFloatField(QLineEdit *edt, double &presult, double defvalue,
                         double minvalue, double maxvalue);
     void markBad(QLineEdit *edt);
 
-    int getChosenResolution(void);
-    double getChosenLineWidth(void);
-    double getChosenSymbolSize(void);
+    int getChosenResolution();
+    double getChosenLineWidth();
+    double getChosenSymbolSize();
 };
 
 #define P4PRINT_NONE 0
