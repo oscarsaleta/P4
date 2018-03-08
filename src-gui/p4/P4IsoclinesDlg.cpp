@@ -19,6 +19,8 @@
 
 #include "P4IsoclinesDlg.hpp"
 
+#include <algorithm>
+
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
@@ -29,6 +31,7 @@
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
+#include "P4WinSphere.hpp"
 #include "main.hpp"
 #include "math_isoclines.hpp"
 
@@ -248,12 +251,22 @@ void P4IsoclinesDlg::onBtnPlot()
     }
 
     // SECOND: read the resulting file and store the list
-    if (!gVFResults.readIsoclines(gThisVF.getbarefilename())) {
+    // FIXME: aqui hem de trobar una forma de guardar les isoclines per cada VF
+    // diferent. Posar-les a diferents fitxers de nom
+    // gThisVF.getbarefilename()+#vf ?
+    for (auto &vf : gVFResults.vf_) {
+        if (!vf->readIsoclines(gThisVF.getbarefilename()))
+            QMessageBox::critical(this, "P4",
+                                  "Cannot read isoclines.\n"
+                                  "Plese check the input field.\n");
+    }
+
+    /*if (!gVFResults.readIsoclines(gThisVF.getbarefilename())) {
         QMessageBox::critical(this, "P4",
                               "Cannot read isoclines.\n"
                               "Please check the input field!\n");
         return;
-    }
+    }*/
     // THIRD: evaluate isoclines with given parameters {dashes, points, memory}.
 
     evaluating_points_ = points;
@@ -288,7 +301,9 @@ void P4IsoclinesDlg::onBtnDelAll()
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    gVFResults.isocline_vector_.clear();
+    for (auto &vf : gVFResults.vf_) {
+        vf->isocline_vector_.clear();
+    }
 
     mainSphere_->refresh();
 }
@@ -302,10 +317,22 @@ void P4IsoclinesDlg::onBtnDelLast()
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
+    // check if all the gVFResults.vf_->isoclines_vector_ are empty, and if
+    // true, disable the delete buttons
+    if (std::all_of(std::begin(gVFResults.vf_), std::end(gVFResults.vf_),
+                    [](const std::unique_ptr<P4VFStudy> &vf) {
+                        return vf->isocline_vector_.empty();
+                    })) {
+        btnDelAll_->setEnabled(false);
+        btnDelLast_->setEnabled(false);
+    }
+
+    /*
     if (gVFResults.isocline_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
+    */
 }
 
 void P4IsoclinesDlg::reset()
@@ -326,12 +353,22 @@ void P4IsoclinesDlg::reset()
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    // if (gVFResults.first_isoclines_ != nullptr) {
+    // check if any of the gVFResults.vf_->isoclines_vector_ are not empty, and
+    // if true, enable the delete buttons
+    if (!std::any_of(std::begin(gVFResults.vf_), std::end(gVFResults.vf_),
+                     [](const std::unique_ptr<P4VFStudy> &vf) {
+                         return vf->isocline_vector_.empty();
+                     })) {
+        btnDelAll_->setEnabled(false);
+        btnDelLast_->setEnabled(false);
+    }
+
+    /*
     if (!gVFResults.isocline_vector_.empty()) {
         btnDelLast_->setEnabled(true);
         btnDelAll_->setEnabled(true);
     }
-
+    */
     if (gVFResults.config_dashes_)
         btn_dashes_->toggle();
     else
