@@ -69,7 +69,6 @@ SOURCES += P4ViewDlg.cpp \
     math_numerics.cpp \
     math_limitcycles.cpp \
     math_isoclines.cpp \
-    math_intblowup.cpp \
     math_gcf.cpp \
     math_findpoint.cpp \
     math_arbitrarycurve.cpp \
@@ -77,8 +76,6 @@ SOURCES += P4ViewDlg.cpp \
     math_charts.cpp \
     math_changedir.cpp \
     main.cpp \
-    file_vf.cpp \
-    file_tab.cpp \
     file_paths.cpp \
     P4ZoomWnd.cpp \
     P4Application.cpp \
@@ -118,7 +115,7 @@ HEADERS +=  ../version.h \
     P4IntParamsDlg.hpp \
     P4IsoclinesDlg.hpp \
     P4LegendWnd.hpp \
-    P4LimitCycles.hpp \
+    P4LimitCyclesDlg.hpp \
     P4OrbitsDlg.hpp \
     P4ParamsDlg.hpp \
     P4ParentStudy.hpp \
