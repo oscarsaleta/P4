@@ -71,7 +71,7 @@ class P4FindDlg : public QWidget
     void updateDlgData();
     void signalEvaluating();
     void signalEvaluated();
-    void signalCurvesEvaluated();
+    void signalSeparatingCurvesEvaluated();
     void onBtnLoad();
     void onBtnSave();
     void onBtnEval();

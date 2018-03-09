@@ -446,7 +446,7 @@ void P4FindDlg::signalEvaluating() { btn_eval_->setEnabled(false); }
 
 void P4FindDlg::signalEvaluated() { btn_eval_->setEnabled(true); }
 
-void P4FindDlg::signalCurvesEvaluated()
+void P4FindDlg::signalSeparatingCurvesEvaluated()
 {
     btn_eval_->setEnabled(true);
     if (vfSelectWindow_) {
