@@ -19,9 +19,13 @@
 
 #pragma once
 
+#include <QWidget>
+
 #include <QPoint>
 #include <QString>
-#include <QWidget>
+
+#include <memory>
+#include <vector>
 
 #define SELECTINGPOINTSTEPS 5
 #define SELECTINGPOINTSPEED 150
@@ -35,12 +39,15 @@ class QResizeEvent;
 class QStatusBar;
 class QTimer;
 
+namespace p4singularities
+{
 struct saddle;
 struct node;
 struct semi_elementary;
 struct weak_focus;
 struct strong_focus;
 struct degenerate;
+}
 struct P4POLYLINES;
 
 class P4WinSphere : public QWidget
@@ -66,18 +73,19 @@ class P4WinSphere : public QWidget
     double dy_;      // y1-y0
 
     std::unique_ptr<QPixmap> painterCache_;
-    bool isPainterCacheDirty_;
-    int paintedXMin_; // to know the update rectangle after painting
+    bool isPainterCacheDirty_{true};
+    int paintedXMin_{0}; // to know the update rectangle after painting
     int paintedXMax_; // we keep to smallest rectangle enclosing
-    int paintedYMin_; // all painted objects.
+    int paintedYMin_{0}; // all painted objects.
     int paintedYMax_;
 
     QString chartstring_;
 
     int spherebgcolor_;
-    // FIXME used?
+    // FIXME: used?
     std::shared_ptr<P4WinSphere> next_; // visible to PlotWnd
-    int selectingX_, selectingY_, selectingPointStep_, selectingPointRadius_;
+    int selectingX_{0}, selectingY_{0};
+    int selectingPointStep_{0}, selectingPointRadius_{0};
     std::unique_ptr<QTimer> selectingTimer_;
 
     int oldw_; // used while printing
@@ -105,30 +113,33 @@ class P4WinSphere : public QWidget
     void plotPointSeparatrices(const p4singularities::saddle &);
     void plotPointSeparatrices(const p4singularities::degenerate &);
     void plotPoints();
+
+    void plotSeparatingCurves(); // FIXME:
     void plotSeparatrices();
     void plotGcf();
-    void plotArbitraryCurves(); // TODO
-    void drawIsoclines();       // TODO
+    void plotArbitraryCurves(); // FIXME:
+    void plotIsoclines();       // FIXME:
     void plotPoincareSphere();
     void plotPoincareLyapunovSphere();
     void plotLineAtInfinity();
+    
     void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
-    void printPoint(saddle *);
-    void printPoint(node *);
-    void printPoint(semi_elementary *);
-    void printPoint(weak_focus *);
-    void printPoint(strong_focus *);
-    void printPoint(degenerate *);
-    void printPointSeparatrices(semi_elementary *p);
-    void printPointSeparatrices(saddle *p);
-    void printPointSeparatrices(degenerate *p);
+    void printPoint(const p4singularities::saddle &);
+    void printPoint(const p4singularities::node &);
+    void printPoint(const p4singularities::semi_elementary &);
+    void printPoint(const p4singularities::weak_focus &);
+    void printPoint(const p4singularities::strong_focus &);
+    void printPoint(const p4singularities::degenerate &);
+    void printPointSeparatrices(const p4singularities::semi_elementary &p);
+    void printPointSeparatrices(const p4singularities::saddle &p);
+    void printPointSeparatrices(const p4singularities::degenerate &p);
     void printPoints();
     void printSeparatrices();
     void printGcf();
     void printSeparatingCurves();
-    void printArbitraryCurves(); // TODO
-    void printIsoclines();       // TODO
+    void printArbitraryCurves(); // FIXME:
+    void printIsoclines();       // FIXME:
     void printPoincareSphere();
     void printPoincareLyapunovSphere();
     void printLineAtInfinity();
@@ -182,9 +193,10 @@ class P4WinSphere : public QWidget
     QStatusBar *msgBar_;
 
     bool iszoom_;
-    bool reverseYAxis_; // when calculating coordinates: this determines
-                        // orientation of horizontal axis.  Normally false,
-                        // only true when printing.
+
+    // when calculating coordinates: this determines orientation of horizontal
+    // axis.  Normally false, only true when printing.
+    bool reverseYAxis_{false};
 
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
@@ -192,8 +204,8 @@ class P4WinSphere : public QWidget
     std::unique_ptr<QPainter> staticPainter_;
     std::unique_ptr<QTimer> refreshTimeout_;
 
-    bool selectingZoom_;
-    bool selectingLCSection_;
+    bool selectingZoom_{false};
+    bool selectingLCSection_{false};
     QPoint zoomAnchor1_;
     QPoint zoomAnchor2_;
     QPoint lcAnchor1_;
