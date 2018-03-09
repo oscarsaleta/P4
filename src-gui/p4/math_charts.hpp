@@ -100,17 +100,18 @@ void eval_vec_field_cyl(const double *y, double *f);
 
 // viewcoordpair functions
 void default_finite_to_viewcoord(double x, double y, double *ucoord);
-bool default_sphere_to_viewcoordpair(double *p, double *q, double *u1,
-                                     double *u2, double *u3, double *u4);
-bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
-                                             double *u2, double *u3,
+bool default_sphere_to_viewcoordpair(const double *p, const double *q,
+                                     double *u1, double *u2, double *u3,
+                                     double *u4);
+bool psphere_to_viewcoordpair_discontinuousx(const double *p, const double *q,
+                                             double *u1, double *u2, double *u3,
                                              double *u4);
-bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
-                                             double *u2, double *u3,
+bool psphere_to_viewcoordpair_discontinuousy(const double *p, const double *q,
+                                             double *u1, double *u2, double *u3,
                                              double *u4);
-bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
-                                              double *u2, double *u3,
-                                              double *u4);
-bool plsphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
-                                              double *u2, double *u3,
-                                              double *u4);
+bool plsphere_to_viewcoordpair_discontinuousx(const double *p, const double *q,
+                                              double *u1, double *u2,
+                                              double *u3, double *u4);
+bool plsphere_to_viewcoordpair_discontinuousy(const double *p, const double *q,
+                                              double *u1, double *u2,
+                                              double *u3, double *u4);

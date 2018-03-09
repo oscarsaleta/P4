@@ -22,11 +22,11 @@
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "main.hpp"
 #include "math_numerics.hpp"
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
+#include "tables.hpp"
 
 #include <cmath>
 
@@ -1070,8 +1070,9 @@ void default_finite_to_viewcoord(double x, double y, double *ucoord)
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
 }
 
-bool default_sphere_to_viewcoordpair(double *p, double *q, double *u1,
-                                     double *u2, double *u3, double *u4)
+bool default_sphere_to_viewcoordpair(const double *p, const double *q,
+                                     double *u1, double *u2, double *u3,
+                                     double *u4)
 {
     /*
         when plotting a line, one checks plot coordinates for both endpoints.
@@ -1090,8 +1091,9 @@ bool default_sphere_to_viewcoordpair(double *p, double *q, double *u1,
                  // in coordinates
 }
 
-bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
-                                             double *u2, double *u3, double *u4)
+bool psphere_to_viewcoordpair_discontinuousx(const double *p, const double *q,
+                                             double *u1, double *u2, double *u3,
+                                             double *u4)
 {
     /*
         when plotting a line, one checks plot coordinates for both endpoints.
@@ -1130,7 +1132,7 @@ bool psphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
                  // in coordinates
 }
 
-bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
+bool psphere_to_viewcoordpair_discontinuousy(const double *p, const double *q, double *u1,
                                              double *u2, double *u3, double *u4)
 {
     /*
@@ -1170,7 +1172,7 @@ bool psphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
                  // in coordinates
 }
 
-bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
+bool plsphere_to_viewcoordpair_discontinuousx(const double *p, const double *q, double *u1,
                                               double *u2, double *u3,
                                               double *u4)
 {
@@ -1236,7 +1238,7 @@ bool plsphere_to_viewcoordpair_discontinuousx(double *p, double *q, double *u1,
     return true;
 }
 
-bool plsphere_to_viewcoordpair_discontinuousy(double *p, double *q, double *u1,
+bool plsphere_to_viewcoordpair_discontinuousy(const double *p, const double *q, double *u1,
                                               double *u2, double *u3,
                                               double *u4)
 {
