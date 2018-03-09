@@ -37,7 +37,7 @@ class P4VFParams : public QWidget
     Q_OBJECT
 
   public:
-    P4VFParams(P4VectorFieldDlg *parent, std::shared_ptr<QScrollBar> sb);
+    P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb);
 
     bool updateDlgData();
 
@@ -54,10 +54,6 @@ class P4VFParams : public QWidget
     std::vector<std::unique_ptr<QLineEdit>> paramNames_;
     std::vector<std::unique_ptr<QLabel>> paramEqual_;
     std::vector<std::unique_ptr<QLineEdit>> paramValues_;
-
-    // FIXME what are these?
-    // std::vector<QString> strLabels_;
-    // std::vector<std::vector<QString>> strValues_;
 
     bool getLineEditCommonParValue(QLineEdit *, int index);
     void setLineEditCommonParValue(QLineEdit *, int index);

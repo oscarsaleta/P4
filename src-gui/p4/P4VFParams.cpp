@@ -19,13 +19,17 @@
 
 #include "P4VFParams.hpp"
 
-#include "P4VectorFieldDlg.hpp"
-
 #include <QLabel>
 #include <QScrollBar>
+#include <QLineEdit>
+#include <QBoxLayout>
+
+#include "P4VectorFieldDlg.hpp"
+#include "P4InputVF.hpp"
+#include "P4Application.hpp"
 
 P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
-    : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF->numparams_}
+    : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF->numParams_}
 {
     int i;
 
@@ -55,7 +59,7 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
     mainLayout_->addWidget(label0.get());
     for (i = 0; i < currentShownParams_; i++) {
-        paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>{});
+        paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>());
         paramLayouts_[i]->addWidget(paramNames_[i].get());
         paramLayouts_[i]->addWidget(paramEqual_[i].get());
         paramLayouts_[i]->addWidget(paramValues_[i].get());
@@ -116,7 +120,7 @@ void P4VFParams::paramsEditingFinished()
 // only called when vf is loaded, and only when numparams did not change.
 bool P4VFParams::updateDlgData()
 {
-    if (gThisVF->numparams_ != currentNumParams_)
+    if (gThisVF->numParams_ != currentNumParams_)
         return false;
 
     for (int i = 0; i < currentShownParams_; i++) {
@@ -153,7 +157,7 @@ void P4VFParams::setLineEditCommonParValue(QLineEdit *le, int index)
         le->setText("########");
 }
 
-void P4VFParams::getLineEditCommonParValue(QLineEdit *le, int index)
+bool P4VFParams::getLineEditCommonParValue(QLineEdit *le, int index)
 {
     int i;
     QString val{le->text().trimmed()};
