@@ -19,13 +19,6 @@
 
 #include "P4VectorFieldDlg.hpp"
 
-#include "P4Application.hpp"
-#include "P4FindDlg.hpp"
-#include "P4InputVF.hpp"
-#include "P4VFParams.hpp"
-#include "custom.hpp"
-#include "main.hpp"
-
 #include <QBoxLayout>
 #include <QFormLayout>
 #include <QHBoxLayout>
@@ -33,6 +26,15 @@
 #include <QLineEdit>
 #include <QScrollBar>
 #include <QSpinBox>
+
+#include "P4Application.hpp"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
+#include "P4VFParams.hpp"
+#include "P4VFSelectDlg.hpp"
+#include "custom.hpp"
+#include "main.hpp"
 
 P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
     : QWidget{finddlg}, parent_{finddlg}
@@ -65,19 +67,15 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
     spin_numparams_->setMaximum(MAXNUMPARAMS);
 
 #ifdef TOOLTIPS
-    edt_xprime_->setToolTip(
-        "Enter your differential equations here.\n"
-        "Use syntax conform to the symbolic manipulator.");
-    edt_yprime_->setToolTip(
-        "Enter your differential equations here.\n"
-        "Use syntax conform to the symbolic manipulator.");
-    edt_gcf_->setToolTip(
-        "Enter greatest common factor here.\n"
-        "Enter \"1\" if you are sure there is no GCF\n"
-        "Enter \"0\" if you want P4 to search for a GCF");
-    spin_numparams_->setToolTip(
-        "If your vector field contains parameters,\n"
-        "specify the number of parameters here.");
+    edt_xprime_->setToolTip("Enter your differential equations here.\n"
+                            "Use syntax conform to the symbolic manipulator.");
+    edt_yprime_->setToolTip("Enter your differential equations here.\n"
+                            "Use syntax conform to the symbolic manipulator.");
+    edt_gcf_->setToolTip("Enter greatest common factor here.\n"
+                         "Enter \"1\" if you are sure there is no GCF\n"
+                         "Enter \"0\" if you want P4 to search for a GCF");
+    spin_numparams_->setToolTip("If your vector field contains parameters,\n"
+                                "specify the number of parameters here.");
 #endif
 
     // layout
@@ -113,11 +111,11 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
         params_ = std::make_unique<P4VFParams>(this, sb_params_);
         paramLayout_->addWidget(params_.get());
         if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            paramLayout_->addWidget(sb_params_);
+            paramLayout_->addWidget(sb_params_.get());
             QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
-                             params_, &P4VFParams::paramsSliderChanged);
+                             params_.get(), &P4VFParams::paramsSliderChanged);
             QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved,
-                             params_, &P4VFParams::paramsSliderChanged);
+                             params_.get(), &P4VFParams::paramsSliderChanged);
         }
         params_->show();
         if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN)
@@ -172,10 +170,10 @@ void P4VectorFieldDlg::numParamsChanged(int val)
     paramLayout_->addWidget(params_.get());
     if (val > MAXNUMPARAMSSHOWN) {
         paramLayout_->addWidget(sb_params_.get());
-        QObject::connect(sb_params_.get(), &QScrollBar::valueChanged, params_,
-                         &P4VFParams::paramsSliderChanged);
-        QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved, params_,
-                         &P4VFParams::paramsSliderChanged);
+        QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
+                         params_.get(), &P4VFParams::paramsSliderChanged);
+        QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved,
+                         params_.get(), &P4VFParams::paramsSliderChanged);
     }
     params_->show();
     if (val > MAXNUMPARAMSSHOWN)
@@ -226,7 +224,7 @@ void P4VectorFieldDlg::updateDlgData()
         params_ = std::make_unique<P4VFParams>(this, sb_params_);
         paramLayout_->addWidget(params_.get());
         if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
-            paramLayout_->addWidget(sb_params_);
+            paramLayout_->addWidget(sb_params_.get());
             QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
                              params_.get(), &P4VFParams::paramsSliderChanged);
             QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved,
@@ -247,14 +245,14 @@ void P4VectorFieldDlg::setLineEditCommonValue(QLineEdit *le,
         le->setText("#########");
 }
 
-void P4VectorFieldDlg::getLineEditCommonValue(
+bool P4VectorFieldDlg::getLineEditCommonValue(
     QLineEdit *le, const std::vector<QString> &newval)
 {
     QString val{le->text().trimmed()};
     int i;
 
     if (!gThisVF->hasCommonString(newval)) {
-        for (i = val.lengt() - 1; i >= 0; i--) {
+        for (i = val.length() - 1; i >= 0; i--) {
             if (val[i] != '#')
                 break;
         }
@@ -270,7 +268,6 @@ void P4VectorFieldDlg::getLineEditCommonValue(
 void P4VectorFieldDlg::editingFinished()
 {
     getDataFromDlg();
-    // TODO: write getter for this
     auto *p = parent_->getVfSelectWindowPtr();
     if (p != nullptr) {
         auto *q = p->getWinCurvesPtr();
