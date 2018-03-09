@@ -743,7 +743,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
 
     sPSBlackWhitePrint = isblackwhite;
 
-    s = gThisVF.getbarefilename() + ".eps";
+    s = gThisVF->getbarefilename() + ".eps";
 
     sPSFile.reset(new QFile(s));
     if (sPSFile->open(QIODevice::WriteOnly))
@@ -794,7 +794,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
     QString title;
     QString datestring;
 
-    title = "Phase portrait of \"" + gThisVF.getbarefilename() + "\"";
+    title = "Phase portrait of \"" + gThisVF->getbarefilename() + "\"";
     if (iszoom)
         title += " (zoom window)";
 

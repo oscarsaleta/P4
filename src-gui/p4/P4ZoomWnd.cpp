@@ -91,7 +91,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
 
 void P4ZoomWnd::onSaveSignal()
 {
-    QSettings settings(gThisVF.getbarefilename().append(".conf"),
+    QSettings settings(gThisVF->getbarefilename().append(".conf"),
                        QSettings::NativeFormat);
     settings.beginGroup(QString("P4ZoomWnd").append(zoomid_));
     settings.setValue("id", zoomid_);

@@ -175,12 +175,12 @@ void P4ArbitraryCurveDlg::onBtnEvaluate()
                                  "with the equation of a curve.\n");
         return;
     }
-    gThisVF.arbitraryCurve_ = edt_curve_->text().trimmed();
+    gThisVF->arbitraryCurve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
     // a list of p4polynom::term2
-    gThisVF.setArbitraryCurveDlg(this);
-    gThisVF.evaluateArbitraryCurveTable();
+    gThisVF->setArbitraryCurveDlg(this);
+    gThisVF->evaluateArbitraryCurveTable();
     btnPlot_->setEnabled(true);
 }
 
@@ -224,7 +224,7 @@ void P4ArbitraryCurveDlg::onBtnPlot()
     }
 
     // SECOND: read the resulting file and store the list
-    if (!gVFResults.readArbitraryCurve(gThisVF.getbarefilename())) {
+    if (!gVFResults.readArbitraryCurve(gThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4",
                               "Cannot read curve.\n"
                               "Please check the input field!\n");
@@ -239,7 +239,7 @@ void P4ArbitraryCurveDlg::onBtnPlot()
 
     btnPlot_->setEnabled(false);
 
-    gThisVF.setArbitraryCurveDlg(this);
+    gThisVF->setArbitraryCurveDlg(this);
     if (!evalArbitraryCurveStart(mainSphere_, dashes, precis, points)) {
         btnPlot_->setEnabled(true);
         QMessageBox::critical(this, "P4",

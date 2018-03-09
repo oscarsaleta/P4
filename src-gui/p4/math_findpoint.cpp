@@ -216,8 +216,8 @@ bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
 
     distance = -1;
 
-    if ((vfindex0 = gThisVF.getVFIndex_sphere(pcoord)) == -1)
-        vfindex0 = gThisVF.numVF_ - 1;
+    if ((vfindex0 = gThisVF->getVFIndex_sphere(pcoord)) == -1)
+        vfindex0 = gThisVF->numVF_ - 1;
 
     for (vfindex = vfindex0; vfindex >= 0; vfindex--) {
         distance = find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_,
@@ -229,8 +229,8 @@ bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
         if (distance == -1)
             break;
     }
-    if (distance == -1 && vfindex0 != gThisVF.numVF_ - 1) {
-        for (vfindex = gThisVF.numVF_ - 1; vfindex > vfindex0; vfindex--) {
+    if (distance == -1 && vfindex0 != gThisVF->numVF_ - 1) {
+        for (vfindex = gThisVF->numVF_ - 1; vfindex > vfindex0; vfindex--) {
             distance =
                 find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_, x,
                                      y, distance, type, pcoord);
@@ -444,7 +444,7 @@ bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
         break;
     }
 
-    if (gThisVF.numVF_ > 1) {
+    if (gThisVF->numVF_ > 1) {
         QString msg;
         msg.sprintf(" (VF #%d)", vfindex + 1);
         s += msg;

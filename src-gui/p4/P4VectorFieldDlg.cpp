@@ -42,17 +42,17 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
     auto p4title = std::make_unique<QLabel>("Specify the vector field:", this);
     p4title->setFont(gP4app->getTitleFont());
 
-    edt_xprime_ = std::make_unique<QLineEdit>(gThisVF.xdot_, this);
+    edt_xprime_ = std::make_unique<QLineEdit>(gThisVF->xdot_, this);
     auto xlabel = std::make_unique<QLabel>("&x' = ", this);
     xlabel->setFont(gP4app->getBoldFont());
     xlabel->setBuddy(edt_xprime_.get());
 
-    edt_yprime_ = std::make_unique<QLineEdit>(gThisVF.ydot_, this);
+    edt_yprime_ = std::make_unique<QLineEdit>(gThisVF->ydot_, this);
     auto ylabel = std::make_unique<QLabel>("&y' = ", this);
     ylabel->setFont(gP4app->getBoldFont());
     ylabel->setBuddy(edt_yprime_.get());
 
-    edt_gcf_ = std::make_unique<QLineEdit>(gThisVF.gcf_, this);
+    edt_gcf_ = std::make_unique<QLineEdit>(gThisVF->gcf_, this);
     auto glabel = std::make_unique<QLabel>("&Gcf: ", this);
     glabel->setFont(gP4app->getBoldFont());
     glabel->setBuddy(edt_gcf_.get());
@@ -102,17 +102,17 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 
     setLayout(mainLayout_.get());
 
-    if (gThisVF.numparams_ != 0) {
-        if (gThisVF.numparams_ > MAXNUMPARAMSSHOWN) {
+    if (gThisVF->numparams_ != 0) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
-            sb_params_->setRange(0, gThisVF.numparams_ - MAXNUMPARAMSSHOWN);
+            sb_params_->setRange(0, gThisVF->numparams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
         params_ = std::make_unique<P4VFParams>(this, sb_params_);
         paramLayout_->addWidget(params_.get());
-        if (gThisVF.numparams_ > MAXNUMPARAMSSHOWN) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
             QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
                              params_, &P4VFParams::paramsSliderChanged);
@@ -120,10 +120,10 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
                              params_, &P4VFParams::paramsSliderChanged);
         }
         params_->show();
-        if (gThisVF.numparams_ > MAXNUMPARAMSSHOWN)
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN)
             sb_params_->show();
 
-        spin_numparams_->setValue(gThisVF.numparams_);
+        spin_numparams_->setValue(gThisVF->numparams_);
     }
 
     // connections
@@ -144,7 +144,7 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 
 void P4VectorFieldDlg::numParamsChanged(int val)
 {
-    if (val < 0 || val > MAXNUMPARAMS || val == gThisVF.numparams_)
+    if (val < 0 || val > MAXNUMPARAMS || val == gThisVF->numparams_)
         return;
 
     params_.reset();
@@ -152,18 +152,18 @@ void P4VectorFieldDlg::numParamsChanged(int val)
     if (sb_params_)
         sb_params_.reset();
 
-    if (gThisVF.changed_ == false) {
-        gThisVF.changed_ = true;
+    if (gThisVF->changed_ == false) {
+        gThisVF->changed_ = true;
         gP4app->signalChanged();
     }
-    gThisVF.numparams_ = val;
+    gThisVF->numparams_ = val;
 
     if (val == 0)
         return;
 
     if (val > MAXNUMPARAMSSHOWN) {
         sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
-        sb_params_->setRange(0, gThisVF.numparams_ - MAXNUMPARAMSSHOWN);
+        sb_params_->setRange(0, gThisVF->numparams_ - MAXNUMPARAMSSHOWN);
         sb_params_->setSingleStep(1);
         sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
     }
@@ -188,13 +188,13 @@ void P4VectorFieldDlg::getDataFromDlg()
 {
     bool changed{false};
 
-    changed |= getLineEditCommonValue(edt_xprime_.get(), gThisVF.xdot_);
-    changed |= getLineEditCommonValue(edt_yprime_.get(), gThisVF.ydot_);
-    changed |= getLineEditCommonValue(edt_gcf_.get(), gThisVF.gcf_);
+    changed |= getLineEditCommonValue(edt_xprime_.get(), gThisVF->xdot_);
+    changed |= getLineEditCommonValue(edt_yprime_.get(), gThisVF->ydot_);
+    changed |= getLineEditCommonValue(edt_gcf_.get(), gThisVF->gcf_);
 
     if (changed) {
-        if (!gThisVF.changed_) {
-            gThisVF.changed_ = true;
+        if (!gThisVF->changed_) {
+            gThisVF->changed_ = true;
             gP4app->signalChanged();
         }
     }
@@ -202,30 +202,30 @@ void P4VectorFieldDlg::getDataFromDlg()
 
 void P4VectorFieldDlg::updateDlgData()
 {
-    setLineEditCommonValue(edt_xprime_.get(), gThisVF.xdot_);
-    setLineEditCommonValue(edt_yprime_.get(), gThisVF.ydot_);
-    setLineEditCommonValue(edt_gcf_.get(), gThisVF.gcf_);
-    spin_numparams_->setValue(gThisVF.numparams_);
+    setLineEditCommonValue(edt_xprime_.get(), gThisVF->xdot_);
+    setLineEditCommonValue(edt_yprime_.get(), gThisVF->ydot_);
+    setLineEditCommonValue(edt_gcf_.get(), gThisVF->gcf_);
+    spin_numparams_->setValue(gThisVF->numparams_);
 
     if (params_)
         if (!params_->updateDlgData())
             params_.reset();
 
-    if (gThisVF.numparams_ == 0)
+    if (gThisVF->numparams_ == 0)
         if (sb_params_)
             sb_params_.reset();
 
-    if (gThisVF.numparams_ != 0 && !params_) {
-        if (gThisVF.numparams_ > MAXNUMPARAMSSHOWN) {
+    if (gThisVF->numparams_ != 0 && !params_) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
-            sb_params_->setRange(0, gThisVF.numparams_ - MAXNUMPARAMSSHOWN);
+            sb_params_->setRange(0, gThisVF->numparams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
         params_ = std::make_unique<P4VFParams>(this, sb_params_);
         paramLayout_->addWidget(params_.get());
-        if (gThisVF.numparams_ > MAXNUMPARAMSSHOWN) {
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_);
             QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
                              params_.get(), &P4VFParams::paramsSliderChanged);
@@ -233,7 +233,7 @@ void P4VectorFieldDlg::updateDlgData()
                              params_.get(), &P4VFParams::paramsSliderChanged);
         }
         params_->show();
-        if (gThisVF.numparams_ > MAXNUMPARAMSSHOWN)
+        if (gThisVF->numparams_ > MAXNUMPARAMSSHOWN)
             sb_params_->show();
     }
 }
@@ -241,8 +241,8 @@ void P4VectorFieldDlg::updateDlgData()
 void P4VectorFieldDlg::setLineEditCommonValue(QLineEdit *le,
                                               const std::vector<QString> &val)
 {
-    if (gThisVF.hasCommonString(val))
-        le->setText(gThisVF.commonString(val));
+    if (gThisVF->hasCommonString(val))
+        le->setText(gThisVF->commonString(val));
     else
         le->setText("#########");
 }
@@ -253,17 +253,17 @@ void P4VectorFieldDlg::getLineEditCommonValue(
     QString val{le->text().trimmed()};
     int i;
 
-    if (!gThisVF.hasCommonString(newval)) {
+    if (!gThisVF->hasCommonString(newval)) {
         for (i = val.lengt() - 1; i >= 0; i--) {
             if (val[i] != '#')
                 break;
         }
         if (i < 0)
             return false;
-        if (!val.compare(gThisVF.commonString(newval)))
+        if (!val.compare(gThisVF->commonString(newval)))
             return false;
     }
-    if (!val.compare(gThisVF.commonString(newval)))
+    if (!val.compare(gThisVF->commonString(newval)))
         return true;
 }
 

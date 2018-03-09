@@ -203,7 +203,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 
 void P4PlotWnd::onSaveSignal()
 {
-    QString fname = gThisVF.getbarefilename().append(".conf");
+    QString fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
     settings.setValue("P4PlotWnd/size", size());
     settings.setValue("P4PlotWnd/pos", pos());
@@ -213,7 +213,7 @@ void P4PlotWnd::onSaveSignal()
 
 void P4PlotWnd::onLoadSignal()
 {
-    QString fname = gThisVF.getbarefilename().append(".conf");
+    QString fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings(fname, QSettings::NativeFormat);
     resize(settings.value("P4PlotWnd/size").toSize());
     move(settings.value("P4PlotWnd/pos").toPoint());
@@ -410,7 +410,7 @@ void P4PlotWnd::configure()
 
     actGCF_->setEnabled(false);
     if (!gVFResults.vf_.empty()) {
-        for (int i = gThisVF.numVF_ - 1; i >= 0; i--) {
+        for (int i = gThisVF->numVF_ - 1; i >= 0; i--) {
             if (!gVFResults.vf_[i]->gcf_.empty()) {
                 actGCF_->setEnabled(true);
                 break;

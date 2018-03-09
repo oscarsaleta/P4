@@ -38,7 +38,7 @@
 // -----------------------------------------------------------------------
 bool prepareVfForIntegration(double *pcoord)
 {
-    int K{gThisVF.getVFIndex_sphere(pcoord)};
+    int K{gThisVF->getVFIndex_sphere(pcoord)};
     if (K >= 0) {
         gVFResults.K_ = K;
         return true;
@@ -201,7 +201,7 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
             psphere_to_R2(p0, p1, p2, y);
             rk78(eval_r_vec_field, y, &hhi0, h_min, h_max,
                  gVFResults.config_tolerance_);
-            if (gThisVF.getVFIndex_R2(y) == gVFResults.K_)
+            if (gThisVF->getVFIndex_R2(y) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -227,10 +227,10 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                     rk78(eval_U1_vec_field, y, &hhi0, h_min, h_max,
                          gVFResults.config_tolerance_);
                     if (y[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
-                        if (gThisVF.getVFIndex_U1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_U1(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (gThisVF.getVFIndex_VV1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_VV1(y) == gVFResults.K_)
                             break;
                     }
                     h_min = gVFResults.config_branchhmi_;
@@ -265,10 +265,10 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                     rk78(eval_V1_vec_field, y, &hhi0, h_min, h_max,
                          gVFResults.config_tolerance_);
                     if (y[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
-                        if (gThisVF.getVFIndex_V1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_V1(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (gThisVF.getVFIndex_UU1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_UU1(y) == gVFResults.K_)
                             break;
                     }
                     h_min = gVFResults.config_branchhmi_;
@@ -303,10 +303,10 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                     rk78(eval_U2_vec_field, y, &hhi0, h_min, h_max,
                          gVFResults.config_tolerance_);
                     if (y[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
-                        if (gThisVF.getVFIndex_U2(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_U2(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (gThisVF.getVFIndex_VV2(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_VV2(y) == gVFResults.K_)
                             break;
                     }
                     h_min = gVFResults.config_branchhmi_;
@@ -339,10 +339,10 @@ void integrate_poincare_orbit(double p0, double p1, double p2, double *pcoord,
                     rk78(eval_V2_vec_field, y, &hhi, h_min, h_max,
                          gVFResults.config_tolerance_);
                     if (y[1] >= 0 || !gVFResults.vf_[gVFResults.K_]->singinf_) {
-                        if (gThisVF.getVFIndex_V2(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_V2(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (gThisVF.getVFIndex_UU2(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_UU2(y) == gVFResults.K_)
                             break;
                     }
                     h_min = gVFResults.config_branchhmi_;
@@ -393,7 +393,7 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
             // NOTE: changed hhi for hhi0, works?
             rk78(eval_r_vec_field, y, &hhi0, h_min, h_max,
                  gVFResults.config_tolerance_);
-            if (gThisVF.getVFIndex_R2(y) == gVFResults.K_)
+            if (gThisVF->getVFIndex_R2(y) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -416,7 +416,7 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
             // NOTE: changed hhi for hhi0, works?
             rk78(eval_vec_field_cyl, y, &hhi0, h_min, h_max,
                  gVFResults.config_tolerance_);
-            if (gThisVF.getVFIndex_cyl(y) == gVFResults.K_)
+            if (gThisVF->getVFIndex_cyl(y) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;

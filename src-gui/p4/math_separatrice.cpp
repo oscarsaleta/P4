@@ -195,7 +195,7 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
             psphere_to_R2(p0, p1, p2, y);
             rk78(eval_r_vec_field, y, &hhi0, h_min, h_max,
                  gVFResults.config_tolerance_);
-            if (gThisVF.getVFIndex_R2(y) == gVFResults.K_)
+            if (gThisVF->getVFIndex_R2(y) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -222,10 +222,10 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                     rk78(eval_U1_vec_field, y, &hhi0, h_min, h_max,
                          gVFResults.config_tolerance_);
                     if (y[1] >= 0 || !vfResultsK->singinf_) {
-                        if (gThisVF.getVFIndex_U1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_U1(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (gThisVF.getVFIndex_VV1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_VV1(y) == gVFResults.K_)
                             break;
                     }
                     h_min = gVFResults.config_branchhmi_;
@@ -263,10 +263,10 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                     rk78(eval_V1_vec_field, y, &hhi0, h_min, h_max,
                          gVFResults.config_tolerance_);
                     if (y[1] >= 0 || !vfResultsK->singinf_) {
-                        if (gThisVF.getVFIndex_V1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_V1(y) == gVFResults.K_)
                             break;
                     } else {
-                        if (gThisVF.getVFIndex_UU1(y) == gVFResults.K_)
+                        if (gThisVF->getVFIndex_UU1(y) == gVFResults.K_)
                             break;
                     }
                     h_min = gVFResults.config_branchhmi_;
@@ -303,10 +303,10 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 rk78(eval_U2_vec_field, y, &hhi0, h_min, h_max,
                      gVFResults.config_tolerance_);
                 if (y[1] >= 0 || !vfResultsK->singinf_) {
-                    if (gThisVF.getVFIndex_U2(y) == gVFResults.K_)
+                    if (gThisVF->getVFIndex_U2(y) == gVFResults.K_)
                         break;
                 } else {
-                    if (gThisVF.getVFIndex_VV2(y) == gVFResults.K_)
+                    if (gThisVF->getVFIndex_VV2(y) == gVFResults.K_)
                         break;
                 }
                 h_min = gVFResults.config_branchhmi_;
@@ -346,10 +346,10 @@ void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
                 rk78(eval_V2_vec_field, y, &hhi0, h_min, h_max,
                      gVFResults.config_tolerance_);
                 if (y[1] >= 0 || !vfResultsK->singinf_) {
-                    if (gThisVF.getVFIndex_V2(y) == gVFResults.K_)
+                    if (gThisVF->getVFIndex_V2(y) == gVFResults.K_)
                         break;
                 } else {
-                    if (gThisVF.getVFIndex_UU2(y) == gVFResults.K_)
+                    if (gThisVF->getVFIndex_UU2(y) == gVFResults.K_)
                         break;
                 }
                 h_min = gVFResults.config_branchhmi_;
@@ -404,7 +404,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
             y[1] = p2;
             rk78(eval_r_vec_field, y, &hhi0, h_min, h_max,
                  gVFResults.config_tolerance_);
-            if (gThisVF.getVFIndex_R2(y) == gVFResults.K_)
+            if (gThisVF->getVFIndex_R2(y) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -430,7 +430,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
                  gVFResults.config_tolerance_);
             if (y[1] >= TWOPI)
                 y[1] -= TWOPI;
-            if (gThisVF.getVFIndex_cyl(y) == gVFResults.K_)
+            if (gThisVF->getVFIndex_cyl(y) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -737,7 +737,7 @@ plot_separatrice(P4WinSphere *spherewnd, double x0, double y0, double a11,
         MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord2);
         break;
     }
-    if (gThisVF.getVFIndex_sphere(pcoord2) != vfindex)
+    if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex)
         return {};
 
     // end of P5 addition
@@ -892,7 +892,7 @@ plot_separatrice(P4WinSphere *spherewnd, double x0, double y0, double a11,
 void plot_all_sep(P4WinSphere *spherewnd)
 {
     if (!gVFResults.vf_.empty()) {
-        for (int i = 0; i < gThisVF.numVF_; i++) {
+        for (int i = 0; i < gThisVF->numVF_; i++) {
             plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i]->saddlePoints_);
             plot_all_se_sep(spherewnd, i, gVFResults.vf_[i]->sePoints_);
             plot_all_de_sep(spherewnd, i, gVFResults.vf_[i]->dePoints_);

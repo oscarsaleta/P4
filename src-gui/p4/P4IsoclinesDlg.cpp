@@ -156,8 +156,8 @@ void P4IsoclinesDlg::onBtnEvaluate()
         return;
     } else {
         QString val = edt_value_->text();
-        gThisVF.getDataFromDlg();
-        val = gThisVF.convertMapleUserParametersLabelsToValues(val);
+        gThisVF->getDataFromDlg();
+        val = gThisVF->convertMapleUserParametersLabelsToValues(val);
         val.toDouble(&ok);
         if (!ok) {
             QMessageBox::information(
@@ -172,8 +172,8 @@ void P4IsoclinesDlg::onBtnEvaluate()
     // FIXME: això també mira només un dels camps... Passo d'aquest check? O el
     // reescric? O miro només el primer? Si n'hi ha més d'un vol dir que estan
     // bé?
-    if ((gThisVF.xdot_[0] == "0" || gThisVF.xdot_[0].isEmpty()) &&
-        (gThisVF.ydot_[0] == "0" || gThisVF.ydot_[0].isEmpty())) {
+    if ((gThisVF->xdot_[0] == "0" || gThisVF->xdot_[0].isEmpty()) &&
+        (gThisVF->ydot_[0] == "0" || gThisVF->ydot_[0].isEmpty())) {
         QMessageBox::information(this, "P4",
                                  "Check that the vector field is "
                                  "correctly introduced.\nIf you "
@@ -182,26 +182,26 @@ void P4IsoclinesDlg::onBtnEvaluate()
         return;
     }
     if (edt_value_->text().trimmed() == "0") {
-        gThisVF.isoclines_ = gThisVF.ydot_;
+        gThisVF->isoclines_ = gThisVF->ydot_;
     } else if (edt_value_->text().trimmed().toLower() == "inf") {
-        gThisVF.isoclines_ = gThisVF.xdot_;
+        gThisVF->isoclines_ = gThisVF->xdot_;
     } else {
         std::vector<QString> tmp;
-        auto &vfx = std::begin(gThisVF.xdot_);
-        auto &vfy = std::begin(gThisVF.ydot_);
-        for (; vfx != std::end(gThisVF.xdot_), vfy != std::end(gThisVF.ydot_);
+        auto &vfx = std::begin(gThisVF->xdot_);
+        auto &vfy = std::begin(gThisVF->ydot_);
+        for (; vfx != std::end(gThisVF->xdot_), vfy != std::end(gThisVF->ydot_);
              ++vfx, ++vfy) {
             tmp.emplace_back("(" + (*vfy) + +")-(" +
                              edt_value_->text().trimmed() + ")*(" + (*vfx) +
                              ")");
         }
-        gThisVF.isoclines_ = std::move(tmp);
+        gThisVF->isoclines_ = std::move(tmp);
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
     // QString to a list of P4POLYNOM2
-    gThisVF.setIsoclinesDlg(this);
-    gThisVF.evaluateIsoclinesTable();
+    gThisVF->setIsoclinesDlg(this);
+    gThisVF->evaluateIsoclinesTable();
     btnPlot_->setEnabled(true);
     plotwnd_->getDlgData();
 }
@@ -253,15 +253,15 @@ void P4IsoclinesDlg::onBtnPlot()
     // SECOND: read the resulting file and store the list
     // FIXME: aqui hem de trobar una forma de guardar les isoclines per cada VF
     // diferent. Posar-les a diferents fitxers de nom
-    // gThisVF.getbarefilename()+#vf ?
+    // gThisVF->getbarefilename()+#vf ?
     for (auto &vf : gVFResults.vf_) {
-        if (!vf->readIsoclines(gThisVF.getbarefilename()))
+        if (!vf->readIsoclines(gThisVF->getbarefilename()))
             QMessageBox::critical(this, "P4",
                                   "Cannot read isoclines.\n"
                                   "Plese check the input field.\n");
     }
 
-    /*if (!gVFResults.readIsoclines(gThisVF.getbarefilename())) {
+    /*if (!gVFResults.readIsoclines(gThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4",
                               "Cannot read isoclines.\n"
                               "Please check the input field!\n");
@@ -275,7 +275,7 @@ void P4IsoclinesDlg::onBtnPlot()
 
     btnPlot_->setEnabled(false);
 
-    gThisVF.setIsoclinesDlg(this);
+    gThisVF->setIsoclinesDlg(this);
 
     result = evalIsoclinesStart(mainSphere_, dashes, precis, points);
     if (!result) {

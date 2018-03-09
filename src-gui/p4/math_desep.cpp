@@ -167,7 +167,7 @@ integrate_blow_up(P4WinSphere *spherewnd, double *pcoord2,
                 break;
             }
 
-            if (gThisVF.getVFIndex_sphere(pcoord) == gVFResults.K_)
+            if (gThisVF->getVFIndex_sphere(pcoord) == gVFResults.K_)
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
@@ -428,7 +428,7 @@ plot_sep_blow_up(P4WinSphere *spherewnd, double x0, double y0, int chart,
         break;
     }
 
-    if (gThisVF.getVFIndex_sphere(pcoord2) != vfindex)
+    if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex)
         return std::vector<p4orbits::orbits_points>{};
 
     // end of P5 addition

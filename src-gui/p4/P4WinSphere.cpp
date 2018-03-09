@@ -577,7 +577,7 @@ void P4WinSphere::resizeEvent(QResizeEvent *e)
 
 void P4WinSphere::paintEvent(QPaintEvent *p)
 {
-    if (gThisVF.evaluating_)
+    if (gThisVF->evaluating_)
         return;
 
     if (!painterCache_ || isPainterCacheDirty_) {
@@ -759,7 +759,7 @@ void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
 
         if (!gVFResults.separatingCurves_.empty()) {
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-            int index{gThisVF.getVFIndex_R2(ucoord)};
+            int index{gThisVF->getVFIndex_R2(ucoord)};
             if (index < 0) {
                 buff.append("  VF: NONE");
             } else {
@@ -2246,10 +2246,10 @@ void P4WinSphere::printSeparatingCurves()
     QString comment;
     bool dashes;
 
-    if (gThisVF.numSeparatingCurves_ > 0 &&
+    if (gThisVF->numSeparatingCurves_ > 0 &&
         !gVFResults.separatingCurves_.empty()) {
         print_comment("Printing separating curves:");
-        for (int i = 0; i < gThisVF.numSeparatingCurves_; i++) {
+        for (int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;
@@ -2639,7 +2639,7 @@ void P4WinSphere::finishPrinting()
         staticPainter_->end();
         staticPainter_.reset();
 
-        if (sP4pixmap->save(gThisVF.getbarefilename() + ".jpg", "JPEG", 100) ==
+        if (sP4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG", 100) ==
             false) {
             QMessageBox::critical(this, "P4",
                                   "For some reason, P4 is unable to save the "

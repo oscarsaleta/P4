@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include <memory>
-
 #include <QWidget>
+
+#include <memory>
 
 class P4PlotWnd;
 class P4FindDlg;
@@ -63,12 +63,13 @@ class P4StartDlg : public QWidget
   public:
     P4StartDlg(const QString &);
 
+    void closeEvent(QCloseEvent *);
+
+    // these methods are used to access/modify findWindow_ and plotWindow_
     P4FindDlg *getFindWindowPtr();
     void setFindWindowPtr(P4FindDlg *);
     P4PlotWnd *getPlotWindowPtr();
     void setPlotWindow(P4PlotWnd *);
-
-    void closeEvent(QCloseEvent *);
 
     // following functions are called by other P4 widgets when something
     // happened:

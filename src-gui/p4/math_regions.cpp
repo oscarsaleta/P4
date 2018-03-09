@@ -41,7 +41,7 @@ bool isInsideRegion_R2(const std::vector<int> &signs, const double *ucoord)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         if (eval_term2(gVFResults.separatingCurves_[k].r2, ucoord) < 0) {
             if (signs[k] > 0)
                 return false;
@@ -62,7 +62,7 @@ bool isInsideRegion_R2_epsilon(const std::vector<int> &signs, const double *ucoo
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         v = eval_term2(gVFResults.separatingCurves_[k].r2, ucoord);
         if (v < -epsilon) {
             if (signs[k] > 0)
@@ -92,7 +92,7 @@ bool isInsideRegion_U1(const std::vector<int> &signs, const double *z1z2)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         if (eval_term2(gVFResults.separatingCurves_[k].u1, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
@@ -113,7 +113,7 @@ bool isInsideRegion_U1_epsilon(const std::vector<int> &signs,
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         v = eval_term2(gVFResults.separatingCurves_[k].u1, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
@@ -143,7 +143,7 @@ bool isInsideRegion_V1(const std::vector<int> &signs, const double *z1z2)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         if (eval_term2(gVFResults.separatingCurves_[k].v1, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
@@ -164,7 +164,7 @@ bool isInsideRegion_V1_epsilon(const std::vector<int> &signs,
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         v = eval_term2(gVFResults.separatingCurves_[k].v1, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
@@ -196,7 +196,7 @@ bool isInsideRegion_U2(const std::vector<int> &signs, const double *z1z2)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         if (eval_term2(gVFResults.separatingCurves_[k].u2, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
@@ -217,7 +217,7 @@ bool isInsideRegion_U2_epsilon(const std::vector<int> &signs,
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         v = eval_term2(gVFResults.separatingCurves_[k].u2, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
@@ -248,7 +248,7 @@ bool isInsideRegion_V2(const std::vector<int> &signs, const double *z1z2)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         if (eval_term2(gVFResults.separatingCurves_[k].v2, z1z2) < 0) {
             if (signs[k] > 0)
                 return false;
@@ -269,7 +269,7 @@ bool isInsideRegion_V2_epsilon(const std::vector<int> &signs,
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         v = eval_term2(gVFResults.separatingCurves_[k].v2, z1z2);
         if (v < -epsilon) {
             if (signs[k] > 0)
@@ -301,7 +301,7 @@ bool isInsideRegion_cyl(const std::vector<int> &signs, const double *rtheta)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         if (eval_term3(gVFResults.separatingCurves_[k].c, rtheta) < 0) {
             if (signs[k] > 0)
                 return false;
@@ -322,7 +322,7 @@ bool isInsideRegion_cyl_epsilon(const std::vector<int> &signs,
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (k = gThisVF.numSeparatingCurves_ - 1; k >= 0; k--) {
+    for (k = gThisVF->numSeparatingCurves_ - 1; k >= 0; k--) {
         v = eval_term3(gVFResults.separatingCurves_[k].c, rtheta);
         if (v < -epsilon) {
             if (signs[k] > 0)
@@ -482,7 +482,7 @@ QString describeRegion(double *pcoord)
     double v;
 
     s = "";
-    for (k = 0; k < gThisVF.numSeparatingCurves_; k++) {
+    for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
         v = eval_curve(gVFResults.separatingCurves_[k], pcoord);
         if (fabs(v) <= 1.e-8)
             s += "0";
@@ -503,7 +503,7 @@ bool isInTheSameRegion(double *testpt, double *refpos)
     if (refpos == nullptr || gVFResults.separatingCurves_.empty())
         return true;
 
-    for (i = gThisVF.numSeparatingCurves_ - 1; i >= 0; i--) {
+    for (i = gThisVF->numSeparatingCurves_ - 1; i >= 0; i--) {
         if (eval_curve(gVFResults.separatingCurves_[i], refpos) < 0) {
             if (eval_curve(gVFResults.separatingCurves_[i], testpt) > 1e-8)
                 return false;
@@ -523,9 +523,9 @@ bool isARealSingularity(double *pcoord, int vfindex)
     if (gVFResults.separatingCurves_.empty())
         return false;
 
-    for (int i = gThisVF.numVFRegions_ - 1; i >= 0; i--) {
-        if (gThisVF.vfRegions_[i].vfIndex == vfindex)
-            if (isInsideRegion_sphere_epsilon(gThisVF.vfRegions_[i].signs,
+    for (int i = gThisVF->numVFRegions_ - 1; i >= 0; i--) {
+        if (gThisVF->vfRegions_[i].vfIndex == vfindex)
+            if (isInsideRegion_sphere_epsilon(gThisVF->vfRegions_[i].signs,
                                               pcoord, 1e-8))
                 return true;
     }

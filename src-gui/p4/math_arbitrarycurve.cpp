@@ -106,42 +106,42 @@ bool runTaskArbitraryCurve(int task, int precision, int points)
 
     switch (task) {
     case EVAL_CURVE_R2:
-        value = gThisVF.prepareArbitraryCurve(
+        value = gThisVF->prepareArbitraryCurve(
             gVFResults.arbitraryCurves_.back().r2, -1, 1, precision, points);
         break;
     case EVAL_CURVE_U1:
-        value = gThisVF.prepareArbitraryCurve(
+        value = gThisVF->prepareArbitraryCurve(
             gVFResults.arbitraryCurves_.back().u1, 0, 1, precision, points);
         break;
     case EVAL_CURVE_V1:
-        value = gThisVF.prepareArbitraryCurve(
+        value = gThisVF->prepareArbitraryCurve(
             gVFResults.arbitraryCurves_.back().u1, -1, 0, precision, points);
         break;
     case EVAL_CURVE_U2:
-        value = gThisVF.prepareArbitraryCurve(
+        value = gThisVF->prepareArbitraryCurve(
             gVFResults.arbitraryCurves_.back().u2, 0, 1, precision, points);
         break;
     case EVAL_CURVE_V2:
-        value = gThisVF.prepareArbitraryCurve(
+        value = gThisVF->prepareArbitraryCurve(
             gVFResults.arbitraryCurves_.back().u2, -1, 0, precision, points);
         break;
     case EVAL_CURVE_LYP_R2:
-        value = gThisVF.prepareArbitraryCurve_LyapunovR2(precision, points);
+        value = gThisVF->prepareArbitraryCurve_LyapunovR2(precision, points);
         break;
     case EVAL_CURVE_CYL1:
-        value = gThisVF.prepareArbitraryCurve_LyapunovCyl(-PI_DIV4, PI_DIV4,
+        value = gThisVF->prepareArbitraryCurve_LyapunovCyl(-PI_DIV4, PI_DIV4,
                                                           precision, points);
         break;
     case EVAL_CURVE_CYL2:
-        value = gThisVF.prepareArbitraryCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
+        value = gThisVF->prepareArbitraryCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
                                                           precision, points);
         break;
     case EVAL_CURVE_CYL3:
-        value = gThisVF.prepareArbitraryCurve_LyapunovCyl(
+        value = gThisVF->prepareArbitraryCurve_LyapunovCyl(
             PI - PI_DIV4, PI + PI_DIV4, precision, points);
         break;
     case EVAL_CURVE_CYL4:
-        value = gThisVF.prepareArbitraryCurve_LyapunovCyl(
+        value = gThisVF->prepareArbitraryCurve_LyapunovCyl(
             -PI + PI_DIV4, -PI_DIV4, precision, points);
         break;
     default:
@@ -150,7 +150,7 @@ bool runTaskArbitraryCurve(int task, int precision, int points)
     }
 
     if (value)
-        return gThisVF.evaluateArbitraryCurve();
+        return gThisVF->evaluateArbitraryCurve();
     else
         return false;
 }
@@ -227,7 +227,7 @@ static bool read_curve(void (*chart)(double, double, double *))
     double pcoord[3];
     int d, c;
 
-    fp = fopen(QFile::encodeName(gThisVF.getfilename_arbitrarycurve()), "r");
+    fp = fopen(QFile::encodeName(gThisVF->getfilename_arbitrarycurve()), "r");
     if (fp == nullptr)
         return false;
 

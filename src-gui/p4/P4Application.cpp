@@ -66,8 +66,8 @@ P4Application::P4Application(int &argc, char **argv) : QApplication{argc, argv}
 
 void P4Application::signalChanged()
 {
-    gThisVF.evaluated_ = false;
-    gThisVF.changed_ = true;
+    gThisVF->evaluated_ = false;
+    gThisVF->changed_ = true;
 
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_CHANGED), nullptr);
@@ -76,10 +76,10 @@ void P4Application::signalChanged()
 
 void P4Application::signalEvaluated(int exitCode)
 {
-    gThisVF.evaluated_ = true;
-    gThisVF.evaluating_ = false;
+    gThisVF->evaluated_ = true;
+    gThisVF->evaluating_ = false;
 
-    gThisVF.finishEvaluation(exitCode);
+    gThisVF->finishEvaluation(exitCode);
 
     auto e = std::make_unique<P4Event>(
         static_cast<QEvent::Type>(TYPE_SIGNAL_EVALUATED), nullptr);
@@ -99,28 +99,28 @@ void P4Application::signalEvaluated(int exitCode)
 
 void P4Application::signalGcfEvaluated(int exitCode)
 {
-    gThisVF.evaluated_ = true;
-    gThisVF.evaluating_ = false;
-    gThisVF.finishEvaluation(exitCode);
+    gThisVF->evaluated_ = true;
+    gThisVF->evaluating_ = false;
+    gThisVF->finishEvaluation(exitCode);
 }
 
 void P4Application::signalSeparatingCurvesEvaluated(int exitCode)
 {
-    gThisVF.evaluating_ = false;
-    gThisVF.finishEvaluation(exitCode);
+    gThisVF->evaluating_ = false;
+    gThisVF->finishEvaluation(exitCode);
 }
 
 void P4Application::signalCurveEvaluated(int exitCode)
 {
-    gThisVF.evaluated_ = true;
-    gThisVF.evaluating_ = false;
+    gThisVF->evaluated_ = true;
+    gThisVF->evaluating_ = false;
 
-    gThisVF.finishEvaluation(exitCode);
+    gThisVF->finishEvaluation(exitCode);
 }
 
 void P4Application::catchProcessError(QProcess::ProcessError qperr)
 {
-    gThisVF.catchProcessError(qperr);
+    gThisVF->catchProcessError(qperr);
 }
 
 void P4Application::signalLoaded()

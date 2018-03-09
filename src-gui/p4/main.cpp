@@ -67,8 +67,7 @@ bool gCmdLineAutoEvaluate;
 bool gCmdLineAutoPlot;
 bool gCmdLineAutoExit;
 
-extern P4ParentStudy gVFResults;
-extern P4InputVF gThisVF;
+P4ParentStudy gVFResults;
 
 // -----------------------------------------------------------------------
 //          Functions for handling command line options
@@ -161,7 +160,7 @@ int main(int argc, char *argv[])
 
     //  gP4app->setStyle( new QCDEStyle() );
 
-    // gThisVF = std::make_shared<P4InputVF>();
+    gThisVF = std::make_unique<P4InputVF>();
 
     gP4startDlg = std::make_unique<P4StartDlg>(gCmdLineFilename);
     if (!gCmdLineAutoExit)
@@ -170,7 +169,7 @@ int main(int argc, char *argv[])
     gP4app->setQuitOnLastWindowClosed(true);
 
     if (gCmdLineFilename.length() != 0) {
-        if (!(gThisVF.load())) {
+        if (!(gThisVF->load())) {
             gCmdLineAutoEvaluate = false;
             gCmdLineAutoPlot = false;
             if (gCmdLineAutoExit) {

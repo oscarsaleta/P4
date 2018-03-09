@@ -163,7 +163,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     else
         btn_actionrun_->toggle();
 
-    switch (gThisVF.typeofstudy_) {
+    switch (gThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
         btn_all_->toggle();
         break;
@@ -204,10 +204,10 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     QObject::connect(btn_all_.get(), &QRadioButton::toggled, this,
                      [=](bool on) {
                          if (on) {
-                             if (gThisVF.typeofstudy_ != TYPEOFSTUDY_ALL) {
-                                 gThisVF.typeofstudy_ = TYPEOFSTUDY_ALL;
-                                 if (gThisVF.changed_ == false) {
-                                     gThisVF.changed_ = true;
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
                                      gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
@@ -220,10 +220,10 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     QObject::connect(btn_one_.get(), &QRadioButton::toggled, this,
                      [=](bool on) {
                          if (on) {
-                             if (gThisVF.typeofstudy_ != TYPEOFSTUDY_ONE) {
-                                 gThisVF.typeofstudy_ = TYPEOFSTUDY_ONE;
-                                 if (gThisVF.changed_ == false) {
-                                     gThisVF.changed_ = true;
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
                                      gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
@@ -236,10 +236,10 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     QObject::connect(btn_fin_.get(), &QRadioButton::toggled, this,
                      [=](bool on) {
                          if (on) {
-                             if (gThisVF.typeofstudy_ != TYPEOFSTUDY_FIN) {
-                                 gThisVF.typeofstudy_ = TYPEOFSTUDY_FIN;
-                                 if (gThisVF.changed_ == false) {
-                                     gThisVF.changed_ = true;
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
                                      gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
@@ -252,10 +252,10 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     QObject::connect(btn_inf_.get(), &QRadioButton::toggled, this,
                      [=](bool on) {
                          if (on) {
-                             if (gThisVF.typeofstudy_ != TYPEOFSTUDY_FIN) {
-                                 gThisVF.typeofstudy_ = TYPEOFSTUDY_FIN;
-                                 if (gThisVF.changed_ == false) {
-                                     gThisVF.changed_ = true;
+                             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
+                                 gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+                                 if (gThisVF->changed_ == false) {
+                                     gThisVF->changed_ = true;
                                      gP4app->signalChanged();
                                  }
                                  if (paramsWindow_) {
@@ -288,7 +288,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     // TODO: implement onSaveSignal slot
 
     // finishing
-    gThisVF.setFindDlg(this);
+    gThisVF->setFindDlg(this);
 
     // show vector field dialog
     if (!vfWindow_) {
@@ -306,7 +306,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
         superLayout_->addWidget(vfSelectWindow_.get(), 0, Qt::AlignTop);
     }
 
-    if (gThisVF.evaluating_)
+    if (gThisVF->evaluating_)
         btn_eval_->setEnabled(false);
 
     // readSettings();
@@ -314,37 +314,37 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 
 void P4FindDlg::onSaveSignal()
 {
-    // QSettings settings(gThisVF.getbarefilename().append(".conf"),
+    // QSettings settings(gThisVF->getbarefilename().append(".conf"),
     // QSettings::NativeFormat);
     // settings.setValue("P4FindDlg/state",saveState());
 }
 
 void P4FindDlg::onBtnLoad()
 {
-    if (gThisVF.load() == false) {
+    if (gThisVF->load() == false) {
         QMessageBox::critical(this, "P4",
                               "Unable to find the input vector field.\n");
     } else {
         // we first signal that the vector field has changed to invalidate all
         // open windows.
-        bool oldeval = gThisVF.evaluated_;
+        bool oldeval = gThisVF->evaluated_;
 
         if (vfSelectWindow_) {
             if (vfSelectWindow_->getWinCurvesPtr() != nullptr) {
-                gVFResults.readTables(gThisVF.getbarefilename(), true, true);
+                gVFResults.readTables(gThisVF->getbarefilename(), true, true);
             }
         }
 
         updateDlgData();
-        if (gThisVF.changed_ == false) {
-            gThisVF.changed_ = true;
+        if (gThisVF->changed_ == false) {
+            gThisVF->changed_ = true;
             gP4app->signalChanged();
         }
 
         // then, we signal that the vector field is unchanged because a save
         // vector field is not needed when quiting.
-        gThisVF.changed_ = false;
-        gThisVF.evaluated_ = oldeval;
+        gThisVF->changed_ = false;
+        gThisVF->evaluated_ = oldeval;
         gP4app->signalLoaded();
     }
 }
@@ -352,15 +352,15 @@ void P4FindDlg::onBtnLoad()
 void P4FindDlg::onBtnSave()
 {
     getDataFromDlg();
-    if (gThisVF.changed_)
-        gThisVF.cleared_ = false;
-    if (gThisVF.cleared_) {
+    if (gThisVF->changed_)
+        gThisVF->cleared_ = false;
+    if (gThisVF->cleared_) {
         QMessageBox::critical(this, "P4",
                               "No data has been entered.\n"
                               "Please specify vector field.\n");
         return;
     }
-    if (gThisVF.save() == false) {
+    if (gThisVF->save() == false) {
         QMessageBox::critical(
             this, "P4",
             "Unable to save the input vector field.\n"
@@ -370,11 +370,11 @@ void P4FindDlg::onBtnSave()
 
 void P4FindDlg::onBtnEval()
 {
-    if (gThisVF.evaluating_)
+    if (gThisVF->evaluating_)
         return;
 
     getDataFromDlg();
-    if (gThisVF.getfilename().length() == 0) {
+    if (gThisVF->getfilename().length() == 0) {
         // error: need to specify filename first
         QMessageBox::critical(this, "P4",
                               "Unable to evaluate.\n"
@@ -382,10 +382,10 @@ void P4FindDlg::onBtnEval()
         return;
     }
 
-    if (gThisVF.changed_)
-        gThisVF.cleared_ = false;
+    if (gThisVF->changed_)
+        gThisVF->cleared_ = false;
 
-    if (gThisVF.cleared_) {
+    if (gThisVF->cleared_) {
         QMessageBox::critical(this, "P4",
                               "No data has been entered.\n"
                               "Please specify vector field.\n");
@@ -393,15 +393,15 @@ void P4FindDlg::onBtnEval()
     }
 
     if (gActionOnlyPrepareFile) {
-        gThisVF.evaluated_ = false;
-        gThisVF.evaluating_ = false;
-        gThisVF.prepare();
+        gThisVF->evaluated_ = false;
+        gThisVF->evaluating_ = false;
+        gThisVF->prepare();
     } else {
-        gThisVF.evaluated_ = false;
-        gThisVF.evaluating_ = true;
-        gThisVF.evaluatingPiecewiseConfig_ = false;
+        gThisVF->evaluated_ = false;
+        gThisVF->evaluating_ = true;
+        gThisVF->evaluatingPiecewiseConfig_ = false;
         signalEvaluating();
-        gThisVF.evaluate();
+        gThisVF->evaluate();
     }
 }
 
@@ -417,7 +417,7 @@ void P4FindDlg::getDataFromDlg()
 
 void P4FindDlg::updateDlgData()
 {
-    switch (gThisVF.typeofstudy_) {
+    switch (gThisVF->typeofstudy_) {
     case TYPEOFSTUDY_ALL:
         btn_all_->toggle();
         break;
