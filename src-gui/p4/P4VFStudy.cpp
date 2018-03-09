@@ -164,7 +164,7 @@ bool P4VFStudy::readGCF(FILE *fp)
 // -----------------------------------------------------------------------
 //                      P4VFStudy::readIsoclines
 // -----------------------------------------------------------------------
-// FIXME: posar a readTables (P4VFStudy)
+// FIXME: how to have an isoclines file for every different VF?
 bool P4VFStudy::readIsoclines(QString basename)
 {
     int N, degree_curve;
@@ -1171,9 +1171,9 @@ void dumpSingularities(QTextEdit &m,
                 s = "(unstable)";
             else
                 s = "( ??? )";
-            ss = s.toAscii();
-            m.append(s.sprintf("    Stability = %d %s", it.stable,
-                               (const char *)ss));
+            ss = s.toLatin1();
+            m.append(
+                s.sprintf("    Stability = %d %s", it.stable, ss.constData()));
             m.append(s.sprintf(" "));
         }
     }
@@ -1208,10 +1208,10 @@ void dumpSingularities(QTextEdit &m,
             chart = "?";
             break;
         }
-        m.append(s.sprintf("%s (x0,y0)=(%g,%g)  Chart %s", type, it.x0, it.y0,
-                           chart));
+        m.append(s.sprintf("WEAK FOCUS:\t(x0,y0)=(%g,%g)  Chart %s", it.x0,
+                           it.y0, chart));
         if (longversion) {
-            m.append(s.sprintf("    Type = %d", wf.type));
+            m.append(s.sprintf("    Type = %d", it.type));
             m.append(s.sprintf(" "));
         }
     }
@@ -1247,18 +1247,18 @@ void dumpSingularities(QTextEdit &m,
             chart = "?";
             break;
         }
-        m.append(s.sprintf("%s (x0,y0)=(%g,%g)  Chart %s", type, it.x0, it.y0,
-                           chart));
+        m.append(
+            s.sprintf("NODE:\t(x0,y0)=(%g,%g)  Chart %s", it.x0, it.y0, chart));
         if (longversion) {
-            if (no.stable == -1)
+            if (it.stable == -1)
                 s = "(stable)";
-            else if (no.stable == +1)
+            else if (it.stable == +1)
                 s = "(unstable)";
             else
                 s = "( ??? )";
-            ss = s.toAscii();
-            m.append(s.sprintf("    Stability = %d %s", no.stable,
-                               (const char *)ss));
+            ss = s.toLatin1();
+            m.append(
+                s.sprintf("    Stability = %d %s", it.stable, ss.constData()));
             m.append(s.sprintf(" "));
         }
     }
@@ -1294,22 +1294,22 @@ void dumpSingularities(QTextEdit &m,
             chart = "?";
             break;
         }
-        m.append(s.sprintf("%s (x0,y0)=(%g,%g)  Chart %s", type, it.x0, it.y0,
-                           chart));
+        m.append(s.sprintf("%SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s",
+                           it.x0, it.y0, chart));
         if (longversion) {
-            m.append(s.sprintf("   Type    = %d", se.type));
-            m.append(s.sprintf("   Epsilon = %g  original=%d", se.epsilon,
-                               se.notadummy));
+            m.append(s.sprintf("   Type    = %d", it.type));
+            m.append(s.sprintf("   Epsilon = %g  original=%d", it.epsilon,
+                               it.notadummy));
             m.append(
                 s.sprintf("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
-                          se.a11, se.a12, se.a21, se.a22));
+                          it.a11, it.a12, it.a21, it.a22));
             m.append(s.sprintf("   Vector Field = "));
             m.append(s.sprintf("      x' = %s",
-                               dumpPoly2(se.vector_field_0_, "x", "y")));
+                               dumpPoly2(it.vector_field_0, "x", "y")));
             m.append(s.sprintf("      y' = %s",
-                               dumpPoly2(se.vector_field_1_, "x", "y")));
+                               dumpPoly2(it.vector_field_1, "x", "y")));
             m.append(s.sprintf("   Separatrices:"));
-            dumpSeparatrices(m, se.separatrices, 6);
+            dumpSeparatrices(m, it.separatrices, 6);
             m.append(s.sprintf(" "));
         }
     }
@@ -1361,20 +1361,20 @@ void P4VFStudy::dump(QTextEdit &m)
     m.append(s.sprintf("Singular points - summary"));
     m.append(s.sprintf("-------------------------"));
     m.append(s.sprintf(" "));
-    dumpSingularities(m, first_saddle_point_, "SADDLE         ", false);
-    dumpSingularities(m, first_se_point_, "SEMI-ELEMENTARY", false);
-    dumpSingularities(m, first_node_point_, "NODE           ", false);
-    dumpSingularities(m, first_wf_point_, "WEAK FOCUS     ", false);
-    dumpSingularities(m, first_sf_point_, "STRONG FOCUS   ", false);
-    dumpSingularities(m, first_de_point_, "DEGENERATE     ", false);
+    dumpSingularities(m, saddlePoints_, false);
+    dumpSingularities(m, sePoints_, false);
+    dumpSingularities(m, nodePoints_, false);
+    dumpSingularities(m, wfPoints_, false);
+    dumpSingularities(m, sfPoints_, false);
+    dumpSingularities(m, dePoints_, false);
     m.append(s.sprintf(" "));
     m.append(s.sprintf("Singular points - full description"));
     m.append(s.sprintf("----------------------------------"));
     m.append(s.sprintf(" "));
-    dumpSingularities(m, first_saddle_point_, "SADDLE         ", true);
-    dumpSingularities(m, first_se_point_, "SEMI-ELEMENTARY", true);
-    dumpSingularities(m, first_node_point_, "NODE           ", true);
-    dumpSingularities(m, first_wf_point_, "WEAK FOCUS     ", true);
-    dumpSingularities(m, first_sf_point_, "STRONG FOCUS   ", true);
-    dumpSingularities(m, first_de_point_, "DEGENERATE     ", true);
+    dumpSingularities(m, saddlePoints_, true);
+    dumpSingularities(m, sePoints_, true);
+    dumpSingularities(m, nodePoints_, true);
+    dumpSingularities(m, wfPoints_, true);
+    dumpSingularities(m, sfPoints_, true);
+    dumpSingularities(m, dePoints_, true);
 }
