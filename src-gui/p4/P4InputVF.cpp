@@ -157,7 +157,7 @@ void P4InputVF::reset(int n)
     gcf_.clear();
 
     parvalue_.clear();
-    numparams_ = 0;
+    numParams_ = 0;
     for (i = 0; i < MAXNUMPARAMS; i++)
         parlabel_[i] = "";
 
@@ -347,12 +347,12 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%d\n", &numparams_) != 1) {
+        if (fscanf(fp, "%d\n", &numParams_) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        for (i = 0; i < numparams_; i++) {
+        for (i = 0; i < numParams_; i++) {
             if (fscanf(fp, "%s", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -369,7 +369,7 @@ bool P4InputVF::load()
             }
             parvalue_[0].push_back(QString{scanbuf});
         }
-        for (i = numparams_; i < MAXNUMPARAMS; i++) {
+        for (i = numParams_; i < MAXNUMPARAMS; i++) {
             parlabel_[i] = QString{};
             parvalue_[0][i].push_back(QString{});
         }
@@ -454,13 +454,13 @@ bool P4InputVF::load()
             numPointsSeparatingCurve_.clear();
         }
 
-        if (fscanf(fp, "%d\n", &numparams_) != 1 || numparams_ < 0 ||
-            numparams_ > MAXNUMPARAMS) {
+        if (fscanf(fp, "%d\n", &numParams_) != 1 || numParams_ < 0 ||
+            numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
         }
-        for (i = 0; i < numparams_; i++) {
+        for (i = 0; i < numParams_; i++) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -468,7 +468,7 @@ bool P4InputVF::load()
             }
             parlabel_[i] = QString{scanbuf};
         }
-        for (i = numparams_; i < MAXNUMPARAMS; i++)
+        for (i = numParams_; i < MAXNUMPARAMS; i++)
             parlabel_[i] = QString{};
 
         if (fscanf(fp, "%d\n", &numVFRegions_) != 1 || numVFRegions_ < 0) {
@@ -604,7 +604,7 @@ bool P4InputVF::load()
             if (epsilon_[k] == "(null)")
                 epsilon_[k] = "";
 
-            for (i = 0; i < numparams_; i++) {
+            for (i = 0; i < numParams_; i++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                     reset(1);
                     fclose(fp);
@@ -612,7 +612,7 @@ bool P4InputVF::load()
                 }
                 parvalue_[k].push_back(QString{scanbuf});
             }
-            for (i = numparams_; i < MAXNUMPARAMS; i++)
+            for (i = numParams_; i < MAXNUMPARAMS; i++)
                 parvalue_[k].push_back(QString{});
         }
     }
@@ -714,8 +714,8 @@ bool P4InputVF::save()
             out << numPointsSeparatingCurve_[i] << "\n";
         }
 
-        out << numparams_ << "\n";
-        for (i = 0; i < numparams_; i++) {
+        out << numParams_ << "\n";
+        for (i = 0; i < numParams_; i++) {
             if (parlabel_[i].isEmpty())
                 out << "(null)\n";
             else
@@ -763,7 +763,7 @@ bool P4InputVF::save()
             else
                 out << gcf_[i] << "\n";
 
-            for (k = 0; k < numparams_; k++) {
+            for (k = 0; k < numParams_; k++) {
                 if (parvalue_[i][k].isEmpty())
                     out << "(null)\n";
                 else
@@ -1070,18 +1070,18 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
     }
 
     fp << "user_parameters := [ ";
-    for (k = 0; k < numparams_; k++) {
+    for (k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         fp << lbl;
-        if (k == numparams_ - 1)
+        if (k == numParams_ - 1)
             fp << " ]:\n";
         else
             fp << ", ";
     }
-    if (numparams_ == 0)
+    if (numParams_ == 0)
         fp << " ]:\n";
 
-    for (k = 0; k < numparams_; k++) {
+    for (k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         if (lbl.length() == 0)
             continue;
@@ -1143,7 +1143,7 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
     fp << "user_curve := " << mycurve << ":\n";
 
     QString lbl, val;
-    for (int k = 0; k < numparams_; k++) {
+    for (int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         // FIXME: s'ha d'iterar per tots els parvalues?
         val = convertMapleUserParameterLabels(parvalue_[0][k]);
@@ -1177,7 +1177,7 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
         fp << s; // FIXME
     }
 
-    for (k = 0; k < numparams_; k++) {
+    for (k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         // FIXME: en aquest cas segur q està malament perquè hem de fer-ho amb
         // cada VF per separat (cada VF té les seves isoclines)
@@ -1285,7 +1285,7 @@ QString P4InputVF::convertMapleUserParameterLabels(QString src)
     QString p, newlabel;
     int i, k;
 
-    for (k = 0; k < numparams_; k++) {
+    for (k = 0; k < numParams_; k++) {
         p = parlabel_[k];
         if (p.length() == 0)
             continue;
@@ -1316,7 +1316,7 @@ QString P4InputVF::convertMapleUserParametersLabelsToValues(QString src)
     QString t, p, newlabel;
     int i;
     QString s{std::move(src)};
-    for (int k = 0; k < numparams_; k++) {
+    for (int k = 0; k < numParams_; k++) {
         p = parlabel_[k];
         if (p.length() == 0)
             continue;
@@ -3290,7 +3290,7 @@ void P4InputVF::deleteVectorField(int index)
             parlabel_[k] = QString{};
         }
 
-        numparams_ = 0;
+        numParams_ = 0;
         p_ = DEFAULTP;
         q_ = DEFAULTQ;
         // symbolicpackage = PACKAGE_MAPLE;

@@ -132,7 +132,7 @@ class P4InputVF : public QObject
     std::unique_ptr<QPushButton> clearProcessButton_;
 
     // PARAMETER LIST
-    int numparams_{0};
+    int numParams_{0};
     // list of parameter names
     QString parlabel_[MAXNUMPARAMS];
     // a list of parameter values for every VF (thus vector of vectors)
