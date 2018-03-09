@@ -19,11 +19,12 @@
 
 #pragma once
 
-#include <memory>
-#include <vector>
+#include <QWidget>
 
 #include <QPoint>
-#include <QWidget>
+
+#include <memory>
+#include <vector>
 
 class P4SeparatingCurvesDlg;
 class QLabel;
@@ -35,37 +36,39 @@ class QKeyEvent;
 class QTimer;
 
 struct P4POLYLINES;
-struct p4curves::curves;
+namespace p4curves
+{
+struct curves;
+}
 
 class P4WinInputSphere : public QWidget
 {
     Q_OBJECT
 
   public:
-    
-    P4WinInputSphere(P4SeparatingCurvesDlg &, QLabel *);
+    P4WinInputSphere(P4SeparatingCurvesDlg *, QLabel *);
 
     //////////////////////
     // MEMBER VARIABLES //
     //////////////////////
 
-    double x0_, y0_;  // world coordinates of upper-left corner
-    double x1_, y1_;  // world coordinates of upper-right corner
-    double dx_;       // x1-x0
-    double dy_;       // y1-y0;
+    double x0_, y0_; // world coordinates of upper-left corner
+    double x1_, y1_; // world coordinates of upper-right corner
+    double dx_;      // x1-x0
+    double dy_;      // y1-y0;
 
-    int w_;       // width of window
-    int h_;       // height of window
-    int idealh_;  // ideal height of window to get good aspect ratio
+    int w_;      // width of window
+    int h_;      // height of window
+    int idealh_; // ideal height of window to get good aspect ratio
 
-    bool isZoom_;
+    bool isZoom_{false};
 
     double horPixelsPerMM_;
     double verPixelsPerMM_;
 
     std::unique_ptr<QPixmap> painterCache_;
     std::unique_ptr<QLabel> status_;
-    bool isPainterCacheDirty_;
+    bool isPainterCacheDirty_{true};
     // to know the update rectangle after painting we keep to smallest rectangle
     // enclosing all painted objects
     int paintedXMin_;
@@ -117,8 +120,8 @@ class P4WinInputSphere : public QWidget
 
     void plotCurves();
     void plotCurve(const p4curves::curves &, int);
-    void plotLine(double *, double *, int);
-    void plotPoint(double *, int);
+    void plotLine(const double *, const double *, int);
+    void plotPoint(const double *, int);
     void setupCoordinateTransformations();
 
   public slots:
@@ -130,13 +133,13 @@ class P4WinInputSphere : public QWidget
     void refreshAfterResize();
 
   private:
-    QSeparatingCurvesDlg &parentWnd_;
+    P4SeparatingCurvesDlg *parentWnd_;
     std::unique_ptr<QPainter> staticPainter_;
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
     std::unique_ptr<QTimer> refreshTimeout_;
 
-    bool selectingZoom_;
+    bool selectingZoom_{false};
     QPoint zoomAnchor1_;
     QPoint zoomAnchor2_;
     std::unique_ptr<QPixmap> anchorMap_;

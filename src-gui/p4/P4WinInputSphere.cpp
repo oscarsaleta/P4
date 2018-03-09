@@ -19,32 +19,36 @@
 
 #include "P4WinInputSphere.hpp"
 
+#include <QKeyEvent>
+#include <QLabel>
+#include <QPainter>
 #include <QPalette>
+#include <QTimer>
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
+#include "main.hpp"
+#include "math_p4.hpp"
 #include "math_regions.hpp"
 #include "plot_tools.hpp"
+#include "math_charts.hpp"
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 
-P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg &parent,
+P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *parent,
                                    QLabel *lbl_status)
-    : QWidget{&parent}, parentWnd_{parent}, status_{lbl_status}
+    : QWidget{parent}, parentWnd_{parent}, status_{lbl_status}
 {
-    isZoom_ = false;
-    isPainterCacheDirty_ = true;
-    selectingZoom_ = false;
-
     setAttribute(Qt::WA_PaintOnScreen);
 
-    setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW);  // minimum size
+    setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW); // minimum size
     w_ = width();
     h_ = height();
     idealh_ = w_;
 
-    horPixelsPerMM_ = ((double)w_) / ((double)widthMM());
-    verPixelsPerMM_ = ((double)h_) / ((double)heightMM());
+    horPixelsPerMM_ = (static_cast<double>(w_)) / widthMM();
+    verPixelsPerMM_ = (static_cast<double>(h_)) / heightMM();
 
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
@@ -57,9 +61,7 @@ void P4WinInputSphere::keyPressEvent(QKeyEvent *e) { e->ignore(); }
 
 void P4WinInputSphere::setupPlot()
 {
-    std::vector<P4POLYLINES> t;
     QPalette palette;
-    double idealhd;
 
     setupCoordinateTransformations();
 
@@ -67,6 +69,7 @@ void P4WinInputSphere::setupPlot()
                      QXFIGCOLOR(spherebgcolor_ = bgColours::CBACKGROUND));
     setPalette(palette);
 
+    // clear circle vectors
     circleAtInfinity_.clear();
     plCircle_.clear();
 
@@ -91,11 +94,10 @@ void P4WinInputSphere::setupPlot()
         }
     }
 
-    dx_ = x1 - x0;
-    dy_ = y1 - y0;
-    idealhd = w_;
-    idealhd = (idealhd / dx) * dy;
-    idealh = (int)(idealhd + .5);
+    dx_ = x1_ - x0_;
+    dy_ = y1_ - y0_;
+    double idealhd{w_ / dx_ * dy_};
+    idealh_ = std::round(idealhd);
 
     if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
         circleAtInfinity_ =
@@ -139,10 +141,10 @@ void P4WinInputSphere::loadAnchorMap()
 
     if (anchorMap_) {
         if (anchorMap_->width() < aw || anchorMap_->height() < ah) {
-            anchorMap_.reset(new QPixmap(aw, ah));
+            anchorMap_ = std::make_unique<QPixmap>(aw, ah);
         }
     } else {
-        anchorMap_.reset(new QPixmap(aw, ah));
+        anchorMap_ = std::make_unique<QPixmap>(aw, ah);
     }
 
     if (!painterCache_) {
@@ -150,7 +152,7 @@ void P4WinInputSphere::loadAnchorMap()
         return;
     }
 
-    QPainter paint(anchorMap_);
+    QPainter paint{anchorMap_.get()};
     paint.drawPixmap(0, 0, aw, ah, *painterCache_, x1, y1, aw, ah);
 }
 
@@ -187,7 +189,7 @@ void P4WinInputSphere::saveAnchorMap()
     int aw{x2 - x1 + 1};
     int ah{y2 - y1 + 1};
 
-    QPainter paint{painterCache_};
+    QPainter paint{painterCache_.get()};
     paint.drawPixmap(x1, y1, aw, ah, *anchorMap_, 0, 0, aw, ah);
     update(x1, y1, aw, ah);
 }
@@ -197,17 +199,16 @@ void P4WinInputSphere::adjustToNewSize()
     w_ = width();
     h_ = height();
 
-    double idealhd{w_};
-    idealhd = (idealhd / dx) * dy;
-    idealh_ = (int)(idealhd + .5);
+    double idealhd{w_ / dx_ * dy_};
+    idealh_ = std::round(idealhd);
 
-    double reqratio{(((double)w_) / horPixelsPerMM_) /
+    double reqratio{((static_cast<double>(w_)) / horPixelsPerMM_) /
                     (idealh_ / verPixelsPerMM_)};
-    double ratio{(((double)w_) / horPixelsPerMM_) /
-                 (((double)h_) / verPixelsPerMM_)};
+    double ratio{((static_cast<double>(w_)) / horPixelsPerMM_) /
+                 ((static_cast<double>(h_)) / verPixelsPerMM_)};
 
     QString buf;
-    buf.sprintf("Aspect ratio = %f\n", (float)(ratio / reqratio));
+    buf.sprintf("Aspect ratio = %8.5g\n", ratio / reqratio);
     status_->setText(buf);
     status_->setMaximumWidth(w_);
 
@@ -223,15 +224,15 @@ void P4WinInputSphere::adjustToNewSize()
     }
 
     if (!painterCache_) {
-        painterCache_.reset(new QPixmap(size()));
+        painterCache_ = std::make_unique<QPixmap>(size());
         isPainterCacheDirty_ = false;
 
-        QPainter paint{painterCache_};
+        QPainter paint{painterCache_.get()};
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
         paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-        staticPainter_.reset(&paint);  // TODO works?
+        staticPainter_.reset(&paint); // TODO works?
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -253,10 +254,10 @@ void P4WinInputSphere::adjustToNewSize()
         staticPainter_.reset();
 
         if (refreshTimeout_)
-            refreshTimeout_.stop();
+            refreshTimeout_->stop();
         else {
-            refreshTimeout_.reset(new QTimer());
-            QObject::connect(refreshTimeout_, &QTimer::timeout, this,
+            refreshTimeout_ = std::make_unique<QTimer>();
+            QObject::connect(refreshTimeout_.get(), &QTimer::timeout, this,
                              &P4WinInputSphere::refreshAfterResize);
         }
         refreshTimeout_->start(500);
@@ -278,15 +279,15 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
 
     if (!painterCache_ || isPainterCacheDirty_) {
         if (!painterCache_)
-            painterCache_.refresh(new QPixmap(size()));
+            painterCache_ = std::make_unique<QPixmap>(size());
         isPainterCacheDirty_ = false;
 
-        QPainter paint{painterCache_};
+        QPainter paint{painterCache_.get()};
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
         paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-        staticPainter_.reset(&paint);
+        staticPainter_ = std::make_unique<QPainter>(&paint);
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -326,8 +327,8 @@ void P4WinInputSphere::markSelection(int x1, int y1, int x2, int y2)
     if (by2 >= height())
         by2 = height() - 1;
 
-    QPainter p{painterCache_};
-    QColor{QXFIGCOLOR(WHITE)};
+    QPainter p{painterCache_.get()};
+    QColor c{QXFIGCOLOR(WHITE)};
     c.setAlpha(32);
     p.setPen(QXFIGCOLOR(WHITE));
     p.setBrush(c);
@@ -343,35 +344,36 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
 {
     int x{e->x()}, y{e->y()};
     double wx{coWorldX(x)}, wy{coWorldY(y)};
+    double ucoord[2], pcoord[3];
+    QString buf;
+    int index;
 
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
         switch (gVFResults.typeofview_) {
         case TYPEOFVIEW_PLANE:
             if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
-                buf.sprintf("Local study   (x,y) = (%f,%f)", (float)wx,
-                            (float)wy);
+                buf.sprintf("Local study   (x,y) = (%8.5g,%8.5g)", wx, wy);
             else
-                buf.sprintf("Planar view   (x,y) = (%f,%f)", (float)wx,
-                            (float)wy);
+                buf.sprintf("Planar view   (x,y) = (%8.5g,%8.5g)", wx, wy);
             break;
         case TYPEOFVIEW_SPHERE:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
-                buf.sprintf("The Poincare sphere   (x,y) = (%f,%f)",
-                            (float)ucoord[0], (float)ucoord[1]);
+                buf.sprintf("The Poincare sphere   (x,y) = (%8.5g,%8.5g)",
+                            ucoord[0], ucoord[1]);
             else
-                buf.sprintf("The P-L sphere of type (%d,%d)   (x,y) = (%f,%f)",
-                            gVFResults.p_, gVFResults.q_, (float)ucoord[0],
-                            (float)ucoord[1]);
+                buf.sprintf(
+                    "The P-L sphere of type (%d,%d)   (x,y) = (%8.5g,%8.5g)",
+                    gVFResults.p_, gVFResults.q_, ucoord[0], ucoord[1]);
             break;
         case TYPEOFVIEW_U1:
             MATHFUNC(sphere_to_U1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (ucoord[1] >= 0)
-                buf.sprintf("The U1 chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The U1 chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             else
-                buf.sprintf("The V1' chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The V1' chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             break;
         case TYPEOFVIEW_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
@@ -380,20 +382,20 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
                 ucoord[1] = -ucoord[1];
             }
             if (ucoord[1] >= 0)
-                buf.sprintf("The V1 chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The V1 chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             else
-                buf.sprintf("The U1' chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The U1' chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             break;
         case TYPEOFVIEW_U2:
             MATHFUNC(sphere_to_U2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (ucoord[1] >= 0)
-                buf.sprintf("The U2 chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The U2 chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             else
-                buf.sprintf("The V2' chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The V2' chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             break;
         case TYPEOFVIEW_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
@@ -402,11 +404,11 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
                 ucoord[1] = -ucoord[1];
             }
             if (ucoord[1] >= 0)
-                buf.sprintf("The V2 chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The V2 chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             else
-                buf.sprintf("The U2' chart   (z1,z2) = (%f,%f) ",
-                            (float)ucoord[1], (float)ucoord[0]);
+                buf.sprintf("The U2' chart   (z1,z2) = (%8.5g,%8.5g) ",
+                            ucoord[1], ucoord[0]);
             break;
         }
 
@@ -416,7 +418,7 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
             if (index < 0) {
                 buf.append("   VF: NONE");
             } else {
-                s.sprint("   VF: #%d", index + 1);
+                s.sprintf("   VF: #%d", index + 1);
                 buf.append(s);
             }
             s = describeRegion(pcoord);
@@ -465,13 +467,13 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
 
 double P4WinInputSphere::coWorldX(int x)
 {
-    double wx{((double)w_) / (w_ - 1)};
+    double wx{(static_cast<double>(w_)) / (w_ - 1)};
     return wx * dx_ + x0_;
 }
 
 double P4WinInputSphere::coWorldY(int y)
 {
-    double wy{((double)(h - 1 - y)) / (h - 1)};
+    double wy{(static_cast<double>(h_ - 1 - y)) / (h_ - 1)};
     return wy * dy_ + y0_;
 }
 
@@ -526,8 +528,10 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
         int y{e->y()};
         double wx{coWorldX(x)};
         double wy{coWorldY(y)};
+        double pcoord[3];
+
         if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord))
-            parentWnd_.onMouseClickLeft(pcoord[0], pcoord[1], pcoord[2]);
+            parentWnd_->onMouseClickLeft(pcoord[0], pcoord[1], pcoord[2]);
         return;
     }
 
@@ -546,7 +550,7 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
             double wx{coWorldX(x)};
             double wy{coWorldY(y)};
             if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-                parentWnd_.onMouseClickRight(pcoord[0], pcoord[1], pcoord[2]);
+                parentWnd_->onMouseClickRight(pcoord[0], pcoord[1], pcoord[2]);
             }
             return;
         }
@@ -564,12 +568,12 @@ void P4WinInputSphere::mouseReleaseEvent(QMouseEvent *e)
             saveAnchorMap();
             selectingZoom_ = false;
 
-            int _x1{zoomAnchor1.x()};
-            int _y1{zoomAnchor1.y()};
-            int _x2{zoomAnchor2.x()};
-            int _y2{zoomAnchor2.y()};
+            int _x1{zoomAnchor1_.x()};
+            int _y1{zoomAnchor1_.y()};
+            int _x2{zoomAnchor2_.x()};
+            int _y2{zoomAnchor2_.y()};
 
-            parentWnd_.makeZoom(coWorldX(_x1), coWorldY(_y1), coWorldX(_x2),
+            parentWnd_->makeZoom(coWorldX(_x1), coWorldY(_y1), coWorldX(_x2),
                                  coWorldY(_y2));
         }
         QWidget::mouseReleaseEvent(e);
@@ -578,19 +582,19 @@ void P4WinInputSphere::mouseReleaseEvent(QMouseEvent *e)
     QWidget::mouseReleaseEvent(e);
 }
 
-void P4WinInputSphere::drawLine(double _x1, double _y1, double _x2, double _y2,
+void P4WinInputSphere::drawLine(double x1, double y1, double x2, double y2,
                                 int color)
 {
     int wx1, wy1, wx2, wy2;
 
     if (staticPainter_) {
-        if (_x1 >= x0 && _x1 <= x1 && _y1 >= y0 && _y1 <= y1) {
-            wx1 = coWinX(_x1);
-            wy1 = coWinY(_y1);
-            if (_x2 >= x0 && _x2 <= x1 && _y2 >= y0 && _y2 <= y1) {
+        if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
+            wx1 = coWinX(x1);
+            wy1 = coWinY(y1);
+            if (x2 >= x0_ && x2 <= x1_ && y2 >= y0_ && y2 <= y1_) {
                 // both points are visible in the window
-                wx2 = coWinX(_x2);
-                wy2 = coWinY(_y2);
+                wx2 = coWinX(x2);
+                wy2 = coWinY(y2);
                 if (paintedXMin_ > wx1)
                     paintedXMin_ = wx1;
                 if (paintedXMax_ < wx1)
@@ -611,13 +615,13 @@ void P4WinInputSphere::drawLine(double _x1, double _y1, double _x2, double _y2,
                 staticPainter_->setPen(QXFIGCOLOR(color));
                 staticPainter_->drawLine(wx1, wy1, wx2, wy2);
             } else {
-                // only (_x2, _y2) is not visible
-                if (lineRectangleIntersect(_x1, _y1, _x2, _y2, x0_, x1_, y0_,
+                // only (x2, y2) is not visible
+                if (lineRectangleIntersect(x1, y1, x2, y2, x0_, x1_, y0_,
                                            y1_)) {
-                    wx1 = coWinX(_x1);
-                    wy1 = coWinY(_y1);
-                    wx2 = coWinX(_x2);
-                    wy2 = coWinY(_y2);
+                    wx1 = coWinX(x1);
+                    wy1 = coWinY(y1);
+                    wx2 = coWinX(x2);
+                    wy2 = coWinY(y2);
                     staticPainter_->setPen(QXFIGCOLOR(color));
 
                     if (paintedXMin_ > wx1)
@@ -641,14 +645,14 @@ void P4WinInputSphere::drawLine(double _x1, double _y1, double _x2, double _y2,
                 }
             }
         } else {
-            if (_x2 >= x0 && _x2 <= x1 && _y2 >= y0 && _y2 <= y1) {
-                // only (_x2,_y2) is visible
-                if (lineRectangleIntersect(_x1, _y1, _x2, _y2, x0_, x1_, y0_,
+            if (x2 >= x0_ && x2 <= x1_ && y2 >= y0_ && y2 <= y1_) {
+                // only (x2,y2) is visible
+                if (lineRectangleIntersect(x1, y1, x2, y2, x0_, x1_, y0_,
                                            y1_)) {
-                    wx1 = coWinX(_x1);
-                    wy1 = coWinY(_y1);
-                    wx2 = coWinX(_x2);
-                    wy2 = coWinY(_y2);
+                    wx1 = coWinX(x1);
+                    wy1 = coWinY(y1);
+                    wx2 = coWinX(x2);
+                    wy2 = coWinY(y2);
                     staticPainter_->setPen(QXFIGCOLOR(color));
 
                     if (paintedXMin_ > wx1)
@@ -672,12 +676,12 @@ void P4WinInputSphere::drawLine(double _x1, double _y1, double _x2, double _y2,
                 }
             } else {
                 // both end points are invisible
-                if (lineRectangleIntersect(_x1, _y1, _x2, _y2, x0_, x1_, y0_,
+                if (lineRectangleIntersect(x1, y1, x2, y2, x0_, x1_, y0_,
                                            y1_)) {
-                    wx1 = coWinX(_x1);
-                    wy1 = coWinY(_y1);
-                    wx2 = coWinX(_x2);
-                    wy2 = coWinY(_y2);
+                    wx1 = coWinX(x1);
+                    wy1 = coWinY(y1);
+                    wx2 = coWinX(x2);
+                    wy2 = coWinY(y2);
                     staticPainter_->setPen(QXFIGCOLOR(color));
 
                     if (paintedXMin_ > wx1)
@@ -730,9 +734,9 @@ void P4WinInputSphere::prepareDrawing()
 {
     if (!painterCache_) {
         isPainterCacheDirty_ = true;
-        painterCache_.reset(new QPixmap(size()));
+        painterCache_ = std::make_unique<QPixmap>(size());
     }
-    staticPainter_.reset(new QPainter(painterCache_));
+    staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
 
     paintedXMin_ = width() - 1;
     paintedYMin_ = height() - 1;
@@ -751,7 +755,7 @@ void P4WinInputSphere::finishDrawing()
         if (paintedXMax_ >= width())
             paintedXMax_ = width() - 1;
         if (paintedYMin_ < 0)
-            paintedYMin = 0;
+            paintedYMin_ = 0;
         if (paintedYMax_ >= height())
             paintedYMax_ = height() - 1;
 
@@ -797,24 +801,22 @@ void P4WinInputSphere::plotLineAtInfinity()
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
             staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
-            staticPainter_->drawLine(coWinX(0.0), 0, coWinY(0.0), h - 1);
+            staticPainter_->drawLine(coWinX(0.0), 0, coWinY(0.0), h_ - 1);
         }
         break;
     case TYPEOFVIEW_U2:
     case TYPEOFVIEW_V2:
         if (y0_ < 0.0 && y1_ > 0.0) {
             staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
-            staticPainter_->drawLine(0, coWinY(0.0), w - 1, coWinY(0.0));
+            staticPainter_->drawLine(0, coWinY(0.0), w_ - 1, coWinY(0.0));
         }
         break;
     }
 }
 
-std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
-                                                          double a, double b,
-                                                          bool dotted,
-                                                          double resa,
-                                                          double resb)
+std::vector<P4POLYLINES>
+P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
+                                 bool dotted, double resa, double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output is
     // stored in a list of points that is dynamically allocated.
@@ -824,13 +826,13 @@ std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
     double e;
     double R{(resa < resb) ? resa : resb};
     double x, y, c;
-    double prevx{0.}, prevy{0.};
+    double prevx{0.0}, prevy{0.0};
     bool d{false}, doton{true};
     int dotcount{0};
     std::vector<P4POLYLINES> result;
 
     if (R < 1.0)
-        R = 1.0;  // protection
+        R = 1.0; // protection
     e = 2 * acos(1.0 - 0.5 / R);
     if (R * sin(e) > 1.0)
         e = asin(1.0 / R);
@@ -934,7 +936,7 @@ std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
             }
         } else {
             if (doton) {
-                result.push_back(P4POLYLINES(x1, y1, x2, y2));
+                result.emplace_back(prevx, prevy, x, y);
                 prevx = x;
                 prevy = y;
             }
@@ -951,14 +953,14 @@ std::vector<P4POLYLINES> P4WinInputSphere::produceEllipse(double cx, double cy,
 void P4WinInputSphere::plotCurves()
 {
     if (!gVFResults.separatingCurves_.empty())
-        for (r = 0; r < gThisVF->numCurveS_; r++)
+        for (int r = 0; r < gThisVF->numSeparatingCurves_; r++)
             plotCurve(gVFResults.separatingCurves_[r], r);
 }
 
 void P4WinInputSphere::plotCurve(const p4curves::curves &crv, int index)
 {
     double pcoord[3];
-    std::vector<p4orbits::orbits_points> &sep{crv.points};
+    auto &sep = crv.points;
 
     for (auto const &it : sep) {
         if (it.dashes)
@@ -970,7 +972,7 @@ void P4WinInputSphere::plotCurve(const p4curves::curves &crv, int index)
     }
 }
 
-void QP4WinInputSphere::plotLine(double *p1, double *p2, int color)
+void P4WinInputSphere::plotLine(const double *p1, const double *p2, int color)
 {
     double ucoord1[2];
     double ucoord2[2];
@@ -986,10 +988,10 @@ void QP4WinInputSphere::plotLine(double *p1, double *p2, int color)
     }
 }
 
-void P4WinInputSphere::plotPoint(double *p, int color)
+void P4WinInputSphere::plotPoint(const double *p, int color)
 {
     double ucoord[2];
-    MATHFUNC(sphere_to_viecoord)(p[0], p[1], p[2], ucoord);
+    MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], ucoord);
     drawPoint(ucoord[0], ucoord[1], color);
 }
 
