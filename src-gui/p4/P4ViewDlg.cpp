@@ -19,13 +19,6 @@
 
 #include "P4ViewDlg.hpp"
 
-#include "P4Application.hpp"
-#include "P4InputVF.hpp"
-#include "custom.hpp"
-#include "tables.hpp"
-#include "main.hpp"
-#include "math_p4.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -33,6 +26,14 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+
+#include "P4Application.hpp"
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "custom.hpp"
+#include "main.hpp"
+#include "math_p4.hpp"
+#include "tables.hpp"
 
 P4ViewDlg::~P4ViewDlg() { getDataFromDlg(); }
 
@@ -104,10 +105,9 @@ P4ViewDlg::P4ViewDlg(bool virtualchk)
     edt_y0_->setToolTip("Minimum coordinate on the vertical axis");
     edt_x1_->setToolTip("Maximum coordinate on the horizontal axis");
     edt_y1_->setToolTip("Maximum coordinate on the vertical axis");
-    btn_square_->setToolTip(
-        "Fills fields MinY, MaxX, MaxY with "
-        "MinX,-MinX,-MinX respectively,\nto make a square "
-        "rectangle around the origin.");
+    btn_square_->setToolTip("Fills fields MinY, MaxX, MaxY with "
+                            "MinX,-MinX,-MinX respectively,\nto make a square "
+                            "rectangle around the origin.");
     if (haveVirtualCheckBox_)
         chk_plotvirtuals_->setToolTip(
             "Determines wheter or not to plot singularities of vector fields "
@@ -197,8 +197,8 @@ P4ViewDlg::P4ViewDlg(bool virtualchk)
     QObject::connect(edt_y1_.get(), &QLineEdit::textChanged, this,
                      &P4ViewDlg::onFieldChange);
     if (haveVirtualCheckBox_)
-        QObject::connect(chk_plotvirtuals_, &QCheckBox::stateChanged, this,
-                         &P4ViewDlg::plotvirtuals_stateChanged);
+        QObject::connect(chk_plotvirtuals_.get(), &QCheckBox::stateChanged,
+                         this, &P4ViewDlg::plotvirtuals_stateChanged);
 
     // finishing
 
@@ -339,7 +339,8 @@ void P4ViewDlg::btn_square_clicked()
 {
     double x0;
 
-    if (readFloatField(edt_x0_, &x0, X_MIN, MIN_FLOAT, MAX_FLOAT) == false) {
+    if (readFloatField(edt_x0_.get(), x0, X_MIN, MIN_FLOAT, MAX_FLOAT) ==
+        false) {
         // no error reading field
 
         if (x0 > 0)
@@ -441,16 +442,16 @@ bool P4ViewDlg::getDataFromDlg()
     double oldymax{gVFResults.ymax_};
 
     changed_ |=
-        readFloatField(edt_projection_, gVFResults.config_projection_,
+        readFloatField(edt_projection_.get(), gVFResults.config_projection_,
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
-    changed_ |=
-        readFloatField(edt_x0_, gVFResults.xmin_, X_MIN, MIN_FLOAT, MAX_FLOAT);
-    changed_ |=
-        readFloatField(edt_y0_, gVFResults.ymin_, Y_MIN, MIN_FLOAT, MAX_FLOAT);
-    changed_ |=
-        readFloatField(edt_x1_, gVFResults.xmax_, X_MAX, MIN_FLOAT, MAX_FLOAT);
-    changed_ |=
-        readFloatField(edt_y1_, gVFResults.ymax_, Y_MAX, MIN_FLOAT, MAX_FLOAT);
+    changed_ |= readFloatField(edt_x0_.get(), gVFResults.xmin_, X_MIN,
+                               MIN_FLOAT, MAX_FLOAT);
+    changed_ |= readFloatField(edt_y0_.get(), gVFResults.ymin_, Y_MIN,
+                               MIN_FLOAT, MAX_FLOAT);
+    changed_ |= readFloatField(edt_x1_.get(), gVFResults.xmax_, X_MAX,
+                               MIN_FLOAT, MAX_FLOAT);
+    changed_ |= readFloatField(edt_y1_.get(), gVFResults.ymax_, Y_MAX,
+                               MIN_FLOAT, MAX_FLOAT);
 
     if (haveVirtualCheckBox_) {
         if (chk_plotvirtuals_->checkState() == Qt::Unchecked) {
