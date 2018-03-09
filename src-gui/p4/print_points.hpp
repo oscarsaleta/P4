@@ -19,25 +19,44 @@
 
 #pragma once
 
+#include <vector>
+
 class QString;
 struct P4POLYLINES;
 
 extern void (*print_saddle)(double, double);
+extern void (*print_virtualsaddle)(double, double);
 extern void (*print_stablenode)(double, double);
+extern void (*print_virtualstablenode)(double, double);
 extern void (*print_unstablenode)(double, double);
+extern void (*print_virtualunstablenode)(double, double);
 extern void (*print_stableweakfocus)(double, double);
+extern void (*print_virtualstableweakfocus)(double, double);
 extern void (*print_unstableweakfocus)(double, double);
+extern void (*print_virtualunstableweakfocus)(double, double);
 extern void (*print_weakfocus)(double, double);
+extern void (*print_virtualweakfocus)(double, double);
 extern void (*print_stablestrongfocus)(double, double);
+extern void (*print_virtualstablestrongfocus)(double, double);
 extern void (*print_unstablestrongfocus)(double, double);
+extern void (*print_virtualunstablestrongfocus)(double, double);
 extern void (*print_sesaddle)(double, double);
+extern void (*print_virtualsesaddle)(double, double);
 extern void (*print_sesaddlenode)(double, double);
+extern void (*print_virtualsesaddlenode)(double, double);
 extern void (*print_sestablenode)(double, double);
+extern void (*print_virtualsestablenode)(double, double);
 extern void (*print_seunstablenode)(double, double);
+extern void (*print_virtualseunstablenode)(double, double);
 extern void (*print_degen)(double, double);
+extern void (*print_virtualdegen)(double, double);
 extern void (*print_center)(double, double);
+extern void (*print_virtualcenter)(double, double);
+
+extern void (*print_coinciding)(double, double);
+
 extern void (*print_elips)(double, double, double, double, int, bool,
-                           std::vector<P4POLYLINES>);
+                           const std::vector<P4POLYLINES> &);
 extern void (*print_line)(double, double, double, double, int);
 extern void (*print_point)(double, double, int);
 extern void (*print_comment)(QString);
