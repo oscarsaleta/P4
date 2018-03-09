@@ -26,11 +26,15 @@
 #include <QMessageBox>
 #include <QPushButton>
 
+#include "P4Application.hpp"
+#include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
+#include "P4StartDlg.hpp"
+#include "P4PlotWnd.hpp"
 #include "main.hpp"
 
-// FIXME: hauria de posar-lo docked o no?
 P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     : QWidget{finddlg}, parent_{finddlg}
 {
@@ -83,11 +87,11 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     QObject::connect(btn_del_.get(), &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnDel);
     QObject::connect(btn_p4config_.get(), &QPushButton::clicked, this,
-                     &P4VFSelectDlg::onBtnP5Config);
+                     &P4VFSelectDlg::onBtnP4Config);
     QObject::connect(
         cbb_vfselect_.get(),
         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        this, &P4VFSelectDlg::onVFSelectionChanged);
+        this, &P4VFSelectDlg::onVfSelectionChanged);
 
     setP4WindowTitle(this, "P4 Vector Field Selection");
 
@@ -97,8 +101,9 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
 void P4VFSelectDlg::updateDlgData()
 {
     QString s;
+    int k;
 
-    for (int k = 0; k < gThisVF->numVF_; k++) {
+    for (k = 0; k < gThisVF->numVF_; k++) {
         s.sprintf("%d", k + 1);
         if (cbb_vfselect_->count() > k)
             cbb_vfselect_->setItemText(k, s);
@@ -158,7 +163,7 @@ void P4VFSelectDlg::onBtnAdd()
 
     parent_->updateDlgData();
     if (gThisVF->changed_ == false) {
-        gThisVF->changed = true;
+        gThisVF->changed_ = true;
         gP4app->signalChanged();
     }
 }
@@ -207,7 +212,7 @@ void P4VFSelectDlg::onBtnNext()
     parent_->updateDlgData();
 }
 
-void P4VFSelectDlg::onVFSelectionChanged(int index)
+void P4VFSelectDlg::onVfSelectionChanged(int index)
 {
     if (index < gThisVF->numVF_) {
         if (index != gThisVF->selected_[0] || gThisVF->numSelected_ > 1) {
@@ -232,10 +237,10 @@ void P4VFSelectDlg::onVFSelectionChanged(int index)
 
 bool P4VFSelectDlg::checkPlotWindowClosed()
 {
-    if (!(parent_->parent_->plotWindow_))
+    if (!(parent_->getParentPtr()->getPlotWindowPtr()))
         return true;
-    if (!(parent_->parent_->plotWindow_->isVisible())) {
-        parent_->parent_->closePlotWindow();
+    if (!(parent_->getParentPtr()->getPlotWindowPtr()->isVisible())) {
+        parent_->getParentPtr()->closePlotWindow();
         return true;
     }
     QMessageBox::critical(this, "P4",
@@ -245,7 +250,7 @@ bool P4VFSelectDlg::checkPlotWindowClosed()
     return false;
 }
 
-void P4VFSelectDlg::onBtnP5Config()
+void P4VFSelectDlg::onBtnP4Config()
 {
     if (!checkPlotWindowClosed())
         return;
