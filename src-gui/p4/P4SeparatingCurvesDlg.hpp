@@ -40,8 +40,13 @@ class P4SeparatingCurvesDlg : public QWidget
 
   public:
     P4SeparatingCurvesDlg(P4FindDlg *startwindow);
+
     void updateDlgData();
     void signalSeparatingCurvesEvaluated();
+
+    void makeZoom(double, double, double, double);
+    void onMouseClickLeft(double, double, double);
+    void onMouseClickRight(double, double, double);
 
   private:
     P4FindDlg *parent_;
@@ -75,10 +80,6 @@ class P4SeparatingCurvesDlg : public QWidget
 
     bool markingvf_;
     bool marking_;
-
-    void makeZoom(double, double, double, double);
-    void onMouseClickLeft(double, double, double);
-    void onMouseClickRight(double, double, double);
 
   public slots:
     void onBtnZoomOut();
