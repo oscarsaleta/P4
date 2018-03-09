@@ -23,8 +23,7 @@
 #include <QCloseEvent>
 #include <QDir>
 #include <QFileDialog>
-#include <QLabe
-l >
+#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
@@ -39,12 +38,14 @@ l >
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
+#include "P4VFSelectDlg.hpp"
 #include "custom.hpp"
 #include "main.hpp"
 #include "p4settings.hpp"
 
-    // initialise background colors
-    int bgColours::CBACKGROUND = BLACK;
+// initialise background colors
+int bgColours::CBACKGROUND = BLACK;
 int bgColours::CFOREGROUND = WHITE;
 int bgColours::CORBIT = YELLOW;
 bool bgColours::PRINT_WHITE_BG = true;
@@ -286,7 +287,7 @@ void P4StartDlg::onHelp()
     if (gP4smallIcon)
         helpWindow_->setWindowIcon(*gP4smallIcon);
 
-    setP4WindowTitle(helpWindow_, "P4 Help");
+    setP4WindowTitle(helpWindow_.get(), "P4 Help");
     helpWindow_->show();
     helpWindow_->raise();
 }
@@ -311,10 +312,10 @@ void P4StartDlg::onPlot()
         gVFResults.setupCoordinateTransformations();
         if (plotWindow_)
             plotWindow_->signalEvaluated();
-
         return;
     }
-    if (!gVFResults.readCurve(gThisVF->getbarefilename())) {
+
+    if (!gVFResults.readArbitraryCurve(gThisVF->getbarefilename())) {
         // nothing, we simply don't have a curve for plotting
     }
 
@@ -380,68 +381,69 @@ void P4StartDlg::signalEvaluated()
                 "\nA study at the finite region is not available!");
         }
     }
-}
 
-if (viewInfiniteWindow_) {
-    QString fname;
+    if (viewInfiniteWindow_) {
+        QString fname;
 
-    if (findWindow_)
-        findWindow_->getDataFromDlg();
+        if (findWindow_)
+            findWindow_->getDataFromDlg();
 
-    fname = gThisVF->getfilename_infresults();
-    if (P4InputVF::fileExists(fname)) {
-        viewInfiniteWindow_ = std::make_unique<QTextEdit>();
-        showText(*viewInfiniteWindow_, "View results at infinity", fname);
-        if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
-            gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
-            // mark: data invalid according to vf information
-            viewInfiniteWindow_->setFont(gP4app->getCourierFont());
-        }
-    } else {
-        if (viewInfiniteWindow_) {
-            viewInfiniteWindow_->clear();
-            viewInfiniteWindow_->setCurrentFont(gP4app->getBoldCourierFont());
-            viewInfiniteWindow_->insertPlainText(
-                "\nA study at infinity is not available!");
+        fname = gThisVF->getfilename_infresults();
+        if (P4InputVF::fileExists(fname)) {
+            viewInfiniteWindow_ = std::make_unique<QTextEdit>();
+            showText(*viewInfiniteWindow_, "View results at infinity", fname);
+            if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
+                gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+                // mark: data invalid according to vf information
+                viewInfiniteWindow_->setFont(gP4app->getCourierFont());
+            }
+        } else {
+            if (viewInfiniteWindow_) {
+                viewInfiniteWindow_->clear();
+                viewInfiniteWindow_->setCurrentFont(
+                    gP4app->getBoldCourierFont());
+                viewInfiniteWindow_->insertPlainText(
+                    "\nA study at infinity is not available!");
+            }
         }
     }
-}
 
-// Transfer signal to findWindow_:
-if (findWindow_) {
-    findWindow_->signalEvaluated();
-}
+    // Transfer signal to findWindow_:
+    if (findWindow_) {
+        findWindow_->signalEvaluated();
+    }
 
-// Transfer signal to plotWindow_:
-if (plotWindow_) {
-    // read maple/reduce results
-    if (!gVFResults.readTables(gThisVF->getbarefilename(),
-                               gThisVF->evaluatingPiecewiseConfig_, false)) {
-        if (gThisVF->evaluatingPiecewiseConfig_) {
-            // ...
+    // Transfer signal to plotWindow_:
+    if (plotWindow_) {
+        // read maple/reduce results
+        if (!gVFResults.readTables(gThisVF->getbarefilename(),
+                                   gThisVF->evaluatingPiecewiseConfig_,
+                                   false)) {
+            if (gThisVF->evaluatingPiecewiseConfig_) {
+                // ...
+            } else {
+                QMessageBox::critical(
+                    this, "P4",
+                    "Cannot read computation results.\n"
+                    "Please check the input-vector field and parameters!\n");
+                gVFResults.setupCoordinateTransformations();
+                plotWindow_->signalEvaluated();
+            }
         } else {
-            QMessageBox::critical(
-                this, "P4",
-                "Cannot read computation results.\n"
-                "Please check the input-vector field and parameters!\n");
-            gVFResults.setupCoordinateTransformations();
-            plotWindow_->signalEvaluated();
-        }
-    } else {
-        if (gThisVF->evaluatingPiecewiseConfig_) {
-            // ...
-        } else {
-            gVFResults.setupCoordinateTransformations();
-            plotWindow_->signalEvaluated();
+            if (gThisVF->evaluatingPiecewiseConfig_) {
+                // ...
+            } else {
+                gVFResults.setupCoordinateTransformations();
+                plotWindow_->signalEvaluated();
+            }
         }
     }
-}
 
-// the vector field may be changed during evaluation.  In that
-// case, the flag gThisVF->changed_ is set, so the newly evaluated context
-// is immediately marked as "old".
-if (gThisVF->changed_)
-    signalChanged();
+    // the vector field may be changed during evaluation.  In that
+    // case, the flag gThisVF->changed_ is set, so the newly evaluated context
+    // is immediately marked as "old".
+    if (gThisVF->changed_)
+        signalChanged();
 }
 
 void P4StartDlg::signalSaved()
@@ -562,7 +564,7 @@ void P4StartDlg::showText(QTextEdit &win, const QString &caption,
     win.clear();
 
     if (gP4smallIcon)
-        win.setWindowIcon(gP4smallIcon);
+        win.setWindowIcon(*gP4smallIcon);
 
     QFile f{fname};
     if (!f.open(QIODevice::ReadOnly))
@@ -690,13 +692,13 @@ bool P4StartDlg::canOpenPlot()
     if (!findWindow_) {
         return true;
     } else {
-        auto *p = findWindow_->getVFSelectWindowPtr();
+        auto *p = findWindow_->getVfSelectWindowPtr();
         if (p == nullptr) {
             return true;
         } else {
             auto *q = p->getWinCurvesPtr();
             if (q != nullptr)
-                q->closeConfigWindow();
+                p->closeConfigWindow();
         }
     }
     return true;

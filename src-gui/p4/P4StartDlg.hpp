@@ -67,7 +67,7 @@ class P4StartDlg : public QWidget
 
     // these methods are used to access/modify findWindow_ and plotWindow_
     P4FindDlg *getFindWindowPtr();
-    void setFindWindowPtr(P4FindDlg *);
+    void setFindWindow(P4FindDlg *);
     P4PlotWnd *getPlotWindowPtr();
     void setPlotWindow(P4PlotWnd *);
 
@@ -81,6 +81,7 @@ class P4StartDlg : public QWidget
     bool canOpenPlot();
     void customEvent(QEvent *);
     void closePlotWindow();
+    void signalSeparatingCurvesEvaluated();
 
   public slots:
     // following slots are called by QT when a button is pressed or a file name
