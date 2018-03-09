@@ -462,3 +462,8 @@ P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr() const
         return vfSelectWindow_.get();
     return nullptr;
 }
+
+P4StartDlg *P4FindDlg::getParentPtr() const
+{
+    return parent_;
+}

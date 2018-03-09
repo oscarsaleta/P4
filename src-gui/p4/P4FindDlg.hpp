@@ -40,6 +40,7 @@ class P4FindDlg : public QWidget
     void getDataFromDlg();
 
     P4VFSelectDlg *getVfSelectWindowPtr() const;
+    P4StartDlg *getParentPtr() const;
 
   private:
     P4StartDlg *parent_;
