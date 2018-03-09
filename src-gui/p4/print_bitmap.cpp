@@ -19,17 +19,18 @@
 
 #include "print_bitmap.hpp"
 
+#include <QBrush>
+#include <QPainter>
+
+#include "P4ParentStudy.hpp"
 #include "custom.hpp"
 #include "main.hpp"
 #include "plot_tools.hpp"
 #include "print_points.hpp"
 
-#include <QBrush>
-#include <QPainter>
-
 static bool sP4PrintBlackWhite = true;
 
-static std::unique_ptr<QPainter> sP4PrintPainter{};
+static QPainter *sP4PrintPainter;
 
 static int sP4PrintLineWidth = 0;
 static int sP4PrintSymbolWidth = 0;
@@ -41,10 +42,10 @@ static int sLastP4PrintColor = 0;
 int printColorTable(int color)
 {
     int colorTable[NUMXFIGCOLORS] = {
-        WHITE,  // black --> white when printing
+        WHITE, // black --> white when printing
         BLUE,   GREEN,  CYAN,   RED,   MAGENTA,
-        BLACK,  // yellow --> black when printing
-        BLACK,  // white --> black when printing
+        BLACK, // yellow --> black when printing
+        BLACK, // white --> black when printing
         BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1,  GREEN2,   GREEN3,   CYAN1,
         CYAN2,  CYAN3,  RED1,   RED2,  RED3,    MAGENTA1, MAGENTA2, MAGENTA3,
         BROWN1, BROWN2, BROWN3, PINK1, PINK2,   PINK3,    PINK4,    GOLD};
@@ -758,7 +759,7 @@ static void p4Print_print_coinciding(double _x, double _y)
     else
         color = printColorTable(CDEGEN);
 
-    QPen p{QXFIGCOLOR(color), (int)P4PrintLineWidth * 26 / 20};
+    QPen p{QXFIGCOLOR(color), std::round(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
 
     // print double cross:
@@ -848,9 +849,8 @@ static void p4Print_print_point(double _x0, double _y0, int color)
 
 // ---------------------------------------------------------------------------------------
 
-void prepareP4Printing(int w, int h, bool isblackwhite,
-                       std::unique_ptr<QPainter> p4paint, int linewidth,
-                       int symbolwidth)
+void prepareP4Printing(int w, int h, bool isblackwhite, QPainter *p4paint,
+                       int linewidth, int symbolwidth)
 {
     QString s;
 
@@ -917,10 +917,8 @@ void prepareP4Printing(int w, int h, bool isblackwhite,
         QBrush(QXFIGCOLOR(printColorTable(bgColours::CBACKGROUND))));
 }
 
-void finishP4Printing(void)
+void finishP4Printing()
 {
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
-
-    sP4PrintPainter.reset();
 }
