@@ -19,9 +19,10 @@
 
 #include "plot_points.hpp"
 
-#include "custom.hpp"
-
 #include <QPainter>
+
+#include "P4ParentStudy.hpp"
+#include "custom.hpp"
 
 // -----------------------------------------------------------------------
 //                          PLOT SINGULAR POINTS
@@ -119,11 +120,11 @@ void win_plot_stableweakfocus(QPainter *p, int x, int y)
     p->drawPolygon(qpa);
 }
 
-void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y)
+void win_plot_virtualstableweakfocus(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
+    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_S));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -136,6 +137,19 @@ void win_plot_unstableweakfocus(QPainter *p, int x, int y)
 {
     p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
     p->setBrush(QXFIGCOLOR(CWEAK_FOCUS_U));
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
+                  y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
+
+    p->drawPolygon(qpa);
+}
+
+void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y)
+{
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
+    p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);

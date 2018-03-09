@@ -40,6 +40,7 @@ void win_plot_virtualsaddle(QPainter *p, int x, int y);
 void win_plot_virtualstablenode(QPainter *p, int x, int y);
 void win_plot_virtualunstablenode(QPainter *p, int x, int y);
 void win_plot_virtualweakfocus(QPainter *p, int x, int y);
+void win_plot_virtualstableweakfocus(QPainter *p, int x, int y);
 void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y);
 void win_plot_virtualcenter(QPainter *p, int x, int y);
 void win_plot_virtualstablestrongfocus(QPainter *p, int x, int y);
