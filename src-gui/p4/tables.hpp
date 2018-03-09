@@ -158,21 +158,27 @@ struct transformations {
 };
 
 struct blow_up_points {
-    int n; // number of transformations
+    // number of transformations
+    int n;
     std::vector<transformations> trans;
-    double x0, y0;             // last point that is not degenerate
-    double a11, a12, a21, a22; // transformation matrix
-    std::vector<p4polynom::term2> vector_field_0; // vector field FIXME
-    std::vector<p4polynom::term2> vector_field_1; // vector field FIXME
-    std::vector<p4polynom::term1> sep;            // sep (t,g(t))
-    int type;                        // type of seperatrice (STYPE_STABLE, ...)
-    bool integrating_in_local_chart; // if true then use the blow up vector
-                                     // field if the modulus of the last point
-                                     // of the separatrices is less than 1
-    double point[2];                 // end point sep in blow up chart
+    // last point that is not degenerate
+    double x0, y0;
+    // transformation matrix
+    double a11, a12, a21, a22;
+    // vector field
+    std::vector<p4polynom::term2> vector_field_0;
+    std::vector<p4polynom::term2> vector_field_1;
+    // sep (t,g(t))
+    std::vector<p4polynom::term1> sep;
+    // type of seperatrice (STYPE_STABLE, ...)
+    int type;
+    // if true then use the blow up vector field if the modulus of the last
+    // point of the separatrices is less than 1
+    bool integrating_in_local_chart;
+    // end point sep in blow up chart
+    double point[2];
 
     std::vector<p4orbits::orbits_points> sep_points;
-    // std::vector<orbits_points> last_sep_point; TODO mirar si realment cal
 
     blow_up_points() {}
     blow_up_points(int _n, std::vector<transformations> tr, double _x0,
@@ -221,7 +227,9 @@ struct sep {
 #define POSITION_STANDALONE 1      // stand-alone singularity
 #define POSITION_COINCIDING_MAIN 2 // singularity coincides and will be drawn
 
-#define POSITION_COINCIDING_VIRTUAL 3 // is a virtual singularity, but coincides with a real one so do not plot at all
+#define POSITION_COINCIDING_VIRTUAL                                            \
+    3 // is a virtual singularity, but coincides with a real one so do not plot
+      // at all
 #define POSITION_COINCIDING 4 // singularity coincides, but is already drawn
 // --------------------------------------
 //
