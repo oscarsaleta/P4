@@ -78,7 +78,6 @@ class P4StartDlg : public QWidget
     void signalChanged();
     void signalLoaded();
     void signalSaved();
-    bool canOpenPlot();
     void customEvent(QEvent *);
     void closePlotWindow();
     void signalSeparatingCurvesEvaluated();
