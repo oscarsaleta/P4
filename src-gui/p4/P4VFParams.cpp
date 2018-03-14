@@ -29,7 +29,7 @@
 #include "P4VectorFieldDlg.hpp"
 
 P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
-    : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF->numParams_}
+    : QWidget{parent}, currentNumParams_{gThisVF->numParams_}, sb_params_{sb}
 {
     int i;
 
