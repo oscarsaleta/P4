@@ -245,8 +245,8 @@ void P4VectorFieldDlg::setLineEditCommonValue(QLineEdit *le,
         le->setText("#########");
 }
 
-bool P4VectorFieldDlg::getLineEditCommonValue(
-    QLineEdit *le, const std::vector<QString> &newval)
+bool P4VectorFieldDlg::getLineEditCommonValue(QLineEdit *le,
+                                              std::vector<QString> &newval)
 {
     QString val{le->text().trimmed()};
     int i;
@@ -262,7 +262,10 @@ bool P4VectorFieldDlg::getLineEditCommonValue(
             return false;
     }
     if (!val.compare(gThisVF->commonString(newval)))
-        return true;
+        return false;
+
+    gThisVF->setCommonString(newval, val);
+    return true;
 }
 
 void P4VectorFieldDlg::editingFinished()

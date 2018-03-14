@@ -46,7 +46,7 @@ class P4VectorFieldDlg : public QWidget
 
     void getDataFromDlg();
     void updateDlgData();
-    bool getLineEditCommonValue(QLineEdit *, const std::vector<QString> &);
+    bool getLineEditCommonValue(QLineEdit *, std::vector<QString> &);
     void setLineEditCommonValue(QLineEdit *, const std::vector<QString> &);
 
   private:
