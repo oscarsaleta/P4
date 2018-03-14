@@ -19,24 +19,25 @@
 
 #include "print_xfig.hpp"
 
+#include <QFile>
+#include <QTextStream>
+
 #include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "main.hpp"
 #include "plot_tools.hpp"
 #include "print_bitmap.hpp"
 #include "print_points.hpp"
+#include "tables.hpp"
 
-#include <QFile>
-#include <QTextStream>
-
-static std::unique_ptr<QFile> sXFigFile();
+static std::unique_ptr<QFile> sXFigFile;
 static QTextStream sXFigStream;
 
 static bool sXFigBlackWhitePrint = true;
 static int sXFigSymbolWidth = 0;
-static int sXFigLineWidth = 0;      // linewidth at 80 DPI (for xfig only)
-static int sXFigRealLineWidth = 0;  // linewidth at chosen resolution
+static int sXFigLineWidth = 0;     // linewidth at 80 DPI (for xfig only)
+static int sXFigRealLineWidth = 0; // linewidth at chosen resolution
 static int sXFigResolution = 0;
 static int sXFigW = 0;
 static int sXFigH = 0;
@@ -135,12 +136,12 @@ static void xfig_print_box2(int x, int y, int color)
     QString s;
     s.sprintf("2 2 0 1 %d %d 0 0 -1 0.0 0 0 0 0 0 5\n", color, -1);
     sXFigStream << s;
-    s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x + XFigSymbolWidth / 2,
-              y - XFigSymbolWidth / 2, x + XFigSymbolWidth / 2,
-              y + XFigSymbolWidth / 2, x - XFigSymbolWidth / 2,
-              y + XFigSymbolWidth / 2, x - XFigSymbolWidth / 2,
-              y - XFigSymbolWidth / 2, x + XFigSymbolWidth / 2,
-              y - XFigSymbolWidth / 2);
+    s.sprintf("    %d %d %d %d %d %d %d %d %d %d\n", x + sXFigSymbolWidth / 2,
+              y - sXFigSymbolWidth / 2, x + sXFigSymbolWidth / 2,
+              y + sXFigSymbolWidth / 2, x - sXFigSymbolWidth / 2,
+              y + sXFigSymbolWidth / 2, x - sXFigSymbolWidth / 2,
+              y - sXFigSymbolWidth / 2, x + sXFigSymbolWidth / 2,
+              y - sXFigSymbolWidth / 2);
     sXFigStream << s;
 }
 
@@ -393,10 +394,10 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
     if (sXFigBlackWhitePrint)
         color = printColorTable(bgColours::CFOREGROUND);
 
-    int x0{(int)_x0};
-    int y0{(int)_y0};
-    int x1{(int)_x1};
-    int y1{(int)_y1};
+    int x0{floor(_x0)};
+    int y0{floor(_y0)};
+    int x1{floor(_x1)};
+    int y1{floor(_y1)};
     if (x0 == x1 && y0 == y1)
         return;
 
@@ -462,7 +463,7 @@ static void xfig_print_elips(double x0, double y0, double a, double b,
         int linestyle;
 
         if (dotted) {
-            linestyle = 1;  // dashed
+            linestyle = 1; // dashed
             // style_val = on/off length (in 1/80 of inch) = 8*linestyle
             styleval = sXFigLineWidth * 4;
         } else {
@@ -626,159 +627,161 @@ static void xfig_print_point(double _x0, double _y0, int color)
 
 static void xfig_print_saddle(double x, double y)
 {
-    xfig_print_box((int)x, (int)y, printColorTable(CSADDLE));
+    xfig_print_box(floor(x), floor(y), printColorTable(CSADDLE));
 }
 
 static void xfig_print_stablenode(double x, double y)
 {
-    xfig_print_box((int)x, (int)y, printColorTable(CNODE_S));
+    xfig_print_box(floor(x), floor(y), printColorTable(CNODE_S));
 }
 static void xfig_print_unstablenode(double x, double y)
 {
-    xfig_print_box((int)x, (int)y, printColorTable(CNODE_U));
+    xfig_print_box(floor(x), floor(y), printColorTable(CNODE_U));
 }
 
 static void xfig_print_stableweakfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, printColorTable(CWEAK_FOCUS_S));
+    xfig_print_diamond(floor(x), floor(y), printColorTable(CWEAK_FOCUS_S));
 }
 
 static void xfig_print_unstableweakfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, printColorTable(CWEAK_FOCUS_U));
+    xfig_print_diamond(floor(x), floor(y), printColorTable(CWEAK_FOCUS_U));
 }
 
 static void xfig_print_weakfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, printColorTable(CWEAK_FOCUS));
+    xfig_print_diamond(floor(x), floor(y), printColorTable(CWEAK_FOCUS));
 }
 
 static void xfig_print_center(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, printColorTable(CCENTER));
+    xfig_print_diamond(floor(x), floor(y), printColorTable(CCENTER));
 }
 
 static void xfig_print_stablestrongfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, printColorTable(CSTRONG_FOCUS_S));
+    xfig_print_diamond(floor(x), floor(y), printColorTable(CSTRONG_FOCUS_S));
 }
 
 static void xfig_print_unstablestrongfocus(double x, double y)
 {
-    xfig_print_diamond((int)x, (int)y, printColorTable(CSTRONG_FOCUS_U));
+    xfig_print_diamond(floor(x), floor(y), printColorTable(CSTRONG_FOCUS_U));
 }
 
 static void xfig_print_sesaddle(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, printColorTable(CSADDLE));
+    xfig_print_triangle(floor(x), floor(y), printColorTable(CSADDLE));
 }
 
 static void xfig_print_sesaddlenode(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, printColorTable(CSADDLE_NODE));
+    xfig_print_triangle(floor(x), floor(y), printColorTable(CSADDLE_NODE));
 }
 
 static void xfig_print_sestablenode(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, printColorTable(CNODE_S));
+    xfig_print_triangle(floor(x), floor(y), printColorTable(CNODE_S));
 }
 
 static void xfig_print_seunstablenode(double x, double y)
 {
-    xfig_print_triangle((int)x, (int)y, printColorTable(CNODE_U));
+    xfig_print_triangle(floor(x), floor(y), printColorTable(CNODE_U));
 }
 
 static void xfig_print_degen(double x, double y)
 {
-    xfig_print_cross((int)x, (int)y, printColorTable(CDEGEN));
+    xfig_print_cross(floor(x), floor(y), printColorTable(CDEGEN));
 }
 
 static void xfig_print_virtualsaddle(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_box2((int)x, (int)y, printColorTable(CSADDLE));
+        xfig_print_box2(floor(x), floor(y), printColorTable(CSADDLE));
 }
 
 static void xfig_print_virtualstablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_box2((int)x, (int)y, printColorTable(CNODE_S));
+        xfig_print_box2(floor(x), floor(y), printColorTable(CNODE_S));
 }
 static void xfig_print_virtualunstablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_box2((int)x, (int)y, printColorTable(CNODE_U));
+        xfig_print_box2(floor(x), floor(y), printColorTable(CNODE_U));
 }
 
 static void xfig_print_virtualstableweakfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2((int)x, (int)y, printColorTable(CWEAK_FOCUS_S));
+        xfig_print_diamond2(floor(x), floor(y), printColorTable(CWEAK_FOCUS_S));
 }
 
 static void xfig_print_virtualunstableweakfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2((int)x, (int)y, printColorTable(CWEAK_FOCUS_U));
+        xfig_print_diamond2(floor(x), floor(y), printColorTable(CWEAK_FOCUS_U));
 }
 
 static void xfig_print_virtualweakfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2((int)x, (int)y, printColorTable(CWEAK_FOCUS));
+        xfig_print_diamond2(floor(x), floor(y), printColorTable(CWEAK_FOCUS));
 }
 
 static void xfig_print_virtualcenter(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2((int)x, (int)y, printColorTable(CCENTER));
+        xfig_print_diamond2(floor(x), floor(y), printColorTable(CCENTER));
 }
 
 static void xfig_print_virtualstablestrongfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2((int)x, (int)y, printColorTable(CSTRONG_FOCUS_S));
+        xfig_print_diamond2(floor(x), floor(y),
+                            printColorTable(CSTRONG_FOCUS_S));
 }
 
 static void xfig_print_virtualunstablestrongfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2((int)x, (int)y, printColorTable(CSTRONG_FOCUS_U));
+        xfig_print_diamond2(floor(x), floor(y),
+                            printColorTable(CSTRONG_FOCUS_U));
 }
 
 static void xfig_print_virtualsesaddle(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2((int)x, (int)y, printColorTable(CSADDLE));
+        xfig_print_triangle2(floor(x), floor(y), printColorTable(CSADDLE));
 }
 
 static void xfig_print_virtualsesaddlenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2((int)x, (int)y, printColorTable(CSADDLE_NODE));
+        xfig_print_triangle2(floor(x), floor(y), printColorTable(CSADDLE_NODE));
 }
 
 static void xfig_print_virtualsestablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2((int)x, (int)y, printColorTable(CNODE_S));
+        xfig_print_triangle2(floor(x), floor(y), printColorTable(CNODE_S));
 }
 
 static void xfig_print_virtualseunstablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2((int)x, (int)y, printColorTable(CNODE_U));
+        xfig_print_triangle2(floor(x), floor(y), printColorTable(CNODE_U));
 }
 
 static void xfig_print_virtualdegen(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_cross2((int)x, (int)y, printColorTable(CDEGEN));
+        xfig_print_cross2(floor(x), floor(y), printColorTable(CDEGEN));
 }
 
 void xfig_print_coinciding(double x, double y)
 {
-    xfig_print_doublecross((int)x, (int)y, printColorTable(CDEGEN);
+    xfig_print_doublecross(floor(x), floor(y), printColorTable(CDEGEN));
 }
 
 // ---------------------------------------------------------------------------------------
@@ -813,19 +816,19 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     // XFIG Line width is always at 80 DPI, regardless of resolution
     sXFigLineWidth *= 80;
     sXFigLineWidth =
-        (sXFigLineWidth + (resolution / 2)) / resolution;  // divide + round up
+        (sXFigLineWidth + (resolution / 2)) / resolution; // divide + round up
 
     // make sure it is even, and nonzero
     sXFigLineWidth /= 2;
     if (sXFigLineWidth == 0)
-        sXFigLineWidth = 1;  // minimal line width = 1
+        sXFigLineWidth = 1; // minimal line width = 1
     sXFigLineWidth *= 2;
 
     s = gThisVF->getbarefilename() + ".fig";
 
-    sXFigFile.reset(new QFile(s));
+    sXFigFile = std::make_unique<QFile>(s);
     if (sXFigFile->open(QIODevice::WriteOnly)) {
-        sXFigStream.setDevice(sXFigFile);
+        sXFigStream.setDevice(sXFigFile.get());
     } else {
         sXFigFile.reset();
     }
@@ -870,7 +873,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     sLastXFigColor = -1;
 
     sXFigLineBusy = false;
-    sXFigLinePoints = std::make_unique<int[]>(new int[XFIG_LINE_MAXPOINTS * 2]);
+    sXFigLinePoints = std::make_unique<int[]>(XFIG_LINE_MAXPOINTS * 2);
 
     sXFigW = w * 1200;
     sXFigW /= resolution;
@@ -878,13 +881,12 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     sXFigH /= resolution;
 
     if (sXFigFile) {
-        sXFigStream
-            << "#FIG 3.1\n"  // XFIG version 3.1 file format
-               "Portrait\n"  // portrait orientation
-               "Center\n"    // center on page
-               "Inches\n"    // use inches (XFIG makes rounding errors with
-                             // centimeters)
-               "1200 2\n";   // unused in XFIG???
+        sXFigStream << "#FIG 3.1\n" // XFIG version 3.1 file format
+                       "Portrait\n" // portrait orientation
+                       "Center\n"   // center on page
+                       "Inches\n" // use inches (XFIG makes rounding errors with
+                                  // centimeters)
+                       "1200 2\n"; // unused in XFIG???
         if (!bgColours::PRINT_WHITE_BG) {
             /*
                 object type     2   (=polyline)
@@ -905,10 +907,9 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                 npoints         5   (=5 points)
             */
             QString s;
-            s.sprintf(
-                "2 2 0 1 0 7 999 -1 0 0.0000000 0 0 0 0 0 5\n"
-                "    %d %d %d %d %d %d %d %d %d %d\n",
-                0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
+            s.sprintf("2 2 0 1 0 7 999 -1 0 0.0000000 0 0 0 0 0 5\n"
+                      "    %d %d %d %d %d %d %d %d %d %d\n",
+                      0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
             sXFigStream << s;
         }
         if (gVFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
@@ -931,10 +932,9 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                 npoints         5   (=5 points)
             */
             QString s;
-            s.sprintf(
-                "2 2 0 1 0 7 998 0 -1 0.0000000 0 0 0 0 0 5\n"
-                "    %d %d %d %d %d %d %d %d %d %d\n",
-                0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
+            s.sprintf("2 2 0 1 0 7 998 0 -1 0.0000000 0 0 0 0 0 5\n"
+                      "    %d %d %d %d %d %d %d %d %d %d\n",
+                      0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
             sXFigStream << s;
         }
     }
@@ -953,7 +953,7 @@ void finishXFigPrinting(void)
     plot_p = spherePlotPoint;
 
     if (sXFigLinePoints != nullptr) {
-        delete[] sXFigLinePoints;
+        sXFigLinePoints.reset();
         sXFigLinePoints = nullptr;
     }
 }
