@@ -166,7 +166,7 @@ void P4VectorFieldDlg::numParamsChanged(int val)
         sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
     }
 
-    params_ = std::make_unique<P4VFParams>(this, sb_params_);
+    params_ = std::make_unique<P4VFParams>(this, sb_params_.get());
     paramLayout_->addWidget(params_.get());
     if (val > MAXNUMPARAMSSHOWN) {
         paramLayout_->addWidget(sb_params_.get());
@@ -221,7 +221,7 @@ void P4VectorFieldDlg::updateDlgData()
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
-        params_ = std::make_unique<P4VFParams>(this, sb_params_);
+        params_ = std::make_unique<P4VFParams>(this, sb_params_.get());
         paramLayout_->addWidget(params_.get());
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_.get());
