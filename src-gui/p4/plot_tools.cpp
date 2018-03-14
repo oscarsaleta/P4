@@ -58,10 +58,7 @@ WHEN ZOOMING
 // FIXME: com fer que ho faci per cada sphere del vector?
 void spherePlotLine(P4WinSphere *sp, double *p1, double *p2, int color)
 {
-    double ucoord1[2];
-    double ucoord2[2];
-    double ucoord3[2];
-    double ucoord4[2];
+    double ucoord1[2], ucoord2[2], ucoord3[2], ucoord4[2];
 
     if (MATHFUNC(sphere_to_viewcoordpair)(p1, p2, ucoord1, ucoord2, ucoord3,
                                           ucoord4)) {
@@ -76,8 +73,7 @@ void spherePlotLine(P4WinSphere *sp, double *p1, double *p2, int color)
     }
 }
 
-void spherePlotPoint(P4WinSphere *sp, double *p,
-                     int color)
+void spherePlotPoint(P4WinSphere *sp, double *p, int color)
 {
     double ucoord[2];
 
@@ -88,8 +84,7 @@ void spherePlotPoint(P4WinSphere *sp, double *p,
     }
 }
 
-void spherePrintLine(P4WinSphere *sp, double *p1, double *p2,
-                     int color)
+void spherePrintLine(P4WinSphere *sp, double *p1, double *p2, int color)
 {
     double ucoord1[2];
     double ucoord2[2];
