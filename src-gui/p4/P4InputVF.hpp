@@ -47,7 +47,7 @@ class QProcess;
 class QTextEdit;
 class QPushButton;
 class QTextStream;
-class QMetaObject::Connection; // NOTE works?
+class QMetaObject; // NOTE works?
 
 class P4GcfDlg;
 class P4ArbitraryCurveDlg;
