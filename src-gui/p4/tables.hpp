@@ -191,6 +191,8 @@ struct blow_up_points {
           a22{_a22}, vector_field_0{ve0}, vector_field_1{ve1}, sep{se},
           type{ty}, integrating_in_local_chart{in}, sep_points{sp}
     {
+        point[0] = po[0];
+        point[1] = po[1];
     }
 };
 
