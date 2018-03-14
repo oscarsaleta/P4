@@ -19,11 +19,6 @@
 
 #include "P4SettingsDlg.hpp"
 
-#include "custom.hpp"
-#include "file_paths.hpp"
-#include "main.hpp"
-#include "p4settings.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QFileDialog>
@@ -32,6 +27,11 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+
+#include "custom.hpp"
+#include "file_paths.hpp"
+#include "main.hpp"
+#include "p4settings.hpp"
 
 /*
     The Settings Window is a modal dialog box!
@@ -303,12 +303,14 @@ void P4SettingsDlg::onReset()
 
 void P4SettingsDlg::onBrowseMaple()
 {
-    browseForExistingPathOrFile(edt_maple_.get(), "Select maple executable:", true);
+    browseForExistingPathOrFile(edt_maple_.get(),
+                                "Select maple executable:", true);
 }
 
 void P4SettingsDlg::onBrowseTemp()
 {
-    browseForExistingPathOrFile(edt_temp_.get(), "Select temporary path:", false);
+    browseForExistingPathOrFile(edt_temp_.get(),
+                                "Select temporary path:", false);
 }
 
 void P4SettingsDlg::onBrowseSum()

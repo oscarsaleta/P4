@@ -19,13 +19,6 @@
 
 #include "P4GcfDlg.hpp"
 
-#include "P4InputVF.hpp"
-#include "P4ParentStudy.hpp"
-#include "custom.hpp"
-#include "main.hpp"
-#include "math_gcf.hpp"
-#include "tables.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
@@ -33,6 +26,13 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "custom.hpp"
+#include "main.hpp"
+#include "math_gcf.hpp"
+#include "tables.hpp"
 
 P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4WinSphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotwnd_{plt},

@@ -30,10 +30,10 @@
 
 #include "math_numerics.hpp"
 
-#include "math_p4.hpp"
-
 #include <cfloat>
 #include <cmath>
+
+#include "math_p4.hpp"
 
 static double sPrecision1 = 1e-16;
 static double sPrecision2 = 1e-8;

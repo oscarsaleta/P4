@@ -336,9 +336,9 @@ QString getDefaultMapleInstallation(void)
 
 void removeFile(QString fname) { QFile::remove(fname); }
 
-// --------------------------------------------------------------------
-//               Some Windows Path Functions
-// --------------------------------------------------------------------
+    // --------------------------------------------------------------------
+    //               Some Windows Path Functions
+    // --------------------------------------------------------------------
 
 #ifdef Q_OS_WIN
 

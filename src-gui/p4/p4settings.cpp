@@ -19,12 +19,12 @@
 
 #include "p4settings.hpp"
 
-#include "file_paths.hpp"
-#include "P4InputVF.hpp"
-#include "main.hpp"
-
 #include <QDir>
 #include <QSettings>
+
+#include "P4InputVF.hpp"
+#include "file_paths.hpp"
+#include "main.hpp"
 
 /*
     P4 Base Path

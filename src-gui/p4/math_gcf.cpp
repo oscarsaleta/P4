@@ -19,6 +19,10 @@
 
 #include "math_gcf.hpp"
 
+#include <QFile>
+
+#include <cmath>
+
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
@@ -28,10 +32,6 @@
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
 #include "tables.hpp"
-
-#include <QFile>
-
-#include <cmath>
 
 // static global variables
 static int sGcfTask{EVAL_GCF_NONE};
@@ -145,42 +145,42 @@ bool runTask(int task, int precision, int points, int index)
     switch (task) {
     case EVAL_GCF_R2:
         value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_, -1, 1,
-                                   precision, points);
+                                    precision, points);
         break;
     case EVAL_GCF_U1:
         value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U1_, 0, 1,
-                                   precision, points);
+                                    precision, points);
         break;
     case EVAL_GCF_V1:
         value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U1_, -1, 0,
-                                   precision, points);
+                                    precision, points);
         break;
     case EVAL_GCF_U2:
         value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U2_, 0, 1,
-                                   precision, points);
+                                    precision, points);
         break;
     case EVAL_GCF_V2:
         value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U2_, -1, 0,
-                                   precision, points);
+                                    precision, points);
         break;
     case EVAL_GCF_LYP_R2:
         value = gThisVF->prepareGcf_LyapunovR2(precision, points, index);
         break;
     case EVAL_GCF_CYL1:
         value = gThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, precision,
-                                               points, index);
+                                                points, index);
         break;
     case EVAL_GCF_CYL2:
-        value = gThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, precision,
-                                               points, index);
+        value = gThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
+                                                precision, points, index);
         break;
     case EVAL_GCF_CYL3:
         value = gThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                               precision, points, index);
+                                                precision, points, index);
         break;
     case EVAL_GCF_CYL4:
         value = gThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
-                                               precision, points, index);
+                                                precision, points, index);
         break;
     default:
         value = false;

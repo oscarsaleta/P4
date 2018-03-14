@@ -19,6 +19,10 @@
 
 #include "math_arbitrarycurve.hpp"
 
+#include <QFile>
+
+#include <cmath>
+
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4WinSphere.hpp"
@@ -26,10 +30,6 @@
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
-
-#include <QFile>
-
-#include <cmath>
 
 // static global variables
 static int sCurveTask = EVAL_CURVE_NONE;
@@ -130,11 +130,11 @@ bool runTaskArbitraryCurve(int task, int precision, int points)
         break;
     case EVAL_CURVE_CYL1:
         value = gThisVF->prepareArbitraryCurve_LyapunovCyl(-PI_DIV4, PI_DIV4,
-                                                          precision, points);
+                                                           precision, points);
         break;
     case EVAL_CURVE_CYL2:
-        value = gThisVF->prepareArbitraryCurve_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
-                                                          precision, points);
+        value = gThisVF->prepareArbitraryCurve_LyapunovCyl(
+            PI_DIV4, PI - PI_DIV4, precision, points);
         break;
     case EVAL_CURVE_CYL3:
         value = gThisVF->prepareArbitraryCurve_LyapunovCyl(

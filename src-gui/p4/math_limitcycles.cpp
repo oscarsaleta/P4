@@ -19,6 +19,8 @@
 
 #include "math_limitcycles.hpp"
 
+#include <cmath>
+
 #include "P4LimitCyclesDlg.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4WinSphere.hpp"
@@ -28,8 +30,6 @@
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
 #include "tables.hpp"
-
-#include <cmath>
 
 // static functions
 
@@ -73,13 +73,13 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
         return false;
 
     MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
     for (i = 0; i <= gVFResults.config_lc_numpoints_; i++) {
         copy_x_into_y(p2, p1);
         if (!prepareVfForIntegration(p1))
             return false;
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0) {
             // we have crossed the line on which the transverse section is
@@ -99,14 +99,14 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
         return false;
 
     MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
     for (i = 0; i <= gVFResults.config_lc_numpoints_; i++) {
         copy_x_into_y(p2, p1);
         hhi2 = hhi;
         if (!prepareVfForIntegration(p1))
             return false;
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0) {
             ok = true;
@@ -130,7 +130,7 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
             if (!prepareVfForIntegration(p1))
                 return false;
             MATHFUNC(integrate_sphere_orbit)
-            (p1[0], p1[1], p1[2], pp, &hhi2, &dashes, &d, h_min, fabs(hhi2));
+            (p1[0], p1[1], p1[2], pp, hhi2, dashes, d, h_min, fabs(hhi2));
             if ((fabs(MATHFUNC(eval_lc)(pp, a, b, c)) <= 1e-8) ||
                 (fabs(hhi2) <= h_min))
                 break;
@@ -394,7 +394,7 @@ void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
     if (!prepareVfForIntegration(p1))
         return;
     MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
     copy_x_into_y(p2, LCpoints.pcoord);
     LCpoints.color = CLIMIT;
@@ -409,7 +409,7 @@ void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
     while (1) {
         copy_x_into_y(p2, p1);
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
         copy_x_into_y(p2, LCpoints.pcoord);
         LCpoints.color = CLIMIT;
@@ -429,14 +429,14 @@ void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
     if (!prepareVfForIntegration(p1))
         return;
     MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
     while (1) {
         copy_x_into_y(p2, p1);
         if (!prepareVfForIntegration(p1))
             return;
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
         copy_x_into_y(p2, LCpoints.pcoord);
         LCpoints.color = CLIMIT;

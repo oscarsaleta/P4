@@ -22,6 +22,10 @@
 
 #include "main.hpp"
 
+#include <QMessageBox>
+#include <QPixmap>
+#include <QPrinter>
+
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
@@ -34,10 +38,6 @@
 #else
 #include "../version.h"
 #endif
-
-#include <QMessageBox>
-#include <QPixmap>
-#include <QPrinter>
 
 /*
     ----------------------------------------------------------------------------

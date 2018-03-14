@@ -283,7 +283,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                      &P4FindDlg::onBtnSave);
     QObject::connect(btn_eval_.get(), &QPushButton::clicked, this,
                      &P4FindDlg::onBtnEval);
-    QObject::connect(&gThisVF, &P4InputVF::saveSignal, this,
+    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
                      &P4FindDlg::onSaveSignal);
     // TODO: implement onSaveSignal slot
 
@@ -463,7 +463,4 @@ P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr() const
     return nullptr;
 }
 
-P4StartDlg *P4FindDlg::getParentPtr() const
-{
-    return parent_;
-}
+P4StartDlg *P4FindDlg::getParentPtr() const { return parent_; }

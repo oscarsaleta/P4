@@ -19,6 +19,8 @@
 
 #include "math_p4.hpp"
 
+#include <cmath>
+
 #include "P4IntParamsDlg.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
@@ -26,8 +28,6 @@
 #include "P4WinSphere.hpp"
 #include "math_charts.hpp"
 #include "tables.hpp"
-
-#include <cmath>
 
 bool less_poincare(double *p1, double *p2)
 {

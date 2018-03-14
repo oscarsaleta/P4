@@ -132,8 +132,8 @@ class P4ParentStudy : public QObject
     // coordinate transformation routines, set up when starting the plot
 
     void (*viewcoord_to_sphere)(double, double, double *);
-    bool (*sphere_to_viewcoordpair)(const double *, const double *, double *, double *,
-                                    double *, double *);
+    bool (*sphere_to_viewcoordpair)(const double *, const double *, double *,
+                                    double *, double *, double *);
 
     void (*finite_to_viewcoord)(double, double, double *);
     void (*sphere_to_viewcoord)(double, double, double, double *);

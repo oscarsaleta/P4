@@ -75,7 +75,7 @@ class P4WinSphere : public QWidget
     std::unique_ptr<QPixmap> painterCache_;
     bool isPainterCacheDirty_{true};
     int paintedXMin_{0}; // to know the update rectangle after painting
-    int paintedXMax_; // we keep to smallest rectangle enclosing
+    int paintedXMax_;    // we keep to smallest rectangle enclosing
     int paintedYMin_{0}; // all painted objects.
     int paintedYMax_;
 
@@ -122,7 +122,7 @@ class P4WinSphere : public QWidget
     void plotPoincareSphere();
     void plotPoincareLyapunovSphere();
     void plotLineAtInfinity();
-    
+
     void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
     void printPoint(const p4singularities::saddle &);

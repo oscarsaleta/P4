@@ -29,10 +29,10 @@
 #include "P4ParentStudy.hpp"
 #include "P4SeparatingCurvesDlg.hpp"
 #include "main.hpp"
+#include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "math_regions.hpp"
 #include "plot_tools.hpp"
-#include "math_charts.hpp"
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 

@@ -135,7 +135,8 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
 
     if (gThisVF->numVFRegions_ > 0) {
         for (j = 0; j < gThisVF->numVFRegions_; j++) {
-            if (fscanf(fp, "%d", &v) != 1 || v != gThisVF->vfRegions_[j].vfIndex)
+            if (fscanf(fp, "%d", &v) != 1 ||
+                v != gThisVF->vfRegions_[j].vfIndex)
                 return false;
             for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &v) != 1 ||

@@ -21,13 +21,13 @@
 
 #include <QApplication>
 
+#include <memory>
+
 #ifdef Q_OS_WIN
 #define USERPLATFORM "WINDOWS"
 #else
 #define USERPLATFORM "LINUX"
 #endif
-
-#include <memory>
 
 class QFont;
 class QProcess;

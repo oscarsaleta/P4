@@ -19,6 +19,8 @@
 
 #include "math_orbits.hpp"
 
+#include <cmath>
+
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
@@ -30,8 +32,6 @@
 #include "math_polynom.hpp"
 #include "plot_tools.hpp"
 #include "tables.hpp"
-
-#include <cmath>
 
 // -----------------------------------------------------------------------
 //          prepareVfForIntegration
@@ -458,8 +458,7 @@ integrate_orbit(P4WinSphere *spherewnd, double pcoord[3], double step, int dir,
             break;
 
         MATHFUNC(integrate_sphere_orbit)
-        (pcoord[0], pcoord[1], pcoord[2], pcoord, &hhi, &dashes, &d, h_min,
-         h_max);
+        (pcoord[0], pcoord[1], pcoord[2], pcoord, hhi, dashes, d, h_min, h_max);
 
         if ((i % UPDATEFREQ_STEPSIZE) == 0)
             set_current_step(fabs(hhi));

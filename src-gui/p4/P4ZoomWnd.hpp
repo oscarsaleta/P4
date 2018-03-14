@@ -54,7 +54,7 @@ class P4ZoomWnd : public QMainWindow
 
     double x1_, x2_, y1_, y2_;
 
-    std::unique_ptr<P4WinSphere> sphere_;  // main sphere
+    std::unique_ptr<P4WinSphere> sphere_; // main sphere
 
   public slots:
     // void signalEvaluating();

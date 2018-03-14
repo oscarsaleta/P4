@@ -19,10 +19,6 @@
 
 #include "P4IntParamsDlg.hpp"
 
-#include "P4Application.hpp"
-#include "P4ParentStudy.hpp"
-#include "main.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
@@ -30,6 +26,10 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSpinBox>
+
+#include "P4Application.hpp"
+#include "P4ParentStudy.hpp"
+#include "main.hpp"
 
 P4IntParamsDlg::~P4IntParamsDlg() { getDataFromDlg(); }
 

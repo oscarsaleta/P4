@@ -19,14 +19,14 @@
 
 #include "P4Application.hpp"
 
+#include <QFont>
+
 #include "P4Event.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4StartDlg.hpp"
 #include "custom.hpp"
 #include "main.hpp"
-
-#include <QFont>
 
 P4Application::P4Application(int &argc, char **argv) : QApplication{argc, argv}
 {

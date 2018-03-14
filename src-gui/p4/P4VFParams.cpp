@@ -19,14 +19,14 @@
 
 #include "P4VFParams.hpp"
 
-#include <QLabel>
-#include <QScrollBar>
-#include <QLineEdit>
 #include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QScrollBar>
 
-#include "P4VectorFieldDlg.hpp"
-#include "P4InputVF.hpp"
 #include "P4Application.hpp"
+#include "P4InputVF.hpp"
+#include "P4VectorFieldDlg.hpp"
 
 P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
     : QWidget{parent}, sb_params_{sb}, currentNumParams_{gThisVF->numParams_}

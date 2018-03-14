@@ -19,14 +19,14 @@
 
 #include "P4AboutDlg.hpp"
 
-#include "P4SettingsDlg.hpp"
-#include "main.hpp"
-#include "p4settings.hpp"
-
 #include <QBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+
+#include "P4SettingsDlg.hpp"
+#include "main.hpp"
+#include "p4settings.hpp"
 
 P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

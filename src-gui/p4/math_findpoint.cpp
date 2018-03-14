@@ -19,6 +19,9 @@
 
 #include "math_findpoint.hpp"
 
+#include <cmath>
+
+#include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4SepDlg.hpp"
 #include "P4VFStudy.hpp"
@@ -31,9 +34,6 @@
 #include "math_separatrice.hpp"
 #include "math_sesep.hpp"
 #include "tables.hpp"
-#include "P4InputVF.hpp"
-
-#include <cmath>
 
 // -----------------------------------------------------------------------
 //

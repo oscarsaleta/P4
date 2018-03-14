@@ -19,9 +19,6 @@
 
 #include "P4PrintDlg.hpp"
 
-#include "custom.hpp"
-#include "main.hpp"
-
 #include <QBoxLayout>
 #include <QButtonGroup>
 #include <QCheckBox>
@@ -29,6 +26,9 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+
+#include "custom.hpp"
+#include "main.hpp"
 
 /*
     The Print Window is a modal dialog box!
@@ -147,7 +147,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     mainLayout_->addWidget(btn_blackwhite_.get());
     mainLayout_->addSpacing(2);
 
-    auto printColourLayout=std::make_unique<QHBoxLayout>();
+    auto printColourLayout = std::make_unique<QHBoxLayout>();
     printColourLayout->addWidget(lbl_bgcolor_.get());
     printColourLayout->addStretch(0);
     printColourLayout->addWidget(btn_whitebg_.get());
@@ -156,17 +156,17 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     mainLayout_->addLayout(printColourLayout.get());
     mainLayout_->addSpacing(2);
 
-    auto l1=std::make_unique<QHBoxLayout>();
+    auto l1 = std::make_unique<QHBoxLayout>();
     l1->addWidget(label_1.get());
     l1->addWidget(edt_resolution_.get());
     l1->addStretch(0);
 
-    auto l2=std::make_unique<QHBoxLayout>();
+    auto l2 = std::make_unique<QHBoxLayout>();
     l2->addWidget(label_2.get());
     l2->addWidget(edt_linewidth_.get());
     l2->addStretch(0);
 
-    auto l3=std::make_unique<QHBoxLayout>();
+    auto l3 = std::make_unique<QHBoxLayout>();
     l3->addWidget(label_3.get());
     l3->addWidget(edt_symbolsize_.get());
     l3->addStretch(0);

@@ -209,7 +209,7 @@ void P4ZoomWnd::adjustHeight()
     int h{height() + sphere_->idealh_ - sphere_->h_};
 
     int m{gP4app->desktop()->height()};
-    m -= m / 10;  // occuppy at most 90% of the screen's height
+    m -= m / 10; // occuppy at most 90% of the screen's height
 
     if (h > m) {
         deltah = static_cast<double>(h - m);
@@ -226,7 +226,7 @@ void P4ZoomWnd::adjustHeight()
         m = gP4app->desktop()->width();
         m -= m / 10;
         if (w > m)
-            w = m;  // occupy at most 90 % of the screen's width
+            w = m; // occupy at most 90 % of the screen's width
     }
     resize(w, h);
     statusBar()->showMessage("Ready.");

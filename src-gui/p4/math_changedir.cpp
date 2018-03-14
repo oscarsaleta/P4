@@ -22,15 +22,15 @@
 
 #include "math_changedir.hpp"
 
+#include <cmath>
+
+#include "P4ParentStudy.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
-#include "P4ParentStudy.hpp"
-#include "P4VFStudy.hpp"
-
-#include <cmath>
+#include "tables.hpp"
 
 // -----------------------------------------------------------------------
 //                          CHANGE_DIR_POINCARE

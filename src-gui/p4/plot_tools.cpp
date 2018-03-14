@@ -19,12 +19,12 @@
 
 #include "plot_tools.hpp"
 
+#include <cmath>
+
 #include "P4ParentStudy.hpp"
 #include "P4WinSphere.hpp"
 #include "math_p4.hpp"
 #include "tables.hpp"
-
-#include <cmath>
 
 void (*plot_l)(P4WinSphere *, const double *, const double *, int) = nullptr;
 void (*plot_p)(P4WinSphere *, const double *, int) = nullptr;

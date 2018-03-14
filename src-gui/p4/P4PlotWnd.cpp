@@ -149,9 +149,9 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(Qt::TopToolBarArea, toolBar2.get());
 
-    QObject::connect(&gThisVF, &P4InputVF::saveSignal, this,
+    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
                      &P4PlotWnd::onSaveSignal);
-    QObject::connect(&gThisVF, &P4InputVF::loadSignal, this,
+    QObject::connect(gThisVF.get(), &P4InputVF::loadSignal, this,
                      &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS

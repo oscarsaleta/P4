@@ -19,6 +19,8 @@
 
 #include "math_charts.hpp"
 
+#include <cmath>
+
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
 #include "custom.hpp"
@@ -27,8 +29,6 @@
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
 #include "tables.hpp"
-
-#include <cmath>
 
 // -----------------------------------------------------------------------
 //                      FUNCTION PROTOTYPES
@@ -1132,8 +1132,9 @@ bool psphere_to_viewcoordpair_discontinuousx(const double *p, const double *q,
                  // in coordinates
 }
 
-bool psphere_to_viewcoordpair_discontinuousy(const double *p, const double *q, double *u1,
-                                             double *u2, double *u3, double *u4)
+bool psphere_to_viewcoordpair_discontinuousy(const double *p, const double *q,
+                                             double *u1, double *u2, double *u3,
+                                             double *u4)
 {
     /*
         when plotting a line, one checks plot coordinates for both endpoints.
@@ -1172,9 +1173,9 @@ bool psphere_to_viewcoordpair_discontinuousy(const double *p, const double *q, d
                  // in coordinates
 }
 
-bool plsphere_to_viewcoordpair_discontinuousx(const double *p, const double *q, double *u1,
-                                              double *u2, double *u3,
-                                              double *u4)
+bool plsphere_to_viewcoordpair_discontinuousx(const double *p, const double *q,
+                                              double *u1, double *u2,
+                                              double *u3, double *u4)
 {
     double c[2], qx, qy, px, py;
     double pp[3], qq[3];
@@ -1238,9 +1239,9 @@ bool plsphere_to_viewcoordpair_discontinuousx(const double *p, const double *q, 
     return true;
 }
 
-bool plsphere_to_viewcoordpair_discontinuousy(const double *p, const double *q, double *u1,
-                                              double *u2, double *u3,
-                                              double *u4)
+bool plsphere_to_viewcoordpair_discontinuousy(const double *p, const double *q,
+                                              double *u1, double *u2,
+                                              double *u3, double *u4)
 {
     double c[2], qx, qy, px, py;
     double pp[3], qq[3];

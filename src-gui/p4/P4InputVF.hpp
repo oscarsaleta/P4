@@ -19,14 +19,14 @@
 
 #pragma once
 
-#include "custom.hpp"
-
 #include <memory>
 #include <vector>
 
 #include <QObject>
 #include <QProcess>
 #include <QString>
+
+#include "custom.hpp"
 
 #define TYPEOFSTUDY_ALL 0
 #define TYPEOFSTUDY_FIN 1
@@ -291,8 +291,8 @@ class P4InputVF : public QObject
     void createProcessWindow();
 
     // EVALUATION: gcf
-    bool prepareGcf(const std::vector<p4polynom::term2> &f, double y1, double y2,
-                    int precision, int numpoints);
+    bool prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
+                    double y2, int precision, int numpoints);
     bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
                                 int numpoints, int index);
     bool prepareGcf_LyapunovR2(int precision, int numpoints, int index);

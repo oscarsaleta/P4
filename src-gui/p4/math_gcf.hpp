@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <vector>
+
 #define EVAL_GCF_NONE 0
 #define EVAL_GCF_R2 1
 #define EVAL_GCF_U1 2
@@ -32,8 +34,6 @@
 #define EVAL_GCF_CYL3 10
 #define EVAL_GCF_CYL4 11
 #define EVAL_GCF_FINISHLYAPUNOV 12
-
-#include <vector>
 
 class P4WinSphere;
 

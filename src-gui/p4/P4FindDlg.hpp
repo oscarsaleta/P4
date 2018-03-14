@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QWidget>
+
 #include <memory>
 
 class P4ParamsDlg;
