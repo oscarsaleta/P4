@@ -307,7 +307,7 @@ void P4WinSphere::setupPlot()
     dx_ = x1_ - x0_;
     dy_ = y1_ - y0_;
 
-    double idealhd{std::round(w_ / dx_ * dy_)};
+    // double idealhd{std::round(w_ / dx_ * dy_)};
 
     switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_PLANE:
@@ -468,7 +468,7 @@ void P4WinSphere::adjustToNewSize()
     w_ = width();
     h_ = height();
 
-    auto idealhd = static_cast<double>(std::round(w_ / dx_ * dy_));
+    // auto idealhd = static_cast<double>(std::round(w_ / dx_ * dy_));
 
     auto reqratio = (static_cast<double>(w_) / horPixelsPerMM_) /
                     (idealh_ / verPixelsPerMM_);
@@ -2236,7 +2236,7 @@ void P4WinSphere::printSeparatingCurves()
                     if (it->dashes && dashes)
                         (*plot_l)(this, pcoord, it->pcoord, it->color);
                     else {
-                        auto &nextpt = it + 1;
+                        auto nextpt = it + 1;
                         if (nextpt == std::end(sep))
                             (*plot_p)(this, it->pcoord, it->color);
                         else if (!nextpt->dashes ||
