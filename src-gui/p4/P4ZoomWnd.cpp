@@ -19,6 +19,13 @@
 
 #include "P4ZoomWnd.hpp"
 
+#include <QDesktopWidget>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QSettings>
+#include <QStatusBar>
+#include <QToolBar>
+
 #include "P4Application.hpp"
 #include "P4Event.hpp"
 #include "P4InputVF.hpp"
@@ -30,20 +37,13 @@
 #include "main.hpp"
 #include "plot_tools.hpp"
 
-#include <QDesktopWidget>
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QSettings>
-#include <QStatusBar>
-#include <QToolBar>
-
 P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                      double y2)
     : QMainWindow(), parent_{main}, zoomid_{id}, x1_{x1}, x2_{x2}, y1_{y1},
       y2_{y2}
 {
     if (gP4smallIcon)
-        setWindowIcon(gP4smallIcon);
+        setWindowIcon(*gP4smallIcon);
 
     auto toolBar1 = std::make_unique<QToolBar>("ZoomBar1", this);
     toolBar1->setMovable(false);
@@ -66,7 +66,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                      &P4ZoomWnd::onBtnPrint);
     toolBar1->addAction(actPrint_.get());
 
-    QObject::connect(gThisVF.get(), &QInputVF::saveSignal, this,
+    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
                      &P4ZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
@@ -77,7 +77,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
 #endif
 
     statusBar()->showMessage("Ready");
-    addToolBar(Qt::TopToolBarArea, toolBar1);
+    addToolBar(Qt::TopToolBarArea, toolBar1.get());
 
     sphere_ = std::make_unique<P4WinSphere>(this, statusBar(), true, x1_, y1_,
                                             x2_, y2_);
@@ -147,7 +147,7 @@ void P4ZoomWnd::onBtnPrint()
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
             gP4printer->setResolution(res);
-            QPrintDialog dialog{gP4printer, this};
+            QPrintDialog dialog{gP4printer.get(), this};
             if (!dialog.exec())
                 return;
             res = gP4printer->resolution();
