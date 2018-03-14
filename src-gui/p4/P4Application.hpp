@@ -20,6 +20,7 @@
 #pragma once
 
 #include <QApplication>
+#include <QProcess>
 
 #include <memory>
 
@@ -30,7 +31,6 @@
 #endif
 
 class QFont;
-class QProcess;
 
 class P4Application : public QApplication
 {
