@@ -102,13 +102,13 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 
     if (gThisVF->numParams_ != 0) {
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
-            sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
+            sb_params_ = std::make_unique<QScrollBar>(Qt::Vertical, this);
             sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
-        params_ = std::make_unique<P4VFParams>(this, sb_params_);
+        params_ = std::make_unique<P4VFParams>(this, sb_params_.get());
         paramLayout_->addWidget(params_.get());
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
             paramLayout_->addWidget(sb_params_.get());
@@ -160,7 +160,7 @@ void P4VectorFieldDlg::numParamsChanged(int val)
         return;
 
     if (val > MAXNUMPARAMSSHOWN) {
-        sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
+        sb_params_ = std::make_unique<QScrollBar>(Qt::Vertical, this);
         sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
         sb_params_->setSingleStep(1);
         sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
@@ -215,7 +215,7 @@ void P4VectorFieldDlg::updateDlgData()
 
     if (gThisVF->numParams_ != 0 && !params_) {
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
-            sb_params_ = std::make_shared<QScrollBar>(Qt::Vertical, this);
+            sb_params_ = std::make_unique<QScrollBar>(Qt::Vertical, this);
             sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
