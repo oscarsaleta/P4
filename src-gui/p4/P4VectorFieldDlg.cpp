@@ -44,17 +44,17 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
     auto p4title = std::make_unique<QLabel>("Specify the vector field:", this);
     p4title->setFont(gP4app->getTitleFont());
 
-    edt_xprime_ = std::make_unique<QLineEdit>(gThisVF->xdot_, this);
+    edt_xprime_ = std::make_unique<QLineEdit>("", this);
     auto xlabel = std::make_unique<QLabel>("&x' = ", this);
     xlabel->setFont(gP4app->getBoldFont());
     xlabel->setBuddy(edt_xprime_.get());
 
-    edt_yprime_ = std::make_unique<QLineEdit>(gThisVF->ydot_, this);
+    edt_yprime_ = std::make_unique<QLineEdit>("", this);
     auto ylabel = std::make_unique<QLabel>("&y' = ", this);
     ylabel->setFont(gP4app->getBoldFont());
     ylabel->setBuddy(edt_yprime_.get());
 
-    edt_gcf_ = std::make_unique<QLineEdit>(gThisVF->gcf_, this);
+    edt_gcf_ = std::make_unique<QLineEdit>("", this);
     auto glabel = std::make_unique<QLabel>("&Gcf: ", this);
     glabel->setFont(gP4app->getBoldFont());
     glabel->setBuddy(edt_gcf_.get());
