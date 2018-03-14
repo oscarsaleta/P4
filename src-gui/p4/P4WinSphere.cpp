@@ -499,7 +499,7 @@ void P4WinSphere::adjustToNewSize()
 
         paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-        staticPainter_ = std::make_unique<QPainter>(paint);
+        staticPainter_ = std::make_unique<QPainter>(std::move(paint));
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
@@ -572,7 +572,7 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
 
         paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-        staticPainter_ = std::make_unique<QPainter>(paint);
+        staticPainter_ = std::make_unique<QPainter>(std::move(paint));
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
