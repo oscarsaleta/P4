@@ -28,7 +28,7 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
-class QSpinBox;
+// class QSpinBox;
 class QString;
 class QCheckBox;
 
@@ -68,7 +68,7 @@ class P4ViewDlg : public QWidget
     std::unique_ptr<QLabel> lbl_y0_;
     std::unique_ptr<QLabel> lbl_y1_;
 
-    std::unique_ptr<QSpinBox> spin_numpoints_;
+    //std::unique_ptr<QSpinBox> spin_numpoints_;
 
     bool readFloatField(QLineEdit *, double &, double, double, double);
 
