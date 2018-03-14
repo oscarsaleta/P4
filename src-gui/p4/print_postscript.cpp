@@ -19,18 +19,19 @@
 
 #include "print_postscript.hpp"
 
+#include <QFile>
+#include <QTextStream>
+#include <cmath>
+
 #include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
 #include "custom.hpp"
-#include "tables.hpp"
 #include "main.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
 #include "print_bitmap.hpp"
 #include "print_points.hpp"
-
-#include <QFile>
-#include <QTextStream>
-#include <cmath>
+#include "tables.hpp"
 
 static bool sPSBlackWhitePrint{true};
 
@@ -528,18 +529,16 @@ static void ps_print_degen(double x, double y)
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
-            s.sprintf(
-                "LW 2.6 mul setlinewidth\n"
-                "col%d %8.5g %8.5g cross\n"
-                "LW setlinewidth\n",
-                printColorTable(bgColours::CFOREGROUND), x, y);
+            s.sprintf("LW 2.6 mul setlinewidth\n"
+                      "col%d %8.5g %8.5g cross\n"
+                      "LW setlinewidth\n",
+                      printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
             sLastPSColor = CDEGEN;
-            s.sprintf(
-                "LW 2.6 mul setlinewidth\n"
-                "col%d %8.5g %8.5g cross\n"
-                "LW setlinewidth\n",
-                printColorTable(CDEGEN), x, y);
+            s.sprintf("LW 2.6 mul setlinewidth\n"
+                      "col%d %8.5g %8.5g cross\n"
+                      "LW setlinewidth\n",
+                      printColorTable(CDEGEN), x, y);
             sPSFileStream << s;
         }
     }
@@ -553,18 +552,16 @@ static void ps_print_virtualdegen(double x, double y)
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
-            s.sprintf(
-                "LW 1.3 mul setlinewidth\n"
-                "col%d %8.5g %8.5g cross\n"
-                "LW setlinewidth\n",
-                printColorTable(bgColours::CFOREGROUND), x, y);
+            s.sprintf("LW 1.3 mul setlinewidth\n"
+                      "col%d %8.5g %8.5g cross\n"
+                      "LW setlinewidth\n",
+                      printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
             sLastPSColor = CDEGEN;
-            s.sprintf(
-                "LW 1.3 mul setlinewidth\n"
-                "col%d %8.5g %8.5g cross\n"
-                "LW setlinewidth\n",
-                printColorTable(CDEGEN), x, y);
+            s.sprintf("LW 1.3 mul setlinewidth\n"
+                      "col%d %8.5g %8.5g cross\n"
+                      "LW setlinewidth\n",
+                      printColorTable(CDEGEN), x, y);
             sPSFileStream << s;
         }
     }
@@ -572,22 +569,20 @@ static void ps_print_virtualdegen(double x, double y)
 
 static void ps_print_coinciding(double x, double y)
 {
-    if (s_PSFILE) {
+    if (sPSFile) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
-            s.printf(
-                "LW 1.3 mul setlinewidth\n"
-                "col%d %8.5g %8.5g doublecross\n"
-                "LW setlinewidth\n",
-                printColorTable(bgColours::CFOREGROUND), x, y)
+            s.sprintf("LW 1.3 mul setlinewidth\n"
+                      "col%d %8.5g %8.5g doublecross\n"
+                      "LW setlinewidth\n",
+                      printColorTable(bgColours::CFOREGROUND), x, y);
         } else {
             sLastPSColor = CDEGEN;
-            s.printf(
-                "LW 1.3 mul setlinewidth\n"
-                "col%d %8.5g %8.5g doublecross\n"
-                "LW setlinewidth\n",
-                printColorTable(CDEGEN), x, y)
+            s.sprintf("LW 1.3 mul setlinewidth\n"
+                      "col%d %8.5g %8.5g doublecross\n"
+                      "LW setlinewidth\n",
+                      printColorTable(CDEGEN), x, y);
         }
         sPSFileStream << s;
     }
@@ -678,8 +673,8 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
 static void ps_print_point(double x0, double y0, int color)
 {
     if (sLastPSX0 == x0 && sLastPSY0 == y0 && sLastPSColor == color)
-        return;  // just a small protection against big PS files: do not
-                 // print series of the same points.
+        return; // just a small protection against big PS files: do not
+                // print series of the same points.
 
     sLastPSX0 = x0;
     sLastPSY0 = y0;
@@ -803,11 +798,10 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
         // measurements
         // (1 point = 1/72 inch)
 
-        s.sprintf(
-            "%%!PS-Adobe-3.0 EPSF-3.0\n"
-            "%%%%BoundingBox: %d %d %d %d\n",
-            std::trunc(bbx0), std::trunc(bby0), std::trunc(bbx1),
-            std::trunc(bby1));
+        s.sprintf("%%!PS-Adobe-3.0 EPSF-3.0\n"
+                  "%%%%BoundingBox: %d %d %d %d\n",
+                  std::trunc(bbx0), std::trunc(bby0), std::trunc(bbx1),
+                  std::trunc(bby1));
 
         sPSFileStream << s;
         sPSFileStream << "%%%%Title: " << title << "\n";
@@ -815,33 +809,30 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
         sPSFileStream << "%%%%CreationDate: " << datestring << "\n";
         sPSFileStream << "%%%%EndComments\n\n";
 
-        s.sprintf(
-            "%% User specified resolution = %d DPI\n"
-            "%% User specified Linewidth and symbolwidth, in pixels:\n\n"
-            "/LW %d def\n"
-            "/SW %d def\n\n"
-            "%% Derived dash pattern:\n"
-            "/DS %d def\n\n",
-            resolution, linewidth, symbolwidth, linewidth * 6);
+        s.sprintf("%% User specified resolution = %d DPI\n"
+                  "%% User specified Linewidth and symbolwidth, in pixels:\n\n"
+                  "/LW %d def\n"
+                  "/SW %d def\n\n"
+                  "%% Derived dash pattern:\n"
+                  "/DS %d def\n\n",
+                  resolution, linewidth, symbolwidth, linewidth * 6);
         sPSFileStream << s;
 
-        s.sprintf(
-            "%% Transformation from default 72 DPI to chosen resolution, "
-            "and shift towards center of page:\n"
-            "/scaletransformation{\n"
-            "   %8.5g %8.5g scale\n"
-            "   %d %d translate}def\n\n",
-            scalefactor, scalefactor, x0, y0);
+        s.sprintf("%% Transformation from default 72 DPI to chosen resolution, "
+                  "and shift towards center of page:\n"
+                  "/scaletransformation{\n"
+                  "   %8.5g %8.5g scale\n"
+                  "   %d %d translate}def\n\n",
+                  scalefactor, scalefactor, x0, y0);
 
         sPSFileStream << s;
 
-        s.sprintf(
-            "/frame{\n"
-            "   0 setlinewidth\n"
-            "   newpath 0 0 moveto 0 %d lineto %d %d lineto %d 0 lineto "
-            "closepath\n"
-            "   clip stroke}def\n\n",
-            h, w, h, w);
+        s.sprintf("/frame{\n"
+                  "   0 setlinewidth\n"
+                  "   newpath 0 0 moveto 0 %d lineto %d %d lineto %d 0 lineto "
+                  "closepath\n"
+                  "   clip stroke}def\n\n",
+                  h, w, h, w);
         sPSFileStream << s;
 
         sPSFileStream << "%% Color table:\n"
@@ -888,14 +879,14 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                          "fill\n"
                          "}bind def\n\n";
 
-        PSFileStream << "/vbox{ moveto\n"
-                        "SW neg 2 div SW 2 div rmoveto\n"
-                        "SW  0 rlineto\n"
-                        "0  SW neg rlineto\n"
-                        "SW neg 0 rlineto\n"
-                        "closepath\n"
-                        "stroke\n"
-                        "}bind def\n\n";
+        sPSFileStream << "/vbox{ moveto\n"
+                         "SW neg 2 div SW 2 div rmoveto\n"
+                         "SW  0 rlineto\n"
+                         "0  SW neg rlineto\n"
+                         "SW neg 0 rlineto\n"
+                         "closepath\n"
+                         "stroke\n"
+                         "}bind def\n\n";
 
         sPSFileStream << "/dot{\n"
                          "LW 2 div 0 360 arc fill\n"
@@ -911,15 +902,15 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                          "fill\n"
                          "}bind def\n\n";
 
-        PSFileStream << "/vdiamond{\n"
-                        "moveto\n"
-                        "0  SW 2 div 1.3 mul rmoveto\n"
-                        "SW 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
-                        "SW neg 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
-                        "SW neg 2 div 1.3 mul SW 2 div 1.3 mul rlineto\n"
-                        "closepath\n"
-                        "stroke\n"
-                        "}bind def\n\n";
+        sPSFileStream << "/vdiamond{\n"
+                         "moveto\n"
+                         "0  SW 2 div 1.3 mul rmoveto\n"
+                         "SW 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
+                         "SW neg 2 div 1.3 mul SW neg 2 div 1.3 mul rlineto\n"
+                         "SW neg 2 div 1.3 mul SW 2 div 1.3 mul rlineto\n"
+                         "closepath\n"
+                         "stroke\n"
+                         "}bind def\n\n";
 
         sPSFileStream << "/triangle{\n"
                          "moveto\n"
@@ -929,13 +920,13 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                          "fill\n"
                          "}bind def\n\n";
 
-        PSFileStream << "/vtriangle{\n"
-                        "moveto\n"
-                        "0  SW 2 div 1.2 mul rmoveto\n"
-                        "SW 2 div 1.2 mul SW neg 1.2 mul rlineto\n"
-                        "SW 1.2 mul neg 0  rlineto\n"
-                        "stroke\n"
-                        "}bind def\n\n";
+        sPSFileStream << "/vtriangle{\n"
+                         "moveto\n"
+                         "0  SW 2 div 1.2 mul rmoveto\n"
+                         "SW 2 div 1.2 mul SW neg 1.2 mul rlineto\n"
+                         "SW 1.2 mul neg 0  rlineto\n"
+                         "stroke\n"
+                         "}bind def\n\n";
 
         sPSFileStream << "/cross{\n"
                          "moveto\n"
@@ -946,49 +937,47 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
                          "stroke\n"
                          "}bind def\n\n";
 
-        PSFileStream << "/doublecross{\n"
-                        "moveto\n"
-                        "SW 2 div SW 2 div rmoveto\n"
-                        "SW neg SW neg rlineto\n"
-                        "0  SW rmoveto\n"
-                        "SW SW neg rlineto\n"
-                        "SW -2 div SW -4 div rmoveto\n"
-                        "0 SW 1.5 mul rlineto\n"
-                        "SW -0.75 mul SW -0.75 mul rmoveto\n"
-                        "SW 11.5 mul 0 rlineto\n"
-                        "stroke\n"
-                        "}bind def\n\n";
+        sPSFileStream << "/doublecross{\n"
+                         "moveto\n"
+                         "SW 2 div SW 2 div rmoveto\n"
+                         "SW neg SW neg rlineto\n"
+                         "0  SW rmoveto\n"
+                         "SW SW neg rlineto\n"
+                         "SW -2 div SW -4 div rmoveto\n"
+                         "0 SW 1.5 mul rlineto\n"
+                         "SW -0.75 mul SW -0.75 mul rmoveto\n"
+                         "SW 11.5 mul 0 rlineto\n"
+                         "stroke\n"
+                         "}bind def\n\n";
 
-        PSFileStream << "/vcross{\n"
-                        "moveto\n"
-                        "SW 3 div SW 3 div rmoveto\n"
-                        "SW 1.5 div neg SW 1.5 div neg rlineto\n"
-                        "0  SW 1.5 div rmoveto\n"
-                        "SW 1.5 div SW 1.5 div neg rlineto\n"
-                        "stroke\n"
-                        "}bind def\n\n";
+        sPSFileStream << "/vcross{\n"
+                         "moveto\n"
+                         "SW 3 div SW 3 div rmoveto\n"
+                         "SW 1.5 div neg SW 1.5 div neg rlineto\n"
+                         "0  SW 1.5 div rmoveto\n"
+                         "SW 1.5 div SW 1.5 div neg rlineto\n"
+                         "stroke\n"
+                         "}bind def\n\n";
 
-        s.sprintf(
-            "%% Main Picture (local coordinates "
-            "(x0,y0,x1,y1)=(0,0,%d,%d):\n"
-            "gsave\n"
-            "scaletransformation\n"
-            "[] 0 setdash\n",
-            w, h);
+        s.sprintf("%% Main Picture (local coordinates "
+                  "(x0,y0,x1,y1)=(0,0,%d,%d):\n"
+                  "gsave\n"
+                  "scaletransformation\n"
+                  "[] 0 setdash\n",
+                  w, h);
         sPSFileStream << s;
 
         if (!bgColours::PRINT_WHITE_BG) {
-            s.sprintf(
-                "%% Fill background with black rectangle:\n"
-                "newpath\n"
-                "0 0 moveto\n"
-                "%d 0 lineto\n"
-                "%d %d lineto\n"
-                "0 %d lineto\n"
-                "closepath\n"
-                "col0\n"
-                "fill\n",
-                w, w, h, h);
+            s.sprintf("%% Fill background with black rectangle:\n"
+                      "newpath\n"
+                      "0 0 moveto\n"
+                      "%d 0 lineto\n"
+                      "%d %d lineto\n"
+                      "0 %d lineto\n"
+                      "closepath\n"
+                      "col0\n"
+                      "fill\n",
+                      w, w, h, h);
             sPSFileStream << s;
         }
 
