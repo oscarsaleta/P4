@@ -21,17 +21,17 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QButtonGroup>
+#include <QLabel>
+#include <QLineEdit>
+#include <QRadioButton>
+#include <QSpinBox>
+
 #include <memory>
 #include <vector>
 
 class P4FindDlg;
-
-class QBoxLayout;
-class QRadioButton;
-class QSpinBox;
-class QLineEdit;
-class QLabel;
-class QButtonGroup;
 
 class P4ParamsDlg : public QWidget
 {

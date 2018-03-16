@@ -19,13 +19,6 @@
 
 #include "P4ParamsDlg.hpp"
 
-#include <QBoxLayout>
-#include <QButtonGroup>
-#include <QLabel>
-#include <QLineEdit>
-#include <QRadioButton>
-#include <QSpinBox>
-
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
@@ -66,7 +59,7 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
 
     auto lbl_epsilon = std::make_unique<QLabel>("Epsilon:", this);
     lbl_epsilon->setFont(gP4app->getBoldFont());
-    edt_epsilon_ = std::make_unique<QLineEdit>(gThisVF->epsilon_, this);
+    edt_epsilon_ = std::make_unique<QLineEdit>("", this);
 
     auto lbl_level = std::make_unique<QLabel>("Level of Approximation:", this);
     lbl_level->setFont(gP4app->getBoldFont());
