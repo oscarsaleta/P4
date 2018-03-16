@@ -61,7 +61,7 @@ class P4WinSphere : public QWidget
     P4WinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);
     ~P4WinSphere();
 
-    static std::vector<std::shared_ptr<P4WinSphere>> sM_sphereList;
+    static std::vector<P4WinSphere *> sM_sphereList;
 
     /* Member variables */
     double horPixelsPerMM_;
@@ -83,7 +83,7 @@ class P4WinSphere : public QWidget
 
     int spherebgcolor_;
     // FIXME: used?
-    std::shared_ptr<P4WinSphere> next_; // visible to PlotWnd
+    P4WinSphere *next_; // visible to PlotWnd
     int selectingX_{0}, selectingY_{0};
     int selectingPointStep_{0}, selectingPointRadius_{0};
     std::unique_ptr<QTimer> selectingTimer_;

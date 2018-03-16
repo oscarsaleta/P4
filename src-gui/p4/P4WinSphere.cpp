@@ -81,8 +81,8 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
 
     // FIXME: is next needed?
     if (!sM_sphereList.empty())
-        sM_sphereList.back()->next_ = std::make_shared<P4WinSphere>(this);
-    sM_sphereList.push_back(std::make_shared<P4WinSphere>(this));
+        sM_sphereList.back()->next_ = this;
+    sM_sphereList.push_back(this);
     sM_numSpheres++;
 
     // THIS IS THE MINIMUM SIZE
@@ -116,7 +116,7 @@ P4WinSphere::~P4WinSphere()
     int i;
 
     for (i = 0; i < sM_numSpheres; i++) {
-        if (sM_sphereList[i].get() == this)
+        if (sM_sphereList[i] == this)
             break;
     }
     if (i == sM_numSpheres)
@@ -493,13 +493,11 @@ void P4WinSphere::adjustToNewSize()
         painterCache_ = std::make_unique<QPixmap>(size());
         isPainterCacheDirty_ = false;
 
-        QPainter paint{painterCache_.get()};
-        paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
+        staticPainter_->fillRect(0, 0, width(), height(),
+                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
-
-        staticPainter_ = std::make_unique<QPainter>(std::move(paint));
+        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
@@ -566,13 +564,11 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
             painterCache_ = std::make_unique<QPixmap>(size());
         isPainterCacheDirty_ = false;
 
-        QPainter paint{painterCache_.get()};
-        paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
+        staticPainter_->fillRect(0, 0, width(), height(),
+                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
-
-        staticPainter_ = std::make_unique<QPainter>(std::move(paint));
+        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
@@ -826,7 +822,7 @@ int P4WinSphere::coWinV(double deltay)
 int P4WinSphere::coWinX(double x)
 {
     double wx{(x - x0_) / dx_ * (w_ - 1)};
-    int iwx{std::round(wx)};
+    int iwx{static_cast<int>(std::round(wx))};
 
     if (iwx >= w_)
         iwx = w_ - 1;
@@ -837,7 +833,7 @@ int P4WinSphere::coWinX(double x)
 int P4WinSphere::coWinY(double y)
 {
     double wy{(y - y0_) / dy_ * (h_ - 1)};
-    int iwy{std::round(wy)};
+    int iwy{static_cast<int>(std::round(wy))};
 
     if (iwy >= h_)
         iwy = h_ - 1;
@@ -987,8 +983,8 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
     int x{winpos.x()}, y{winpos.y()};
 
     sM_sphereList.back()->prepareDrawing();
-    auto result = find_critical_point(sM_sphereList.back().get(), coWorldX(x),
-                                      coWorldY(y));
+    auto result =
+        find_critical_point(sM_sphereList.back(), coWorldX(x), coWorldY(y));
     sM_sphereList.back()->finishDrawing();
 
     if (!result) {
@@ -2442,13 +2438,13 @@ void P4WinSphere::calculateHeightFromWidth(int &width, int &height,
     double h{w * dy_ / dx_ * aspectratio};
 
     if (std::round(h) <= maxheight || maxheight == -1) {
-        height = std::round(h);
+        height = static_cast<int>(std::round(h));
     } else {
         height = maxheight;
         h = static_cast<double>(maxheight);
         w = h * dx_ / dy_;
         w /= aspectratio;
-        width = std::round(w);
+        width = static_cast<int>(std::round(w));
     }
 }
 
@@ -2474,7 +2470,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
     oldw_ = w_;
     oldh_ = h_;
-    w_ = std::round(hpixels);
+    w_ = static_cast<int>(std::round(hpixels));
 
     switch (printmethod) {
     case P4PRINT_DEFAULT: /* pagewidth and height already set */
@@ -2494,7 +2490,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     }
 
     if (w_ > pagewidth && pagewidth != -1)
-        w_ = std::round(pagewidth);
+        w_ = static_cast<int>(std::round(pagewidth));
     if (maxvpixels > pageheight && pageheight != -1)
         maxvpixels = pageheight;
 
@@ -2652,7 +2648,7 @@ void P4WinSphere::prepareDrawing()
         isPainterCacheDirty_ = true;
         painterCache_ = std::make_unique<QPixmap>(size());
     }
-    staticPainter_ = std::make_unique<QPainter>(painterCache_);
+    staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
 
     paintedXMin_ = width() - 1;
     paintedYMin_ = height() - 1;
