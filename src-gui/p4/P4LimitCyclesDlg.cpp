@@ -19,13 +19,9 @@
 
 #include "P4LimitCyclesDlg.hpp"
 
-#include <QBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMessageBox>
 #include <QProgressDialog>
-#include <QPushButton>
-#include <QSpinBox>
 
 #include <cmath>
 

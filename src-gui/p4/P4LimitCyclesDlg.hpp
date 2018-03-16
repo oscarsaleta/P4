@@ -21,17 +21,17 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QSpinBox>
+
 #include <memory>
 
 #include "custom.hpp"
 
 class P4PlotWnd;
 class P4WinSphere;
-
-class QPushButton;
-class QLineEdit;
-class QSpinBox;
-class QBoxLayout;
 
 bool stop_search_limit();
 void write_to_limit_window(double x, double y);
