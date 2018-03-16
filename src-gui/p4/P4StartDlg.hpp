@@ -21,19 +21,21 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QMenu>
+#include <QPushButton>
+#include <QTextBrowser>
+#include <QTextEdit>
+
 #include <memory>
 
-class P4PlotWnd;
-class P4FindDlg;
+#include "P4FindDlg.hpp"
+#include "P4PlotWnd.hpp"
 
-class QBoxLayout;
 class QCloseEvent;
 class QEvent;
-class QLineEdit;
-class QMenu;
-class QPushButton;
 class QString;
-class QTextBrowser;
 
 #define TYPE_SIGNAL_CURVESEVALUATED (QEvent::User + 1)
 #define TYPE_SIGNAL_EVALUATED (QEvent::User + 2)
@@ -52,7 +54,7 @@ class QTextBrowser;
 struct DOUBLEPOINT {
     double x;
     double y;
-    DOUBLEPOINT(int thex = 0, int they = 0) : x{thex}, y{they} {}
+    DOUBLEPOINT(double thex = 0, double they = 0) : x{thex}, y{they} {}
 };
 
 // class defined in win_main.cpp

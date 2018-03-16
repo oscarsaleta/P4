@@ -19,25 +19,18 @@
 
 #include "P4StartDlg.hpp"
 
-#include <QBoxLayout>
 #include <QCloseEvent>
 #include <QDir>
 #include <QFileDialog>
 #include <QLabel>
-#include <QLineEdit>
-#include <QMenu>
 #include <QMessageBox>
-#include <QPushButton>
 #include <QSettings>
-#include <QTextBrowser>
 #include <QTextStream>
 
 #include "P4AboutDlg.hpp"
 #include "P4Application.hpp"
-#include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4PlotWnd.hpp"
 #include "P4SeparatingCurvesDlg.hpp"
 #include "P4VFSelectDlg.hpp"
 #include "custom.hpp"
