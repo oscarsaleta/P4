@@ -21,24 +21,26 @@
 
 #include <QMainWindow>
 
+#include <QAction>
+#include <QBoxLayout>
+
 #include <memory>
 #include <vector>
 
-class P4ArbitraryCurveDlg;
-class P4GcfDlg;
-class P4IsoclinesDlg;
-class P4IntParamsDlg;
-class P4LegendWnd;
-class P4LimitCyclesDlg;
-class P4OrbitsDlg;
-class P4SepDlg;
-class P4StartDlg;
-class P4ViewDlg;
-class P4WinSphere;
-class P4ZoomWnd;
+#include "P4ArbitraryCurveDlg.hpp"
+#include "P4GcfDlg.hpp"
+#include "P4IntParamsDlg.hpp"
+#include "P4IsoclinesDlg.hpp"
+#include "P4LegendWnd.hpp"
+#include "P4LimitCyclesDlg.hpp"
+#include "P4OrbitsDlg.hpp"
+#include "P4SepDlg.hpp"
+#include "P4ViewDlg.hpp"
+#include "P4WinSphere.hpp"
+#include "P4ZoomWnd.hpp"
 
-class QAction;
-class QBoxLayout;
+class P4StartDlg;
+
 class QEvent;
 class QHideEvent;
 
@@ -50,9 +52,9 @@ class P4PlotWnd : public QMainWindow
     P4PlotWnd(P4StartDlg *);
 
     P4IntParamsDlg *getIntParamsWindowPtr() const;
-    void setIntParamsWindow(P4IntParamsDlg *);
+    // void setIntParamsWindow(P4IntParamsDlg *);
     P4ViewDlg *getViewParamsWindowPtr() const;
-    void setViewParamsWindow(P4ViewDlg *);
+    // void setViewParamsWindow(P4ViewDlg *);
 
   private:
     P4StartDlg *parent_;

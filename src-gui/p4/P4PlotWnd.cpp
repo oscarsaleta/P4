@@ -26,22 +26,11 @@
 #include <QToolBar>
 
 #include "P4Application.hpp"
-#include "P4ArbitraryCurveDlg.hpp"
 #include "P4Event.hpp"
-#include "P4GcfDlg.hpp"
 #include "P4InputVF.hpp"
-#include "P4IntParamsDlg.hpp"
-#include "P4IsoclinesDlg.hpp"
-#include "P4LegendWnd.hpp"
-#include "P4LimitCyclesDlg.hpp"
-#include "P4OrbitsDlg.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PrintDlg.hpp"
-#include "P4SepDlg.hpp"
 #include "P4StartDlg.hpp"
-#include "P4ViewDlg.hpp"
-#include "P4WinSphere.hpp"
-#include "P4ZoomWnd.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
 #include "plot_tools.hpp"
@@ -181,14 +170,14 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
     sphere_ =
         std::make_unique<P4WinSphere>(this, statusBar(), false, 0, 0, 0, 0);
     legendWindow_ = std::make_unique<P4LegendWnd>();
-    orbitsWindow_ = std::make_unique<P4OrbitsDlg>(this, sphere_);
-    sepWindow_ = std::make_unique<P4SepDlg>(this, sphere_);
+    orbitsWindow_ = std::make_unique<P4OrbitsDlg>(this, sphere_.get());
+    sepWindow_ = std::make_unique<P4SepDlg>(this, sphere_.get());
     intParamsWindow_ = std::make_unique<P4IntParamsDlg>();
     viewParamsWindow_ = std::make_unique<P4ViewDlg>(this);
-    lcWindow_ = std::make_unique<P4LimitCyclesDlg>(this, sphere_);
-    gcfWindow_ = std::make_unique<P4GcfDlg>(this, sphere_);
-    curveWindow_ = std::make_unique<P4ArbitraryCurveDlg>(this, sphere_);
-    isoclinesWindow_ = std::make_unique<P4IsoclinesDlg>(this, sphere_);
+    lcWindow_ = std::make_unique<P4LimitCyclesDlg>(this, sphere_.get());
+    gcfWindow_ = std::make_unique<P4GcfDlg>(this, sphere_.get());
+    curveWindow_ = std::make_unique<P4ArbitraryCurveDlg>(this, sphere_.get());
+    isoclinesWindow_ = std::make_unique<P4IsoclinesDlg>(this, sphere_.get());
     gLCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere_->show();
@@ -230,7 +219,7 @@ void P4PlotWnd::onLoadSignal()
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
             thiszoom = std::make_unique<P4ZoomWnd>(
-                *this, currentZoomId, currentZoomX1, currentZoomY1,
+                this, currentZoomId, currentZoomX1, currentZoomY1,
                 currentZoomX2, currentZoomY2);
             thiszoom->show();
             thiszoom->raise();
@@ -359,11 +348,12 @@ void P4PlotWnd::onBtnLimitCycles()
 
 void P4PlotWnd::onBtnPrint()
 {
-    auto pdlg = std::make_unique<P4PrintDlg>(this, 0);
+    auto pdlg =
+        std::make_unique<P4PrintDlg>(this, static_cast<Qt::WindowFlags>(0));
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
-    int lw{pdlg->getChosenLineWidth()};
-    int ss{pdlg->getChosenSymbolSize()};
+    double lw{pdlg->getChosenLineWidth()};
+    double ss{pdlg->getChosenSymbolSize()};
     pdlg.reset();
 
     if (result != P4PRINT_NONE) {
@@ -430,7 +420,7 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
         return;
 
     std::unique_ptr<P4ZoomWnd> newZoom{std::make_unique<P4ZoomWnd>(
-        *this, ++lastZoomIdentifier_, x1, y1, x2, y2)};
+        this, ++lastZoomIdentifier_, x1, y1, x2, y2)};
     newZoom->show();
     newZoom->raise();
     newZoom->adjustHeight();
@@ -453,30 +443,30 @@ void P4PlotWnd::closeZoomWindow(int id)
 
 void P4PlotWnd::customEvent(QEvent *_e)
 {
-    P4Event *e = static_cast<P4Event *>(_e);
+    P4Event *e = dynamic_cast<P4Event *>(_e);
     double pcoord[3];
     double ucoord[2];
     double ucoord0[2];
     double ucoord1[2];
     double x, y, x0, y0, x1, y1;
 
-    switch (e->type()) {
-    case TYPE_OPENZOOMWINDOW:
+    switch (static_cast<int>(e->type())) {
+    case TYPE_OPENZOOMWINDOW: {
         double *data1{static_cast<double *>(e->data())};
         openZoomWindow(data1[0], data1[1], data1[2], data1[3]);
         delete data1;
-        break;
-    case TYPE_CLOSE_ZOOMWINDOW:
+    } break;
+    case TYPE_CLOSE_ZOOMWINDOW: {
         int *data2{static_cast<int *>(e->data())};
         closeZoomWindow(*data2);
         delete data2;
-        break;
-    case TYPE_ORBIT_EVENT:
+    } break;
+    case TYPE_ORBIT_EVENT: {
         int *oet{static_cast<int *>(e->data())};
         orbitsWindow_->orbitEvent(*oet);
         delete oet;
-        break;
-    case TYPE_SELECT_ORBIT:
+    } break;
+    case TYPE_SELECT_ORBIT: {
         DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e->data())};
         x = p->x;
         y = p->y;
@@ -489,8 +479,8 @@ void P4PlotWnd::customEvent(QEvent *_e)
                 orbitsWindow_->raise();
         }
         delete p;
-        break;
-    case TYPE_SELECT_LCSECTION:
+    } break;
+    case TYPE_SELECT_LCSECTION: {
         DOUBLEPOINT *p{static_cast<DOUBLEPOINT *>(e->data())};
         x0 = p->x;
         y0 = p->y;
@@ -518,11 +508,13 @@ void P4PlotWnd::customEvent(QEvent *_e)
         lcWindow_->setSection(ucoord0[0], ucoord0[1], ucoord1[0], ucoord1[1]);
         lcWindow_->show();
         lcWindow_->raise();
-        break;
-    case TYPE_SEP_EVENT:
+    } break;
+    case TYPE_SEP_EVENT: {
         int *oet{static_cast<int *>(e->data())};
         sepWindow_->sepEvent(*oet);
         delete oet;
+    } break;
+    default:
         break;
     }
 }
@@ -554,13 +546,13 @@ P4IntParamsDlg *P4PlotWnd::getIntParamsWindowPtr() const
     return nullptr;
 }
 
-void P4PlotWnd::setIntParamsWindow(P4IntParamsDlg *newdlg)
+/*void P4PlotWnd::setIntParamsWindow(P4IntParamsDlg *newdlg)
 {
     if (newdlg != nullptr && newdlg != intParamsWindow_.get())
         intParamsWindow_ = std::make_unique<P4IntParamsDlg>(newdlg);
     else
         intParamsWindow_.reset();
-}
+}*/
 
 P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr() const
 {
@@ -569,10 +561,10 @@ P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr() const
     return nullptr;
 }
 
-void P4PlotWnd::setViewParamsWindow(P4ViewDlg *newdlg)
+/*void P4PlotWnd::setViewParamsWindow(P4ViewDlg *newdlg)
 {
     if (newdlg != nullptr && newdlg != viewParamsWindow_.get())
         viewParamsWindow_ = std::make_unique<P4ViewDlg>(newdlg);
     else
         viewParamsWindow_.reset();
-}
+}*/
