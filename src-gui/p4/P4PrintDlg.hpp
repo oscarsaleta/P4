@@ -21,14 +21,15 @@
 
 #include <QDialog>
 
+#include <QBoxLayout>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+
 #include <memory>
 
-class QBoxLayout;
-class QCheckBox;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
 class QWidget;
 
 class P4PrintDlg : public QDialog

@@ -19,13 +19,9 @@
 
 #include "P4PrintDlg.hpp"
 
-#include <QBoxLayout>
 #include <QButtonGroup>
-#include <QCheckBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
+
+#include <cmath>
 
 #include "custom.hpp"
 #include "main.hpp"
@@ -198,7 +194,7 @@ bool P4PrintDlg::readDialog()
 
     result = readFloatField(edt_resolution_.get(), res, DEFAULT_RESOLUTION, 72,
                             4800);
-    sM_lastResolution = floor(res);
+    sM_lastResolution = std::floor(res);
     result |= readFloatField(edt_linewidth_.get(), sM_lastLineWidth,
                              DEFAULT_LINEWIDTH, MIN_LINEWIDTH, MAX_LINEWIDTH);
     result |=
