@@ -21,15 +21,15 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+
 #include <memory>
 
 class P4WinSphere;
 class P4PlotWnd;
-
-class QPushButton;
-class QLineEdit;
-class QLabel;
-class QBoxLayout;
 
 extern QString gCurrentSingularityInfo[];
 extern double gCurrentSeparatriceEpsilon;

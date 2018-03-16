@@ -19,11 +19,6 @@
 
 #include "P4SepDlg.hpp"
 
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
 #include "P4WinSphere.hpp"
