@@ -21,14 +21,14 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+
 #include <memory>
 
 class P4WinSphere;
 class P4PlotWnd;
-
-class QPushButton;
-class QLineEdit;
-class QBoxLayout;
 
 class P4OrbitsDlg : public QWidget
 {

@@ -19,10 +19,7 @@
 
 #include "P4OrbitsDlg.hpp"
 
-#include <QBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
