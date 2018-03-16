@@ -21,13 +21,13 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+
 class P4WinSphere;
 class P4PlotWnd;
-
-class QPushButton;
-class QRadioButton;
-class QBoxLayout;
-class QLineEdit;
 
 class P4GcfDlg : public QWidget
 {
