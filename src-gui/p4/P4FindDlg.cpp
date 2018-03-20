@@ -19,13 +19,10 @@
 
 #include "P4FindDlg.hpp"
 
-#include <QBoxLayout>
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include <QPushButton>
-#include <QRadioButton>
 #include <QSettings>
 
 #include "P4Application.hpp"

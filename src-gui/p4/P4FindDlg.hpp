@@ -21,16 +21,17 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QPushButton>
+#include <QRadioButton>
+
 #include <memory>
 
-class P4ParamsDlg;
-class P4StartDlg;
-class P4VectorFieldDlg;
-class P4VFSelectDlg;
+#include "P4ParamsDlg.hpp"
+#include "P4VectorFieldDlg.hpp"
+#include "P4VFSelectDlg.hpp"
 
-class QBoxLayout;
-class QPushButton;
-class QRadioButton;
+class P4StartDlg;
 
 class P4FindDlg : public QWidget
 {
