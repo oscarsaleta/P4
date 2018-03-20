@@ -50,7 +50,7 @@ void (*print_virtualdegen)(double, double) = nullptr;
 void (*print_center)(double, double) = nullptr;
 void (*print_virtualcenter)(double, double) = nullptr;
 
-extern void (*print_coinciding)(double, double) = nullptr;
+void (*print_coinciding)(double, double) = nullptr;
 
 void (*print_elips)(double, double, double, double, int, bool,
                     const std::vector<P4POLYLINES> &) = nullptr;
