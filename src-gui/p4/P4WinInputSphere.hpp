@@ -21,25 +21,24 @@
 
 #include <QWidget>
 
+#include <QLabel>
+#include <QPainter>
+#include <QPixmap>
 #include <QPoint>
+#include <QTimer>
 
 #include <memory>
 #include <vector>
 
-class P4SeparatingCurvesDlg;
-class QLabel;
+#include "main.hpp"
+#include "tables.hpp"
+
 class QPaintEvent;
-class QPixmap;
 class QResizeEvent;
 class QMouseEvent;
 class QKeyEvent;
-class QTimer;
 
-struct P4POLYLINES;
-namespace p4curves
-{
-struct curves;
-}
+class P4SeparatingCurvesDlg;
 
 class P4WinInputSphere : public QWidget
 {
@@ -143,4 +142,4 @@ class P4WinInputSphere : public QWidget
     QPoint zoomAnchor1_;
     QPoint zoomAnchor2_;
     std::unique_ptr<QPixmap> anchorMap_;
-}
+};

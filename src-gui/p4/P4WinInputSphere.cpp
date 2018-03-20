@@ -20,15 +20,13 @@
 #include "P4WinInputSphere.hpp"
 
 #include <QKeyEvent>
-#include <QLabel>
-#include <QPainter>
 #include <QPalette>
-#include <QTimer>
+
+#include <cmath>
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4SeparatingCurvesDlg.hpp"
-#include "main.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "math_regions.hpp"
