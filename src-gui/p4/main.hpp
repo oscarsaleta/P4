@@ -19,18 +19,20 @@
 
 #pragma once
 
+#include <QPixmap>
+#include <QPrinter>
 #include <QString>
+
+#include <memory>
 
 class P4ParentStudy;
 
-class QPixmap;
-class QPrinter;
 class QWidget;
 
 // to avoid warnings of unused variables in case we cannot avoid it
 //#define UNUSED(x) (void)(x)
 
-// FIXME fix usages
+// FIXME: fix usages
 struct P4POLYLINES {
     double x1;
     double y1;
