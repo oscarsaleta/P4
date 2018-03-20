@@ -492,6 +492,11 @@ std::vector<p4orbits::orbits_points> integrate_sep(P4WinSphere *spherewnd,
         if ((i % UPDATEFREQ_STEPSIZE) == 0)
             set_current_step(fabs(hhi));
 
+        if (orbit_result.empty())
+            h = dir;
+        else
+            h = orbit_result.back().dir;
+
         copy_x_into_y(pcoord, last_orbit.pcoord);
         last_orbit.color = color;
         last_orbit.dashes = dashes && gVFResults.config_dashes_;
