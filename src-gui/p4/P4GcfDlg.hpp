@@ -26,6 +26,8 @@
 #include <QPushButton>
 #include <QRadioButton>
 
+#include <memory>
+
 class P4WinSphere;
 class P4PlotWnd;
 
@@ -39,8 +41,8 @@ class P4GcfDlg : public QWidget
     void finishGcfEvaluation();
 
   private:
-    P4WinSphere *mainSphere_;
     P4PlotWnd *plotwnd_;
+    P4WinSphere *mainSphere_;
 
     std::unique_ptr<QPushButton> btn_evaluate_;
 
