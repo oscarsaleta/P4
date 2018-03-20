@@ -34,4 +34,4 @@ void plot_next_se_sep(P4WinSphere *, int);
 void select_next_se_sep(P4WinSphere *);
 void change_epsilon_se(P4WinSphere *, double);
 void plot_all_se_sep(P4WinSphere *, int,
-                     std::vector<p4singularities::semi_elementary> &)
+                     std::vector<p4singularities::semi_elementary> &);
