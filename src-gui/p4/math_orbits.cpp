@@ -128,7 +128,7 @@ bool startOrbit(P4WinSphere *sphere, double x, double y, bool R)
         return false;
 
     gVFResults.orbits_.emplace_back(pcoord, bgColours::CORBIT,
-                                    std::vector<p4orbits::orbits_points>{}, 0);
+                                    std::vector<p4orbits::orbits_points>{});
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     sphere->drawPoint(ucoord[0], ucoord[1], bgColours::CORBIT);
@@ -444,7 +444,6 @@ integrate_orbit(P4WinSphere *spherewnd, double pcoord[3], double step, int dir,
     int d, h;
     int dashes;
     double pcoord2[3];
-    p4orbits::orbits_points new_orbit;
     std::vector<p4orbits::orbits_points> orbit_result;
 
     double hhi{dir * step};
