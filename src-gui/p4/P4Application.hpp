@@ -20,6 +20,8 @@
 #pragma once
 
 #include <QApplication>
+
+#include <QFont>
 #include <QProcess>
 
 #include <memory>

@@ -19,8 +19,6 @@
 
 #include "P4Application.hpp"
 
-#include <QFont>
-
 #include "P4Event.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
