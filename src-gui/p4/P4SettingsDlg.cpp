@@ -19,14 +19,9 @@
 
 #include "P4SettingsDlg.hpp"
 
-#include <QBoxLayout>
 #include <QButtonGroup>
 #include <QFileDialog>
-#include <QLabel>
-#include <QLineEdit>
 #include <QMessageBox>
-#include <QPushButton>
-#include <QRadioButton>
 
 #include "custom.hpp"
 #include "file_paths.hpp"
@@ -110,8 +105,7 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
     btn_bgblack_ = std::make_unique<QRadioButton>("Black", this);
     btn_bgwhite_ = std::make_unique<QRadioButton>("White", this);
 
-    std::unique_ptr<QButtonGroup> bgcolors{
-        std::make_unique<QButtonGroup>(this)};
+    auto bgcolors = std::make_unique<QButtonGroup>(this);
     bgcolors->addButton(btn_bgblack_.get());
     bgcolors->addButton(btn_bgwhite_.get());
 
@@ -324,7 +318,8 @@ void P4SettingsDlg::onBrowseBase()
                                 "Select P4 base installation path:", false);
 }
 
-void P4SettingsDlg::browseForExistingPathOrFile(QLineEdit *edt, QString caption,
+void P4SettingsDlg::browseForExistingPathOrFile(QLineEdit *edt,
+                                                const QString &caption,
                                                 bool isfile)
 {
     // browse for an existing path if isfile = false, or for an existing file if

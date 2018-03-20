@@ -21,13 +21,14 @@
 
 #include <QDialog>
 
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+
 #include <memory>
 
-class QBoxLayout;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
 class QString;
 class QWidget;
 
@@ -37,7 +38,7 @@ class P4SettingsDlg : public QDialog
 
   public:
     P4SettingsDlg(QWidget *, Qt::WindowFlags);
-    void browseForExistingPathOrFile(QLineEdit *, QString, bool);
+    void browseForExistingPathOrFile(QLineEdit *, const QString &, bool);
 
   private:
     std::unique_ptr<QLabel> lbl_base_;
