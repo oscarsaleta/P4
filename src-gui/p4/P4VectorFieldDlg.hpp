@@ -21,20 +21,20 @@
 
 #include "custom.hpp"
 
+#include <QBoxLayout>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QScrollBar>
+#include <QSpinBox>
 #include <QString>
 #include <QWidget>
 
 #include <memory>
+#include <vector>
+
+#include "P4VFParams.hpp"
 
 class P4FindDlg;
-class P4VFParams;
-
-class QBoxLayout;
-class QHBoxLayout;
-class QLabel;
-class QLineEdit;
-class QScrollBar;
-class QSpinBox;
 
 class P4VectorFieldDlg : public QWidget
 {

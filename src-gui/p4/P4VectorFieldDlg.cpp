@@ -19,13 +19,8 @@
 
 #include "P4VectorFieldDlg.hpp"
 
-#include <QBoxLayout>
 #include <QFormLayout>
-#include <QHBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
-#include <QScrollBar>
-#include <QSpinBox>
 
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
