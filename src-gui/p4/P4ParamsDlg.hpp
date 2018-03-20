@@ -31,6 +31,8 @@
 #include <memory>
 #include <vector>
 
+class QString;
+
 class P4FindDlg;
 
 class P4ParamsDlg : public QWidget
