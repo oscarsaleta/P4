@@ -222,7 +222,7 @@ void P4LimitCyclesDlg::onbtn_start()
     sLCMaxProgressCount = (int)(d + 0.5);
     sLCProgressDlg = std::make_unique<QProgressDialog>(
         "Searching for limit cycles...", "Stop search", 0, sLCMaxProgressCount,
-        this, 0);
+        this, static_cast<Qt::WindowFlags>(0));
     sLCProgressDlg->setAutoReset(false);
     sLCProgressDlg->setAutoClose(false);
     sLCProgressDlg->setMinimumDuration(0);
