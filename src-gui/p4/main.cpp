@@ -29,6 +29,7 @@
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
 #include "P4SettingsDlg.hpp"
 #include "P4StartDlg.hpp"
 #include "p4settings.hpp"
@@ -191,8 +192,8 @@ int main(int argc, char *argv[])
                                  "In particular, check if P4 has found the "
                                  "Command-Line Version of MAPLE.\n");
 
-        std::unique_ptr<P4SettingsDlg> psettings{
-            std::make_unique<P4SettingsDlg>(nullptr, 0)};
+        auto psettings = std::make_unique<P4SettingsDlg>(
+            nullptr, static_cast<Qt::WindowFlags>(0));
         psettings->exec();
     }
 
