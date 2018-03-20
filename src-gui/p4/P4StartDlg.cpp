@@ -476,7 +476,8 @@ void P4StartDlg::onBrowse()
 
 void P4StartDlg::onAbout()
 {
-    std::unique_ptr<P4AboutDlg> pdlg{std::make_unique<P4AboutDlg>(this, 0)};
+    auto pdlg =
+        std::make_unique<P4AboutDlg>(this, static_cast<Qt::WindowFlags>(0));
     pdlg->exec();
 }
 
@@ -639,7 +640,7 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
 
 void P4StartDlg::customEvent(QEvent *e)
 {
-    switch (e->type()) {
+    switch (static_cast<int>(e->type())) {
     /*case TYPE_SIGNAL_EVALUATING:
         signalEvaluating();
         break;*/
@@ -716,27 +717,9 @@ P4FindDlg *P4StartDlg::getFindWindowPtr()
     return nullptr;
 }
 
-void P4StartDlg::setFindWindow(P4FindDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != findWindow_.get()) {
-        findWindow_ = std::make_unique<P4FindDlg>(newdlg);
-    } else {
-        findWindow_.reset();
-    }
-}
-
 P4PlotWnd *P4StartDlg::getPlotWindowPtr()
 {
     if (plotWindow_)
         return plotWindow_.get();
     return nullptr;
-}
-
-void P4StartDlg::setPlotWindow(P4PlotWnd *newdlg)
-{
-    if (newdlg != nullptr && newdlg != plotWindow_.get()) {
-        plotWindow_ = std::make_unique<P4PlotWnd>(newdlg);
-    } else {
-        plotWindow_.reset();
-    }
 }

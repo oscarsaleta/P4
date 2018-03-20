@@ -62,6 +62,7 @@ class P4StartDlg : public QWidget
 {
     Q_OBJECT
 
+#include <QRadioButton>
   public:
     P4StartDlg(const QString &);
 
@@ -69,9 +70,7 @@ class P4StartDlg : public QWidget
 
     // these methods are used to access/modify findWindow_ and plotWindow_
     P4FindDlg *getFindWindowPtr();
-    void setFindWindow(P4FindDlg *);
     P4PlotWnd *getPlotWindowPtr();
-    void setPlotWindow(P4PlotWnd *);
 
     // following functions are called by other P4 widgets when something
     // happened:
