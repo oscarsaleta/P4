@@ -25,5 +25,7 @@ void drawLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
                     double b, double c);
 void searchLimitCycle(P4WinSphere *spherewnd, double x0, double y0, double x1,
                       double y1, double grid);
+void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
+                     double b, double c);
 void drawLimitCycles(P4WinSphere *spherewnd);
 void deleteLastLimitCycle(P4WinSphere *spherewnd);
