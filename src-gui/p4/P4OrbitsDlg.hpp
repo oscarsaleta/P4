@@ -39,8 +39,8 @@ class P4OrbitsDlg : public QWidget
     void reset();
 
   private:
-    P4WinSphere *mainSphere_;
     P4PlotWnd *plotWnd_;
+    P4WinSphere *mainSphere_;
 
     std::unique_ptr<QPushButton> btnForwards_;
     std::unique_ptr<QPushButton> btnContinue_;
