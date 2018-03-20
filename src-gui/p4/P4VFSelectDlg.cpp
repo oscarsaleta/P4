@@ -19,20 +19,16 @@
 
 #include "P4VFSelectDlg.hpp"
 
-#include <QBoxLayout>
-#include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include <QPushButton>
 
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4SeparatingCurvesDlg.hpp"
-#include "P4StartDlg.hpp"
 #include "P4PlotWnd.hpp"
+#include "P4StartDlg.hpp"
 #include "main.hpp"
 
 P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)

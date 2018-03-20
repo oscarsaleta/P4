@@ -21,16 +21,15 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
+
 #include <memory>
 
-class P4FindDlg;
-class P4SeparatingCurvesDlg;
+#include "P4SeparatingCurvesDlg.hpp"
 
-class QBoxLayout;
-class QHBoxLayout;
-class QLabel;
-class QComboBox;
-class QPushButton;
+class P4FindDlg;
 
 class P4VFSelectDlg : public QWidget
 {
