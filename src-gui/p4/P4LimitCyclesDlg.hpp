@@ -48,8 +48,8 @@ class P4LimitCyclesDlg : public QWidget
     void hideEvent(QHideEvent *);
 
   private:
-    P4WinSphere *mainSphere_;
     P4PlotWnd *plotwnd_;
+    P4WinSphere *mainSphere_;
 
     std::unique_ptr<QPushButton> btn_start_;
     std::unique_ptr<QPushButton> btn_cancel_;
