@@ -647,8 +647,11 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
         QString s;
         if (sPSBlackWhitePrint) {
             if (sLastPSColor == bgColours::CFOREGROUND) {
-                s.sprintf("%d %d moveto %d %d lineto stroke\n", std::trunc(x0),
-                          std::trunc(y0), std::trunc(x1), std::trunc(y1));
+                s.sprintf("%d %d moveto %d %d lineto stroke\n",
+                          static_cast<int>(std::trunc(x0)),
+                          static_cast<int>(std::trunc(y0)),
+                          static_cast<int>(std::trunc(x1)),
+                          static_cast<int>(std::trunc(y1)));
             } else {
                 sLastPSColor = bgColours::CFOREGROUND;
                 s.sprintf(
@@ -657,8 +660,11 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
             }
         } else {
             if (sLastPSColor == color) {
-                s.sprintf("%d %d moveto %d %d lineto stroke\n", std::trunc(x0),
-                          std::trunc(y0), std::trunc(x1), std::trunc(y1));
+                s.sprintf("%d %d moveto %d %d lineto stroke\n",
+                          static_cast<int>(std::trunc(x0)),
+                          static_cast<int>(std::trunc(y0)),
+                          static_cast<int>(std::trunc(x1)),
+                          static_cast<int>(std::trunc(y1)));
             } else {
                 sLastPSColor = color;
                 s.sprintf(
@@ -684,7 +690,8 @@ static void ps_print_point(double x0, double y0, int color)
         QString s;
         if (sPSBlackWhitePrint) {
             if (sLastPSColor == bgColours::CFOREGROUND) {
-                s.sprintf("%d %d dot\n", std::trunc(x0), std::trunc(y0));
+                s.sprintf("%d %d dot\n", static_cast<int>(std::trunc(x0)),
+                          static_cast<int>(std::trunc(y0)));
             } else {
                 sLastPSColor = bgColours::CFOREGROUND;
                 s.sprintf("col%d %8.5g %8.5g dot\n",
@@ -692,7 +699,8 @@ static void ps_print_point(double x0, double y0, int color)
             }
         } else {
             if (sLastPSColor == color) {
-                s.sprintf("%d %d dot\n", std::trunc(x0), std::trunc(y0));
+                s.sprintf("%d %d dot\n", static_cast<int>(std::trunc(x0)),
+                          static_cast<int>(std::trunc(y0)));
             } else {
                 sLastPSColor = color;
                 s.sprintf("col%d %8.5g %8.5g dot\n", printColorTable(color), x0,
@@ -800,8 +808,10 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
 
         s.sprintf("%%!PS-Adobe-3.0 EPSF-3.0\n"
                   "%%%%BoundingBox: %d %d %d %d\n",
-                  std::trunc(bbx0), std::trunc(bby0), std::trunc(bbx1),
-                  std::trunc(bby1));
+                  static_cast<int>(std::trunc(bbx0)),
+                  static_cast<int>(std::trunc(bby0)),
+                  static_cast<int>(std::trunc(bbx1)),
+                  static_cast<int>(std::trunc(bby1)));
 
         sPSFileStream << s;
         sPSFileStream << "%%%%Title: " << title << "\n";
