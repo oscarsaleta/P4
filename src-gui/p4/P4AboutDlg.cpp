@@ -19,10 +19,9 @@
 
 #include "P4AboutDlg.hpp"
 
-#include <QBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
-#include <QPushButton>
+#include <memory>
 
 #include "P4SettingsDlg.hpp"
 #include "main.hpp"
@@ -116,7 +115,8 @@ void P4AboutDlg::onOk() { done(0); }
 void P4AboutDlg::onSettings()
 {
     int value;
-    auto psettings = std::make_unique<P4SettingsDlg>(this, 0);
+    auto psettings =
+        std::make_unique<P4SettingsDlg>(this, static_cast<Qt::WindowFlags>(0));
     value = psettings->exec();
     psettings.reset();
     if (value)

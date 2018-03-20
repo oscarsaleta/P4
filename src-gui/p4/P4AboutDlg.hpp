@@ -19,13 +19,13 @@
 
 #pragma once
 
-#include <memory>
-
+#include <QBoxLayout>
 #include <QDialog>
 #include <QPixmap>
+#include <QPushButton>
 
-class QBoxLayout;
-class QPushButton;
+#include <memory>
+
 class QWidget;
 
 class P4AboutDlg : public QDialog
