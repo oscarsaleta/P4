@@ -25,7 +25,6 @@
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4ViewDlg.hpp"
 #include "P4WinInputSphere.hpp"
 #include "main.hpp"
 

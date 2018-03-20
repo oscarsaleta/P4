@@ -30,11 +30,11 @@
 #include <memory>
 
 #include "P4WinInputSphere.hpp"
+#include "P4ViewDlg.hpp"
 
 class QListWidgetItem;
 
 class P4FindDlg;
-class P4ViewDlg;
 
 class P4SeparatingCurvesDlg : public QWidget
 {
