@@ -21,6 +21,11 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+
 #include <memory>
 
 class P4PlotWnd;

@@ -21,13 +21,9 @@
 
 #include <algorithm>
 
-#include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMessageBox>
-#include <QPushButton>
-#include <QRadioButton>
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
