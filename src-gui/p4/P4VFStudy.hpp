@@ -21,44 +21,11 @@
 
 #include <QObject>
 
-//#include "tables.hpp"
+#include "tables.hpp"
 
 class QTextEdit;
 
 class P4ParentStudy;
-
-namespace p4polynom
-{
-struct term2;
-struct term3;
-}
-
-namespace p4singularities
-{
-struct saddle;
-struct semi_elementary;
-struct node;
-struct strong_focus;
-struct weak_focus;
-struct degenerate;
-}
-
-namespace p4blowup
-{
-struct sep;
-struct transformations;
-struct blow_up_points;
-}
-
-namespace p4orbits
-{
-struct orbits_points;
-}
-
-namespace p4curves
-{
-struct isoclines;
-}
 
 class P4VFStudy : public QObject
 {
