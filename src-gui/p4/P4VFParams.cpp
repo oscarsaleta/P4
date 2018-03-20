@@ -19,9 +19,6 @@
 
 #include "P4VFParams.hpp"
 
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
 #include <QScrollBar>
 
 #include "P4Application.hpp"
