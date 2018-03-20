@@ -19,13 +19,7 @@
 
 #include "P4IntParamsDlg.hpp"
 
-#include <QBoxLayout>
 #include <QButtonGroup>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QSpinBox>
 
 #include "P4Application.hpp"
 #include "P4ParentStudy.hpp"

@@ -21,12 +21,14 @@
 
 #include <QWidget>
 
-class QBoxLayout;
-class QPushButton;
-class QRadioButton;
-class QLineEdit;
-class QLabel;
-class QSpinBox;
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QSpinBox>
+
+#include <memory>
 
 class P4IntParamsDlg : public QWidget
 {
