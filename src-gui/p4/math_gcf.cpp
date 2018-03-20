@@ -41,7 +41,8 @@ static bool sGcfError{false};
 static int sGcfVfIndex{0};
 
 // static functions
-static void insert_gcf_point(double x0, double y0, double z0, int dashes);
+static void insert_gcf_point(double x0, double y0, double z0, int dashes,
+                             int index);
 static bool readTaskResults(int task, int index);
 static bool read_gcf(void (*chart)(double, double, double *), int index);
 
@@ -187,7 +188,10 @@ bool runTask(int task, int precision, int points, int index)
         break;
     }
 
-    return gThisVF->evaluateGcf();
+    if (value)
+        return gThisVF->evaluateGcf();
+    else
+        return false;
 }
 
 static bool readTaskResults(int task, int index)
@@ -252,7 +256,7 @@ void draw_gcf(P4WinSphere *spherewnd,
 static void insert_gcf_point(double x0, double y0, double z0, int dashes,
                              int index)
 {
-    int pcoord[3]{x0, y0, z0};
+    double pcoord[3]{x0, y0, z0};
 
     gVFResults.vf_[index]->gcf_points_.emplace_back(CSING, pcoord, dashes, 0,
                                                     0);
