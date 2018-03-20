@@ -296,7 +296,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     // show params dialog
     if (!paramsWindow_) {
         paramsWindow_ = std::make_unique<P4ParamsDlg>(this);
-        vfSelectWindow_ = std::make_unique<P4VFSelectDlg>(*this);
+        vfSelectWindow_ = std::make_unique<P4VFSelectDlg>(this);
         paramsWindow_->show();
         vfSelectWindow_->show();
         superLayout_->addWidget(paramsWindow_.get(), 0, Qt::AlignTop);
