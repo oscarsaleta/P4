@@ -42,8 +42,8 @@ static int sIsoclinesVfIndex{0};
 
 // static functions
 static void insert_isocline_vector_point(double x0, double y0, double z0,
-                                         int dashes);
-static bool readTaskResults(int);
+                                         int dashes, int index);
+static bool readTaskResults(int, int);
 static bool read_isoclines(void (*chart)(double, double, double *), int index);
 
 // function definitions
@@ -102,7 +102,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
 {
     // set color for the last isocline of each VF
     for (auto &vf : gVFResults.vf_) {
-        int nisocs{(vf->isocline_vector_.size() - 1) % 4};
+        int nisocs{static_cast<int>((vf->isocline_vector_.size() - 1) % 4)};
         vf->isocline_vector_.back().color = CISOC + nisocs;
     }
 
@@ -144,42 +144,42 @@ bool runTaskIsoclines(int task, int precision, int points, int index)
     switch (task) {
     case EVAL_ISOCLINES_R2:
         value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().r2, -1, 1,
-                                         precision, points);
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_U1:
         value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u1, 0, 1,
-                                         precision, points);
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_V1:
         value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u1, -1, 0,
-                                         precision, points);
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_U2:
         value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u2, 0, 1,
-                                         precision, points);
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_V2:
         value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u2, -1, 0,
-                                         precision, points);
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_LYP_R2:
         value = gThisVF->prepareIsoclines_LyapunovR2(precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL1:
         value = gThisVF->prepareIsoclines_LyapunovCyl(-PI_DIV4, PI_DIV4,
-                                                     precision, points, index);
+                                                      precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL2:
         value = gThisVF->prepareIsoclines_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
-                                                     precision, points, index);
+                                                      precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL3:
-        value = gThisVF->prepareIsoclines_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                     precision, points, index);
+        value = gThisVF->prepareIsoclines_LyapunovCyl(
+            PI - PI_DIV4, PI + PI_DIV4, precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL4:
         value = gThisVF->prepareIsoclines_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
-                                                     precision, points, index);
+                                                      precision, points, index);
         break;
     default:
         value = false;
