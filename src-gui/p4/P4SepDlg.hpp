@@ -43,8 +43,8 @@ class P4SepDlg : public QWidget
     void reset();
 
   private:
-    P4WinSphere *mainSphere_;
     P4PlotWnd *plotWnd_;
+    P4WinSphere *mainSphere_;
 
     std::unique_ptr<QPushButton> btn_selectnext_;
     std::unique_ptr<QPushButton> btn_intnext_;
