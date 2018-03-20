@@ -21,15 +21,15 @@
 
 #include <QWidget>
 
+#include <QBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+
 #include <memory>
 
 class P4PlotWnd;
 class P4WinSphere;
-
-class QPushButton;
-class QRadioButton;
-class QLineEdit;
-class QBoxLayout;
 
 class P4ArbitraryCurveDlg : public QWidget
 {

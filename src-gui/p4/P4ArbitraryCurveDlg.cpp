@@ -19,13 +19,9 @@
 
 #include "P4ArbitraryCurveDlg.hpp"
 
-#include <QBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
-#include <QLineEdit>
 #include <QMessageBox>
-#include <QPushButton>
-#include <QRadioButton>
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
