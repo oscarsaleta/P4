@@ -187,8 +187,8 @@ void P4IsoclinesDlg::onBtnEvaluate()
         gThisVF->isoclines_ = gThisVF->xdot_;
     } else {
         std::vector<QString> tmp;
-        auto &vfx = std::begin(gThisVF->xdot_);
-        auto &vfy = std::begin(gThisVF->ydot_);
+        auto vfx = std::begin(gThisVF->xdot_);
+        auto vfy = std::begin(gThisVF->ydot_);
         for (; vfx != std::end(gThisVF->xdot_), vfy != std::end(gThisVF->ydot_);
              ++vfx, ++vfy) {
             tmp.emplace_back("(" + (*vfy) + +")-(" +
