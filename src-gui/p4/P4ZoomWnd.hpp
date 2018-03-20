@@ -21,13 +21,15 @@
 
 #include <QMainWindow>
 
+#include <QBoxLayout>
+#include <QAction>
+
+#include "P4WinSphere.hpp"
+
 #include <memory>
 
 class P4PlotWnd;
-class P4WinSphere;
 
-class QAction;
-class QBoxLayout;
 class QEvent;
 class QHideEvent;
 

@@ -26,20 +26,21 @@
 #include <QStatusBar>
 #include <QToolBar>
 
+#include <cmath>
+
 #include "P4Application.hpp"
 #include "P4Event.hpp"
 #include "P4InputVF.hpp"
 #include "P4PlotWnd.hpp"
 #include "P4PrintDlg.hpp"
 #include "P4StartDlg.hpp"
-#include "P4WinSphere.hpp"
 #include "custom.hpp"
 #include "main.hpp"
 #include "plot_tools.hpp"
 
 P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                      double y2)
-    : QMainWindow(), parent_{main}, zoomid_{id}, x1_{x1}, x2_{x2}, y1_{y1},
+    : QMainWindow(), zoomid_{id}, parent_{main}, x1_{x1}, x2_{x2}, y1_{y1},
       y2_{y2}
 {
     if (gP4smallIcon)
@@ -136,9 +137,8 @@ void P4ZoomWnd::onBtnRefresh()
 
 void P4ZoomWnd::onBtnPrint()
 {
-    int res;
-    double lw, ss;
-    auto pdlg = std::make_unique<P4PrintDlg>(this, 0);
+    auto pdlg =
+        std::make_unique<P4PrintDlg>(this, static_cast<Qt::WindowFlags>(0));
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
     double lw{pdlg->getChosenLineWidth()};
