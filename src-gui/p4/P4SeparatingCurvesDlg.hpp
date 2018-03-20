@@ -19,20 +19,22 @@
 
 #pragma once
 
-#include <memory>
-
 #include <QWidget>
 
-class QBoxLayout;
-class QLabel;
-class QPushButton;
-class QListWidget;
-class QLineEdit;
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QPushButton>
+
+#include <memory>
+
+#include "P4WinInputSphere.hpp"
+
 class QListWidgetItem;
 
 class P4FindDlg;
 class P4ViewDlg;
-class P4WinInputSphere;
 
 class P4SeparatingCurvesDlg : public QWidget
 {

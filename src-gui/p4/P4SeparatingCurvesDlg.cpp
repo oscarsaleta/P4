@@ -19,12 +19,7 @@
 
 #include "P4SeparatingCurvesDlg.hpp"
 
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QListWidget>
 #include <QMessageBox>
-#include <QPushButton>
 
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
