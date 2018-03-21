@@ -19,6 +19,8 @@
 
 #include "math_desep.hpp"
 
+#include <cmath>
+
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
@@ -54,7 +56,7 @@ static double power(double a, int b)
     if (b == 0)
         return 1.0;
     else
-        return pow(a, static_cast<double>(b));
+        return std::pow(a, static_cast<double>(b));
 }
 
 // ---------------------------------------------------------------------------
@@ -171,8 +173,9 @@ integrate_blow_up(P4WinSphere *spherewnd, double *pcoord2,
                 break;
             h_min = gVFResults.config_branchhmi_;
             h_max /= 2;
-            hhi0 = fabs(hhi0 * hhi) / 2 / hhi;
-            if (fabs(hhi0) < h_min || h_max < gVFResults.config_branchhmi_) {
+            hhi0 = std::abs(hhi0 * hhi) / 2 / hhi;
+            if (std::abs(hhi0) < h_min ||
+                h_max < gVFResults.config_branchhmi_) {
                 hhi0 = h_min;
                 if (hhi < 0)
                     hhi0 = -hhi0;
@@ -396,6 +399,8 @@ plot_sep_blow_up(P4WinSphere *spherewnd, double x0, double y0, int chart,
         color = findSepColor2(gVFResults.vf_[gVFResults.K_]->gcf_V2_,
                               de_sep.type, point);
         break;
+    default:
+        color = bgColours::CBACKGROUND;
     }
 
     // P5 addition: check if one can start with this separatrice
@@ -570,7 +575,6 @@ void change_epsilon_de(P4WinSphere *spherewnd, double epsilon)
 // ---------------------------------------------------------------------------
 void start_plot_de_sep(P4WinSphere *spherewnd, int vfindex)
 {
-    int deid{gVFResults.selectedDeSepIndex_};
     auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
     auto &de_poi = gVFResults.dePoints_[gVFResults.selectedDePointIndex_];
     double p[3];
