@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include "color.hpp"
 
 // Defaults regarding Vector Field and Filename
@@ -282,7 +284,7 @@ extern bool PRINT_WHITE_BG;
 // if z coord on the poincare sphere is less than ZCOORD then point goes to
 // infinity:
 
-#define ZCOORD (sqrt(2) / 2)
+#define ZCOORD (std::sqrt(2) / 2)
 
 #define RADIUS 0.25 // radius for the finite points
 #define RADIUS2 (RADIUS * RADIUS)
