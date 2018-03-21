@@ -21,23 +21,9 @@
 
 #include <vector>
 
+#include "tables.hpp"
+
 class QString;
-
-namespace p4singularities
-{
-struct genericsingularity;
-struct saddle;
-struct semi_elementary;
-struct node;
-struct strong_focus;
-struct weak_focus;
-struct degenerate;
-}
-
-namespace p4curves
-{
-struct curves;
-}
 
 struct positionitem {
     double pcoord[3];
@@ -79,9 +65,6 @@ QString describeRegion(double *pcoord);
 bool isInTheSameRegion(double *testpt, double *refpos);
 bool isARealSingularity(double *pcoord, int vfIndex);
 bool isARealSingularity(double x0, double y0, int chart, int vfIndex);
-
-double pSphereDistance(double *p, double *q);
-double plSphereDistance(double *p, double *q);
 
 void markSingularity(p4singularities::saddle s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,

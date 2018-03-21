@@ -26,6 +26,9 @@
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
 
+static double pSphereDistance(double *p, double *q);
+static double plSphereDistance(double *p, double *q);
+
 // ---------------------------------------------------------------------
 //  isInsideRegion_R2, isInsideRegion_R2_epsilon
 // ---------------------------------------------------------------------
@@ -53,8 +56,8 @@ bool isInsideRegion_R2(const std::vector<int> &signs, const double *ucoord)
     return true;
 }
 
-bool isInsideRegion_R2_epsilon(const std::vector<int> &signs, const double *ucoord,
-                               double epsilon)
+bool isInsideRegion_R2_epsilon(const std::vector<int> &signs,
+                               const double *ucoord, double epsilon)
 {
     int k;
     double v;
@@ -563,7 +566,7 @@ bool isARealSingularity(double x0, double y0, int chart, int vfindex)
 //          pSphereDistance
 // ---------------------------------------------------------------------
 // Calculates somehow the distance between two points on the sphere
-double pSphereDistance(double *p, double *q)
+static double pSphereDistance(double *p, double *q)
 {
     double theta1, theta2;
     double rp[2], rq[2];
