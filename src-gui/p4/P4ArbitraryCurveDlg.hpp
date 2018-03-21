@@ -37,6 +37,11 @@ class P4ArbitraryCurveDlg : public QWidget
 
   public:
     P4ArbitraryCurveDlg(P4PlotWnd *, P4WinSphere *);
+    P4ArbitraryCurveDlg(const P4ArbitraryCurveDlg *other)
+        : P4ArbitraryCurveDlg(other->plotwnd_, other->mainSphere_)
+    {
+    }
+
     void reset();
     void finishArbitraryCurveEvaluation();
 
