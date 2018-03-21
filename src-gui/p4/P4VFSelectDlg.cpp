@@ -130,8 +130,8 @@ void P4VFSelectDlg::updateDlgData()
         else
             btn_prev_->setEnabled(true);
 
-        if (gThisVF->selected_[0] =
-                gThisVF->numVF_ - 1 && gThisVF->numSelected_ == 1)
+        if ((gThisVF->selected_[0] =
+                 gThisVF->numVF_ - 1 && gThisVF->numSelected_) == 1)
             btn_next_->setEnabled(false);
         else
             btn_next_->setEnabled(true);
