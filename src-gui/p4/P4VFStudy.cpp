@@ -92,8 +92,10 @@ bool P4VFStudy::readTables(FILE *fpvec, FILE *fpfin, FILE *fpinf)
             return false;
         singinf_ = 0;
     } else {
-        if (fscanf(fpvec, "%d %d", &singinf_, &dir_vec_field_) != 2)
+        int aux;
+        if (fscanf(fpvec, "%d %d", &aux, &dir_vec_field_) != 2)
             return false;
+        singinf_ = (aux == 1 ? true : false);
     }
 
     if (fpfin != nullptr) {
@@ -1006,7 +1008,7 @@ void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
 {
     QString s;
     char smargin[80];
-    char *stype;
+    std::string stype;
     strcpy(smargin, "                              ");
     smargin[margin] = 0;
 
@@ -1033,8 +1035,8 @@ void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
             stype = "???????????????";
             break;
         }
-        m.append(s.sprintf("%sType=%s  Dir=%-2d  original=%d", smargin, stype,
-                           it.direction, it.notadummy));
+        m.append(s.sprintf("%sType=%s  Dir=%-2d  original=%d", smargin,
+                           stype.data(), it.direction, it.notadummy));
         if (it.d == 0)
             m.append(s.sprintf("%sTaylor: (x,y)=(t,%s)", smargin,
                                dumpPoly1(it.separatrice, "t")));
@@ -1294,7 +1296,7 @@ void dumpSingularities(QTextEdit &m,
             chart = "?";
             break;
         }
-        m.append(s.sprintf("%SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s",
+        m.append(s.sprintf("SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s",
                            it.x0, it.y0, chart));
         if (longversion) {
             m.append(s.sprintf("   Type    = %d", it.type));
