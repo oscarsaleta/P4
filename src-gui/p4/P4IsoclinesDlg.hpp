@@ -42,6 +42,11 @@ class P4IsoclinesDlg : public QWidget
 
   public:
     P4IsoclinesDlg(P4PlotWnd *, P4WinSphere *);
+    P4IsoclinesDlg(const P4IsoclinesDlg *other)
+        : P4IsoclinesDlg(other->plotwnd_, other->mainSphere_)
+    {
+    }
+
     void reset();
     void finishIsoclinesEvaluation();
 
