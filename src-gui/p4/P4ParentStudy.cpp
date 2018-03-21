@@ -624,60 +624,6 @@ void P4ParentStudy::setupCoordinateTransformations()
 }
 
 // -----------------------------------------------------------------------
-//          P4ParentStudy::readPiecewiseData
-// -----------------------------------------------------------------------
-bool P4ParentStudy::readPiecewiseData(FILE *fp)
-{
-    int j, k, v;
-
-    if (gThisVF->numSeparatingCurves_ == 0)
-        return true;
-
-    if (fscanf(fp, "%d\n", &v) != 1)
-        return false;
-
-    if (v != gThisVF->numVFRegions_)
-        return false;
-
-    if (gThisVF->numVFRegions_ > 0) {
-        for (j = 0; j < gThisVF->numVFRegions_; j++) {
-            if (fscanf(fp, "%d", &v) != 1)
-                return false;
-            if (v != gThisVF->vfRegions_[j].vfIndex)
-                return false;
-            for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
-                if (fscanf(fp, "%d", &v) != 1)
-                    return false;
-                if (v != gThisVF->vfRegions_[j].signs[k])
-                    return false;
-            }
-            fscanf(fp, "\n");
-        }
-    }
-
-    if (fscanf(fp, "%d\n", &v) != 1)
-        return false;
-    if (v != gThisVF->numCurveRegions_)
-        return false;
-    if (gThisVF->numCurveRegions_ > 0) {
-        for (j = 0; j < gThisVF->numCurveRegions_; j++) {
-            if (fscanf(fp, "%d", &v) != 1)
-                return false;
-            if (v != gThisVF->curveRegions_[j].curveIndex)
-                return false;
-            for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
-                if (fscanf(fp, "%d", &v) != 1)
-                    return false;
-                if (v != gThisVF->curveRegions_[j].signs[k])
-                    return false;
-            }
-            fscanf(fp, "\n");
-        }
-    }
-    return true;
-}
-
-// -----------------------------------------------------------------------
 //          P4ParentStudy::deleteVFs
 // -----------------------------------------------------------------------
 void P4ParentStudy::clearVFs() { vf_.clear(); }
