@@ -69,7 +69,7 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     lst_curves_ = std::make_unique<QListWidget>(this);
     lst_vfs_ = std::make_unique<QListWidget>(this);
 
-    isphere_ = std::make_unique<P4WinInputSphere>(this, lbl_status_);
+    isphere_ = std::make_unique<P4WinInputSphere>(this, lbl_status_.get());
     isphere_->setupPlot();
 
     viewParamsWindow_ = std::make_unique<P4ViewDlg>(false);
@@ -270,10 +270,11 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     for (i = 0; i < gThisVF->numSeparatingCurves_; i++) {
         if (gThisVF->separatingCurves_[i].isEmpty())
-            itm = std::make_unique<QListWidgetItem>("polynomial", lst_curves_);
+            itm = std::make_unique<QListWidgetItem>("polynomial",
+                                                    lst_curves_.get());
         else
             itm = std::make_unique<QListWidgetItem>(
-                gThisVF->separatingCurves_[i], lst_curves_);
+                gThisVF->separatingCurves_[i], lst_curves_.get());
     }
 
     if (!lst_curves_->selectedItems().isEmpty()) {
@@ -302,7 +303,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
         s = s.append("\ny' = ");
         s = s.append(gThisVF->ydot_[i]);
         s = s.append("\n");
-        itm = std::make_unique<QListWidgetItem>(s, lst_vfs_);
+        itm = std::make_unique<QListWidgetItem>(s, lst_vfs_.get());
         itm->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
 
