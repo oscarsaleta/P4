@@ -22,9 +22,13 @@
 #include <memory>
 #include <vector>
 
+#include <QMetaObject>
 #include <QObject>
 #include <QProcess>
+#include <QPushButton>
 #include <QString>
+#include <QTextEdit>
+#include <QWidget>
 
 #include "custom.hpp"
 
@@ -42,12 +46,7 @@
 #endif
 
 // forward class and struct declarations
-class QWidget;
-class QProcess;
-class QTextEdit;
-class QPushButton;
 class QTextStream;
-class QMetaObject; // NOTE works?
 
 class P4GcfDlg;
 class P4ArbitraryCurveDlg;

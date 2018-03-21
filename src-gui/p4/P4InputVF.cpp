@@ -24,8 +24,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QLabel>
-#include <QMetaObject>
-#include <QProcess>
 #include <QPushButton>
 #include <QSettings>
 #include <QTextEdit>
@@ -1024,13 +1022,13 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
 
         fp << "x0 := " << x0_ << ":\n";
         fp << "y0 := " << y0_ << ":\n";
-        s.sprintf("x_min := x0+(%8.5g):\n", X_MIN);
+        s.sprintf("x_min := x0+(%8.5g):\n", static_cast<double>(X_MIN));
         fp << s;
-        s.sprintf("x_max := x0+(%8.5g):\n", X_MAX);
+        s.sprintf("x_max := x0+(%8.5g):\n", static_cast<double>(X_MAX));
         fp << s;
-        s.sprintf("y_min := y0+(%8.5g):\n", Y_MIN);
+        s.sprintf("y_min := y0+(%8.5g):\n", static_cast<double>(Y_MIN));
         fp << s;
-        s.sprintf("y_max := y0+(%8.5g):\n", Y_MAX);
+        s.sprintf("y_max := y0+(%8.5g):\n", static_cast<double>(Y_MAX));
         fp << s;
     } else {
         s.sprintf("user_p := %d:\n", p_);
@@ -2213,13 +2211,13 @@ void P4InputVF::createProcessWindow()
     if (gP4smallIcon)
         outputWindow_->setWindowIcon(*gP4smallIcon);
 
-    auto vLayout = std::make_unique<QVBoxLayout>(outputWindow_);
+    auto vLayout = std::make_unique<QVBoxLayout>(outputWindow_.get());
     vLayout->setSpacing(3);
     vLayout->setContentsMargins(5, 5, 5, 5);
     auto vLayout2 = std::make_unique<QVBoxLayout>();
     vLayout2->setSpacing(3);
 
-    processText_ = std::make_unique<QTextEdit>(outputWindow_);
+    processText_ = std::make_unique<QTextEdit>(outputWindow_.get());
     processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
     processText_->setWordWrapMode(QTextOption::WrapAnywhere);
     processText_->setFont(gP4app->getCourierFont());
@@ -3240,14 +3238,14 @@ void P4InputVF::deleteVectorField(int index)
 {
     // first disconnect from other structures
 
-    int k, i;
+    int k;
 
     if (!gVFResults.vf_.empty()) {
         gVFResults.clearVFs();
         gVFResults.K_ = 0;
     }
 
-    for (auto &it = std::begin(vfRegions_); it != std::end(vfRegions_); ++it) {
+    for (auto it = std::begin(vfRegions_); it != std::end(vfRegions_); ++it) {
         if (it->vfIndex == index) {
             vfRegions_.erase(it);
             numVFRegions_--;
@@ -3255,7 +3253,7 @@ void P4InputVF::deleteVectorField(int index)
             it->vfIndex--;
     }
 
-    for (auto &it = std::begin(selected_); it != std::end(selected_); ++it) {
+    for (auto it = std::begin(selected_); it != std::end(selected_); ++it) {
         if (*it == index) {
             selected_.erase(it);
             numSelected_--;
@@ -3482,7 +3480,7 @@ void P4InputVF::finishSeparatingCurvesEvaluation()
 // -----------------------------------------------------------------------
 void P4InputVF::markVFRegion(int index, const double *p)
 {
-    int i, k;
+    int i;
 
     if (gVFResults.separatingCurves_.empty())
         return;
@@ -3692,7 +3690,7 @@ void P4InputVF::resampleIsoclines(int i)
 {
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
-    for (auto &isoc = std::begin(gVFResults.vf_[i]->isocline_vector_);
+    for (auto isoc = std::begin(gVFResults.vf_[i]->isocline_vector_);
          isoc != std::end(gVFResults.vf_[i]->isocline_vector_); ++isoc) {
         for (auto it = std::begin(isoc->points); it != std::end(isoc->points);
              ++it) {
@@ -3750,7 +3748,6 @@ int P4InputVF::getVFIndex_R2(const double *ucoord)
 // system
 int P4InputVF::getVFIndex_sphere(const double *pcoord)
 {
-    double ucoord[2], theta;
     if (!gVFResults.plweights_) {
         return getVFIndex_psphere(pcoord);
     } else {
@@ -3776,7 +3773,7 @@ int P4InputVF::getVFIndex_psphere(const double *pcoord)
         psphere_to_R2(pcoord[0], pcoord[1], pcoord[2], ucoord);
         return getVFIndex_R2(ucoord);
     } else {
-        theta = atan2(fabs(pcoord[1]), fabs(pcoord[0]));
+        theta = std::atan2(fabs(pcoord[1]), fabs(pcoord[0]));
         if (theta < PI_DIV4 && theta > -PI_DIV4) {
             if (pcoord[0] > 0) {
                 psphere_to_U1(pcoord[0], pcoord[1], pcoord[2], ucoord);
