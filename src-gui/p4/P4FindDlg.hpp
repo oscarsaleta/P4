@@ -28,8 +28,8 @@
 #include <memory>
 
 #include "P4ParamsDlg.hpp"
-#include "P4VectorFieldDlg.hpp"
 #include "P4VFSelectDlg.hpp"
+#include "P4VectorFieldDlg.hpp"
 
 class P4StartDlg;
 
@@ -39,6 +39,8 @@ class P4FindDlg : public QWidget
 
   public:
     P4FindDlg(P4StartDlg *startwindow);
+    P4FindDlg(const P4FindDlg *other) : P4FindDlg(other->parent_) {}
+
     void getDataFromDlg();
 
     P4VFSelectDlg *getVfSelectWindowPtr() const;
