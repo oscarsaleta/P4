@@ -37,6 +37,11 @@ class P4GcfDlg : public QWidget
 
   public:
     P4GcfDlg(P4PlotWnd *, P4WinSphere *);
+    P4GcfDlg(const P4GcfDlg *other)
+        : P4GcfDlg(other->plotwnd_, other->mainSphere_)
+    {
+    }
+
     void reset();
     void finishGcfEvaluation();
 
