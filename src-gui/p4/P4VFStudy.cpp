@@ -341,19 +341,20 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
         // delete the line
         // #2
         psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, -1, 0,
-                          false);
+                          false, ssep);
         // #3
         if (fscanf(fp, "%d", &stype) != 1 || fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
         if (!readTerm1(fp, ssep, N))
             return false;
         psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, 1, 1,
-                          true);
+                          true, ssep);
         // #4
         psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, -1, 1,
-                          false);
+                          false, ssep);
     }
-    fscanf(fp, "%lf ", &epsilon);
+    if (fscanf(fp, "%lf ", &epsilon) != 1)
+        return false;
     saddlePoints_.emplace_back(x0, y0, chart, 0, epsilon, true, psep, vf0, vf1,
                                a11, a12, a21, a22);
 
@@ -949,6 +950,7 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
                                  int n)
 {
     int N, typ;
+    double p[2]{0, 0};
 
     // variables per construir p4blowup::blow_up_points
     int pn;
@@ -993,7 +995,7 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
             return false;
         }
         blowup.emplace_back(pn, ptrans, x0, y0, a11, a12, a21, a22, vf0, vf1,
-                            psep, ptype, true,
+                            psep, ptype, true, p,
                             std::vector<p4orbits::orbits_points>{});
     }
     return true;
@@ -1296,8 +1298,8 @@ void dumpSingularities(QTextEdit &m,
             chart = "?";
             break;
         }
-        m.append(s.sprintf("SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s",
-                           it.x0, it.y0, chart));
+        m.append(s.sprintf("SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s", it.x0,
+                           it.y0, chart));
         if (longversion) {
             m.append(s.sprintf("   Type    = %d", it.type));
             m.append(s.sprintf("   Epsilon = %g  original=%d", it.epsilon,
