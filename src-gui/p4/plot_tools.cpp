@@ -56,7 +56,8 @@ WHEN ZOOMING
 */
 
 // FIXME: com fer que ho faci per cada sphere del vector?
-void spherePlotLine(P4WinSphere *sp, double *p1, double *p2, int color)
+void spherePlotLine(P4WinSphere *sp, const double *p1, const double *p2,
+                    int color)
 {
     double ucoord1[2], ucoord2[2], ucoord3[2], ucoord4[2];
 
@@ -73,7 +74,7 @@ void spherePlotLine(P4WinSphere *sp, double *p1, double *p2, int color)
     }
 }
 
-void spherePlotPoint(P4WinSphere *sp, double *p, int color)
+void spherePlotPoint(P4WinSphere *sp, const double *p, int color)
 {
     double ucoord[2];
 
@@ -84,7 +85,8 @@ void spherePlotPoint(P4WinSphere *sp, double *p, int color)
     }
 }
 
-void spherePrintLine(P4WinSphere *sp, double *p1, double *p2, int color)
+void spherePrintLine(P4WinSphere *sp, const double *p1, const double *p2,
+                     int color)
 {
     double ucoord1[2];
     double ucoord2[2];
@@ -100,7 +102,7 @@ void spherePrintLine(P4WinSphere *sp, double *p1, double *p2, int color)
     }
 }
 
-void spherePrintPoint(P4WinSphere *sp, double *p, int color)
+void spherePrintPoint(P4WinSphere *sp, const double *p, int color)
 {
     double ucoord[2];
 
