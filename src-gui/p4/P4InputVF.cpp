@@ -4078,3 +4078,12 @@ void P4InputVF::setIsoclinesDlg(P4IsoclinesDlg *newdlg)
         isoclinesDlg_.reset();
     }
 }
+
+// ---------------------------------------------------------------------
+//          getDataFromDlg
+// ---------------------------------------------------------------------
+void P4InputVF::getDataFromDlg()
+{
+    if (findDlg_)
+        findDlg_->getDataFromDlg();
+}
