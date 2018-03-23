@@ -22,6 +22,7 @@
 #include <QKeyEvent>
 #include <QPalette>
 
+#include <algorithm>
 #include <cmath>
 
 #include "P4InputVF.hpp"
@@ -36,7 +37,7 @@ static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 
 P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *parent,
                                    QLabel *lbl_status)
-    : QWidget{parent}, parentWnd_{parent}, status_{lbl_status}
+    : QWidget{parent}, status_{lbl_status}, parentWnd_{parent}
 {
     setAttribute(Qt::WA_PaintOnScreen);
 
@@ -63,8 +64,8 @@ void P4WinInputSphere::setupPlot()
 
     setupCoordinateTransformations();
 
-    palette.setColor(backgroundRole(),
-                     QXFIGCOLOR(spherebgcolor_ = bgColours::CBACKGROUND));
+    spherebgcolor_ = bgColours::CBACKGROUND;
+    palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_));
     setPalette(palette);
 
     // clear circle vectors
@@ -115,17 +116,10 @@ void P4WinInputSphere::loadAnchorMap()
     int x1{zoomAnchor1_.x()}, y1{zoomAnchor1_.y()};
     int x2{zoomAnchor2_.x()}, y2{zoomAnchor2_.y()};
 
-    int s;
-    if (x1 > x1) {
-        s = x1;
-        x1 = x2;
-        x2 = s;
-    }
-    if (y1 > y2) {
-        s = y1;
-        y1 = y2;
-        y2 = s;
-    }
+    if (x1 > x2)
+        std::swap(x1, x2);
+    if (y1 > y2)
+        std::swap(y1, y2);
     if (x1 < 0)
         x1 = 0;
     if (y1 < 0)
@@ -225,12 +219,10 @@ void P4WinInputSphere::adjustToNewSize()
         painterCache_ = std::make_unique<QPixmap>(size());
         isPainterCacheDirty_ = false;
 
-        QPainter paint{painterCache_.get()};
-        paint.fillRect(0, 0, width(), height(),
+        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
+        staticPainter_->fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
-
-        staticPainter_.reset(&paint); // TODO works?
+        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -245,8 +237,8 @@ void P4WinInputSphere::adjustToNewSize()
         // during resizing: only plot essential information
         QColor c = QXFIGCOLOR(WHITE);
         c.setAlpha(128);
-        paint.setPen(c);
-        paint.drawText(0, 0, width(), height(),
+        staticPainter_->setPen(c);
+        staticPainter_->drawText(0, 0, width(), height(),
                        Qt::AlignHCenter | Qt::AlignVCenter, "Resizing ...  ");
 
         staticPainter_.reset();
@@ -280,12 +272,11 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
             painterCache_ = std::make_unique<QPixmap>(size());
         isPainterCacheDirty_ = false;
 
-        QPainter paint{painterCache_.get()};
-        paint.fillRect(0, 0, width(), height(),
+        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
+        staticPainter_->fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
-        staticPainter_ = std::make_unique<QPainter>(&paint);
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
