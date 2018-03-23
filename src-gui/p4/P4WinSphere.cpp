@@ -57,6 +57,7 @@ static std::unique_ptr<QPixmap> sP4pixmap;
 static double sP4pixmapDPM{0};
 
 int P4WinSphere::sM_numSpheres{0};
+std::vector<P4WinSphere *> sM_sphereList;
 
 /*
     Coordinates on the sphere:
