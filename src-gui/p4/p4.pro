@@ -29,6 +29,8 @@ CONFIG += c++1z
 CONFIG += fwhopr
 CONFIG -= console
 
+# QMAKE_CXXFLAGS += -v
+
 macx {
     CONFIG -= app_bundle
     QMAKE_LFLAGS += -L/usr/local/opt/qt/lib
