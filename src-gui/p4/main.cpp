@@ -69,6 +69,9 @@ bool gCmdLineAutoPlot;
 bool gCmdLineAutoExit;
 
 P4ParentStudy gVFResults;
+std::unique_ptr<P4InputVF> gThisVF;
+std::unique_ptr<P4StartDlg> gP4startDlg;
+std::unique_ptr<P4Application> gP4app;
 
 // -----------------------------------------------------------------------
 //          Functions for handling command line options
