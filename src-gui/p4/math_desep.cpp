@@ -686,17 +686,17 @@ void select_next_de_sep(P4WinSphere *spherewnd)
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
 void plot_all_de_sep(P4WinSphere *spherewnd, int vfindex,
-                     std::vector<p4singularities::degenerate> &point)
+                     const std::vector<p4singularities::degenerate> &point)
 {
     double p[3];
 
-    for (auto &it1 : point) {
+    for (auto it1 : point) {
         if (!isARealSingularity(it1.x0, it1.y0, it1.chart, vfindex) ||
             !it1.notadummy)
             continue;
 
-        auto &de_sep = it1.blow_up;
-        for (auto &it2 : de_sep) {
+        auto de_sep = it1.blow_up;
+        for (auto it2 : de_sep) {
             if (!it2.sep_points.empty()) {
                 auto &sep = it2.sep_points.back();
                 copy_x_into_y(sep.pcoord, p);
