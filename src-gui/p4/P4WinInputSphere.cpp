@@ -221,7 +221,7 @@ void P4WinInputSphere::adjustToNewSize()
 
         staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
         staticPainter_->fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
         staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
@@ -239,7 +239,8 @@ void P4WinInputSphere::adjustToNewSize()
         c.setAlpha(128);
         staticPainter_->setPen(c);
         staticPainter_->drawText(0, 0, width(), height(),
-                       Qt::AlignHCenter | Qt::AlignVCenter, "Resizing ...  ");
+                                 Qt::AlignHCenter | Qt::AlignVCenter,
+                                 "Resizing ...  ");
 
         staticPainter_.reset();
 
@@ -262,6 +263,13 @@ void P4WinInputSphere::refreshAfterResize()
     refresh();
 }
 
+void P4WinInputSphere::resizeEvent(QResizeEvent *e)
+{
+    if (e->size() == e->oldSize())
+        return;
+    adjustToNewSize();
+}
+
 void P4WinInputSphere::paintEvent(QPaintEvent *p)
 {
     if (gThisVF->evaluating_)
@@ -274,9 +282,8 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
 
         staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
         staticPainter_->fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
         staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
-
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
