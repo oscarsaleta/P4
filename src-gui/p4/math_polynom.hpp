@@ -44,6 +44,6 @@ char *printterm2(char *buf, const p4polynom::term2 &f, bool isfirst,
 char *printterm3(char *buf, const p4polynom::term3 &f, bool isfirst,
                  const char *r, const char *Co, const char *Si);
 
-bool readTerm1(FILE *fp, std::vector<p4polynom::term1> p, int N);
-bool readTerm2(FILE *fp, std::vector<p4polynom::term2> p, int N);
-bool readTerm3(FILE *fp, std::vector<p4polynom::term3> p, int N);
+bool readTerm1(FILE *fp, std::vector<p4polynom::term1> &p, int N);
+bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N);
+bool readTerm3(FILE *fp, std::vector<p4polynom::term3> &p, int N);
