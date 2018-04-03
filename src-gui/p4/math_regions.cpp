@@ -710,7 +710,7 @@ void markSingularity(p4singularities::saddle &s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // semi elementary version
-void markSingularity(p4singularities::semi_elementary s,
+void markSingularity(p4singularities::semi_elementary &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -780,7 +780,7 @@ void markSingularity(p4singularities::semi_elementary s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // node version
-void markSingularity(p4singularities::node s, std::vector<positionitem> &plist,
+void markSingularity(p4singularities::node &s, std::vector<positionitem> &plist,
                      int &numpos, int vfindex, bool plweights)
 {
     double pcoord[3];
@@ -849,7 +849,7 @@ void markSingularity(p4singularities::node s, std::vector<positionitem> &plist,
 //          markSingularity
 // ---------------------------------------------------------------------
 // strong focus version
-void markSingularity(p4singularities::strong_focus s,
+void markSingularity(p4singularities::strong_focus &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -919,7 +919,7 @@ void markSingularity(p4singularities::strong_focus s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // weak focus version
-void markSingularity(p4singularities::weak_focus s,
+void markSingularity(p4singularities::weak_focus &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -989,7 +989,7 @@ void markSingularity(p4singularities::weak_focus s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // degenerate version
-void markSingularity(p4singularities::degenerate s,
+void markSingularity(p4singularities::degenerate &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
