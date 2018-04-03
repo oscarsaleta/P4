@@ -1005,8 +1005,9 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
 //          DUMP FUNCTIONS
 // -----------------------------------------------------------------------
 
-void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
-                      int margin)
+void P4VFStudy::dumpSeparatrices(QTextEdit &m,
+                                 const std::vector<p4blowup::sep> &separ,
+                                 int margin)
 {
     QString s;
     char smargin[80];
@@ -1049,9 +1050,9 @@ void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
 }
 
 // dump saddle singularities
-void dumpSingularities(QTextEdit &m,
-                       const std::vector<p4singularities::saddle> &p,
-                       bool longversion)
+void P4VFStudy::dumpSingularities(QTextEdit &m,
+                                  const std::vector<p4singularities::saddle> &p,
+                                  bool longversion)
 {
     const char *chart;
     QString s;
@@ -1098,9 +1099,9 @@ void dumpSingularities(QTextEdit &m,
 }
 
 // dump degenerate singularities
-void dumpSingularities(QTextEdit &m,
-                       const std::vector<p4singularities::degenerate> &p,
-                       bool longversion)
+void P4VFStudy::dumpSingularities(
+    QTextEdit &m, const std::vector<p4singularities::degenerate> &p,
+    bool longversion)
 {
     const char *chart;
     QString s;
@@ -1137,9 +1138,9 @@ void dumpSingularities(QTextEdit &m,
 }
 
 // dump strong focus singularities
-void dumpSingularities(QTextEdit &m,
-                       const std::vector<p4singularities::strong_focus> &p,
-                       bool longversion)
+void P4VFStudy::dumpSingularities(
+    QTextEdit &m, const std::vector<p4singularities::strong_focus> &p,
+    bool longversion)
 {
     const char *chart;
     QString s;
@@ -1184,9 +1185,9 @@ void dumpSingularities(QTextEdit &m,
 }
 
 // dump weak focus singularities
-void dumpSingularities(QTextEdit &m,
-                       const std::vector<p4singularities::weak_focus> &p,
-                       bool longversion)
+void P4VFStudy::dumpSingularities(
+    QTextEdit &m, const std::vector<p4singularities::weak_focus> &p,
+    bool longversion)
 {
     const char *chart;
     QString s;
@@ -1222,9 +1223,9 @@ void dumpSingularities(QTextEdit &m,
 }
 
 // dump node singularities
-void dumpSingularities(QTextEdit &m,
-                       const std::vector<p4singularities::node> &p,
-                       bool longversion)
+void P4VFStudy::dumpSingularities(QTextEdit &m,
+                                  const std::vector<p4singularities::node> &p,
+                                  bool longversion)
 {
     const char *chart;
     QString s;
@@ -1269,9 +1270,9 @@ void dumpSingularities(QTextEdit &m,
 }
 
 // dump semi elementary singularities
-void dumpSingularities(QTextEdit &m,
-                       const std::vector<p4singularities::semi_elementary> &p,
-                       bool longversion)
+void P4VFStudy::dumpSingularities(
+    QTextEdit &m, const std::vector<p4singularities::semi_elementary> &p,
+    bool longversion)
 {
     const char *chart;
     QString s;
