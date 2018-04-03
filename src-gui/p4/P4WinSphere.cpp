@@ -57,7 +57,7 @@ static std::unique_ptr<QPixmap> sP4pixmap;
 static double sP4pixmapDPM{0};
 
 int P4WinSphere::sM_numSpheres{0};
-std::vector<P4WinSphere *> sM_sphereList;
+std::vector<P4WinSphere *> P4WinSphere::sM_sphereList;
 
 /*
     Coordinates on the sphere:
@@ -1443,6 +1443,41 @@ void P4WinSphere::plotGcf()
 {
     for (auto const &vf : gVFResults.vf_) {
         draw_gcf(this, vf->gcf_points_, CSING, 1);
+    }
+}
+
+void P4WinSphere::plotSeparatingCurves()
+{
+    int k;
+    bool dashes;
+    double pcoord[3];
+
+    if (gVFResults.separatingCurves_.empty())
+        return;
+
+    for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
+        dashes = true;
+
+        auto &sep = gVFResults.separatingCurves_[k].points;
+        for (auto it = std::begin(sep); it != std::end(sep); ++it) {
+            if (it->color == CSEPCURVE) {
+                if (it->dashes && dashes)
+                    (*plot_l)(this, pcoord, it->pcoord, it->color);
+                else {
+                    auto nextpt = it + 1;
+                    if (nextpt == std::end(sep))
+                        (*plot_p)(this, it->pcoord, it->color);
+                    else if (!(nextpt->dashes && nextpt->color == CSEPCURVE &&
+                               dashes))
+                        (*plot_p)(this, it->pcoord, it->color);
+                    // draw nothing when the next point is a dash
+                }
+                dashes = true;
+            } else {
+                dashes = false;
+            }
+            copy_x_into_y(it->pcoord, pcoord);
+        }
     }
 }
 
