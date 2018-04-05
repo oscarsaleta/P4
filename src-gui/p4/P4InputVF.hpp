@@ -30,6 +30,9 @@
 #include <QTextEdit>
 #include <QWidget>
 
+#include "P4ArbitraryCurveDlg.hpp"
+#include "P4GcfDlg.hpp"
+#include "P4IsoclinesDlg.hpp"
 #include "custom.hpp"
 
 #define TYPEOFSTUDY_ALL 0
@@ -48,10 +51,8 @@
 // forward class and struct declarations
 class QTextStream;
 
-class P4GcfDlg;
-class P4ArbitraryCurveDlg;
-class P4IsoclinesDlg;
 class P4FindDlg;
+
 
 namespace p4polynom
 {
@@ -360,7 +361,7 @@ class P4InputVF : public QObject
 
   private:
     // P4 GUI ELEMENTS
-    std::unique_ptr<P4FindDlg> findDlg_;
+    P4FindDlg *findDlg_;
     std::unique_ptr<P4GcfDlg> gcfDlg_;
     std::unique_ptr<P4ArbitraryCurveDlg> arbitraryCurveDlg_;
     std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
