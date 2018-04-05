@@ -39,7 +39,6 @@ class P4FindDlg : public QWidget
 
   public:
     P4FindDlg(P4StartDlg *startwindow);
-    P4FindDlg(const P4FindDlg *other) : P4FindDlg(other->parent_) {}
 
     void getDataFromDlg();
 
