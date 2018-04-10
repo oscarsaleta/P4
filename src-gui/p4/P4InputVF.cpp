@@ -3060,8 +3060,9 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 {
+    auto j0 = lst[selected_[0]];
     for (int i = 1; i < numSelected_; i++) {
-        if (lst[selected_[0]].compare(lst[selected_[i]]))
+        if (j0.compare(lst[selected_[i]]))
             return false;
     }
     return true;
@@ -3994,10 +3995,7 @@ int P4InputVF::getVFIndex_VV2(const double *yy)
 // ---------------------------------------------------------------------
 //          getFindDlg
 // ---------------------------------------------------------------------
-P4FindDlg *P4InputVF::getFindDlgPtr() const
-{
-    return findDlg_;
-}
+P4FindDlg *P4InputVF::getFindDlgPtr() const { return findDlg_; }
 
 // ---------------------------------------------------------------------
 //          setFindDlg
