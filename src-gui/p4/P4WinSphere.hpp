@@ -21,8 +21,11 @@
 
 #include <QWidget>
 
+#include <QPainter>
+#include <QPixmap>
 #include <QPoint>
 #include <QString>
+#include <QTimer>
 
 #include <memory>
 #include <vector>
@@ -32,12 +35,9 @@
 
 class QKeyEvent;
 class QMouseEvent;
-class QPainter;
 class QPaintEvent;
-class QPixmap;
 class QResizeEvent;
 class QStatusBar;
-class QTimer;
 
 namespace p4singularities
 {

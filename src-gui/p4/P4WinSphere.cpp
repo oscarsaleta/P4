@@ -21,11 +21,9 @@
 
 #include <QKeyEvent>
 #include <QMessageBox>
-#include <QPainter>
 #include <QPrinter>
 #include <QResizeEvent>
 #include <QStatusBar>
-#include <QTimer>
 
 #include <cmath>
 #include <utility>
