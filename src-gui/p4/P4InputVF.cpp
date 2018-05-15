@@ -181,6 +181,8 @@ void P4InputVF::reset(int n)
         ydot_.push_back(QString(DEFAULTYDOT));
         gcf_.push_back(QString(DEFAULTGCF));
         parvalue_.push_back(std::vector<QString>{});
+        for (int j=0;j<MAXNUMPARAMS;j++)
+            parvalue_.back().push_back(QString{});
     }
 
     separatingCurves_.clear();
