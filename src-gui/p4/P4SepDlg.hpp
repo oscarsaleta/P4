@@ -51,12 +51,17 @@ class P4SepDlg : public QWidget
     std::unique_ptr<QPushButton> btn_start_;
     std::unique_ptr<QPushButton> btn_cont_;
     std::unique_ptr<QLineEdit> edt_epsilon_;
+    std::unique_ptr<QLabel> lbl1_;
     std::unique_ptr<QLabel> lbl_info_0_;
     std::unique_ptr<QLabel> lbl_info_1_;
     std::unique_ptr<QLabel> lbl_info_2_;
     std::unique_ptr<QLabel> lbl_info_3_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+
+    std::unique_ptr<QHBoxLayout> layout3_;
+    std::unique_ptr<QHBoxLayout> layout4_;
+    std::unique_ptr<QHBoxLayout> layout5_;
 
     bool started_;
     bool selected_;

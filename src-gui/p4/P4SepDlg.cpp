@@ -41,8 +41,8 @@ P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btn_selectnext_ = std::make_unique<QPushButton>("Select &Next sep", this);
 
     edt_epsilon_ = std::make_unique<QLineEdit>("", this);
-    auto lbl1 = std::make_unique<QLabel>("&Epsilon = ", this);
-    lbl1->setBuddy(edt_epsilon_.get());
+    lbl1_ = std::make_unique<QLabel>("&Epsilon = ", this);
+    lbl1_->setBuddy(edt_epsilon_.get());
 
     lbl_info_0_ = std::make_unique<QLabel>("", this);
     lbl_info_1_ = std::make_unique<QLabel>("", this);
@@ -58,21 +58,21 @@ P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
     mainLayout_->addWidget(lbl_info_2_.get());
     mainLayout_->addWidget(lbl_info_3_.get());
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(lbl1.get());
-    layout3->addWidget(edt_epsilon_.get());
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(lbl1_.get());
+    layout3_->addWidget(edt_epsilon_.get());
 
-    auto layout4 = std::make_unique<QHBoxLayout>();
-    layout4->addWidget(btn_start_.get());
-    layout4->addWidget(btn_cont_.get());
+    layout4_ = std::make_unique<QHBoxLayout>();
+    layout4_->addWidget(btn_start_.get());
+    layout4_->addWidget(btn_cont_.get());
 
-    auto layout5 = std::make_unique<QHBoxLayout>();
-    layout5->addWidget(btn_intnext_.get());
-    layout5->addWidget(btn_selectnext_.get());
+    layout5_ = std::make_unique<QHBoxLayout>();
+    layout5_->addWidget(btn_intnext_.get());
+    layout5_->addWidget(btn_selectnext_.get());
 
-    mainLayout_->addLayout(layout3.get());
-    mainLayout_->addLayout(layout4.get());
-    mainLayout_->addLayout(layout5.get());
+    mainLayout_->addLayout(layout3_.get());
+    mainLayout_->addLayout(layout4_.get());
+    mainLayout_->addLayout(layout5_.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_.get());
