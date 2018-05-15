@@ -22,6 +22,7 @@
 #include <QWidget>
 
 #include <QBoxLayout>
+#include <QHBoxLayout>
 #include <QButtonGroup>
 #include <QLabel>
 #include <QLineEdit>
@@ -49,7 +50,31 @@ class P4ParamsDlg : public QWidget
   private:
     P4FindDlg *parent_;
 
+    std::unique_ptr<QLabel> p4title_;
+    std::unique_ptr<QLabel> symlabel_;
+    std::unique_ptr<QLabel> seplabel_;
+    std::unique_ptr<QLabel> lbl_precis_;
+    std::unique_ptr<QLabel> lbl_precis0_;
+    std::unique_ptr<QLabel> lbl_epsilon_;
+    std::unique_ptr<QLabel> lbl_level_;
+    std::unique_ptr<QLabel> lbl_numlevel_;
+    std::unique_ptr<QLabel> lbl_maxlevel_;
+    std::unique_ptr<QLabel> lbl_weakness_;
+
     std::unique_ptr<QBoxLayout> mainLayout_;
+
+    std::unique_ptr<QHBoxLayout> symLayout_;
+    std::unique_ptr<QHBoxLayout> sepLayout_;
+    std::unique_ptr<QHBoxLayout> layout1_;
+    std::unique_ptr<QHBoxLayout> layout2_;
+    std::unique_ptr<QHBoxLayout> layout3_;
+    std::unique_ptr<QHBoxLayout> layout4_;
+    std::unique_ptr<QHBoxLayout> layout5_;
+    std::unique_ptr<QHBoxLayout> layout6_;
+    std::unique_ptr<QHBoxLayout> layout7_;
+    std::unique_ptr<QHBoxLayout> layout8_;
+    std::unique_ptr<QHBoxLayout> layout9_;
+
     std::unique_ptr<QRadioButton> btn_sepyes_;
     std::unique_ptr<QRadioButton> btn_sepno_;
     std::unique_ptr<QRadioButton> btn_num_;

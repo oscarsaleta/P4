@@ -31,57 +31,57 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    auto p4title =
+    p4title_ =
         std::make_unique<QLabel>("Find Singular Points Parameters", this);
-    p4title->setFont(gP4app->getTitleFont());
+    p4title_->setFont(gP4app->getTitleFont());
 
-    auto symlabel = std::make_unique<QLabel>("Calculations: ", this);
-    symlabel->setFont(gP4app->getBoldFont());
+    symlabel_ = std::make_unique<QLabel>("Calculations: ", this);
+    symlabel_->setFont(gP4app->getBoldFont());
     btn_alg_ = std::make_unique<QRadioButton>("Algebraic", this);
     btn_num_ = std::make_unique<QRadioButton>("Numeric", this);
 
-    auto seplabel = std::make_unique<QLabel>("Test Separatrices:  ", this);
-    seplabel->setFont(gP4app->getBoldFont());
+    seplabel_ = std::make_unique<QLabel>("Test Separatrices:  ", this);
+    seplabel_->setFont(gP4app->getBoldFont());
     btn_sepyes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_sepno_ = std::make_unique<QRadioButton>("No", this);
 
-    auto lbl_precis = std::make_unique<QLabel>("Accuracy:", this);
-    lbl_precis->setFont(gP4app->getBoldFont());
+    lbl_precis_ = std::make_unique<QLabel>("Accuracy:", this);
+    lbl_precis_->setFont(gP4app->getBoldFont());
     spin_precis_ = std::make_unique<QSpinBox>(this);
     spin_precis_->setMinimum(MINPRECISION);
     spin_precis_->setMaximum(MAXPRECISION);
 
-    auto lbl_precis0 = std::make_unique<QLabel>("Precision:", this);
-    lbl_precis0->setFont(gP4app->getBoldFont());
+    lbl_precis0_ = std::make_unique<QLabel>("Precision:", this);
+    lbl_precis0_->setFont(gP4app->getBoldFont());
     spin_precis0_ = std::make_unique<QSpinBox>(this);
     spin_precis0_->setMinimum(MINPRECISION0);
     spin_precis0_->setMaximum(MAXPRECISION0);
 
-    auto lbl_epsilon = std::make_unique<QLabel>("Epsilon:", this);
-    lbl_epsilon->setFont(gP4app->getBoldFont());
+    lbl_epsilon_ = std::make_unique<QLabel>("Epsilon:", this);
+    lbl_epsilon_->setFont(gP4app->getBoldFont());
     edt_epsilon_ = std::make_unique<QLineEdit>("", this);
 
-    auto lbl_level = std::make_unique<QLabel>("Level of Approximation:", this);
-    lbl_level->setFont(gP4app->getBoldFont());
+    lbl_level_ = std::make_unique<QLabel>("Level of Approximation:", this);
+    lbl_level_->setFont(gP4app->getBoldFont());
     spin_level_ = std::make_unique<QSpinBox>(this);
     spin_level_->setMinimum(MINLEVEL);
     spin_level_->setMaximum(MAXLEVEL);
 
-    auto lbl_numlevel = std::make_unique<QLabel>("Numeric level:", this);
-    lbl_numlevel->setFont(gP4app->getBoldFont());
+    lbl_numlevel_ = std::make_unique<QLabel>("Numeric level:", this);
+    lbl_numlevel_->setFont(gP4app->getBoldFont());
     spin_numlevel_ = std::make_unique<QSpinBox>(this);
     spin_numlevel_->setMinimum(MINNUMLEVEL);
     spin_numlevel_->setMaximum(MAXNUMLEVEL);
 
-    auto lbl_maxlevel = std::make_unique<QLabel>("Maximum level:", this);
-    lbl_maxlevel->setFont(gP4app->getBoldFont());
+    lbl_maxlevel_ = std::make_unique<QLabel>("Maximum level:", this);
+    lbl_maxlevel_->setFont(gP4app->getBoldFont());
     spin_maxlevel_ = std::make_unique<QSpinBox>(this);
     spin_maxlevel_->setMinimum(MINMAXLEVEL);
     spin_maxlevel_->setMaximum(MAXMAXLEVEL);
 
-    auto lbl_weakness =
+    lbl_weakness_ =
         std::make_unique<QLabel>("Maximum level of weakness:", this);
-    lbl_weakness->setFont(gP4app->getBoldFont());
+    lbl_weakness_->setFont(gP4app->getBoldFont());
     spin_weakness_ = std::make_unique<QSpinBox>(this);
     spin_weakness_->setMinimum(MINWEAKNESS);
     spin_weakness_->setMaximum(MAXWEAKNESS);
@@ -143,78 +143,78 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
 
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    mainLayout_->addWidget(p4title.get());
+    mainLayout_->addWidget(p4title_.get());
 
-    auto symLayout = std::make_unique<QHBoxLayout>();
-    symLayout->addWidget(symlabel.get());
-    symLayout->addWidget(btn_alg_.get());
-    symLayout->addWidget(btn_num_.get());
-    mainLayout_->addLayout(symLayout.get());
+    symLayout_ = std::make_unique<QHBoxLayout>();
+    symLayout_->addWidget(symlabel_.get());
+    symLayout_->addWidget(btn_alg_.get());
+    symLayout_->addWidget(btn_num_.get());
+    mainLayout_->addLayout(symLayout_.get());
 
-    auto sepLayout = std::make_unique<QHBoxLayout>();
-    sepLayout->addWidget(seplabel.get());
-    sepLayout->addWidget(btn_sepyes_.get());
-    sepLayout->addWidget(btn_sepno_.get());
-    mainLayout_->addLayout(sepLayout.get());
+    sepLayout_ = std::make_unique<QHBoxLayout>();
+    sepLayout_->addWidget(seplabel_.get());
+    sepLayout_->addWidget(btn_sepyes_.get());
+    sepLayout_->addWidget(btn_sepno_.get());
+    mainLayout_->addLayout(sepLayout_.get());
 
-    auto layout1 = std::make_unique<QHBoxLayout>();
-    layout1->addWidget(lbl_precis.get());
-    layout1->addWidget(spin_precis_.get());
-    layout1->addStretch(0);
-    layout1->addWidget(lbl_precis0.get());
-    layout1->addWidget(spin_precis0_.get());
+    layout1_ = std::make_unique<QHBoxLayout>();
+    layout1_->addWidget(lbl_precis_.get());
+    layout1_->addWidget(spin_precis_.get());
+    layout1_->addStretch(0);
+    layout1_->addWidget(lbl_precis0_.get());
+    layout1_->addWidget(spin_precis0_.get());
 
-    auto layout2 = std::make_unique<QHBoxLayout>();
-    layout2->addWidget(lbl_epsilon.get());
-    layout2->addWidget(edt_epsilon_.get());
-    layout2->addStretch(0);
+    layout2_ = std::make_unique<QHBoxLayout>();
+    layout2_->addWidget(lbl_epsilon_.get());
+    layout2_->addWidget(edt_epsilon_.get());
+    layout2_->addStretch(0);
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(lbl_level.get());
-    layout3->addWidget(spin_level_.get());
-    layout3->addStretch(0);
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(lbl_level_.get());
+    layout3_->addWidget(spin_level_.get());
+    layout3_->addStretch(0);
 
-    auto layout4 = std::make_unique<QHBoxLayout>();
-    layout4->addWidget(lbl_numlevel.get());
-    layout4->addWidget(spin_numlevel_.get());
-    layout4->addStretch(0);
+    layout4_ = std::make_unique<QHBoxLayout>();
+    layout4_->addWidget(lbl_numlevel_.get());
+    layout4_->addWidget(spin_numlevel_.get());
+    layout4_->addStretch(0);
 
-    auto layout5 = std::make_unique<QHBoxLayout>();
-    layout5->addWidget(lbl_maxlevel.get());
-    layout5->addWidget(spin_maxlevel_.get());
-    layout5->addStretch(0);
+    layout5_ = std::make_unique<QHBoxLayout>();
+    layout5_->addWidget(lbl_maxlevel_.get());
+    layout5_->addWidget(spin_maxlevel_.get());
+    layout5_->addStretch(0);
 
-    auto layout6 = std::make_unique<QHBoxLayout>();
-    layout6->addWidget(lbl_weakness.get());
-    layout6->addWidget(spin_weakness_.get());
-    layout6->addStretch(0);
+    layout6_ = std::make_unique<QHBoxLayout>();
+    layout6_->addWidget(lbl_weakness_.get());
+    layout6_->addWidget(spin_weakness_.get());
+    layout6_->addStretch(0);
 
-    auto layout7 = std::make_unique<QHBoxLayout>();
-    layout7->addWidget(lbl_p_.get());
-    layout7->addWidget(spin_p_.get());
-    layout7->addWidget(lbl_q_.get());
-    layout7->addWidget(spin_q_.get());
-    layout7->addStretch(0);
+    layout7_ = std::make_unique<QHBoxLayout>();
+    layout7_->addWidget(lbl_p_.get());
+    layout7_->addWidget(spin_p_.get());
+    layout7_->addWidget(lbl_q_.get());
+    layout7_->addWidget(spin_q_.get());
+    layout7_->addStretch(0);
 
-    auto layout8 = std::make_unique<QHBoxLayout>();
-    layout8->addWidget(lbl_x0_.get());
-    layout8->addWidget(edt_x0_.get());
-    layout8->addStretch(0);
+    layout8_ = std::make_unique<QHBoxLayout>();
+    layout8_->addWidget(lbl_x0_.get());
+    layout8_->addWidget(edt_x0_.get());
+    layout8_->addStretch(0);
 
-    auto layout9 = std::make_unique<QHBoxLayout>();
-    layout9->addWidget(lbl_y0_.get());
-    layout9->addWidget(edt_y0_.get());
-    layout9->addStretch(0);
+    layout9_ = std::make_unique<QHBoxLayout>();
+    layout9_->addWidget(lbl_y0_.get());
+    layout9_->addWidget(edt_y0_.get());
+    layout9_->addStretch(0);
 
-    mainLayout_->addLayout(layout1.get());
-    mainLayout_->addLayout(layout2.get());
-    mainLayout_->addLayout(layout3.get());
-    mainLayout_->addLayout(layout4.get());
-    mainLayout_->addLayout(layout5.get());
-    mainLayout_->addLayout(layout6.get());
-    mainLayout_->addLayout(layout7.get());
-    mainLayout_->addLayout(layout8.get());
-    mainLayout_->addLayout(layout9.get());
+    mainLayout_->addLayout(layout1_.get());
+    mainLayout_->addLayout(layout2_.get());
+    mainLayout_->addLayout(layout3_.get());
+    mainLayout_->addLayout(layout4_.get());
+    mainLayout_->addLayout(layout5_.get());
+    mainLayout_->addLayout(layout6_.get());
+    mainLayout_->addLayout(layout7_.get());
+    mainLayout_->addLayout(layout8_.get());
+    mainLayout_->addLayout(layout9_.get());
 
     setLayout(mainLayout_.get());
 
