@@ -22,6 +22,8 @@
 #include <QWidget>
 
 #include <QBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
 #include <QPushButton>
@@ -103,6 +105,11 @@ class P4StartDlg : public QWidget
     std::unique_ptr<P4PlotWnd> plotWindow_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QHBoxLayout> buttonsLayout_;
+    std::unique_ptr<QHBoxLayout> namesLayout_;
+
+    std::unique_ptr<QLabel> p4name_;
+
     std::unique_ptr<QPushButton> btn_quit_;
     std::unique_ptr<QPushButton> btn_find_;
     std::unique_ptr<QPushButton> btn_view_;
@@ -116,6 +123,9 @@ class P4StartDlg : public QWidget
     std::unique_ptr<QTextBrowser> helpWindow_;
     std::unique_ptr<QTextEdit> viewInfiniteWindow_;
     std::unique_ptr<QTextEdit> viewFiniteWindow_;
+
+    std::unique_ptr<QAction> actFin_;
+    std::unique_ptr<QAction> actInf_;
 
     bool canOpenPlot();
 };

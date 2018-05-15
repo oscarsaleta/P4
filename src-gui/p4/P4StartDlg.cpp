@@ -65,9 +65,9 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     else
         edt_name_ = std::make_unique<QLineEdit>(
             gThisVF->filename_ = autofilename, this);
-    auto p4name = std::make_unique<QLabel>(" &Name: ", this);
-    p4name->setBuddy(edt_name_.get());
-    p4name->setFont(gP4app->getBoldFont());
+    p4name_ = std::make_unique<QLabel>(" &Name: ", this);
+    p4name_->setBuddy(edt_name_.get());
+    p4name_->setFont(gP4app->getBoldFont());
 
     edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
@@ -90,20 +90,20 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     // define placement of controls
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    auto buttons = std::make_unique<QHBoxLayout>();
-    buttons->addWidget(btn_quit_.get());
-    buttons->addWidget(btn_view_.get());
-    buttons->addWidget(btn_plot_.get());
-    buttons->addWidget(btn_help_.get());
+    buttonsLayout_ = std::make_unique<QHBoxLayout>();
+    buttonsLayout_->addWidget(btn_quit_.get());
+    buttonsLayout_->addWidget(btn_view_.get());
+    buttonsLayout_->addWidget(btn_plot_.get());
+    buttonsLayout_->addWidget(btn_help_.get());
 
-    mainLayout_->addLayout(buttons.get());
+    mainLayout_->addLayout(buttonsLayout_.get());
 
-    auto names = std::make_unique<QHBoxLayout>();
-    names->addWidget(p4name.get());
-    names->addWidget(edt_name_.get());
-    names->addWidget(btn_browse_.get());
-    names->addWidget(btn_about_.get());
-    mainLayout_->addLayout(names.get());
+    namesLayout_ = std::make_unique<QHBoxLayout>();
+    namesLayout_->addWidget(p4name_.get());
+    namesLayout_->addWidget(edt_name_.get());
+    namesLayout_->addWidget(btn_browse_.get());
+    namesLayout_->addWidget(btn_about_.get());
+    mainLayout_->addLayout(namesLayout_.get());
 
     setLayout(mainLayout_.get());
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
@@ -112,17 +112,17 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 
     viewMenu_ = std::make_unique<QMenu>(this);
 
-    auto actFin = std::make_unique<QAction>("Fini&te", this);
-    actFin->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(actFin.get(), &QAction::triggered, this,
+    actFin_ = std::make_unique<QAction>("Fini&te", this);
+    actFin_->setShortcut(Qt::ALT + Qt::Key_T);
+    QObject::connect(actFin_.get(), &QAction::triggered, this,
                      &P4StartDlg::onViewFinite);
-    viewMenu_->addAction(actFin.get());
+    viewMenu_->addAction(actFin_.get());
 
-    auto actInf = std::make_unique<QAction>("&Infinite", this);
-    actInf->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(actInf.get(), &QAction::triggered, this,
+    actInf_ = std::make_unique<QAction>("&Infinite", this);
+    actInf_->setShortcut(Qt::ALT + Qt::Key_I);
+    QObject::connect(actInf_.get(), &QAction::triggered, this,
                      &P4StartDlg::onViewInfinite);
-    viewMenu_->addAction(actInf.get());
+    viewMenu_->addAction(actInf_.get());
 
     btn_view_->setMenu(viewMenu_.get());
 
