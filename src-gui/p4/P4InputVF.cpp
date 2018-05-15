@@ -106,7 +106,11 @@
 // -----------------------------------------------------------------------
 //          CONSTRUCTOR
 // -----------------------------------------------------------------------
-P4InputVF::P4InputVF() { vfRegions_.emplace_back(0, std::vector<int>{}); }
+P4InputVF::P4InputVF()
+{
+    //vfRegions_.emplace_back(0, std::vector<int>{});
+    reset(1);
+}
 
 // -----------------------------------------------------------------------
 //          DESTRUCTOR
@@ -143,6 +147,7 @@ void P4InputVF::reset(int n)
     // clear current vectors
     numeric_.clear();
     precision_.clear();
+    precision0_.clear();
     epsilon_.clear();
     testsep_.clear();
     taylorlevel_.clear();
@@ -165,6 +170,7 @@ void P4InputVF::reset(int n)
     for (i = 0; i < n; i++) {
         numeric_.push_back(DEFAULTNUMERIC);
         precision_.push_back(DEFAULTPRECISION);
+        precision0_.push_back(DEFAULTPRECISION0);
         epsilon_.push_back(QString(DEFAULTEPSILON));
         testsep_.push_back(DEFAULTTESTSEP);
         taylorlevel_.push_back(DEFAULTLEVEL);
@@ -3060,6 +3066,9 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 {
+    for (int i = 0; i < numSelected_; i++) {
+        fprintf(stderr, "selected_[%d]=%d\n", i, selected_[i]);
+    }
     auto j0 = lst[selected_[0]];
     for (int i = 1; i < numSelected_; i++) {
         if (j0.compare(lst[selected_[i]]))
