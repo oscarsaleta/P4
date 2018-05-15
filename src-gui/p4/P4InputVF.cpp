@@ -3066,9 +3066,6 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 {
-    for (int i = 0; i < numSelected_; i++) {
-        fprintf(stderr, "selected_[%d]=%d\n", i, selected_[i]);
-    }
     auto j0 = lst[selected_[0]];
     for (int i = 1; i < numSelected_; i++) {
         if (j0.compare(lst[selected_[i]]))
@@ -3203,6 +3200,7 @@ void P4InputVF::addVectorField()
     numeric_.push_back(DEFAULTNUMERIC);
     testsep_.push_back(DEFAULTTESTSEP);
     precision_.push_back(DEFAULTPRECISION);
+    precision0_.push_back(DEFAULTPRECISION0);
     taylorlevel_.push_back(DEFAULTLEVEL);
     numericlevel_.push_back(DEFAULTNUMLEVEL);
     maxlevel_.push_back(DEFAULTMAXLEVEL);
