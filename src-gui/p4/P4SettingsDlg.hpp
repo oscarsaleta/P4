@@ -24,6 +24,7 @@
 #include <QBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QButtonGroup>
 #include <QPushButton>
 #include <QRadioButton>
 
@@ -66,6 +67,12 @@ class P4SettingsDlg : public QDialog
     std::unique_ptr<QPushButton> btn_cancel_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+
+    std::unique_ptr<QButtonGroup> bgcolors_;
+
+    std::unique_ptr<QHBoxLayout> buttons_;
+    std::unique_ptr<QGridLayout> lay00_;
+    std::unique_ptr<QHBoxLayout> bgbuttons_;
 
   public slots:
     void onOk();

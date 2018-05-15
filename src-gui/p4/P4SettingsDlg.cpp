@@ -19,7 +19,6 @@
 
 #include "P4SettingsDlg.hpp"
 
-#include <QButtonGroup>
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -105,9 +104,9 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
     btn_bgblack_ = std::make_unique<QRadioButton>("Black", this);
     btn_bgwhite_ = std::make_unique<QRadioButton>("White", this);
 
-    auto bgcolors = std::make_unique<QButtonGroup>(this);
-    bgcolors->addButton(btn_bgblack_.get());
-    bgcolors->addButton(btn_bgwhite_.get());
+    bgcolors_ = std::make_unique<QButtonGroup>(this);
+    bgcolors_->addButton(btn_bgblack_.get());
+    bgcolors_->addButton(btn_bgwhite_.get());
 
     btn_ok_ = std::make_unique<QPushButton>("&Ok", this);
     btn_reset_ = std::make_unique<QPushButton>("&Reset", this);
@@ -155,45 +154,45 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
         this));
     mainLayout_->addSpacing(4);
 
-    auto buttons = std::make_unique<QHBoxLayout>();
-    buttons->addStretch(0);
-    buttons->addWidget(btn_ok_.get());
-    buttons->addWidget(btn_reset_.get());
-    buttons->addWidget(btn_cancel_.get());
-    buttons->addStretch(0);
+    buttons_ = std::make_unique<QHBoxLayout>();
+    buttons_->addStretch(0);
+    buttons_->addWidget(btn_ok_.get());
+    buttons_->addWidget(btn_reset_.get());
+    buttons_->addWidget(btn_cancel_.get());
+    buttons_->addStretch(0);
 
-    auto lay00 = std::make_unique<QGridLayout>();
+    lay00_ = std::make_unique<QGridLayout>();
 
-    lay00->addWidget(lbl_base_.get(), 0, 0);
-    lay00->addWidget(edt_base_.get(), 0, 1);
-    lay00->addWidget(btn_base_.get(), 0, 2);
-    lay00->addWidget(lbl_sum_.get(), 1, 0);
-    lay00->addWidget(edt_sum_.get(), 1, 1);
-    lay00->addWidget(btn_sum_.get(), 1, 2);
-    lay00->addWidget(lbl_temp_.get(), 2, 0);
-    lay00->addWidget(edt_temp_.get(), 2, 1);
-    lay00->addWidget(btn_temp_.get(), 2, 2);
-    lay00->addWidget(lbl_maple_.get(), 3, 0);
-    lay00->addWidget(edt_maple_.get(), 3, 1);
-    lay00->addWidget(btn_maple_.get(), 3, 2);
+    lay00_->addWidget(lbl_base_.get(), 0, 0);
+    lay00_->addWidget(edt_base_.get(), 0, 1);
+    lay00_->addWidget(btn_base_.get(), 0, 2);
+    lay00_->addWidget(lbl_sum_.get(), 1, 0);
+    lay00_->addWidget(edt_sum_.get(), 1, 1);
+    lay00_->addWidget(btn_sum_.get(), 1, 2);
+    lay00_->addWidget(lbl_temp_.get(), 2, 0);
+    lay00_->addWidget(edt_temp_.get(), 2, 1);
+    lay00_->addWidget(btn_temp_.get(), 2, 2);
+    lay00_->addWidget(lbl_maple_.get(), 3, 0);
+    lay00_->addWidget(edt_maple_.get(), 3, 1);
+    lay00_->addWidget(btn_maple_.get(), 3, 2);
 
-    auto bgbuttons = std::make_unique<QHBoxLayout>();
-    bgbuttons->addWidget(lbl_bgcolor_.get());
-    bgbuttons->addStretch(0);
-    bgbuttons->addWidget(btn_bgblack_.get());
-    bgbuttons->addWidget(btn_bgwhite_.get());
+    bgbuttons_ = std::make_unique<QHBoxLayout>();
+    bgbuttons_->addWidget(lbl_bgcolor_.get());
+    bgbuttons_->addStretch(0);
+    bgbuttons_->addWidget(btn_bgblack_.get());
+    bgbuttons_->addWidget(btn_bgwhite_.get());
 
     if (bgColours::CBACKGROUND == BLACK)
         btn_bgblack_->toggle();
     else
         btn_bgwhite_->toggle();
 
-    mainLayout_->addLayout(lay00.get());
+    mainLayout_->addLayout(lay00_.get());
     mainLayout_->addSpacing(3);
-    mainLayout_->addLayout(bgbuttons.get());
+    mainLayout_->addLayout(bgbuttons_.get());
     mainLayout_->addSpacing(3);
     // mainLayout_->addSpacing(4);
-    mainLayout_->addLayout(buttons.get());
+    mainLayout_->addLayout(buttons_.get());
 
     setLayout(mainLayout_.get());
 
