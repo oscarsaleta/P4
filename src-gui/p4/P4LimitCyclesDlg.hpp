@@ -25,6 +25,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QLabel>
 
 #include <memory>
 
@@ -61,6 +62,19 @@ class P4LimitCyclesDlg : public QWidget
     std::unique_ptr<QLineEdit> edt_x1_;
     std::unique_ptr<QLineEdit> edt_y1_;
     std::unique_ptr<QLineEdit> edt_grid_;
+
+    std::unique_ptr<QLabel> lbl1_;
+    std::unique_ptr<QLabel> lbl2_;
+    std::unique_ptr<QLabel> lbl3_;
+    std::unique_ptr<QLabel> lbl4_;
+    std::unique_ptr<QLabel> lbl5_;
+    std::unique_ptr<QLabel> lbl6_;
+
+    std::unique_ptr<QGridLayout> lay00_;
+    std::unique_ptr<QHBoxLayout> layout1_;
+    std::unique_ptr<QHBoxLayout> layout2_;
+    std::unique_ptr<QHBoxLayout> layout3_;
+    std::unique_ptr<QHBoxLayout> layout4_;
 
     std::unique_ptr<QSpinBox> spin_numpoints_;
 

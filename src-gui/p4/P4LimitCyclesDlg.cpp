@@ -19,7 +19,6 @@
 
 #include "P4LimitCyclesDlg.hpp"
 
-#include <QLabel>
 #include <QMessageBox>
 #include <QProgressDialog>
 
@@ -45,20 +44,20 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     edt_x0_ = std::make_unique<QLineEdit>("", this);
-    auto lbl1 = std::make_unique<QLabel>("x0 = ", this);
+    lbl1_ = std::make_unique<QLabel>("x0 = ", this);
     edt_y0_ = std::make_unique<QLineEdit>("", this);
-    auto lbl2 = std::make_unique<QLabel>("y0 = ", this);
+    lbl2_ = std::make_unique<QLabel>("y0 = ", this);
     edt_x1_ = std::make_unique<QLineEdit>("", this);
-    auto lbl3 = std::make_unique<QLabel>("x1 = ", this);
+    lbl3_ = std::make_unique<QLabel>("x1 = ", this);
     edt_y1_ = std::make_unique<QLineEdit>("", this);
-    auto lbl4 = std::make_unique<QLabel>("y1 = ", this);
+    lbl4_ = std::make_unique<QLabel>("y1 = ", this);
     edt_grid_ = std::make_unique<QLineEdit>("", this);
-    auto lbl5 = std::make_unique<QLabel>("Grid: ", this);
+    lbl5_ = std::make_unique<QLabel>("Grid: ", this);
 
     spin_numpoints_ = std::make_unique<QSpinBox>(this);
     spin_numpoints_->setMinimum(MIN_LCPOINTS);
     spin_numpoints_->setMaximum(MAX_LCPOINTS);
-    auto lbl6 = std::make_unique<QLabel>("# Points: ", this);
+    lbl6_ = std::make_unique<QLabel>("# Points: ", this);
 
     btn_start_ = std::make_unique<QPushButton>("&Start", this);
     btn_cancel_ = std::make_unique<QPushButton>("&Reset setpoints", this);
@@ -92,37 +91,37 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4WinSphere *sp)
 
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    auto lay00 = std::make_unique<QGridLayout>();
-    lay00->addWidget(lbl1.get(), 0, 0);
-    lay00->addWidget(edt_x0_.get(), 0, 1);
-    lay00->addWidget(lbl2.get(), 0, 2);
-    lay00->addWidget(edt_y0_.get(), 0, 3);
-    lay00->addWidget(lbl3.get(), 1, 0);
-    lay00->addWidget(edt_x1_.get(), 1, 1);
-    lay00->addWidget(lbl4.get(), 1, 2);
-    lay00->addWidget(edt_y1_.get(), 1, 3);
+    lay00_ = std::make_unique<QGridLayout>();
+    lay00_->addWidget(lbl1_.get(), 0, 0);
+    lay00_->addWidget(edt_x0_.get(), 0, 1);
+    lay00_->addWidget(lbl2_.get(), 0, 2);
+    lay00_->addWidget(edt_y0_.get(), 0, 3);
+    lay00_->addWidget(lbl3_.get(), 1, 0);
+    lay00_->addWidget(edt_x1_.get(), 1, 1);
+    lay00_->addWidget(lbl4_.get(), 1, 2);
+    lay00_->addWidget(edt_y1_.get(), 1, 3);
 
-    auto layout1 = std::make_unique<QHBoxLayout>();
-    layout1->addWidget(lbl5.get());
-    layout1->addWidget(edt_grid_.get());
+    layout1_ = std::make_unique<QHBoxLayout>();
+    layout1_->addWidget(lbl5_.get());
+    layout1_->addWidget(edt_grid_.get());
 
-    auto layout2 = std::make_unique<QHBoxLayout>();
-    layout2->addWidget(btn_start_.get());
-    layout2->addWidget(btn_cancel_.get());
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(btn_start_.get());
+    layout3_->addWidget(btn_cancel_.get());
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(lbl6.get());
-    layout3->addWidget(spin_numpoints_.get());
+    layout2_ = std::make_unique<QHBoxLayout>();
+    layout2_->addWidget(lbl6_.get());
+    layout2_->addWidget(spin_numpoints_.get());
 
-    auto layout4 = std::make_unique<QHBoxLayout>();
-    layout4->addWidget(btn_dellast_.get());
-    layout4->addWidget(btn_delall_.get());
+    layout4_ = std::make_unique<QHBoxLayout>();
+    layout4_->addWidget(btn_dellast_.get());
+    layout4_->addWidget(btn_delall_.get());
 
-    mainLayout_->addLayout(lay00.get());
-    mainLayout_->addLayout(layout1.get());
-    mainLayout_->addLayout(layout3.get());
-    mainLayout_->addLayout(layout2.get());
-    mainLayout_->addLayout(layout4.get());
+    mainLayout_->addLayout(lay00_.get());
+    mainLayout_->addLayout(layout1_.get());
+    mainLayout_->addLayout(layout2_.get());
+    mainLayout_->addLayout(layout3_.get());
+    mainLayout_->addLayout(layout4_.get());
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_.get());
