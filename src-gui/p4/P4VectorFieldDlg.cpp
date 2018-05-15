@@ -19,9 +19,6 @@
 
 #include "P4VectorFieldDlg.hpp"
 
-#include <QFormLayout>
-#include <QLabel>
-
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
@@ -36,26 +33,26 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    auto p4title = std::make_unique<QLabel>("Specify the vector field:", this);
-    p4title->setFont(gP4app->getTitleFont());
+    p4title_ = std::make_unique<QLabel>("Specify the vector field:", this);
+    p4title_->setFont(gP4app->getTitleFont());
 
     edt_xprime_ = std::make_unique<QLineEdit>("", this);
-    auto xlabel = std::make_unique<QLabel>("&x' = ", this);
-    xlabel->setFont(gP4app->getBoldFont());
-    xlabel->setBuddy(edt_xprime_.get());
+    xlabel_ = std::make_unique<QLabel>("&x' = ", this);
+    xlabel_->setFont(gP4app->getBoldFont());
+    xlabel_->setBuddy(edt_xprime_.get());
 
     edt_yprime_ = std::make_unique<QLineEdit>("", this);
-    auto ylabel = std::make_unique<QLabel>("&y' = ", this);
-    ylabel->setFont(gP4app->getBoldFont());
-    ylabel->setBuddy(edt_yprime_.get());
+    ylabel_ = std::make_unique<QLabel>("&y' = ", this);
+    ylabel_->setFont(gP4app->getBoldFont());
+    ylabel_->setBuddy(edt_yprime_.get());
 
     edt_gcf_ = std::make_unique<QLineEdit>("", this);
-    auto glabel = std::make_unique<QLabel>("&Gcf: ", this);
-    glabel->setFont(gP4app->getBoldFont());
-    glabel->setBuddy(edt_gcf_.get());
+    glabel_ = std::make_unique<QLabel>("&Gcf: ", this);
+    glabel_->setFont(gP4app->getBoldFont());
+    glabel_->setBuddy(edt_gcf_.get());
 
-    auto plabel = std::make_unique<QLabel>("Number of Parameters: ", this);
-    plabel->setFont(gP4app->getBoldFont());
+    plabel_ = std::make_unique<QLabel>("Number of Parameters: ", this);
+    plabel_->setFont(gP4app->getBoldFont());
 
     spin_numparams_ = std::make_unique<QSpinBox>(this);
     spin_numparams_->setMinimum(0);
@@ -75,22 +72,22 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
-    mainLayout_->addWidget(p4title.get());
+    mainLayout_->addWidget(p4title_.get());
 
-    auto formLayout = std::make_unique<QFormLayout>();
-    formLayout->addRow(xlabel.get(), edt_xprime_.get());
-    formLayout->addRow(ylabel.get(), edt_yprime_.get());
-    formLayout->addRow(glabel.get(), edt_gcf_.get());
+    formLayout_ = std::make_unique<QFormLayout>();
+    formLayout_->addRow(xlabel_.get(), edt_xprime_.get());
+    formLayout_->addRow(ylabel_.get(), edt_yprime_.get());
+    formLayout_->addRow(glabel_.get(), edt_gcf_.get());
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(plabel.get());
-    layout3->addWidget(spin_numparams_.get());
-    layout3->addStretch(0);
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(plabel_.get());
+    layout3_->addWidget(spin_numparams_.get());
+    layout3_->addStretch(0);
 
     paramLayout_ = std::make_unique<QHBoxLayout>();
 
-    mainLayout_->addLayout(formLayout.get());
-    mainLayout_->addLayout(layout3.get());
+    mainLayout_->addLayout(formLayout_.get());
+    mainLayout_->addLayout(layout3_.get());
     mainLayout_->addLayout(paramLayout_.get());
 
     setLayout(mainLayout_.get());

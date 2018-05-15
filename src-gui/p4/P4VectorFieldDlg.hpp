@@ -22,7 +22,9 @@
 #include "custom.hpp"
 
 #include <QBoxLayout>
+#include <QFormLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QScrollBar>
 #include <QSpinBox>
@@ -60,6 +62,15 @@ class P4VectorFieldDlg : public QWidget
     std::unique_ptr<QSpinBox> spin_numparams_;
     std::unique_ptr<QHBoxLayout> paramLayout_;
     std::unique_ptr<QScrollBar> sb_params_;
+
+    std::unique_ptr<QLabel> p4title_;
+    std::unique_ptr<QLabel> xlabel_;
+    std::unique_ptr<QLabel> ylabel_;
+    std::unique_ptr<QLabel> glabel_;
+    std::unique_ptr<QLabel> plabel_;
+
+    std::unique_ptr<QFormLayout> formLayout_;
+    std::unique_ptr<QHBoxLayout> layout3_;
 
   public slots:
     void numParamsChanged(int);
