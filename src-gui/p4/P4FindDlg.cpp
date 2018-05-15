@@ -41,24 +41,24 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    auto p4title =
+    p4title_ =
         std::make_unique<QLabel>("Find and Examine Singular Points", this);
-    p4title->setFont(gP4app->getStandardFont());
+    p4title_->setFont(gP4app->getTitleFont());
 
-    auto actlabel = std::make_unique<QLabel>("File Action:  ", this);
-    actlabel->setFont(gP4app->getBoldFont());
+    actlabel_ = std::make_unique<QLabel>("File Action:  ", this);
+    actlabel_->setFont(gP4app->getBoldFont());
     btn_actionrun_ = std::make_unique<QRadioButton>("Run File", this);
     btn_actionprep_ = std::make_unique<QRadioButton>("Prepare File", this);
 
-    auto singpoints = std::make_unique<QLabel>("Singular points:  \n\n", this);
-    singpoints->setFont(gP4app->getBoldFont());
+    singpoints_ = std::make_unique<QLabel>("Singular points:  \n\n", this);
+    singpoints_->setFont(gP4app->getBoldFont());
     btn_all_ = std::make_unique<QRadioButton>("All ", this);
     btn_fin_ = std::make_unique<QRadioButton>("Finite ", this);
     btn_inf_ = std::make_unique<QRadioButton>("Infinite ", this);
     btn_one_ = std::make_unique<QRadioButton>("One ", this);
 
-    auto saveall = std::make_unique<QLabel>("Save all information: ", this);
-    saveall->setFont(gP4app->getBoldFont());
+    saveall_ = std::make_unique<QLabel>("Save all information: ", this);
+    saveall_->setFont(gP4app->getBoldFont());
     btn_yes_ = std::make_unique<QRadioButton>("Yes", this);
     btn_no_ = std::make_unique<QRadioButton>("No", this);
 
@@ -98,41 +98,41 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
 
     mainLayout_->addSpacing(8);
-    mainLayout_->addWidget(p4title.get());
+    mainLayout_->addWidget(p4title_.get());
 
-    auto actLayout = std::make_unique<QHBoxLayout>();
-    actLayout->addWidget(actlabel.get());
-    actLayout->addWidget(btn_actionrun_.get());
-    actLayout->addWidget(btn_actionprep_.get());
-    actLayout->addStretch(0);
-    mainLayout_->addLayout(actLayout.get());
+    actLayout_ = std::make_unique<QHBoxLayout>();
+    actLayout_->addWidget(actlabel_.get());
+    actLayout_->addWidget(btn_actionrun_.get());
+    actLayout_->addWidget(btn_actionprep_.get());
+    actLayout_->addStretch(0);
+    mainLayout_->addLayout(actLayout_.get());
 
-    auto singlineLayout = std::make_unique<QHBoxLayout>();
-    singlineLayout->addWidget(singpoints.get(), 0, Qt::AlignBottom);
+    singlineLayout_ = std::make_unique<QHBoxLayout>();
+    singlineLayout_->addWidget(singpoints_.get(), 0, Qt::AlignBottom);
 
-    auto singLayout = std::make_unique<QGridLayout>();
-    singLayout->addWidget(btn_all_.get(), 0, 0);
-    singLayout->addWidget(btn_fin_.get(), 0, 1);
-    singLayout->addWidget(btn_inf_.get(), 1, 0);
-    singLayout->addWidget(btn_one_.get(), 1, 1);
-    singlineLayout->addLayout(singLayout.get());
-    singlineLayout->addStretch(0);
+    singLayout_ = std::make_unique<QGridLayout>();
+    singLayout_->addWidget(btn_all_.get(), 0, 0);
+    singLayout_->addWidget(btn_fin_.get(), 0, 1);
+    singLayout_->addWidget(btn_inf_.get(), 1, 0);
+    singLayout_->addWidget(btn_one_.get(), 1, 1);
+    singlineLayout_->addLayout(singLayout_.get());
+    singlineLayout_->addStretch(0);
 
-    mainLayout_->addLayout(singlineLayout.get());
+    mainLayout_->addLayout(singlineLayout_.get());
 
-    auto layout0 = std::make_unique<QHBoxLayout>();
-    layout0->addWidget(saveall.get());
-    layout0->addWidget(btn_yes_.get());
-    layout0->addWidget(btn_no_.get());
-    layout0->addStretch(0);
+    layout0_ = std::make_unique<QHBoxLayout>();
+    layout0_->addWidget(saveall_.get());
+    layout0_->addWidget(btn_yes_.get());
+    layout0_->addWidget(btn_no_.get());
+    layout0_->addStretch(0);
 
-    auto layout1 = std::make_unique<QGridLayout>();
-    layout1->addWidget(btn_load_.get(), 0, 0);
-    layout1->addWidget(btn_save_.get(), 0, 1);
-    layout1->addWidget(btn_eval_.get(), 1, 0, 1, 2);
+    layout1_ = std::make_unique<QGridLayout>();
+    layout1_->addWidget(btn_load_.get(), 0, 0);
+    layout1_->addWidget(btn_save_.get(), 0, 1);
+    layout1_->addWidget(btn_eval_.get(), 1, 0, 1, 2);
 
-    mainLayout_->addLayout(layout0.get());
-    mainLayout_->addLayout(layout1.get());
+    mainLayout_->addLayout(layout0_.get());
+    mainLayout_->addLayout(layout1_.get());
 
     //   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -141,19 +141,19 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     setLayout(superLayout_.get());
 
     // connections
-    auto btngrp1 = std::make_unique<QButtonGroup>(this);
-    btngrp1->addButton(btn_all_.get());
-    btngrp1->addButton(btn_fin_.get());
-    btngrp1->addButton(btn_inf_.get());
-    btngrp1->addButton(btn_one_.get());
+    btngrp1_ = std::make_unique<QButtonGroup>(this);
+    btngrp1_->addButton(btn_all_.get());
+    btngrp1_->addButton(btn_fin_.get());
+    btngrp1_->addButton(btn_inf_.get());
+    btngrp1_->addButton(btn_one_.get());
 
-    auto btngrp2 = std::make_unique<QButtonGroup>(this);
-    btngrp2->addButton(btn_yes_.get());
-    btngrp2->addButton(btn_no_.get());
+    btngrp2_ = std::make_unique<QButtonGroup>(this);
+    btngrp2_->addButton(btn_yes_.get());
+    btngrp2_->addButton(btn_no_.get());
 
-    auto btngrp4 = std::make_unique<QButtonGroup>(this);
-    btngrp4->addButton(btn_actionrun_.get());
-    btngrp4->addButton(btn_actionprep_.get());
+    btngrp3_ = std::make_unique<QButtonGroup>(this);
+    btngrp3_->addButton(btn_actionrun_.get());
+    btngrp3_->addButton(btn_actionprep_.get());
 
     if (gActionOnlyPrepareFile)
         btn_actionprep_->toggle();

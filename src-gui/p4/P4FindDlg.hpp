@@ -51,6 +51,20 @@ class P4FindDlg : public QWidget
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QBoxLayout> parLayout_;
     std::unique_ptr<QBoxLayout> superLayout_;
+    std::unique_ptr<QHBoxLayout> actLayout_;
+    std::unique_ptr<QHBoxLayout> singlineLayout_;
+    std::unique_ptr<QGridLayout> singLayout_;
+    std::unique_ptr<QHBoxLayout> layout0_;
+    std::unique_ptr<QGridLayout> layout1_;
+
+    std::unique_ptr<QButtonGroup> btngrp1_;
+    std::unique_ptr<QButtonGroup> btngrp2_;
+    std::unique_ptr<QButtonGroup> btngrp3_;
+
+    std::unique_ptr<QLabel> p4title_;
+    std::unique_ptr<QLabel> actlabel_;
+    std::unique_ptr<QLabel> singpoints_;
+    std::unique_ptr<QLabel> saveall_;
 
     std::unique_ptr<QRadioButton> btn_actionrun_;
     std::unique_ptr<QRadioButton> btn_actionprep_;
