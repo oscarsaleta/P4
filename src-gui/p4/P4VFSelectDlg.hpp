@@ -57,12 +57,18 @@ class P4VFSelectDlg : public QWidget
     P4FindDlg *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QHBoxLayout> layout1_;
+    std::unique_ptr<QHBoxLayout> layout2_;
+    std::unique_ptr<QHBoxLayout> layout3_;
+
     std::unique_ptr<QComboBox> cbb_vfselect_;
     std::unique_ptr<QPushButton> btn_add_;
     std::unique_ptr<QPushButton> btn_del_;
     std::unique_ptr<QPushButton> btn_prev_;
     std::unique_ptr<QPushButton> btn_next_;
     std::unique_ptr<QPushButton> btn_p4config_;
+
+    std::unique_ptr<QLabel> p4title_;
 
     std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
 };

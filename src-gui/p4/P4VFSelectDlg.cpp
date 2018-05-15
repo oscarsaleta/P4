@@ -34,8 +34,8 @@
 P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     : QWidget{finddlg}, parent_{finddlg}
 {
-    auto p4title = std::make_unique<QLabel>("Vector Fields:", this);
-    p4title->setFont(gP4app->getTitleFont());
+    p4title_ = std::make_unique<QLabel>("Vector Fields:", this);
+    p4title_->setFont(gP4app->getTitleFont());
 
     cbb_vfselect_ = std::make_unique<QComboBox>(this);
     btn_add_ = std::make_unique<QPushButton>("Add", this);
@@ -56,20 +56,20 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    auto layout1 = std::make_unique<QHBoxLayout>();
-    layout1->addWidget(p4title.get());
-    layout1->addWidget(cbb_vfselect_.get());
-    mainLayout_->addLayout(layout1.get());
+    layout1_ = std::make_unique<QHBoxLayout>();
+    layout1_->addWidget(p4title_.get());
+    layout1_->addWidget(cbb_vfselect_.get());
+    mainLayout_->addLayout(layout1_.get());
 
-    auto layout2 = std::make_unique<QHBoxLayout>();
-    layout2->addWidget(btn_prev_.get());
-    layout2->addWidget(btn_next_.get());
-    mainLayout_->addLayout(layout2.get());
+    layout2_ = std::make_unique<QHBoxLayout>();
+    layout2_->addWidget(btn_prev_.get());
+    layout2_->addWidget(btn_next_.get());
+    mainLayout_->addLayout(layout2_.get());
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(btn_add_.get());
-    layout3->addWidget(btn_del_.get());
-    mainLayout_->addLayout(layout3.get());
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(btn_add_.get());
+    layout3_->addWidget(btn_del_.get());
+    mainLayout_->addLayout(layout3_.get());
 
     mainLayout_->addWidget(btn_p4config_.get());
 
