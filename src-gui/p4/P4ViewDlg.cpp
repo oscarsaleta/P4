@@ -43,45 +43,45 @@ P4ViewDlg::P4ViewDlg(bool virtualchk)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    auto p4title = std::make_unique<QLabel>("View Parameters", this);
-    p4title->setFont(gP4app->getTitleFont());
+    p4title_ = std::make_unique<QLabel>("View Parameters", this);
+    p4title_->setFont(gP4app->getTitleFont());
 
-    auto kindlabel = std::make_unique<QLabel>("Type of view: ", this);
-    kindlabel->setFont(gP4app->getBoldFont());
+    kindlabel_ = std::make_unique<QLabel>("Type of view: ", this);
+    kindlabel_->setFont(gP4app->getBoldFont());
 
-    auto btngrp = std::make_unique<QButtonGroup>(this);
+    btngrp_ = std::make_unique<QButtonGroup>(this);
     btn_sphere_ = std::make_unique<QRadioButton>("Spherical", this);
     btn_plane_ = std::make_unique<QRadioButton>("Planar", this);
     btn_U1_ = std::make_unique<QRadioButton>("U1", this);
     btn_U2_ = std::make_unique<QRadioButton>("U2", this);
     btn_V1_ = std::make_unique<QRadioButton>("V1", this);
     btn_V2_ = std::make_unique<QRadioButton>("V2", this);
-    btngrp->addButton(btn_sphere_.get());
-    btngrp->addButton(btn_plane_.get());
-    btngrp->addButton(btn_U1_.get());
-    btngrp->addButton(btn_U2_.get());
-    btngrp->addButton(btn_V1_.get());
-    btngrp->addButton(btn_V2_.get());
+    btngrp_->addButton(btn_sphere_.get());
+    btngrp_->addButton(btn_plane_.get());
+    btngrp_->addButton(btn_U1_.get());
+    btngrp_->addButton(btn_U2_.get());
+    btngrp_->addButton(btn_V1_.get());
+    btngrp_->addButton(btn_V2_.get());
 
-    auto lbl_projection_ = std::make_unique<QLabel>("Projection:", this);
+    lbl_projection_ = std::make_unique<QLabel>("Projection:", this);
     lbl_projection_->setFont(gP4app->getBoldFont());
     edt_projection_ = std::make_unique<QLineEdit>("-1", this);
 
-    auto lbl_x0_ = std::make_unique<QLabel>("Min. x:", this);
+    lbl_x0_ = std::make_unique<QLabel>("Min. x:", this);
     lbl_x0_->setFont(gP4app->getBoldFont());
     edt_x0_ = std::make_unique<QLineEdit>("-1", this);
 
     btn_square_ = std::make_unique<QPushButton>("&Square", this);
 
-    auto lbl_y0_ = std::make_unique<QLabel>("Min. y:", this);
+    lbl_y0_ = std::make_unique<QLabel>("Min. y:", this);
     lbl_y0_->setFont(gP4app->getBoldFont());
     edt_y0_ = std::make_unique<QLineEdit>("-1", this);
 
-    auto lbl_x1_ = std::make_unique<QLabel>("Max. x", this);
+    lbl_x1_ = std::make_unique<QLabel>("Max. x", this);
     lbl_x1_->setFont(gP4app->getBoldFont());
     edt_x1_ = std::make_unique<QLineEdit>("1", this);
 
-    auto lbl_y1_ = std::make_unique<QLabel>("Max. y", this);
+    lbl_y1_ = std::make_unique<QLabel>("Max. y", this);
     lbl_y1_->setFont(gP4app->getBoldFont());
     edt_y1_ = std::make_unique<QLineEdit>("1", this);
 
@@ -119,50 +119,50 @@ P4ViewDlg::P4ViewDlg(bool virtualchk)
 
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
 
-    mainLayout_->addWidget(p4title.get());
+    mainLayout_->addWidget(p4title_.get());
 
-    auto kindLayout = std::make_unique<QGridLayout>();
-    kindLayout->addWidget(kindlabel.get(), 0, 0);
-    kindLayout->addWidget(btn_sphere_.get(), 0, 1);
-    kindLayout->addWidget(btn_plane_.get(), 0, 2);
-    kindLayout->addWidget(btn_U1_.get(), 1, 1);
-    kindLayout->addWidget(btn_U2_.get(), 1, 2);
-    kindLayout->addWidget(btn_V1_.get(), 2, 1);
-    kindLayout->addWidget(btn_V2_.get(), 2, 2);
+    kindLayout_ = std::make_unique<QGridLayout>();
+    kindLayout_->addWidget(kindlabel_.get(), 0, 0);
+    kindLayout_->addWidget(btn_sphere_.get(), 0, 1);
+    kindLayout_->addWidget(btn_plane_.get(), 0, 2);
+    kindLayout_->addWidget(btn_U1_.get(), 1, 1);
+    kindLayout_->addWidget(btn_U2_.get(), 1, 2);
+    kindLayout_->addWidget(btn_V1_.get(), 2, 1);
+    kindLayout_->addWidget(btn_V2_.get(), 2, 2);
 
-    mainLayout_->addLayout(kindLayout.get());
+    mainLayout_->addLayout(kindLayout_.get());
 
-    auto layout1 = std::make_unique<QHBoxLayout>();
-    layout1->addWidget(lbl_projection_.get());
-    layout1->addWidget(edt_projection_.get());
-    layout1->addStretch(0);
+    layout1_ = std::make_unique<QHBoxLayout>();
+    layout1_->addWidget(lbl_projection_.get());
+    layout1_->addWidget(edt_projection_.get());
+    layout1_->addStretch(0);
 
-    auto layout2 = std::make_unique<QHBoxLayout>();
-    layout2->addWidget(lbl_x0_.get());
-    layout2->addWidget(edt_x0_.get());
-    layout2->addWidget(btn_square_.get());
-    layout2->addStretch(0);
+    layout2_ = std::make_unique<QHBoxLayout>();
+    layout2_->addWidget(lbl_x0_.get());
+    layout2_->addWidget(edt_x0_.get());
+    layout2_->addWidget(btn_square_.get());
+    layout2_->addStretch(0);
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(lbl_y0_.get());
-    layout3->addWidget(edt_y0_.get());
-    layout3->addStretch(0);
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(lbl_y0_.get());
+    layout3_->addWidget(edt_y0_.get());
+    layout3_->addStretch(0);
 
-    auto layout4 = std::make_unique<QHBoxLayout>();
-    layout4->addWidget(lbl_x1_.get());
-    layout4->addWidget(edt_x1_.get());
-    layout4->addStretch(0);
+    layout4_ = std::make_unique<QHBoxLayout>();
+    layout4_->addWidget(lbl_x1_.get());
+    layout4_->addWidget(edt_x1_.get());
+    layout4_->addStretch(0);
 
-    auto layout5 = std::make_unique<QHBoxLayout>();
-    layout5->addWidget(lbl_y1_.get());
-    layout5->addWidget(edt_y1_.get());
-    layout5->addStretch(0);
+    layout5_ = std::make_unique<QHBoxLayout>();
+    layout5_->addWidget(lbl_y1_.get());
+    layout5_->addWidget(edt_y1_.get());
+    layout5_->addStretch(0);
 
-    mainLayout_->addLayout(layout1.get());
-    mainLayout_->addLayout(layout2.get());
-    mainLayout_->addLayout(layout3.get());
-    mainLayout_->addLayout(layout4.get());
-    mainLayout_->addLayout(layout5.get());
+    mainLayout_->addLayout(layout1_.get());
+    mainLayout_->addLayout(layout2_.get());
+    mainLayout_->addLayout(layout3_.get());
+    mainLayout_->addLayout(layout4_.get());
+    mainLayout_->addLayout(layout5_.get());
     if (haveVirtualCheckBox_)
         mainLayout_->addWidget(chk_plotvirtuals_.get());
     mainLayout_->addStretch(0);

@@ -23,14 +23,17 @@
 
 #include <memory>
 
-class QBoxLayout;
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QRadioButton;
+#include <QBoxLayout>
+#include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QButtonGroup>
+#include <QPushButton>
+#include <QRadioButton>
 // class QSpinBox;
 class QString;
-class QCheckBox;
+#include <QCheckBox>
 
 class P4ViewDlg : public QWidget
 {
@@ -47,13 +50,13 @@ class P4ViewDlg : public QWidget
     bool haveVirtualCheckBox_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QGridLayout> kindLayout_;
+    std::unique_ptr<QHBoxLayout> layout1_;
+    std::unique_ptr<QHBoxLayout> layout2_;
+    std::unique_ptr<QHBoxLayout> layout3_;
+    std::unique_ptr<QHBoxLayout> layout4_;
+    std::unique_ptr<QHBoxLayout> layout5_;
 
-    std::unique_ptr<QRadioButton> btn_sphere_;
-    std::unique_ptr<QRadioButton> btn_plane_;
-    std::unique_ptr<QRadioButton> btn_U1_;
-    std::unique_ptr<QRadioButton> btn_V1_;
-    std::unique_ptr<QRadioButton> btn_U2_;
-    std::unique_ptr<QRadioButton> btn_V2_;
     std::unique_ptr<QLineEdit> edt_projection_;
     std::unique_ptr<QLineEdit> edt_x0_;
     std::unique_ptr<QLineEdit> edt_x1_;
@@ -62,13 +65,23 @@ class P4ViewDlg : public QWidget
     std::unique_ptr<QCheckBox> chk_plotvirtuals_;
     std::unique_ptr<QPushButton> btn_square_;
 
+    std::unique_ptr<QLabel> p4title_;
+    std::unique_ptr<QLabel> kindlabel_;
     std::unique_ptr<QLabel> lbl_projection_;
     std::unique_ptr<QLabel> lbl_x0_;
     std::unique_ptr<QLabel> lbl_x1_;
     std::unique_ptr<QLabel> lbl_y0_;
     std::unique_ptr<QLabel> lbl_y1_;
 
-    //std::unique_ptr<QSpinBox> spin_numpoints_;
+    std::unique_ptr<QButtonGroup> btngrp_;
+    std::unique_ptr<QRadioButton> btn_sphere_;
+    std::unique_ptr<QRadioButton> btn_plane_;
+    std::unique_ptr<QRadioButton> btn_U1_;
+    std::unique_ptr<QRadioButton> btn_V1_;
+    std::unique_ptr<QRadioButton> btn_U2_;
+    std::unique_ptr<QRadioButton> btn_V2_;
+
+    // std::unique_ptr<QSpinBox> spin_numpoints_;
 
     bool readFloatField(QLineEdit *, double &, double, double, double);
 
