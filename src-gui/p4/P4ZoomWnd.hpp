@@ -23,6 +23,7 @@
 
 #include <QBoxLayout>
 #include <QAction>
+#include <QToolBar>
 
 #include "P4WinSphere.hpp"
 
@@ -53,6 +54,8 @@ class P4ZoomWnd : public QMainWindow
     std::unique_ptr<QAction> actClose_;
     std::unique_ptr<QAction> actRefresh_;
     std::unique_ptr<QAction> actPrint_;
+
+    std::unique_ptr<QToolBar> toolBar1_;
 
     double x1_, x2_, y1_, y2_;
 
