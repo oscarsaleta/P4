@@ -22,6 +22,7 @@
 #include <QWidget>
 
 #include <QBoxLayout>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -29,8 +30,8 @@
 
 #include <memory>
 
-#include "P4WinInputSphere.hpp"
 #include "P4ViewDlg.hpp"
+#include "P4WinInputSphere.hpp"
 
 class QListWidgetItem;
 
@@ -54,7 +55,15 @@ class P4SeparatingCurvesDlg : public QWidget
     P4FindDlg *parent_;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
+    std::unique_ptr<QBoxLayout> layoutA_;
+    std::unique_ptr<QBoxLayout> layoutB_;
+    std::unique_ptr<QHBoxLayout> layout1_;
+    std::unique_ptr<QHBoxLayout> layout1a_;
+    std::unique_ptr<QHBoxLayout> layout2_;
+    std::unique_ptr<QHBoxLayout> layout3_;
 
+    std::unique_ptr<QLabel> p4title_;
+    std::unique_ptr<QLabel> p4title2_;
     std::unique_ptr<QLabel> lbl_status_;
     std::unique_ptr<QLabel> lbl_vf_or_curves_;
     std::unique_ptr<QLabel> lbl_info_;

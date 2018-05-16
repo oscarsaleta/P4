@@ -31,11 +31,11 @@
 P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     : QWidget{}, parent_{parent}
 {
-    auto p4title = std::make_unique<QLabel>("Region Separating Curves:", this);
-    p4title->setFont(gP4app->getTitleFont());
+    p4title_ = std::make_unique<QLabel>("Region Separating Curves:", this);
+    p4title_->setFont(gP4app->getTitleFont());
 
-    auto p4title2 = std::make_unique<QLabel>("Vector Field List:", this);
-    p4title2->setFont(gP4app->getTitleFont());
+    p4title2_ = std::make_unique<QLabel>("Vector Field List:", this);
+    p4title2_->setFont(gP4app->getTitleFont());
 
     btn_add_ = std::make_unique<QPushButton>("&Add", this);
     btn_del_ = std::make_unique<QPushButton>("&Del", this);
@@ -82,51 +82,51 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
 
     // layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::LeftToRight, this);
-    auto layoutA = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
-    auto layoutB = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
-    layoutA->addWidget(p4title.get());
+    layoutA_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    layoutB_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    layoutA_->addWidget(p4title_.get());
 
-    auto layout1 = std::make_unique<QHBoxLayout>();
-    layout1->addWidget(btn_add_.get());
-    layout1->addWidget(btn_del_.get());
-    auto layout1a = std::make_unique<QHBoxLayout>();
-    layout1a->addWidget(lbl_numpoints_.get());
-    layout1a->addWidget(edt_numpoints_.get());
+    layout1_ = std::make_unique<QHBoxLayout>();
+    layout1_->addWidget(btn_add_.get());
+    layout1_->addWidget(btn_del_.get());
+    layout1a_ = std::make_unique<QHBoxLayout>();
+    layout1a_->addWidget(lbl_numpoints_.get());
+    layout1a_->addWidget(edt_numpoints_.get());
 
-    layout1->addWidget(btn_edit_.get());
-    layoutA->addLayout(layout1.get());
-    layoutA->addWidget(lst_curves_.get());
-    layoutA->addLayout(layout1a.get());
-    layoutA->addWidget(p4title2.get());
-    layoutA->addWidget(lst_vfs_.get());
+    layout1_->addWidget(btn_edit_.get());
+    layoutA_->addLayout(layout1_.get());
+    layoutA_->addWidget(lst_curves_.get());
+    layoutA_->addLayout(layout1a_.get());
+    layoutA_->addWidget(p4title2_.get());
+    layoutA_->addWidget(lst_vfs_.get());
 
-    auto layout2 = std::make_unique<QHBoxLayout>();
-    layout2->addWidget(lbl_vf_or_curves_.get());
-    layout2->addWidget(btn_mark_.get());
-    layout2->addWidget(btn_unmark_.get());
-    layout2->addWidget(btn_resetmarks_.get());
-    layout2->addStretch(1);
+    layout2_ = std::make_unique<QHBoxLayout>();
+    layout2_->addWidget(lbl_vf_or_curves_.get());
+    layout2_->addWidget(btn_mark_.get());
+    layout2_->addWidget(btn_unmark_.get());
+    layout2_->addWidget(btn_resetmarks_.get());
+    layout2_->addStretch(1);
 
-    auto layout3 = std::make_unique<QHBoxLayout>();
-    layout3->addWidget(btn_refresh_.get());
-    layout3->addWidget(btn_eval_.get());
-    layout3->addWidget(btn_view_.get());
-    layout3->addWidget(btn_zoomout_.get());
-    layout3->addStretch(1);
+    layout3_ = std::make_unique<QHBoxLayout>();
+    layout3_->addWidget(btn_refresh_.get());
+    layout3_->addWidget(btn_eval_.get());
+    layout3_->addWidget(btn_view_.get());
+    layout3_->addWidget(btn_zoomout_.get());
+    layout3_->addStretch(1);
 
-    layoutB->addLayout(layout2.get());
-    layoutB->addWidget(lbl_info_.get());
-    layoutB->addLayout(layout3.get());
-    layoutB->addWidget(isphere_.get());
-    layoutB->addWidget(lbl_status_.get());
+    layoutB_->addLayout(layout2_.get());
+    layoutB_->addWidget(lbl_info_.get());
+    layoutB_->addLayout(layout3_.get());
+    layoutB_->addWidget(isphere_.get());
+    layoutB_->addWidget(lbl_status_.get());
 
-    layoutB->setStretchFactor(isphere_.get(), 1);
-    layoutB->setStretchFactor(lbl_status_.get(), 0);
+    layoutB_->setStretchFactor(isphere_.get(), 1);
+    layoutB_->setStretchFactor(lbl_status_.get(), 0);
 
-    mainLayout_->addLayout(layoutA.get());
-    mainLayout_->addLayout(layoutB.get());
-    mainLayout_->setStretchFactor(layoutA.get(), 0);
-    mainLayout_->setStretchFactor(layoutB.get(), 2);
+    mainLayout_->addLayout(layoutA_.get());
+    mainLayout_->addLayout(layoutB_.get());
+    mainLayout_->setStretchFactor(layoutA_.get(), 0);
+    mainLayout_->setStretchFactor(layoutB_.get(), 2);
     setLayout(mainLayout_.get());
 
     // connections
