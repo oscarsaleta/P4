@@ -92,7 +92,7 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
     spin_weakness_->setMinimum(MINWEAKNESS);
     spin_weakness_->setMaximum(MAXWEAKNESS);
 
-    auto lbl_p_ = new QLabel{"p:", this};
+    lbl_p_ = new QLabel{"p:", this};
     lbl_p_->setFont(gP4app->getBoldFont());
     spin_p_ = new QSpinBox{this};
     spin_p_->setMinimum(MINP);
