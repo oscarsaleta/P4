@@ -21,12 +21,10 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-
-#include <memory>
+class QBoxLayout;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
 
 class P4PlotWnd;
 class P4WinSphere;
@@ -49,19 +47,19 @@ class P4ArbitraryCurveDlg : public QWidget
     P4WinSphere *mainSphere_;
     P4PlotWnd *plotwnd_;
 
-    std::unique_ptr<QPushButton> btnEvaluate_;
-    std::unique_ptr<QPushButton> btnPlot_;
-    std::unique_ptr<QPushButton> btnDelLast_;
-    std::unique_ptr<QPushButton> btnDelAll_;
+    QPushButton* btnEvaluate_;
+    QPushButton* btnPlot_;
+    QPushButton* btnDelLast_;
+    QPushButton* btnDelAll_;
 
-    std::unique_ptr<QRadioButton> btn_dots_;
-    std::unique_ptr<QRadioButton> btn_dashes_;
-    std::unique_ptr<QLineEdit> edt_curve_;
-    std::unique_ptr<QLineEdit> edt_points_;
-    std::unique_ptr<QLineEdit> edt_precis_;
-    std::unique_ptr<QLineEdit> edt_memory_;
+    QRadioButton* btn_dots_;
+    QRadioButton* btn_dashes_;
+    QLineEdit* edt_curve_;
+    QLineEdit* edt_points_;
+    QLineEdit* edt_precis_;
+    QLineEdit* edt_memory_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QBoxLayout* mainLayout_;
 
     int evaluating_points_{false};
     int evaluating_memory_{false};
