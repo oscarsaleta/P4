@@ -66,7 +66,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
                      &P4ZoomWnd::onBtnPrint);
     toolBar1_->addAction(actPrint_.get());
 
-    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
+    QObject::connect(gThisVF, &P4InputVF::saveSignal, this,
                      &P4ZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
@@ -146,7 +146,7 @@ void P4ZoomWnd::onBtnPrint()
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
             gP4printer->setResolution(res);
-            QPrintDialog dialog{gP4printer.get(), this};
+            QPrintDialog dialog{gP4printer, this};
             if (!dialog.exec())
                 return;
             res = gP4printer->resolution();

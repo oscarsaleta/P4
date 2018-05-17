@@ -2564,7 +2564,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
     case P4PRINT_DEFAULT:
         staticPainter_ = std::make_unique<QPainter>();
 
-        if (!staticPainter_->begin(gP4printer.get())) {
+        if (!staticPainter_->begin(gP4printer)) {
             staticPainter_.reset();
             return;
         }
