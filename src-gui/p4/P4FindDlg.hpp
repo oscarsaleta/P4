@@ -21,18 +21,19 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QPushButton>
-#include <QRadioButton>
+class QGridLayout;
+class QBoxLayout;
+class QHBoxLayout;
+class QButtonGroup;
+class QLabel;
+class QRadioButton;
+class QPushButton;
 
-#include <memory>
-
-#include "P4ParamsDlg.hpp"
-#include "P4SeparatingCurvesDlg.hpp"
-#include "P4VFSelectDlg.hpp"
-#include "P4VectorFieldDlg.hpp"
-
+class P4ParamsDlg;
+class P4SeparatingCurvesDlg;
 class P4StartDlg;
+class P4VFSelectDlg;
+class P4VectorFieldDlg;
 
 class P4FindDlg : public QWidget
 {
@@ -52,43 +53,43 @@ class P4FindDlg : public QWidget
   private:
     P4StartDlg *parent_;
 
-    std::unique_ptr<QGridLayout> superLayout_;
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QBoxLayout> parLayout_;
-    std::unique_ptr<QBoxLayout> vfLayout_;
-    std::unique_ptr<QBoxLayout> vfSelectLayout_;
+    QGridLayout *superLayout_;
+    QBoxLayout *mainLayout_;
+    QBoxLayout *parLayout_;
+    QBoxLayout *vfLayout_;
+    QBoxLayout *vfSelectLayout_;
 
-    std::unique_ptr<QHBoxLayout> actLayout_;
-    std::unique_ptr<QHBoxLayout> singlineLayout_;
-    std::unique_ptr<QGridLayout> singLayout_;
-    std::unique_ptr<QHBoxLayout> layout0_;
-    std::unique_ptr<QGridLayout> layout1_;
+    QHBoxLayout *actLayout_;
+    QHBoxLayout *singlineLayout_;
+    QGridLayout *singLayout_;
+    QHBoxLayout *layout0_;
+    QGridLayout *layout1_;
 
-    std::unique_ptr<QButtonGroup> btngrp1_;
-    std::unique_ptr<QButtonGroup> btngrp2_;
-    std::unique_ptr<QButtonGroup> btngrp3_;
+    QButtonGroup *btngrp1_;
+    QButtonGroup *btngrp2_;
+    QButtonGroup *btngrp3_;
 
-    std::unique_ptr<QLabel> p4title_;
-    std::unique_ptr<QLabel> actlabel_;
-    std::unique_ptr<QLabel> singpoints_;
-    std::unique_ptr<QLabel> saveall_;
+    QLabel *p4title_;
+    QLabel *actlabel_;
+    QLabel *singpoints_;
+    QLabel *saveall_;
 
-    std::unique_ptr<QRadioButton> btn_actionrun_;
-    std::unique_ptr<QRadioButton> btn_actionprep_;
-    std::unique_ptr<QRadioButton> btn_all_;
-    std::unique_ptr<QRadioButton> btn_fin_;
-    std::unique_ptr<QRadioButton> btn_inf_;
-    std::unique_ptr<QRadioButton> btn_one_;
-    std::unique_ptr<QRadioButton> btn_yes_;
-    std::unique_ptr<QRadioButton> btn_no_;
-    std::unique_ptr<QPushButton> btn_load_;
-    std::unique_ptr<QPushButton> btn_save_;
-    std::unique_ptr<QPushButton> btn_eval_;
+    QRadioButton *btn_actionrun_;
+    QRadioButton *btn_actionprep_;
+    QRadioButton *btn_all_;
+    QRadioButton *btn_fin_;
+    QRadioButton *btn_inf_;
+    QRadioButton *btn_one_;
+    QRadioButton *btn_yes_;
+    QRadioButton *btn_no_;
+    QPushButton *btn_load_;
+    QPushButton *btn_save_;
+    QPushButton *btn_eval_;
 
-    std::unique_ptr<P4VectorFieldDlg> vfWindow_;
-    std::unique_ptr<P4ParamsDlg> paramsWindow_;
-    std::unique_ptr<P4VFSelectDlg> vfSelectWindow_;
-    std::unique_ptr<P4SeparatingCurvesDlg> piecewiseConfigWindow_;
+    P4VectorFieldDlg *vfWindow_ = nullptr;
+    P4ParamsDlg *paramsWindow_ = nullptr;
+    P4VFSelectDlg *vfSelectWindow_ = nullptr;
+    P4SeparatingCurvesDlg *piecewiseConfigWindow_ = nullptr;
 
     // void saveSettings();
     // void readSettings();
