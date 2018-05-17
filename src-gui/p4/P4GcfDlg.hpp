@@ -21,12 +21,10 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-
-#include <memory>
+class QBoxLayout;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
 
 class P4WinSphere;
 class P4PlotWnd;
@@ -49,15 +47,15 @@ class P4GcfDlg : public QWidget
     P4PlotWnd *plotwnd_;
     P4WinSphere *mainSphere_;
 
-    std::unique_ptr<QPushButton> btn_evaluate_;
+    QPushButton *btn_evaluate_;
 
-    std::unique_ptr<QRadioButton> btn_dots_;
-    std::unique_ptr<QRadioButton> btn_dashes_;
-    std::unique_ptr<QLineEdit> edt_points_;
-    std::unique_ptr<QLineEdit> edt_precis_;
-    std::unique_ptr<QLineEdit> edt_memory_;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_points_;
+    QLineEdit *edt_precis_;
+    QLineEdit *edt_memory_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QBoxLayout *mainLayout_;
 
     int evaluating_points_;
     int evaluating_memory_;
