@@ -26,6 +26,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
 #include "P4StartDlg.hpp"
 #include "main.hpp"
 
@@ -251,7 +252,7 @@ void P4VFSelectDlg::onBtnP4Config()
 
     win_curves_ = parent_->getPiecewiseConfigWindowPtr();
 
-    if (parent_->getPiecewiseConfigWindowPtr() == nullptr) {
+    if (win_curves_ == nullptr) {
         gVFResults.readTables(gThisVF->getbarefilename(), true, true);
         parent_->createPiecewiseConfigWindow();
         win_curves_ = parent_->getPiecewiseConfigWindowPtr();
