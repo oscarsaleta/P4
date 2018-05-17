@@ -21,15 +21,15 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QLabel>
-
-#include <memory>
-
 #include "custom.hpp"
+
+class QBoxLayout;
+class QGridLayout;
+class QHBoxLayout;
+class QLineEdit;
+class QPushButton;
+class QSpinBox;
+class QLabel;
 
 class P4PlotWnd;
 class P4WinSphere;
@@ -52,33 +52,33 @@ class P4LimitCyclesDlg : public QWidget
     P4PlotWnd *plotwnd_;
     P4WinSphere *mainSphere_;
 
-    std::unique_ptr<QPushButton> btn_start_;
-    std::unique_ptr<QPushButton> btn_cancel_;
-    std::unique_ptr<QPushButton> btn_delall_;
-    std::unique_ptr<QPushButton> btn_dellast_;
+    QPushButton *btn_start_;
+    QPushButton *btn_cancel_;
+    QPushButton *btn_delall_;
+    QPushButton *btn_dellast_;
 
-    std::unique_ptr<QLineEdit> edt_x0_;
-    std::unique_ptr<QLineEdit> edt_y0_;
-    std::unique_ptr<QLineEdit> edt_x1_;
-    std::unique_ptr<QLineEdit> edt_y1_;
-    std::unique_ptr<QLineEdit> edt_grid_;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_y0_;
+    QLineEdit *edt_x1_;
+    QLineEdit *edt_y1_;
+    QLineEdit *edt_grid_;
 
-    std::unique_ptr<QLabel> lbl1_;
-    std::unique_ptr<QLabel> lbl2_;
-    std::unique_ptr<QLabel> lbl3_;
-    std::unique_ptr<QLabel> lbl4_;
-    std::unique_ptr<QLabel> lbl5_;
-    std::unique_ptr<QLabel> lbl6_;
+    QLabel *lbl1_;
+    QLabel *lbl2_;
+    QLabel *lbl3_;
+    QLabel *lbl4_;
+    QLabel *lbl5_;
+    QLabel *lbl6_;
 
-    std::unique_ptr<QGridLayout> lay00_;
-    std::unique_ptr<QHBoxLayout> layout1_;
-    std::unique_ptr<QHBoxLayout> layout2_;
-    std::unique_ptr<QHBoxLayout> layout3_;
-    std::unique_ptr<QHBoxLayout> layout4_;
+    QGridLayout *lay00_;
+    QHBoxLayout *layout1_;
+    QHBoxLayout *layout2_;
+    QHBoxLayout *layout3_;
+    QHBoxLayout *layout4_;
 
-    std::unique_ptr<QSpinBox> spin_numpoints_;
+    QSpinBox *spin_numpoints_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QBoxLayout *mainLayout_;
 
     double selected_x0_{0};
     double selected_y0_{0};
