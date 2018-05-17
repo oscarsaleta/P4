@@ -202,10 +202,12 @@ int main(int argc, char *argv[])
 
     returnvalue = gP4app->exec();
 
-    gP4printer.reset();
-
     saveP4Settings();
 
+    gP4smallIcon.reset();
+    gP4printer.reset();
+    gThisVF.reset();
+    // gP4startDlg.reset();
     gP4app.reset();
 
     return returnvalue;
