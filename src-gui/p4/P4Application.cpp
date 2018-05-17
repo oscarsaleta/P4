@@ -19,6 +19,8 @@
 
 #include "P4Application.hpp"
 
+#include <QFont>
+
 #include "P4Event.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
@@ -28,38 +30,53 @@
 
 P4Application::P4Application(int &argc, char **argv) : QApplication{argc, argv}
 {
-    standardFont_ = std::make_unique<QFont>();
+    standardFont_ = new QFont();
     standardFont_->setPointSize(standardFont_->pointSize() + FONTSIZE);
     setFont(*standardFont_);
 
-    boldFont_ = std::make_unique<QFont>();
+    boldFont_ = new QFont();
     boldFont_->setWeight(QFont::Bold);
 
-    titleFont_ = std::make_unique<QFont>();
+    titleFont_ = new QFont();
     titleFont_->setPointSize(titleFont_->pointSize() + TITLEFONTSIZE);
     titleFont_->setWeight(QFont::Bold);
 
-    courierFont_ = std::make_unique<QFont>();
+    courierFont_ = new QFont();
     courierFont_->setFamily("Courier");
     courierFont_->setFixedPitch(true);
     courierFont_->setPointSize(courierFont_->pointSize() + FONTSIZE);
 
-    boldCourierFont_ = std::make_unique<QFont>();
+    boldCourierFont_ = new QFont();
     boldCourierFont_->setFamily("Courier");
     boldCourierFont_->setFixedPitch(true);
     boldCourierFont_->setWeight(QFont::Bold);
     boldCourierFont_->setPointSize(boldCourierFont_->pointSize() + FONTSIZE);
 
-    legendFont_ = std::make_unique<QFont>();
+    legendFont_ = new QFont();
     legendFont_->setFamily("Courier");
     legendFont_->setFixedPitch(true);
     legendFont_->setPointSize(legendFont_->pointSize() + LEGENDFONTSIZE);
 }
 
+/*P4Application::~P4Application()
+{
+    if (standardFont_ != nullptr)
+        delete standardFont_;
+    if (boldFont_ != nullptr)
+        delete boldFont_;
+    if (titleFont_ != nullptr)
+        delete titleFont_;
+    if (courierFont_ != nullptr)
+        delete courierFont_;
+    if (boldCourierFont_ != nullptr)
+        delete boldCourierFont_;
+    if (legendFont_ != nullptr)
+        delete legendFont_;
+}*/
+
 // -----------------------------------------------------------------------
 //                          SIGNALS
 // -----------------------------------------------------------------------
-//
 // Following signals may be called from another thread
 
 void P4Application::signalChanged()
@@ -67,9 +84,9 @@ void P4Application::signalChanged()
     gThisVF->evaluated_ = false;
     gThisVF->changed_ = true;
 
-    auto e = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_SIGNAL_CHANGED), nullptr);
-    gP4app->postEvent(gP4startDlg.get(), e.release());
+    auto e =
+        new P4Event{static_cast<QEvent::Type>(TYPE_SIGNAL_CHANGED), nullptr};
+    gP4app->postEvent(gP4startDlg, e);
 }
 
 void P4Application::signalEvaluated(int exitCode)
@@ -79,9 +96,9 @@ void P4Application::signalEvaluated(int exitCode)
 
     gThisVF->finishEvaluation(exitCode);
 
-    auto e = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_SIGNAL_EVALUATED), nullptr);
-    gP4app->postEvent(gP4startDlg.get(), e.release());
+    auto e =
+        new P4Event{static_cast<QEvent::Type>(TYPE_SIGNAL_EVALUATED), nullptr};
+    gP4app->postEvent(gP4startDlg, e);
 
     if (gCmdLineAutoExit) {
         gCmdLineAutoPlot = false;
@@ -123,9 +140,9 @@ void P4Application::catchProcessError(QProcess::ProcessError qperr)
 
 void P4Application::signalLoaded()
 {
-    auto e = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_SIGNAL_LOADED), nullptr);
-    gP4app->postEvent(gP4startDlg.get(), e.release());
+    auto e =
+        new P4Event{static_cast<QEvent::Type>(TYPE_SIGNAL_LOADED), nullptr};
+    gP4app->postEvent(gP4startDlg, e);
 
     if (gCmdLineAutoEvaluate) {
         gCmdLineAutoEvaluate = false;
@@ -141,19 +158,18 @@ void P4Application::signalLoaded()
 
 void P4Application::signalSaved()
 {
-    auto e = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_SIGNAL_SAVED), nullptr);
-    gP4app->postEvent(gP4startDlg.get(), e.release());
+    auto e = new P4Event{static_cast<QEvent::Type>(TYPE_SIGNAL_SAVED), nullptr};
+    gP4app->postEvent(gP4startDlg, e);
 }
 
-QFont P4Application::getStandardFont() const { return *standardFont_; }
+QFont &P4Application::getStandardFont() const { return *standardFont_; }
 
-QFont P4Application::getBoldFont() const { return *boldFont_; }
+QFont &P4Application::getBoldFont() const { return *boldFont_; }
 
-QFont P4Application::getTitleFont() const { return *titleFont_; }
+QFont &P4Application::getTitleFont() const { return *titleFont_; }
 
-QFont P4Application::getCourierFont() const { return *courierFont_; }
+QFont &P4Application::getCourierFont() const { return *courierFont_; }
 
-QFont P4Application::getBoldCourierFont() const { return *boldCourierFont_; }
+QFont &P4Application::getBoldCourierFont() const { return *boldCourierFont_; }
 
-QFont P4Application::getLegendFont() const { return *legendFont_; }
+QFont &P4Application::getLegendFont() const { return *legendFont_; }

@@ -21,7 +21,6 @@
 
 #include <QApplication>
 
-#include <QFont>
 #include <QProcess>
 
 #include <memory>
@@ -40,13 +39,14 @@ class P4Application : public QApplication
 
   public:
     P4Application(int &argc, char **argv);
+    //~P4Application();
 
-    QFont getStandardFont() const;
-    QFont getBoldFont() const;
-    QFont getCourierFont() const;
-    QFont getBoldCourierFont() const;
-    QFont getTitleFont() const;
-    QFont getLegendFont() const;
+    QFont &getStandardFont() const;
+    QFont &getBoldFont() const;
+    QFont &getCourierFont() const;
+    QFont &getBoldCourierFont() const;
+    QFont &getTitleFont() const;
+    QFont &getLegendFont() const;
 
   public slots:
     void signalEvaluated(int);
@@ -59,12 +59,12 @@ class P4Application : public QApplication
     void catchProcessError(QProcess::ProcessError);
 
   private:
-    std::unique_ptr<QFont> standardFont_;
-    std::unique_ptr<QFont> boldFont_;
-    std::unique_ptr<QFont> courierFont_;
-    std::unique_ptr<QFont> boldCourierFont_;
-    std::unique_ptr<QFont> titleFont_;
-    std::unique_ptr<QFont> legendFont_;
+    QFont *standardFont_;
+    QFont *boldFont_;
+    QFont *courierFont_;
+    QFont *boldCourierFont_;
+    QFont *titleFont_;
+    QFont *legendFont_;
 };
 
-extern std::unique_ptr<P4Application> gP4app;
+extern P4Application *gP4app;
