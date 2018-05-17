@@ -19,13 +19,12 @@
 
 #pragma once
 
-#include <QBoxLayout>
 #include <QDialog>
+
 #include <QPixmap>
-#include <QPushButton>
 
-#include <memory>
-
+class QBoxLayout;
+class QPushButton;
 class QWidget;
 
 class P4AboutDlg : public QDialog
@@ -33,16 +32,16 @@ class P4AboutDlg : public QDialog
     Q_OBJECT
 
   public:
-    P4AboutDlg(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    P4AboutDlg(QWidget *parent = nullptr, Qt::WindowFlags f = 0);
 
   public slots:
     void onOk();
     void onSettings();
 
   private:
-    std::unique_ptr<QPushButton> btn_ok_;
-    std::unique_ptr<QPushButton> btn_settings_;
+    QPushButton *btn_ok_;
+    QPushButton *btn_settings_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QBoxLayout *mainLayout_;
     QPixmap p4image_;
 };

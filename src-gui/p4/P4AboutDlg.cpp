@@ -19,9 +19,11 @@
 
 #include "P4AboutDlg.hpp"
 
+#include <QBoxLayout>
 #include <QGridLayout>
 #include <QLabel>
-#include <memory>
+#include <QPushButton>
+#include <QWidget>
 
 #include "P4SettingsDlg.hpp"
 #include "main.hpp"
@@ -38,8 +40,8 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     if (gP4smallIcon)
         setWindowIcon(*gP4smallIcon);
 
-    btn_ok_ = std::make_unique<QPushButton>("&Ok");
-    btn_settings_ = std::make_unique<QPushButton>("&Main Settings");
+    btn_ok_ = new QPushButton{"&Ok", this};
+    btn_settings_ = new QPushButton{"&Main Settings", this};
 
 #ifdef TOOLTIPS
     btn_ok_->setToolTip("Go back to program");
@@ -48,61 +50,58 @@ P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
     // define placement of controls
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    auto lay00 = std::make_unique<QGridLayout>();
-    auto label1 =
-        std::make_unique<QLabel>("P4 (Planar Polynomial Phase Portraits) by");
-    auto label2 = std::make_unique<QLabel>("");
-    auto label3 = std::make_unique<QLabel>(
-        "    J.C. Artés (Universitat Autònoma de Barcelona)");
+    auto lay00 = new QGridLayout{};
+    auto label1 = new QLabel{"P4 (Planar Polynomial Phase Portraits) by", this};
+    auto label2 = new QLabel{"", this};
+    auto label3 =
+        new QLabel{"    J.C. Artés (Universitat Autònoma de Barcelona)", this};
     auto label4 =
-        std::make_unique<QLabel>("    P. De Maesschalck (Hasselt University)");
-    auto label5 =
-        std::make_unique<QLabel>("    F. Dumortier (Hasselt University)");
-    auto label6 =
-        std::make_unique<QLabel>("    C. Herssens (Hasselt University)");
-    auto label7 = std::make_unique<QLabel>(
-        "    J. Llibre (Universitat Autònoma de Barcelona)");
-    auto label8 = std::make_unique<QLabel>(
-        "    O. Saleta (Universitat Autònoma de Barcelona)");
-    auto label9 = std::make_unique<QLabel>(
-        "    J. Torregrosa (Universitat Autònoma de Barcelona)");
-    auto label10 = std::make_unique<QLabel>("");
-    auto label11 = std::make_unique<QLabel>(" Version " + gP4version + "   " +
-                                            gP4versionDate + " " + gP4platform);
+        new QLabel{"    P. De Maesschalck (Hasselt University)", this};
+    auto label5 = new QLabel{"    F. Dumortier (Hasselt University)", this};
+    auto label6 = new QLabel{"    C. Herssens (Hasselt University)", this};
+    auto label7 =
+        new QLabel{"    J. Llibre (Universitat Autònoma de Barcelona)", this};
+    auto label8 =
+        new QLabel{"    O. Saleta (Universitat Autònoma de Barcelona)", this};
+    auto label9 = new QLabel{
+        "    J. Torregrosa (Universitat Autònoma de Barcelona)", this};
+    auto label10 = new QLabel{"", this};
+    auto label11 = new QLabel{" Version " + gP4version + "   " +
+                                  gP4versionDate + " " + gP4platform,
+                              this};
 
-    lay00->addWidget(label1.get(), 0, 1);
-    lay00->addWidget(label1.get(), 1, 1);
-    lay00->addWidget(label3.get(), 2, 1);
-    lay00->addWidget(label4.get(), 3, 1);
-    lay00->addWidget(label5.get(), 4, 1);
-    lay00->addWidget(label6.get(), 5, 1);
-    lay00->addWidget(label7.get(), 6, 1);
-    lay00->addWidget(label8.get(), 7, 1);
-    lay00->addWidget(label9.get(), 8, 1);
-    lay00->addWidget(label10.get(), 9, 1);
-    lay00->addWidget(label11.get(), 10, 1);
+    lay00->addWidget(label1, 0, 1);
+    lay00->addWidget(label2, 1, 1);
+    lay00->addWidget(label3, 2, 1);
+    lay00->addWidget(label4, 3, 1);
+    lay00->addWidget(label5, 4, 1);
+    lay00->addWidget(label6, 5, 1);
+    lay00->addWidget(label7, 6, 1);
+    lay00->addWidget(label8, 7, 1);
+    lay00->addWidget(label9, 8, 1);
+    lay00->addWidget(label10, 9, 1);
+    lay00->addWidget(label11, 10, 1);
 
-    auto l = std::make_unique<QLabel>("(missing image)");
+    auto l = new QLabel{"(missing image)", this};
     if (p4image_.load(getP4BinPath() + "/portrait.png"))
         l->setPixmap(p4image_);
 
-    lay00->addWidget(l.get(), 0, 0, 10, 1);
+    lay00->addWidget(l, 0, 0, 10, 1);
 
-    mainLayout_->addLayout(lay00.get());
-    auto buttons = std::make_unique<QHBoxLayout>();
+    mainLayout_->addLayout(lay00);
+    auto buttons = new QHBoxLayout{};
     buttons->addStretch(1);
-    buttons->addWidget(btn_ok_.get());
+    buttons->addWidget(btn_ok_);
     buttons->addStretch(0);
-    buttons->addWidget(btn_settings_.get());
-    mainLayout_->addLayout(buttons.get());
-    setLayout(mainLayout_.get());
+    buttons->addWidget(btn_settings_);
+    mainLayout_->addLayout(buttons);
+    setLayout(mainLayout_);
 
     // connections
-    QObject::connect(btn_ok_.get(), &QPushButton::clicked, this,
-                     &P4AboutDlg::onOk);
-    QObject::connect(btn_settings_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_ok_, &QPushButton::clicked, this, &P4AboutDlg::onOk);
+    QObject::connect(btn_settings_, &QPushButton::clicked, this,
                      &P4AboutDlg::onSettings);
 
     btn_ok_->setFocus();
@@ -115,10 +114,10 @@ void P4AboutDlg::onOk() { done(0); }
 void P4AboutDlg::onSettings()
 {
     int value;
-    auto psettings =
-        std::make_unique<P4SettingsDlg>(this, static_cast<Qt::WindowFlags>(0));
+    auto psettings = new P4SettingsDlg{this, static_cast<Qt::WindowFlags>(0)};
     value = psettings->exec();
-    psettings.reset();
+    delete psettings;
+    psettings = nullptr;
     if (value)
         done(0);
 }
