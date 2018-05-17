@@ -33,8 +33,8 @@
 
 P4IntParamsDlg::~P4IntParamsDlg() { getDataFromDlg(); }
 
-P4IntParamsDlg::P4IntParamsDlg()
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint)
+P4IntParamsDlg::P4IntParamsDlg(QWidget *parent)
+    : QWidget(parent, Qt::Tool | Qt::WindowStaysOnTopHint)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 

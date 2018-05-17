@@ -33,7 +33,7 @@ class P4IntParamsDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4IntParamsDlg();
+    P4IntParamsDlg(QWidget *parent = nullptr);
     ~P4IntParamsDlg();
 
     void getDataFromDlg();

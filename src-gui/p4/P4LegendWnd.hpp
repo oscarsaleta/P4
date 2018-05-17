@@ -28,7 +28,7 @@ class P4LegendWnd : public QWidget
     Q_OBJECT
 
   public:
-    P4LegendWnd();
+    P4LegendWnd(QWidget *parent = nullptr);
 
     void paintEvent(QPaintEvent *);
     void calculateGeometry();

@@ -73,8 +73,8 @@ P4RGBITEM gXFigToRGB[NUMXFIGCOLORS] = {
 //                              LEGEND
 // -----------------------------------------------------------------------
 
-P4LegendWnd::P4LegendWnd()
-    : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint}
+P4LegendWnd::P4LegendWnd(QWidget *parent)
+    : QWidget{parent, Qt::Tool | Qt::WindowStaysOnTopHint}
 {
     int w, h;
 
