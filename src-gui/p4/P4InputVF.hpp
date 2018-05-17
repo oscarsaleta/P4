@@ -19,20 +19,13 @@
 
 #pragma once
 
-#include <memory>
+#include <QObject>
+
 #include <vector>
 
-#include <QMetaObject>
-#include <QObject>
 #include <QProcess>
-#include <QPushButton>
 #include <QString>
-#include <QTextEdit>
-#include <QWidget>
 
-#include "P4ArbitraryCurveDlg.hpp"
-#include "P4GcfDlg.hpp"
-#include "P4IsoclinesDlg.hpp"
 #include "custom.hpp"
 
 #define TYPEOFSTUDY_ALL 0
@@ -49,10 +42,17 @@
 #endif
 
 // forward class and struct declarations
+class QMetaObject;
+class QProcess;
+class QPushButton;
+class QTextEdit;
 class QTextStream;
+class QWidget;
 
+class P4ArbitraryCurveDlg;
 class P4FindDlg;
-
+class P4GcfDlg;
+class P4IsoclinesDlg;
 
 namespace p4polynom
 {
@@ -74,7 +74,7 @@ struct curveRegion {
     {
     }
 };
-}
+} // namespace p4InputVFRegions
 
 class P4InputVF : public QObject
 {
@@ -122,14 +122,14 @@ class P4InputVF : public QObject
     // EVALUATION VARIABLES
     QString evalFile_;
     QString evalFile2_;
-    std::unique_ptr<QProcess> evalProcess_;
-    std::unique_ptr<QMetaObject::Connection> evalProcessFinishedConnection_;
+    QProcess *evalProcess_;
+    QMetaObject::Connection *evalProcessFinishedConnection_;
 
     // QT GUI ELEMENTS FIXME need to be public?
-    std::unique_ptr<QWidget> outputWindow_;
-    std::unique_ptr<QTextEdit> processText_;
-    std::unique_ptr<QPushButton> terminateProcessButton_;
-    std::unique_ptr<QPushButton> clearProcessButton_;
+    QWidget *outputWindow_;
+    QTextEdit *processText_;
+    QPushButton *terminateProcessButton_;
+    QPushButton *clearProcessButton_;
 
     // PARAMETER LIST
     int numParams_{0};
@@ -237,25 +237,45 @@ class P4InputVF : public QObject
     void setCommonParValue(int, QString);
 
     // FILENAMES
-    QString getfilename() const;            // filename.inp
-    QString getbarefilename() const;        // filename
-    QString getfilename_finresults() const; // filename_fin.res
-    QString getfilename_infresults() const; // filename_inf.res
-    QString getfilename_fintable() const;   // filename_fin.tab
-    QString getfilename_inftable() const;   // filename_inf.tab
-    QString getfilename_vectable() const;   // filename_vec.tab
-    QString getfilename_gcf() const;        // filename_gcf.tab (temporary file)
-    QString getmaplefilename() const;       // filename.txt
+
+    // filename.inp
+    QString getfilename() const;
+    // filename
+    QString getbarefilename() const;
+    // filename_fin.res
+    QString getfilename_finresults() const;
+    // filename_inf.res
+    QString getfilename_infresults() const;
+    // filename_fin.tab
+    QString getfilename_fintable() const;
+    // filename_inf.tab
+    QString getfilename_inftable() const;
+    // filename_vec.tab
+    QString getfilename_vectable() const;
+    // filename_gcf.tab (temporary file)
+    QString getfilename_gcf() const;
+    // filename.txt
+    QString getmaplefilename() const;
+
     // curve filenames
-    QString getfilename_arbitrarycurvetable() const; // filename_veccurve.tab
-    QString getfilename_arbitrarycurve() const;      // filename_curve.tab (tmp)
-    QString getPrepareArbitraryCurveFileName() const; // filename_curve_prep.txt
+    // filename_veccurve.tab
+    QString getfilename_arbitrarycurvetable() const;
+    // filename_curve.tab (tmp)
+    QString getfilename_arbitrarycurve() const;
+    // filename_curve_prep.txt
+    QString getPrepareArbitraryCurveFileName() const;
+
     // isoclines filenames
-    QString getfilename_isoclinestable() const; // filename_vecisocline.tab
-    QString getfilename_isoclines() const; // filename_isocline.tab (tmp file)
-    QString getPrepareIsoclinesFileName() const; // filename_isocline_prep.txt
+    // filename_vecisocline.tab
+    QString getfilename_isoclinestable() const;
+    // filename_isocline.tab (tmp file)
+    QString getfilename_isoclines() const;
+    // filename_isocline_prep.txt
+    QString getPrepareIsoclinesFileName() const;
+
     // separating curve filename (filename_sepcurves.tab)
     QString getfilename_separatingcurveresults() const;
+
     // check if a file exists
     static bool fileExists(QString);
 
@@ -362,9 +382,9 @@ class P4InputVF : public QObject
   private:
     // P4 GUI ELEMENTS
     P4FindDlg *findDlg_;
-    std::unique_ptr<P4GcfDlg> gcfDlg_;
-    std::unique_ptr<P4ArbitraryCurveDlg> arbitraryCurveDlg_;
-    std::unique_ptr<P4IsoclinesDlg> isoclinesDlg_;
+    P4GcfDlg *gcfDlg_;
+    P4ArbitraryCurveDlg *arbitraryCurveDlg_;
+    P4IsoclinesDlg *isoclinesDlg_;
 };
 
-extern std::unique_ptr<P4InputVF> gThisVF;
+extern P4InputVF *gThisVF;
