@@ -19,6 +19,10 @@
 
 #include "P4PlotWnd.hpp"
 
+#include <QAction>
+#include <QBoxLayout>
+#include <QEvent>
+#include <QHideEvent>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QSettings>
@@ -26,121 +30,130 @@
 #include <QToolBar>
 
 #include "P4Application.hpp"
+#include "P4ArbitraryCurveDlg.hpp"
 #include "P4Event.hpp"
+#include "P4GcfDlg.hpp"
 #include "P4InputVF.hpp"
+#include "P4IntParamsDlg.hpp"
+#include "P4IsoclinesDlg.hpp"
+#include "P4LegendWnd.hpp"
+#include "P4LimitCyclesDlg.hpp"
+#include "P4OrbitsDlg.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PrintDlg.hpp"
+#include "P4SepDlg.hpp"
 #include "P4StartDlg.hpp"
+#include "P4ViewDlg.hpp"
+#include "P4WinSphere.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
 #include "plot_tools.hpp"
 
-P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
+P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 
     setAttribute(Qt::WA_PaintOnScreen, true);
     // setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
-    if (gP4smallIcon)
+    if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
 
     numZooms_ = 0;
     lastZoomIdentifier_ = 0;
     flagAllSepsPlotted_ = false;
 
-    auto toolBar1 = std::make_unique<QToolBar>("PlotBar1", this);
+    auto toolBar1 = new QToolBar{"PlotBar1", this};
     toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
 
-    auto toolBar2 = std::make_unique<QToolBar>("PlotBar2", this);
+    auto toolBar2 = new QToolBar{"PlotBar2", this};
     toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2->setMovable(false);
 
-    actClose_ = std::make_unique<QAction>("Clos&e", this);
+    actClose_ = new QAction{"Clos&e", this};
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    QObject::connect(actClose_.get(), &QAction::triggered, this,
+    QObject::connect(actClose_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnClose);
-    toolBar1->addAction(actClose_.get());
+    toolBar1->addAction(actClose_);
 
-    actRefresh_ = std::make_unique<QAction>("&Refresh", this);
+    actRefresh_ = new QAction{"&Refresh", this};
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    QObject::connect(actRefresh_.get(), &QAction::triggered, this,
+    QObject::connect(actRefresh_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnRefresh);
-    toolBar1->addAction(actRefresh_.get());
+    toolBar1->addAction(actRefresh_);
 
-    actLegend_ = std::make_unique<QAction>("&Legend", this);
+    actLegend_ = new QAction{"&Legend", this};
     actLegend_->setShortcut(Qt::ALT + Qt::Key_L);
-    QObject::connect(actLegend_.get(), &QAction::triggered, this,
+    QObject::connect(actLegend_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnLegend);
-    toolBar1->addAction(actLegend_.get());
+    toolBar1->addAction(actLegend_);
 
-    actOrbits_ = std::make_unique<QAction>("&Orbits", this);
+    actOrbits_ = new QAction{"&Orbits", this};
     actOrbits_->setShortcut(Qt::ALT + Qt::Key_O);
-    QObject::connect(actOrbits_.get(), &QAction::triggered, this,
+    QObject::connect(actOrbits_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnOrbits);
-    toolBar1->addAction(actOrbits_.get());
+    toolBar1->addAction(actOrbits_);
 
-    actIntParams_ = std::make_unique<QAction>("&Integration Parameters", this);
+    actIntParams_ = new QAction{"&Integration Parameters", this};
     actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(actIntParams_.get(), &QAction::triggered, this,
+    QObject::connect(actIntParams_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnIntParams);
-    toolBar1->addAction(actIntParams_.get());
+    toolBar1->addAction(actIntParams_);
 
-    actGCF_ = std::make_unique<QAction>("&GCF", this);
+    actGCF_ = new QAction{"&GCF", this};
     actGCF_->setShortcut(Qt::ALT + Qt::Key_G);
-    QObject::connect(actGCF_.get(), &QAction::triggered, this,
-                     &P4PlotWnd::onBtnGCF);
-    toolBar1->addAction(actGCF_.get());
+    QObject::connect(actGCF_, &QAction::triggered, this, &P4PlotWnd::onBtnGCF);
+    toolBar1->addAction(actGCF_);
 
-    actCurve_ = std::make_unique<QAction>("&Curves", this);
+    actCurve_ = new QAction{"&Curves", this};
     // actCurve_->setShortcut(Qt::ALT + Qt::Key_C);
-    QObject::connect(actCurve_.get(), &QAction::triggered, this,
+    QObject::connect(actCurve_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnCurve);
-    toolBar1->addAction(actCurve_.get());
+    toolBar1->addAction(actCurve_);
 
-    actPlotSep_ = std::make_unique<QAction>("Plot &Separatrice", this);
+    actPlotSep_ = new QAction{"Plot &Separatrice", this};
     actPlotSep_->setShortcut(Qt::ALT + Qt::Key_S);
-    QObject::connect(actPlotSep_.get(), &QAction::triggered, this,
+    QObject::connect(actPlotSep_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnPlotSep);
-    toolBar2->addAction(actPlotSep_.get());
+    toolBar2->addAction(actPlotSep_);
 
-    actPlotAllSeps_ = std::make_unique<QAction>("Plot All Separa&trices", this);
+    actPlotAllSeps_ = new QAction{"Plot All Separa&trices", this};
     actPlotAllSeps_->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(actPlotAllSeps_.get(), &QAction::triggered, this,
+    QObject::connect(actPlotAllSeps_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnPlotAllSeps);
-    toolBar2->addAction(actPlotAllSeps_.get());
+    toolBar2->addAction(actPlotAllSeps_);
 
-    actLimitCycles_ = std::make_unique<QAction>("Limit C&ycles", this);
+    actLimitCycles_ = new QAction{"Limit C&ycles", this};
     actLimitCycles_->setShortcut(Qt::ALT + Qt::Key_Y);
-    QObject::connect(actLimitCycles_.get(), &QAction::triggered, this,
+    QObject::connect(actLimitCycles_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnLimitCycles);
-    toolBar2->addAction(actLimitCycles_.get());
+    toolBar2->addAction(actLimitCycles_);
 
-    actIsoclines_ = std::make_unique<QAction>("Isoclines", this);
-    QObject::connect(actIsoclines_.get(), &QAction::triggered, this,
+    actIsoclines_ = new QAction{"Isoclines", this};
+    QObject::connect(actIsoclines_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnIsoclines);
-    toolBar2->addAction(actIsoclines_.get());
+    toolBar2->addAction(actIsoclines_);
 
-    actView_ = std::make_unique<QAction>("&View", this);
+    actView_ = new QAction{"&View", this};
     actView_->setShortcut(Qt::ALT + Qt::Key_V);
-    QObject::connect(actView_.get(), &QAction::triggered, this,
+    QObject::connect(actView_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnView);
-    toolBar2->addAction(actView_.get());
+    toolBar2->addAction(actView_);
 
-    actPrint_ = std::make_unique<QAction>("&Print", this);
+    actPrint_ = new QAction{"&Print", this};
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    QObject::connect(actPrint_.get(), &QAction::triggered, this,
+    QObject::connect(actPrint_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnPrint);
-    toolBar2->addAction(actPrint_.get());
+    toolBar2->addAction(actPrint_);
 
-    addToolBar(Qt::TopToolBarArea, toolBar1.get());
+    addToolBar(Qt::TopToolBarArea, toolBar1);
     addToolBarBreak(Qt::TopToolBarArea);
-    addToolBar(Qt::TopToolBarArea, toolBar2.get());
+    addToolBar(Qt::TopToolBarArea, toolBar2);
 
-    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
+    QObject::connect(gThisVF, &P4InputVF::saveSignal, this,
                      &P4PlotWnd::onSaveSignal);
-    QObject::connect(gThisVF.get(), &P4InputVF::loadSignal, this,
+    QObject::connect(gThisVF, &P4InputVF::loadSignal, this,
                      &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
@@ -167,21 +180,20 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 
     statusBar()->showMessage("Ready");
 
-    sphere_ =
-        std::make_unique<P4WinSphere>(this, statusBar(), false, 0, 0, 0, 0);
-    legendWindow_ = std::make_unique<P4LegendWnd>();
-    orbitsWindow_ = std::make_unique<P4OrbitsDlg>(this, sphere_.get());
-    sepWindow_ = std::make_unique<P4SepDlg>(this, sphere_.get());
-    intParamsWindow_ = std::make_unique<P4IntParamsDlg>();
-    viewParamsWindow_ = std::make_unique<P4ViewDlg>(this);
-    lcWindow_ = std::make_unique<P4LimitCyclesDlg>(this, sphere_.get());
-    gcfWindow_ = std::make_unique<P4GcfDlg>(this, sphere_.get());
-    curveWindow_ = std::make_unique<P4ArbitraryCurveDlg>(this, sphere_.get());
-    isoclinesWindow_ = std::make_unique<P4IsoclinesDlg>(this, sphere_.get());
+    sphere_ = new P4WinSphere{this, statusBar(), false, 0, 0, 0, 0};
+    legendWindow_ = new P4LegendWnd{this};
+    orbitsWindow_ = new P4OrbitsDlg{this, sphere_};
+    sepWindow_ = new P4SepDlg{this, sphere_};
+    intParamsWindow_ = new P4IntParamsDlg{this};
+    viewParamsWindow_ = new P4ViewDlg{this};
+    lcWindow_ = new P4LimitCyclesDlg{this, sphere_};
+    gcfWindow_ = new P4GcfDlg{this, sphere_};
+    curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
+    isoclinesWindow_ = new P4IsoclinesDlg{this, sphere_};
     gLCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere_->show();
-    setCentralWidget(sphere_.get());
+    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
     intParamsWindow_->updateDlgData();
@@ -192,8 +204,8 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 
 void P4PlotWnd::onSaveSignal()
 {
-    QString fname = gThisVF->getbarefilename().append(".conf");
-    QSettings settings(fname, QSettings::NativeFormat);
+    auto fname = gThisVF->getbarefilename().append(".conf");
+    QSettings settings{fname, QSettings::NativeFormat};
     settings.setValue("P4PlotWnd/size", size());
     settings.setValue("P4PlotWnd/pos", pos());
     settings.setValue("P4PlotWnd/numZooms", numZooms_);
@@ -202,8 +214,8 @@ void P4PlotWnd::onSaveSignal()
 
 void P4PlotWnd::onLoadSignal()
 {
-    QString fname = gThisVF->getbarefilename().append(".conf");
-    QSettings settings(fname, QSettings::NativeFormat);
+    auto fname = gThisVF->getbarefilename().append(".conf");
+    QSettings settings{fname, QSettings::NativeFormat};
     resize(settings.value("P4PlotWnd/size").toSize());
     move(settings.value("P4PlotWnd/pos").toPoint());
 
@@ -260,16 +272,16 @@ void P4PlotWnd::signalEvaluated()
 
 void P4PlotWnd::onBtnClose()
 {
-    auto e1 = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-    gP4app->postEvent(parent_, e1.release());
+    auto e1 =
+        new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr};
+    gP4app->postEvent(parent_, e1);
 }
 
 bool P4PlotWnd::close()
 {
-    auto e1 = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-    gP4app->postEvent(parent_, e1.release());
+    auto e1 =
+        new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr};
+    gP4app->postEvent(parent_, e1);
 
     return QMainWindow::close();
 }
@@ -283,7 +295,7 @@ void P4PlotWnd::onBtnRefresh()
 void P4PlotWnd::onBtnLegend()
 {
     if (!legendWindow_)
-        legendWindow_ = std::make_unique<P4LegendWnd>();
+        legendWindow_ = new P4LegendWnd{};
     legendWindow_->show();
     legendWindow_->raise();
 }
@@ -335,7 +347,7 @@ void P4PlotWnd::onBtnPlotAllSeps()
 {
     getDlgData();
     sphere_->prepareDrawing();
-    plot_all_sep(sphere_.get());
+    plot_all_sep(sphere_);
     sphere_->finishDrawing();
     flagAllSepsPlotted_ = true;
 }
@@ -348,19 +360,20 @@ void P4PlotWnd::onBtnLimitCycles()
 
 void P4PlotWnd::onBtnPrint()
 {
-    auto pdlg =
-        std::make_unique<P4PrintDlg>(this, static_cast<Qt::WindowFlags>(0));
+    auto pdlg = new P4PrintDlg{this, static_cast<Qt::WindowFlags>(0)};
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
     double lw{pdlg->getChosenLineWidth()};
     double ss{pdlg->getChosenSymbolSize()};
-    pdlg.reset();
+
+    delete pdlg;
+    pdlg = nullptr;
 
     if (result != P4PRINT_NONE) {
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
             gP4printer->setResolution(res);
 
-            QPrintDialog dialog(gP4printer.get(), this);
+            QPrintDialog dialog(gP4printer, this);
             if (!dialog.exec())
                 return;
 
@@ -522,9 +535,9 @@ void P4PlotWnd::customEvent(QEvent *_e)
 void P4PlotWnd::hideEvent(QHideEvent *h)
 {
     if (!isMinimized()) {
-        auto e1 = std::make_unique<P4Event>(
-            static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr);
-        gP4app->postEvent(parent_, e1.release());
+        auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW),
+                              nullptr};
+        gP4app->postEvent(parent_, e1);
     }
 }
 
@@ -533,7 +546,6 @@ void P4PlotWnd::getDlgData()
     intParamsWindow_->getDataFromDlg();
     if (viewParamsWindow_->getDataFromDlg()) {
         // true when a big change occured in the view
-
         gVFResults.setupCoordinateTransformations();
         configure();
     }
@@ -541,30 +553,10 @@ void P4PlotWnd::getDlgData()
 
 P4IntParamsDlg *P4PlotWnd::getIntParamsWindowPtr() const
 {
-    if (intParamsWindow_)
-        return intParamsWindow_.get();
-    return nullptr;
+    return intParamsWindow_;
 }
-
-/*void P4PlotWnd::setIntParamsWindow(P4IntParamsDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != intParamsWindow_.get())
-        intParamsWindow_ = std::make_unique<P4IntParamsDlg>(newdlg);
-    else
-        intParamsWindow_.reset();
-}*/
 
 P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr() const
 {
-    if (viewParamsWindow_)
-        return viewParamsWindow_.get();
-    return nullptr;
+    return viewParamsWindow_;
 }
-
-/*void P4PlotWnd::setViewParamsWindow(P4ViewDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != viewParamsWindow_.get())
-        viewParamsWindow_ = std::make_unique<P4ViewDlg>(newdlg);
-    else
-        viewParamsWindow_.reset();
-}*/

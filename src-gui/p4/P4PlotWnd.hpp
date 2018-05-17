@@ -21,28 +21,27 @@
 
 #include <QMainWindow>
 
-#include <QAction>
-#include <QBoxLayout>
-
 #include <memory>
 #include <vector>
 
-#include "P4ArbitraryCurveDlg.hpp"
-#include "P4GcfDlg.hpp"
-#include "P4IntParamsDlg.hpp"
-#include "P4IsoclinesDlg.hpp"
-#include "P4LegendWnd.hpp"
-#include "P4LimitCyclesDlg.hpp"
-#include "P4OrbitsDlg.hpp"
-#include "P4SepDlg.hpp"
-#include "P4ViewDlg.hpp"
-#include "P4WinSphere.hpp"
 #include "P4ZoomWnd.hpp"
 
-class P4StartDlg;
-
+class QAction;
+class QBoxLayout;
 class QEvent;
 class QHideEvent;
+
+class P4ArbitraryCurveDlg;
+class P4GcfDlg;
+class P4IntParamsDlg;
+class P4IsoclinesDlg;
+class P4LegendWnd;
+class P4LimitCyclesDlg;
+class P4OrbitsDlg;
+class P4SepDlg;
+class P4StartDlg;
+class P4ViewDlg;
+class P4WinSphere;
 
 class P4PlotWnd : public QMainWindow
 {
@@ -52,40 +51,38 @@ class P4PlotWnd : public QMainWindow
     P4PlotWnd(P4StartDlg *);
 
     P4IntParamsDlg *getIntParamsWindowPtr() const;
-    // void setIntParamsWindow(P4IntParamsDlg *);
     P4ViewDlg *getViewParamsWindowPtr() const;
-    // void setViewParamsWindow(P4ViewDlg *);
 
   private:
     P4StartDlg *parent_;
 
-    std::unique_ptr<P4IntParamsDlg> intParamsWindow_;
-    std::unique_ptr<P4ViewDlg> viewParamsWindow_;
+    P4IntParamsDlg *intParamsWindow_;
+    P4ViewDlg *viewParamsWindow_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QAction> actClose_;
-    std::unique_ptr<QAction> actRefresh_;
-    std::unique_ptr<QAction> actLegend_;
-    std::unique_ptr<QAction> actOrbits_;
-    std::unique_ptr<QAction> actIntParams_;
-    std::unique_ptr<QAction> actView_;
-    std::unique_ptr<QAction> actGCF_;
-    std::unique_ptr<QAction> actCurve_;
-    std::unique_ptr<QAction> actIsoclines_;
-    std::unique_ptr<QAction> actPlotSep_;
-    std::unique_ptr<QAction> actPlotAllSeps_;
-    std::unique_ptr<QAction> actLimitCycles_;
-    std::unique_ptr<QAction> actPrint_;
+    QBoxLayout *mainLayout_;
+    QAction *actClose_;
+    QAction *actRefresh_;
+    QAction *actLegend_;
+    QAction *actOrbits_;
+    QAction *actIntParams_;
+    QAction *actView_;
+    QAction *actGCF_;
+    QAction *actCurve_;
+    QAction *actIsoclines_;
+    QAction *actPlotSep_;
+    QAction *actPlotAllSeps_;
+    QAction *actLimitCycles_;
+    QAction *actPrint_;
 
-    std::unique_ptr<P4LegendWnd> legendWindow_;
-    std::unique_ptr<P4OrbitsDlg> orbitsWindow_;
-    std::unique_ptr<P4SepDlg> sepWindow_;
-    std::unique_ptr<P4LimitCyclesDlg> lcWindow_;
-    std::unique_ptr<P4GcfDlg> gcfWindow_;
-    std::unique_ptr<P4ArbitraryCurveDlg> curveWindow_;
-    std::unique_ptr<P4IsoclinesDlg> isoclinesWindow_;
+    P4LegendWnd *legendWindow_;
+    P4OrbitsDlg *orbitsWindow_;
+    P4SepDlg *sepWindow_;
+    P4LimitCyclesDlg *lcWindow_;
+    P4GcfDlg *gcfWindow_;
+    P4ArbitraryCurveDlg *curveWindow_;
+    P4IsoclinesDlg *isoclinesWindow_;
 
-    std::unique_ptr<P4WinSphere> sphere_; // main sphere
+    P4WinSphere *sphere_; // main sphere
 
     int numZooms_;
     int lastZoomIdentifier_;
