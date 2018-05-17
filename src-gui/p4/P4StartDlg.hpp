@@ -101,9 +101,6 @@ class P4StartDlg : public QWidget
     void onLoadSignal();
 
   private:
-    std::unique_ptr<P4FindDlg> findWindow_;
-    std::unique_ptr<P4PlotWnd> plotWindow_;
-
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QHBoxLayout> buttonsLayout_;
     std::unique_ptr<QHBoxLayout> namesLayout_;
@@ -123,6 +120,9 @@ class P4StartDlg : public QWidget
     std::unique_ptr<QTextBrowser> helpWindow_;
     std::unique_ptr<QTextEdit> viewInfiniteWindow_;
     std::unique_ptr<QTextEdit> viewFiniteWindow_;
+
+    std::unique_ptr<P4FindDlg> findWindow_;
+    std::unique_ptr<P4PlotWnd> plotWindow_;
 
     std::unique_ptr<QAction> actFin_;
     std::unique_ptr<QAction> actInf_;

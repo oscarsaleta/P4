@@ -45,6 +45,7 @@ bool bgColours::PRINT_WHITE_BG = true;
 
 P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     // general initialization
 
     QString cap{"Planar Polynomial Phase Portraits"};
@@ -686,14 +687,8 @@ bool P4StartDlg::canOpenPlot()
     if (!findWindow_) {
         return true;
     } else {
-        auto *p = findWindow_->getVfSelectWindowPtr();
-        if (p == nullptr) {
-            return true;
-        } else {
-            auto *q = p->getWinCurvesPtr();
-            if (q != nullptr)
-                p->closeConfigWindow();
-        }
+        if (findWindow_->getPiecewiseConfigWindowPtr() != nullptr)
+            findWindow_->closePiecewiseConfigWindow();
     }
     return true;
 }
