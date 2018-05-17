@@ -108,7 +108,7 @@
 // -----------------------------------------------------------------------
 P4InputVF::P4InputVF()
 {
-    //vfRegions_.emplace_back(0, std::vector<int>{});
+    // vfRegions_.emplace_back(0, std::vector<int>{});
     reset(1);
 }
 
@@ -181,7 +181,7 @@ void P4InputVF::reset(int n)
         ydot_.push_back(QString(DEFAULTYDOT));
         gcf_.push_back(QString(DEFAULTGCF));
         parvalue_.push_back(std::vector<QString>{});
-        for (int j=0;j<MAXNUMPARAMS;j++)
+        for (int j = 0; j < MAXNUMPARAMS; j++)
             parvalue_.back().push_back(QString{});
     }
 
@@ -3255,14 +3255,45 @@ void P4InputVF::deleteVectorField(int index)
         gVFResults.K_ = 0;
     }
 
+    for (k = 0; k < numVFRegions_; k++) {
+        if (vfRegions_[k].vfIndex == index) {
+            vfRegions_.erase(std::begin(vfRegions_) + k);
+            numVFRegions_--;
+            k--;
+            if (numVFRegions_ == 0) {
+                vfRegions_.clear();
+            }
+        } else if (vfRegions_[k].vfIndex > index)
+            vfRegions_[k].vfIndex--;
+    }
+    /*
     for (auto it = std::begin(vfRegions_); it != std::end(vfRegions_); ++it) {
         if (it->vfIndex == index) {
             vfRegions_.erase(it);
             numVFRegions_--;
         } else if (it->vfIndex > index)
             it->vfIndex--;
-    }
+    }*/
 
+    for (k = 0; k < numSelected_; k++) {
+        if (selected_[k] == index) {
+            if (k < numSelected_ - 1)
+                selected_.erase(std::begin(selected_) + k);
+            numSelected_--;
+            k--;
+            if (numSelected_ == 0) {
+                numSelected_ = 1;
+                selected_[0] = index;
+                if (selected_[0] >= numVF_ - 1)
+                    selected_[0] = numVF_ - 2;
+                if (selected_[0] < 0)
+                    selected_[0] = 0;
+                break;
+            }
+        } else if (selected_[k] > index)
+            selected_[k]--;
+    }
+    /*
     for (auto it = std::begin(selected_); it != std::end(selected_); ++it) {
         if (*it == index) {
             selected_.erase(it);
@@ -3278,7 +3309,7 @@ void P4InputVF::deleteVectorField(int index)
             }
         } else if (*it > index)
             *it--;
-    }
+    }*/
 
     if (numVF_ == 1) {
         // delete last one: replace by default startup values
@@ -3316,7 +3347,7 @@ void P4InputVF::deleteVectorField(int index)
     }
     if (numVF_ == 1 && numVFRegions_ == 0 && numSeparatingCurves_ == 0) {
         numVFRegions_ = 1;
-        vfRegions_.push_back(p4InputVFRegions::vfRegion{0, std::vector<int>{}});
+        vfRegions_.emplace_back(0, std::vector<int>{});
     }
 }
 
