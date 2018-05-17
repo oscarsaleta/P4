@@ -19,18 +19,27 @@
 
 #include "P4StartDlg.hpp"
 
+#include <QBoxLayout>
 #include <QCloseEvent>
 #include <QDir>
 #include <QFileDialog>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QSettings>
+#include <QTextBrowser>
+#include <QTextEdit>
 #include <QTextStream>
 
 #include "P4AboutDlg.hpp"
 #include "P4Application.hpp"
+#include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
+#include "P4PlotWnd.hpp"
 #include "P4SeparatingCurvesDlg.hpp"
 #include "P4VFSelectDlg.hpp"
 #include "custom.hpp"
@@ -55,25 +64,24 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     if (gP4smallIcon)
         setWindowIcon(*gP4smallIcon);
 
-    btn_quit_ = std::make_unique<QPushButton>("&Quit", this);
-    btn_view_ = std::make_unique<QPushButton>("Vie&w", this);
-    btn_plot_ = std::make_unique<QPushButton>("&Plot", this);
-    btn_help_ = std::make_unique<QPushButton>("&Help", this);
-    btn_about_ = std::make_unique<QPushButton>("Ab&out P4...", this);
+    btn_quit_ = new QPushButton{"&Quit", this};
+    btn_view_ = new QPushButton{"Vie&w", this};
+    btn_plot_ = new QPushButton{"&Plot", this};
+    btn_help_ = new QPushButton{"&Help", this};
+    btn_about_ = new QPushButton{"Ab&out P4...", this};
 
     if (autofilename.length() == 0)
-        edt_name_ = std::make_unique<QLineEdit>(DEFAULTFILENAME, this);
+        edt_name_ = new QLineEdit{DEFAULTFILENAME, this};
     else
-        edt_name_ = std::make_unique<QLineEdit>(
-            gThisVF->filename_ = autofilename, this);
-    p4name_ = std::make_unique<QLabel>(" &Name: ", this);
-    p4name_->setBuddy(edt_name_.get());
+        edt_name_ = new QLineEdit{gThisVF->filename_ = autofilename, this};
+    p4name_ = new QLabel{" &Name: ", this};
+    p4name_->setBuddy(edt_name_);
     p4name_->setFont(gP4app->getBoldFont());
 
     edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
 
-    btn_browse_ = std::make_unique<QPushButton>("&Browse", this);
+    btn_browse_ = new QPushButton{"&Browse", this};
 
 #ifdef TOOLTIPS
     btn_quit_->setToolTip("Quit P4");
@@ -89,59 +97,59 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 #endif
 
     // define placement of controls
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    buttonsLayout_ = std::make_unique<QHBoxLayout>();
-    buttonsLayout_->addWidget(btn_quit_.get());
-    buttonsLayout_->addWidget(btn_view_.get());
-    buttonsLayout_->addWidget(btn_plot_.get());
-    buttonsLayout_->addWidget(btn_help_.get());
+    buttonsLayout_ = new QHBoxLayout{};
+    buttonsLayout_->addWidget(btn_quit_);
+    buttonsLayout_->addWidget(btn_view_);
+    buttonsLayout_->addWidget(btn_plot_);
+    buttonsLayout_->addWidget(btn_help_);
 
-    mainLayout_->addLayout(buttonsLayout_.get());
+    mainLayout_->addLayout(buttonsLayout_);
 
-    namesLayout_ = std::make_unique<QHBoxLayout>();
-    namesLayout_->addWidget(p4name_.get());
-    namesLayout_->addWidget(edt_name_.get());
-    namesLayout_->addWidget(btn_browse_.get());
-    namesLayout_->addWidget(btn_about_.get());
-    mainLayout_->addLayout(namesLayout_.get());
+    namesLayout_ = new QHBoxLayout{};
+    namesLayout_->addWidget(p4name_);
+    namesLayout_->addWidget(edt_name_);
+    namesLayout_->addWidget(btn_browse_);
+    namesLayout_->addWidget(btn_about_);
+    mainLayout_->addLayout(namesLayout_);
 
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
 
     // connections
 
-    viewMenu_ = std::make_unique<QMenu>(this);
+    viewMenu_ = new QMenu{this};
 
-    actFin_ = std::make_unique<QAction>("Fini&te", this);
+    actFin_ = new QAction{"Fini&te", this};
     actFin_->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(actFin_.get(), &QAction::triggered, this,
+    QObject::connect(actFin_, &QAction::triggered, this,
                      &P4StartDlg::onViewFinite);
-    viewMenu_->addAction(actFin_.get());
+    viewMenu_->addAction(actFin_);
 
-    actInf_ = std::make_unique<QAction>("&Infinite", this);
+    actInf_ = new QAction{"&Infinite", this};
     actInf_->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(actInf_.get(), &QAction::triggered, this,
+    QObject::connect(actInf_, &QAction::triggered, this,
                      &P4StartDlg::onViewInfinite);
-    viewMenu_->addAction(actInf_.get());
+    viewMenu_->addAction(actInf_);
 
-    btn_view_->setMenu(viewMenu_.get());
+    btn_view_->setMenu(viewMenu_);
 
-    QObject::connect(btn_quit_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_quit_, &QPushButton::clicked, this,
                      &P4StartDlg::onQuit);
-    QObject::connect(btn_plot_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_plot_, &QPushButton::clicked, this,
                      &P4StartDlg::onPlot);
-    QObject::connect(btn_help_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_help_, &QPushButton::clicked, this,
                      &P4StartDlg::onHelp);
-    QObject::connect(btn_about_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_about_, &QPushButton::clicked, this,
                      &P4StartDlg::onAbout);
-    QObject::connect(btn_browse_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_browse_, &QPushButton::clicked, this,
                      &P4StartDlg::onBrowse);
-    QObject::connect(edt_name_.get(), &QLineEdit::textChanged, this,
+    QObject::connect(edt_name_, &QLineEdit::textChanged, this,
                      &P4StartDlg::onFilenameChange);
-    QObject::connect(gThisVF.get(), &P4InputVF::saveSignal, this,
+    QObject::connect(gThisVF, &P4InputVF::saveSignal, this,
                      &P4StartDlg::onSaveSignal);
-    QObject::connect(gThisVF.get(), &P4InputVF::loadSignal, this,
+    QObject::connect(gThisVF, &P4InputVF::loadSignal, this,
                      &P4StartDlg::onLoadSignal);
 
     // setting focus
@@ -150,10 +158,10 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 
     // show find dialog
     if (!findWindow_) {
-        findWindow_ = std::make_unique<P4FindDlg>(this);
+        findWindow_ = new P4FindDlg{this};
         findWindow_->show();
         findWindow_->raise();
-        mainLayout_->addWidget(findWindow_.get());
+        mainLayout_->addWidget(findWindow_);
     }
 
     setP4WindowTitle(this, cap);
@@ -210,7 +218,7 @@ void P4StartDlg::onLoadSignal()
         resize(settings.value("size").toSize());
         move(settings.value("pos").toPoint());
         if (settings.value("plotWindow").toBool()) {
-            if (plotWindow_)
+            if (plotWindow_ != nullptr)
                 plotWindow_->show();
             else {
                 onPlot();
@@ -218,8 +226,10 @@ void P4StartDlg::onLoadSignal()
             }
         }
         if (settings.value("viewInfiniteWindow").toBool()) {
-            if (viewInfiniteWindow_)
-                viewInfiniteWindow_.reset();
+            if (viewInfiniteWindow_ != nullptr) {
+                delete viewInfiniteWindow_;
+                viewInfiniteWindow_ = nullptr;
+            }
             onViewInfinite();
             viewInfiniteWindow_->resize(
                 settings.value("viewInfiniteWindow-size").toSize());
@@ -227,8 +237,10 @@ void P4StartDlg::onLoadSignal()
                 settings.value("viewInfiniteWindow-pos").toPoint());
         }
         if (settings.value("viewFiniteWindow").toBool()) {
-            if (viewFiniteWindow_)
-                viewFiniteWindow_.reset();
+            if (viewFiniteWindow_ != nullptr) {
+                delete viewFiniteWindow_;
+                viewFiniteWindow_ = nullptr;
+            }
             onViewFinite();
             viewFiniteWindow_->resize(
                 settings.value("viewFiniteWindow-size").toSize());
@@ -237,7 +249,7 @@ void P4StartDlg::onLoadSignal()
         }
         if (settings.value("outputWindow").toBool() &&
             settings.value("processText").toBool()) {
-            if (gThisVF) {
+            if (gThisVF != nullptr) {
                 gThisVF->createProcessWindow();
                 gThisVF->terminateProcessButton_->setDisabled(true);
                 gThisVF->outputWindow_->resize(
@@ -274,14 +286,14 @@ void P4StartDlg::onHelp()
     }
 
     if (!helpWindow_)
-        helpWindow_ = std::make_unique<QTextBrowser>();
+        helpWindow_ = new QTextBrowser{};
 
     helpWindow_->setSource(QUrl::fromLocalFile(helpname));
     helpWindow_->resize(640, 480);
     if (gP4smallIcon)
         helpWindow_->setWindowIcon(*gP4smallIcon);
 
-    setP4WindowTitle(helpWindow_.get(), "P4 Help");
+    setP4WindowTitle(helpWindow_, "P4 Help");
     helpWindow_->show();
     helpWindow_->raise();
 }
@@ -316,7 +328,7 @@ void P4StartDlg::onPlot()
     gVFResults.setupCoordinateTransformations();
 
     if (!plotWindow_) {
-        plotWindow_ = std::make_unique<P4PlotWnd>(this);
+        plotWindow_ = new P4PlotWnd{this};
     }
 
     plotWindow_->configure(); // configure plot window
@@ -363,7 +375,7 @@ void P4StartDlg::signalEvaluated()
         fname = gThisVF->getfilename_finresults();
 
         if (P4InputVF::fileExists(fname)) {
-            viewFiniteWindow_ = std::make_unique<QTextEdit>();
+            viewFiniteWindow_ = new QTextEdit{this};
             showText(*viewFiniteWindow_, "View results at the finite region",
                      fname);
         }
@@ -384,7 +396,7 @@ void P4StartDlg::signalEvaluated()
 
         fname = gThisVF->getfilename_infresults();
         if (P4InputVF::fileExists(fname)) {
-            viewInfiniteWindow_ = std::make_unique<QTextEdit>();
+            viewInfiniteWindow_ = new QTextEdit{this};
             showText(*viewInfiniteWindow_, "View results at infinity", fname);
             if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
                 gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
@@ -416,10 +428,10 @@ void P4StartDlg::signalEvaluated()
             if (gThisVF->evaluatingPiecewiseConfig_) {
                 // ...
             } else {
-                QMessageBox::critical(
-                    this, "P4",
-                    "Cannot read computation results.\n"
-                    "Please check the input-vector field and parameters!\n");
+                QMessageBox::critical(this, "P4",
+                                      "Cannot read computation results.\n"
+                                      "Please check the input-vector field "
+                                      "and parameters!\n");
                 gVFResults.setupCoordinateTransformations();
                 plotWindow_->signalEvaluated();
             }
@@ -434,8 +446,8 @@ void P4StartDlg::signalEvaluated()
     }
 
     // the vector field may be changed during evaluation.  In that
-    // case, the flag gThisVF->changed_ is set, so the newly evaluated context
-    // is immediately marked as "old".
+    // case, the flag gThisVF->changed_ is set, so the newly evaluated
+    // context is immediately marked as "old".
     if (gThisVF->changed_)
         signalChanged();
 }
@@ -477,8 +489,7 @@ void P4StartDlg::onBrowse()
 
 void P4StartDlg::onAbout()
 {
-    auto pdlg =
-        std::make_unique<P4AboutDlg>(this, static_cast<Qt::WindowFlags>(0));
+    auto pdlg = new P4AboutDlg{this, static_cast<Qt::WindowFlags>(0)};
     pdlg->exec();
 }
 
@@ -506,7 +517,7 @@ void P4StartDlg::onViewFinite()
         return;
     }
 
-    viewFiniteWindow_ = std::make_unique<QTextEdit>();
+    viewFiniteWindow_ = new QTextEdit{this};
     showText(*viewFiniteWindow_, "View results at the finite region", fname);
     viewFiniteWindow_->show();
     viewFiniteWindow_->raise();
@@ -541,7 +552,7 @@ void P4StartDlg::onViewInfinite()
         return;
     }
 
-    viewInfiniteWindow_ = std::make_unique<QTextEdit>();
+    viewInfiniteWindow_ = new QTextEdit{this};
     showText(*viewInfiniteWindow_, "View results at infinity", fname);
     viewInfiniteWindow_->show();
     viewInfiniteWindow_->raise();
@@ -602,8 +613,8 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
 
     // This event get to process window-system close events.
     // A close event is subtly different from a hide event:
-    // hide may often mean "iconify" but close means that the window is going
-    // away for good.
+    // hide may often mean "iconify" but close means that the window is
+    // going away for good.
 
     if (!gThisVF) {
         ce->accept();
@@ -658,8 +669,7 @@ void P4StartDlg::customEvent(QEvent *e)
         signalSaved();
         break;
     case TYPE_CLOSE_PLOTWINDOW:
-        if (plotWindow_)
-            plotWindow_.reset();
+        closePlotWindow();
         break;
     default:
         QWidget::customEvent(e);
@@ -684,7 +694,7 @@ void P4StartDlg::customEvent(QEvent *e)
 
 bool P4StartDlg::canOpenPlot()
 {
-    if (!findWindow_) {
+    if (findWindow_ == nullptr) {
         return true;
     } else {
         if (findWindow_->getPiecewiseConfigWindowPtr() != nullptr)
@@ -695,26 +705,18 @@ bool P4StartDlg::canOpenPlot()
 
 void P4StartDlg::signalSeparatingCurvesEvaluated()
 {
-    if (findWindow_)
+    if (findWindow_ != nullptr)
         findWindow_->signalSeparatingCurvesEvaluated();
 }
 
 void P4StartDlg::closePlotWindow()
 {
-    if (plotWindow_)
-        plotWindow_.reset();
+    if (plotWindow_ != nullptr) {
+        delete plotWindow_;
+        plotWindow_ = nullptr;
+    }
 }
 
-P4FindDlg *P4StartDlg::getFindWindowPtr()
-{
-    if (findWindow_)
-        return findWindow_.get();
-    return nullptr;
-}
+P4FindDlg *P4StartDlg::getFindWindowPtr() { return findWindow_; }
 
-P4PlotWnd *P4StartDlg::getPlotWindowPtr()
-{
-    if (plotWindow_)
-        return plotWindow_.get();
-    return nullptr;
-}
+P4PlotWnd *P4StartDlg::getPlotWindowPtr() { return plotWindow_; }

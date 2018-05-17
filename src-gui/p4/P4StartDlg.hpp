@@ -21,23 +21,21 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMenu>
-#include <QPushButton>
-#include <QTextBrowser>
-#include <QTextEdit>
-
-#include <memory>
-
-#include "P4FindDlg.hpp"
-#include "P4PlotWnd.hpp"
-
+class QBoxLayout;
+class QHBoxLayout;
+class QLabel;
+class QPushButton;
+class QLineEdit;
+class QMenu;
+class QTextBrowser;
+class QTextEdit;
+class QAction;
 class QCloseEvent;
 class QEvent;
 class QString;
+
+class P4FindDlg;
+class P4PlotWnd;
 
 #define TYPE_SIGNAL_CURVESEVALUATED (QEvent::User + 1)
 #define TYPE_SIGNAL_EVALUATED (QEvent::User + 2)
@@ -64,7 +62,6 @@ class P4StartDlg : public QWidget
 {
     Q_OBJECT
 
-#include <QRadioButton>
   public:
     P4StartDlg(const QString &);
 
@@ -101,33 +98,33 @@ class P4StartDlg : public QWidget
     void onLoadSignal();
 
   private:
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QHBoxLayout> buttonsLayout_;
-    std::unique_ptr<QHBoxLayout> namesLayout_;
+    QBoxLayout *mainLayout_;
+    QHBoxLayout *buttonsLayout_;
+    QHBoxLayout *namesLayout_;
 
-    std::unique_ptr<QLabel> p4name_;
+    QLabel *p4name_;
 
-    std::unique_ptr<QPushButton> btn_quit_;
-    std::unique_ptr<QPushButton> btn_find_;
-    std::unique_ptr<QPushButton> btn_view_;
-    std::unique_ptr<QPushButton> btn_plot_;
-    std::unique_ptr<QPushButton> btn_help_;
-    std::unique_ptr<QPushButton> btn_about_;
-    std::unique_ptr<QPushButton> btn_browse_;
-    std::unique_ptr<QLineEdit> edt_name_;
-    std::unique_ptr<QMenu> viewMenu_;
+    QPushButton *btn_quit_;
+    QPushButton *btn_find_;
+    QPushButton *btn_view_;
+    QPushButton *btn_plot_;
+    QPushButton *btn_help_;
+    QPushButton *btn_about_;
+    QPushButton *btn_browse_;
+    QLineEdit *edt_name_;
+    QMenu *viewMenu_;
 
-    std::unique_ptr<QTextBrowser> helpWindow_;
-    std::unique_ptr<QTextEdit> viewInfiniteWindow_;
-    std::unique_ptr<QTextEdit> viewFiniteWindow_;
+    QTextBrowser *helpWindow_ = nullptr;
+    QTextEdit *viewInfiniteWindow_ = nullptr;
+    QTextEdit *viewFiniteWindow_ = nullptr;
 
-    std::unique_ptr<P4FindDlg> findWindow_;
-    std::unique_ptr<P4PlotWnd> plotWindow_;
+    P4FindDlg *findWindow_ = nullptr;
+    P4PlotWnd *plotWindow_ = nullptr;
 
-    std::unique_ptr<QAction> actFin_;
-    std::unique_ptr<QAction> actInf_;
+    QAction *actFin_;
+    QAction *actInf_;
 
     bool canOpenPlot();
 };
 
-extern std::unique_ptr<P4StartDlg> gP4startDlg;
+extern P4StartDlg *gP4startDlg;
