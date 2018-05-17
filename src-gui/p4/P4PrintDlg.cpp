@@ -19,9 +19,16 @@
 
 #include "P4PrintDlg.hpp"
 
-#include <QButtonGroup>
-
 #include <cmath>
+
+#include <QBoxLayout>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QWidget>
 
 #include "custom.hpp"
 #include "main.hpp"
@@ -38,41 +45,39 @@ double P4PrintDlg::sM_lastLineWidth{DEFAULT_LINEWIDTH};
 double P4PrintDlg::sM_lastSymbolSize{DEFAULT_SYMBOLSIZE};
 int P4PrintDlg::sM_lastResolution{DEFAULT_RESOLUTION};
 
-P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog{parent, f}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    if (gP4smallIcon)
+    if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
 
 #ifdef USE_SYSTEM_PRINTER
-    btn_default_ = std::make_unique<QPushButton>("&System printer", this);
+    btn_default_ = new QPushButton{"&System printer", this};
 #endif
-    btn_epsimage_ = std::make_unique<QPushButton>("&EPS Image", this);
-    btn_xfigimage_ = std::make_unique<QPushButton>("&XFIG Image", this);
-    btn_jpeg_ = std::make_unique<QPushButton>("&JPEG Image", this);
-    btn_cancel_ = std::make_unique<QPushButton>("&Cancel", this);
+    btn_epsimage_ = new QPushButton{"&EPS Image", this};
+    btn_xfigimage_ = new QPushButton{"&XFIG Image", this};
+    btn_jpeg_ = new QPushButton{"&JPEG Image", this};
+    btn_cancel_ = new QPushButton{"&Cancel", this};
 
-    auto label_1 =
-        std::make_unique<QLabel>("Output resolution (in DPI): ", this);
-    auto label_2 = std::make_unique<QLabel>("Line width (in mm):", this);
-    auto label_3 = std::make_unique<QLabel>("Symbol size (in mm):", this);
+    auto label_1 = new QLabel{"Output resolution (in DPI): ", this};
+    auto label_2 = new QLabel{"Line width (in mm):", this};
+    auto label_3 = new QLabel{"Symbol size (in mm):", this};
 
-    edt_resolution_ = std::make_unique<QLineEdit>("", this);
-    edt_linewidth_ = std::make_unique<QLineEdit>("", this);
-    edt_symbolsize_ = std::make_unique<QLineEdit>("", this);
+    edt_resolution_ = new QLineEdit{"", this};
+    edt_linewidth_ = new QLineEdit{"", this};
+    edt_symbolsize_ = new QLineEdit{"", this};
 
-    btn_blackwhite_ =
-        std::make_unique<QCheckBox>("&Black&&White printing", this);
+    btn_blackwhite_ = new QCheckBox{"&Black&&White printing", this};
     btn_blackwhite_->setChecked(sM_lastBlackWhite);
 
-    lbl_bgcolor_ = std::make_unique<QLabel>("Print background colour:", this);
-    btn_whitebg_ = std::make_unique<QRadioButton>("&White", this);
-    btn_blackbg_ = std::make_unique<QRadioButton>("B&lack", this);
+    lbl_bgcolor_ = new QLabel{"Print background colour:", this};
+    btn_whitebg_ = new QRadioButton{"&White", this};
+    btn_blackbg_ = new QRadioButton{"B&lack", this};
 
-    auto bgcolors = std::make_unique<QButtonGroup>(this);
-    bgcolors->addButton(btn_whitebg_.get());
-    bgcolors->addButton(btn_blackbg_.get());
+    auto bgcolors = new QButtonGroup{this};
+    bgcolors->addButton(btn_whitebg_);
+    bgcolors->addButton(btn_blackbg_);
 
     if (bgColours::PRINT_WHITE_BG)
         btn_whitebg_->toggle();
@@ -107,70 +112,70 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
     edt_symbolsize_->setToolTip("The size of the singularity annotation");
 #endif
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
     mainLayout_->addWidget(
-        new QLabel("Please select printing method...", this));
+        new QLabel{"Please select printing method...", this});
 
-    std::unique_ptr<QHBoxLayout> buttons{std::make_unique<QHBoxLayout>()};
+    auto buttons = new QHBoxLayout{};
 #ifdef USE_SYSTEM_PRINTER
-    buttons->addWidget(btn_default_.get());
+    buttons->addWidget(btn_default_);
 #endif
-    buttons->addWidget(btn_epsimage_.get());
-    buttons->addWidget(btn_xfigimage_.get());
-    buttons->addWidget(btn_jpeg_.get());
-    buttons->addWidget(btn_cancel_.get());
-    mainLayout_->addLayout(buttons.get());
+    buttons->addWidget(btn_epsimage_);
+    buttons->addWidget(btn_xfigimage_);
+    buttons->addWidget(btn_jpeg_);
+    buttons->addWidget(btn_cancel_);
+    mainLayout_->addLayout(buttons);
 
 #ifdef USE_SYSTEM_PRINTER
-    QObject::connect(btn_default_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_default_, &QPushButton::clicked, this,
                      &P4PrintDlg::onDefaultPrinter);
 #endif
-    QObject::connect(btn_epsimage_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_epsimage_, &QPushButton::clicked, this,
                      &P4PrintDlg::onEpsImagePrinter);
-    QObject::connect(btn_xfigimage_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_xfigimage_, &QPushButton::clicked, this,
                      &P4PrintDlg::onXfigImagePrinter);
-    QObject::connect(btn_jpeg_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_jpeg_, &QPushButton::clicked, this,
                      &P4PrintDlg::onJpegImagePrinter);
-    QObject::connect(btn_cancel_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_cancel_, &QPushButton::clicked, this,
                      &P4PrintDlg::onCancel);
-    QObject::connect(btn_whitebg_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_whitebg_, &QRadioButton::toggled, this,
                      [=]() { bgColours::PRINT_WHITE_BG = true; });
-    QObject::connect(btn_blackbg_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_blackbg_, &QRadioButton::toggled, this,
                      [=]() { bgColours::PRINT_WHITE_BG = false; });
 
     mainLayout_->addSpacing(2);
-    mainLayout_->addWidget(btn_blackwhite_.get());
+    mainLayout_->addWidget(btn_blackwhite_);
     mainLayout_->addSpacing(2);
 
-    auto printColourLayout = std::make_unique<QHBoxLayout>();
-    printColourLayout->addWidget(lbl_bgcolor_.get());
+    auto printColourLayout = new QHBoxLayout{};
+    printColourLayout->addWidget(lbl_bgcolor_);
     printColourLayout->addStretch(0);
-    printColourLayout->addWidget(btn_whitebg_.get());
-    printColourLayout->addWidget(btn_blackbg_.get());
+    printColourLayout->addWidget(btn_whitebg_);
+    printColourLayout->addWidget(btn_blackbg_);
 
-    mainLayout_->addLayout(printColourLayout.get());
+    mainLayout_->addLayout(printColourLayout);
     mainLayout_->addSpacing(2);
 
-    auto l1 = std::make_unique<QHBoxLayout>();
-    l1->addWidget(label_1.get());
-    l1->addWidget(edt_resolution_.get());
+    auto l1 = new QHBoxLayout{};
+    l1->addWidget(label_1);
+    l1->addWidget(edt_resolution_);
     l1->addStretch(0);
 
-    auto l2 = std::make_unique<QHBoxLayout>();
-    l2->addWidget(label_2.get());
-    l2->addWidget(edt_linewidth_.get());
+    auto l2 = new QHBoxLayout{};
+    l2->addWidget(label_2);
+    l2->addWidget(edt_linewidth_);
     l2->addStretch(0);
 
-    auto l3 = std::make_unique<QHBoxLayout>();
-    l3->addWidget(label_3.get());
-    l3->addWidget(edt_symbolsize_.get());
+    auto l3 = new QHBoxLayout{};
+    l3->addWidget(label_3);
+    l3->addWidget(edt_symbolsize_);
     l3->addStretch(0);
 
-    mainLayout_->addLayout(l1.get());
-    mainLayout_->addLayout(l2.get());
-    mainLayout_->addLayout(l3.get());
-    setLayout(mainLayout_.get());
+    mainLayout_->addLayout(l1);
+    mainLayout_->addLayout(l2);
+    mainLayout_->addLayout(l3);
+    setLayout(mainLayout_);
 
     QString s;
     s.sprintf("%g", sM_lastLineWidth);
@@ -192,14 +197,13 @@ bool P4PrintDlg::readDialog()
 
     sM_lastBlackWhite = btn_blackwhite_->isChecked();
 
-    result = readFloatField(edt_resolution_.get(), res, DEFAULT_RESOLUTION, 72,
-                            4800);
+    result = readFloatField(edt_resolution_, res, DEFAULT_RESOLUTION, 72, 4800);
     sM_lastResolution = std::floor(res);
-    result |= readFloatField(edt_linewidth_.get(), sM_lastLineWidth,
+    result |= readFloatField(edt_linewidth_, sM_lastLineWidth,
                              DEFAULT_LINEWIDTH, MIN_LINEWIDTH, MAX_LINEWIDTH);
     result |=
-        readFloatField(edt_symbolsize_.get(), sM_lastSymbolSize,
-                       DEFAULT_SYMBOLSIZE, MIN_SYMBOLSIZE, MAX_SYMBOLSIZE);
+        readFloatField(edt_symbolsize_, sM_lastSymbolSize, DEFAULT_SYMBOLSIZE,
+                       MIN_SYMBOLSIZE, MAX_SYMBOLSIZE);
 
     return !result;
 }
@@ -237,8 +241,8 @@ void P4PrintDlg::onXfigImagePrinter()
             i = QMessageBox::warning( this, "Warning",
                                    "XFig printing can only  be done with a
        resolution of 1200 DPI.",
-                                   "Continue at 1200 DPI", "Cancel", 0, 0, 1 );
-            if( i != 0 )
+                                   "Continue at 1200 DPI", "Cancel", 0, 0, 1
+       ); if( i != 0 )
             {
                 done( P4PRINT_NONE );
                 return;

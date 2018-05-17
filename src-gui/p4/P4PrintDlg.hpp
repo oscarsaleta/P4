@@ -21,15 +21,12 @@
 
 #include <QDialog>
 
-#include <QBoxLayout>
-#include <QCheckBox>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-
-#include <memory>
-
+class QBoxLayout;
+class QCheckBox;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
 class QWidget;
 
 class P4PrintDlg : public QDialog
@@ -45,21 +42,21 @@ class P4PrintDlg : public QDialog
     static int sM_lastResolution;
 
   private:
-    std::unique_ptr<QPushButton> btn_default_;
-    std::unique_ptr<QPushButton> btn_epsimage_;
-    std::unique_ptr<QPushButton> btn_xfigimage_;
-    std::unique_ptr<QPushButton> btn_cancel_;
-    std::unique_ptr<QPushButton> btn_jpeg_;
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QCheckBox> btn_blackwhite_;
+    QPushButton *btn_default_;
+    QPushButton *btn_epsimage_;
+    QPushButton *btn_xfigimage_;
+    QPushButton *btn_cancel_;
+    QPushButton *btn_jpeg_;
+    QBoxLayout *mainLayout_;
+    QCheckBox *btn_blackwhite_;
 
-    std::unique_ptr<QLabel> lbl_bgcolor_;
-    std::unique_ptr<QRadioButton> btn_whitebg_;
-    std::unique_ptr<QRadioButton> btn_blackbg_;
+    QLabel *lbl_bgcolor_;
+    QRadioButton *btn_whitebg_;
+    QRadioButton *btn_blackbg_;
 
-    std::unique_ptr<QLineEdit> edt_resolution_;
-    std::unique_ptr<QLineEdit> edt_linewidth_;
-    std::unique_ptr<QLineEdit> edt_symbolsize_;
+    QLineEdit *edt_resolution_;
+    QLineEdit *edt_linewidth_;
+    QLineEdit *edt_symbolsize_;
 
   public slots:
     void onDefaultPrinter();
