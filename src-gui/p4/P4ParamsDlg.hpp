@@ -22,8 +22,8 @@
 #include <QWidget>
 
 #include <QBoxLayout>
-#include <QHBoxLayout>
 #include <QButtonGroup>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QRadioButton>
