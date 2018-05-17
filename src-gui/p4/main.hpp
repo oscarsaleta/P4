@@ -56,8 +56,8 @@ extern QString gP4version;
 extern QString gP4versionDate;
 extern QString gP4platform;
 
-extern std::unique_ptr<QPixmap> gP4smallIcon;
-extern std::unique_ptr<QPrinter> gP4printer;
+extern QPixmap *gP4smallIcon;
+extern QPrinter *gP4printer;
 
 extern bool gActionOnlyPrepareFile;
 extern bool gActionSaveAll;
