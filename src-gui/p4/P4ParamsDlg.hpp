@@ -21,17 +21,14 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QButtonGroup>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QRadioButton>
-#include <QSpinBox>
-
-#include <memory>
 #include <vector>
 
+class QBoxLayout;
+class QButtonGroup;
+class QLabel;
+class QLineEdit;
+class QRadioButton;
+class QSpinBox;
 class QString;
 
 class P4FindDlg;
@@ -50,61 +47,38 @@ class P4ParamsDlg : public QWidget
   private:
     P4FindDlg *parent_;
 
-    std::unique_ptr<QLabel> p4title_;
-    std::unique_ptr<QLabel> symlabel_;
-    std::unique_ptr<QLabel> seplabel_;
-    std::unique_ptr<QLabel> lbl_precis_;
-    std::unique_ptr<QLabel> lbl_precis0_;
-    std::unique_ptr<QLabel> lbl_epsilon_;
-    std::unique_ptr<QLabel> lbl_level_;
-    std::unique_ptr<QLabel> lbl_numlevel_;
-    std::unique_ptr<QLabel> lbl_maxlevel_;
-    std::unique_ptr<QLabel> lbl_weakness_;
+    QBoxLayout *mainLayout_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QRadioButton *btn_sepyes_;
+    QRadioButton *btn_sepno_;
+    QRadioButton *btn_num_;
+    QRadioButton *btn_alg_;
+    QSpinBox *spin_precis_;
+    QSpinBox *spin_precis0_;
+    QSpinBox *spin_level_;
+    QSpinBox *spin_numlevel_;
+    QSpinBox *spin_maxlevel_;
+    QSpinBox *spin_weakness_;
+    QSpinBox *spin_p_;
+    QSpinBox *spin_q_;
+    QLineEdit *edt_epsilon_;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_y0_;
 
-    std::unique_ptr<QHBoxLayout> symLayout_;
-    std::unique_ptr<QHBoxLayout> sepLayout_;
-    std::unique_ptr<QHBoxLayout> layout1_;
-    std::unique_ptr<QHBoxLayout> layout2_;
-    std::unique_ptr<QHBoxLayout> layout3_;
-    std::unique_ptr<QHBoxLayout> layout4_;
-    std::unique_ptr<QHBoxLayout> layout5_;
-    std::unique_ptr<QHBoxLayout> layout6_;
-    std::unique_ptr<QHBoxLayout> layout7_;
-    std::unique_ptr<QHBoxLayout> layout8_;
-    std::unique_ptr<QHBoxLayout> layout9_;
+    QLabel *lbl_x0_;
+    QLabel *lbl_y0_;
+    QLabel *lbl_p_;
+    QLabel *lbl_q_;
 
-    std::unique_ptr<QRadioButton> btn_sepyes_;
-    std::unique_ptr<QRadioButton> btn_sepno_;
-    std::unique_ptr<QRadioButton> btn_num_;
-    std::unique_ptr<QRadioButton> btn_alg_;
-    std::unique_ptr<QSpinBox> spin_precis_;
-    std::unique_ptr<QSpinBox> spin_precis0_;
-    std::unique_ptr<QSpinBox> spin_level_;
-    std::unique_ptr<QSpinBox> spin_numlevel_;
-    std::unique_ptr<QSpinBox> spin_maxlevel_;
-    std::unique_ptr<QSpinBox> spin_weakness_;
-    std::unique_ptr<QSpinBox> spin_p_;
-    std::unique_ptr<QSpinBox> spin_q_;
-    std::unique_ptr<QLineEdit> edt_epsilon_;
-    std::unique_ptr<QLineEdit> edt_x0_;
-    std::unique_ptr<QLineEdit> edt_y0_;
-
-    std::unique_ptr<QLabel> lbl_x0_;
-    std::unique_ptr<QLabel> lbl_y0_;
-    std::unique_ptr<QLabel> lbl_p_;
-    std::unique_ptr<QLabel> lbl_q_;
-
-    std::unique_ptr<QButtonGroup> btngrp_numeric_;
-    std::unique_ptr<QButtonGroup> btngrp_testsep_;
+    QButtonGroup *btngrp_numeric_;
+    QButtonGroup *btngrp_testsep_;
 
     // FIXME raw pointers
-    void setSpinBoxCommonValue(QSpinBox &, const std::vector<int> &val,
+    void setSpinBoxCommonValue(QSpinBox *, const std::vector<int> &val,
                                int minval);
-    bool getSpinBoxCommonValue(const QSpinBox &, std::vector<int> &val);
-    void setLineEditCommonValue(QLineEdit &le, const std::vector<QString> &val);
-    bool getLineEditCommonValue(const QLineEdit &le,
+    bool getSpinBoxCommonValue(const QSpinBox *, std::vector<int> &val);
+    void setLineEditCommonValue(QLineEdit *le, const std::vector<QString> &val);
+    bool getLineEditCommonValue(const QLineEdit *le,
                                 std::vector<QString> &newval);
 
   public slots:
