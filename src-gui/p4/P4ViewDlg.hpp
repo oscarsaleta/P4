@@ -24,11 +24,11 @@
 #include <memory>
 
 #include <QBoxLayout>
+#include <QButtonGroup>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QButtonGroup>
 #include <QPushButton>
 #include <QRadioButton>
 // class QSpinBox;
@@ -40,7 +40,7 @@ class P4ViewDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4ViewDlg(bool virtualchk);
+    P4ViewDlg(QWidget *parent = nullptr, bool virtualchk = false);
     ~P4ViewDlg();
     bool getDataFromDlg();
     void updateDlgData();

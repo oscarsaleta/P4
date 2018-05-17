@@ -37,8 +37,8 @@
 
 P4ViewDlg::~P4ViewDlg() { getDataFromDlg(); }
 
-P4ViewDlg::P4ViewDlg(bool virtualchk)
-    : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
+P4ViewDlg::P4ViewDlg(QWidget *parent, bool virtualchk)
+    : QWidget{parent, Qt::Tool | Qt::WindowStaysOnTopHint},
       haveVirtualCheckBox_{virtualchk}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
