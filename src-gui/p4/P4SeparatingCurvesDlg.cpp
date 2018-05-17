@@ -457,9 +457,7 @@ void P4SeparatingCurvesDlg::onBtnResetMarks()
             }
             isphere_->refresh();
         }
-        lbl_info_->setText(
-            "All vector field marks have been erased. Please, reassign vector "
-            "fields from scratch.");
+        lbl_info_->setText("All vector field marks have been erased.");
     } else {
         if (gThisVF->numCurveRegions_ > 0) {
             gThisVF->clearCurveMarks();
