@@ -19,25 +19,21 @@
 
 #pragma once
 
-#include <QWidget>
+#include <QMainWindow>
 
-#include <QBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QListWidget>
-#include <QPushButton>
-
-#include <memory>
-
-#include "P4ViewDlg.hpp"
-#include "P4WinInputSphere.hpp"
-
+class QBoxLayout;
+class QHBoxLayout;
+class QLabel;
+class QLineEdit;
+class QListWidget;
 class QListWidgetItem;
+class QPushButton;
 
 class P4FindDlg;
+class P4ViewDlg;
+class P4WinInputSphere;
 
-class P4SeparatingCurvesDlg : public QWidget
+class P4SeparatingCurvesDlg : public QMainWindow
 {
     Q_OBJECT
 
@@ -53,41 +49,33 @@ class P4SeparatingCurvesDlg : public QWidget
 
   private:
     P4FindDlg *parent_;
+    QWidget *mainWidget_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QBoxLayout> layoutA_;
-    std::unique_ptr<QBoxLayout> layoutB_;
-    std::unique_ptr<QHBoxLayout> layout1_;
-    std::unique_ptr<QHBoxLayout> layout1a_;
-    std::unique_ptr<QHBoxLayout> layout2_;
-    std::unique_ptr<QHBoxLayout> layout3_;
+    QBoxLayout *mainLayout_;
 
-    std::unique_ptr<QLabel> p4title_;
-    std::unique_ptr<QLabel> p4title2_;
-    std::unique_ptr<QLabel> lbl_status_;
-    std::unique_ptr<QLabel> lbl_vf_or_curves_;
-    std::unique_ptr<QLabel> lbl_info_;
-    std::unique_ptr<QLabel> lbl_numpoints_;
+    QLabel *lbl_status_;
+    QLabel *lbl_vf_or_curves_;
+    QLabel *lbl_info_;
 
-    std::unique_ptr<P4ViewDlg> viewParamsWindow_;
+    P4ViewDlg *viewParamsWindow_;
 
-    std::unique_ptr<QPushButton> btn_add_;
-    std::unique_ptr<QPushButton> btn_del_;
-    std::unique_ptr<QPushButton> btn_edit_;
-    std::unique_ptr<QPushButton> btn_refresh_;
-    std::unique_ptr<QPushButton> btn_eval_;
-    std::unique_ptr<QPushButton> btn_mark_;
-    std::unique_ptr<QPushButton> btn_unmark_;
-    std::unique_ptr<QPushButton> btn_resetmarks_;
-    std::unique_ptr<QPushButton> btn_view_;
-    std::unique_ptr<QPushButton> btn_zoomout_;
+    QPushButton *btn_add_;
+    QPushButton *btn_del_;
+    QPushButton *btn_edit_;
+    QPushButton *btn_refresh_;
+    QPushButton *btn_eval_;
+    QPushButton *btn_mark_;
+    QPushButton *btn_unmark_;
+    QPushButton *btn_resetmarks_;
+    QPushButton *btn_view_;
+    QPushButton *btn_zoomout_;
 
-    std::unique_ptr<QListWidget> lst_curves_;
-    std::unique_ptr<QListWidget> lst_vfs_;
+    QListWidget *lst_curves_;
+    QListWidget *lst_vfs_;
 
-    std::unique_ptr<P4WinInputSphere> isphere_;
+    P4WinInputSphere *isphere_;
 
-    std::unique_ptr<QLineEdit> edt_numpoints_;
+    QLineEdit *edt_numpoints_;
 
     bool markingvf_;
     bool marking_;
