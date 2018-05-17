@@ -19,7 +19,10 @@
 
 #include "P4OrbitsDlg.hpp"
 
+#include <QBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
@@ -28,24 +31,24 @@
 #include "math_orbits.hpp"
 
 P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
+    : QWidget(plt, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    edt_x0_ = std::make_unique<QLineEdit>("", this);
-    auto lbl1 = std::make_unique<QLabel>("&x0 =", this);
-    lbl1->setBuddy(edt_x0_.get());
-    edt_y0_ = std::make_unique<QLineEdit>("", this);
-    auto lbl2 = std::make_unique<QLabel>("&y0 =", this);
-    lbl2->setBuddy(edt_y0_.get());
+    edt_x0_ = new QLineEdit{"", this};
+    auto lbl1 = new QLabel{"&x0 =", this};
+    lbl1->setBuddy(edt_x0_);
+    edt_y0_ = new QLineEdit{"", this};
+    auto lbl2 = new QLabel{"&y0 =", this};
+    lbl2->setBuddy(edt_y0_);
 
-    btnSelect_ = std::make_unique<QPushButton>("&Select", this);
-    btnForwards_ = std::make_unique<QPushButton>("&Forwards", this);
-    btnContinue_ = std::make_unique<QPushButton>("&Continue", this);
-    btnBackwards_ = std::make_unique<QPushButton>("&Backwards", this);
-    btnDelLast_ = std::make_unique<QPushButton>("&Delete Last Orbit", this);
-    btnDelAll_ = std::make_unique<QPushButton>("Delete &All Orbits", this);
+    btnSelect_ = new QPushButton{"&Select", this};
+    btnForwards_ = new QPushButton{"&Forwards", this};
+    btnContinue_ = new QPushButton{"&Continue", this};
+    btnBackwards_ = new QPushButton{"&Backwards", this};
+    btnDelLast_ = new QPushButton{"&Delete Last Orbit", this};
+    btnDelAll_ = new QPushButton{"Delete &All Orbits", this};
 
 #ifdef TOOLTIPS
     edt_x0_->setToolTip(
@@ -66,46 +69,46 @@ P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
 
     // layout
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    auto lay00 = std::make_unique<QGridLayout>();
-    lay00->addWidget(lbl1.get(), 0, 0);
-    lay00->addWidget(edt_x0_.get(), 0, 1);
-    lay00->addWidget(lbl2.get(), 1, 0);
-    lay00->addWidget(edt_y0_.get(), 1, 1);
-    lay00->addWidget(btnSelect_.get(), 0, 2, 2, 1);
+    auto lay00 = new QGridLayout{};
+    lay00->addWidget(lbl1, 0, 0);
+    lay00->addWidget(edt_x0_, 0, 1);
+    lay00->addWidget(lbl2, 1, 0);
+    lay00->addWidget(edt_y0_, 1, 1);
+    lay00->addWidget(btnSelect_, 0, 2, 2, 1);
 
-    auto layout1 = std::make_unique<QHBoxLayout>();
-    layout1->addWidget(btnForwards_.get());
-    layout1->addWidget(btnContinue_.get());
-    layout1->addWidget(btnBackwards_.get());
+    auto layout1 = new QHBoxLayout{};
+    layout1->addWidget(btnForwards_);
+    layout1->addWidget(btnContinue_);
+    layout1->addWidget(btnBackwards_);
     layout1->addStretch(0);
 
-    auto layout2 = std::make_unique<QHBoxLayout>();
-    layout2->addWidget(btnDelLast_.get());
-    layout2->addWidget(btnDelAll_.get());
+    auto layout2 = new QHBoxLayout{};
+    layout2->addWidget(btnDelLast_);
+    layout2->addWidget(btnDelAll_);
     layout2->addStretch(0);
 
-    mainLayout_->addLayout(lay00.get());
-    mainLayout_->addLayout(layout1.get());
-    mainLayout_->addLayout(layout2.get());
+    mainLayout_->addLayout(lay00);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
 
     // connections
 
-    QObject::connect(btnSelect_.get(), &QPushButton::clicked, this,
+    QObject::connect(btnSelect_, &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnSelect);
-    QObject::connect(btnForwards_.get(), &QPushButton::clicked, this,
+    QObject::connect(btnForwards_, &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnForwards);
-    QObject::connect(btnBackwards_.get(), &QPushButton::clicked, this,
+    QObject::connect(btnBackwards_, &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnBackwards);
-    QObject::connect(btnContinue_.get(), &QPushButton::clicked, this,
+    QObject::connect(btnContinue_, &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnContinue);
-    QObject::connect(btnDelAll_.get(), &QPushButton::clicked, this,
+    QObject::connect(btnDelAll_, &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnDelAll);
-    QObject::connect(btnDelLast_.get(), &QPushButton::clicked, this,
+    QObject::connect(btnDelLast_, &QPushButton::clicked, this,
                      &P4OrbitsDlg::onBtnDelLast);
 
     // finishing

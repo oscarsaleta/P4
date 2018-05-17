@@ -21,11 +21,9 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-
-#include <memory>
+class QBoxLayout;
+class QLineEdit;
+class QPushButton;
 
 class P4WinSphere;
 class P4PlotWnd;
@@ -36,23 +34,24 @@ class P4OrbitsDlg : public QWidget
 
   public:
     P4OrbitsDlg(P4PlotWnd *, P4WinSphere *);
+
     void reset();
 
   private:
     P4PlotWnd *plotWnd_;
     P4WinSphere *mainSphere_;
 
-    std::unique_ptr<QPushButton> btnForwards_;
-    std::unique_ptr<QPushButton> btnContinue_;
-    std::unique_ptr<QPushButton> btnBackwards_;
-    std::unique_ptr<QPushButton> btnDelAll_;
-    std::unique_ptr<QPushButton> btnDelLast_;
-    std::unique_ptr<QPushButton> btnSelect_;
+    QPushButton *btnForwards_;
+    QPushButton *btnContinue_;
+    QPushButton *btnBackwards_;
+    QPushButton *btnDelAll_;
+    QPushButton *btnDelLast_;
+    QPushButton *btnSelect_;
 
-    std::unique_ptr<QLineEdit> edt_x0_;
-    std::unique_ptr<QLineEdit> edt_y0_;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_y0_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QBoxLayout *mainLayout_;
 
     double selected_x0_{0};
     double selected_y0_{0};
