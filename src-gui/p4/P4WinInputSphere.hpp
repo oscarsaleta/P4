@@ -22,6 +22,7 @@
 #include <QWidget>
 
 #include <QLabel>
+#include <QMainWindow>
 #include <QPainter>
 #include <QPixmap>
 #include <QPoint>
@@ -45,7 +46,8 @@ class P4WinInputSphere : public QWidget
     Q_OBJECT
 
   public:
-    P4WinInputSphere(P4SeparatingCurvesDlg *, QLabel *);
+    P4WinInputSphere(QWidget *parent, P4SeparatingCurvesDlg *wnd,
+                     QLabel *lbl_status);
 
     //////////////////////
     // MEMBER VARIABLES //

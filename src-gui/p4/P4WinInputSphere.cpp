@@ -35,9 +35,9 @@
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 
-P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *parent,
+P4WinInputSphere::P4WinInputSphere(QWidget *parent, P4SeparatingCurvesDlg *wnd,
                                    QLabel *lbl_status)
-    : QWidget{parent}, status_{lbl_status}, parentWnd_{parent}
+    : QWidget{parent}, status_{lbl_status}, parentWnd_{wnd}
 {
     setAttribute(Qt::WA_PaintOnScreen);
 
