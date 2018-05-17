@@ -28,6 +28,7 @@
 #include <memory>
 
 #include "P4ParamsDlg.hpp"
+#include "P4SeparatingCurvesDlg.hpp"
 #include "P4VFSelectDlg.hpp"
 #include "P4VectorFieldDlg.hpp"
 
@@ -44,13 +45,19 @@ class P4FindDlg : public QWidget
 
     P4VFSelectDlg *getVfSelectWindowPtr() const;
     P4StartDlg *getParentPtr() const;
+    P4SeparatingCurvesDlg *getPiecewiseConfigWindowPtr() const;
+    void createPiecewiseConfigWindow();
+    void closePiecewiseConfigWindow();
 
   private:
     P4StartDlg *parent_;
 
+    std::unique_ptr<QGridLayout> superLayout_;
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QBoxLayout> parLayout_;
-    std::unique_ptr<QBoxLayout> superLayout_;
+    std::unique_ptr<QBoxLayout> vfLayout_;
+    std::unique_ptr<QBoxLayout> vfSelectLayout_;
+
     std::unique_ptr<QHBoxLayout> actLayout_;
     std::unique_ptr<QHBoxLayout> singlineLayout_;
     std::unique_ptr<QGridLayout> singLayout_;
@@ -81,6 +88,7 @@ class P4FindDlg : public QWidget
     std::unique_ptr<P4VectorFieldDlg> vfWindow_;
     std::unique_ptr<P4ParamsDlg> paramsWindow_;
     std::unique_ptr<P4VFSelectDlg> vfSelectWindow_;
+    std::unique_ptr<P4SeparatingCurvesDlg> piecewiseConfigWindow_;
 
     // void saveSettings();
     // void readSettings();

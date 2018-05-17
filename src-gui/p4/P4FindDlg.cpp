@@ -39,8 +39,6 @@
 P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     : QWidget{startdlg}, parent_{startdlg}
 {
-    //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
-
     p4title_ =
         std::make_unique<QLabel>("Find and Examine Singular Points", this);
     p4title_->setFont(gP4app->getTitleFont());
@@ -92,9 +90,9 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
                           "optionally process it");
 #endif
 
-    // layout
-    superLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::LeftToRight, this);
-    parLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
+    superLayout_ = std::make_unique<QGridLayout>(this);
+
+    // find and examine singular points layout
     mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
 
     mainLayout_->addSpacing(8);
@@ -134,10 +132,39 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     mainLayout_->addLayout(layout0_.get());
     mainLayout_->addLayout(layout1_.get());
 
-    //   mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-
     mainLayout_->addStretch(0);
-    superLayout_->addLayout(mainLayout_.get());
+    superLayout_->addLayout(mainLayout_.get(), 0, 0);
+
+    // parameters layout
+    parLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
+    if (!paramsWindow_) {
+        paramsWindow_ = std::make_unique<P4ParamsDlg>(this);
+        paramsWindow_->show();
+        parLayout_->addWidget(paramsWindow_.get(), 0, Qt::AlignTop);
+    }
+    parLayout_->addStretch(0);
+    superLayout_->addLayout(parLayout_.get(), 0, 1);
+
+    // vector field layout
+    vfLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
+    if (!vfWindow_) {
+        vfWindow_ = std::make_unique<P4VectorFieldDlg>(this);
+        vfWindow_->show();
+        vfLayout_->addWidget(vfWindow_.get());
+    }
+    vfLayout_->addStretch(0);
+    superLayout_->addLayout(vfLayout_.get(), 1, 0);
+
+    // vector field select layout
+    vfSelectLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
+    if (!vfSelectWindow_) {
+        vfSelectWindow_ = std::make_unique<P4VFSelectDlg>(this);
+        vfSelectWindow_->show();
+        vfSelectLayout_->addWidget(vfSelectWindow_.get(), 0, Qt::AlignTop);
+    }
+    vfSelectLayout_->addStretch(0);
+    superLayout_->addLayout(vfSelectLayout_.get(), 1, 1);
+
     setLayout(superLayout_.get());
 
     // connections
@@ -287,22 +314,6 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     // finishing
     gThisVF->setFindDlg(this);
 
-    // show vector field dialog
-    if (!vfWindow_) {
-        vfWindow_ = std::make_unique<P4VectorFieldDlg>(this);
-        vfWindow_->show();
-        mainLayout_->addWidget(vfWindow_.get());
-    }
-    // show params dialog
-    if (!paramsWindow_) {
-        paramsWindow_ = std::make_unique<P4ParamsDlg>(this);
-        vfSelectWindow_ = std::make_unique<P4VFSelectDlg>(this);
-        paramsWindow_->show();
-        vfSelectWindow_->show();
-        superLayout_->addWidget(paramsWindow_.get(), 0, Qt::AlignTop);
-        superLayout_->addWidget(vfSelectWindow_.get(), 0, Qt::AlignTop);
-    }
-
     if (gThisVF->evaluating_)
         btn_eval_->setEnabled(false);
 
@@ -327,7 +338,7 @@ void P4FindDlg::onBtnLoad()
         bool oldeval = gThisVF->evaluated_;
 
         if (vfSelectWindow_) {
-            if (vfSelectWindow_->getWinCurvesPtr() != nullptr) {
+            if (piecewiseConfigWindow_) {
                 gVFResults.readTables(gThisVF->getbarefilename(), true, true);
             }
         }
@@ -447,9 +458,8 @@ void P4FindDlg::signalSeparatingCurvesEvaluated()
 {
     btn_eval_->setEnabled(true);
     if (vfSelectWindow_) {
-        if (vfSelectWindow_->getWinCurvesPtr() != nullptr)
-            vfSelectWindow_->getWinCurvesPtr()
-                ->signalSeparatingCurvesEvaluated();
+        if (piecewiseConfigWindow_ != nullptr)
+            piecewiseConfigWindow_->signalSeparatingCurvesEvaluated();
     }
 }
 
@@ -461,3 +471,15 @@ P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr() const
 }
 
 P4StartDlg *P4FindDlg::getParentPtr() const { return parent_; }
+
+P4SeparatingCurvesDlg *P4FindDlg::getPiecewiseConfigWindowPtr() const
+{
+    return piecewiseConfigWindow_.get();
+}
+
+void P4FindDlg::createPiecewiseConfigWindow()
+{
+    piecewiseConfigWindow_ = std::make_unique<P4SeparatingCurvesDlg>(this);
+}
+
+void P4FindDlg::closePiecewiseConfigWindow() { piecewiseConfigWindow_.reset(); }
