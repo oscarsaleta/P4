@@ -19,8 +19,6 @@
 
 #include "P4VFSelectDlg.hpp"
 
-#include <QHBoxLayout>
-#include <QLabel>
 #include <QMessageBox>
 
 #include "P4Application.hpp"
@@ -130,8 +128,8 @@ void P4VFSelectDlg::updateDlgData()
         else
             btn_prev_->setEnabled(true);
 
-        if ((gThisVF->selected_[0] =
-                 gThisVF->numVF_ - 1 && gThisVF->numSelected_) == 1)
+        if ((gThisVF->selected_[0] == gThisVF->numVF_ - 1 &&
+             gThisVF->numSelected_) == 1)
             btn_next_->setEnabled(false);
         else
             btn_next_->setEnabled(true);
@@ -140,7 +138,7 @@ void P4VFSelectDlg::updateDlgData()
         btn_next_->setEnabled(false);
     }
 
-    if (win_curves_)
+    if (win_curves_ != nullptr)
         win_curves_->updateDlgData();
 }
 
@@ -169,9 +167,11 @@ void P4VFSelectDlg::onBtnDel()
     parent_->getDataFromDlg();
     if (!checkPlotWindowClosed())
         return;
+
     while (gThisVF->numSelected_ > 1)
         gThisVF->deleteVectorField(
             gThisVF->selected_[gThisVF->numSelected_ - 1]);
+
     gThisVF->deleteVectorField(gThisVF->selected_[0]);
     parent_->updateDlgData();
     if (gThisVF->changed_ == false) {
@@ -184,10 +184,9 @@ void P4VFSelectDlg::onBtnPrev()
 {
     parent_->getDataFromDlg();
     int j{gThisVF->selected_[0]};
-    if (gThisVF->numSelected_ > 1) {
-        gThisVF->selected_.clear();
+    gThisVF->selected_.clear();
+    if (gThisVF->numSelected_ > 1)
         gThisVF->numSelected_ = 1;
-    }
     if (--j < 0)
         j = 0;
     gThisVF->selected_.push_back(j);
@@ -198,10 +197,9 @@ void P4VFSelectDlg::onBtnNext()
 {
     parent_->getDataFromDlg();
     int j{gThisVF->selected_[0]};
-    if (gThisVF->numSelected_ > 1) {
-        gThisVF->selected_.clear();
+    gThisVF->selected_.clear();
+    if (gThisVF->numSelected_ > 1)
         gThisVF->numSelected_ = 1;
-    }
     if (++j >= gThisVF->numVF_)
         j = gThisVF->numVF_ - 1;
     gThisVF->selected_.push_back(j);
@@ -216,7 +214,7 @@ void P4VFSelectDlg::onVfSelectionChanged(int index)
             gThisVF->selected_.clear();
             gThisVF->selected_.push_back(index);
             gThisVF->numSelected_ = 1;
-            parent_->getDataFromDlg();
+            parent_->updateDlgData();
         }
     } else if (index >= gThisVF->numVF_) {
         // selected all
@@ -233,7 +231,7 @@ void P4VFSelectDlg::onVfSelectionChanged(int index)
 
 bool P4VFSelectDlg::checkPlotWindowClosed()
 {
-    if (!(parent_->getParentPtr()->getPlotWindowPtr()))
+    if (parent_->getParentPtr()->getPlotWindowPtr() == nullptr)
         return true;
     if (!(parent_->getParentPtr()->getPlotWindowPtr()->isVisible())) {
         parent_->getParentPtr()->closePlotWindow();
@@ -251,9 +249,12 @@ void P4VFSelectDlg::onBtnP4Config()
     if (!checkPlotWindowClosed())
         return;
 
-    if (!win_curves_) {
+    win_curves_ = parent_->getPiecewiseConfigWindowPtr();
+
+    if (parent_->getPiecewiseConfigWindowPtr() == nullptr) {
         gVFResults.readTables(gThisVF->getbarefilename(), true, true);
-        win_curves_.reset(new P4SeparatingCurvesDlg(parent_));
+        parent_->createPiecewiseConfigWindow();
+        win_curves_ = parent_->getPiecewiseConfigWindowPtr();
         win_curves_->show();
     } else {
         win_curves_->show();
@@ -263,14 +264,7 @@ void P4VFSelectDlg::onBtnP4Config()
 
 void P4VFSelectDlg::closeConfigWindow()
 {
-    if (win_curves_) {
-        win_curves_.reset();
+    if (win_curves_ != nullptr) {
+        parent_->closePiecewiseConfigWindow();
     }
-}
-
-P4SeparatingCurvesDlg *P4VFSelectDlg::getWinCurvesPtr() const
-{
-    if (win_curves_)
-        return win_curves_.get();
-    return nullptr;
 }

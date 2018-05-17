@@ -23,13 +23,14 @@
 
 #include <QBoxLayout>
 #include <QComboBox>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QPushButton>
 
 #include <memory>
 
-#include "P4SeparatingCurvesDlg.hpp"
-
 class P4FindDlg;
+class P4SeparatingCurvesDlg;
 
 class P4VFSelectDlg : public QWidget
 {
@@ -43,8 +44,6 @@ class P4VFSelectDlg : public QWidget
     void closeConfigWindow();
     bool checkPlotWindowClosed();
 
-    P4SeparatingCurvesDlg *getWinCurvesPtr() const;
-
   public slots:
     void onBtnAdd();
     void onBtnDel();
@@ -55,6 +54,7 @@ class P4VFSelectDlg : public QWidget
 
   private:
     P4FindDlg *parent_;
+    P4SeparatingCurvesDlg *win_curves_ = nullptr;
 
     std::unique_ptr<QBoxLayout> mainLayout_;
     std::unique_ptr<QHBoxLayout> layout1_;
@@ -69,6 +69,4 @@ class P4VFSelectDlg : public QWidget
     std::unique_ptr<QPushButton> btn_p4config_;
 
     std::unique_ptr<QLabel> p4title_;
-
-    std::unique_ptr<P4SeparatingCurvesDlg> win_curves_;
 };
