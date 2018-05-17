@@ -21,14 +21,12 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QSpinBox>
-
-#include <memory>
+class QBoxLayout;
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
+class QSpinBox;
 
 class P4IntParamsDlg : public QWidget
 {
@@ -45,28 +43,28 @@ class P4IntParamsDlg : public QWidget
   private:
     bool changed_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
+    QBoxLayout *mainLayout_;
 
-    std::unique_ptr<QPushButton> btn_reset_;
-    std::unique_ptr<QRadioButton> btn_org_;
-    std::unique_ptr<QRadioButton> btn_red_;
-    std::unique_ptr<QRadioButton> btn_dots_;
-    std::unique_ptr<QRadioButton> btn_dashes_;
-    std::unique_ptr<QLineEdit> edt_minstep_;
-    std::unique_ptr<QLineEdit> edt_branchminstep_;
-    std::unique_ptr<QLineEdit> edt_maxstep_;
-    std::unique_ptr<QLineEdit> edt_stepsize_;
-    std::unique_ptr<QLabel> lbl_curstep_;
-    std::unique_ptr<QLineEdit> edt_tolerance_;
+    QPushButton *btn_reset_;
+    QRadioButton *btn_org_;
+    QRadioButton *btn_red_;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_minstep_;
+    QLineEdit *edt_branchminstep_;
+    QLineEdit *edt_maxstep_;
+    QLineEdit *edt_stepsize_;
+    QLabel *lbl_curstep_;
+    QLineEdit *edt_tolerance_;
 
-    std::unique_ptr<QLabel> lbl_minstep_;
-    std::unique_ptr<QLabel> lbl_maxstep_;
-    std::unique_ptr<QLabel> lbl_branchminstep_;
-    std::unique_ptr<QLabel> lbl_stepsize_;
-    std::unique_ptr<QLabel> lbl0_curstep_;
-    std::unique_ptr<QLabel> lbl_tolerance_;
+    QLabel *lbl_minstep_;
+    QLabel *lbl_maxstep_;
+    QLabel *lbl_branchminstep_;
+    QLabel *lbl_stepsize_;
+    QLabel *lbl0_curstep_;
+    QLabel *lbl_tolerance_;
 
-    std::unique_ptr<QSpinBox> spin_numpoints_;
+    QSpinBox *spin_numpoints_;
 
     bool readFloatField(QLineEdit *, double &, double, double, double);
 
