@@ -19,6 +19,11 @@
 
 #include "P4SepDlg.hpp"
 
+#include <QBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
 #include "P4WinSphere.hpp"
@@ -30,52 +35,52 @@ QString gCurrentSingularityInfo[4]{"", "", "", ""};
 double gCurrentSeparatriceEpsilon{0};
 
 P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
-    : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
+    : QWidget(plt, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    btn_start_ = std::make_unique<QPushButton>("&Start integrating sep", this);
-    btn_cont_ = std::make_unique<QPushButton>("&Cont integrating sep", this);
-    btn_intnext_ = std::make_unique<QPushButton>("&Integrate next sep", this);
-    btn_selectnext_ = std::make_unique<QPushButton>("Select &Next sep", this);
+    btn_start_ = new QPushButton{"&Start integrating sep", this};
+    btn_cont_ = new QPushButton{"&Cont integrating sep", this};
+    btn_intnext_ = new QPushButton{"&Integrate next sep", this};
+    btn_selectnext_ = new QPushButton{"Select &Next sep", this};
 
-    edt_epsilon_ = std::make_unique<QLineEdit>("", this);
-    lbl1_ = std::make_unique<QLabel>("&Epsilon = ", this);
-    lbl1_->setBuddy(edt_epsilon_.get());
+    edt_epsilon_ = new QLineEdit{"", this};
+    lbl1_ = new QLabel{"&Epsilon = ", this};
+    lbl1_->setBuddy(edt_epsilon_);
 
-    lbl_info_0_ = std::make_unique<QLabel>("", this);
-    lbl_info_1_ = std::make_unique<QLabel>("", this);
-    lbl_info_2_ = std::make_unique<QLabel>("", this);
-    lbl_info_3_ = std::make_unique<QLabel>("", this);
+    lbl_info_0_ = new QLabel{"", this};
+    lbl_info_1_ = new QLabel{"", this};
+    lbl_info_2_ = new QLabel{"", this};
+    lbl_info_3_ = new QLabel{"", this};
 
     // layout
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    mainLayout_->addWidget(lbl_info_0_.get());
-    mainLayout_->addWidget(lbl_info_1_.get());
-    mainLayout_->addWidget(lbl_info_2_.get());
-    mainLayout_->addWidget(lbl_info_3_.get());
+    mainLayout_->addWidget(lbl_info_0_);
+    mainLayout_->addWidget(lbl_info_1_);
+    mainLayout_->addWidget(lbl_info_2_);
+    mainLayout_->addWidget(lbl_info_3_);
 
-    layout3_ = std::make_unique<QHBoxLayout>();
-    layout3_->addWidget(lbl1_.get());
-    layout3_->addWidget(edt_epsilon_.get());
+    auto layout3 = new QHBoxLayout{};
+    layout3->addWidget(lbl1_);
+    layout3->addWidget(edt_epsilon_);
 
-    layout4_ = std::make_unique<QHBoxLayout>();
-    layout4_->addWidget(btn_start_.get());
-    layout4_->addWidget(btn_cont_.get());
+    auto layout4 = new QHBoxLayout{};
+    layout4->addWidget(btn_start_);
+    layout4->addWidget(btn_cont_);
 
-    layout5_ = std::make_unique<QHBoxLayout>();
-    layout5_->addWidget(btn_intnext_.get());
-    layout5_->addWidget(btn_selectnext_.get());
+    auto layout5 = new QHBoxLayout{};
+    layout5->addWidget(btn_intnext_);
+    layout5->addWidget(btn_selectnext_);
 
-    mainLayout_->addLayout(layout3_.get());
-    mainLayout_->addLayout(layout4_.get());
-    mainLayout_->addLayout(layout5_.get());
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(layout5);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
 
 #ifdef TOOLTIPS
     edt_epsilon_->setToolTip(
@@ -89,15 +94,15 @@ P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
 #endif
 
     // connections
-    QObject::connect(btn_selectnext_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_selectnext_, &QPushButton::clicked, this,
                      &P4SepDlg::onbtn_selectnext);
-    QObject::connect(btn_intnext_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_intnext_, &QPushButton::clicked, this,
                      &P4SepDlg::onbtn_intnext);
-    QObject::connect(btn_start_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_start_, &QPushButton::clicked, this,
                      &P4SepDlg::onbtn_start);
-    QObject::connect(btn_cont_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_cont_, &QPushButton::clicked, this,
                      &P4SepDlg::onbtn_cont);
-    QObject::connect(edt_epsilon_.get(), &QLineEdit::returnPressed, this,
+    QObject::connect(edt_epsilon_, &QLineEdit::returnPressed, this,
                      &P4SepDlg::onepsilon_enter);
 
     // finishing
@@ -261,7 +266,7 @@ void P4SepDlg::onepsilon_enter()
     s = edt_epsilon_->text();
     eps = s.toDouble(&ok);
     if (!ok || eps <= 0) {
-        markBad(edt_epsilon_.get());
+        markBad(edt_epsilon_);
         return;
     }
 

@@ -21,12 +21,10 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-
-#include <memory>
+class QBoxLayout;
+class QLabel;
+class QLineEdit;
+class QPushButton;
 
 class P4WinSphere;
 class P4PlotWnd;
@@ -46,22 +44,18 @@ class P4SepDlg : public QWidget
     P4PlotWnd *plotWnd_;
     P4WinSphere *mainSphere_;
 
-    std::unique_ptr<QPushButton> btn_selectnext_;
-    std::unique_ptr<QPushButton> btn_intnext_;
-    std::unique_ptr<QPushButton> btn_start_;
-    std::unique_ptr<QPushButton> btn_cont_;
-    std::unique_ptr<QLineEdit> edt_epsilon_;
-    std::unique_ptr<QLabel> lbl1_;
-    std::unique_ptr<QLabel> lbl_info_0_;
-    std::unique_ptr<QLabel> lbl_info_1_;
-    std::unique_ptr<QLabel> lbl_info_2_;
-    std::unique_ptr<QLabel> lbl_info_3_;
+    QPushButton *btn_selectnext_;
+    QPushButton *btn_intnext_;
+    QPushButton *btn_start_;
+    QPushButton *btn_cont_;
+    QLineEdit *edt_epsilon_;
+    QLabel *lbl1_;
+    QLabel *lbl_info_0_;
+    QLabel *lbl_info_1_;
+    QLabel *lbl_info_2_;
+    QLabel *lbl_info_3_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-
-    std::unique_ptr<QHBoxLayout> layout3_;
-    std::unique_ptr<QHBoxLayout> layout4_;
-    std::unique_ptr<QHBoxLayout> layout5_;
+    QBoxLayout *mainLayout_;
 
     bool started_;
     bool selected_;
