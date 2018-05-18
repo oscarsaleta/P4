@@ -23,6 +23,7 @@
 
 #include <vector>
 
+#include <QMetaObject>
 #include <QProcess>
 #include <QString>
 
@@ -42,7 +43,6 @@
 #endif
 
 // forward class and struct declarations
-class QMetaObject;
 class QProcess;
 class QPushButton;
 class QTextEdit;
