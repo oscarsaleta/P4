@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -20,20 +20,21 @@
 /* if we use the original vector field and we plot a separatrice then it
    is possible that we have to change the direction */
 
-#include "math_changedir.h"
-
-#include "custom.h"
-#include "file_tab.h"
-#include "math_charts.h"
-#include "math_p4.h"
-#include "math_polynom.h"
+#include "math_changedir.hpp"
 
 #include <cmath>
+
+#include "P4ParentStudy.hpp"
+#include "P4VFStudy.hpp"
+#include "custom.hpp"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "math_polynom.hpp"
+#include "tables.hpp"
 
 // -----------------------------------------------------------------------
 //                          CHANGE_DIR_POINCARE
 // -----------------------------------------------------------------------
-
 int change_dir_poincare(double p[3])
 {
     double y[2];
@@ -41,9 +42,8 @@ int change_dir_poincare(double p[3])
 
     if (p[2] > ZCOORD) {
         // finite point
-
         psphere_to_R2(p[0], p[1], p[2], y);
-        if (eval_term2(g_VFResults.gcf_, y) >= 0)
+        if (eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_, y) >= 0)
             return 0;
         else
             return 1;
@@ -51,16 +51,16 @@ int change_dir_poincare(double p[3])
 
     theta = atan2(fabs(p[1]), fabs(p[0]));
 
-    if ((theta < PI_DIV4) && (theta > -PI_DIV4)) {
+    if (theta < PI_DIV4 && theta > -PI_DIV4) {
         if (p[0] > 0) {
             psphere_to_U1(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_U1_, y) >= 0)
+            if (eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_U1_, y) >= 0)
                 return 0;
             else
                 return 1;
         } else {
             psphere_to_V1(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_V1_, y) >= 0)
+            if (eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_V1_, y) >= 0)
                 return 0;
             else
                 return 1;
@@ -68,13 +68,13 @@ int change_dir_poincare(double p[3])
     } else {
         if (p[1] > 0) {
             psphere_to_U2(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_U2_, y) >= 0)
+            if (eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_U2_, y) >= 0)
                 return 0;
             else
                 return 1;
         } else {
             psphere_to_V2(p[0], p[1], p[2], y);
-            if (eval_term2(g_VFResults.gcf_V2_, y) >= 0)
+            if (eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_V2_, y) >= 0)
                 return 0;
             else
                 return 1;
@@ -85,7 +85,6 @@ int change_dir_poincare(double p[3])
 // -----------------------------------------------------------------------
 //                          CHANGE_DIR_LYAPUNOV
 // -----------------------------------------------------------------------
-
 int change_dir_lyapunov(double p[3])
 {
     double y[2];
@@ -93,14 +92,14 @@ int change_dir_lyapunov(double p[3])
     if (p[0] == 0) {
         y[0] = p[1];
         y[1] = p[2];
-        if (eval_term2(g_VFResults.gcf_, y) >= 0)
+        if (eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_, y) >= 0)
             return 0;
         else
             return 1;
     } else {
         y[0] = p[1];
         y[1] = p[2];
-        if (eval_term3(g_VFResults.gcf_C_, y) >= 0)
+        if (eval_term3(gVFResults.vf_[gVFResults.K_]->gcf_C_, y) >= 0)
             return 0;
         else
             return 1;

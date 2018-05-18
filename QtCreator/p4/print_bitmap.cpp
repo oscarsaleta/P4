@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -17,30 +17,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "print_bitmap.h"
-
-#include "custom.h"
-#include "main.h"
-#include "plot_tools.h"
-#include "print_points.h"
+#include "print_bitmap.hpp"
 
 #include <QBrush>
 #include <QPainter>
 
-static bool s_P4PrintBlackWhite = true;
+#include <cmath>
 
-static QPainter *s_P4PrintPainter = nullptr;
+#include "P4ParentStudy.hpp"
+#include "custom.hpp"
+#include "main.hpp"
+#include "plot_tools.hpp"
+#include "print_points.hpp"
 
-static int s_P4PrintLineWidth = 0;
-static int s_P4PrintSymbolWidth = 0;
-static int s_LastP4PrintX0 = 0;
-static int s_LastP4PrintY0 = 0;
-static int s_LastP4Printcolor = 0;
+static bool sP4PrintBlackWhite{true};
 
-// ---------------------------------------------------------------------------------------
+static QPainter *sP4PrintPainter;
+
+static int sP4PrintLineWidth{0};
+static int sP4PrintSymbolWidth{0};
+static int sLastP4PrintX0{0};
+static int sLastP4PrintY0{0};
+static int sLastP4PrintColor{0};
+
+// ----------------------------------------------------------------------------
 int printColorTable(int color)
 {
-    int colorTable[NUMXFIGCOLORS] = {
+    int colorTable[NUMXFIGCOLORS]{
         WHITE, // black --> white when printing
         BLUE,   GREEN,  CYAN,   RED,   MAGENTA,
         BLACK, // yellow --> black when printing
@@ -48,7 +51,7 @@ int printColorTable(int color)
         BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1,  GREEN2,   GREEN3,   CYAN1,
         CYAN2,  CYAN3,  RED1,   RED2,  RED3,    MAGENTA1, MAGENTA2, MAGENTA3,
         BROWN1, BROWN2, BROWN3, PINK1, PINK2,   PINK3,    PINK4,    GOLD};
-    int colorTableReverse[NUMXFIGCOLORS] = {
+    int colorTableReverse[NUMXFIGCOLORS]{
         BLACK,  BLUE,   GREEN,  CYAN,  RED,    MAGENTA,  YELLOW,   WHITE,
         BLUE1,  BLUE2,  BLUE3,  BLUE4, GREEN1, GREEN2,   GREEN3,   CYAN1,
         CYAN2,  CYAN3,  RED1,   RED2,  RED3,   MAGENTA1, MAGENTA2, MAGENTA3,
@@ -60,464 +63,790 @@ int printColorTable(int color)
         return colorTableReverse[color];
 }
 
-static void P4Print_comment(QString s)
+static void p4Print_comment(QString s)
 {
-    UNUSED(s);
     // do nothing
 }
 
-static void P4Print_print_saddle(double _x, double _y)
+static void p4Print_print_saddle(double _x, double _y)
 {
-    int x;
-    int y;
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
-    x = (int)_x;
-    y = (int)_y;
 
-    if (s_P4PrintBlackWhite)
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CSADDLE);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print box:
-    s_P4PrintPainter->drawRect(x - s_P4PrintSymbolWidth / 2,
-                               y - s_P4PrintSymbolWidth / 2,
-                               s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
+    sP4PrintPainter->drawRect(x - sP4PrintSymbolWidth / 2,
+                              y - sP4PrintSymbolWidth / 2, sP4PrintSymbolWidth,
+                              sP4PrintSymbolWidth);
 }
 
-static void P4Print_print_stablenode(double _x, double _y)
+static void p4Print_print_virtualsaddle(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CSADDLE);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print box:
+    sP4PrintPainter->drawRect(x - sP4PrintSymbolWidth / 2,
+                              y - sP4PrintSymbolWidth / 2, sP4PrintSymbolWidth,
+                              sP4PrintSymbolWidth);
+}
+
+static void p4Print_print_stablenode(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CNODE_S);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print box:
-    s_P4PrintPainter->drawRect(x - s_P4PrintSymbolWidth / 2,
-                               y - s_P4PrintSymbolWidth / 2,
-                               s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
+    sP4PrintPainter->drawRect(x - sP4PrintSymbolWidth / 2,
+                              y - sP4PrintSymbolWidth / 2, sP4PrintSymbolWidth,
+                              sP4PrintSymbolWidth);
 }
 
-static void P4Print_print_unstablenode(double _x, double _y)
+static void p4Print_print_virtualstablenode(double _x, double _y)
 {
-    int x;
-    int y;
-    int color;
-    x = (int)_x;
-    y = (int)_y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
 
-    if (s_P4PrintBlackWhite)
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CNODE_S);
+
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print box:
+    sP4PrintPainter->drawRect(x - sP4PrintSymbolWidth / 2,
+                              y - sP4PrintSymbolWidth / 2, sP4PrintSymbolWidth,
+                              sP4PrintSymbolWidth);
+}
+
+static void p4Print_print_unstablenode(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CNODE_U);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print box:
-    s_P4PrintPainter->drawRect(x - s_P4PrintSymbolWidth / 2,
-                               y - s_P4PrintSymbolWidth / 2,
-                               s_P4PrintSymbolWidth, s_P4PrintSymbolWidth);
+    sP4PrintPainter->drawRect(x - sP4PrintSymbolWidth / 2,
+                              y - sP4PrintSymbolWidth / 2, sP4PrintSymbolWidth,
+                              sP4PrintSymbolWidth);
 }
 
-static void P4Print_print_stableweakfocus(double _x, double _y)
+static void p4Print_print_virtualunstablenode(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
-    if (s_P4PrintBlackWhite)
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CNODE_U);
+
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print box:
+    sP4PrintPainter->drawRect(x - sP4PrintSymbolWidth / 2,
+                              y - sP4PrintSymbolWidth / 2, sP4PrintSymbolWidth,
+                              sP4PrintSymbolWidth);
+}
+
+static void p4Print_print_stableweakfocus(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CWEAK_FOCUS_S);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print diamond:
-
     QPolygon qpa(4);
-    qpa.setPoints(4, x, y - s_P4PrintSymbolWidth * 13 / 20,
-                  x + s_P4PrintSymbolWidth * 13 / 20, y, x,
-                  y + s_P4PrintSymbolWidth * 13 / 20,
-                  x - s_P4PrintSymbolWidth * 13 / 20, y);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
 
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_unstableweakfocus(double _x, double _y)
+static void p4Print_print_virtualstableweakfocus(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
-    if (s_P4PrintBlackWhite)
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CWEAK_FOCUS_S);
+
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print diamond:
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_unstableweakfocus(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CWEAK_FOCUS_U);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print diamond:
-
     QPolygon qpa(4);
-    qpa.setPoints(4, x, y - s_P4PrintSymbolWidth * 13 / 20,
-                  x + s_P4PrintSymbolWidth * 13 / 20, y, x,
-                  y + s_P4PrintSymbolWidth * 13 / 20,
-                  x - s_P4PrintSymbolWidth * 13 / 20, y);
-
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_weakfocus(double _x, double _y)
+static void p4Print_print_virtualunstableweakfocus(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CWEAK_FOCUS_U);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print diamond:
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_weakfocus(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CWEAK_FOCUS);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print diamond:
-
     QPolygon qpa(4);
-    qpa.setPoints(4, x, y - s_P4PrintSymbolWidth * 13 / 20,
-                  x + s_P4PrintSymbolWidth * 13 / 20, y, x,
-                  y + s_P4PrintSymbolWidth * 13 / 20,
-                  x - s_P4PrintSymbolWidth * 13 / 20, y);
-
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_center(double _x, double _y)
+static void p4Print_print_virtualweakfocus(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CWEAK_FOCUS);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print diamond:
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_center(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CCENTER);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print diamond:
-
     QPolygon qpa(4);
-    qpa.setPoints(4, x, y - s_P4PrintSymbolWidth * 13 / 20,
-                  x + s_P4PrintSymbolWidth * 13 / 20, y, x,
-                  y + s_P4PrintSymbolWidth * 13 / 20,
-                  x - s_P4PrintSymbolWidth * 13 / 20, y);
-
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_stablestrongfocus(double _x, double _y)
+static void p4Print_print_virtualcenter(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CCENTER);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print diamond:
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_stablestrongfocus(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CSTRONG_FOCUS_S);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print diamond:
-
     QPolygon qpa(4);
-    qpa.setPoints(4, x, y - s_P4PrintSymbolWidth * 13 / 20,
-                  x + s_P4PrintSymbolWidth * 13 / 20, y, x,
-                  y + s_P4PrintSymbolWidth * 13 / 20,
-                  x - s_P4PrintSymbolWidth * 13 / 20, y);
-
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_unstablestrongfocus(double _x, double _y)
+static void p4Print_print_virtualstablestrongfocus(double _x, double _y)
 {
-    int x, y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x; // seems to be necessary
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CSTRONG_FOCUS_S);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print diamond:
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_unstablestrongfocus(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CSTRONG_FOCUS_U);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print diamond:
-
     QPolygon qpa(4);
-    qpa.setPoints(4, x, y - s_P4PrintSymbolWidth * 13 / 20,
-                  x + s_P4PrintSymbolWidth * 13 / 20, y, x,
-                  y + s_P4PrintSymbolWidth * 13 / 20,
-                  x - s_P4PrintSymbolWidth * 13 / 20, y);
-
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_sesaddle(double _x, double _y)
+static void p4Print_print_virtualunstablestrongfocus(double _x, double _y)
 {
-    int x;
-    int y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x;
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CSTRONG_FOCUS_U);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print diamond:
+    QPolygon qpa(4);
+    qpa.setPoints(4, x, y - sP4PrintSymbolWidth * 13 / 20,
+                  x + sP4PrintSymbolWidth * 13 / 20, y, x,
+                  y + sP4PrintSymbolWidth * 13 / 20,
+                  x - sP4PrintSymbolWidth * 13 / 20, y);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_sesaddle(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CSADDLE);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print triangle:
-
     QPolygon qpa(3);
-    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20,
-                  x + s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20, x,
-                  y - s_P4PrintSymbolWidth * 12 / 20);
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_sesaddlenode(double _x, double _y)
+static void p4Print_print_virtualsesaddle(double _x, double _y)
 {
-    int x, y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x; // seems to be necessary
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CSADDLE);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print triangle:
+    QPolygon qpa(3);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_sesaddlenode(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CSADDLE_NODE);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
-    // print triangle:
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
+    // print triangle:
     QPolygon qpa(3);
-    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20,
-                  x + s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20, x,
-                  y - s_P4PrintSymbolWidth * 12 / 20);
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_sestablenode(double _x, double _y)
+static void p4Print_print_virtualsesaddlenode(double _x, double _y)
 {
-    int x, y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x; // seems to be necessary
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CSADDLE_NODE);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print triangle:
+    QPolygon qpa(3);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_sestablenode(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CNODE_S);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print triangle:
-
     QPolygon qpa(3);
-    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20,
-                  x + s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20, x,
-                  y - s_P4PrintSymbolWidth * 12 / 20);
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_seunstablenode(double _x, double _y)
+static void p4Print_print_virtualsestablenode(double _x, double _y)
 {
-    int x, y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    x = (int)_x; // seems to be necessary
-    y = (int)_y;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CNODE_S);
 
-    if (s_P4PrintBlackWhite)
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
+
+    // print triangle:
+    QPolygon qpa(3);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
+
+static void p4Print_print_seunstablenode(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CNODE_U);
 
-    s_P4PrintPainter->setPen(QXFIGCOLOR(color));
-    s_P4PrintPainter->setBrush(QXFIGCOLOR(color));
+    sP4PrintPainter->setPen(QXFIGCOLOR(color));
+    sP4PrintPainter->setBrush(QXFIGCOLOR(color));
 
     // print triangle:
-
     QPolygon qpa(3);
-    qpa.setPoints(3, x - s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20,
-                  x + s_P4PrintSymbolWidth * 12 / 20,
-                  y + s_P4PrintSymbolWidth * 12 / 20, x,
-                  y - s_P4PrintSymbolWidth * 12 / 20);
-    s_P4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
 }
 
-static void P4Print_print_degen(double _x, double _y)
+static void p4Print_print_virtualseunstablenode(double _x, double _y)
 {
-    int i, x, y;
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
     int color;
 
-    i = s_P4PrintLineWidth * 26 / 20;
-    //  if( i > s_P4PrintSymbolWidth/2 )
-    //      i = s_P4PrintSymbolWidth/4;
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CNODE_U);
 
-    x = (int)_x;
-    y = (int)_y;
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->setBrush(Qt::NoBrush);
 
-    // print cross:
+    // print triangle:
+    QPolygon qpa(3);
+    qpa.setPoints(
+        3, x - sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20,
+        x + sP4PrintSymbolWidth * 12 / 20, y + sP4PrintSymbolWidth * 12 / 20, x,
+        y - sP4PrintSymbolWidth * 12 / 20);
+    sP4PrintPainter->drawPolygon(qpa, Qt::OddEvenFill);
+}
 
-    if (s_P4PrintBlackWhite)
+static void p4Print_print_degen(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
     else
         color = printColorTable(CDEGEN);
 
-    QPen p = QPen(QXFIGCOLOR(color), i);
-    s_P4PrintPainter->setPen(p);
-    s_P4PrintPainter->drawLine(
-        x - s_P4PrintSymbolWidth / 2, y - s_P4PrintSymbolWidth / 2,
-        x + s_P4PrintSymbolWidth / 2, y + s_P4PrintSymbolWidth / 2);
-    s_P4PrintPainter->drawLine(
-        x + s_P4PrintSymbolWidth / 2, y - s_P4PrintSymbolWidth / 2,
-        x - s_P4PrintSymbolWidth / 2, y + s_P4PrintSymbolWidth / 2);
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+
+    // print cross:
+    sP4PrintPainter->drawLine(
+        x - sP4PrintSymbolWidth / 2, y - sP4PrintSymbolWidth / 2,
+        x + sP4PrintSymbolWidth / 2, y + sP4PrintSymbolWidth / 2);
+    sP4PrintPainter->drawLine(
+        x + sP4PrintSymbolWidth / 2, y - sP4PrintSymbolWidth / 2,
+        x - sP4PrintSymbolWidth / 2, y + sP4PrintSymbolWidth / 2);
 }
 
-static void P4Print_print_elips(double x0, double y0, double a, double b,
-                                int color, bool dotted,
-                                struct P4POLYLINES *ellipse)
+static void p4Print_print_virtualdegen(double _x, double _y)
 {
-    int color2;
-    if (s_P4PrintBlackWhite)
-        color2 = printColorTable(bgColours::CFOREGROUND);
+    if (!gVFResults.plotVirtualSingularities_)
+        return;
+
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
     else
-        color2 = printColorTable(color);
+        color = printColorTable(CDEGEN);
 
-    QPen p = QPen(QXFIGCOLOR(color2), s_P4PrintLineWidth);
+    QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+
+    // print cross:
+    sP4PrintPainter->drawLine(
+        x - sP4PrintSymbolWidth / 2, y - sP4PrintSymbolWidth / 2,
+        x + sP4PrintSymbolWidth / 2, y + sP4PrintSymbolWidth / 2);
+    sP4PrintPainter->drawLine(
+        x + sP4PrintSymbolWidth / 2, y - sP4PrintSymbolWidth / 2,
+        x - sP4PrintSymbolWidth / 2, y + sP4PrintSymbolWidth / 2);
+}
+
+static void p4Print_print_coinciding(double _x, double _y)
+{
+    int x{static_cast<int>(_x)};
+    int y{static_cast<int>(_y)};
+    int color;
+
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+    else
+        color = printColorTable(CDEGEN);
+
+    QPen p{QXFIGCOLOR(color), std::round(sP4PrintLineWidth * 26 / 20)};
+    sP4PrintPainter->setPen(p);
+
+    // print double cross:
+    sP4PrintPainter->drawLine(
+        x - sP4PrintSymbolWidth / 2, y - sP4PrintSymbolWidth / 2,
+        x + sP4PrintSymbolWidth / 2, y + sP4PrintSymbolWidth / 2);
+    sP4PrintPainter->drawLine(
+        x + sP4PrintSymbolWidth / 2, y - sP4PrintSymbolWidth / 2,
+        x - sP4PrintSymbolWidth / 2, y + sP4PrintSymbolWidth / 2);
+    sP4PrintPainter->drawLine(x, y - (sP4PrintSymbolWidth * 3) / 4, x,
+                              y + (sP4PrintSymbolWidth * 3) / 4);
+    sP4PrintPainter->drawLine(x + (sP4PrintSymbolWidth * 3) / 4, y,
+                              x - (sP4PrintSymbolWidth * 3) / 4, y);
+}
+
+static void p4Print_print_elips(double x0, double y0, double a, double b,
+                                int color, bool dotted,
+                                const std::vector<P4POLYLINES> &ellipse)
+{
+    color = printColorTable(color);
+    if (sP4PrintBlackWhite)
+        color = printColorTable(bgColours::CFOREGROUND);
+
+    QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
-    s_P4PrintPainter->setPen(p);
+    sP4PrintPainter->setPen(p);
 
-    // we do not use the (x0,y0,a,b,dotted) parameters.
-    // Instead, we use the "precompiled" ellipse parameter.  Here, a list of
-    // lines is computed
-    // that approximates the ellipse.
+    // we do not use the (x0,y0,a,b,dotted) parameters. Instead, we use the
+    // "precompiled" ellipse parameter.  Here, a list of lines is computed that
+    // approximates the ellipse.
 
-    UNUSED(x0);
-    UNUSED(y0);
-    UNUSED(a);
-    UNUSED(b);
-    UNUSED(dotted);
-    while (ellipse != nullptr) {
-        s_P4PrintPainter->drawLine((int)(ellipse->x1), (int)(ellipse->y1),
-                                   (int)(ellipse->x2), (int)(ellipse->y2));
-        ellipse = ellipse->next;
+    for (auto const &it : ellipse) {
+        sP4PrintPainter->drawLine(
+            static_cast<int>(it.x1), static_cast<int>(it.y1),
+            static_cast<int>(it.x2), static_cast<int>(it.y2));
     }
 }
 
-static void P4Print_print_line(double _x0, double _y0, double _x1, double _y1,
+static void p4Print_print_line(double _x0, double _y0, double _x1, double _y1,
                                int color)
 {
-    int x0, y0, x1, y1;
-
     color = printColorTable(color);
-    if (s_P4PrintBlackWhite)
+    if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
 
-    x0 = (int)_x0;
-    x1 = (int)_x1;
-    y0 = (int)_y0;
-    y1 = (int)_y1;
+    int x0{static_cast<int>(_x0)};
+    int x1{static_cast<int>(_x1)};
+    int y0{static_cast<int>(_y0)};
+    int y1{static_cast<int>(_y1)};
 
     if (x0 == x1 && y0 == y1)
         return;
 
-    QPen p = QPen(QXFIGCOLOR(color), s_P4PrintLineWidth);
+    QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
 
-    s_P4PrintPainter->setPen(p);
-    s_P4PrintPainter->drawLine(x0, y0, x1, y1);
+    sP4PrintPainter->setPen(p);
+    sP4PrintPainter->drawLine(x0, y0, x1, y1);
 }
 
-static void P4Print_print_point(double _x0, double _y0, int color)
+static void p4Print_print_point(double _x0, double _y0, int color)
 {
-    int x0;
-    int y0;
-
-    if (s_P4PrintBlackWhite)
+    if (sP4PrintBlackWhite)
         color = bgColours::CFOREGROUND;
     color = printColorTable(color);
 
-    x0 = (int)_x0;
-    y0 = (int)_y0;
+    int x0{static_cast<int>(_x0)};
+    int y0{static_cast<int>(_y0)};
 
-    if (x0 == s_LastP4PrintX0 && y0 == s_LastP4PrintY0 &&
-        color == s_LastP4Printcolor)
+    if (x0 == sLastP4PrintX0 && y0 == sLastP4PrintY0 &&
+        color == sLastP4PrintColor)
         return;
 
-    s_LastP4PrintX0 = x0;
-    s_LastP4PrintY0 = y0;
-    s_LastP4Printcolor = color;
+    sLastP4PrintX0 = x0;
+    sLastP4PrintY0 = y0;
+    sLastP4PrintColor = color;
 
-    QPen p = QPen(QXFIGCOLOR(color), s_P4PrintLineWidth);
+    QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
 
-    s_P4PrintPainter->setPen(p);
-    if (s_P4PrintLineWidth > 1) {
-        s_P4PrintPainter->drawLine(x0, y0, x0, y0);
+    sP4PrintPainter->setPen(p);
+    if (sP4PrintLineWidth > 1) {
+        sP4PrintPainter->drawLine(x0, y0, x0, y0);
     } else {
-        s_P4PrintPainter->drawPoint(x0, y0);
+        sP4PrintPainter->drawPoint(x0, y0);
     }
 }
 
@@ -528,43 +857,71 @@ void prepareP4Printing(int w, int h, bool isblackwhite, QPainter *p4paint,
 {
     QString s;
 
-    s_P4PrintBlackWhite = isblackwhite;
-    s_P4PrintPainter = p4paint;
-    s_P4PrintLineWidth = linewidth;
-    s_P4PrintSymbolWidth = symbolwidth;
+    sP4PrintBlackWhite = isblackwhite;
+    sP4PrintPainter = p4paint;
+    sP4PrintLineWidth = linewidth;
+    sP4PrintSymbolWidth = symbolwidth;
 
     plot_l = spherePrintLine;
     plot_p = spherePrintPoint;
 
-    print_saddle = P4Print_print_saddle;
-    print_stablenode = P4Print_print_stablenode;
-    print_unstablenode = P4Print_print_unstablenode;
-    print_stableweakfocus = P4Print_print_stableweakfocus;
-    print_unstableweakfocus = P4Print_print_unstableweakfocus;
-    print_weakfocus = P4Print_print_weakfocus;
-    print_stablestrongfocus = P4Print_print_stablestrongfocus;
-    print_unstablestrongfocus = P4Print_print_unstablestrongfocus;
-    print_sesaddle = P4Print_print_sesaddle;
-    print_sesaddlenode = P4Print_print_sesaddlenode;
-    print_sestablenode = P4Print_print_sestablenode;
-    print_seunstablenode = P4Print_print_seunstablenode;
-    print_degen = P4Print_print_degen;
-    print_center = P4Print_print_center;
-    print_elips = P4Print_print_elips;
-    print_point = P4Print_print_point;
-    print_line = P4Print_print_line;
-    print_comment = P4Print_comment;
+    print_saddle = p4Print_print_saddle;
+    print_virtualsaddle = p4Print_print_virtualsaddle;
 
-    s_LastP4Printcolor = -1;
+    print_stablenode = p4Print_print_stablenode;
+    print_virtualstablenode = p4Print_print_virtualstablenode;
+
+    print_unstablenode = p4Print_print_unstablenode;
+    print_virtualunstablenode = p4Print_print_virtualunstablenode;
+
+    print_stableweakfocus = p4Print_print_stableweakfocus;
+    print_virtualstableweakfocus = p4Print_print_virtualstableweakfocus;
+
+    print_unstableweakfocus = p4Print_print_unstableweakfocus;
+    print_virtualunstableweakfocus = p4Print_print_virtualunstableweakfocus;
+
+    print_weakfocus = p4Print_print_weakfocus;
+    print_virtualweakfocus = p4Print_print_virtualweakfocus;
+
+    print_stablestrongfocus = p4Print_print_stablestrongfocus;
+    print_virtualstablestrongfocus = p4Print_print_virtualstablestrongfocus;
+
+    print_unstablestrongfocus = p4Print_print_unstablestrongfocus;
+    print_virtualunstablestrongfocus = p4Print_print_virtualunstablestrongfocus;
+
+    print_sesaddle = p4Print_print_sesaddle;
+    print_virtualsesaddle = p4Print_print_virtualsesaddle;
+
+    print_sesaddlenode = p4Print_print_sesaddlenode;
+    print_virtualsesaddlenode = p4Print_print_virtualsesaddlenode;
+
+    print_sestablenode = p4Print_print_sestablenode;
+    print_virtualsestablenode = p4Print_print_virtualsestablenode;
+
+    print_seunstablenode = p4Print_print_seunstablenode;
+    print_virtualseunstablenode = p4Print_print_virtualseunstablenode;
+
+    print_degen = p4Print_print_degen;
+    print_virtualdegen = p4Print_print_virtualdegen;
+
+    print_center = p4Print_print_center;
+    print_virtualcenter = p4Print_print_virtualcenter;
+
+    print_coinciding = p4Print_print_coinciding;
+    print_elips = p4Print_print_elips;
+    print_point = p4Print_print_point;
+    print_line = p4Print_print_line;
+    print_comment = p4Print_comment;
+
+    sLastP4PrintColor = -1;
 
     p4paint->fillRect(
         0, 0, w, h,
         QBrush(QXFIGCOLOR(printColorTable(bgColours::CBACKGROUND))));
 }
 
-void finishP4Printing(void)
+void finishP4Printing()
 {
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
-    s_P4PrintPainter = nullptr;
 }
