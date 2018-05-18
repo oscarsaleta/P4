@@ -785,7 +785,7 @@ static void p4Print_print_elips(double x0, double y0, double a, double b,
     if (sP4PrintBlackWhite)
         color = printColorTable(bgColours::CFOREGROUND);
 
-    QPen p{QXFIGCOLOR(color), sP4PrintLineWidth};
+    QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
     sP4PrintPainter->setPen(p);
 
@@ -815,7 +815,7 @@ static void p4Print_print_line(double _x0, double _y0, double _x1, double _y1,
     if (x0 == x1 && y0 == y1)
         return;
 
-    QPen p{QXFIGCOLOR(color), sP4PrintLineWidth};
+    QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
 
     sP4PrintPainter->setPen(p);
@@ -839,7 +839,7 @@ static void p4Print_print_point(double _x0, double _y0, int color)
     sLastP4PrintY0 = y0;
     sLastP4PrintColor = color;
 
-    QPen p{QXFIGCOLOR(color), sP4PrintLineWidth};
+    QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
 
     sP4PrintPainter->setPen(p);
