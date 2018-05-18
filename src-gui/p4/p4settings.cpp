@@ -46,10 +46,10 @@ static QString sSettingsMapleExe;
 // static QString sSettingsReduceExe;
 static bool sSettingsChanged;
 
-QString getP4Path(void) { return sSettingsP4Path; }
-QString getP4TempPath(void) { return sSettingsTempPath; }
-QString getP4SumTablePath(void) { return sSettingsSumtablePath; }
-QString getMapleExe(void) { return sSettingsMapleExe; }
+QString getP4Path() { return sSettingsP4Path; }
+QString getP4TempPath() { return sSettingsTempPath; }
+QString getP4SumTablePath() { return sSettingsSumtablePath; }
+QString getMapleExe() { return sSettingsMapleExe; }
 
 void setMathManipulator(QString s)
 {
@@ -91,7 +91,7 @@ void setMapleExe(QString s)
     }
 }
 
-QString getP4MaplePath(void)
+QString getP4MaplePath()
 {
     QString f, g;
     f = getP4Path();
@@ -103,11 +103,9 @@ QString getP4MaplePath(void)
     return g;
 }
 
-QString getMathManipulator(void) { return sSettingsMathManipulator; }
+QString getMathManipulator() { return sSettingsMathManipulator; }
 
-int getMathPackage(void) { return PACKAGE_MAPLE; }
-
-QString getP4HelpPath(void)
+QString getP4HelpPath()
 {
     QString f, g;
     f = getP4Path();
@@ -119,7 +117,7 @@ QString getP4HelpPath(void)
     return g;
 }
 
-QString getP4BinPath(void)
+QString getP4BinPath()
 {
     QString f, g;
     f = getP4Path();
@@ -133,9 +131,9 @@ QString getP4BinPath(void)
 
 // ------------------------------------------------------------------------------------------
 
-bool readP4Settings(void)
+bool readP4Settings()
 {
-    std::unique_ptr<QSettings> p4settings{new QSettings()};
+    auto p4settings = new QSettings{};
     bool _ok{false};
 
     sSettingsChanged = false;
@@ -152,7 +150,8 @@ bool readP4Settings(void)
         }
     }
 
-    p4settings.reset();
+    delete p4settings;
+    p4settings = nullptr;
 
     if (!_ok) {
         sSettingsP4Path = getDefaultP4Path();
@@ -167,13 +166,12 @@ bool readP4Settings(void)
     return true;
 }
 
-void saveP4Settings(void)
+void saveP4Settings()
 {
     if (sSettingsChanged == false)
         return;
 
-    std::unique_ptr<QSettings> p4settings{new QSettings()};
-
+    auto p4settings = new QSettings{};
     p4settings->setValue("/Version", gP4version);
     p4settings->setValue("/BuildDate", gP4versionDate);
     p4settings->setValue("/InstallPath", getP4Path());
@@ -184,5 +182,6 @@ void saveP4Settings(void)
     p4settings->setValue("/Math", getMathManipulator());
 #endif
 
-    p4settings.reset();
+    delete p4settings;
+    p4settings = nullptr;
 }
