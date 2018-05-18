@@ -19,8 +19,16 @@
 
 #include "P4SettingsDlg.hpp"
 
+#include <QBoxLayout>
+#include <QButtonGroup>
 #include <QFileDialog>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QString>
+#include <QWidget>
 
 #include "custom.hpp"
 #include "file_paths.hpp"
@@ -79,38 +87,37 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    edt_base_ = std::make_unique<QLineEdit>(stripQuotes(getP4Path()), this);
-    lbl_base_ = std::make_unique<QLabel>("&Base Installation Path", this);
-    btn_base_ = std::make_unique<QPushButton>("Browse...", this);
-    lbl_base_->setBuddy(edt_base_.get());
+    edt_base_ = new QLineEdit{stripQuotes(getP4Path()), this};
+    lbl_base_ = new QLabel{"&Base Installation Path", this};
+    btn_base_ = new QPushButton{"Browse...", this};
+    lbl_base_->setBuddy(edt_base_);
 
-    edt_sum_ =
-        std::make_unique<QLineEdit>(stripQuotes(getP4SumTablePath()), this);
-    lbl_sum_ = std::make_unique<QLabel>("&Sumtable Path", this);
-    btn_sum_ = std::make_unique<QPushButton>("Browse...", this);
-    lbl_sum_->setBuddy(edt_sum_.get());
+    edt_sum_ = new QLineEdit{stripQuotes(getP4SumTablePath()), this};
+    lbl_sum_ = new QLabel{"&Sumtable Path", this};
+    btn_sum_ = new QPushButton{"Browse...", this};
+    lbl_sum_->setBuddy(edt_sum_);
 
-    edt_temp_ = std::make_unique<QLineEdit>(stripQuotes(getP4TempPath()), this);
-    lbl_temp_ = std::make_unique<QLabel>("&Temporary Files Path", this);
-    btn_temp_ = std::make_unique<QPushButton>("Browse...", this);
-    lbl_temp_->setBuddy(edt_temp_.get());
+    edt_temp_ = new QLineEdit{stripQuotes(getP4TempPath()), this};
+    lbl_temp_ = new QLabel{"&Temporary Files Path", this};
+    btn_temp_ = new QPushButton{"Browse...", this};
+    lbl_temp_->setBuddy(edt_temp_);
 
-    edt_maple_ = std::make_unique<QLineEdit>(stripQuotes(getMapleExe()), this);
-    lbl_maple_ = std::make_unique<QLabel>("&Maple Executable", this);
-    btn_maple_ = std::make_unique<QPushButton>("Browse...", this);
-    lbl_maple_->setBuddy(edt_maple_.get());
+    edt_maple_ = new QLineEdit{stripQuotes(getMapleExe()), this};
+    lbl_maple_ = new QLabel{"&Maple Executable", this};
+    btn_maple_ = new QPushButton{"Browse...", this};
+    lbl_maple_->setBuddy(edt_maple_);
 
-    lbl_bgcolor_ = std::make_unique<QLabel>("Plot background color", this);
-    btn_bgblack_ = std::make_unique<QRadioButton>("Black", this);
-    btn_bgwhite_ = std::make_unique<QRadioButton>("White", this);
+    lbl_bgcolor_ = new QLabel{"Plot background color", this};
+    btn_bgblack_ = new QRadioButton{"Black", this};
+    btn_bgwhite_ = new QRadioButton{"White", this};
 
-    bgcolors_ = std::make_unique<QButtonGroup>(this);
-    bgcolors_->addButton(btn_bgblack_.get());
-    bgcolors_->addButton(btn_bgwhite_.get());
+    bgcolors_ = new QButtonGroup{this};
+    bgcolors_->addButton(btn_bgblack_);
+    bgcolors_->addButton(btn_bgwhite_);
 
-    btn_ok_ = std::make_unique<QPushButton>("&Ok", this);
-    btn_reset_ = std::make_unique<QPushButton>("&Reset", this);
-    btn_cancel_ = std::make_unique<QPushButton>("&Cancel", this);
+    btn_ok_ = new QPushButton{"&Ok", this};
+    btn_reset_ = new QPushButton{"&Reset", this};
+    btn_cancel_ = new QPushButton{"&Cancel", this};
 
     btn_ok_->setDefault(true);
 
@@ -140,7 +147,7 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
                            "executable automatically");
 #endif
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
     mainLayout_->addSpacing(4);
     mainLayout_->addWidget(new QLabel(
@@ -154,69 +161,69 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
         this));
     mainLayout_->addSpacing(4);
 
-    buttons_ = std::make_unique<QHBoxLayout>();
-    buttons_->addStretch(0);
-    buttons_->addWidget(btn_ok_.get());
-    buttons_->addWidget(btn_reset_.get());
-    buttons_->addWidget(btn_cancel_.get());
-    buttons_->addStretch(0);
+    auto buttons = new QHBoxLayout{};
+    buttons->addStretch(0);
+    buttons->addWidget(btn_ok_);
+    buttons->addWidget(btn_reset_);
+    buttons->addWidget(btn_cancel_);
+    buttons->addStretch(0);
 
-    lay00_ = std::make_unique<QGridLayout>();
+    auto lay00 = new QGridLayout{};
 
-    lay00_->addWidget(lbl_base_.get(), 0, 0);
-    lay00_->addWidget(edt_base_.get(), 0, 1);
-    lay00_->addWidget(btn_base_.get(), 0, 2);
-    lay00_->addWidget(lbl_sum_.get(), 1, 0);
-    lay00_->addWidget(edt_sum_.get(), 1, 1);
-    lay00_->addWidget(btn_sum_.get(), 1, 2);
-    lay00_->addWidget(lbl_temp_.get(), 2, 0);
-    lay00_->addWidget(edt_temp_.get(), 2, 1);
-    lay00_->addWidget(btn_temp_.get(), 2, 2);
-    lay00_->addWidget(lbl_maple_.get(), 3, 0);
-    lay00_->addWidget(edt_maple_.get(), 3, 1);
-    lay00_->addWidget(btn_maple_.get(), 3, 2);
+    lay00->addWidget(lbl_base_, 0, 0);
+    lay00->addWidget(edt_base_, 0, 1);
+    lay00->addWidget(btn_base_, 0, 2);
+    lay00->addWidget(lbl_sum_, 1, 0);
+    lay00->addWidget(edt_sum_, 1, 1);
+    lay00->addWidget(btn_sum_, 1, 2);
+    lay00->addWidget(lbl_temp_, 2, 0);
+    lay00->addWidget(edt_temp_, 2, 1);
+    lay00->addWidget(btn_temp_, 2, 2);
+    lay00->addWidget(lbl_maple_, 3, 0);
+    lay00->addWidget(edt_maple_, 3, 1);
+    lay00->addWidget(btn_maple_, 3, 2);
 
-    bgbuttons_ = std::make_unique<QHBoxLayout>();
-    bgbuttons_->addWidget(lbl_bgcolor_.get());
-    bgbuttons_->addStretch(0);
-    bgbuttons_->addWidget(btn_bgblack_.get());
-    bgbuttons_->addWidget(btn_bgwhite_.get());
+    auto bgbuttons = new QHBoxLayout{};
+    bgbuttons->addWidget(lbl_bgcolor_);
+    bgbuttons->addStretch(0);
+    bgbuttons->addWidget(btn_bgblack_);
+    bgbuttons->addWidget(btn_bgwhite_);
 
     if (bgColours::CBACKGROUND == BLACK)
         btn_bgblack_->toggle();
     else
         btn_bgwhite_->toggle();
 
-    mainLayout_->addLayout(lay00_.get());
+    mainLayout_->addLayout(lay00);
     mainLayout_->addSpacing(3);
-    mainLayout_->addLayout(bgbuttons_.get());
+    mainLayout_->addLayout(bgbuttons);
     mainLayout_->addSpacing(3);
     // mainLayout_->addSpacing(4);
-    mainLayout_->addLayout(buttons_.get());
+    mainLayout_->addLayout(buttons);
 
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
 
-    QObject::connect(btn_base_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_base_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onBrowseBase);
-    QObject::connect(btn_sum_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_sum_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onBrowseSum);
-    QObject::connect(btn_temp_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_temp_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onBrowseTemp);
-    QObject::connect(btn_maple_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_maple_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onBrowseMaple);
-    QObject::connect(btn_ok_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_ok_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onOk);
-    QObject::connect(btn_reset_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_reset_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onReset);
-    QObject::connect(btn_cancel_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_cancel_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onCancel);
 
-    QObject::connect(btn_bgblack_.get(), &QRadioButton::toggled, this, [=]() {
+    QObject::connect(btn_bgblack_, &QRadioButton::toggled, this, [=]() {
         bgColours::CFOREGROUND = WHITE;
         bgColours::CBACKGROUND = BLACK;
         bgColours::CORBIT = YELLOW;
     });
-    QObject::connect(btn_bgwhite_.get(), &QRadioButton::toggled, this, [=]() {
+    QObject::connect(btn_bgwhite_, &QRadioButton::toggled, this, [=]() {
         bgColours::CFOREGROUND = BLACK;
         bgColours::CBACKGROUND = WHITE;
         bgColours::CORBIT = GREEN1;
@@ -296,24 +303,22 @@ void P4SettingsDlg::onReset()
 
 void P4SettingsDlg::onBrowseMaple()
 {
-    browseForExistingPathOrFile(edt_maple_.get(),
-                                "Select maple executable:", true);
+    browseForExistingPathOrFile(edt_maple_, "Select maple executable:", true);
 }
 
 void P4SettingsDlg::onBrowseTemp()
 {
-    browseForExistingPathOrFile(edt_temp_.get(),
-                                "Select temporary path:", false);
+    browseForExistingPathOrFile(edt_temp_, "Select temporary path:", false);
 }
 
 void P4SettingsDlg::onBrowseSum()
 {
-    browseForExistingPathOrFile(edt_sum_.get(), "Select sumtable path:", false);
+    browseForExistingPathOrFile(edt_sum_, "Select sumtable path:", false);
 }
 
 void P4SettingsDlg::onBrowseBase()
 {
-    browseForExistingPathOrFile(edt_base_.get(),
+    browseForExistingPathOrFile(edt_base_,
                                 "Select P4 base installation path:", false);
 }
 
