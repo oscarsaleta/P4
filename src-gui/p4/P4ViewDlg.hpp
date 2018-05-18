@@ -21,19 +21,12 @@
 
 #include <QWidget>
 
-#include <memory>
-
-#include <QBoxLayout>
-#include <QButtonGroup>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QRadioButton>
-// class QSpinBox;
+class QBoxLayout;
+class QCheckBox;
+class QLineEdit;
+class QPushButton;
+class QRadioButton;
 class QString;
-#include <QCheckBox>
 
 class P4ViewDlg : public QWidget
 {
@@ -49,39 +42,22 @@ class P4ViewDlg : public QWidget
     bool changed_;
     bool haveVirtualCheckBox_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QGridLayout> kindLayout_;
-    std::unique_ptr<QHBoxLayout> layout1_;
-    std::unique_ptr<QHBoxLayout> layout2_;
-    std::unique_ptr<QHBoxLayout> layout3_;
-    std::unique_ptr<QHBoxLayout> layout4_;
-    std::unique_ptr<QHBoxLayout> layout5_;
+    QBoxLayout *mainLayout_;
 
-    std::unique_ptr<QLineEdit> edt_projection_;
-    std::unique_ptr<QLineEdit> edt_x0_;
-    std::unique_ptr<QLineEdit> edt_x1_;
-    std::unique_ptr<QLineEdit> edt_y0_;
-    std::unique_ptr<QLineEdit> edt_y1_;
-    std::unique_ptr<QCheckBox> chk_plotvirtuals_;
-    std::unique_ptr<QPushButton> btn_square_;
+    QLineEdit *edt_projection_;
+    QLineEdit *edt_x0_;
+    QLineEdit *edt_x1_;
+    QLineEdit *edt_y0_;
+    QLineEdit *edt_y1_;
+    QCheckBox *chk_plotvirtuals_;
+    QPushButton *btn_square_;
 
-    std::unique_ptr<QLabel> p4title_;
-    std::unique_ptr<QLabel> kindlabel_;
-    std::unique_ptr<QLabel> lbl_projection_;
-    std::unique_ptr<QLabel> lbl_x0_;
-    std::unique_ptr<QLabel> lbl_x1_;
-    std::unique_ptr<QLabel> lbl_y0_;
-    std::unique_ptr<QLabel> lbl_y1_;
-
-    std::unique_ptr<QButtonGroup> btngrp_;
-    std::unique_ptr<QRadioButton> btn_sphere_;
-    std::unique_ptr<QRadioButton> btn_plane_;
-    std::unique_ptr<QRadioButton> btn_U1_;
-    std::unique_ptr<QRadioButton> btn_V1_;
-    std::unique_ptr<QRadioButton> btn_U2_;
-    std::unique_ptr<QRadioButton> btn_V2_;
-
-    // std::unique_ptr<QSpinBox> spin_numpoints_;
+    QRadioButton *btn_sphere_;
+    QRadioButton *btn_plane_;
+    QRadioButton *btn_U1_;
+    QRadioButton *btn_V1_;
+    QRadioButton *btn_U2_;
+    QRadioButton *btn_V2_;
 
     bool readFloatField(QLineEdit *, double &, double, double, double);
 

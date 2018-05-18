@@ -26,6 +26,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QString>
 
 #include "P4Application.hpp"
 #include "P4InputVF.hpp"
@@ -43,51 +44,50 @@ P4ViewDlg::P4ViewDlg(QWidget *parent, bool virtualchk)
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    p4title_ = std::make_unique<QLabel>("View Parameters", this);
-    p4title_->setFont(gP4app->getTitleFont());
+    auto p4title = new QLabel{"View Parameters", this};
+    p4title->setFont(gP4app->getTitleFont());
 
-    kindlabel_ = std::make_unique<QLabel>("Type of view: ", this);
-    kindlabel_->setFont(gP4app->getBoldFont());
+    auto kindlabel = new QLabel{"Type of view: ", this};
+    kindlabel->setFont(gP4app->getBoldFont());
 
-    btngrp_ = std::make_unique<QButtonGroup>(this);
-    btn_sphere_ = std::make_unique<QRadioButton>("Spherical", this);
-    btn_plane_ = std::make_unique<QRadioButton>("Planar", this);
-    btn_U1_ = std::make_unique<QRadioButton>("U1", this);
-    btn_U2_ = std::make_unique<QRadioButton>("U2", this);
-    btn_V1_ = std::make_unique<QRadioButton>("V1", this);
-    btn_V2_ = std::make_unique<QRadioButton>("V2", this);
-    btngrp_->addButton(btn_sphere_.get());
-    btngrp_->addButton(btn_plane_.get());
-    btngrp_->addButton(btn_U1_.get());
-    btngrp_->addButton(btn_U2_.get());
-    btngrp_->addButton(btn_V1_.get());
-    btngrp_->addButton(btn_V2_.get());
+    auto btngrp = new QButtonGroup{this};
+    btn_sphere_ = new QRadioButton{"Spherical", this};
+    btn_plane_ = new QRadioButton{"Planar", this};
+    btn_U1_ = new QRadioButton{"U1", this};
+    btn_U2_ = new QRadioButton{"U2", this};
+    btn_V1_ = new QRadioButton{"V1", this};
+    btn_V2_ = new QRadioButton{"V2", this};
+    btngrp->addButton(btn_sphere_);
+    btngrp->addButton(btn_plane_);
+    btngrp->addButton(btn_U1_);
+    btngrp->addButton(btn_U2_);
+    btngrp->addButton(btn_V1_);
+    btngrp->addButton(btn_V2_);
 
-    lbl_projection_ = std::make_unique<QLabel>("Projection:", this);
-    lbl_projection_->setFont(gP4app->getBoldFont());
-    edt_projection_ = std::make_unique<QLineEdit>("-1", this);
+    auto lbl_projection = new QLabel{"Projection:", this};
+    lbl_projection->setFont(gP4app->getBoldFont());
+    edt_projection_ = new QLineEdit{"-1", this};
 
-    lbl_x0_ = std::make_unique<QLabel>("Min. x:", this);
-    lbl_x0_->setFont(gP4app->getBoldFont());
-    edt_x0_ = std::make_unique<QLineEdit>("-1", this);
+    auto lbl_x0 = new QLabel{"Min. x:", this};
+    lbl_x0->setFont(gP4app->getBoldFont());
+    edt_x0_ = new QLineEdit{"-1", this};
 
-    btn_square_ = std::make_unique<QPushButton>("&Square", this);
+    btn_square_ = new QPushButton{"&Square", this};
 
-    lbl_y0_ = std::make_unique<QLabel>("Min. y:", this);
-    lbl_y0_->setFont(gP4app->getBoldFont());
-    edt_y0_ = std::make_unique<QLineEdit>("-1", this);
+    auto lbl_y0 = new QLabel{"Min. y:", this};
+    lbl_y0->setFont(gP4app->getBoldFont());
+    edt_y0_ = new QLineEdit{"-1", this};
 
-    lbl_x1_ = std::make_unique<QLabel>("Max. x", this);
-    lbl_x1_->setFont(gP4app->getBoldFont());
-    edt_x1_ = std::make_unique<QLineEdit>("1", this);
+    auto lbl_x1 = new QLabel{"Max. x", this};
+    lbl_x1->setFont(gP4app->getBoldFont());
+    edt_x1_ = new QLineEdit{"1", this};
 
-    lbl_y1_ = std::make_unique<QLabel>("Max. y", this);
-    lbl_y1_->setFont(gP4app->getBoldFont());
-    edt_y1_ = std::make_unique<QLineEdit>("1", this);
+    auto lbl_y1 = new QLabel{"Max. y", this};
+    lbl_y1->setFont(gP4app->getBoldFont());
+    edt_y1_ = new QLineEdit{"1", this};
 
     if (haveVirtualCheckBox_)
-        chk_plotvirtuals_ =
-            std::make_unique<QCheckBox>("Plot Virtual Singularities", this);
+        chk_plotvirtuals_ = new QCheckBox{"Plot Virtual Singularities", this};
 
 #ifdef TOOLTIPS
     btn_sphere_->setToolTip(
@@ -117,88 +117,88 @@ P4ViewDlg::P4ViewDlg(QWidget *parent, bool virtualchk)
 
     // layout
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    mainLayout_->addWidget(p4title_.get());
+    mainLayout_->addWidget(p4title);
 
-    kindLayout_ = std::make_unique<QGridLayout>();
-    kindLayout_->addWidget(kindlabel_.get(), 0, 0);
-    kindLayout_->addWidget(btn_sphere_.get(), 0, 1);
-    kindLayout_->addWidget(btn_plane_.get(), 0, 2);
-    kindLayout_->addWidget(btn_U1_.get(), 1, 1);
-    kindLayout_->addWidget(btn_U2_.get(), 1, 2);
-    kindLayout_->addWidget(btn_V1_.get(), 2, 1);
-    kindLayout_->addWidget(btn_V2_.get(), 2, 2);
+    auto kindLayout = new QGridLayout{};
+    kindLayout->addWidget(kindlabel, 0, 0);
+    kindLayout->addWidget(btn_sphere_, 0, 1);
+    kindLayout->addWidget(btn_plane_, 0, 2);
+    kindLayout->addWidget(btn_U1_, 1, 1);
+    kindLayout->addWidget(btn_U2_, 1, 2);
+    kindLayout->addWidget(btn_V1_, 2, 1);
+    kindLayout->addWidget(btn_V2_, 2, 2);
 
-    mainLayout_->addLayout(kindLayout_.get());
+    mainLayout_->addLayout(kindLayout);
 
-    layout1_ = std::make_unique<QHBoxLayout>();
-    layout1_->addWidget(lbl_projection_.get());
-    layout1_->addWidget(edt_projection_.get());
-    layout1_->addStretch(0);
+    auto layout1 = new QHBoxLayout{};
+    layout1->addWidget(lbl_projection);
+    layout1->addWidget(edt_projection_);
+    layout1->addStretch(0);
 
-    layout2_ = std::make_unique<QHBoxLayout>();
-    layout2_->addWidget(lbl_x0_.get());
-    layout2_->addWidget(edt_x0_.get());
-    layout2_->addWidget(btn_square_.get());
-    layout2_->addStretch(0);
+    auto layout2 = new QHBoxLayout{};
+    layout2->addWidget(lbl_x0);
+    layout2->addWidget(edt_x0_);
+    layout2->addWidget(btn_square_);
+    layout2->addStretch(0);
 
-    layout3_ = std::make_unique<QHBoxLayout>();
-    layout3_->addWidget(lbl_y0_.get());
-    layout3_->addWidget(edt_y0_.get());
-    layout3_->addStretch(0);
+    auto layout3 = new QHBoxLayout{};
+    layout3->addWidget(lbl_y0);
+    layout3->addWidget(edt_y0_);
+    layout3->addStretch(0);
 
-    layout4_ = std::make_unique<QHBoxLayout>();
-    layout4_->addWidget(lbl_x1_.get());
-    layout4_->addWidget(edt_x1_.get());
-    layout4_->addStretch(0);
+    auto layout4 = new QHBoxLayout{};
+    layout4->addWidget(lbl_x1);
+    layout4->addWidget(edt_x1_);
+    layout4->addStretch(0);
 
-    layout5_ = std::make_unique<QHBoxLayout>();
-    layout5_->addWidget(lbl_y1_.get());
-    layout5_->addWidget(edt_y1_.get());
-    layout5_->addStretch(0);
+    auto layout5 = new QHBoxLayout{};
+    layout5->addWidget(lbl_y1);
+    layout5->addWidget(edt_y1_);
+    layout5->addStretch(0);
 
-    mainLayout_->addLayout(layout1_.get());
-    mainLayout_->addLayout(layout2_.get());
-    mainLayout_->addLayout(layout3_.get());
-    mainLayout_->addLayout(layout4_.get());
-    mainLayout_->addLayout(layout5_.get());
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
+    mainLayout_->addLayout(layout5);
     if (haveVirtualCheckBox_)
-        mainLayout_->addWidget(chk_plotvirtuals_.get());
+        mainLayout_->addWidget(chk_plotvirtuals_);
     mainLayout_->addStretch(0);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
 
     // connections
 
-    QObject::connect(btn_sphere_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_sphere_, &QRadioButton::toggled, this,
                      &P4ViewDlg::btn_sphere_toggled);
-    QObject::connect(btn_plane_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_plane_, &QRadioButton::toggled, this,
                      &P4ViewDlg::btn_plane_toggled);
-    QObject::connect(btn_U1_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_U1_, &QRadioButton::toggled, this,
                      &P4ViewDlg::btn_U1_toggled);
-    QObject::connect(btn_U2_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_U2_, &QRadioButton::toggled, this,
                      &P4ViewDlg::btn_U2_toggled);
-    QObject::connect(btn_V1_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_V1_, &QRadioButton::toggled, this,
                      &P4ViewDlg::btn_V1_toggled);
-    QObject::connect(btn_V2_.get(), &QRadioButton::toggled, this,
+    QObject::connect(btn_V2_, &QRadioButton::toggled, this,
                      &P4ViewDlg::btn_V2_toggled);
-    QObject::connect(btn_square_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_square_, &QPushButton::clicked, this,
                      &P4ViewDlg::btn_square_clicked);
-    QObject::connect(edt_projection_.get(), &QLineEdit::textChanged, this,
+    QObject::connect(edt_projection_, &QLineEdit::textChanged, this,
                      &P4ViewDlg::onFieldChange);
-    QObject::connect(edt_x0_.get(), &QLineEdit::textChanged, this,
+    QObject::connect(edt_x0_, &QLineEdit::textChanged, this,
                      &P4ViewDlg::onFieldChange);
-    QObject::connect(edt_x1_.get(), &QLineEdit::textChanged, this,
+    QObject::connect(edt_x1_, &QLineEdit::textChanged, this,
                      &P4ViewDlg::onFieldChange);
-    QObject::connect(edt_y0_.get(), &QLineEdit::textChanged, this,
+    QObject::connect(edt_y0_, &QLineEdit::textChanged, this,
                      &P4ViewDlg::onFieldChange);
-    QObject::connect(edt_y1_.get(), &QLineEdit::textChanged, this,
+    QObject::connect(edt_y1_, &QLineEdit::textChanged, this,
                      &P4ViewDlg::onFieldChange);
     if (haveVirtualCheckBox_)
-        QObject::connect(chk_plotvirtuals_.get(), &QCheckBox::stateChanged,
-                         this, &P4ViewDlg::plotvirtuals_stateChanged);
+        QObject::connect(chk_plotvirtuals_, &QCheckBox::stateChanged, this,
+                         &P4ViewDlg::plotvirtuals_stateChanged);
 
     // finishing
 
@@ -339,8 +339,7 @@ void P4ViewDlg::btn_square_clicked()
 {
     double x0;
 
-    if (readFloatField(edt_x0_.get(), x0, X_MIN, MIN_FLOAT, MAX_FLOAT) ==
-        false) {
+    if (readFloatField(edt_x0_, x0, X_MIN, MIN_FLOAT, MAX_FLOAT) == false) {
         // no error reading field
 
         if (x0 > 0)
@@ -442,16 +441,16 @@ bool P4ViewDlg::getDataFromDlg()
     double oldymax{gVFResults.ymax_};
 
     changed_ |=
-        readFloatField(edt_projection_.get(), gVFResults.config_projection_,
+        readFloatField(edt_projection_, gVFResults.config_projection_,
                        DEFAULT_PROJECTION, MIN_PROJECTION, MAX_PROJECTION);
-    changed_ |= readFloatField(edt_x0_.get(), gVFResults.xmin_, X_MIN,
-                               MIN_FLOAT, MAX_FLOAT);
-    changed_ |= readFloatField(edt_y0_.get(), gVFResults.ymin_, Y_MIN,
-                               MIN_FLOAT, MAX_FLOAT);
-    changed_ |= readFloatField(edt_x1_.get(), gVFResults.xmax_, X_MAX,
-                               MIN_FLOAT, MAX_FLOAT);
-    changed_ |= readFloatField(edt_y1_.get(), gVFResults.ymax_, Y_MAX,
-                               MIN_FLOAT, MAX_FLOAT);
+    changed_ |=
+        readFloatField(edt_x0_, gVFResults.xmin_, X_MIN, MIN_FLOAT, MAX_FLOAT);
+    changed_ |=
+        readFloatField(edt_y0_, gVFResults.ymin_, Y_MIN, MIN_FLOAT, MAX_FLOAT);
+    changed_ |=
+        readFloatField(edt_x1_, gVFResults.xmax_, X_MAX, MIN_FLOAT, MAX_FLOAT);
+    changed_ |=
+        readFloatField(edt_y1_, gVFResults.ymax_, Y_MAX, MIN_FLOAT, MAX_FLOAT);
 
     if (haveVirtualCheckBox_) {
         if (chk_plotvirtuals_->checkState() == Qt::Unchecked) {
