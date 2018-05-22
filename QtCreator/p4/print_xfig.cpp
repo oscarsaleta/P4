@@ -33,7 +33,7 @@
 #include "print_points.hpp"
 #include "tables.hpp"
 
-static std::unique_ptr<QFile> sXFigFile;
+static QFile *sXFigFile{nullptr};
 static QTextStream sXFigStream;
 
 static bool sXFigBlackWhitePrint = true;
@@ -54,13 +54,13 @@ static int sXFigLineLastY = 0;
 static int sXFigLineColor = 0;
 static int sXFigLineNumPoints = 0;
 // NOTE: check if this works
-static std::unique_ptr<int[]> sXFigLinePoints;
+static int *sXFigLinePoints{nullptr};
 
 static void xfig_line_start(int x0, int y0, int x1, int y1, int color);
 static void xfig_line_continue(int x1, int y1);
 static void xfig_line_finish(void);
 
-// ---------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 static void xfig_print_comment(QString s)
 {
@@ -838,7 +838,7 @@ void xfig_print_coinciding(double x, double y)
                            printColorTable(CDEGEN));
 }
 
-// ---------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                          int resolution, int linewidth, int symbolwidth)
@@ -880,11 +880,12 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
 
     s = gThisVF->getbarefilename() + ".fig";
 
-    sXFigFile = std::make_unique<QFile>(s);
+    sXFigFile = new QFile{s};
     if (sXFigFile->open(QIODevice::WriteOnly)) {
-        sXFigStream.setDevice(sXFigFile.get());
+        sXFigStream.setDevice(sXFigFile);
     } else {
-        sXFigFile.reset();
+        delete sXFigFile;
+        sXFigFile = nullptr;
     }
 
     plot_l = spherePrintLine;
@@ -927,7 +928,8 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
     sLastXFigColor = -1;
 
     sXFigLineBusy = false;
-    sXFigLinePoints = std::make_unique<int[]>(XFIG_LINE_MAXPOINTS * 2);
+    // max points *2 for x and y coords
+    sXFigLinePoints = new int[XFIG_LINE_MAXPOINTS * 2];
 
     sXFigW = w * 1200;
     sXFigW /= resolution;
@@ -1000,14 +1002,15 @@ void finishXFigPrinting(void)
         sXFigStream.flush();
         sXFigStream.setDevice(nullptr);
         sXFigFile->close();
-        sXFigFile.reset();
+        delete sXFigFile;
+        sXFigFile = nullptr;
     }
 
     plot_l = spherePlotLine;
     plot_p = spherePlotPoint;
 
     if (sXFigLinePoints != nullptr) {
-        sXFigLinePoints.reset();
+        delete[] sXFigLinePoints;
         sXFigLinePoints = nullptr;
     }
 }
