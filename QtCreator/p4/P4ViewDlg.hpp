@@ -33,7 +33,7 @@ class P4ViewDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4ViewDlg(QWidget *parent = nullptr, bool virtualchk = false);
+    P4ViewDlg(bool virtualchk = false, QWidget *parent = nullptr);
     ~P4ViewDlg();
     bool getDataFromDlg();
     void updateDlgData();
