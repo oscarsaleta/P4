@@ -51,20 +51,20 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4WinSphere *sp)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     edt_x0_ = new QLineEdit{"", this};
-    lbl1_ = new QLabel{"x0 = ", this};
+    auto lbl1 = new QLabel{"x0 = ", this};
     edt_y0_ = new QLineEdit{"", this};
-    lbl2_ = new QLabel{"y0 = ", this};
+    auto lbl2 = new QLabel{"y0 = ", this};
     edt_x1_ = new QLineEdit{"", this};
-    lbl3_ = new QLabel{"x1 = ", this};
+    auto lbl3 = new QLabel{"x1 = ", this};
     edt_y1_ = new QLineEdit{"", this};
-    lbl4_ = new QLabel{"y1 = ", this};
+    auto lbl4 = new QLabel{"y1 = ", this};
     edt_grid_ = new QLineEdit{"", this};
-    lbl5_ = new QLabel{"Grid: ", this};
+    auto lbl5 = new QLabel{"Grid: ", this};
 
     spin_numpoints_ = new QSpinBox{this};
     spin_numpoints_->setMinimum(MIN_LCPOINTS);
     spin_numpoints_->setMaximum(MAX_LCPOINTS);
-    lbl6_ = new QLabel{"# Points: ", this};
+    auto lbl6 = new QLabel{"# Points: ", this};
 
     btn_start_ = new QPushButton{"&Start", this};
     btn_cancel_ = new QPushButton{"&Reset setpoints", this};
@@ -98,37 +98,37 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4WinSphere *sp)
 
     mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    lay00_ = new QGridLayout{};
-    lay00_->addWidget(lbl1_, 0, 0);
-    lay00_->addWidget(edt_x0_, 0, 1);
-    lay00_->addWidget(lbl2_, 0, 2);
-    lay00_->addWidget(edt_y0_, 0, 3);
-    lay00_->addWidget(lbl3_, 1, 0);
-    lay00_->addWidget(edt_x1_, 1, 1);
-    lay00_->addWidget(lbl4_, 1, 2);
-    lay00_->addWidget(edt_y1_, 1, 3);
+    auto lay00 = new QGridLayout{};
+    lay00->addWidget(lbl1, 0, 0);
+    lay00->addWidget(edt_x0_, 0, 1);
+    lay00->addWidget(lbl2, 0, 2);
+    lay00->addWidget(edt_y0_, 0, 3);
+    lay00->addWidget(lbl3, 1, 0);
+    lay00->addWidget(edt_x1_, 1, 1);
+    lay00->addWidget(lbl4, 1, 2);
+    lay00->addWidget(edt_y1_, 1, 3);
 
-    layout1_ = new QHBoxLayout{};
-    layout1_->addWidget(lbl5_);
-    layout1_->addWidget(edt_grid_);
+    auto layout1 = new QHBoxLayout{};
+    layout1->addWidget(lbl5);
+    layout1->addWidget(edt_grid_);
 
-    layout3_ = new QHBoxLayout{};
-    layout3_->addWidget(btn_start_);
-    layout3_->addWidget(btn_cancel_);
+    auto layout3 = new QHBoxLayout{};
+    layout3->addWidget(btn_start_);
+    layout3->addWidget(btn_cancel_);
 
-    layout2_ = new QHBoxLayout{};
-    layout2_->addWidget(lbl6_);
-    layout2_->addWidget(spin_numpoints_);
+    auto layout2 = new QHBoxLayout{};
+    layout2->addWidget(lbl6);
+    layout2->addWidget(spin_numpoints_);
 
-    layout4_ = new QHBoxLayout{};
-    layout4_->addWidget(btn_dellast_);
-    layout4_->addWidget(btn_delall_);
+    auto layout4 = new QHBoxLayout{};
+    layout4->addWidget(btn_dellast_);
+    layout4->addWidget(btn_delall_);
 
-    mainLayout_->addLayout(lay00_);
-    mainLayout_->addLayout(layout1_);
-    mainLayout_->addLayout(layout2_);
-    mainLayout_->addLayout(layout3_);
-    mainLayout_->addLayout(layout4_);
+    mainLayout_->addLayout(lay00);
+    mainLayout_->addLayout(layout1);
+    mainLayout_->addLayout(layout2);
+    mainLayout_->addLayout(layout3);
+    mainLayout_->addLayout(layout4);
 
     mainLayout_->setSizeConstraint(QLayout::SetFixedSize);
     setLayout(mainLayout_);
