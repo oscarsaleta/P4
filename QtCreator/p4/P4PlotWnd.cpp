@@ -185,7 +185,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
     orbitsWindow_ = new P4OrbitsDlg{this, sphere_};
     sepWindow_ = new P4SepDlg{this, sphere_};
     intParamsWindow_ = new P4IntParamsDlg{this};
-    viewParamsWindow_ = new P4ViewDlg{this};
+    viewParamsWindow_ = new P4ViewDlg{false, this};
     lcWindow_ = new P4LimitCyclesDlg{this, sphere_};
     gcfWindow_ = new P4GcfDlg{this, sphere_};
     curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
