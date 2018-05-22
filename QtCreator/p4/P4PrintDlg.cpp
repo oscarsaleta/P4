@@ -71,7 +71,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog{parent, f}
     btn_blackwhite_ = new QCheckBox{"&Black&&White printing", this};
     btn_blackwhite_->setChecked(sM_lastBlackWhite);
 
-    lbl_bgcolor_ = new QLabel{"Print background colour:", this};
+    auto lbl_bgcolor = new QLabel{"Print background colour:", this};
     btn_whitebg_ = new QRadioButton{"&White", this};
     btn_blackbg_ = new QRadioButton{"B&lack", this};
 
@@ -97,7 +97,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog{parent, f}
     btn_cancel_->setToolTip("Cancel printing");
     btn_blackwhite_->setToolTip(
         "If checked, produce a black&white image, rather than a colour image");
-    lbl_bgcolor_->setToolTip(
+    lbl_bgcolor->setToolTip(
         "Select the background colour to use for printing, regardless of plot "
         "background colour configuration in main settings");
     btn_whitebg_->setToolTip("Use white background for printing");
@@ -149,7 +149,7 @@ P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog{parent, f}
     mainLayout_->addSpacing(2);
 
     auto printColourLayout = new QHBoxLayout{};
-    printColourLayout->addWidget(lbl_bgcolor_);
+    printColourLayout->addWidget(lbl_bgcolor);
     printColourLayout->addStretch(0);
     printColourLayout->addWidget(btn_whitebg_);
     printColourLayout->addWidget(btn_blackbg_);
