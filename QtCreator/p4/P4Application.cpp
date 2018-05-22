@@ -32,7 +32,7 @@ P4Application::P4Application(int &argc, char **argv) : QApplication{argc, argv}
 {
     standardFont_ = new QFont();
     standardFont_->setPointSize(standardFont_->pointSize() + FONTSIZE);
-    setFont(*standardFont_);
+    setFont(*standardFont_); // stdfnt
 
     boldFont_ = new QFont();
     boldFont_->setWeight(QFont::Bold);
