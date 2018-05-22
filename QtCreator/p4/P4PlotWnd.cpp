@@ -178,7 +178,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
 
     statusBar()->showMessage("Ready");
 
-    sphere_ = new P4WinSphere{this, statusBar(), false, 0, 0, 0, 0};
+    sphere_ = new P4WinSphere{statusBar(), false, 0, 0, 0, 0, this};
     legendWindow_ = new P4LegendWnd{this};
     orbitsWindow_ = new P4OrbitsDlg{this, sphere_};
     sepWindow_ = new P4SepDlg{this, sphere_};
