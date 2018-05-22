@@ -61,7 +61,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 
     // define controls
 
-    if (gP4smallIcon)
+    if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
 
     btn_quit_ = new QPushButton{"&Quit", this};
@@ -157,7 +157,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     edt_name_->setFocus();
 
     // show find dialog
-    if (!findWindow_) {
+    if (findWindow_ == nullptr) {
         findWindow_ = new P4FindDlg{this};
         findWindow_->show();
         findWindow_->raise();
@@ -176,22 +176,22 @@ void P4StartDlg::onSaveSignal()
     settings.setValue("pos", pos());
     settings.setValue("size", size());
 
-    if (viewInfiniteWindow_) {
+    if (viewInfiniteWindow_ != nullptr) {
         settings.setValue("viewInfiniteWindow", true);
         settings.setValue("viewInfiniteWindow-pos", viewInfiniteWindow_->pos());
         settings.setValue("viewInfiniteWindow-size",
                           viewInfiniteWindow_->size());
     }
-    if (viewFiniteWindow_) {
+    if (viewFiniteWindow_ != nullptr) {
         settings.setValue("viewFiniteWindow", true);
         settings.setValue("viewFiniteWindow-pos", viewFiniteWindow_->pos());
         settings.setValue("viewFiniteWindow-size", viewFiniteWindow_->size());
     }
-    if (plotWindow_)
+    if (plotWindow_ != nullptr)
         settings.setValue("plotWindow", true);
     else
         settings.setValue("plotWindow", false);
-    if (gThisVF) {
+    if (gThisVF != nullptr) {
         if (gThisVF->outputWindow_ != nullptr) {
             settings.setValue("outputWindow", true);
             settings.setValue("outputWindow-size",
@@ -210,8 +210,8 @@ void P4StartDlg::onSaveSignal()
 
 void P4StartDlg::onLoadSignal()
 {
-    QSettings settings(gThisVF->getbarefilename().append(".conf"),
-                       QSettings::NativeFormat);
+    QSettings settings{gThisVF->getbarefilename().append(".conf"),
+                       QSettings::NativeFormat};
     settings.beginGroup("P4StartDlg");
     // check if there is configuration in this file
     if (settings.contains("size")) {
@@ -285,12 +285,12 @@ void P4StartDlg::onHelp()
         return;
     }
 
-    if (!helpWindow_)
+    if (helpWindow_ == nullptr)
         helpWindow_ = new QTextBrowser{};
 
     helpWindow_->setSource(QUrl::fromLocalFile(helpname));
     helpWindow_->resize(640, 480);
-    if (gP4smallIcon)
+    if (gP4smallIcon != nullptr)
         helpWindow_->setWindowIcon(*gP4smallIcon);
 
     setP4WindowTitle(helpWindow_, "P4 Help");
@@ -307,7 +307,7 @@ void P4StartDlg::onPlot()
         return;
     }
 
-    if (findWindow_)
+    if (findWindow_ != nullptr)
         findWindow_->getDataFromDlg();
 
     // read maple/reduce results
@@ -316,7 +316,7 @@ void P4StartDlg::onPlot()
                               "Cannot read computation results.\nPlease check "
                               "the input-vector field and parameters!\n");
         gVFResults.setupCoordinateTransformations();
-        if (plotWindow_)
+        if (plotWindow_ != nullptr)
             plotWindow_->signalEvaluated();
         return;
     }
@@ -327,7 +327,7 @@ void P4StartDlg::onPlot()
 
     gVFResults.setupCoordinateTransformations();
 
-    if (!plotWindow_) {
+    if (plotWindow_ == nullptr) {
         plotWindow_ = new P4PlotWnd{this};
     }
 
@@ -351,11 +351,11 @@ void P4StartDlg::signalEvaluating()
     btn_plot_->setEnabled(false);
 
     // Transfer signal to findWindow_:
-    /*if (findWindow_)
+    /*if (findWindow_!=nullptr)
         findWindow_->signalEvaluating();*/
 
     // Transfer signal to plotWindow_:
-    /*if (plotWindow_)
+    /*if (plotWindow_!=nullptr)
         plotWindow_->signalEvaluating();*/
 }
 
@@ -366,21 +366,22 @@ void P4StartDlg::signalEvaluated()
     btn_plot_->setEnabled(true);
 
     // freshen view finite/infinite windows if they are open:
-    if (viewFiniteWindow_) {
+    if (viewFiniteWindow_ != nullptr) {
         QString fname;
 
-        if (findWindow_)
+        if (findWindow_ != nullptr)
             findWindow_->getDataFromDlg();
 
         fname = gThisVF->getfilename_finresults();
 
         if (P4InputVF::fileExists(fname)) {
+            delete viewFiniteWindow_;
             viewFiniteWindow_ = new QTextEdit{this};
             showText(*viewFiniteWindow_, "View results at the finite region",
                      fname);
         }
     } else {
-        if (viewFiniteWindow_) {
+        if (viewFiniteWindow_ != nullptr) {
             viewFiniteWindow_->clear();
             viewFiniteWindow_->setCurrentFont(gP4app->getBoldCourierFont());
             viewFiniteWindow_->insertPlainText(
@@ -388,14 +389,15 @@ void P4StartDlg::signalEvaluated()
         }
     }
 
-    if (viewInfiniteWindow_) {
+    if (viewInfiniteWindow_ != nullptr) {
         QString fname;
 
-        if (findWindow_)
+        if (findWindow_ != nullptr)
             findWindow_->getDataFromDlg();
 
         fname = gThisVF->getfilename_infresults();
         if (P4InputVF::fileExists(fname)) {
+            delete viewInfiniteWindow_;
             viewInfiniteWindow_ = new QTextEdit{this};
             showText(*viewInfiniteWindow_, "View results at infinity", fname);
             if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
@@ -404,7 +406,7 @@ void P4StartDlg::signalEvaluated()
                 viewInfiniteWindow_->setFont(gP4app->getCourierFont());
             }
         } else {
-            if (viewInfiniteWindow_) {
+            if (viewInfiniteWindow_ != nullptr) {
                 viewInfiniteWindow_->clear();
                 viewInfiniteWindow_->setCurrentFont(
                     gP4app->getBoldCourierFont());
@@ -415,12 +417,12 @@ void P4StartDlg::signalEvaluated()
     }
 
     // Transfer signal to findWindow_:
-    if (findWindow_) {
+    if (findWindow_ != nullptr) {
         findWindow_->signalEvaluated();
     }
 
     // Transfer signal to plotWindow_:
-    if (plotWindow_) {
+    if (plotWindow_ != nullptr) {
         // read maple/reduce results
         if (!gVFResults.readTables(gThisVF->getbarefilename(),
                                    gThisVF->evaluatingPiecewiseConfig_,
@@ -464,13 +466,13 @@ void P4StartDlg::signalLoaded()
 
 void P4StartDlg::signalChanged()
 {
-    if (viewFiniteWindow_) {
+    if (viewFiniteWindow_ != nullptr) {
         viewFiniteWindow_->setFont(gP4app->getCourierFont());
     }
-    if (viewInfiniteWindow_) {
+    if (viewInfiniteWindow_ != nullptr) {
         viewInfiniteWindow_->setFont(gP4app->getCourierFont());
     }
-    if (plotWindow_) {
+    if (plotWindow_ != nullptr) {
         plotWindow_->signalChanged();
     }
 }
@@ -489,7 +491,7 @@ void P4StartDlg::onBrowse()
 
 void P4StartDlg::onAbout()
 {
-    auto pdlg = new P4AboutDlg{this, static_cast<Qt::WindowFlags>(0)};
+    auto pdlg = new P4AboutDlg{static_cast<Qt::WindowFlags>(0), this};
     pdlg->exec();
 }
 
@@ -499,7 +501,7 @@ void P4StartDlg::onViewFinite()
 
     QString fname;
 
-    if (findWindow_)
+    if (findWindow_ != nullptr)
         findWindow_->getDataFromDlg();
 
     fname = gThisVF->getfilename_finresults();
@@ -517,6 +519,7 @@ void P4StartDlg::onViewFinite()
         return;
     }
 
+    delete viewFiniteWindow_;
     viewFiniteWindow_ = new QTextEdit{this};
     showText(*viewFiniteWindow_, "View results at the finite region", fname);
     viewFiniteWindow_->show();
@@ -552,6 +555,7 @@ void P4StartDlg::onViewInfinite()
         return;
     }
 
+    delete viewInfiniteWindow_;
     viewInfiniteWindow_ = new QTextEdit{this};
     showText(*viewInfiniteWindow_, "View results at infinity", fname);
     viewInfiniteWindow_->show();
@@ -569,7 +573,7 @@ void P4StartDlg::showText(QTextEdit &win, const QString &caption,
 {
     win.clear();
 
-    if (gP4smallIcon)
+    if (gP4smallIcon != nullptr)
         win.setWindowIcon(*gP4smallIcon);
 
     QFile f{fname};
@@ -616,12 +620,12 @@ void P4StartDlg::closeEvent(QCloseEvent *ce)
     // hide may often mean "iconify" but close means that the window is
     // going away for good.
 
-    if (!gThisVF) {
+    if (gThisVF == nullptr) {
         ce->accept();
         return;
     }
 
-    if (findWindow_)
+    if (findWindow_ != nullptr)
         findWindow_->getDataFromDlg();
 
     if (!gThisVF->changed_) {
