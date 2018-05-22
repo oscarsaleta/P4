@@ -21,11 +21,17 @@
 
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
+#include <QPixmap>
 #include <QPrinter>
 #include <QResizeEvent>
 #include <QStatusBar>
+#include <QTimer>
 
 #include <cmath>
+#include <memory>
 #include <utility>
 
 #include "P4Application.hpp"
@@ -51,7 +57,7 @@
 #include "print_postscript.hpp"
 #include "print_xfig.hpp"
 
-static std::unique_ptr<QPixmap> sP4pixmap;
+QPixmap *sP4pixmap;
 static double sP4pixmapDPM{0};
 
 int P4WinSphere::sM_numSpheres{0};
@@ -72,9 +78,9 @@ std::vector<P4WinSphere *> P4WinSphere::sM_sphereList;
 
 // parameters x1,... are irrelevant if isZoom is false
 
-P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
-                         double x1, double y1, double x2, double y2)
-    : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}
+P4WinSphere::P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1,
+                         double x2, double y2, QWidget *parent)
+    : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
     //    setAttribute( Qt::WA_PaintOnScreen );
 
@@ -97,11 +103,9 @@ P4WinSphere::P4WinSphere(QWidget *parent, QStatusBar *bar, bool isZoom,
     setFocusPolicy(Qt::ClickFocus);
     setWindowFlags(windowFlags());
 
-    iszoom_ = isZoom;
-    if (isZoom) {
+    if (iszoom_) {
         x0_ = x1;
         y0_ = y1;
-
         x1_ = x2;
         y1_ = y2;
     }
@@ -120,10 +124,9 @@ P4WinSphere::~P4WinSphere()
     }
     if (i == sM_numSpheres)
         return; // error: sphere not found?
-    else if (i > 0)
-        sM_sphereList[i - 1]->next_ = std::move(next_);
-    else if (i < sM_numSpheres - 1)
-        sM_sphereList.erase(std::begin(sM_sphereList) + i);
+    if (i > 0)
+        sM_sphereList[i - 1]->next_ = next_;
+    sM_sphereList.erase(std::begin(sM_sphereList) + i);
 
     sM_numSpheres--;
 }
@@ -157,52 +160,52 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // F: integrate orbit forwards in time
             data1 = std::make_unique<int>(1);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_C:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // C: continue integrate orbit
             data1 = std::make_unique<int>(0);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         } else if (bs == Qt::ShiftModifier ||
                    bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+C:  continue integrating separatrice
             data1 = std::make_unique<int>(0);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_B:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // B: integrate orbit backwards in time
             data1 = std::make_unique<int>(-1);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_D:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // D: delete orbit
             data1 = std::make_unique<int>(2);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_A:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // A: delete all orbits
             data1 = std::make_unique<int>(3);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_N:
@@ -210,9 +213,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+N: select next separatrice
             data1 = std::make_unique<int>(3);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_I:
@@ -220,9 +223,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+I: integrate next separatrice
             data1 = std::make_unique<int>(2);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_S:
@@ -230,9 +233,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+S: start integrate separatrice
             data1 = std::make_unique<int>(1);
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
+                                  data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         break;
     }
@@ -381,18 +384,19 @@ void P4WinSphere::loadAnchorMap()
 
     if (anchorMap_) {
         if (anchorMap_->width() < aw || anchorMap_->height() < ah) {
-            anchorMap_ = std::make_unique<QPixmap>(aw, ah);
+            anchorMap_ = new QPixmap{aw, ah};
         }
     } else {
-        anchorMap_ = std::make_unique<QPixmap>(aw, ah);
+        anchorMap_ = new QPixmap{aw, ah};
     }
 
-    if (!painterCache_) {
-        anchorMap_.reset();
+    if (painterCache_ == nullptr) {
+        delete anchorMap_;
+        anchorMap_ = nullptr;
         return;
     }
 
-    QPainter paint{anchorMap_.get()};
+    QPainter paint{anchorMap_};
     if (selectingZoom_) {
         // only copy rectangular edges, not inside
         /*paint.drawPixmap(0, 0, aw, 1, *painterCache_, x1, y1, aw, 1);
@@ -444,7 +448,7 @@ void P4WinSphere::saveAnchorMap()
     aw = x2 - x1 + 1;
     ah = y2 - y1 + 1;
 
-    QPainter paint{painterCache_.get()};
+    QPainter paint{painterCache_};
 
     if (selectingZoom_) {
         // only copy rectangular edges, not inside
@@ -488,15 +492,17 @@ void P4WinSphere::adjustToNewSize()
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
 
-    if (painterCache_) {
-        painterCache_ = std::make_unique<QPixmap>(size());
+    if (painterCache_ != nullptr) {
+        delete painterCache_;
+        painterCache_ = new QPixmap{size()};
         isPainterCacheDirty_ = false;
 
-        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
-        staticPainter_->fillRect(0, 0, width(), height(),
-                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+        QPainter paint{painterCache_};
+        paint.fillRect(0, 0, width(), height(),
+                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
-        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+        staticPainter_ = &paint;
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
@@ -520,17 +526,17 @@ void P4WinSphere::adjustToNewSize()
 
         QColor c{QXFIGCOLOR(WHITE)};
         c.setAlpha(128);
-        staticPainter_->setPen(c);
-        staticPainter_->drawText(0, 0, width(), height(),
-                                 Qt::AlignHCenter | Qt::AlignVCenter,
-                                 "Resizing ...  ");
-        staticPainter_.reset();
+        paint.setPen(c);
+        paint.drawText(0, 0, width(), height(),
+                       Qt::AlignHCenter | Qt::AlignVCenter, "Resizing ...  ");
 
-        if (refreshTimeout_)
+        staticPainter_ = nullptr;
+
+        if (refreshTimeout_ != nullptr)
             refreshTimeout_->stop();
         else {
-            refreshTimeout_ = std::make_unique<QTimer>();
-            QObject::connect(refreshTimeout_.get(), &QTimer::timeout, this,
+            refreshTimeout_ = new QTimer{};
+            QObject::connect(refreshTimeout_, &QTimer::timeout, this,
                              &P4WinSphere::refreshAfterResize);
         }
         refreshTimeout_->start(500);
@@ -539,8 +545,9 @@ void P4WinSphere::adjustToNewSize()
 
 void P4WinSphere::refreshAfterResize()
 {
-    if (refreshTimeout_) {
-        refreshTimeout_.reset();
+    if (refreshTimeout_ != nullptr) {
+        delete refreshTimeout_;
+        refreshTimeout_ = nullptr;
     }
     refresh();
 }
@@ -558,16 +565,18 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
     if (gThisVF->evaluating_)
         return;
 
-    if (!painterCache_ || isPainterCacheDirty_) {
-        if (!painterCache_)
-            painterCache_ = std::make_unique<QPixmap>(size());
+    if (painterCache_ == nullptr || isPainterCacheDirty_) {
+        if (painterCache_ == nullptr)
+            painterCache_ = new QPixmap{size()};
         isPainterCacheDirty_ = false;
 
-        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
-        staticPainter_->fillRect(0, 0, width(), height(),
-                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+        QPainter paint{painterCache_};
+        paint.fillRect(0, 0, width(), height(),
+                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
 
-        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+
+        staticPainter_ = &paint;
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
@@ -590,7 +599,8 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
         drawOrbits(this);
         drawLimitCycles(this);
         plotPoints();
-        staticPainter_.reset();
+
+        staticPainter_ = nullptr;
     }
 
     QPainter widgetpaint{this};
@@ -609,7 +619,7 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
 void P4WinSphere::markSelection(int x1, int y1, int x2, int y2,
                                 int selectiontype)
 {
-    if (!painterCache_)
+    if (painterCache_ == nullptr)
         return;
 
     int bx1{(x1 < x2) ? x1 : x2};
@@ -626,7 +636,7 @@ void P4WinSphere::markSelection(int x1, int y1, int x2, int y2,
     if (by2 >= height())
         by2 = height() - 1;
 
-    QPainter p{painterCache_.get()};
+    QPainter p{painterCache_};
     QColor c;
 
     switch (selectiontype) {
@@ -808,14 +818,14 @@ int P4WinSphere::coWinH(double deltax)
 {
     double wx{deltax / dx_ * (w_ - 1)};
 
-    return std::round(wx);
+    return static_cast<int>(std::round(wx));
 }
 
 int P4WinSphere::coWinV(double deltay)
 {
     double wy{deltay / dy_ * (h_ - 1)};
 
-    return std::round(wy);
+    return static_cast<int>(std::round(wy));
 }
 
 int P4WinSphere::coWinX(double x)
@@ -837,9 +847,8 @@ int P4WinSphere::coWinY(double y)
     if (iwy >= h_)
         iwy = h_ - 1;
 
-    return (reverseYAxis_) ? iwy : h_ - 1 - iwy; // on screen: vertical
-                                                 // axis orientation is
-                                                 // reversed
+    // on screen: vertical axis orientation is reversed
+    return (reverseYAxis_) ? iwy : h_ - 1 - iwy;
 }
 
 void P4WinSphere::mousePressEvent(QMouseEvent *e)
@@ -875,10 +884,10 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
                                                        coWorldY(e->y()));
             double pcoord[3];
             if (MATHFUNC(is_valid_viewcoord)(data1->x, data1->y, pcoord)) {
-                auto e1 = std::make_unique<P4Event>(
-                    static_cast<QEvent::Type>(TYPE_SELECT_ORBIT),
-                    data1.release());
-                gP4app->postEvent(parentWnd_, e1.release());
+                auto e1 =
+                    new P4Event{static_cast<QEvent::Type>(TYPE_SELECT_ORBIT),
+                                data1.release()};
+                gP4app->postEvent(parentWnd_, e1);
             }
         }
     } else if (e->button() == Qt::RightButton) {
@@ -907,10 +916,10 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(zoomAnchor1_.y());
             data1[2] = coWorldX(zoomAnchor2_.x());
             data1[3] = coWorldY(zoomAnchor2_.y());
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW),
-                data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW),
+                            data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
         if (selectingLCSection_) {
             saveAnchorMap();
@@ -921,10 +930,10 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
             data1[1] = coWorldY(lcAnchor1_.y());
             data1[2] = coWorldX(lcAnchor2_.x());
             data1[3] = coWorldY(lcAnchor2_.y());
-            auto e1 = std::make_unique<P4Event>(
-                static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION),
-                data1.release());
-            gP4app->postEvent(parentWnd_, e1.release());
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION),
+                            data1.release()};
+            gP4app->postEvent(parentWnd_, e1);
         }
     }
     QWidget::mouseReleaseEvent(e);
@@ -993,8 +1002,9 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         auto px = coWinX(gVFResults.selected_ucoord_[0]);
         auto py = coWinY(gVFResults.selected_ucoord_[1]);
 
-        if (selectingTimer_) {
-            selectingTimer_.reset();
+        if (selectingTimer_ != nullptr) {
+            delete selectingTimer_;
+            selectingTimer_ = nullptr;
             selectingPointStep_ = 0;
             updatePointSelection();
         }
@@ -1003,16 +1013,16 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         selectingX_ = px;
         selectingY_ = py;
 
-        selectingTimer_ = std::make_unique<QTimer>();
-        QObject::connect(selectingTimer_.get(), &QTimer::timeout, this,
+        selectingTimer_ = new QTimer{};
+        QObject::connect(selectingTimer_, &QTimer::timeout, this,
                          &P4WinSphere::updatePointSelection);
         selectingTimer_->start(SELECTINGPOINTSPEED);
         msgBar_->showMessage("Search nearest critical point: Found");
 
         auto data1 = std::make_unique<int>(-1);
-        auto e1 = std::make_unique<P4Event>(
-            static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1.release());
-        gP4app->postEvent(parentWnd_, e1.release());
+        auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
+                              data1.release()};
+        gP4app->postEvent(parentWnd_, e1);
     }
 }
 
@@ -1042,17 +1052,17 @@ void P4WinSphere::plotPoint(const p4singularities::saddle &p)
 
     switch (p.position) {
     case POSITION_VIRTUAL:
-        win_plot_virtualsaddle(staticPainter_.get(), x, y);
+        win_plot_virtualsaddle(staticPainter_, x, y);
         break;
     case POSITION_COINCIDING:
         break;
     case POSITION_COINCIDING_VIRTUAL:
         break;
     case POSITION_COINCIDING_MAIN:
-        win_plot_coinciding(staticPainter_.get(), x, y);
+        win_plot_coinciding(staticPainter_, x, y);
         break;
     default:
-        win_plot_saddle(staticPainter_.get(), x, y);
+        win_plot_saddle(staticPainter_, x, y);
         break;
     }
 }
@@ -1081,33 +1091,33 @@ void P4WinSphere::plotPoint(const p4singularities::node &p)
     if (p.stable == -1) {
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualstablenode(staticPainter_.get(), x, y);
+            win_plot_virtualstablenode(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_stablenode(staticPainter_.get(), x, y);
+            win_plot_stablenode(staticPainter_, x, y);
             break;
         }
     } else {
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualunstablenode(staticPainter_.get(), x, y);
+            win_plot_virtualunstablenode(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_unstablenode(staticPainter_.get(), x, y);
+            win_plot_unstablenode(staticPainter_, x, y);
             break;
         }
     }
@@ -1138,68 +1148,68 @@ void P4WinSphere::plotPoint(const p4singularities::weak_focus &p)
     case SINGTYPE_STABLE:
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualstableweakfocus(staticPainter_.get(), x, y);
+            win_plot_virtualstableweakfocus(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_stableweakfocus(staticPainter_.get(), x, y);
+            win_plot_stableweakfocus(staticPainter_, x, y);
             break;
         }
         break;
     case SINGTYPE_UNSTABLE:
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualunstableweakfocus(staticPainter_.get(), x, y);
+            win_plot_virtualunstableweakfocus(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_unstableweakfocus(staticPainter_.get(), x, y);
+            win_plot_unstableweakfocus(staticPainter_, x, y);
             break;
         }
         break;
     case SINGTYPE_CENTER:
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualcenter(staticPainter_.get(), x, y);
+            win_plot_virtualcenter(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_center(staticPainter_.get(), x, y);
+            win_plot_center(staticPainter_, x, y);
             break;
         }
         break;
     default:
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualweakfocus(staticPainter_.get(), x, y);
+            win_plot_virtualweakfocus(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_weakfocus(staticPainter_.get(), x, y);
+            win_plot_weakfocus(staticPainter_, x, y);
             break;
         }
         break;
@@ -1230,33 +1240,33 @@ void P4WinSphere::plotPoint(const p4singularities::strong_focus &p)
     if (p.stable == -1) {
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualstablestrongfocus(staticPainter_.get(), x, y);
+            win_plot_virtualstablestrongfocus(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_stablestrongfocus(staticPainter_.get(), x, y);
+            win_plot_stablestrongfocus(staticPainter_, x, y);
             break;
         }
     } else {
         switch (p.position) {
         case POSITION_VIRTUAL:
-            win_plot_virtualunstablestrongfocus(staticPainter_.get(), x, y);
+            win_plot_virtualunstablestrongfocus(staticPainter_, x, y);
             break;
         case POSITION_COINCIDING:
             break;
         case POSITION_COINCIDING_VIRTUAL:
             break;
         case POSITION_COINCIDING_MAIN:
-            win_plot_coinciding(staticPainter_.get(), x, y);
+            win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
-            win_plot_unstablestrongfocus(staticPainter_.get(), x, y);
+            win_plot_unstablestrongfocus(staticPainter_, x, y);
             break;
         }
     }
@@ -1285,17 +1295,17 @@ void P4WinSphere::plotPoint(const p4singularities::degenerate &p)
 
     switch (p.position) {
     case POSITION_VIRTUAL:
-        win_plot_virtualdegen(staticPainter_.get(), x, y);
+        win_plot_virtualdegen(staticPainter_, x, y);
         break;
     case POSITION_COINCIDING:
         break;
     case POSITION_COINCIDING_VIRTUAL:
         break;
     case POSITION_COINCIDING_MAIN:
-        win_plot_coinciding(staticPainter_.get(), x, y);
+        win_plot_coinciding(staticPainter_, x, y);
         break;
     default:
-        win_plot_degen(staticPainter_.get(), x, y);
+        win_plot_degen(staticPainter_, x, y);
         break;
     }
 }
@@ -1325,28 +1335,28 @@ void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
     case POSITION_VIRTUAL:
         switch (p.type) {
         case 1:
-            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
+            win_plot_virtualsesaddlenode(staticPainter_, x, y);
             break;
         case 2:
-            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
+            win_plot_virtualsesaddlenode(staticPainter_, x, y);
             break;
         case 3:
-            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
+            win_plot_virtualsesaddlenode(staticPainter_, x, y);
             break;
         case 4:
-            win_plot_virtualsesaddlenode(staticPainter_.get(), x, y);
+            win_plot_virtualsesaddlenode(staticPainter_, x, y);
             break;
         case 5:
-            win_plot_virtualseunstablenode(staticPainter_.get(), x, y);
+            win_plot_virtualseunstablenode(staticPainter_, x, y);
             break;
         case 6:
-            win_plot_virtualsesaddle(staticPainter_.get(), x, y);
+            win_plot_virtualsesaddle(staticPainter_, x, y);
             break;
         case 7:
-            win_plot_virtualsesaddle(staticPainter_.get(), x, y);
+            win_plot_virtualsesaddle(staticPainter_, x, y);
             break;
         case 8:
-            win_plot_virtualsestablenode(staticPainter_.get(), x, y);
+            win_plot_virtualsestablenode(staticPainter_, x, y);
             break;
         }
         break;
@@ -1355,33 +1365,33 @@ void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
     case POSITION_COINCIDING_VIRTUAL:
         break;
     case POSITION_COINCIDING_MAIN:
-        win_plot_coinciding(staticPainter_.get(), x, y);
+        win_plot_coinciding(staticPainter_, x, y);
         break;
     default:
         switch (p.type) {
         case 1:
-            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            win_plot_sesaddlenode(staticPainter_, x, y);
             break;
         case 2:
-            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            win_plot_sesaddlenode(staticPainter_, x, y);
             break;
         case 3:
-            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            win_plot_sesaddlenode(staticPainter_, x, y);
             break;
         case 4:
-            win_plot_sesaddlenode(staticPainter_.get(), x, y);
+            win_plot_sesaddlenode(staticPainter_, x, y);
             break;
         case 5:
-            win_plot_seunstablenode(staticPainter_.get(), x, y);
+            win_plot_seunstablenode(staticPainter_, x, y);
             break;
         case 6:
-            win_plot_sesaddle(staticPainter_.get(), x, y);
+            win_plot_sesaddle(staticPainter_, x, y);
             break;
         case 7:
-            win_plot_sesaddle(staticPainter_.get(), x, y);
+            win_plot_sesaddle(staticPainter_, x, y);
             break;
         case 8:
-            win_plot_sestablenode(staticPainter_.get(), x, y);
+            win_plot_sestablenode(staticPainter_, x, y);
             break;
         }
         break;
@@ -1691,7 +1701,7 @@ void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
 {
     int wx1, wy1, wx2, wy2;
 
-    if (staticPainter_) {
+    if (staticPainter_ != nullptr) {
         if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
             wx1 = coWinX(x1);
             wy1 = coWinY(y1);
@@ -1820,7 +1830,7 @@ void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
 
 void P4WinSphere::drawPoint(double x, double y, int color)
 {
-    if (staticPainter_) {
+    if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
         staticPainter_->setPen(QXFIGCOLOR(color));
@@ -2562,10 +2572,11 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
                             std::round(lw), 2 * std::round(ss));
         break;
     case P4PRINT_DEFAULT:
-        staticPainter_ = std::make_unique<QPainter>();
+        staticPainter_ = new QPainter{};
 
         if (!staticPainter_->begin(gP4printer)) {
-            staticPainter_.reset();
+            delete staticPainter_;
+            staticPainter_ = nullptr;
             return;
         }
 
@@ -2577,29 +2588,33 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
             staticPainter_->drawRect(0, 0, w_, h_);
         }
         reverseYAxis_ = false; // no need for reversing axes in this case
-        prepareP4Printing(w_, h_, isblackwhite, staticPainter_.get(),
-                          std::round(lw), 2 * std::round(ss));
+        prepareP4Printing(w_, h_, isblackwhite, staticPainter_, std::round(lw),
+                          2 * std::round(ss));
         break;
 
     case P4PRINT_JPEGIMAGE:
-        staticPainter_ = std::make_unique<QPainter>();
-        sP4pixmap = std::make_unique<QPixmap>(w_, h_);
+        staticPainter_ = new QPainter{};
+        sP4pixmap = new QPixmap{w_, h_};
         reverseYAxis_ = false; // no need for reversing axes in this case
         if (sP4pixmap->isNull()) {
             msgBar_->showMessage(
                 "Print failure (try to choose a lower resolution).");
-            sP4pixmap.reset();
-            staticPainter_.reset();
+            delete sP4pixmap;
+            sP4pixmap = nullptr;
+            delete staticPainter_;
+            staticPainter_ = nullptr;
             return;
         }
-        if (!staticPainter_->begin(sP4pixmap.get())) {
-            sP4pixmap.reset();
-            staticPainter_.reset();
+        if (!staticPainter_->begin(sP4pixmap)) {
+            delete sP4pixmap;
+            sP4pixmap = nullptr;
+            delete staticPainter_;
+            staticPainter_ = nullptr;
             return;
         }
 
-        prepareP4Printing(w_, h_, isblackwhite, staticPainter_.get(),
-                          std::round(lw), 2 * std::round(ss));
+        prepareP4Printing(w_, h_, isblackwhite, staticPainter_, std::round(lw),
+                          2 * std::round(ss));
         break;
     }
     msgBar_->showMessage("Printing ...");
@@ -2620,7 +2635,8 @@ void P4WinSphere::finishPrinting()
     } else if (printMethod_ == P4PRINT_DEFAULT) {
         finishP4Printing();
         staticPainter_->end();
-        staticPainter_.reset();
+        delete staticPainter_;
+        staticPainter_ = nullptr;
         w_ = oldw_;
         h_ = oldh_;
         reverseYAxis_ = false;
@@ -2635,7 +2651,8 @@ void P4WinSphere::finishPrinting()
 
         finishP4Printing();
         staticPainter_->end();
-        staticPainter_.reset();
+        delete staticPainter_;
+        staticPainter_ = nullptr;
 
         if (sP4pixmap->save(gThisVF->getbarefilename() + ".jpg", "JPEG", 100) ==
             false) {
@@ -2644,7 +2661,8 @@ void P4WinSphere::finishPrinting()
                                   "resulting JPEG image to disc.");
         }
 
-        sP4pixmap.reset();
+        delete sP4pixmap;
+        sP4pixmap = nullptr;
         reverseYAxis_ = false;
         w_ = oldw_;
         h_ = oldh_;
@@ -2678,11 +2696,11 @@ void P4WinSphere::print()
 
 void P4WinSphere::prepareDrawing()
 {
-    if (!painterCache_) {
+    if (painterCache_ == nullptr) {
         isPainterCacheDirty_ = true;
-        painterCache_ = std::make_unique<QPixmap>(size());
+        painterCache_ = new QPixmap{size()};
     }
-    staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
+    staticPainter_ = new QPainter{painterCache_};
 
     paintedXMin_ = width() - 1;
     paintedYMin_ = height() - 1;
@@ -2698,9 +2716,10 @@ void P4WinSphere::finishDrawing()
     if (next_)
         next_->finishDrawing();
 
-    if (staticPainter_) {
+    if (staticPainter_ != nullptr) {
         staticPainter_->end();
-        staticPainter_.reset();
+        delete staticPainter_;
+        staticPainter_ = nullptr;
 
         if (paintedXMin_ < 0)
             paintedXMin_ = 0;

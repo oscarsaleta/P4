@@ -21,13 +21,9 @@
 
 #include <QWidget>
 
-#include <QPainter>
-#include <QPixmap>
 #include <QPoint>
 #include <QString>
-#include <QTimer>
 
-#include <memory>
 #include <vector>
 
 #define SELECTINGPOINTSTEPS 5
@@ -35,9 +31,12 @@
 
 class QKeyEvent;
 class QMouseEvent;
+class QPainter;
 class QPaintEvent;
+class QPixmap;
 class QResizeEvent;
 class QStatusBar;
+class QTimer;
 
 namespace p4singularities
 {
@@ -47,7 +46,7 @@ struct semi_elementary;
 struct weak_focus;
 struct strong_focus;
 struct degenerate;
-}
+} // namespace p4singularities
 struct P4POLYLINES;
 
 class P4WinSphere : public QWidget
@@ -58,7 +57,8 @@ class P4WinSphere : public QWidget
 
   public:
     /* Constructor and destructor */
-    P4WinSphere(QWidget *, QStatusBar *, bool, double, double, double, double);
+    P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1, double x2,
+                double y2, QWidget *parent);
     ~P4WinSphere();
 
     static std::vector<P4WinSphere *> sM_sphereList;
@@ -72,7 +72,7 @@ class P4WinSphere : public QWidget
     double dx_;      // x1-x0
     double dy_;      // y1-y0
 
-    std::unique_ptr<QPixmap> painterCache_;
+    QPixmap *painterCache_;
     bool isPainterCacheDirty_{true};
     int paintedXMin_{0}; // to know the update rectangle after painting
     int paintedXMax_;    // we keep to smallest rectangle enclosing
@@ -86,7 +86,7 @@ class P4WinSphere : public QWidget
     P4WinSphere *next_; // visible to PlotWnd
     int selectingX_{0}, selectingY_{0};
     int selectingPointStep_{0}, selectingPointRadius_{0};
-    std::unique_ptr<QTimer> selectingTimer_;
+    QTimer *selectingTimer_;
 
     int oldw_; // used while printing
     int oldh_;
@@ -201,8 +201,8 @@ class P4WinSphere : public QWidget
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
 
-    std::unique_ptr<QPainter> staticPainter_;
-    std::unique_ptr<QTimer> refreshTimeout_;
+    QPainter *staticPainter_;
+    QTimer *refreshTimeout_;
 
     bool selectingZoom_{false};
     bool selectingLCSection_{false};
@@ -210,7 +210,7 @@ class P4WinSphere : public QWidget
     QPoint zoomAnchor2_;
     QPoint lcAnchor1_;
     QPoint lcAnchor2_;
-    std::unique_ptr<QPixmap> anchorMap_;
+    QPixmap *anchorMap_;
 
     int printMethod_;
 };
