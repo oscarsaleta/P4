@@ -43,23 +43,23 @@
 P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     : QWidget{startdlg}, parent_{startdlg}
 {
-    p4title_ = new QLabel{"Find and Examine Singular Points", this};
-    p4title_->setFont(gP4app->getTitleFont());
+    auto p4title = new QLabel{"Find and Examine Singular Points", this};
+    p4title->setFont(gP4app->getTitleFont());
 
-    actlabel_ = new QLabel{"File Action:  ", this};
-    actlabel_->setFont(gP4app->getBoldFont());
+    auto actlabel = new QLabel{"File Action:  ", this};
+    actlabel->setFont(gP4app->getBoldFont());
     btn_actionrun_ = new QRadioButton{"Run File", this};
     btn_actionprep_ = new QRadioButton{"Prepare File", this};
 
-    singpoints_ = new QLabel{"Singular points:  \n\n", this};
-    singpoints_->setFont(gP4app->getBoldFont());
+    auto singpoints = new QLabel{"Singular points:  \n\n", this};
+    singpoints->setFont(gP4app->getBoldFont());
     btn_all_ = new QRadioButton{"All ", this};
     btn_fin_ = new QRadioButton{"Finite ", this};
     btn_inf_ = new QRadioButton{"Infinite ", this};
     btn_one_ = new QRadioButton{"One ", this};
 
-    saveall_ = new QLabel{"Save all information: ", this};
-    saveall_->setFont(gP4app->getBoldFont());
+    auto saveall = new QLabel{"Save all information: ", this};
+    saveall->setFont(gP4app->getBoldFont());
     btn_yes_ = new QRadioButton{"Yes", this};
     btn_no_ = new QRadioButton{"No", this};
 
@@ -96,93 +96,93 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     superLayout_ = new QGridLayout{this};
 
     // find and examine singular points layout
-    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom};
+    auto mainLayout = new QBoxLayout{QBoxLayout::TopToBottom};
 
-    mainLayout_->addSpacing(8);
-    mainLayout_->addWidget(p4title_);
+    mainLayout->addSpacing(8);
+    mainLayout->addWidget(p4title);
 
-    actLayout_ = new QHBoxLayout{};
-    actLayout_->addWidget(actlabel_);
-    actLayout_->addWidget(btn_actionrun_);
-    actLayout_->addWidget(btn_actionprep_);
-    actLayout_->addStretch(0);
-    mainLayout_->addLayout(actLayout_);
+    auto actLayout = new QHBoxLayout{};
+    actLayout->addWidget(actlabel);
+    actLayout->addWidget(btn_actionrun_);
+    actLayout->addWidget(btn_actionprep_);
+    actLayout->addStretch(0);
+    mainLayout->addLayout(actLayout);
 
-    singlineLayout_ = new QHBoxLayout{};
-    singlineLayout_->addWidget(singpoints_, 0, Qt::AlignBottom);
+    auto singlineLayout = new QHBoxLayout{};
+    singlineLayout->addWidget(singpoints, 0, Qt::AlignBottom);
 
-    singLayout_ = new QGridLayout{};
-    singLayout_->addWidget(btn_all_, 0, 0);
-    singLayout_->addWidget(btn_fin_, 0, 1);
-    singLayout_->addWidget(btn_inf_, 1, 0);
-    singLayout_->addWidget(btn_one_, 1, 1);
-    singlineLayout_->addLayout(singLayout_);
-    singlineLayout_->addStretch(0);
+    auto singLayout = new QGridLayout{};
+    singLayout->addWidget(btn_all_, 0, 0);
+    singLayout->addWidget(btn_fin_, 0, 1);
+    singLayout->addWidget(btn_inf_, 1, 0);
+    singLayout->addWidget(btn_one_, 1, 1);
+    singlineLayout->addLayout(singLayout);
+    singlineLayout->addStretch(0);
 
-    mainLayout_->addLayout(singlineLayout_);
+    mainLayout->addLayout(singlineLayout);
 
-    layout0_ = new QHBoxLayout{};
-    layout0_->addWidget(saveall_);
-    layout0_->addWidget(btn_yes_);
-    layout0_->addWidget(btn_no_);
-    layout0_->addStretch(0);
-    mainLayout_->addLayout(layout0_);
+    auto layout0 = new QHBoxLayout{};
+    layout0->addWidget(saveall);
+    layout0->addWidget(btn_yes_);
+    layout0->addWidget(btn_no_);
+    layout0->addStretch(0);
+    mainLayout->addLayout(layout0);
 
-    layout1_ = new QGridLayout{};
-    layout1_->addWidget(btn_load_, 0, 0);
-    layout1_->addWidget(btn_save_, 0, 1);
-    layout1_->addWidget(btn_eval_, 1, 0, 1, 2);
-    mainLayout_->addLayout(layout1_);
+    auto layout1 = new QGridLayout{};
+    layout1->addWidget(btn_load_, 0, 0);
+    layout1->addWidget(btn_save_, 0, 1);
+    layout1->addWidget(btn_eval_, 1, 0, 1, 2);
+    mainLayout->addLayout(layout1);
 
-    mainLayout_->addStretch(0);
-    superLayout_->addLayout(mainLayout_, 0, 0);
+    mainLayout->addStretch(0);
+    superLayout_->addLayout(mainLayout, 0, 0);
 
     // parameters layout
-    parLayout_ = new QBoxLayout{QBoxLayout::TopToBottom};
+    auto parLayout = new QBoxLayout{QBoxLayout::TopToBottom};
     if (paramsWindow_ == nullptr) {
         paramsWindow_ = new P4ParamsDlg{this};
         paramsWindow_->show();
-        parLayout_->addWidget(paramsWindow_, 0, Qt::AlignTop);
+        parLayout->addWidget(paramsWindow_, 0, Qt::AlignTop);
     }
-    parLayout_->addStretch(0);
-    superLayout_->addLayout(parLayout_, 0, 1);
+    parLayout->addStretch(0);
+    superLayout_->addLayout(parLayout, 0, 1);
 
     // vector field layout
-    vfLayout_ = new QBoxLayout{QBoxLayout::TopToBottom};
+    auto vfLayout = new QBoxLayout{QBoxLayout::TopToBottom};
     if (vfWindow_ == nullptr) {
         vfWindow_ = new P4VectorFieldDlg{this};
         vfWindow_->show();
-        vfLayout_->addWidget(vfWindow_);
+        vfLayout->addWidget(vfWindow_);
     }
-    vfLayout_->addStretch(0);
-    superLayout_->addLayout(vfLayout_, 1, 0);
+    vfLayout->addStretch(0);
+    superLayout_->addLayout(vfLayout, 1, 0);
 
     // vector field select layout
-    vfSelectLayout_ = new QBoxLayout{QBoxLayout::TopToBottom};
+    auto vfSelectLayout = new QBoxLayout{QBoxLayout::TopToBottom};
     if (vfSelectWindow_ == nullptr) {
         vfSelectWindow_ = new P4VFSelectDlg{this};
         vfSelectWindow_->show();
-        vfSelectLayout_->addWidget(vfSelectWindow_, 0, Qt::AlignTop);
+        vfSelectLayout->addWidget(vfSelectWindow_, 0, Qt::AlignTop);
     }
-    vfSelectLayout_->addStretch(0);
-    superLayout_->addLayout(vfSelectLayout_, 1, 1);
+    vfSelectLayout->addStretch(0);
+    superLayout_->addLayout(vfSelectLayout, 1, 1);
 
     setLayout(superLayout_);
 
     // connections
-    btngrp1_ = new QButtonGroup{this};
-    btngrp1_->addButton(btn_all_);
-    btngrp1_->addButton(btn_fin_);
-    btngrp1_->addButton(btn_inf_);
-    btngrp1_->addButton(btn_one_);
+    auto btngrp1 = new QButtonGroup{this};
+    btngrp1->addButton(btn_all_);
+    btngrp1->addButton(btn_fin_);
+    btngrp1->addButton(btn_inf_);
+    btngrp1->addButton(btn_one_);
 
-    btngrp2_ = new QButtonGroup{this};
-    btngrp2_->addButton(btn_yes_);
-    btngrp2_->addButton(btn_no_);
+    auto btngrp2 = new QButtonGroup{this};
+    btngrp2->addButton(btn_yes_);
+    btngrp2->addButton(btn_no_);
 
-    btngrp3_ = new QButtonGroup{this};
-    btngrp3_->addButton(btn_actionrun_);
-    btngrp3_->addButton(btn_actionprep_);
+    auto btngrp3 = new QButtonGroup{this};
+    btngrp3->addButton(btn_actionrun_);
+    btngrp3->addButton(btn_actionprep_);
 
     if (gActionOnlyPrepareFile)
         btn_actionprep_->toggle();
