@@ -50,7 +50,7 @@ class P4VectorFieldDlg : public QWidget
 
   private:
     P4FindDlg *parent_;
-    P4VFParams *params_;
+    P4VFParams *params_{nullptr};
 
     QBoxLayout *mainLayout_;
     QLineEdit *edt_xprime_;
@@ -58,7 +58,7 @@ class P4VectorFieldDlg : public QWidget
     QLineEdit *edt_gcf_;
     QSpinBox *spin_numparams_;
     QHBoxLayout *paramLayout_;
-    QScrollBar *sb_params_;
+    QScrollBar *sb_params_{nullptr};
 
   public slots:
     void numParamsChanged(int);

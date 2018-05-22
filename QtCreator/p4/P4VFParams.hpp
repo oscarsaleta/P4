@@ -50,7 +50,7 @@ class P4VFParams : public QWidget
     int currentShownParams_;
     int currentPageIndex_{0};
 
-    QScrollBar *sb_params_;
+    QScrollBar *sb_params_{nullptr};
     QBoxLayout *mainLayout_;
     QBoxLayout *superLayout_;
 
