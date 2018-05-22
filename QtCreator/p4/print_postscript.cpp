@@ -35,7 +35,7 @@
 
 static bool sPSBlackWhitePrint{true};
 
-static std::unique_ptr<QFile> sPSFile;
+static QFile *sPSFile;
 static QTextStream sPSFileStream;
 static int sPSW{0};
 static int sPSH{0};
@@ -50,14 +50,14 @@ static void ps_print_line(double x0, double y0, double x1, double y1,
 
 static void ps_print_comment(QString s)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         sPSFileStream << "%% " << s << "\n";
     }
 }
 
 static void ps_print_saddle(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -76,7 +76,7 @@ static void ps_print_virtualsaddle(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -93,7 +93,7 @@ static void ps_print_virtualsaddle(double x, double y)
 
 static void ps_print_stablenode(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -112,7 +112,7 @@ static void ps_print_virtualstablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -129,7 +129,7 @@ static void ps_print_virtualstablenode(double x, double y)
 
 static void ps_print_unstablenode(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -148,7 +148,7 @@ static void ps_print_virtualunstablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -165,7 +165,7 @@ static void ps_print_virtualunstablenode(double x, double y)
 
 static void ps_print_stableweakfocus(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -184,7 +184,7 @@ static void ps_print_virtualstableweakfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -201,7 +201,7 @@ static void ps_print_virtualstableweakfocus(double x, double y)
 
 static void ps_print_unstableweakfocus(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -220,7 +220,7 @@ static void ps_print_virtualunstableweakfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -237,7 +237,7 @@ static void ps_print_virtualunstableweakfocus(double x, double y)
 
 static void ps_print_weakfocus(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -256,7 +256,7 @@ static void ps_print_virtualweakfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -273,7 +273,7 @@ static void ps_print_virtualweakfocus(double x, double y)
 
 static void ps_print_center(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -292,7 +292,7 @@ static void ps_print_virtualcenter(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -309,7 +309,7 @@ static void ps_print_virtualcenter(double x, double y)
 
 static void ps_print_stablestrongfocus(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -328,7 +328,7 @@ static void ps_print_virtualstablestrongfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -345,7 +345,7 @@ static void ps_print_virtualstablestrongfocus(double x, double y)
 
 static void ps_print_unstablestrongfocus(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -364,7 +364,7 @@ static void ps_print_virtualunstablestrongfocus(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -381,7 +381,7 @@ static void ps_print_virtualunstablestrongfocus(double x, double y)
 
 static void ps_print_sesaddle(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -400,7 +400,7 @@ static void ps_print_virtualsesaddle(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -417,7 +417,7 @@ static void ps_print_virtualsesaddle(double x, double y)
 
 static void ps_print_sesaddlenode(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -436,7 +436,7 @@ static void ps_print_virtualsesaddlenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -453,7 +453,7 @@ static void ps_print_virtualsesaddlenode(double x, double y)
 
 static void ps_print_sestablenode(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -472,7 +472,7 @@ static void ps_print_virtualsestablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -489,7 +489,7 @@ static void ps_print_virtualsestablenode(double x, double y)
 
 static void ps_print_seunstablenode(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -508,7 +508,7 @@ static void ps_print_virtualseunstablenode(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -525,7 +525,7 @@ static void ps_print_virtualseunstablenode(double x, double y)
 
 static void ps_print_degen(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -548,7 +548,7 @@ static void ps_print_virtualdegen(double x, double y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -569,7 +569,7 @@ static void ps_print_virtualdegen(double x, double y)
 
 static void ps_print_coinciding(double x, double y)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             sLastPSColor = bgColours::CFOREGROUND;
@@ -598,7 +598,7 @@ static void ps_print_elips(double x0, double y0, double a, double b, int color,
     // is not necessary, since the PS command for drawing ellipses works just
     // fine.
 
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         if (dotted)
             sPSFileStream << "gsave\n";
 
@@ -643,7 +643,7 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
     if (x0 == x1 && y0 == y1)
         return;
 
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             if (sLastPSColor == bgColours::CFOREGROUND) {
@@ -686,7 +686,7 @@ static void ps_print_point(double x0, double y0, int color)
     sLastPSY0 = y0;
     sLastPSColor = color;
 
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         QString s;
         if (sPSBlackWhitePrint) {
             if (sLastPSColor == bgColours::CFOREGROUND) {
@@ -748,11 +748,14 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
 
     s = gThisVF->getbarefilename() + ".eps";
 
-    sPSFile.reset(new QFile(s));
+    if (sPSFile != nullptr)
+        delete sPSFile;
+    sPSFile = new QFile{s};
     if (sPSFile->open(QIODevice::WriteOnly))
-        sPSFileStream.setDevice(sPSFile.get());
+        sPSFileStream.setDevice(sPSFile);
     else {
-        sPSFile.reset();
+        delete sPSFile;
+        sPSFile = nullptr;
     }
 
     sLastPSColor = -1;
@@ -801,7 +804,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
     if (iszoom)
         title += " (zoom window)";
 
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         // to calculate bounding box, we need to convert to point
         // measurements
         // (1 point = 1/72 inch)
@@ -1003,7 +1006,7 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
 
 void finishPostscriptPrinting(void)
 {
-    if (sPSFile) {
+    if (sPSFile != nullptr) {
         sPSFileStream << "grestore\n"
                          "showpage\n"
                          "%%EOF\n";
@@ -1011,7 +1014,8 @@ void finishPostscriptPrinting(void)
         sPSFileStream.flush();
         sPSFileStream.setDevice(nullptr);
         sPSFile->close();
-        sPSFile.reset();
+        delete sPSFile;
+        sPSFile = nullptr;
     }
 
     plot_l = spherePlotLine;
