@@ -19,11 +19,13 @@
 
 #include "P4ZoomWnd.hpp"
 
+#include <QAction>
 #include <QDesktopWidget>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QSettings>
 #include <QStatusBar>
+#include <QToolBar>
 
 #include <cmath>
 
@@ -42,47 +44,46 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     : QMainWindow(), zoomid_{id}, parent_{main}, x1_{x1}, x2_{x2}, y1_{y1},
       y2_{y2}
 {
-    if (gP4smallIcon)
+    if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
 
-    toolBar1_ = std::make_unique<QToolBar>("ZoomBar1", this);
-    toolBar1_->setMovable(false);
+    auto toolBar1 = new QToolBar{"ZoomBar1", this};
+    toolBar1->setMovable(false);
 
-    actClose_ = std::make_unique<QAction>("Close", this);
-    actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    QObject::connect(actClose_.get(), &QAction::triggered, this,
+    auto actClose = new QAction{"Close", this};
+    actClose->setShortcut(Qt::ALT + Qt::Key_E);
+    QObject::connect(actClose, &QAction::triggered, this,
                      &P4ZoomWnd::onBtnClose);
-    toolBar1_->addAction(actClose_.get());
+    toolBar1->addAction(actClose);
 
-    actRefresh_ = std::make_unique<QAction>("Refresh", this);
-    actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    QObject::connect(actRefresh_.get(), &QAction::triggered, this,
+    auto actRefresh = new QAction{"Refresh", this};
+    actRefresh->setShortcut(Qt::ALT + Qt::Key_R);
+    QObject::connect(actRefresh, &QAction::triggered, this,
                      &P4ZoomWnd::onBtnRefresh);
-    toolBar1_->addAction(actRefresh_.get());
+    toolBar1->addAction(actRefresh);
 
-    actPrint_ = std::make_unique<QAction>("Print", this);
-    actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    QObject::connect(actPrint_.get(), &QAction::triggered, this,
+    auto actPrint = new QAction{"Print", this};
+    actPrint->setShortcut(Qt::ALT + Qt::Key_P);
+    QObject::connect(actPrint, &QAction::triggered, this,
                      &P4ZoomWnd::onBtnPrint);
-    toolBar1_->addAction(actPrint_.get());
+    toolBar1->addAction(actPrint);
 
     QObject::connect(gThisVF, &P4InputVF::saveSignal, this,
                      &P4ZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
-    actClose_->setToolTip(
+    actClose->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
-    actRefresh_->setToolTip("Redraw the plot window");
-    actPrint_->setToolTip("Opens the print window");
+    actRefresh->setToolTip("Redraw the plot window");
+    actPrint->setToolTip("Opens the print window");
 #endif
 
     statusBar()->showMessage("Ready");
-    addToolBar(Qt::TopToolBarArea, toolBar1_.get());
+    addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = std::make_unique<P4WinSphere>(this, statusBar(), true, x1_, y1_,
-                                            x2_, y2_);
+    sphere_ = new P4WinSphere{statusBar(), true, x1_, y1_, x2_, y2_, this};
     sphere_->show();
-    setCentralWidget(sphere_.get());
+    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
     sphere_->setupPlot();
 
