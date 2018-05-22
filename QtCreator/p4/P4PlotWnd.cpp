@@ -358,7 +358,7 @@ void P4PlotWnd::onBtnLimitCycles()
 
 void P4PlotWnd::onBtnPrint()
 {
-    auto pdlg = new P4PrintDlg{this, static_cast<Qt::WindowFlags>(0)};
+    auto pdlg = new P4PrintDlg{static_cast<Qt::WindowFlags>(0), this};
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
     double lw{pdlg->getChosenLineWidth()};
