@@ -79,10 +79,10 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     lst_curves_ = new QListWidget{mainWidget_};
     lst_vfs_ = new QListWidget{mainWidget_};
 
-    isphere_ = new P4WinInputSphere{mainWidget_, this, lbl_status_};
+    isphere_ = new P4WinInputSphere{this, lbl_status_, mainWidget_};
     isphere_->setupPlot();
 
-    viewParamsWindow_ = new P4ViewDlg{mainWidget_, false};
+    viewParamsWindow_ = new P4ViewDlg{false, mainWidget_};
     viewParamsWindow_->updateDlgData();
 
     edt_numpoints_ = new QLineEdit{"", mainWidget_};
