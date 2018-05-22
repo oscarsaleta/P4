@@ -22,11 +22,8 @@
 #include <QWidget>
 
 class QBoxLayout;
-class QHBoxLayout;
-class QLabel;
 class QPushButton;
 class QLineEdit;
-class QMenu;
 class QTextBrowser;
 class QTextEdit;
 class QAction;
@@ -99,10 +96,6 @@ class P4StartDlg : public QWidget
 
   private:
     QBoxLayout *mainLayout_;
-    QHBoxLayout *buttonsLayout_;
-    QHBoxLayout *namesLayout_;
-
-    QLabel *p4name_;
 
     QPushButton *btn_quit_;
     QPushButton *btn_view_;
@@ -111,7 +104,6 @@ class P4StartDlg : public QWidget
     QPushButton *btn_about_;
     QPushButton *btn_browse_;
     QLineEdit *edt_name_;
-    QMenu *viewMenu_;
 
     QTextBrowser *helpWindow_{nullptr};
     QTextEdit *viewInfiniteWindow_{nullptr};
@@ -119,9 +111,6 @@ class P4StartDlg : public QWidget
 
     P4FindDlg *findWindow_{nullptr};
     P4PlotWnd *plotWindow_{nullptr};
-
-    QAction *actFin_;
-    QAction *actInf_;
 
     bool canOpenPlot();
 };

@@ -74,9 +74,9 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
         edt_name_ = new QLineEdit{DEFAULTFILENAME, this};
     else
         edt_name_ = new QLineEdit{gThisVF->filename_ = autofilename, this};
-    p4name_ = new QLabel{" &Name: ", this};
-    p4name_->setBuddy(edt_name_);
-    p4name_->setFont(gP4app->getBoldFont());
+    auto p4name = new QLabel{" &Name: ", this};
+    p4name->setBuddy(edt_name_);
+    p4name->setFont(gP4app->getBoldFont());
 
     edt_name_->setSelection(0, strlen(DEFAULTFILENAME));
     edt_name_->setCursorPosition(strlen(DEFAULTFILENAME));
@@ -99,7 +99,7 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     // define placement of controls
     mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    buttonsLayout_ = new QHBoxLayout{};
+    auto buttonsLayout_ = new QHBoxLayout{};
     buttonsLayout_->addWidget(btn_quit_);
     buttonsLayout_->addWidget(btn_view_);
     buttonsLayout_->addWidget(btn_plot_);
@@ -107,8 +107,8 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 
     mainLayout_->addLayout(buttonsLayout_);
 
-    namesLayout_ = new QHBoxLayout{};
-    namesLayout_->addWidget(p4name_);
+    auto namesLayout_ = new QHBoxLayout{};
+    namesLayout_->addWidget(p4name);
     namesLayout_->addWidget(edt_name_);
     namesLayout_->addWidget(btn_browse_);
     namesLayout_->addWidget(btn_about_);
@@ -119,21 +119,21 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 
     // connections
 
-    viewMenu_ = new QMenu{this};
+    auto viewMenu = new QMenu{this};
 
-    actFin_ = new QAction{"Fini&te", this};
-    actFin_->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(actFin_, &QAction::triggered, this,
+    auto actFin = new QAction{"Fini&te", this};
+    actFin->setShortcut(Qt::ALT + Qt::Key_T);
+    QObject::connect(actFin, &QAction::triggered, this,
                      &P4StartDlg::onViewFinite);
-    viewMenu_->addAction(actFin_);
+    viewMenu->addAction(actFin);
 
-    actInf_ = new QAction{"&Infinite", this};
-    actInf_->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(actInf_, &QAction::triggered, this,
+    auto actInf = new QAction{"&Infinite", this};
+    actInf->setShortcut(Qt::ALT + Qt::Key_I);
+    QObject::connect(actInf, &QAction::triggered, this,
                      &P4StartDlg::onViewInfinite);
-    viewMenu_->addAction(actInf_);
+    viewMenu->addAction(actInf);
 
-    btn_view_->setMenu(viewMenu_);
+    btn_view_->setMenu(viewMenu);
 
     QObject::connect(btn_quit_, &QPushButton::clicked, this,
                      &P4StartDlg::onQuit);
