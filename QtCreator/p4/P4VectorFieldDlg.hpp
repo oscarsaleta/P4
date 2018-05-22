@@ -53,9 +53,11 @@ class P4VectorFieldDlg : public QWidget
     P4VFParams *params_{nullptr};
 
     QBoxLayout *mainLayout_;
+
     QLineEdit *edt_xprime_;
     QLineEdit *edt_yprime_;
     QLineEdit *edt_gcf_;
+
     QSpinBox *spin_numparams_;
     QHBoxLayout *paramLayout_;
     QScrollBar *sb_params_{nullptr};
