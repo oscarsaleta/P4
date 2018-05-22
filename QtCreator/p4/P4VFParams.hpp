@@ -21,7 +21,6 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -31,10 +30,11 @@
 
 #include "custom.hpp"
 
-class P4VectorFieldDlg;
-
+class QBoxLayout;
 class QScrollBar;
 class QString;
+
+class P4VectorFieldDlg;
 
 class P4VFParams : public QWidget
 {
@@ -51,8 +51,8 @@ class P4VFParams : public QWidget
     int currentPageIndex_{0};
 
     QScrollBar *sb_params_;
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QBoxLayout> superLayout_;
+    QBoxLayout *mainLayout_;
+    QBoxLayout *superLayout_;
 
     std::vector<std::unique_ptr<QHBoxLayout>> paramLayouts_;
     std::vector<std::unique_ptr<QLineEdit>> paramNames_;
