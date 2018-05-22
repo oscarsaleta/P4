@@ -21,23 +21,21 @@
 
 #include <QWidget>
 
-#include <QLabel>
 #include <QMainWindow>
-#include <QPainter>
-#include <QPixmap>
 #include <QPoint>
-#include <QTimer>
 
-#include <memory>
 #include <vector>
 
 #include "main.hpp"
 #include "tables.hpp"
 
-class QPaintEvent;
-class QResizeEvent;
-class QMouseEvent;
 class QKeyEvent;
+class QLabel;
+class QMouseEvent;
+class QPainter;
+class QPaintEvent;
+class QPixmap;
+class QResizeEvent;
 
 class P4SeparatingCurvesDlg;
 
@@ -46,8 +44,8 @@ class P4WinInputSphere : public QWidget
     Q_OBJECT
 
   public:
-    P4WinInputSphere(QWidget *parent, P4SeparatingCurvesDlg *wnd,
-                     QLabel *lbl_status);
+    P4WinInputSphere(P4SeparatingCurvesDlg *wnd, QLabel *lbl_status,
+                     QWidget *parent);
 
     //////////////////////
     // MEMBER VARIABLES //
@@ -67,8 +65,8 @@ class P4WinInputSphere : public QWidget
     double horPixelsPerMM_;
     double verPixelsPerMM_;
 
-    std::unique_ptr<QPixmap> painterCache_;
-    std::unique_ptr<QLabel> status_;
+    QPixmap *painterCache_;
+    QLabel *status_;
     bool isPainterCacheDirty_{true};
     // to know the update rectangle after painting we keep to smallest rectangle
     // enclosing all painted objects
@@ -119,8 +117,8 @@ class P4WinInputSphere : public QWidget
     // void updatePointSelection();
     void markSelection(int x1, int y1, int x2, int y2);
 
-    void plotCurves();
-    void plotCurve(const p4curves::curves &, int);
+    void plotSeparatingCurves();
+    void plotSeparatingCurve(const p4curves::curves &, int);
     void plotLine(const double *, const double *, int);
     void plotPoint(const double *, int);
     void setupCoordinateTransformations();
@@ -135,13 +133,13 @@ class P4WinInputSphere : public QWidget
 
   private:
     P4SeparatingCurvesDlg *parentWnd_;
-    std::unique_ptr<QPainter> staticPainter_;
+    QPainter *staticPainter_;
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
-    std::unique_ptr<QTimer> refreshTimeout_;
+    QTimer *refreshTimeout_;
 
     bool selectingZoom_{false};
     QPoint zoomAnchor1_;
     QPoint zoomAnchor2_;
-    std::unique_ptr<QPixmap> anchorMap_;
+    QPixmap *anchorMap_;
 };

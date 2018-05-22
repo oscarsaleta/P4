@@ -21,13 +21,9 @@
 
 #include <QWidget>
 
-#include <QBoxLayout>
-#include <QComboBox>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
-
-#include <memory>
+class QBoxLayout;
+class QComboBox;
+class QPushButton;
 
 class P4FindDlg;
 class P4SeparatingCurvesDlg;
@@ -56,17 +52,12 @@ class P4VFSelectDlg : public QWidget
     P4FindDlg *parent_;
     P4SeparatingCurvesDlg *win_curves_ = nullptr;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QHBoxLayout> layout1_;
-    std::unique_ptr<QHBoxLayout> layout2_;
-    std::unique_ptr<QHBoxLayout> layout3_;
+    QBoxLayout *mainLayout_;
 
-    std::unique_ptr<QComboBox> cbb_vfselect_;
-    std::unique_ptr<QPushButton> btn_add_;
-    std::unique_ptr<QPushButton> btn_del_;
-    std::unique_ptr<QPushButton> btn_prev_;
-    std::unique_ptr<QPushButton> btn_next_;
-    std::unique_ptr<QPushButton> btn_p4config_;
-
-    std::unique_ptr<QLabel> p4title_;
+    QComboBox *cbb_vfselect_;
+    QPushButton *btn_add_;
+    QPushButton *btn_del_;
+    QPushButton *btn_prev_;
+    QPushButton *btn_next_;
+    QPushButton *btn_p4config_;
 };

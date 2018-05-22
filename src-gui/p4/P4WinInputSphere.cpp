@@ -20,10 +20,17 @@
 #include "P4WinInputSphere.hpp"
 
 #include <QKeyEvent>
+#include <QLabel>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QPalette>
+#include <QPixmap>
+#include <QResizeEvent>
+#include <QTimer>
 
-#include <algorithm>
 #include <cmath>
+#include <utility>
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
@@ -35,8 +42,8 @@
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
 
-P4WinInputSphere::P4WinInputSphere(QWidget *parent, P4SeparatingCurvesDlg *wnd,
-                                   QLabel *lbl_status)
+P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *wnd,
+                                   QLabel *lbl_status, QWidget *parent)
     : QWidget{parent}, status_{lbl_status}, parentWnd_{wnd}
 {
     setAttribute(Qt::WA_PaintOnScreen);
@@ -129,22 +136,24 @@ void P4WinInputSphere::loadAnchorMap()
     if (y2 >= height())
         y2 = height() - 1;
 
-    int aw{x2 - x1 + 1}, ah{y2 - y1 + 1};
+    int aw{x2 - x1 + 1};
+    int ah{y2 - y1 + 1};
 
-    if (anchorMap_) {
+    if (anchorMap_ != nullptr) {
         if (anchorMap_->width() < aw || anchorMap_->height() < ah) {
-            anchorMap_ = std::make_unique<QPixmap>(aw, ah);
+            anchorMap_ = new QPixmap{aw, ah};
         }
     } else {
-        anchorMap_ = std::make_unique<QPixmap>(aw, ah);
+        anchorMap_ = new QPixmap{aw, ah};
     }
 
-    if (!painterCache_) {
-        anchorMap_.reset();
+    if (painterCache_ == nullptr) {
+        delete anchorMap_;
+        anchorMap_ = nullptr;
         return;
     }
 
-    QPainter paint{anchorMap_.get()};
+    QPainter paint{anchorMap_};
     paint.drawPixmap(0, 0, aw, ah, *painterCache_, x1, y1, aw, ah);
 }
 
@@ -158,17 +167,10 @@ void P4WinInputSphere::saveAnchorMap()
     int x2{zoomAnchor2_.x()};
     int y2{zoomAnchor2_.y()};
 
-    int s;
-    if (x1 > x2) {
-        s = x1;
-        x1 = x2;
-        x2 = s;
-    }
-    if (y1 > y2) {
-        s = y1;
-        y1 = y2;
-        y2 = s;
-    }
+    if (x1 > x2)
+        std::swap(x1, x2);
+    if (y1 > y2)
+        std::swap(y1, y2);
     if (x1 < 0)
         x1 = 0;
     if (y1 < 0)
@@ -181,7 +183,7 @@ void P4WinInputSphere::saveAnchorMap()
     int aw{x2 - x1 + 1};
     int ah{y2 - y1 + 1};
 
-    QPainter paint{painterCache_.get()};
+    QPainter paint{painterCache_};
     paint.drawPixmap(x1, y1, aw, ah, *anchorMap_, 0, 0, aw, ah);
     update(x1, y1, aw, ah);
 }
@@ -215,14 +217,17 @@ void P4WinInputSphere::adjustToNewSize()
                                        coWinH(RADIUS), coWinV(RADIUS));
     }
 
-    if (!painterCache_) {
-        painterCache_ = std::make_unique<QPixmap>(size());
+    if (painterCache_ != nullptr) {
+        delete painterCache_;
+        painterCache_ = new QPixmap{size()};
         isPainterCacheDirty_ = false;
 
-        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
-        staticPainter_->fillRect(0, 0, width(), height(),
-                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
-        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+        QPainter paint{painterCache_};
+        paint.fillRect(0, 0, width(), height(),
+                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+
+        staticPainter_ = &paint;
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -237,18 +242,17 @@ void P4WinInputSphere::adjustToNewSize()
         // during resizing: only plot essential information
         QColor c = QXFIGCOLOR(WHITE);
         c.setAlpha(128);
-        staticPainter_->setPen(c);
-        staticPainter_->drawText(0, 0, width(), height(),
-                                 Qt::AlignHCenter | Qt::AlignVCenter,
-                                 "Resizing ...  ");
+        paint.setPen(c);
+        paint.drawText(0, 0, width(), height(),
+                       Qt::AlignHCenter | Qt::AlignVCenter, "Resizing ...  ");
 
-        staticPainter_.reset();
+        staticPainter_ = nullptr;
 
-        if (refreshTimeout_)
+        if (refreshTimeout_ != nullptr)
             refreshTimeout_->stop();
         else {
-            refreshTimeout_ = std::make_unique<QTimer>();
-            QObject::connect(refreshTimeout_.get(), &QTimer::timeout, this,
+            refreshTimeout_ = new QTimer{};
+            QObject::connect(refreshTimeout_, &QTimer::timeout, this,
                              &P4WinInputSphere::refreshAfterResize);
         }
         refreshTimeout_->start(500);
@@ -257,8 +261,9 @@ void P4WinInputSphere::adjustToNewSize()
 
 void P4WinInputSphere::refreshAfterResize()
 {
-    if (refreshTimeout_) {
-        refreshTimeout_.reset();
+    if (refreshTimeout_ != nullptr) {
+        delete refreshTimeout_;
+        refreshTimeout_ = nullptr;
     }
     refresh();
 }
@@ -275,15 +280,17 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
     if (gThisVF->evaluating_)
         return;
 
-    if (!painterCache_ || isPainterCacheDirty_) {
-        if (!painterCache_)
-            painterCache_ = std::make_unique<QPixmap>(size());
+    if (painterCache_ == nullptr || isPainterCacheDirty_) {
+        if (painterCache_ == nullptr)
+            painterCache_ = new QPixmap{size()};
         isPainterCacheDirty_ = false;
 
-        staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
-        staticPainter_->fillRect(0, 0, width(), height(),
-                                 QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
-        staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+        QPainter paint{painterCache_};
+        paint.fillRect(0, 0, width(), height(),
+                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+
+        staticPainter_ = &paint;
 
         if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
             if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
@@ -295,9 +302,9 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
                 plotLineAtInfinity();
         }
 
-        plotCurves();
+        plotSeparatingCurves();
 
-        staticPainter_.reset();
+        staticPainter_ = nullptr;
     }
 
     QPainter widgetpaint{this};
@@ -306,7 +313,7 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
 
 void P4WinInputSphere::markSelection(int x1, int y1, int x2, int y2)
 {
-    if (!painterCache_)
+    if (painterCache_ == nullptr)
         return;
 
     int bx1{(x1 < x2) ? x1 : x2};
@@ -323,11 +330,12 @@ void P4WinInputSphere::markSelection(int x1, int y1, int x2, int y2)
     if (by2 >= height())
         by2 = height() - 1;
 
-    QPainter p{painterCache_.get()};
+    QPainter p{painterCache_};
     QColor c{QXFIGCOLOR(WHITE)};
     c.setAlpha(32);
     p.setPen(QXFIGCOLOR(WHITE));
     p.setBrush(c);
+
     if (bx1 == bx2 || by1 == by2)
         p.drawLine(bx1, by1, bx2, by2);
     else
@@ -463,7 +471,7 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
 
 double P4WinInputSphere::coWorldX(int x)
 {
-    double wx{(static_cast<double>(w_)) / (w_ - 1)};
+    double wx{(static_cast<double>(x)) / (w_ - 1)};
     return wx * dx_ + x0_;
 }
 
@@ -476,7 +484,7 @@ double P4WinInputSphere::coWorldY(int y)
 int P4WinInputSphere::coWinX(double x)
 {
     double wx{((x - x0_) / dx_) * (w_ - 1)};
-    int iwx{(int)(wx + 0.5)};
+    int iwx{static_cast<int>(wx + 0.5)};
     if (iwx >= w_)
         iwx = w_ - 1;
     return iwx;
@@ -485,7 +493,7 @@ int P4WinInputSphere::coWinX(double x)
 int P4WinInputSphere::coWinY(double y)
 {
     double wy{((y - y0_) / dy_) * (h_ - 1)};
-    int iwy{(int)(wy + 0.5)};
+    int iwy{static_cast<int>(wy + 0.5)};
     if (iwy >= h_)
         iwy = h_ - 1;
     return h_ - 1 - iwy;
@@ -494,13 +502,13 @@ int P4WinInputSphere::coWinY(double y)
 int P4WinInputSphere::coWinH(double deltax)
 {
     double wx{(deltax / dx_) * (w_ - 1)};
-    return (int)(wx + 0.5);
+    return static_cast<int>(std::round(wx));
 }
 
 int P4WinInputSphere::coWinV(double deltay)
 {
     double wy{(deltay / dy_) * (h_ - 1)};
-    return (int)(wy + 0.5);
+    return static_cast<int>(std::round(wy));
 }
 
 void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
@@ -531,8 +539,6 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
         return;
     }
 
-    int x, y;
-    double wx, wy;
     double pcoord[3];
 
     if (e->button() == Qt::RightButton) {
@@ -583,7 +589,7 @@ void P4WinInputSphere::drawLine(double x1, double y1, double x2, double y2,
 {
     int wx1, wy1, wx2, wy2;
 
-    if (staticPainter_) {
+    if (staticPainter_ != nullptr) {
         if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
             wx1 = coWinX(x1);
             wy1 = coWinY(y1);
@@ -706,7 +712,7 @@ void P4WinInputSphere::drawLine(double x1, double y1, double x2, double y2,
 
 void P4WinInputSphere::drawPoint(double x, double y, int color)
 {
-    if (staticPainter_) {
+    if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
 
@@ -728,11 +734,11 @@ void P4WinInputSphere::drawPoint(double x, double y, int color)
 
 void P4WinInputSphere::prepareDrawing()
 {
-    if (!painterCache_) {
+    if (painterCache_ == nullptr) {
         isPainterCacheDirty_ = true;
-        painterCache_ = std::make_unique<QPixmap>(size());
+        painterCache_ = new QPixmap{size()};
     }
-    staticPainter_ = std::make_unique<QPainter>(painterCache_.get());
+    staticPainter_ = new QPainter{painterCache_};
 
     paintedXMin_ = width() - 1;
     paintedYMin_ = height() - 1;
@@ -744,7 +750,8 @@ void P4WinInputSphere::finishDrawing()
 {
     if (staticPainter_) {
         staticPainter_->end();
-        staticPainter_.reset();
+        delete staticPainter_;
+        staticPainter_ = nullptr;
 
         if (paintedXMin_ < 0)
             paintedXMin_ = 0;
@@ -946,14 +953,15 @@ P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
     return result;
 }
 
-void P4WinInputSphere::plotCurves()
+void P4WinInputSphere::plotSeparatingCurves()
 {
     if (!gVFResults.separatingCurves_.empty())
         for (int r = 0; r < gThisVF->numSeparatingCurves_; r++)
-            plotCurve(gVFResults.separatingCurves_[r], r);
+            plotSeparatingCurve(gVFResults.separatingCurves_[r], r);
 }
 
-void P4WinInputSphere::plotCurve(const p4curves::curves &crv, int index)
+void P4WinInputSphere::plotSeparatingCurve(const p4curves::curves &crv,
+                                           int index)
 {
     double pcoord[3];
     auto &sep = crv.points;

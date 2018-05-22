@@ -19,22 +19,19 @@
 
 #pragma once
 
-#include "custom.hpp"
-
-#include <QBoxLayout>
-#include <QFormLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QScrollBar>
-#include <QSpinBox>
-#include <QString>
 #include <QWidget>
 
-#include <memory>
+#include <QString>
+
 #include <vector>
 
 #include "P4VFParams.hpp"
+#include "custom.hpp"
+
+class QBoxLayout;
+class QLineEdit;
+class QScrollBar;
+class QSpinBox;
 
 class P4FindDlg;
 
@@ -43,7 +40,7 @@ class P4VectorFieldDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4VectorFieldDlg(P4FindDlg *startwindow);
+    P4VectorFieldDlg(P4FindDlg *parent);
     ~P4VectorFieldDlg();
 
     void getDataFromDlg();
@@ -53,24 +50,15 @@ class P4VectorFieldDlg : public QWidget
 
   private:
     P4FindDlg *parent_;
-    std::unique_ptr<P4VFParams> params_;
+    P4VFParams *params_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QLineEdit> edt_xprime_;
-    std::unique_ptr<QLineEdit> edt_yprime_;
-    std::unique_ptr<QLineEdit> edt_gcf_;
-    std::unique_ptr<QSpinBox> spin_numparams_;
-    std::unique_ptr<QHBoxLayout> paramLayout_;
-    std::unique_ptr<QScrollBar> sb_params_;
-
-    std::unique_ptr<QLabel> p4title_;
-    std::unique_ptr<QLabel> xlabel_;
-    std::unique_ptr<QLabel> ylabel_;
-    std::unique_ptr<QLabel> glabel_;
-    std::unique_ptr<QLabel> plabel_;
-
-    std::unique_ptr<QFormLayout> formLayout_;
-    std::unique_ptr<QHBoxLayout> layout3_;
+    QBoxLayout *mainLayout_;
+    QLineEdit *edt_xprime_;
+    QLineEdit *edt_yprime_;
+    QLineEdit *edt_gcf_;
+    QSpinBox *spin_numparams_;
+    QHBoxLayout *paramLayout_;
+    QScrollBar *sb_params_;
 
   public slots:
     void numParamsChanged(int);
