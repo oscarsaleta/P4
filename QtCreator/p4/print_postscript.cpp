@@ -35,7 +35,7 @@
 
 static bool sPSBlackWhitePrint{true};
 
-static QFile *sPSFile;
+static QFile *sPSFile{nullptr};
 static QTextStream sPSFileStream;
 static int sPSW{0};
 static int sPSH{0};
