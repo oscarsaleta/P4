@@ -28,6 +28,7 @@
 #include <QToolBar>
 
 #include <cmath>
+#include <memory>
 
 #include "P4Application.hpp"
 #include "P4Event.hpp"
@@ -118,9 +119,9 @@ void P4ZoomWnd::signalEvaluated() { configure(); }
 void P4ZoomWnd::onBtnClose()
 {
     auto data = std::make_unique<int>(zoomid_);
-    auto e1 = std::make_unique<P4Event>(
-        static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.release());
-    gP4app->postEvent(parent_, e1.release());
+    auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW),
+                          data.release()};
+    gP4app->postEvent(parent_, e1);
 }
 
 bool P4ZoomWnd::close()
@@ -137,8 +138,7 @@ void P4ZoomWnd::onBtnRefresh()
 
 void P4ZoomWnd::onBtnPrint()
 {
-    auto pdlg =
-        std::make_unique<P4PrintDlg>(this, static_cast<Qt::WindowFlags>(0));
+    auto pdlg = new P4PrintDlg{static_cast<Qt::WindowFlags>(0), this};
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
     double lw{pdlg->getChosenLineWidth()};
@@ -181,8 +181,8 @@ void P4ZoomWnd::customEvent(QEvent *_e)
     if (e->type() == TYPE_OPENZOOMWINDOW || e->type() == TYPE_ORBIT_EVENT ||
         e->type() == TYPE_SELECT_ORBIT || e->type() == TYPE_SEP_EVENT ||
         e->type() == TYPE_SELECT_LCSECTION) {
-        auto newe = std::make_unique<P4Event>(e->type(), e->data());
-        gP4app->postEvent(parent_, newe.release());
+        auto newe = new P4Event{e->type(), e->data()};
+        gP4app->postEvent(parent_, newe);
         return;
     }
 
@@ -193,9 +193,9 @@ void P4ZoomWnd::hideEvent(QHideEvent *h)
 {
     if (!isMinimized()) {
         auto data = std::make_unique<int>(zoomid_);
-        auto e1 = std::make_unique<P4Event>(
-            static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW), data.release());
-        gP4app->postEvent(parent_, e1.release());
+        auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_ZOOMWINDOW),
+                              data.release()};
+        gP4app->postEvent(parent_, e1);
     }
 }
 
