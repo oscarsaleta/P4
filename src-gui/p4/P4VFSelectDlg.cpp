@@ -19,7 +19,11 @@
 
 #include "P4VFSelectDlg.hpp"
 
+#include <QBoxLayout>
+#include <QComboBox>
+#include <QLabel>
 #include <QMessageBox>
+#include <QPushButton>
 
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
@@ -33,16 +37,15 @@
 P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
     : QWidget{finddlg}, parent_{finddlg}
 {
-    p4title_ = std::make_unique<QLabel>("Vector Fields:", this);
-    p4title_->setFont(gP4app->getTitleFont());
+    auto p4title = new QLabel{"Vector Fields:", this};
+    p4title->setFont(gP4app->getTitleFont());
 
-    cbb_vfselect_ = std::make_unique<QComboBox>(this);
-    btn_add_ = std::make_unique<QPushButton>("Add", this);
-    btn_del_ = std::make_unique<QPushButton>("Delete", this);
-    btn_prev_ = std::make_unique<QPushButton>("<", this);
-    btn_next_ = std::make_unique<QPushButton>(">", this);
-    btn_p4config_ =
-        std::make_unique<QPushButton>("Piecewise &Configuration...", this);
+    cbb_vfselect_ = new QComboBox{this};
+    btn_add_ = new QPushButton{"Add", this};
+    btn_del_ = new QPushButton{"Delete", this};
+    btn_prev_ = new QPushButton{"<", this};
+    btn_next_ = new QPushButton{">", this};
+    btn_p4config_ = new QPushButton{"Piecewise &Configuration...", this};
 
 #ifdef TOOLTIPS
     btn_add_->setToolTip("Adds a new vector field");
@@ -53,38 +56,38 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
 #endif
 
     // layout
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
 
-    layout1_ = std::make_unique<QHBoxLayout>();
-    layout1_->addWidget(p4title_.get());
-    layout1_->addWidget(cbb_vfselect_.get());
-    mainLayout_->addLayout(layout1_.get());
+    auto layout1_ = new QHBoxLayout{};
+    layout1_->addWidget(p4title);
+    layout1_->addWidget(cbb_vfselect_);
+    mainLayout_->addLayout(layout1_);
 
-    layout2_ = std::make_unique<QHBoxLayout>();
-    layout2_->addWidget(btn_prev_.get());
-    layout2_->addWidget(btn_next_.get());
-    mainLayout_->addLayout(layout2_.get());
+    auto layout2_ = new QHBoxLayout{};
+    layout2_->addWidget(btn_prev_);
+    layout2_->addWidget(btn_next_);
+    mainLayout_->addLayout(layout2_);
 
-    layout3_ = std::make_unique<QHBoxLayout>();
-    layout3_->addWidget(btn_add_.get());
-    layout3_->addWidget(btn_del_.get());
-    mainLayout_->addLayout(layout3_.get());
+    auto layout3_ = new QHBoxLayout{};
+    layout3_->addWidget(btn_add_);
+    layout3_->addWidget(btn_del_);
+    mainLayout_->addLayout(layout3_);
 
-    mainLayout_->addWidget(btn_p4config_.get());
+    mainLayout_->addWidget(btn_p4config_);
 
     // connections
-    QObject::connect(btn_prev_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_prev_, &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnPrev);
-    QObject::connect(btn_next_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_next_, &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnNext);
-    QObject::connect(btn_add_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_add_, &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnAdd);
-    QObject::connect(btn_del_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_del_, &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnDel);
-    QObject::connect(btn_p4config_.get(), &QPushButton::clicked, this,
+    QObject::connect(btn_p4config_, &QPushButton::clicked, this,
                      &P4VFSelectDlg::onBtnP4Config);
     QObject::connect(
-        cbb_vfselect_.get(),
+        cbb_vfselect_,
         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &P4VFSelectDlg::onVfSelectionChanged);
 

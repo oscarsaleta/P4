@@ -19,18 +19,19 @@
 
 #include "P4VFParams.hpp"
 
+#include <QBoxLayout>
 #include <QScrollBar>
 
 #include "P4Application.hpp"
 #include "P4InputVF.hpp"
 #include "P4VectorFieldDlg.hpp"
 
-P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
+P4VFParams::P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent)
     : QWidget{parent}, currentNumParams_{gThisVF->numParams_}, sb_params_{sb}
 {
     int i;
 
-    auto label0 = std::make_unique<QLabel>("Enter values for all parameters");
+    auto label0 = new QLabel{"Enter values for all parameters"};
     label0->setFont(gP4app->getTitleFont());
 
     currentShownParams_ = (currentNumParams_ < MAXNUMPARAMSSHOWN)
@@ -53,8 +54,8 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
 #endif
     }
 
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom);
-    mainLayout_->addWidget(label0.get());
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom};
+    mainLayout_->addWidget(label0);
     for (i = 0; i < currentShownParams_; i++) {
         paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>());
         paramLayouts_[i]->addWidget(paramNames_[i].get());
@@ -68,19 +69,19 @@ P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
                          this, &P4VFParams::paramsEditingFinished);
     }
 
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
     updateDlgData();
 }
 
 bool P4VFParams::focusNextPrevChild(bool next)
 {
-    std::unique_ptr<QWidget> p{focusWidget()};
+    auto p = focusWidget();
 
-    if (p == paramNames_[0] && currentPageIndex_ != 0 && !next) {
+    if (p == paramNames_[0].get() && currentPageIndex_ != 0 && !next) {
         sb_params_->setValue(currentPageIndex_ - 1);
         return focusNextPrevChild(true);
     }
-    if (p == paramValues_[currentShownParams_ - 1] &&
+    if (p == paramValues_[currentShownParams_ - 1].get() &&
         currentPageIndex_ < currentNumParams_ - MAXNUMPARAMSSHOWN && next) {
         sb_params_->setValue(currentPageIndex_ + 1);
         return focusNextPrevChild(false);
@@ -90,7 +91,7 @@ bool P4VFParams::focusNextPrevChild(bool next)
 
 void P4VFParams::paramsEditingFinished()
 {
-    if (!gThisVF || gThisVF->numParams_ != currentNumParams_)
+    if (gThisVF == nullptr || gThisVF->numParams_ != currentNumParams_)
         return;
 
     bool changed{false};

@@ -19,6 +19,12 @@
 
 #include "P4VectorFieldDlg.hpp"
 
+#include <QBoxLayout>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QScrollBar>
+#include <QSpinBox>
+
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
 #include "P4InputVF.hpp"
@@ -28,33 +34,33 @@
 #include "custom.hpp"
 #include "main.hpp"
 
-P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
-    : QWidget{finddlg}, parent_{finddlg}
+P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *parent)
+    : QWidget{parent}, parent_{parent}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
-    p4title_ = std::make_unique<QLabel>("Specify the vector field:", this);
-    p4title_->setFont(gP4app->getTitleFont());
+    auto p4title = new QLabel{"Specify the vector field:", this};
+    p4title->setFont(gP4app->getTitleFont());
 
-    edt_xprime_ = std::make_unique<QLineEdit>("", this);
-    xlabel_ = std::make_unique<QLabel>("&x' = ", this);
-    xlabel_->setFont(gP4app->getBoldFont());
-    xlabel_->setBuddy(edt_xprime_.get());
+    edt_xprime_ = new QLineEdit{"", this};
+    auto xlabel = new QLabel{"&x' = ", this};
+    xlabel->setFont(gP4app->getBoldFont());
+    xlabel->setBuddy(edt_xprime_);
 
-    edt_yprime_ = std::make_unique<QLineEdit>("", this);
-    ylabel_ = std::make_unique<QLabel>("&y' = ", this);
-    ylabel_->setFont(gP4app->getBoldFont());
-    ylabel_->setBuddy(edt_yprime_.get());
+    edt_yprime_ = new QLineEdit{"", this};
+    auto ylabel = new QLabel{"&y' = ", this};
+    ylabel->setFont(gP4app->getBoldFont());
+    ylabel->setBuddy(edt_yprime_);
 
-    edt_gcf_ = std::make_unique<QLineEdit>("", this);
-    glabel_ = std::make_unique<QLabel>("&Gcf: ", this);
-    glabel_->setFont(gP4app->getBoldFont());
-    glabel_->setBuddy(edt_gcf_.get());
+    edt_gcf_ = new QLineEdit{"", this};
+    auto glabel = new QLabel{"&Gcf: ", this};
+    glabel->setFont(gP4app->getBoldFont());
+    glabel->setBuddy(edt_gcf_);
 
-    plabel_ = std::make_unique<QLabel>("Number of Parameters: ", this);
-    plabel_->setFont(gP4app->getBoldFont());
+    auto plabel = new QLabel{"Number of Parameters: ", this};
+    plabel->setFont(gP4app->getBoldFont());
 
-    spin_numparams_ = std::make_unique<QSpinBox>(this);
+    spin_numparams_ = new QSpinBox{this};
     spin_numparams_->setMinimum(0);
     spin_numparams_->setMaximum(MAXNUMPARAMS);
 
@@ -71,43 +77,43 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
 #endif
 
     // layout
-    mainLayout_ = std::make_unique<QBoxLayout>(QBoxLayout::TopToBottom, this);
-    mainLayout_->addWidget(p4title_.get());
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
+    mainLayout_->addWidget(p4title);
 
-    formLayout_ = std::make_unique<QFormLayout>();
-    formLayout_->addRow(xlabel_.get(), edt_xprime_.get());
-    formLayout_->addRow(ylabel_.get(), edt_yprime_.get());
-    formLayout_->addRow(glabel_.get(), edt_gcf_.get());
+    auto formLayout_ = new QFormLayout{};
+    formLayout_->addRow(xlabel, edt_xprime_);
+    formLayout_->addRow(ylabel, edt_yprime_);
+    formLayout_->addRow(glabel, edt_gcf_);
 
-    layout3_ = std::make_unique<QHBoxLayout>();
-    layout3_->addWidget(plabel_.get());
-    layout3_->addWidget(spin_numparams_.get());
+    auto layout3_ = new QHBoxLayout{};
+    layout3_->addWidget(plabel);
+    layout3_->addWidget(spin_numparams_);
     layout3_->addStretch(0);
 
-    paramLayout_ = std::make_unique<QHBoxLayout>();
+    paramLayout_ = new QHBoxLayout{};
 
-    mainLayout_->addLayout(formLayout_.get());
-    mainLayout_->addLayout(layout3_.get());
-    mainLayout_->addLayout(paramLayout_.get());
+    mainLayout_->addLayout(formLayout_);
+    mainLayout_->addLayout(layout3_);
+    mainLayout_->addLayout(paramLayout_);
 
-    setLayout(mainLayout_.get());
+    setLayout(mainLayout_);
 
     if (gThisVF->numParams_ != 0) {
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
-            sb_params_ = std::make_unique<QScrollBar>(Qt::Vertical, this);
+            sb_params_ = new QScrollBar{Qt::Vertical, this};
             sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
-        params_ = std::make_unique<P4VFParams>(this, sb_params_.get());
-        paramLayout_->addWidget(params_.get());
+        params_ = new P4VFParams{sb_params_, this};
+        paramLayout_->addWidget(params_);
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
-            paramLayout_->addWidget(sb_params_.get());
-            QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
-                             params_.get(), &P4VFParams::paramsSliderChanged);
-            QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved,
-                             params_.get(), &P4VFParams::paramsSliderChanged);
+            paramLayout_->addWidget(sb_params_);
+            QObject::connect(sb_params_, &QScrollBar::valueChanged, params_,
+                             &P4VFParams::paramsSliderChanged);
+            QObject::connect(sb_params_, &QScrollBar::sliderMoved, params_,
+                             &P4VFParams::paramsSliderChanged);
         }
         params_->show();
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN)
@@ -117,14 +123,14 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *finddlg)
     }
 
     // connections
-    QObject::connect(edt_xprime_.get(), &QLineEdit::editingFinished, this,
+    QObject::connect(edt_xprime_, &QLineEdit::editingFinished, this,
                      &P4VectorFieldDlg::editingFinished);
-    QObject::connect(edt_yprime_.get(), &QLineEdit::editingFinished, this,
+    QObject::connect(edt_yprime_, &QLineEdit::editingFinished, this,
                      &P4VectorFieldDlg::editingFinished);
-    QObject::connect(edt_gcf_.get(), &QLineEdit::editingFinished, this,
+    QObject::connect(edt_gcf_, &QLineEdit::editingFinished, this,
                      &P4VectorFieldDlg::editingFinished);
     QObject::connect(
-        spin_numparams_.get(),
+        spin_numparams_,
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
         &P4VectorFieldDlg::numParamsChanged);
 
@@ -137,10 +143,13 @@ void P4VectorFieldDlg::numParamsChanged(int val)
     if (val < 0 || val > MAXNUMPARAMS || val == gThisVF->numParams_)
         return;
 
-    params_.reset();
+    delete params_;
+    params_ = nullptr;
 
-    if (sb_params_)
-        sb_params_.reset();
+    if (sb_params_ != nullptr) {
+        delete sb_params_;
+        sb_params_ = nullptr;
+    }
 
     if (gThisVF->changed_ == false) {
         gThisVF->changed_ = true;
@@ -152,20 +161,20 @@ void P4VectorFieldDlg::numParamsChanged(int val)
         return;
 
     if (val > MAXNUMPARAMSSHOWN) {
-        sb_params_ = std::make_unique<QScrollBar>(Qt::Vertical, this);
+        sb_params_ = new QScrollBar{Qt::Vertical, this};
         sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
         sb_params_->setSingleStep(1);
         sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
     }
 
-    params_ = std::make_unique<P4VFParams>(this, sb_params_.get());
-    paramLayout_->addWidget(params_.get());
+    params_ = new P4VFParams{sb_params_, this};
+    paramLayout_->addWidget(params_);
     if (val > MAXNUMPARAMSSHOWN) {
-        paramLayout_->addWidget(sb_params_.get());
-        QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
-                         params_.get(), &P4VFParams::paramsSliderChanged);
-        QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved,
-                         params_.get(), &P4VFParams::paramsSliderChanged);
+        paramLayout_->addWidget(sb_params_);
+        QObject::connect(sb_params_, &QScrollBar::valueChanged, params_,
+                         &P4VFParams::paramsSliderChanged);
+        QObject::connect(sb_params_, &QScrollBar::sliderMoved, params_,
+                         &P4VFParams::paramsSliderChanged);
     }
     params_->show();
     if (val > MAXNUMPARAMSSHOWN)
@@ -178,9 +187,9 @@ void P4VectorFieldDlg::getDataFromDlg()
 {
     bool changed{false};
 
-    changed |= getLineEditCommonValue(edt_xprime_.get(), gThisVF->xdot_);
-    changed |= getLineEditCommonValue(edt_yprime_.get(), gThisVF->ydot_);
-    changed |= getLineEditCommonValue(edt_gcf_.get(), gThisVF->gcf_);
+    changed |= getLineEditCommonValue(edt_xprime_, gThisVF->xdot_);
+    changed |= getLineEditCommonValue(edt_yprime_, gThisVF->ydot_);
+    changed |= getLineEditCommonValue(edt_gcf_, gThisVF->gcf_);
 
     if (changed) {
         if (!gThisVF->changed_) {
@@ -192,35 +201,41 @@ void P4VectorFieldDlg::getDataFromDlg()
 
 void P4VectorFieldDlg::updateDlgData()
 {
-    setLineEditCommonValue(edt_xprime_.get(), gThisVF->xdot_);
-    setLineEditCommonValue(edt_yprime_.get(), gThisVF->ydot_);
-    setLineEditCommonValue(edt_gcf_.get(), gThisVF->gcf_);
+    setLineEditCommonValue(edt_xprime_, gThisVF->xdot_);
+    setLineEditCommonValue(edt_yprime_, gThisVF->ydot_);
+    setLineEditCommonValue(edt_gcf_, gThisVF->gcf_);
     spin_numparams_->setValue(gThisVF->numParams_);
 
-    if (params_)
-        if (!params_->updateDlgData())
-            params_.reset();
+    if (params_ != nullptr) {
+        if (!params_->updateDlgData()) {
+            delete params_;
+            params_ = nullptr;
+        }
+    }
 
-    if (gThisVF->numParams_ == 0)
-        if (sb_params_)
-            sb_params_.reset();
+    if (gThisVF->numParams_ == 0) {
+        if (sb_params_ != nullptr) {
+            delete sb_params_;
+            sb_params_ = nullptr;
+        }
+    }
 
     if (gThisVF->numParams_ != 0 && !params_) {
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
-            sb_params_ = std::make_unique<QScrollBar>(Qt::Vertical, this);
+            sb_params_ = new QScrollBar{Qt::Vertical, this};
             sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
             sb_params_->setSingleStep(1);
             sb_params_->setPageStep(MAXNUMPARAMSSHOWN);
         }
 
-        params_ = std::make_unique<P4VFParams>(this, sb_params_.get());
-        paramLayout_->addWidget(params_.get());
+        params_ = new P4VFParams{sb_params_, this};
+        paramLayout_->addWidget(params_);
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
-            paramLayout_->addWidget(sb_params_.get());
-            QObject::connect(sb_params_.get(), &QScrollBar::valueChanged,
-                             params_.get(), &P4VFParams::paramsSliderChanged);
-            QObject::connect(sb_params_.get(), &QScrollBar::sliderMoved,
-                             params_.get(), &P4VFParams::paramsSliderChanged);
+            paramLayout_->addWidget(sb_params_);
+            QObject::connect(sb_params_, &QScrollBar::valueChanged, params_,
+                             &P4VFParams::paramsSliderChanged);
+            QObject::connect(sb_params_, &QScrollBar::sliderMoved, params_,
+                             &P4VFParams::paramsSliderChanged);
         }
         params_->show();
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN)
