@@ -60,19 +60,7 @@ class P4PlotWnd : public QMainWindow
     P4ViewDlg *viewParamsWindow_;
 
     QBoxLayout *mainLayout_;
-    QAction *actClose_;
-    QAction *actRefresh_;
-    QAction *actLegend_;
-    QAction *actOrbits_;
-    QAction *actIntParams_;
-    QAction *actView_;
     QAction *actGCF_;
-    QAction *actCurve_;
-    QAction *actIsoclines_;
-    QAction *actPlotSep_;
-    QAction *actPlotAllSeps_;
-    QAction *actLimitCycles_;
-    QAction *actPrint_;
 
     P4LegendWnd *legendWindow_;
     P4OrbitsDlg *orbitsWindow_;
