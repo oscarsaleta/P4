@@ -29,7 +29,7 @@
 #include "main.hpp"
 #include "p4settings.hpp"
 
-P4AboutDlg::P4AboutDlg(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
+P4AboutDlg::P4AboutDlg(Qt::WindowFlags f, QWidget *parent) : QDialog(parent, f)
 {
     // general initialization
 
