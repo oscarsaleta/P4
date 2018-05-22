@@ -105,7 +105,6 @@ class P4StartDlg : public QWidget
     QLabel *p4name_;
 
     QPushButton *btn_quit_;
-    QPushButton *btn_find_;
     QPushButton *btn_view_;
     QPushButton *btn_plot_;
     QPushButton *btn_help_;
@@ -114,12 +113,12 @@ class P4StartDlg : public QWidget
     QLineEdit *edt_name_;
     QMenu *viewMenu_;
 
-    QTextBrowser *helpWindow_ = nullptr;
-    QTextEdit *viewInfiniteWindow_ = nullptr;
-    QTextEdit *viewFiniteWindow_ = nullptr;
+    QTextBrowser *helpWindow_{nullptr};
+    QTextEdit *viewInfiniteWindow_{nullptr};
+    QTextEdit *viewFiniteWindow_{nullptr};
 
-    P4FindDlg *findWindow_ = nullptr;
-    P4PlotWnd *plotWindow_ = nullptr;
+    P4FindDlg *findWindow_{nullptr};
+    P4PlotWnd *plotWindow_{nullptr};
 
     QAction *actFin_;
     QAction *actInf_;
