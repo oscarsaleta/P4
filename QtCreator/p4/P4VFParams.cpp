@@ -26,7 +26,7 @@
 #include "P4InputVF.hpp"
 #include "P4VectorFieldDlg.hpp"
 
-P4VFParams::P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb)
+P4VFParams::P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent)
     : QWidget{parent}, currentNumParams_{gThisVF->numParams_}, sb_params_{sb}
 {
     int i;

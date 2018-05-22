@@ -41,7 +41,7 @@ class P4VFParams : public QWidget
     Q_OBJECT
 
   public:
-    P4VFParams(P4VectorFieldDlg *parent, QScrollBar *sb);
+    P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent);
 
     bool updateDlgData();
 
