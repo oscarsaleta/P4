@@ -33,7 +33,7 @@ class P4PrintDlg : public QDialog
     Q_OBJECT
 
   public:
-    P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
+    P4PrintDlg(Qt::WindowFlags f, QWidget *parent);
 
     static bool sM_lastBlackWhite;
     static double sM_lastLineWidth;

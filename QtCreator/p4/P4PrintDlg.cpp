@@ -45,7 +45,7 @@ double P4PrintDlg::sM_lastLineWidth{DEFAULT_LINEWIDTH};
 double P4PrintDlg::sM_lastSymbolSize{DEFAULT_SYMBOLSIZE};
 int P4PrintDlg::sM_lastResolution{DEFAULT_RESOLUTION};
 
-P4PrintDlg::P4PrintDlg(QWidget *parent, Qt::WindowFlags f) : QDialog{parent, f}
+P4PrintDlg::P4PrintDlg(Qt::WindowFlags f, QWidget *parent) : QDialog{parent, f}
 {
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
