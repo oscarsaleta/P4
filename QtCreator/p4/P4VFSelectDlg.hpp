@@ -39,6 +39,7 @@ class P4VFSelectDlg : public QWidget
 
     void closeConfigWindow();
     bool checkPlotWindowClosed();
+    P4SeparatingCurvesDlg *getConfigWindowPtr() const;
 
   public slots:
     void onBtnAdd();

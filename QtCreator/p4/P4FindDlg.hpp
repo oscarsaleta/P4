@@ -43,9 +43,6 @@ class P4FindDlg : public QWidget
 
     P4VFSelectDlg *getVfSelectWindowPtr() const;
     P4StartDlg *getParentPtr() const;
-    P4SeparatingCurvesDlg *getPiecewiseConfigWindowPtr() const;
-    void createPiecewiseConfigWindow();
-    void closePiecewiseConfigWindow();
 
   private:
     P4StartDlg *parent_;
@@ -67,7 +64,6 @@ class P4FindDlg : public QWidget
     P4VectorFieldDlg *vfWindow_{nullptr};
     P4ParamsDlg *paramsWindow_{nullptr};
     P4VFSelectDlg *vfSelectWindow_{nullptr};
-    P4SeparatingCurvesDlg *piecewiseConfigWindow_{nullptr};
 
     // void saveSettings();
     // void readSettings();

@@ -335,7 +335,7 @@ void P4FindDlg::onBtnLoad()
         bool oldeval = gThisVF->evaluated_;
 
         if (vfSelectWindow_ != nullptr) {
-            if (piecewiseConfigWindow_) {
+            if (vfSelectWindow_->getConfigWindowPtr() != nullptr) {
                 gVFResults.readTables(gThisVF->getbarefilename(), true, true);
             }
         }
@@ -455,8 +455,9 @@ void P4FindDlg::signalSeparatingCurvesEvaluated()
 {
     btn_eval_->setEnabled(true);
     if (vfSelectWindow_ != nullptr) {
-        if (piecewiseConfigWindow_ != nullptr)
-            piecewiseConfigWindow_->signalSeparatingCurvesEvaluated();
+        if (vfSelectWindow_->getConfigWindowPtr() != nullptr)
+            vfSelectWindow_->getConfigWindowPtr()
+                ->signalSeparatingCurvesEvaluated();
     }
 }
 
@@ -466,19 +467,3 @@ P4VFSelectDlg *P4FindDlg::getVfSelectWindowPtr() const
 }
 
 P4StartDlg *P4FindDlg::getParentPtr() const { return parent_; }
-
-P4SeparatingCurvesDlg *P4FindDlg::getPiecewiseConfigWindowPtr() const
-{
-    return piecewiseConfigWindow_;
-}
-
-void P4FindDlg::createPiecewiseConfigWindow()
-{
-    piecewiseConfigWindow_ = new P4SeparatingCurvesDlg{this};
-}
-
-void P4FindDlg::closePiecewiseConfigWindow()
-{
-    delete piecewiseConfigWindow_;
-    piecewiseConfigWindow_ = nullptr;
-}
