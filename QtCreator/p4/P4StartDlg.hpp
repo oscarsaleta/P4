@@ -82,7 +82,6 @@ class P4StartDlg : public QWidget
   public slots:
     // following slots are called by QT when a button is pressed or a file name
     // is changed:
-    void onQuit();
     void onPlot();
     void onViewFinite();
     void onViewInfinite();
