@@ -29,5 +29,5 @@
 
 *************************************************************************/
 
-#define VERSION "7.0.2-beta"
-#define VERSIONDATE "November, 2017"
+#define VERSION "8.0.0-alpha"
+#define VERSIONDATE "May, 2018"
