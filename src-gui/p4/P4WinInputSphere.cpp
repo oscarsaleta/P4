@@ -40,8 +40,6 @@
 #include "math_regions.hpp"
 #include "plot_tools.hpp"
 
-static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart);
-
 P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *wnd,
                                    QLabel *lbl_status, QWidget *parent)
     : QWidget{parent}, status_{lbl_status}, parentWnd_{wnd}

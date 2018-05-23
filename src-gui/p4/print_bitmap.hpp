@@ -19,8 +19,6 @@
 
 #pragma once
 
-#include <memory>
-
 class QPainter;
 
 int printColorTable(int color);

@@ -65,8 +65,8 @@ class P4WinInputSphere : public QWidget
     double horPixelsPerMM_;
     double verPixelsPerMM_;
 
-    QPixmap *painterCache_;
-    QLabel *status_;
+    QPixmap *painterCache_{nullptr};
+    QLabel *status_{nullptr};
     bool isPainterCacheDirty_{true};
     // to know the update rectangle after painting we keep to smallest rectangle
     // enclosing all painted objects
@@ -133,13 +133,13 @@ class P4WinInputSphere : public QWidget
 
   private:
     P4SeparatingCurvesDlg *parentWnd_;
-    QPainter *staticPainter_;
+    QPainter *staticPainter_{nullptr};
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
-    QTimer *refreshTimeout_;
+    QTimer *refreshTimeout_{nullptr};
 
     bool selectingZoom_{false};
     QPoint zoomAnchor1_;
     QPoint zoomAnchor2_;
-    QPixmap *anchorMap_;
+    QPixmap *anchorMap_{nullptr};
 };

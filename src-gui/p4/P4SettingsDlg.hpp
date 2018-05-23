@@ -23,7 +23,6 @@
 
 class QBoxLayout;
 class QButtonGroup;
-class QLabel;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
@@ -39,23 +38,18 @@ class P4SettingsDlg : public QDialog
     void browseForExistingPathOrFile(QLineEdit *, const QString &, bool);
 
   private:
-    QLabel *lbl_base_;
     QLineEdit *edt_base_;
     QPushButton *btn_base_;
 
-    QLabel *lbl_sum_;
     QLineEdit *edt_sum_;
     QPushButton *btn_sum_;
 
-    QLabel *lbl_temp_;
     QLineEdit *edt_temp_;
     QPushButton *btn_temp_;
 
-    QLabel *lbl_maple_;
     QLineEdit *edt_maple_;
     QPushButton *btn_maple_;
 
-    QLabel *lbl_bgcolor_;
     QRadioButton *btn_bgblack_;
     QRadioButton *btn_bgwhite_;
 
@@ -64,8 +58,6 @@ class P4SettingsDlg : public QDialog
     QPushButton *btn_cancel_;
 
     QBoxLayout *mainLayout_;
-
-    QButtonGroup *bgcolors_;
 
   public slots:
     void onOk();

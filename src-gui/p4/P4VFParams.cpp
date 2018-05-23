@@ -54,7 +54,7 @@ P4VFParams::P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent)
 #endif
     }
 
-    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom};
+    mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
     mainLayout_->addWidget(label0);
     for (i = 0; i < currentShownParams_; i++) {
         paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>());

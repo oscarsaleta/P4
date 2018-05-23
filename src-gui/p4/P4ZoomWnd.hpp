@@ -21,18 +21,13 @@
 
 #include <QMainWindow>
 
-#include <QBoxLayout>
-#include <QAction>
-#include <QToolBar>
-
 #include "P4WinSphere.hpp"
 
-#include <memory>
-
-class P4PlotWnd;
-
+class QBoxLayout;
 class QEvent;
 class QHideEvent;
+
+class P4PlotWnd;
 
 class P4ZoomWnd : public QMainWindow
 {
@@ -50,16 +45,9 @@ class P4ZoomWnd : public QMainWindow
     // non-owning raw pointer to parent
     P4PlotWnd *parent_;
 
-    std::unique_ptr<QBoxLayout> mainLayout_;
-    std::unique_ptr<QAction> actClose_;
-    std::unique_ptr<QAction> actRefresh_;
-    std::unique_ptr<QAction> actPrint_;
-
-    std::unique_ptr<QToolBar> toolBar1_;
-
     double x1_, x2_, y1_, y2_;
 
-    std::unique_ptr<P4WinSphere> sphere_; // main sphere
+    P4WinSphere *sphere_; // main sphere
 
   public slots:
     // void signalEvaluating();

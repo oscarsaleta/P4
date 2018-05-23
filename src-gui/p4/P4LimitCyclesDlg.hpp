@@ -24,12 +24,9 @@
 #include "custom.hpp"
 
 class QBoxLayout;
-class QGridLayout;
-class QHBoxLayout;
 class QLineEdit;
 class QPushButton;
 class QSpinBox;
-class QLabel;
 
 class P4PlotWnd;
 class P4WinSphere;
@@ -62,19 +59,6 @@ class P4LimitCyclesDlg : public QWidget
     QLineEdit *edt_x1_;
     QLineEdit *edt_y1_;
     QLineEdit *edt_grid_;
-
-    QLabel *lbl1_;
-    QLabel *lbl2_;
-    QLabel *lbl3_;
-    QLabel *lbl4_;
-    QLabel *lbl5_;
-    QLabel *lbl6_;
-
-    QGridLayout *lay00_;
-    QHBoxLayout *layout1_;
-    QHBoxLayout *layout2_;
-    QHBoxLayout *layout3_;
-    QHBoxLayout *layout4_;
 
     QSpinBox *spin_numpoints_;
 

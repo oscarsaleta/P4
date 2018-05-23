@@ -60,7 +60,6 @@ P4ParentStudy::P4ParentStudy()
 // -----------------------------------------------------------------------
 void P4ParentStudy::reset()
 {
-    int i;
     vf_.clear();
     // vfK_ = nullptr;
     K_ = 0;

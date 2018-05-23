@@ -49,7 +49,7 @@ class P4SepDlg : public QWidget
     QPushButton *btn_start_;
     QPushButton *btn_cont_;
     QLineEdit *edt_epsilon_;
-    QLabel *lbl1_;
+
     QLabel *lbl_info_0_;
     QLabel *lbl_info_1_;
     QLabel *lbl_info_2_;

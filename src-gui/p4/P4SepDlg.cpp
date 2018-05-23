@@ -46,8 +46,8 @@ P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btn_selectnext_ = new QPushButton{"Select &Next sep", this};
 
     edt_epsilon_ = new QLineEdit{"", this};
-    lbl1_ = new QLabel{"&Epsilon = ", this};
-    lbl1_->setBuddy(edt_epsilon_);
+    auto lbl1 = new QLabel{"&Epsilon = ", this};
+    lbl1->setBuddy(edt_epsilon_);
 
     lbl_info_0_ = new QLabel{"", this};
     lbl_info_1_ = new QLabel{"", this};
@@ -64,7 +64,7 @@ P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
     mainLayout_->addWidget(lbl_info_3_);
 
     auto layout3 = new QHBoxLayout{};
-    layout3->addWidget(lbl1_);
+    layout3->addWidget(lbl1);
     layout3->addWidget(edt_epsilon_);
 
     auto layout4 = new QHBoxLayout{};

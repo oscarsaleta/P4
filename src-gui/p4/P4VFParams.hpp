@@ -52,7 +52,6 @@ class P4VFParams : public QWidget
 
     QScrollBar *sb_params_;
     QBoxLayout *mainLayout_;
-    QBoxLayout *superLayout_;
 
     std::vector<std::unique_ptr<QHBoxLayout>> paramLayouts_;
     std::vector<std::unique_ptr<QLineEdit>> paramNames_;

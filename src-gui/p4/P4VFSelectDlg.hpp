@@ -50,7 +50,7 @@ class P4VFSelectDlg : public QWidget
 
   private:
     P4FindDlg *parent_;
-    P4SeparatingCurvesDlg *win_curves_ = nullptr;
+    P4SeparatingCurvesDlg *win_curves_{nullptr};
 
     QBoxLayout *mainLayout_;
 

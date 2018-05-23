@@ -32,7 +32,7 @@ class P4AboutDlg : public QDialog
     Q_OBJECT
 
   public:
-    P4AboutDlg(QWidget *parent = nullptr, Qt::WindowFlags f = 0);
+    P4AboutDlg(Qt::WindowFlags f = 0, QWidget *parent = nullptr);
 
   public slots:
     void onOk();

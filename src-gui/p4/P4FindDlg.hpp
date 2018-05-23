@@ -22,9 +22,6 @@
 #include <QWidget>
 
 class QGridLayout;
-class QBoxLayout;
-class QHBoxLayout;
-class QButtonGroup;
 class QLabel;
 class QRadioButton;
 class QPushButton;
@@ -54,25 +51,6 @@ class P4FindDlg : public QWidget
     P4StartDlg *parent_;
 
     QGridLayout *superLayout_;
-    QBoxLayout *mainLayout_;
-    QBoxLayout *parLayout_;
-    QBoxLayout *vfLayout_;
-    QBoxLayout *vfSelectLayout_;
-
-    QHBoxLayout *actLayout_;
-    QHBoxLayout *singlineLayout_;
-    QGridLayout *singLayout_;
-    QHBoxLayout *layout0_;
-    QGridLayout *layout1_;
-
-    QButtonGroup *btngrp1_;
-    QButtonGroup *btngrp2_;
-    QButtonGroup *btngrp3_;
-
-    QLabel *p4title_;
-    QLabel *actlabel_;
-    QLabel *singpoints_;
-    QLabel *saveall_;
 
     QRadioButton *btn_actionrun_;
     QRadioButton *btn_actionprep_;
@@ -86,10 +64,10 @@ class P4FindDlg : public QWidget
     QPushButton *btn_save_;
     QPushButton *btn_eval_;
 
-    P4VectorFieldDlg *vfWindow_ = nullptr;
-    P4ParamsDlg *paramsWindow_ = nullptr;
-    P4VFSelectDlg *vfSelectWindow_ = nullptr;
-    P4SeparatingCurvesDlg *piecewiseConfigWindow_ = nullptr;
+    P4VectorFieldDlg *vfWindow_{nullptr};
+    P4ParamsDlg *paramsWindow_{nullptr};
+    P4VFSelectDlg *vfSelectWindow_{nullptr};
+    P4SeparatingCurvesDlg *piecewiseConfigWindow_{nullptr};
 
     // void saveSettings();
     // void readSettings();

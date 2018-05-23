@@ -23,7 +23,6 @@
 
 class QBoxLayout;
 class QCheckBox;
-class QLabel;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
@@ -34,7 +33,7 @@ class P4PrintDlg : public QDialog
     Q_OBJECT
 
   public:
-    P4PrintDlg(QWidget *parent, Qt::WindowFlags f);
+    P4PrintDlg(Qt::WindowFlags f, QWidget *parent);
 
     static bool sM_lastBlackWhite;
     static double sM_lastLineWidth;
@@ -42,7 +41,7 @@ class P4PrintDlg : public QDialog
     static int sM_lastResolution;
 
   private:
-    QPushButton *btn_default_;
+    QPushButton *btn_default_{nullptr};
     QPushButton *btn_epsimage_;
     QPushButton *btn_xfigimage_;
     QPushButton *btn_cancel_;
@@ -50,7 +49,6 @@ class P4PrintDlg : public QDialog
     QBoxLayout *mainLayout_;
     QCheckBox *btn_blackwhite_;
 
-    QLabel *lbl_bgcolor_;
     QRadioButton *btn_whitebg_;
     QRadioButton *btn_blackbg_;
 

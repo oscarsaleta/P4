@@ -88,32 +88,32 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
     //  setFont( QFont( FONTSTYLE, FONTSIZE ) );
 
     edt_base_ = new QLineEdit{stripQuotes(getP4Path()), this};
-    lbl_base_ = new QLabel{"&Base Installation Path", this};
+    auto lbl_base = new QLabel{"&Base Installation Path", this};
     btn_base_ = new QPushButton{"Browse...", this};
-    lbl_base_->setBuddy(edt_base_);
+    lbl_base->setBuddy(edt_base_);
 
     edt_sum_ = new QLineEdit{stripQuotes(getP4SumTablePath()), this};
-    lbl_sum_ = new QLabel{"&Sumtable Path", this};
+    auto lbl_sum = new QLabel{"&Sumtable Path", this};
     btn_sum_ = new QPushButton{"Browse...", this};
-    lbl_sum_->setBuddy(edt_sum_);
+    lbl_sum->setBuddy(edt_sum_);
 
     edt_temp_ = new QLineEdit{stripQuotes(getP4TempPath()), this};
-    lbl_temp_ = new QLabel{"&Temporary Files Path", this};
+    auto lbl_temp = new QLabel{"&Temporary Files Path", this};
     btn_temp_ = new QPushButton{"Browse...", this};
-    lbl_temp_->setBuddy(edt_temp_);
+    lbl_temp->setBuddy(edt_temp_);
 
     edt_maple_ = new QLineEdit{stripQuotes(getMapleExe()), this};
-    lbl_maple_ = new QLabel{"&Maple Executable", this};
+    auto lbl_maple = new QLabel{"&Maple Executable", this};
     btn_maple_ = new QPushButton{"Browse...", this};
-    lbl_maple_->setBuddy(edt_maple_);
+    lbl_maple->setBuddy(edt_maple_);
 
-    lbl_bgcolor_ = new QLabel{"Plot background color", this};
+    auto lbl_bgcolor = new QLabel{"Plot background color", this};
     btn_bgblack_ = new QRadioButton{"Black", this};
     btn_bgwhite_ = new QRadioButton{"White", this};
 
-    bgcolors_ = new QButtonGroup{this};
-    bgcolors_->addButton(btn_bgblack_);
-    bgcolors_->addButton(btn_bgwhite_);
+    auto bgcolors = new QButtonGroup{this};
+    bgcolors->addButton(btn_bgblack_);
+    bgcolors->addButton(btn_bgwhite_);
 
     btn_ok_ = new QPushButton{"&Ok", this};
     btn_reset_ = new QPushButton{"&Reset", this};
@@ -170,21 +170,21 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
 
     auto lay00 = new QGridLayout{};
 
-    lay00->addWidget(lbl_base_, 0, 0);
+    lay00->addWidget(lbl_base, 0, 0);
     lay00->addWidget(edt_base_, 0, 1);
     lay00->addWidget(btn_base_, 0, 2);
-    lay00->addWidget(lbl_sum_, 1, 0);
+    lay00->addWidget(lbl_sum, 1, 0);
     lay00->addWidget(edt_sum_, 1, 1);
     lay00->addWidget(btn_sum_, 1, 2);
-    lay00->addWidget(lbl_temp_, 2, 0);
+    lay00->addWidget(lbl_temp, 2, 0);
     lay00->addWidget(edt_temp_, 2, 1);
     lay00->addWidget(btn_temp_, 2, 2);
-    lay00->addWidget(lbl_maple_, 3, 0);
+    lay00->addWidget(lbl_maple, 3, 0);
     lay00->addWidget(edt_maple_, 3, 1);
     lay00->addWidget(btn_maple_, 3, 2);
 
     auto bgbuttons = new QHBoxLayout{};
-    bgbuttons->addWidget(lbl_bgcolor_);
+    bgbuttons->addWidget(lbl_bgcolor);
     bgbuttons->addStretch(0);
     bgbuttons->addWidget(btn_bgblack_);
     bgbuttons->addWidget(btn_bgwhite_);

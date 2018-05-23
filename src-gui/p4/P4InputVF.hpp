@@ -122,14 +122,14 @@ class P4InputVF : public QObject
     // EVALUATION VARIABLES
     QString evalFile_;
     QString evalFile2_;
-    QProcess *evalProcess_;
-    QMetaObject::Connection *evalProcessFinishedConnection_;
+    QProcess *evalProcess_{nullptr};
+    QMetaObject::Connection *evalProcessFinishedConnection_{nullptr};
 
     // QT GUI ELEMENTS FIXME need to be public?
-    QWidget *outputWindow_;
-    QTextEdit *processText_;
-    QPushButton *terminateProcessButton_;
-    QPushButton *clearProcessButton_;
+    QWidget *outputWindow_{nullptr};
+    QTextEdit *processText_{nullptr};
+    QPushButton *terminateProcessButton_{nullptr};
+    QPushButton *clearProcessButton_{nullptr};
 
     // PARAMETER LIST
     int numParams_{0};
