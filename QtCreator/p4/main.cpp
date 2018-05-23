@@ -215,10 +215,6 @@ int main(int argc, char *argv[])
         delete gP4printer;
         gP4printer = nullptr;
     }
-    if (gThisVF != nullptr) {
-        delete gThisVF;
-        gThisVF = nullptr;
-    }
     if (gP4startDlg != nullptr) {
         delete gP4startDlg;
         gP4startDlg = nullptr;
@@ -226,6 +222,10 @@ int main(int argc, char *argv[])
     if (gP4app != nullptr) {
         delete gP4app;
         gP4app = nullptr;
+    }
+    if (gThisVF != nullptr) {
+        delete gThisVF;
+        gThisVF = nullptr;
     }
 
     return returnvalue;

@@ -54,7 +54,7 @@ bool bgColours::PRINT_WHITE_BG = true;
 
 P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 {
-    setAttribute(Qt::WA_DeleteOnClose);
+    // setAttribute(Qt::WA_DeleteOnClose);
     // general initialization
 
     QString cap{"Planar Polynomial Phase Portraits"};
@@ -157,12 +157,12 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     edt_name_->setFocus();
 
     // show find dialog
-    if (findWindow_ == nullptr) {
-        findWindow_ = new P4FindDlg{this};
-        findWindow_->show();
-        findWindow_->raise();
-        mainLayout_->addWidget(findWindow_);
-    }
+    if (findWindow_ != nullptr)
+        delete findWindow_;
+    findWindow_ = new P4FindDlg{this};
+    findWindow_->show();
+    findWindow_->raise();
+    mainLayout_->addWidget(findWindow_);
 
     setP4WindowTitle(this, cap);
 }
@@ -286,7 +286,7 @@ void P4StartDlg::onHelp()
     }
 
     if (helpWindow_ == nullptr)
-        helpWindow_ = new QTextBrowser{};
+        helpWindow_ = new QTextBrowser{this};
 
     helpWindow_->setSource(QUrl::fromLocalFile(helpname));
     helpWindow_->resize(640, 480);
@@ -519,7 +519,8 @@ void P4StartDlg::onViewFinite()
         return;
     }
 
-    delete viewFiniteWindow_;
+    if (viewFiniteWindow_ != nullptr)
+        delete viewFiniteWindow_;
     viewFiniteWindow_ = new QTextEdit{this};
     showText(*viewFiniteWindow_, "View results at the finite region", fname);
     viewFiniteWindow_->show();
@@ -555,7 +556,8 @@ void P4StartDlg::onViewInfinite()
         return;
     }
 
-    delete viewInfiniteWindow_;
+    if (viewInfiniteWindow_ != nullptr)
+        delete viewInfiniteWindow_;
     viewInfiniteWindow_ = new QTextEdit{this};
     showText(*viewInfiniteWindow_, "View results at infinity", fname);
     viewInfiniteWindow_->show();
