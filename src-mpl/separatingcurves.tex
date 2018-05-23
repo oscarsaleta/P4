@@ -49,7 +49,7 @@ Default values of the user parameters:
 restart;
 user_numpointscurves := [100]:
 user_curves := [x*y]:
-user_curvesfile := "untitled_curve.tab":
+user_curvesfile := "untitled_sepcurves.tab":
 returnvalue := 0:
 \end{lstlisting}
 
@@ -86,7 +86,7 @@ FindAllSeparatingCurves := proc()
     for r from 1 to numcurves do
         user_numpoints := user_numpointscurves[r];
         user_f := user_curves[r];
-        if not FindCurve( fp ) then
+        if not FindSeparatingCurve( fp ) then
             fclose(fp);
             fclose( fopen( user_file, WRITE, TEXT ) ); # clear file
             returnvalue := 0;
@@ -100,12 +100,10 @@ FindAllSeparatingCurves := proc()
 end:
 \end{lstlisting}
 
-The routine FindCurve now prepares the calculations in the several charts,
-and calls a routine, similar to the routine to find greatest common factor-points,
-to write the data to a file.
+The routine FindSeparatingCurve now prepares the calculations in the several charts, and calls a routine, similar to the routine to find greatest common factor-points, to write the data to a file.
 
-\begin{lstlisting}[name=p5curves]
-FindCurve := proc( fp )
+\begin{lstlisting}[name=separatingcurves]
+FindSeparatingCurve := proc( fp )
     global user_x1, user_x2, user_y1, user_y2, u, v, user_f;
     local f, fU1, fV1, fU2, fV2, fC, z1, z2, s, L, j, d;
 
@@ -175,7 +173,7 @@ FindCurve := proc( fp )
         u := x;
         v := y;
         printf( "Chart R2: " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -187,7 +185,7 @@ FindCurve := proc( fp )
         u := x;
         v := y;
         printf( "Chart U1: " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -199,7 +197,7 @@ FindCurve := proc( fp )
         u := x;
         v := y;
         printf( "Chart U2: " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -211,7 +209,7 @@ FindCurve := proc( fp )
         u := x;
         v := y;
         printf( "Chart V1': " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -223,7 +221,7 @@ FindCurve := proc( fp )
         u := x;
         v := y;
         printf( "Chart V2': " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -247,7 +245,7 @@ FindCurve := proc( fp )
         u := x*cos(y);
         v := x*sin(y);
         printf( "Chart R2 (Lyapunov-weights): " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -259,7 +257,7 @@ FindCurve := proc( fp )
         u := cos(y);
         v := sin(y);
         printf( "Chart U1 (Lyapunov-weights): " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -271,7 +269,7 @@ FindCurve := proc( fp )
         u := cos(y);
         v := sin(y);
         printf( "Chart U2 (Lyapunov-weights): " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -283,7 +281,7 @@ FindCurve := proc( fp )
         u := cos(y);
         v := sin(y);
         printf( "Chart V1 (Lyapunov-weights): " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
 
@@ -295,7 +293,7 @@ FindCurve := proc( fp )
         u := cos(y);
         v := sin(y);
         printf( "Chart V2 (Lyapunov-weights): " );
-        if not FindCurveInChart( fp ) then
+        if not FindSeparatingCurveInChart( fp ) then
             return false;
         end if;
     end if;
@@ -303,8 +301,8 @@ FindCurve := proc( fp )
 end:
 \end{lstlisting}
 
-\begin{lstlisting}[name=p5curves]
-FindCurveInChart := proc( fp )
+\begin{lstlisting}[name=separatingcurves]
+FindSeparatingCurveInChart := proc( fp )
     global  u, v, returnvalue, facs, fac, user_f, user_numpoints;
     local   m, n, P, k, i, j, s, f, CURVES_ARRAY_TO_LISTLIST, SimplifyPlot;
 
@@ -367,8 +365,8 @@ end:
 
 Saving all to a library:
 
-\begin{lstlisting}[name=p5curves]
-save( returnvalue, FindAllCurves, FindCurve, FindCurveInChart, "p5curves.m" );
+\begin{lstlisting}[name=separatingcurves]
+save( returnvalue, FindAllSeparatingCurves, FindSeparatingCurve, FindSeparatingCurveInChart, "separatingcurves.m" );
 \end{lstlisting}
 
 \section{Syntax of output file}
