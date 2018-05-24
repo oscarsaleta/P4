@@ -403,12 +403,16 @@ void P4ParamsDlg::getDataFromDlg()
         changed = true;
     }
 
+    if (spin_precis0_->value() != gThisVF->precision0_) {
+        gThisVF->precision0_ = spin_precis0_->value();
+        changed = true;
+    }
+
     changed |= getSpinBoxCommonValue(spin_level_, gThisVF->taylorlevel_);
     changed |= getSpinBoxCommonValue(spin_numlevel_, gThisVF->numericlevel_);
     changed |= getSpinBoxCommonValue(spin_maxlevel_, gThisVF->maxlevel_);
     changed |= getSpinBoxCommonValue(spin_weakness_, gThisVF->weakness_);
     changed |= getSpinBoxCommonValue(spin_precis_, gThisVF->precision_);
-    changed |= getSpinBoxCommonValue(spin_precis0_, gThisVF->precision0_);
     changed |= getLineEditCommonValue(edt_epsilon_, gThisVF->epsilon_);
 
     if (changed) {
@@ -451,7 +455,8 @@ void P4ParamsDlg::updateDlgData()
     setSpinBoxCommonValue(spin_weakness_, gThisVF->weakness_, MINWEAKNESS);
     setLineEditCommonValue(edt_epsilon_, gThisVF->epsilon_);
     setSpinBoxCommonValue(spin_precis_, gThisVF->precision_, MINPRECISION);
-    setSpinBoxCommonValue(spin_precis0_, gThisVF->precision0_, MINPRECISION0);
+
+    spin_precis0_->setValue(gThisVF->precision0_);
 
     if (gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
         edt_x0_->setText(gThisVF->x0_);
