@@ -237,10 +237,10 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
                      &P4ParamsDlg::btn_alg_toggled);
     QObject::connect(btn_num_, &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_num_toggled);
-    QObject::connect(
+    /*QObject::connect(
         spin_level_,
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        &P4ParamsDlg::onLevelChange);
+        &P4ParamsDlg::onLevelChange);*/
     QObject::connect(btn_sepno_, &QRadioButton::toggled, this,
                      &P4ParamsDlg::btn_sepno_toggled);
     QObject::connect(btn_sepyes_, &QRadioButton::toggled, this,
@@ -250,9 +250,8 @@ P4ParamsDlg::P4ParamsDlg(P4FindDlg *finddlg)
     updateDlgData();
 }
 
-void P4ParamsDlg::onLevelChange(int value)
+/*void P4ParamsDlg::onLevelChange(int value)
 {
-    /*
     spin_maxlevel_->setMinimum(value);
     spin_numlevel_->setMinimum(value);
 
@@ -261,8 +260,7 @@ void P4ParamsDlg::onLevelChange(int value)
 
     if (spin_numlevel_->value() < value)
         spin_numlevel_->setValue(value);
-    */
-}
+}*/
 
 void P4ParamsDlg::btn_alg_toggled(bool on)
 {

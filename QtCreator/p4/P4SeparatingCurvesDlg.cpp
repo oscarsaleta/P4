@@ -152,29 +152,34 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
                      &P4SeparatingCurvesDlg::onBtnUnmarkToggled);
     QObject::connect(btn_resetmarks_, &QPushButton::clicked, this,
                      &P4SeparatingCurvesDlg::onBtnResetMarks);
-    QObject::connect(btn_zoomout_, &QPushButton::clicked, this,
-                     &P4SeparatingCurvesDlg::onBtnZoomOut);
+    QObject::connect(btn_zoomout_, &QPushButton::clicked, this, [this]() {
+        isphere_->isZoom_ = false;
+        isphere_->setupPlot();
+        isphere_->refresh();
+    });
     QObject::connect(btn_refresh_, &QPushButton::clicked, this,
                      &P4SeparatingCurvesDlg::onBtnRefresh);
     QObject::connect(btn_eval_, &QPushButton::clicked, this,
                      &P4SeparatingCurvesDlg::onBtnEval);
-    QObject::connect(btn_view_, &QPushButton::clicked, this,
-                     &P4SeparatingCurvesDlg::onBtnView);
+    QObject::connect(btn_view_, &QPushButton::clicked, this, [this]() {
+        viewParamsWindow_->show();
+        viewParamsWindow_->raise();
+    });
 
     QObject::connect(lst_curves_, &QListWidget::itemChanged, this,
                      &P4SeparatingCurvesDlg::onCurveChanged);
     QObject::connect(lst_curves_, &QListWidget::itemSelectionChanged, this,
                      &P4SeparatingCurvesDlg::onCurvesSelectionChanged);
     QObject::connect(lst_curves_, &QListWidget::itemActivated, this,
-                     &P4SeparatingCurvesDlg::onCurvesItemActivated);
+                     &P4SeparatingCurvesDlg::onCurvesSelectionChanged);
     QObject::connect(lst_vfs_, &QListWidget::itemSelectionChanged, this,
                      &P4SeparatingCurvesDlg::onVfsSelectionChanged);
     QObject::connect(lst_vfs_, &QListWidget::itemActivated, this,
-                     &P4SeparatingCurvesDlg::onVfsItemActivated);
+                     &P4SeparatingCurvesDlg::onVfsSelectionChanged);
     QObject::connect(lst_curves_, &QListWidget::itemClicked, this,
-                     &P4SeparatingCurvesDlg::onCurvesClicked);
+                     &P4SeparatingCurvesDlg::onCurvesSelectionChanged);
     QObject::connect(lst_vfs_, &QListWidget::itemClicked, this,
-                     &P4SeparatingCurvesDlg::onVfsClicked);
+                     &P4SeparatingCurvesDlg::onVfsSelectionChanged);
 
     QObject::connect(edt_numpoints_, &QLineEdit::editingFinished, this,
                      &P4SeparatingCurvesDlg::onNumpointsEditingFinished);
@@ -370,11 +375,6 @@ void P4SeparatingCurvesDlg::onCurvesSelectionChanged()
     edt_numpoints_->setText(s);
 }
 
-void P4SeparatingCurvesDlg::onCurvesItemActivated(QListWidgetItem *itm)
-{
-    onCurvesSelectionChanged();
-}
-
 void P4SeparatingCurvesDlg::onVfsSelectionChanged()
 {
     if (!lst_vfs_->selectedItems().isEmpty()) {
@@ -389,21 +389,6 @@ void P4SeparatingCurvesDlg::onVfsSelectionChanged()
             markingvf_ = true;
         }
     }
-}
-
-void P4SeparatingCurvesDlg::onVfsItemActivated(QListWidgetItem *itm)
-{
-    onVfsSelectionChanged();
-}
-
-void P4SeparatingCurvesDlg::onCurvesClicked(QListWidgetItem *itm)
-{
-    onCurvesSelectionChanged();
-}
-
-void P4SeparatingCurvesDlg::onVfsClicked(QListWidgetItem *itm)
-{
-    onVfsSelectionChanged();
 }
 
 void P4SeparatingCurvesDlg::onBtnUnmarkToggled(bool c)
@@ -481,19 +466,6 @@ void P4SeparatingCurvesDlg::onBtnResetMarks()
             "All curve marks have been erased. Now separating curves are drawn "
             "completely.");
     }
-}
-
-void P4SeparatingCurvesDlg::onBtnZoomOut()
-{
-    isphere_->isZoom_ = false;
-    isphere_->setupPlot();
-    isphere_->refresh();
-}
-
-void P4SeparatingCurvesDlg::onBtnView()
-{
-    viewParamsWindow_->show();
-    viewParamsWindow_->raise();
 }
 
 void P4SeparatingCurvesDlg::onBtnEval()
@@ -670,10 +642,11 @@ void P4SeparatingCurvesDlg::onMouseClickLeft(double x0, double y0, double z0)
     }
 }
 
-void P4SeparatingCurvesDlg::onMouseClickRight(double x0, double y0, double z0)
-{
-    // unused
-}
+// void P4SeparatingCurvesDlg::onMouseClickRight(double x0, double y0, double
+// z0)
+//{
+//    // unused
+//}
 
 void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
 {

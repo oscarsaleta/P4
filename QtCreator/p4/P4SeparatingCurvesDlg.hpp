@@ -81,7 +81,6 @@ class P4SeparatingCurvesDlg : public QMainWindow
     bool marking_;
 
   public slots:
-    void onBtnZoomOut();
     void onBtnAdd();
     void onBtnDel();
     void onBtnEdit();
@@ -90,14 +89,9 @@ class P4SeparatingCurvesDlg : public QMainWindow
     void onBtnMarkToggled(bool);
     void onBtnUnmarkToggled(bool);
     void onBtnResetMarks();
-    void onBtnView();
     void onBtnEval();
     void onBtnRefresh();
 
-    void onCurvesClicked(QListWidgetItem *);
-    void onVfsClicked(QListWidgetItem *);
-    void onVfsItemActivated(QListWidgetItem *);
-    void onCurvesItemActivated(QListWidgetItem *);
     void onCurveChanged(QListWidgetItem *);
     void onCurvesSelectionChanged();
     void onVfsSelectionChanged();

@@ -2273,10 +2273,11 @@ void P4InputVF::createProcessWindow()
 
     QObject::connect(terminateProcessButton_, &QPushButton::clicked, this,
                      &P4InputVF::onTerminateButton);
-    QObject::connect(clearProcessButton_, &QPushButton::clicked, this, [=]() {
-        if (processText_ != nullptr)
-            processText_->clear();
-    });
+    QObject::connect(clearProcessButton_, &QPushButton::clicked, this,
+                     [this]() {
+                         if (processText_ != nullptr)
+                             processText_->clear();
+                     });
 }
 
 // -----------------------------------------------------------------------

@@ -218,12 +218,12 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
     QObject::connect(btn_cancel_, &QPushButton::clicked, this,
                      &P4SettingsDlg::onCancel);
 
-    QObject::connect(btn_bgblack_, &QRadioButton::toggled, this, [=]() {
+    QObject::connect(btn_bgblack_, &QRadioButton::toggled, this, []() {
         bgColours::CFOREGROUND = WHITE;
         bgColours::CBACKGROUND = BLACK;
         bgColours::CORBIT = YELLOW;
     });
-    QObject::connect(btn_bgwhite_, &QRadioButton::toggled, this, [=]() {
+    QObject::connect(btn_bgwhite_, &QRadioButton::toggled, this, []() {
         bgColours::CFOREGROUND = BLACK;
         bgColours::CBACKGROUND = WHITE;
         bgColours::CORBIT = GREEN1;

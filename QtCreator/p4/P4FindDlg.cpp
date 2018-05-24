@@ -211,7 +211,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 
     /* set evaluate as text in the run button if evaluate option is selected */
     QObject::connect(btn_actionrun_, &QRadioButton::toggled, this,
-                     [=](bool on) {
+                     [this](bool on) {
                          if (on) {
                              gActionOnlyPrepareFile = false;
                              btn_eval_->setText("&Evaluate");
@@ -220,14 +220,14 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 
     /* set prepare as text in the run button if prepare option is selected */
     QObject::connect(btn_actionprep_, &QRadioButton::toggled, this,
-                     [=](bool on) {
+                     [this](bool on) {
                          if (on) {
                              gActionOnlyPrepareFile = true;
                              btn_eval_->setText("Pr&epare");
                          }
                      });
 
-    QObject::connect(btn_all_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_all_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
                 gThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
@@ -242,7 +242,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_one_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_one_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
                 gThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
@@ -257,7 +257,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_fin_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_fin_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
                 gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
@@ -272,7 +272,7 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_inf_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_inf_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
             if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
                 gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
@@ -287,12 +287,12 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
             }
         }
     });
-    QObject::connect(btn_yes_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_yes_, &QRadioButton::toggled, this, [](bool on) {
         if (on) {
             gActionSaveAll = true;
         }
     });
-    QObject::connect(btn_no_, &QRadioButton::toggled, this, [=](bool on) {
+    QObject::connect(btn_no_, &QRadioButton::toggled, this, [](bool on) {
         if (on) {
             gActionSaveAll = false;
         }
