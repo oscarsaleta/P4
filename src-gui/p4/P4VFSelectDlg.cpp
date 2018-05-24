@@ -253,12 +253,9 @@ void P4VFSelectDlg::onBtnP4Config()
     if (!checkPlotWindowClosed())
         return;
 
-    win_curves_ = parent_->getPiecewiseConfigWindowPtr();
-
     if (win_curves_ == nullptr) {
         gVFResults.readTables(gThisVF->getbarefilename(), true, true);
-        parent_->createPiecewiseConfigWindow();
-        win_curves_ = parent_->getPiecewiseConfigWindowPtr();
+        win_curves_ = new P4SeparatingCurvesDlg{parent_};
         win_curves_->show();
     } else {
         win_curves_->show();
@@ -269,6 +266,12 @@ void P4VFSelectDlg::onBtnP4Config()
 void P4VFSelectDlg::closeConfigWindow()
 {
     if (win_curves_ != nullptr) {
-        parent_->closePiecewiseConfigWindow();
+        delete win_curves_;
+        win_curves_ = nullptr;
     }
+}
+
+P4SeparatingCurvesDlg *P4VFSelectDlg::getConfigWindowPtr() const
+{
+    return win_curves_;
 }

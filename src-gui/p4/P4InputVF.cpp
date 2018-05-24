@@ -266,40 +266,30 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         } else {
-            bool value{((flag_numeric == 0) ? false : true)};
-            numeric_.push_back(std::move(value));
-            precision_.push_back(std::move(aux));
-            epsilon_.emplace_back(scanbuf);
-            value = ((flag_testsep == 0) ? false : true);
-            testsep_.push_back(std::move(value));
+            numeric_[0] = ((flag_numeric == 0) ? false : true);
+            precision_[0] = aux;
+            epsilon_[0] = scanbuf;
+            testsep_[0] = ((flag_testsep == 0) ? false : true);
         }
-        if (fscanf(fp, "%d\n", &aux) != 1) {
+        if (fscanf(fp, "%d\n", &taylorlevel_[0]) != 1) {
             reset(1);
             fclose(fp);
             return false;
-        } else {
-            taylorlevel_.push_back(std::move(aux));
         }
-        if (fscanf(fp, "%d\n", &aux) != 1) {
+        if (fscanf(fp, "%d\n", &numericlevel_[0]) != 1) {
             reset(1);
             fclose(fp);
             return false;
-        } else {
-            numericlevel_.push_back(std::move(aux));
         }
-        if (fscanf(fp, "%d\n", &aux) != 1) {
+        if (fscanf(fp, "%d\n", &maxlevel_[0]) != 1) {
             reset(1);
             fclose(fp);
             return false;
-        } else {
-            maxlevel_.push_back(std::move(aux));
         }
-        if (fscanf(fp, "%d\n", &aux) != 1) {
+        if (fscanf(fp, "%d\n", &weakness_[0]) != 1) {
             reset(1);
             fclose(fp);
             return false;
-        } else {
-            weakness_.push_back(std::move(aux));
         }
 
         if (typeofstudy_ == TYPEOFSTUDY_ONE) {
@@ -332,19 +322,19 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        xdot_.emplace_back(scanbuf);
+        xdot_[0] = scanbuf;
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        ydot_.emplace_back(scanbuf);
+        ydot_[0] = scanbuf;
         if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
             reset(1);
             fclose(fp);
             return false;
         }
-        gcf_.emplace_back(scanbuf);
+        gcf_[0] = scanbuf;
 
         if (xdot_[0] == "(null)")
             xdot_[0] = "";
@@ -364,6 +354,8 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
+
+        std::vector<QString> auxvec;
         for (i = 0; i < numParams_; i++) {
             if (fscanf(fp, "%s", scanbuf) != 1) {
                 reset(1);
@@ -379,12 +371,14 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            parvalue_[0].emplace_back(scanbuf);
+            auxvec.emplace_back(scanbuf);
         }
-        for (i = numParams_; i < MAXNUMPARAMS; i++) {
+        parvalue_.clear();
+        parvalue_.push_back(auxvec);
+        /*for (i = numParams_; i < MAXNUMPARAMS; i++) {
             parlabel_[i] = QString{};
             parvalue_[0][i].push_back(QString{});
-        }
+        }*/
     } else {
         QString _x0;
         QString _y0;
@@ -614,16 +608,18 @@ bool P4InputVF::load()
             if (epsilon_[k] == "(null)")
                 epsilon_[k] = "";
 
+            std::vector<QString> auxvec;
             for (i = 0; i < numParams_; i++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                     reset(1);
                     fclose(fp);
                     return false;
                 }
-                parvalue_[k].emplace_back(scanbuf);
+                auxvec.emplace_back(scanbuf);
             }
-            for (i = numParams_; i < MAXNUMPARAMS; i++)
-                parvalue_[k].push_back(QString{});
+            parvalue_.push_back(auxvec);
+            /*for (i = numParams_; i < MAXNUMPARAMS; i++)
+                parvalue_[k].push_back(QString{});*/
         }
     }
 
@@ -969,6 +965,15 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         fp << "user_precision_pieces := [ ";
         for (i = 0; i < numVF_; i++) {
             fp << precision_[i];
+            if (i == numVF_ - 1)
+                fp << " ]:\n";
+            else
+                fp << ", ";
+        }
+
+        fp << "user_precision0_pieces := [ ";
+        for (i = 0; i < numVF_; i++) {
+            fp << precision0_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
             else
@@ -1744,7 +1749,7 @@ void P4InputVF::evaluate()
     else
         s = s.append(" \"").append(filedotmpl).append("\"");
 
-    if (!outputWindow_ || !processText_)
+    if (outputWindow_ == nullptr || processText_ == nullptr)
         createProcessWindow();
     else {
         processText_->append("\n\n-----------------------------------------"
@@ -1908,7 +1913,7 @@ void P4InputVF::evaluateIsoclinesTable()
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (!outputWindow_ || !processText_)
+        if (outputWindow_ == nullptr || processText_ == nullptr)
             createProcessWindow();
         else {
             processText_->append("\n\n--------------------------------------"
@@ -2231,7 +2236,7 @@ void P4InputVF::createProcessWindow()
     auto vLayout = new QVBoxLayout{outputWindow_};
     vLayout->setSpacing(3);
     vLayout->setContentsMargins(5, 5, 5, 5);
-    auto vLayout2 = new QVBoxLayout{outputWindow_};
+    auto vLayout2 = new QVBoxLayout{};
     vLayout2->setSpacing(3);
 
     processText_ = new QTextEdit{outputWindow_};
@@ -2268,10 +2273,11 @@ void P4InputVF::createProcessWindow()
 
     QObject::connect(terminateProcessButton_, &QPushButton::clicked, this,
                      &P4InputVF::onTerminateButton);
-    QObject::connect(clearProcessButton_, &QPushButton::clicked, this, [=]() {
-        if (processText_ != nullptr)
-            processText_->clear();
-    });
+    QObject::connect(clearProcessButton_, &QPushButton::clicked, this,
+                     [this]() {
+                         if (processText_ != nullptr)
+                             processText_->clear();
+                     });
 }
 
 // -----------------------------------------------------------------------

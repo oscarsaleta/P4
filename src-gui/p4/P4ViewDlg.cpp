@@ -207,7 +207,7 @@ P4ViewDlg::P4ViewDlg(bool virtualchk, QWidget *parent)
     setP4WindowTitle(this, "View Parameters");
 }
 
-void P4ViewDlg::onFieldChange(const QString &dummy) { changed_ = true; }
+void P4ViewDlg::onFieldChange() { changed_ = true; }
 
 void P4ViewDlg::btn_sphere_toggled()
 {

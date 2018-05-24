@@ -102,7 +102,7 @@ void P4Application::signalEvaluated(int exitCode)
 
     if (gCmdLineAutoExit) {
         gCmdLineAutoPlot = false;
-        gP4startDlg->onQuit();
+        // gP4startDlg->onQuit();
         return;
     }
 

@@ -278,7 +278,7 @@ bool P4VectorFieldDlg::getLineEditCommonValue(QLineEdit *le,
 void P4VectorFieldDlg::editingFinished()
 {
     getDataFromDlg();
-    if (parent_->getPiecewiseConfigWindowPtr() != nullptr) {
-        parent_->getPiecewiseConfigWindowPtr()->updateDlgData();
+    if (parent_->getVfSelectWindowPtr()->getConfigWindowPtr() != nullptr) {
+        parent_->getVfSelectWindowPtr()->getConfigWindowPtr()->updateDlgData();
     }
 }

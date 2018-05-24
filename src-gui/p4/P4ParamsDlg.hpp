@@ -86,5 +86,5 @@ class P4ParamsDlg : public QWidget
     void btn_alg_toggled(bool);
     void btn_sepyes_toggled(bool);
     void btn_sepno_toggled(bool);
-    void onLevelChange(int);
+    //    void onLevelChange(int);
 };

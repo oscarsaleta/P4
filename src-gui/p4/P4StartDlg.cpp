@@ -135,8 +135,8 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 
     btn_view_->setMenu(viewMenu);
 
-    QObject::connect(btn_quit_, &QPushButton::clicked, this,
-                     &P4StartDlg::onQuit);
+    QObject::connect(btn_quit_, &QPushButton::clicked, gP4app,
+                     &P4Application::quit);
     QObject::connect(btn_plot_, &QPushButton::clicked, this,
                      &P4StartDlg::onPlot);
     QObject::connect(btn_help_, &QPushButton::clicked, this,
@@ -336,8 +336,6 @@ void P4StartDlg::onPlot()
     plotWindow_->raise();
     plotWindow_->adjustHeight();
 }
-
-void P4StartDlg::onQuit() { close(); }
 
 void P4StartDlg::onFilenameChange(const QString &fname)
 {
@@ -703,8 +701,9 @@ bool P4StartDlg::canOpenPlot()
     if (findWindow_ == nullptr) {
         return true;
     } else {
-        if (findWindow_->getPiecewiseConfigWindowPtr() != nullptr)
-            findWindow_->closePiecewiseConfigWindow();
+        if (findWindow_->getVfSelectWindowPtr()->getConfigWindowPtr() !=
+            nullptr)
+            findWindow_->getVfSelectWindowPtr()->closeConfigWindow();
     }
     return true;
 }

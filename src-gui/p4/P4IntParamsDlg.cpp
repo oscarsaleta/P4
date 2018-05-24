@@ -176,28 +176,28 @@ P4IntParamsDlg::P4IntParamsDlg(QWidget *parent)
 
     // connections
     QObject::connect(btn_org_, &QRadioButton::toggled, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(btn_red_, &QRadioButton::toggled, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(btn_dots_, &QRadioButton::toggled, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(btn_dashes_, &QRadioButton::toggled, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
 
     QObject::connect(edt_stepsize_, &QLineEdit::textChanged, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(edt_maxstep_, &QLineEdit::textChanged, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(edt_minstep_, &QLineEdit::textChanged, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(edt_branchminstep_, &QLineEdit::textChanged, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(edt_tolerance_, &QLineEdit::textChanged, this,
-                     [=]() { changed_ = true; });
+                     [this]() { changed_ = true; });
     QObject::connect(
         spin_numpoints_,
         static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
-        [=]() { changed_ = true; });
+        [this]() { changed_ = true; });
 
     QObject::connect(btn_reset_, &QPushButton::clicked, this,
                      &P4IntParamsDlg::on_btn_reset);

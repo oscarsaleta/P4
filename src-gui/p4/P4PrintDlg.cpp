@@ -140,9 +140,9 @@ P4PrintDlg::P4PrintDlg(Qt::WindowFlags f, QWidget *parent) : QDialog{parent, f}
     QObject::connect(btn_cancel_, &QPushButton::clicked, this,
                      &P4PrintDlg::onCancel);
     QObject::connect(btn_whitebg_, &QRadioButton::toggled, this,
-                     [=]() { bgColours::PRINT_WHITE_BG = true; });
+                     []() { bgColours::PRINT_WHITE_BG = true; });
     QObject::connect(btn_blackbg_, &QRadioButton::toggled, this,
-                     [=]() { bgColours::PRINT_WHITE_BG = false; });
+                     []() { bgColours::PRINT_WHITE_BG = false; });
 
     mainLayout_->addSpacing(2);
     mainLayout_->addWidget(btn_blackwhite_);

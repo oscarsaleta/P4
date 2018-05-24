@@ -345,7 +345,7 @@ bool stop_search_limit()
     return false;
 }
 
-void write_to_limit_window(double x, double y)
+void write_to_limit_window()
 {
     sLCProgressCount++;
 

@@ -63,7 +63,7 @@ class P4ViewDlg : public QWidget
 
   public slots:
     void markBad(QLineEdit *edt);
-    void onFieldChange(const QString &dummy);
+    void onFieldChange();
     void btn_sphere_toggled();
     void btn_plane_toggled();
     void btn_U1_toggled();
