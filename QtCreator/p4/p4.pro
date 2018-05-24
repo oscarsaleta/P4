@@ -26,6 +26,8 @@ CONFIG += static
 CONFIG += c++14
 CONFIG += fwhopr
 
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+
 SOURCES += file_paths.cpp \
     main.cpp \
     math_arbitrarycurve.cpp \
