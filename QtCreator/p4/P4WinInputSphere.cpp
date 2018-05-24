@@ -537,7 +537,7 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
         return;
     }
 
-    double pcoord[3];
+    //    double pcoord[3];
 
     if (e->button() == Qt::RightButton) {
         // cancel zoom window with right mouse button
@@ -545,13 +545,14 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
             saveAnchorMap();
             selectingZoom_ = false;
         } else {
-            int x{e->x()};
-            int y{e->y()};
-            double wx{coWorldX(x)};
-            double wy{coWorldY(y)};
-            if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
-                parentWnd_->onMouseClickRight(pcoord[0], pcoord[1], pcoord[2]);
-            }
+            //            int x{e->x()};
+            //            int y{e->y()};
+            //            double wx{coWorldX(x)};
+            //            double wy{coWorldY(y)};
+            //            if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
+            //                parentWnd_->onMouseClickRight(pcoord[0],
+            //                pcoord[1], pcoord[2]);
+            //            }
             return;
         }
         QWidget::mousePressEvent(e);
