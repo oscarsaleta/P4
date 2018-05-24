@@ -1543,7 +1543,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
               "  end if:\n"
               "end try:\n";
     } else {
-        fp << "try p5main() catch:\n"
+        fp << "try p4main() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
               "lastexception[2] );\n"
               "finally:\n"
