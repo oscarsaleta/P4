@@ -260,13 +260,13 @@ void searchLimitCycle(P4WinSphere *spherewnd, double x0, double y0, double x1,
                 okb1 = false;
                 break;
             }
-            write_to_limit_window(x0, y0);
+            write_to_limit_window();
         }
         if (okf1 || okb1) { // note: they cannot be both true here
             while (1) {
                 x = x0;
                 y = y0;
-                // write_to_limit_window(x0,y0);
+                // write_to_limit_window();
                 if (++counter == gVFResults.config_lc_value_) {
                     counter = 0;
                     if (stop_search_limit()) {

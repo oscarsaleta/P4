@@ -32,7 +32,7 @@ class P4PlotWnd;
 class P4WinSphere;
 
 bool stop_search_limit();
-void write_to_limit_window(double x, double y);
+void write_to_limit_window();
 
 class P4LimitCyclesDlg : public QWidget
 {
