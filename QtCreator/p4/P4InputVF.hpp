@@ -96,7 +96,7 @@ class P4InputVF : public QObject
     // MAPLE EXECUTION PARAMETERS
     std::vector<bool> numeric_;
     std::vector<int> precision_;
-    std::vector<int> precision0_;
+    int precision0_{0};
     std::vector<QString> epsilon_;
     std::vector<bool> testsep_;
     std::vector<int> taylorlevel_;
