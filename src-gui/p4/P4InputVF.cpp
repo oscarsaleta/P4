@@ -153,7 +153,6 @@ void P4InputVF::reset(int n)
     // clear current vectors
     numeric_.clear();
     precision_.clear();
-    precision0_.clear();
     epsilon_.clear();
     testsep_.clear();
     taylorlevel_.clear();
@@ -176,7 +175,7 @@ void P4InputVF::reset(int n)
     for (i = 0; i < n; i++) {
         numeric_.push_back(DEFAULTNUMERIC);
         precision_.push_back(DEFAULTPRECISION);
-        precision0_.push_back(DEFAULTPRECISION0);
+        precision0_ = DEFAULTPRECISION0;
         epsilon_.push_back(QString(DEFAULTEPSILON));
         testsep_.push_back(DEFAULTTESTSEP);
         taylorlevel_.push_back(DEFAULTLEVEL);
@@ -375,10 +374,14 @@ bool P4InputVF::load()
         }
         parvalue_.clear();
         parvalue_.push_back(auxvec);
+
         /*for (i = numParams_; i < MAXNUMPARAMS; i++) {
             parlabel_[i] = QString{};
             parvalue_[0][i].push_back(QString{});
         }*/
+
+        if (fscanf(fp, "%d\n", &precision0_) == 0)
+            precision0_ = DEFAULTPRECISION0;
     } else {
         QString _x0;
         QString _y0;
@@ -776,6 +779,9 @@ bool P4InputVF::save()
                     out << parvalue_[i][k] << "\n";
             }
         }
+        if (precision0_ != DEFAULTPRECISION0)
+            out << precision0_ << "\n";
+
         out.flush();
         file.close();
         changed_ = false;
@@ -971,15 +977,6 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
                 fp << ", ";
         }
 
-        fp << "user_precision0_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
-            fp << precision0_[i];
-            if (i == numVF_ - 1)
-                fp << " ]:\n";
-            else
-                fp << ", ";
-        }
-
         fp << "taylor_level_pieces := [ ";
         for (i = 0; i < numVF_; i++) {
             fp << taylorlevel_[i];
@@ -1015,13 +1012,15 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
             else
                 fp << ", ";
         }
+
+        fp << "user_precision0 := " << precision0_ << ":\n";
     } else { // for curves: use only first VF for parameters
         fp << "user_numeric := " << booleanString(numeric_[0]) << ":\n";
         fp << "epsilon := " << epsilon_[0] << ":\n";
         fp << "test_sep := " << booleanString(testsep_[0]) << ":\n";
         s.sprintf("user_precision := %d:\n", precision_[0]);
         fp << s;
-        s.sprintf("user_precision0 := %d:\n", precision0_[0]);
+        s.sprintf("user_precision0 := %d:\n", precision0_);
         fp << s;
         s.sprintf("taylor_level := %d:\n", taylorlevel_[0]);
         fp << s;
@@ -3219,7 +3218,7 @@ void P4InputVF::addVectorField()
     numeric_.push_back(DEFAULTNUMERIC);
     testsep_.push_back(DEFAULTTESTSEP);
     precision_.push_back(DEFAULTPRECISION);
-    precision0_.push_back(DEFAULTPRECISION0);
+    precision0_ = DEFAULTPRECISION0;
     taylorlevel_.push_back(DEFAULTLEVEL);
     numericlevel_.push_back(DEFAULTNUMLEVEL);
     maxlevel_.push_back(DEFAULTMAXLEVEL);
