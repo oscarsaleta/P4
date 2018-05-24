@@ -325,7 +325,7 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
 
     if (fscanf(fp, "%lf %lf", &x0, &y0) != 2 ||
         fscanf(fp, "%lf %lf %lf %lf", &a11, &a12, &a21, &a22) != 4 ||
-        !readVectorField(fp, vf0, vf1) || fscanf(fp, "%d ", &chart) ||
+        !readVectorField(fp, vf0, vf1) || fscanf(fp, "%d ", &chart) != 1 ||
         fscanf(fp, "%d ", &stype) != 1 || fscanf(fp, "%d ", &N) != 1 || N < 0)
         return false;
 
