@@ -653,7 +653,8 @@ void plot_next_de_sep(P4WinSphere *spherewnd, int vfindex)
 
     desepid++;
 
-    if (desepid > gVFResults.deSeps_.size()) {
+    if (static_cast<std::string::size_type>(desepid) >
+        gVFResults.deSeps_.size()) {
         gVFResults.deSeps_ = gVFResults.dePoints_[depointid].blow_up;
         desepid = 0;
     }
@@ -673,7 +674,8 @@ void select_next_de_sep(P4WinSphere *spherewnd)
 
     desepid++;
 
-    if (desepid > gVFResults.deSeps_.size()) {
+    if (static_cast<std::string::size_type>(desepid) >
+        gVFResults.deSeps_.size()) {
         gVFResults.deSeps_ = gVFResults.dePoints_[depointid].blow_up;
         desepid = 0;
     }
