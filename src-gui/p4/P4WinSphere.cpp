@@ -31,7 +31,6 @@
 #include <QTimer>
 
 #include <cmath>
-#include <memory>
 #include <utility>
 
 #include "P4Application.hpp"
@@ -61,7 +60,7 @@ QPixmap *sP4pixmap;
 static double sP4pixmapDPM{0};
 
 int P4WinSphere::sM_numSpheres{0};
-std::vector<P4WinSphere *> P4WinSphere::sM_sphereList;
+QVector<P4WinSphere *> P4WinSphere::sM_sphereList;
 
 /*
     Coordinates on the sphere:
@@ -82,7 +81,7 @@ P4WinSphere::P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1,
                          double x2, double y2, QWidget *parent)
     : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
-    //    setAttribute( Qt::WA_PaintOnScreen );
+    setAttribute(Qt::WA_PaintOnScreen);
 
     // FIXME: is next needed?
     if (!sM_sphereList.empty())
@@ -382,8 +381,9 @@ void P4WinSphere::loadAnchorMap()
     aw = x2 - x1 + 1;
     ah = y2 - y1 + 1;
 
-    if (anchorMap_) {
+    if (anchorMap_ != nullptr) {
         if (anchorMap_->width() < aw || anchorMap_->height() < ah) {
+            delete anchorMap_;
             anchorMap_ = new QPixmap{aw, ah};
         }
     } else {
@@ -415,7 +415,7 @@ void P4WinSphere::saveAnchorMap()
     int x2, y2;
     int aw, ah;
 
-    if (!anchorMap_ || !painterCache_ ||
+    if (anchorMap_ == nullptr || painterCache_ == nullptr ||
         (!selectingZoom_ && !selectingLCSection_))
         return;
 
@@ -911,28 +911,26 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
         if (selectingZoom_) {
             saveAnchorMap();
             selectingZoom_ = false;
-            std::unique_ptr<double[]> data1{new double[4]};
+            auto data1 = new double[4];
             data1[0] = coWorldX(zoomAnchor1_.x());
             data1[1] = coWorldY(zoomAnchor1_.y());
             data1[2] = coWorldX(zoomAnchor2_.x());
             data1[3] = coWorldY(zoomAnchor2_.y());
-            auto e1 =
-                new P4Event{static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW),
-                            data1.release()};
+            auto e1 = new P4Event{
+                static_cast<QEvent::Type>(TYPE_OPENZOOMWINDOW), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         if (selectingLCSection_) {
             saveAnchorMap();
             selectingLCSection_ = false;
 
-            std::unique_ptr<double[]> data1{new double[4]};
+            auto data1 = new double[4];
             data1[0] = coWorldX(lcAnchor1_.x());
             data1[1] = coWorldY(lcAnchor1_.y());
             data1[2] = coWorldX(lcAnchor2_.x());
             data1[3] = coWorldY(lcAnchor2_.y());
-            auto e1 =
-                new P4Event{static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION),
-                            data1.release()};
+            auto e1 = new P4Event{
+                static_cast<QEvent::Type>(TYPE_SELECT_LCSECTION), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
     }
@@ -1019,9 +1017,9 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
         selectingTimer_->start(SELECTINGPOINTSPEED);
         msgBar_->showMessage("Search nearest critical point: Found");
 
-        auto data1 = std::make_unique<int>(-1);
-        auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
-                              data1.release()};
+        auto data1 = -1;
+        auto e1 =
+            new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT), &data1};
         gP4app->postEvent(parentWnd_, e1);
     }
 }
@@ -2641,7 +2639,7 @@ void P4WinSphere::finishPrinting()
         h_ = oldh_;
         reverseYAxis_ = false;
     } else if (printMethod_ == P4PRINT_JPEGIMAGE) {
-        if (!sP4pixmap) {
+        if (sP4pixmap == nullptr) {
             finishP4Printing();
             w_ = oldw_;
             h_ = oldh_;
@@ -2672,7 +2670,7 @@ void P4WinSphere::finishPrinting()
 
 void P4WinSphere::print()
 {
-    if (printMethod_ == P4PRINT_JPEGIMAGE && !sP4pixmap)
+    if (printMethod_ == P4PRINT_JPEGIMAGE && sP4pixmap == nullptr)
         return;
 
     if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
@@ -2707,13 +2705,13 @@ void P4WinSphere::prepareDrawing()
     paintedXMax_ = 0;
     paintedYMax_ = 0;
 
-    if (next_)
+    if (next_ != nullptr)
         next_->prepareDrawing();
 }
 
 void P4WinSphere::finishDrawing()
 {
-    if (next_)
+    if (next_ != nullptr)
         next_->finishDrawing();
 
     if (staticPainter_ != nullptr) {

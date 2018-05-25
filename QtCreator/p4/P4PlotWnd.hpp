@@ -21,8 +21,9 @@
 
 #include <QMainWindow>
 
+#include <QVector>
+
 #include <memory>
-#include <vector>
 
 #include "P4ZoomWnd.hpp"
 
@@ -56,27 +57,25 @@ class P4PlotWnd : public QMainWindow
   private:
     P4StartDlg *parent_;
 
-    P4IntParamsDlg *intParamsWindow_;
-    P4ViewDlg *viewParamsWindow_;
-
-    QBoxLayout *mainLayout_;
-    QAction *actGCF_;
-
+    P4WinSphere *sphere_; // main sphere
     P4LegendWnd *legendWindow_;
     P4OrbitsDlg *orbitsWindow_;
     P4SepDlg *sepWindow_;
+    P4IntParamsDlg *intParamsWindow_;
+    P4ViewDlg *viewParamsWindow_;
     P4LimitCyclesDlg *lcWindow_;
     P4GcfDlg *gcfWindow_;
     P4ArbitraryCurveDlg *curveWindow_;
     P4IsoclinesDlg *isoclinesWindow_;
 
-    P4WinSphere *sphere_; // main sphere
+    QBoxLayout *mainLayout_;
+    QAction *actGCF_;
 
-    int numZooms_;
-    int lastZoomIdentifier_;
-    std::vector<std::unique_ptr<P4ZoomWnd>> zoomWindows_;
+    int numZooms_{0};
+    int lastZoomIdentifier_{0};
+    QVector<P4ZoomWnd *> zoomWindows_;
 
-    bool flagAllSepsPlotted_;
+    bool flagAllSepsPlotted_{false};
 
   public slots:
     // void signalEvaluating();

@@ -23,6 +23,7 @@
 
 #include <QPoint>
 #include <QString>
+#include <QVector>
 
 #include <vector>
 
@@ -61,7 +62,7 @@ class P4WinSphere : public QWidget
                 double y2, QWidget *parent);
     ~P4WinSphere();
 
-    static std::vector<P4WinSphere *> sM_sphereList;
+    static QVector<P4WinSphere *> sM_sphereList;
 
     /* Member variables */
     double horPixelsPerMM_;
@@ -72,7 +73,7 @@ class P4WinSphere : public QWidget
     double dx_;      // x1-x0
     double dy_;      // y1-y0
 
-    QPixmap *painterCache_;
+    QPixmap *painterCache_{nullptr};
     bool isPainterCacheDirty_{true};
     int paintedXMin_{0}; // to know the update rectangle after painting
     int paintedXMax_;    // we keep to smallest rectangle enclosing
@@ -83,10 +84,10 @@ class P4WinSphere : public QWidget
 
     int spherebgcolor_;
     // FIXME: used?
-    P4WinSphere *next_; // visible to PlotWnd
+    P4WinSphere *next_{nullptr}; // visible to PlotWnd
     int selectingX_{0}, selectingY_{0};
     int selectingPointStep_{0}, selectingPointRadius_{0};
-    QTimer *selectingTimer_;
+    QTimer *selectingTimer_{nullptr};
 
     int oldw_; // used while printing
     int oldh_;
@@ -201,8 +202,8 @@ class P4WinSphere : public QWidget
     std::vector<P4POLYLINES> circleAtInfinity_;
     std::vector<P4POLYLINES> plCircle_;
 
-    QPainter *staticPainter_;
-    QTimer *refreshTimeout_;
+    QPainter *staticPainter_{nullptr};
+    QTimer *refreshTimeout_{nullptr};
 
     bool selectingZoom_{false};
     bool selectingLCSection_{false};
@@ -210,7 +211,7 @@ class P4WinSphere : public QWidget
     QPoint zoomAnchor2_;
     QPoint lcAnchor1_;
     QPoint lcAnchor2_;
-    QPixmap *anchorMap_;
+    QPixmap *anchorMap_{nullptr};
 
     int printMethod_;
 };

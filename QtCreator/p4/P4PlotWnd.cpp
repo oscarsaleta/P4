@@ -59,10 +59,6 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
     if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
 
-    numZooms_ = 0;
-    lastZoomIdentifier_ = 0;
-    flagAllSepsPlotted_ = false;
-
     auto toolBar1 = new QToolBar{"PlotBar1", this};
     toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
@@ -188,10 +184,11 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
     gcfWindow_ = new P4GcfDlg{this, sphere_};
     curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
     isoclinesWindow_ = new P4IsoclinesDlg{this, sphere_};
+
     gLCWindowIsUp = false; // Limit cycles: initially hidden
 
     sphere_->show();
-    setCentralWidget(sphere_);
+    //    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
     intParamsWindow_->updateDlgData();
@@ -219,24 +216,24 @@ void P4PlotWnd::onLoadSignal()
 
     numZooms_ = settings.value("P4PlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
-        std::unique_ptr<P4ZoomWnd> thiszoom;
+        P4ZoomWnd *thiszoom;
         for (int i = 1; i <= numZooms_; i++) {
-            QString zoomName = QString("P4ZoomWnd").append(i);
+            QString zoomName{QString("P4ZoomWnd").append(i)};
             settings.beginGroup(zoomName);
             int currentZoomId = settings.value("id").toInt();
             double currentZoomX1 = settings.value("x1").toDouble();
             double currentZoomX2 = settings.value("x2").toDouble();
             double currentZoomY1 = settings.value("y1").toDouble();
             double currentZoomY2 = settings.value("y2").toDouble();
-            thiszoom = std::make_unique<P4ZoomWnd>(
-                this, currentZoomId, currentZoomX1, currentZoomY1,
-                currentZoomX2, currentZoomY2);
+            thiszoom =
+                new P4ZoomWnd{this,          currentZoomId, currentZoomX1,
+                              currentZoomY1, currentZoomX2, currentZoomY2};
             thiszoom->show();
             thiszoom->raise();
             thiszoom->adjustHeight();
             thiszoom->resize(settings.value("size").toSize());
             thiszoom->move(settings.value("pos").toPoint());
-            zoomWindows_.push_back(std::move(thiszoom));
+            zoomWindows_.push_back(thiszoom);
             settings.endGroup();
         }
     }
@@ -292,7 +289,7 @@ void P4PlotWnd::onBtnRefresh()
 
 void P4PlotWnd::onBtnLegend()
 {
-    if (!legendWindow_)
+    if (legendWindow_ == nullptr)
         legendWindow_ = new P4LegendWnd{};
     legendWindow_->show();
     legendWindow_->raise();
@@ -371,7 +368,7 @@ void P4PlotWnd::onBtnPrint()
         if (result == P4PRINT_DEFAULT || result == -P4PRINT_DEFAULT) {
             gP4printer->setResolution(res);
 
-            QPrintDialog dialog(gP4printer, this);
+            QPrintDialog dialog{gP4printer, this};
             if (!dialog.exec())
                 return;
 
@@ -430,12 +427,11 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
     if (x1 == x2 || y1 == y2)
         return;
 
-    std::unique_ptr<P4ZoomWnd> newZoom{std::make_unique<P4ZoomWnd>(
-        this, ++lastZoomIdentifier_, x1, y1, x2, y2)};
+    auto newZoom = new P4ZoomWnd{this, ++lastZoomIdentifier_, x1, y1, x2, y2};
     newZoom->show();
     newZoom->raise();
     newZoom->adjustHeight();
-    zoomWindows_.push_back(std::move(newZoom));
+    zoomWindows_.push_back(newZoom);
     numZooms_++;
 }
 
@@ -445,6 +441,7 @@ void P4PlotWnd::closeZoomWindow(int id)
          it++) {
         if ((*it)->zoomid_ == id) {
             zoomWindows_.erase(it);
+            // delete it;
             numZooms_--;
             return;
         }
