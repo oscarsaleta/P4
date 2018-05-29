@@ -4058,7 +4058,8 @@ void P4InputVF::setGcfDlg(P4GcfDlg *newdlg)
     if (newdlg != nullptr && newdlg != gcfDlg_) {
         gcfDlg_ = newdlg;
     } else {
-        delete gcfDlg_;
+        if (gcfDlg_ != nullptr)
+            delete gcfDlg_;
         gcfDlg_ = nullptr;
     }
 }
@@ -4079,7 +4080,8 @@ void P4InputVF::setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
     if (newdlg != nullptr && newdlg != arbitraryCurveDlg_) {
         arbitraryCurveDlg_ = newdlg;
     } else {
-        delete arbitraryCurveDlg_;
+        if (arbitraryCurveDlg_ != nullptr)
+            delete arbitraryCurveDlg_;
         arbitraryCurveDlg_ = nullptr;
     }
 }
