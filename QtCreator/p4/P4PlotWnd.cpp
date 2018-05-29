@@ -53,19 +53,21 @@
 
 P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 {
+    qDebug() << "called constructor";
+
     setContextMenuPolicy(Qt::NoContextMenu);
 
-    setAttribute(Qt::WA_PaintOnScreen, true);
+    //    setAttribute(Qt::WA_PaintOnScreen, true);
 
     if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
 
     auto toolBar1 = new QToolBar{"PlotBar1", this};
-    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    //    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
 
     auto toolBar2 = new QToolBar{"PlotBar2", this};
-    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    //    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2->setMovable(false);
 
     actClose_ = new QAction{"Clos&e", this};
@@ -176,51 +178,19 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 
     statusBar()->showMessage("Ready");
 
-    qDebug() << "Creating sphere...";
     sphere_ = new P4WinSphere{statusBar(), false, 0, 0, 0, 0, this};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating legend...";
     legendWindow_ = new P4LegendWnd{this};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating orbits window...";
     orbitsWindow_ = new P4OrbitsDlg{this, sphere_};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating separatrices window...";
     sepWindow_ = new P4SepDlg{this, sphere_};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating integration parameters window...";
     intParamsWindow_ = new P4IntParamsDlg{this};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating view parameters window...";
     viewParamsWindow_ = new P4ViewDlg{false, this};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating limit cycles window...";
     lcWindow_ = new P4LimitCyclesDlg{this, sphere_};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating GCF window...";
     gcfWindow_ = new P4GcfDlg{this, sphere_};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating arbitrary curve window...";
     curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
-    qDebug() << "Finished";
-
-    qDebug() << "Creating isoclines window...";
     isoclinesWindow_ = new P4IsoclinesDlg{this, sphere_};
-    qDebug() << "Finished";
-
     gLCWindowIsUp = false; // Limit cycles: initially hidden
 
-    qDebug() << "Showing sphere...";
     sphere_->show();
-    qDebug() << "Setting sphere as central widget...";
     setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
@@ -230,8 +200,41 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
     setP4WindowTitle(this, "Phase Portrait");
 }
 
+/*P4PlotWnd::~P4PlotWnd()
+{
+    qDebug() << "called deleter";
+
+    for (auto &z : zoomWindows_) {
+        delete z;
+        z = nullptr;
+    }
+    zoomWindows_.clear();
+    delete legendWindow_;
+    legendWindow_ = nullptr;
+    delete orbitsWindow_;
+    orbitsWindow_ = nullptr;
+    delete intParamsWindow_;
+    intParamsWindow_ = nullptr;
+    delete viewParamsWindow_;
+    viewParamsWindow_ = nullptr;
+    delete sepWindow_;
+    sepWindow_ = nullptr;
+    delete lcWindow_;
+    lcWindow_ = nullptr;
+    delete gcfWindow_;
+    gcfWindow_ = nullptr;
+    gThisVF->setGcfDlg(nullptr);
+    delete curveWindow_;
+    curveWindow_ = nullptr;
+    gThisVF->setArbitraryCurveDlg(nullptr);
+    delete isoclinesWindow_;
+    isoclinesWindow_ = nullptr;
+    gThisVF->setIsoclinesDlg(nullptr);
+}*/
+
 void P4PlotWnd::onSaveSignal()
 {
+    qDebug() << "save signal";
     auto fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings{fname, QSettings::NativeFormat};
     settings.setValue("P4PlotWnd/size", size());
@@ -242,7 +245,7 @@ void P4PlotWnd::onSaveSignal()
 
 void P4PlotWnd::onLoadSignal()
 {
-    qDebug() << "P4PlotWnd load signal";
+    qDebug() << "load signal";
     auto fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings{fname, QSettings::NativeFormat};
     resize(settings.value("P4PlotWnd/size").toSize());
@@ -280,6 +283,7 @@ void P4PlotWnd::onLoadSignal()
 
 void P4PlotWnd::adjustHeight()
 {
+    qDebug() << "adjust height";
     sphere_->adjustToNewSize();
     resize(width(), height() + sphere_->idealh_ - sphere_->h_);
     sphere_->refresh();
@@ -288,6 +292,7 @@ void P4PlotWnd::adjustHeight()
 
 void P4PlotWnd::signalChanged()
 {
+    qDebug() << "signal changed";
     sphere_->signalChanged();
     for (auto &it : zoomWindows_)
         it->signalChanged();
@@ -295,6 +300,7 @@ void P4PlotWnd::signalChanged()
 
 void P4PlotWnd::signalEvaluated()
 {
+    qDebug() << "signal evaluated";
     configure();
     for (auto &it : zoomWindows_)
         it->signalEvaluated();
@@ -302,6 +308,7 @@ void P4PlotWnd::signalEvaluated()
 
 void P4PlotWnd::onBtnClose()
 {
+    qDebug() << "button close";
     auto e1 =
         new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr};
     gP4app->postEvent(parent_, e1);
@@ -309,6 +316,7 @@ void P4PlotWnd::onBtnClose()
 
 bool P4PlotWnd::close()
 {
+    qDebug() << "close";
     auto e1 =
         new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW), nullptr};
     gP4app->postEvent(parent_, e1);
@@ -318,12 +326,14 @@ bool P4PlotWnd::close()
 
 void P4PlotWnd::onBtnRefresh()
 {
+    qDebug() << "button refresh";
     getDlgData();
     sphere_->refresh();
 }
 
 void P4PlotWnd::onBtnLegend()
 {
+    qDebug() << "button legend";
     if (legendWindow_ == nullptr)
         legendWindow_ = new P4LegendWnd{};
     legendWindow_->show();
@@ -332,42 +342,49 @@ void P4PlotWnd::onBtnLegend()
 
 void P4PlotWnd::onBtnOrbits()
 {
+    qDebug() << "button orbits";
     orbitsWindow_->show();
     orbitsWindow_->raise();
 }
 
 void P4PlotWnd::onBtnIntParams()
 {
+    qDebug() << "button int params";
     intParamsWindow_->show();
     intParamsWindow_->raise();
 }
 
 void P4PlotWnd::onBtnView()
 {
+    qDebug() << "button view";
     viewParamsWindow_->show();
     viewParamsWindow_->raise();
 }
 
 void P4PlotWnd::onBtnGCF()
 {
+    qDebug() << "button gcf";
     gcfWindow_->show();
     gcfWindow_->raise();
 }
 
 void P4PlotWnd::onBtnCurve()
 {
+    qDebug() << "button curve";
     curveWindow_->show();
     curveWindow_->raise();
 }
 
 void P4PlotWnd::onBtnIsoclines()
 {
+    qDebug() << "button isoclines";
     isoclinesWindow_->show();
     isoclinesWindow_->raise();
 }
 
 void P4PlotWnd::onBtnPlotSep()
 {
+    qDebug() << "button plot separatrice";
     getDlgData();
     sepWindow_->show();
     sepWindow_->raise();
@@ -375,6 +392,7 @@ void P4PlotWnd::onBtnPlotSep()
 
 void P4PlotWnd::onBtnPlotAllSeps()
 {
+    qDebug() << "button plot all separatrices";
     getDlgData();
     sphere_->prepareDrawing();
     plot_all_sep(sphere_);
@@ -384,12 +402,14 @@ void P4PlotWnd::onBtnPlotAllSeps()
 
 void P4PlotWnd::onBtnLimitCycles()
 {
+    qDebug() << "button limit cycles";
     lcWindow_->show();
     lcWindow_->raise();
 }
 
 void P4PlotWnd::onBtnPrint()
 {
+    qDebug() << "button print";
     auto pdlg = new P4PrintDlg{static_cast<Qt::WindowFlags>(0), this};
     int result{pdlg->exec()};
     int res{pdlg->getChosenResolution()};
@@ -421,6 +441,7 @@ void P4PlotWnd::onBtnPrint()
 
 void P4PlotWnd::configure()
 {
+    qDebug() << "configure";
     // reset status bar
     statusBar()->showMessage("Ready");
     // setup line/plot pointing to routines of the sphere_ window
@@ -454,6 +475,7 @@ void P4PlotWnd::configure()
 
 void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
 {
+    qDebug() << "open zoom window";
     if (x1 > x2)
         std::swap(x1, x2);
     if (y1 > y2)
@@ -472,6 +494,7 @@ void P4PlotWnd::openZoomWindow(double x1, double y1, double x2, double y2)
 
 void P4PlotWnd::closeZoomWindow(int id)
 {
+    qDebug() << "close zoom window";
     for (auto it = std::begin(zoomWindows_); it != std::end(zoomWindows_);
          it++) {
         if ((*it)->zoomid_ == id) {
@@ -486,6 +509,7 @@ void P4PlotWnd::closeZoomWindow(int id)
 
 void P4PlotWnd::customEvent(QEvent *_e)
 {
+    qDebug() << "custom event";
     P4Event *e = dynamic_cast<P4Event *>(_e);
     double pcoord[3];
     double ucoord[2];
@@ -564,6 +588,7 @@ void P4PlotWnd::customEvent(QEvent *_e)
 
 void P4PlotWnd::hideEvent(QHideEvent *h)
 {
+    qDebug() << "hide event";
     if (!isMinimized()) {
         auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_CLOSE_PLOTWINDOW),
                               nullptr};
@@ -573,6 +598,7 @@ void P4PlotWnd::hideEvent(QHideEvent *h)
 
 void P4PlotWnd::getDlgData()
 {
+    qDebug() << "get dlg data";
     intParamsWindow_->getDataFromDlg();
     if (viewParamsWindow_->getDataFromDlg()) {
         // true when a big change occured in the view
@@ -583,10 +609,12 @@ void P4PlotWnd::getDlgData()
 
 P4IntParamsDlg *P4PlotWnd::getIntParamsWindowPtr() const
 {
+    qDebug() << "get int params window ptr";
     return intParamsWindow_;
 }
 
 P4ViewDlg *P4PlotWnd::getViewParamsWindowPtr() const
 {
+    qDebug() << "get view params window ptr";
     return viewParamsWindow_;
 }

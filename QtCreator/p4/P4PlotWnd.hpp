@@ -20,7 +20,6 @@
 #pragma once
 
 #include <QMainWindow>
-
 #include <QVector>
 
 class QAction;
@@ -47,6 +46,7 @@ class P4PlotWnd : public QMainWindow
 
   public:
     P4PlotWnd(P4StartDlg *);
+    //    ~P4PlotWnd();
 
     P4IntParamsDlg *getIntParamsWindowPtr() const;
     P4ViewDlg *getViewParamsWindowPtr() const;
@@ -54,16 +54,16 @@ class P4PlotWnd : public QMainWindow
   private:
     P4StartDlg *parent_;
 
-    P4WinSphere *sphere_{nullptr}; // main sphere
-    P4LegendWnd *legendWindow_{nullptr};
-    P4OrbitsDlg *orbitsWindow_{nullptr};
-    P4SepDlg *sepWindow_{nullptr};
-    P4IntParamsDlg *intParamsWindow_{nullptr};
-    P4ViewDlg *viewParamsWindow_{nullptr};
-    P4LimitCyclesDlg *lcWindow_{nullptr};
-    P4GcfDlg *gcfWindow_{nullptr};
-    P4ArbitraryCurveDlg *curveWindow_{nullptr};
-    P4IsoclinesDlg *isoclinesWindow_{nullptr};
+    P4WinSphere *sphere_; // main sphere
+    P4LegendWnd *legendWindow_;
+    P4OrbitsDlg *orbitsWindow_;
+    P4SepDlg *sepWindow_;
+    P4IntParamsDlg *intParamsWindow_;
+    P4ViewDlg *viewParamsWindow_;
+    P4LimitCyclesDlg *lcWindow_;
+    P4GcfDlg *gcfWindow_;
+    P4ArbitraryCurveDlg *curveWindow_;
+    P4IsoclinesDlg *isoclinesWindow_;
 
     QBoxLayout *mainLayout_;
     QAction *actClose_;
