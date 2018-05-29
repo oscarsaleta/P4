@@ -19,6 +19,7 @@
 
 #include "P4WinSphere.hpp"
 
+#include <QDebug>
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QMouseEvent>
@@ -81,6 +82,7 @@ P4WinSphere::P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1,
                          double x2, double y2, QWidget *parent)
     : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
+    qDebug() << "called constructor";
     setAttribute(Qt::WA_PaintOnScreen);
 
     // FIXME: is next needed?
@@ -115,6 +117,7 @@ P4WinSphere::P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1,
 
 P4WinSphere::~P4WinSphere()
 {
+    qDebug() << "called destructor";
     int i;
 
     for (i = 0; i < sM_numSpheres; i++) {
@@ -148,8 +151,9 @@ P4WinSphere::~P4WinSphere()
 
 void P4WinSphere::keyPressEvent(QKeyEvent *e)
 {
+    qDebug() << "keypress event";
     int id;
-    std::unique_ptr<int> data1;
+    int *data1;
     Qt::KeyboardModifiers bs;
 
     id = e->key();
@@ -158,52 +162,52 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
     case Qt::Key_F:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // F: integrate orbit forwards in time
-            data1 = std::make_unique<int>(1);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
-                                  data1.release()};
+            data1 = new int{1};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_C:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // C: continue integrate orbit
-            data1 = std::make_unique<int>(0);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
-                                  data1.release()};
+            data1 = new int{0};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         } else if (bs == Qt::ShiftModifier ||
                    bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+C:  continue integrating separatrice
-            data1 = std::make_unique<int>(0);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
-                                  data1.release()};
+            data1 = new int{0};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_B:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // B: integrate orbit backwards in time
-            data1 = std::make_unique<int>(-1);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
-                                  data1.release()};
+            data1 = new int{-1};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_D:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // D: delete orbit
-            data1 = std::make_unique<int>(2);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
-                                  data1.release()};
+            data1 = new int{2};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
     case Qt::Key_A:
         if (bs == Qt::NoModifier || bs == Qt::AltModifier) {
             // A: delete all orbits
-            data1 = std::make_unique<int>(3);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT),
-                                  data1.release()};
+            data1 = new int{3};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_ORBIT_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
@@ -211,9 +215,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
         if (bs == Qt::ShiftModifier ||
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+N: select next separatrice
-            data1 = std::make_unique<int>(3);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
-                                  data1.release()};
+            data1 = new int{3};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
@@ -221,9 +225,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
         if (bs == Qt::ShiftModifier ||
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+I: integrate next separatrice
-            data1 = std::make_unique<int>(2);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
-                                  data1.release()};
+            data1 = new int{2};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
@@ -231,9 +235,9 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
         if (bs == Qt::ShiftModifier ||
             bs == Qt::AltModifier + Qt::ShiftModifier) {
             // SHIFT+S: start integrate separatrice
-            data1 = std::make_unique<int>(1);
-            auto e1 = new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT),
-                                  data1.release()};
+            data1 = new int{1};
+            auto e1 =
+                new P4Event{static_cast<QEvent::Type>(TYPE_SEP_EVENT), data1};
             gP4app->postEvent(parentWnd_, e1);
         }
         break;
@@ -244,6 +248,7 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart)
 {
+    qDebug() << "make chart string";
     QString buf;
 
     if (isu1v1chart) {
@@ -275,6 +280,7 @@ static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart)
 
 void P4WinSphere::setupPlot()
 {
+    qDebug() << "setup plot";
     QPalette palette;
 
     spherebgcolor_ = bgColours::CBACKGROUND;
@@ -348,6 +354,7 @@ void P4WinSphere::setupPlot()
 
 void P4WinSphere::loadAnchorMap()
 {
+    qDebug() << "load anchor map";
     int x1, y1;
     int x2, y2;
     int aw, ah;
@@ -411,6 +418,7 @@ void P4WinSphere::loadAnchorMap()
 
 void P4WinSphere::saveAnchorMap()
 {
+    qDebug() << "save anchor map";
     int x1, y1;
     int x2, y2;
     int aw, ah;
@@ -466,12 +474,14 @@ void P4WinSphere::saveAnchorMap()
 
 void P4WinSphere::adjustToNewSize()
 {
+    qDebug() << "adjust to new size";
     QString buf;
 
     w_ = width();
     h_ = height();
 
-    // auto idealhd = static_cast<double>(std::round(w_ / dx_ * dy_));
+    auto idealhd = static_cast<double>(std::round(w_ / dx_ * dy_));
+    idealh_ = static_cast<int>(std::round(idealhd));
 
     auto reqratio = (static_cast<double>(w_) / horPixelsPerMM_) /
                     (idealh_ / verPixelsPerMM_);
@@ -545,6 +555,7 @@ void P4WinSphere::adjustToNewSize()
 
 void P4WinSphere::refreshAfterResize()
 {
+    qDebug() << "refresh after resize";
     if (refreshTimeout_ != nullptr) {
         delete refreshTimeout_;
         refreshTimeout_ = nullptr;
@@ -554,6 +565,7 @@ void P4WinSphere::refreshAfterResize()
 
 void P4WinSphere::resizeEvent(QResizeEvent *e)
 {
+    qDebug() << "resize event";
     if (e->size() == e->oldSize())
         return;
 
@@ -562,14 +574,18 @@ void P4WinSphere::resizeEvent(QResizeEvent *e)
 
 void P4WinSphere::paintEvent(QPaintEvent *p)
 {
+    qDebug() << "paint event";
     if (gThisVF->evaluating_)
         return;
 
     if (painterCache_ == nullptr || isPainterCacheDirty_) {
-        if (painterCache_ == nullptr)
+        if (painterCache_ == nullptr) {
+            qDebug() << "  creating new QPixmap painterCache_...";
             painterCache_ = new QPixmap{size()};
+        }
         isPainterCacheDirty_ = false;
 
+        qDebug() << "creating new QPainter from QPixmap painterCache_...";
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
@@ -619,6 +635,7 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
 void P4WinSphere::markSelection(int x1, int y1, int x2, int y2,
                                 int selectiontype)
 {
+    qDebug() << "mark selection";
     if (painterCache_ == nullptr)
         return;
 
@@ -661,6 +678,7 @@ void P4WinSphere::markSelection(int x1, int y1, int x2, int y2,
 
 void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
 {
+    qDebug() << "mouse move event";
     QString buf;
 
     int x{e->x()};
@@ -853,6 +871,7 @@ int P4WinSphere::coWinY(double y)
 
 void P4WinSphere::mousePressEvent(QMouseEvent *e)
 {
+    qDebug() << "mouse press event";
     if (e->button() == Qt::LeftButton) {
         if (e->modifiers() == Qt::ControlModifier) {
             if (!selectingZoom_) {
@@ -906,6 +925,7 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
 
 void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
 {
+    qDebug() << "mouse release event";
     if (e->button() == Qt::LeftButton) {
         // finish zoom window between zoomAnchor1_ and zoomAnchor2_
         if (selectingZoom_) {
@@ -939,6 +959,7 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
 
 bool P4WinSphere::getChartPos(int chart, double x0_, double y0_, double *pos)
 {
+    qDebug() << "get chart pos";
     double pcoord[3];
 
     switch (chart) {
@@ -967,6 +988,7 @@ bool P4WinSphere::getChartPos(int chart, double x0_, double y0_, double *pos)
 
 void P4WinSphere::updatePointSelection()
 {
+    qDebug() << "update point selection";
     if (selectingPointStep_ == 0) {
         selectingPointRadius_ = 0;
         update(selectingX_ - SELECTINGPOINTSTEPS * 4,
@@ -986,6 +1008,7 @@ void P4WinSphere::updatePointSelection()
 
 void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
 {
+    qDebug() << "select nearest singularity";
     int x{winpos.x()}, y{winpos.y()};
 
     sM_sphereList.back()->prepareDrawing();
@@ -1030,6 +1053,7 @@ void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
 
 void P4WinSphere::plotPoint(const p4singularities::saddle &p)
 {
+    qDebug() << "plot point saddle";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1067,6 +1091,7 @@ void P4WinSphere::plotPoint(const p4singularities::saddle &p)
 
 void P4WinSphere::plotPoint(const p4singularities::node &p)
 {
+    qDebug() << "plot point node";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1123,6 +1148,7 @@ void P4WinSphere::plotPoint(const p4singularities::node &p)
 
 void P4WinSphere::plotPoint(const p4singularities::weak_focus &p)
 {
+    qDebug() << "plot point weak focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1216,6 +1242,7 @@ void P4WinSphere::plotPoint(const p4singularities::weak_focus &p)
 
 void P4WinSphere::plotPoint(const p4singularities::strong_focus &p)
 {
+    qDebug() << "plot point strong focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1272,6 +1299,7 @@ void P4WinSphere::plotPoint(const p4singularities::strong_focus &p)
 
 void P4WinSphere::plotPoint(const p4singularities::degenerate &p)
 {
+    qDebug() << "plot point degenerate";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1310,6 +1338,7 @@ void P4WinSphere::plotPoint(const p4singularities::degenerate &p)
 
 void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
 {
+    qDebug() << "plot point semi elementary";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1398,6 +1427,7 @@ void P4WinSphere::plotPoint(const p4singularities::semi_elementary &p)
 
 void P4WinSphere::plotPoints()
 {
+    qDebug() << "plot points";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf->saddlePoints_)
             plotPoint(sp);
@@ -1417,24 +1447,28 @@ void P4WinSphere::plotPoints()
 void P4WinSphere::plotPointSeparatrices(
     const p4singularities::semi_elementary &p)
 {
+    qDebug() << "plot point separatrices (semi elementary)";
     for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
 void P4WinSphere::plotPointSeparatrices(const p4singularities::saddle &p)
 {
+    qDebug() << "plot point separatrices (saddle)";
     for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
 void P4WinSphere::plotPointSeparatrices(const p4singularities::degenerate &p)
 {
+    qDebug() << "plot point separatrices (degenerate)";
     for (auto const &it : p.blow_up)
         draw_sep(this, it.sep_points);
 }
 
 void P4WinSphere::plotSeparatrices()
 {
+    qDebug() << "plot separatrices";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf->saddlePoints_)
             plotPointSeparatrices(sp);
@@ -1447,6 +1481,7 @@ void P4WinSphere::plotSeparatrices()
 
 void P4WinSphere::plotGcf()
 {
+    qDebug() << "plot gcf";
     for (auto const &vf : gVFResults.vf_) {
         draw_gcf(this, vf->gcf_points_, CSING, 1);
     }
@@ -1454,6 +1489,7 @@ void P4WinSphere::plotGcf()
 
 void P4WinSphere::plotSeparatingCurves()
 {
+    qDebug() << "plot separating curves";
     int k;
     bool dashes;
     double pcoord[3];
@@ -1489,6 +1525,7 @@ void P4WinSphere::plotSeparatingCurves()
 
 void P4WinSphere::plotArbitraryCurves()
 {
+    qDebug() << "plot arbitrary curves";
     for (auto const &it : gVFResults.arbitraryCurves_) {
         drawArbitraryCurve(this, it.points, CCURV, 1);
     }
@@ -1496,6 +1533,7 @@ void P4WinSphere::plotArbitraryCurves()
 
 void P4WinSphere::plotIsoclines()
 {
+    qDebug() << "plot isoclines";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &it : vf->isocline_vector_) {
             draw_isoclines(this, it.points, it.color, 1);
@@ -1512,6 +1550,7 @@ std::vector<P4POLYLINES> P4WinSphere::produceEllipse(double cx, double cy,
                                                      bool dotted, double resa,
                                                      double resb)
 {
+    qDebug() << "produce ellipse";
     // this is an exact copy of the plotEllipse routine, except that output
     // is stored in a list of points that is dynamically allocated.
 
@@ -1643,6 +1682,7 @@ std::vector<P4POLYLINES> P4WinSphere::produceEllipse(double cx, double cy,
 
 void P4WinSphere::plotPoincareSphere()
 {
+    qDebug() << "plot poincare sphere";
     int color{CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
@@ -1654,6 +1694,7 @@ void P4WinSphere::plotPoincareSphere()
 
 void P4WinSphere::plotPoincareLyapunovSphere()
 {
+    qDebug() << "plot poincare-lyapunov sphere";
     int color{CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
@@ -1671,6 +1712,7 @@ void P4WinSphere::plotPoincareLyapunovSphere()
 
 void P4WinSphere::plotLineAtInfinity()
 {
+    qDebug() << "plot line at infinity";
     switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
@@ -1697,6 +1739,7 @@ void P4WinSphere::plotLineAtInfinity()
 void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
                            int color)
 {
+    qDebug() << "draw line";
     int wx1, wy1, wx2, wy2;
 
     if (staticPainter_ != nullptr) {
@@ -1828,6 +1871,7 @@ void P4WinSphere::drawLine(double x1, double y1, double x2, double y2,
 
 void P4WinSphere::drawPoint(double x, double y, int color)
 {
+    qDebug() << "draw point";
     if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
@@ -1853,6 +1897,7 @@ void P4WinSphere::drawPoint(double x, double y, int color)
 //---------------------------------------------------------------------
 void P4WinSphere::printPoint(const p4singularities::saddle &p)
 {
+    qDebug() << "print point saddle";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1878,6 +1923,7 @@ void P4WinSphere::printPoint(const p4singularities::saddle &p)
 
 void P4WinSphere::printPoint(const p4singularities::node &p)
 {
+    qDebug() << "print point node";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1922,6 +1968,7 @@ void P4WinSphere::printPoint(const p4singularities::node &p)
 
 void P4WinSphere::printPoint(const p4singularities::weak_focus &p)
 {
+    qDebug() << "print point weak focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2003,6 +2050,7 @@ void P4WinSphere::printPoint(const p4singularities::weak_focus &p)
 
 void P4WinSphere::printPoint(const p4singularities::strong_focus &p)
 {
+    qDebug() << "print point strong focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2047,6 +2095,7 @@ void P4WinSphere::printPoint(const p4singularities::strong_focus &p)
 
 void P4WinSphere::printPoint(const p4singularities::degenerate &p)
 {
+    qDebug() << "print point degenerate";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2073,6 +2122,7 @@ void P4WinSphere::printPoint(const p4singularities::degenerate &p)
 
 void P4WinSphere::printPoint(const p4singularities::semi_elementary &p)
 {
+    qDebug() << "print point semi elementary";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2176,6 +2226,7 @@ void P4WinSphere::printPoint(const p4singularities::semi_elementary &p)
 
 void P4WinSphere::printPoints()
 {
+    qDebug() << "print points";
     print_comment("Printing symbols at all singular points:");
 
     for (auto const &vf : gVFResults.vf_) {
@@ -2197,6 +2248,7 @@ void P4WinSphere::printPoints()
 void P4WinSphere::printPointSeparatrices(
     const p4singularities::semi_elementary &p)
 {
+    qDebug() << "print point separatrices (semi elementary)";
     for (auto const &it : p.separatrices) {
         print_comment("Next separatrix of degenerate point:");
         draw_sep(this, it.sep_points);
@@ -2205,6 +2257,7 @@ void P4WinSphere::printPointSeparatrices(
 
 void P4WinSphere::printPointSeparatrices(const p4singularities::saddle &p)
 {
+    qDebug() << "print point separatrices (saddle)";
     for (auto const &it : p.separatrices) {
         print_comment("Next separatrix of saddle point:");
         draw_sep(this, it.sep_points);
@@ -2213,6 +2266,7 @@ void P4WinSphere::printPointSeparatrices(const p4singularities::saddle &p)
 
 void P4WinSphere::printPointSeparatrices(const p4singularities::degenerate &p)
 {
+    qDebug() << "print point separatrices (degenerate)";
     for (auto const &it : p.blow_up) {
         print_comment("Next separatrix of degenerate point:");
         draw_sep(this, it.sep_points);
@@ -2221,6 +2275,7 @@ void P4WinSphere::printPointSeparatrices(const p4singularities::degenerate &p)
 
 void P4WinSphere::printSeparatrices()
 {
+    qDebug() << "print separatrices";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf->saddlePoints_) {
             print_comment("Printing separatrice for saddle singularity:");
@@ -2240,6 +2295,7 @@ void P4WinSphere::printSeparatrices()
 
 void P4WinSphere::printGcf()
 {
+    qDebug() << "print gcf";
     bool isagcf{false};
     for (auto const &vf : gVFResults.vf_) {
         if (!vf->gcf_points_.empty()) {
@@ -2257,6 +2313,7 @@ void P4WinSphere::printGcf()
 
 void P4WinSphere::printSeparatingCurves()
 {
+    qDebug() << "print separating curve";
     QString comment;
     bool dashes;
     double pcoord[3];
@@ -2294,6 +2351,7 @@ void P4WinSphere::printSeparatingCurves()
 
 void P4WinSphere::printArbitraryCurves()
 {
+    qDebug() << "print arbitrary curves";
     QString comment;
     int i{1};
     for (auto const &it : gVFResults.arbitraryCurves_) {
@@ -2305,6 +2363,7 @@ void P4WinSphere::printArbitraryCurves()
 
 void P4WinSphere::printIsoclines()
 {
+    qDebug() << "print isoclines";
     QString comment;
     int i{1};
     for (auto const &vf : gVFResults.vf_) {
@@ -2318,6 +2377,7 @@ void P4WinSphere::printIsoclines()
 
 void P4WinSphere::printPoincareSphere()
 {
+    qDebug() << "print poincare sphere";
     print_comment("Printing Poincare Sphere:");
     auto p =
         produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
@@ -2333,6 +2393,7 @@ void P4WinSphere::printPoincareSphere()
 
 void P4WinSphere::printPoincareLyapunovSphere()
 {
+    qDebug() << "print poincare-lyapunov sphere";
     print_comment("Printing Poincare Lyapunov-Sphere (circle at infinity):");
 
     auto p =
@@ -2365,6 +2426,7 @@ void P4WinSphere::printPoincareLyapunovSphere()
 
 void P4WinSphere::printLineAtInfinity()
 {
+    qDebug() << "print line at infinity";
     switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
@@ -2383,6 +2445,7 @@ void P4WinSphere::printLineAtInfinity()
 
 void P4WinSphere::printOrbits()
 {
+    qDebug() << "print orbits";
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
@@ -2395,6 +2458,7 @@ void P4WinSphere::printOrbits()
 
 void P4WinSphere::printLimitCycles()
 {
+    qDebug() << "print limit cycles";
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
@@ -2408,6 +2472,7 @@ void P4WinSphere::printLimitCycles()
 void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
                             int color)
 {
+    qDebug() << "print line";
     int wx1, wy1, wx2, wy2;
 
     if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
@@ -2455,6 +2520,7 @@ void P4WinSphere::printLine(double x1, double y1, double x2, double y2,
 
 void P4WinSphere::printPoint(double x, double y, int color)
 {
+    qDebug() << "print point";
     if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
         return;
 
@@ -2463,7 +2529,9 @@ void P4WinSphere::printPoint(double x, double y, int color)
 
 void P4WinSphere::refresh()
 {
+    qDebug() << "refresh";
     isPainterCacheDirty_ = true;
+    qDebug() << "calling update()";
     update();
 }
 
@@ -2471,6 +2539,7 @@ void P4WinSphere::calculateHeightFromWidth(int &width, int &height,
                                            int maxheight = -1,
                                            double aspectratio = 1)
 {
+    qDebug() << "calculate height from width";
     // given an optimal width in width, this procedure calculates the
     // corresponding height in order to maintain the given aspectratio. If
     // however the maximum height is violated, then we choose to have the
@@ -2494,6 +2563,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
                                   int myresolution, double mylinewidth,
                                   double mysymbolsize)
 {
+    qDebug() << "prepare printing";
     double pagewidth, pageheight;
     double aspectratio{1}; // assume aspect ratio 1
 
@@ -2620,6 +2690,7 @@ void P4WinSphere::preparePrinting(int printmethod, bool isblackwhite,
 
 void P4WinSphere::finishPrinting()
 {
+    qDebug() << "finish printing";
     if (printMethod_ == P4PRINT_EPSIMAGE) {
         finishPostscriptPrinting();
         reverseYAxis_ = false;
@@ -2668,8 +2739,10 @@ void P4WinSphere::finishPrinting()
     msgBar_->showMessage("Printing has finished.");
 }
 
+// TODO call from paintEvent with a printFlag or something
 void P4WinSphere::print()
 {
+    qDebug() << "print";
     if (printMethod_ == P4PRINT_JPEGIMAGE && sP4pixmap == nullptr)
         return;
 
@@ -2694,6 +2767,7 @@ void P4WinSphere::print()
 
 void P4WinSphere::prepareDrawing()
 {
+    qDebug() << "prepare drawing";
     if (painterCache_ == nullptr) {
         isPainterCacheDirty_ = true;
         painterCache_ = new QPixmap{size()};
@@ -2711,6 +2785,7 @@ void P4WinSphere::prepareDrawing()
 
 void P4WinSphere::finishDrawing()
 {
+    qDebug() << "finish drawing";
     if (next_ != nullptr)
         next_->finishDrawing();
 
@@ -2736,6 +2811,7 @@ void P4WinSphere::finishDrawing()
 
 void P4WinSphere::signalEvaluating()
 {
+    qDebug() << "signal evaluating";
     /*
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
@@ -2746,6 +2822,7 @@ void P4WinSphere::signalEvaluating()
 
 void P4WinSphere::signalChanged()
 {
+    qDebug() << "signal changed";
     /*
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
