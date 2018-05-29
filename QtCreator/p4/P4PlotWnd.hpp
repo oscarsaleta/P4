@@ -23,10 +23,6 @@
 
 #include <QVector>
 
-#include <memory>
-
-#include "P4ZoomWnd.hpp"
-
 class QAction;
 class QBoxLayout;
 class QEvent;
@@ -43,6 +39,7 @@ class P4SepDlg;
 class P4StartDlg;
 class P4ViewDlg;
 class P4WinSphere;
+class P4ZoomWnd;
 
 class P4PlotWnd : public QMainWindow
 {
@@ -57,19 +54,31 @@ class P4PlotWnd : public QMainWindow
   private:
     P4StartDlg *parent_;
 
-    P4WinSphere *sphere_; // main sphere
-    P4LegendWnd *legendWindow_;
-    P4OrbitsDlg *orbitsWindow_;
-    P4SepDlg *sepWindow_;
-    P4IntParamsDlg *intParamsWindow_;
-    P4ViewDlg *viewParamsWindow_;
-    P4LimitCyclesDlg *lcWindow_;
-    P4GcfDlg *gcfWindow_;
-    P4ArbitraryCurveDlg *curveWindow_;
-    P4IsoclinesDlg *isoclinesWindow_;
+    P4WinSphere *sphere_{nullptr}; // main sphere
+    P4LegendWnd *legendWindow_{nullptr};
+    P4OrbitsDlg *orbitsWindow_{nullptr};
+    P4SepDlg *sepWindow_{nullptr};
+    P4IntParamsDlg *intParamsWindow_{nullptr};
+    P4ViewDlg *viewParamsWindow_{nullptr};
+    P4LimitCyclesDlg *lcWindow_{nullptr};
+    P4GcfDlg *gcfWindow_{nullptr};
+    P4ArbitraryCurveDlg *curveWindow_{nullptr};
+    P4IsoclinesDlg *isoclinesWindow_{nullptr};
 
     QBoxLayout *mainLayout_;
+    QAction *actClose_;
+    QAction *actRefresh_;
+    QAction *actLegend_;
+    QAction *actOrbits_;
+    QAction *actIntParams_;
     QAction *actGCF_;
+    QAction *actCurve_;
+    QAction *actPlotSep_;
+    QAction *actPlotAllSeps_;
+    QAction *actLimitCycles_;
+    QAction *actIsoclines_;
+    QAction *actView_;
+    QAction *actPrint_;
 
     int numZooms_{0};
     int lastZoomIdentifier_{0};

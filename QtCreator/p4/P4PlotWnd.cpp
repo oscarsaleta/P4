@@ -21,6 +21,7 @@
 
 #include <QAction>
 #include <QBoxLayout>
+#include <QDebug>
 #include <QEvent>
 #include <QHideEvent>
 #include <QPrintDialog>
@@ -45,16 +46,16 @@
 #include "P4StartDlg.hpp"
 #include "P4ViewDlg.hpp"
 #include "P4WinSphere.hpp"
+#include "P4ZoomWnd.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
 #include "plot_tools.hpp"
 
-P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
+P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 {
     setContextMenuPolicy(Qt::NoContextMenu);
 
     setAttribute(Qt::WA_PaintOnScreen, true);
-    // setAttribute(Qt::WA_PaintOutsidePaintEvent, true);
 
     if (gP4smallIcon != nullptr)
         setWindowIcon(*gP4smallIcon);
@@ -67,80 +68,80 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
     toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2->setMovable(false);
 
-    auto actClose = new QAction{"Clos&e", this};
-    actClose->setShortcut(Qt::ALT + Qt::Key_E);
-    QObject::connect(actClose, &QAction::triggered, this,
+    actClose_ = new QAction{"Clos&e", this};
+    actClose_->setShortcut(Qt::ALT + Qt::Key_E);
+    QObject::connect(actClose_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnClose);
-    toolBar1->addAction(actClose);
+    toolBar1->addAction(actClose_);
 
-    auto actRefresh = new QAction{"&Refresh", this};
-    actRefresh->setShortcut(Qt::ALT + Qt::Key_R);
-    QObject::connect(actRefresh, &QAction::triggered, this,
+    actRefresh_ = new QAction{"&Refresh", this};
+    actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
+    QObject::connect(actRefresh_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnRefresh);
-    toolBar1->addAction(actRefresh);
+    toolBar1->addAction(actRefresh_);
 
-    auto actLegend = new QAction{"&Legend", this};
-    actLegend->setShortcut(Qt::ALT + Qt::Key_L);
-    QObject::connect(actLegend, &QAction::triggered, this,
+    actLegend_ = new QAction{"&Legend", this};
+    actLegend_->setShortcut(Qt::ALT + Qt::Key_L);
+    QObject::connect(actLegend_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnLegend);
-    toolBar1->addAction(actLegend);
+    toolBar1->addAction(actLegend_);
 
-    auto actOrbits_ = new QAction{"&Orbits", this};
+    actOrbits_ = new QAction{"&Orbits", this};
     actOrbits_->setShortcut(Qt::ALT + Qt::Key_O);
     QObject::connect(actOrbits_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnOrbits);
     toolBar1->addAction(actOrbits_);
 
-    auto actIntParams = new QAction{"&Integration Parameters", this};
-    actIntParams->setShortcut(Qt::ALT + Qt::Key_I);
-    QObject::connect(actIntParams, &QAction::triggered, this,
+    actIntParams_ = new QAction{"&Integration Parameters", this};
+    actIntParams_->setShortcut(Qt::ALT + Qt::Key_I);
+    QObject::connect(actIntParams_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnIntParams);
-    toolBar1->addAction(actIntParams);
+    toolBar1->addAction(actIntParams_);
 
     actGCF_ = new QAction{"&GCF", this};
     actGCF_->setShortcut(Qt::ALT + Qt::Key_G);
     QObject::connect(actGCF_, &QAction::triggered, this, &P4PlotWnd::onBtnGCF);
     toolBar1->addAction(actGCF_);
 
-    auto actCurve = new QAction{"&Curves", this};
-    // actCurve->setShortcut(Qt::ALT + Qt::Key_C);
-    QObject::connect(actCurve, &QAction::triggered, this,
+    actCurve_ = new QAction{"&Curves", this};
+    QObject::connect(actCurve_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnCurve);
-    toolBar1->addAction(actCurve);
+    toolBar1->addAction(actCurve_);
 
-    auto actPlotSep = new QAction{"Plot &Separatrice", this};
-    actPlotSep->setShortcut(Qt::ALT + Qt::Key_S);
-    QObject::connect(actPlotSep, &QAction::triggered, this,
+    actPlotSep_ = new QAction{"Plot &Separatrice", this};
+    actPlotSep_->setShortcut(Qt::ALT + Qt::Key_S);
+    QObject::connect(actPlotSep_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnPlotSep);
-    toolBar2->addAction(actPlotSep);
+    toolBar2->addAction(actPlotSep_);
 
-    auto actPlotAllSeps = new QAction{"Plot All Separa&trices", this};
-    actPlotAllSeps->setShortcut(Qt::ALT + Qt::Key_T);
-    QObject::connect(actPlotAllSeps, &QAction::triggered, this,
+    actPlotAllSeps_ = new QAction{"Plot All Separa&trices", this};
+    actPlotAllSeps_->setShortcut(Qt::ALT + Qt::Key_T);
+    QObject::connect(actPlotAllSeps_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnPlotAllSeps);
-    toolBar2->addAction(actPlotAllSeps);
+    toolBar2->addAction(actPlotAllSeps_);
 
-    auto actLimitCycles = new QAction{"Limit C&ycles", this};
-    actLimitCycles->setShortcut(Qt::ALT + Qt::Key_Y);
-    QObject::connect(actLimitCycles, &QAction::triggered, this,
+    actLimitCycles_ = new QAction{"Limit C&ycles", this};
+    actLimitCycles_->setShortcut(Qt::ALT + Qt::Key_Y);
+    QObject::connect(actLimitCycles_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnLimitCycles);
-    toolBar2->addAction(actLimitCycles);
+    toolBar2->addAction(actLimitCycles_);
 
-    auto actIsoclines = new QAction{"Isoclines", this};
-    QObject::connect(actIsoclines, &QAction::triggered, this,
+    actIsoclines_ = new QAction{"Isoclines", this};
+    QObject::connect(actIsoclines_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnIsoclines);
-    toolBar2->addAction(actIsoclines);
+    toolBar2->addAction(actIsoclines_);
 
-    auto actView = new QAction{"&View", this};
-    actView->setShortcut(Qt::ALT + Qt::Key_V);
-    QObject::connect(actView, &QAction::triggered, this, &P4PlotWnd::onBtnView);
-    toolBar2->addAction(actView);
+    actView_ = new QAction{"&View", this};
+    actView_->setShortcut(Qt::ALT + Qt::Key_V);
+    QObject::connect(actView_, &QAction::triggered, this,
+                     &P4PlotWnd::onBtnView);
+    toolBar2->addAction(actView_);
 
-    auto actPrint = new QAction{"&Print", this};
-    actPrint->setShortcut(Qt::ALT + Qt::Key_P);
-    QObject::connect(actPrint, &QAction::triggered, this,
+    actPrint_ = new QAction{"&Print", this};
+    actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
+    QObject::connect(actPrint_, &QAction::triggered, this,
                      &P4PlotWnd::onBtnPrint);
-    toolBar2->addAction(actPrint);
+    toolBar2->addAction(actPrint_);
 
     addToolBar(Qt::TopToolBarArea, toolBar1);
     addToolBarBreak(Qt::TopToolBarArea);
@@ -152,43 +153,75 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{main}, parent_{main}
                      &P4PlotWnd::onLoadSignal);
 
 #ifdef TOOLTIPS
-    actClose->setToolTip(
+    actClose_->setToolTip(
         "Closes the plot window, all subwindows and zoom window");
-    actRefresh->setToolTip("Redraw the plot window");
-    actLegend->setToolTip("Show legend");
+    actRefresh_->setToolTip("Redraw the plot window");
+    actLegend_->setToolTip("Show legend");
     actOrbits_->setToolTip("Opens \"Integrate Orbits\" window");
-    actIntParams->setToolTip("Opens \"Integration Parameters\" window");
+    actIntParams_->setToolTip("Opens \"Integration Parameters\" window");
     actGCF_->setToolTip("Opens Greatest-Common-Factor window.\n"
                         "Disabled if there is no GCF");
-    actCurve->setToolTip("Opens window for plotting arbitrary curves.");
-    actPlotSep->setToolTip("Opens \"Plot separatrices\" window");
-    actPlotAllSeps->setToolTip("Plots all separatrices of all singular points "
-                               "with default integration parameters.\n"
-                               "Change integration parameters if the effect is "
-                               "too small to be visible.");
-    actLimitCycles->setToolTip("Opens limit cycle window");
-    actIsoclines->setToolTip("Opens window for plotting isoclines");
-    actView->setToolTip("Opens the \"View parameter\" window");
-    actPrint->setToolTip("Opens the print window");
+    actCurve_->setToolTip("Opens window for plotting arbitrary curves.");
+    actPlotSep_->setToolTip("Opens \"Plot separatrices\" window");
+    actPlotAllSeps_->setToolTip(
+        "Plots all separatrices of all singular points "
+        "with default integration parameters.\n"
+        "Change integration parameters if the effect is "
+        "too small to be visible.");
+    actLimitCycles_->setToolTip("Opens limit cycle window");
+    actIsoclines_->setToolTip("Opens window for plotting isoclines");
+    actView_->setToolTip("Opens the \"View parameter\" window");
+    actPrint_->setToolTip("Opens the print window");
 #endif
 
     statusBar()->showMessage("Ready");
 
+    qDebug() << "Creating sphere...";
     sphere_ = new P4WinSphere{statusBar(), false, 0, 0, 0, 0, this};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating legend...";
     legendWindow_ = new P4LegendWnd{this};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating orbits window...";
     orbitsWindow_ = new P4OrbitsDlg{this, sphere_};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating separatrices window...";
     sepWindow_ = new P4SepDlg{this, sphere_};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating integration parameters window...";
     intParamsWindow_ = new P4IntParamsDlg{this};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating view parameters window...";
     viewParamsWindow_ = new P4ViewDlg{false, this};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating limit cycles window...";
     lcWindow_ = new P4LimitCyclesDlg{this, sphere_};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating GCF window...";
     gcfWindow_ = new P4GcfDlg{this, sphere_};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating arbitrary curve window...";
     curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
+    qDebug() << "Finished";
+
+    qDebug() << "Creating isoclines window...";
     isoclinesWindow_ = new P4IsoclinesDlg{this, sphere_};
+    qDebug() << "Finished";
 
     gLCWindowIsUp = false; // Limit cycles: initially hidden
 
+    qDebug() << "Showing sphere...";
     sphere_->show();
-    //    setCentralWidget(sphere_);
+    qDebug() << "Setting sphere as central widget...";
+    setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
 
     intParamsWindow_->updateDlgData();
@@ -209,10 +242,12 @@ void P4PlotWnd::onSaveSignal()
 
 void P4PlotWnd::onLoadSignal()
 {
+    qDebug() << "P4PlotWnd load signal";
     auto fname = gThisVF->getbarefilename().append(".conf");
     QSettings settings{fname, QSettings::NativeFormat};
     resize(settings.value("P4PlotWnd/size").toSize());
     move(settings.value("P4PlotWnd/pos").toPoint());
+    adjustHeight();
 
     numZooms_ = settings.value("P4PlotWnd/numZooms").toInt();
     if (numZooms_ != 0) {
