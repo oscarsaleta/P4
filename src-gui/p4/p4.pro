@@ -29,7 +29,11 @@ CONFIG += c++14
 CONFIG += fwhopr
 CONFIG -= console
 
+QMAKE_CXXFLAGS += -std=c++14
+
+unix {
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+}
 
 macx {
     CONFIG -= app_bundle
