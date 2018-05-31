@@ -25,7 +25,7 @@ QT += printsupport
 
 CONFIG += qt
 CONFIG += static
-CONFIG += c++1z
+CONFIG += c++14
 CONFIG += fwhopr
 CONFIG -= console
 
