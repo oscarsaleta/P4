@@ -17,13 +17,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LYAPUNOV_MPF_H
-#define LYAPUNOV_MPF_H
+#pragma once
 
 #ifdef _WIN32
-#include "../../mpir/dll/x64/Release/gmp.h"
 #include "../../mpfr/dll/x64/Release/mpfr.h"
+#include "../../mpir/dll/x64/Release/gmp.h"
 #else
+#include <cstddef>
 #include <mpfr.h>
 #endif
 
@@ -98,5 +98,3 @@ extern mpfr_t one;
 
 bool mpfr_negligible(mpfr_t);
 bool mpfr_negligible_V(mpfr_t);
-
-#endif // LYAPUNOV_MPF_H

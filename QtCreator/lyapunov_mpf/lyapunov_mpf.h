@@ -23,6 +23,7 @@
 #include "../../mpfr/dll/x64/Release/mpfr.h"
 #include "../../mpir/dll/x64/Release/gmp.h"
 #else
+#include <cstddef>
 #include <mpfr.h>
 #endif
 
