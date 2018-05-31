@@ -65,8 +65,8 @@ class P4StartDlg : public QWidget
     void closeEvent(QCloseEvent *);
 
     // these methods are used to access/modify findWindow_ and plotWindow_
-    P4FindDlg *getFindWindowPtr();
-    P4PlotWnd *getPlotWindowPtr();
+    P4FindDlg *getFindWindowPtr() { return findWindow_; }
+    P4PlotWnd *getPlotWindowPtr() { return plotWindow_; }
 
     // following functions are called by other P4 widgets when something
     // happened:
@@ -75,9 +75,9 @@ class P4StartDlg : public QWidget
     void signalChanged();
     void signalLoaded();
     void signalSaved();
+    void signalSeparatingCurvesEvaluated();
     void customEvent(QEvent *);
     void closePlotWindow();
-    void signalSeparatingCurvesEvaluated();
 
   public slots:
     // following slots are called by QT when a button is pressed or a file name

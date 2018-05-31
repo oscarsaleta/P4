@@ -310,7 +310,7 @@ void P4StartDlg::onPlot()
     if (findWindow_ != nullptr)
         findWindow_->getDataFromDlg();
 
-    // read maple/reduce results
+    // read maple results
     if (!gVFResults.readTables(gThisVF->getbarefilename(), false, false)) {
         QMessageBox::critical(this, "P4",
                               "Cannot read computation results.\nPlease check "
@@ -721,7 +721,3 @@ void P4StartDlg::closePlotWindow()
         plotWindow_ = nullptr;
     }
 }
-
-P4FindDlg *P4StartDlg::getFindWindowPtr() { return findWindow_; }
-
-P4PlotWnd *P4StartDlg::getPlotWindowPtr() { return plotWindow_; }

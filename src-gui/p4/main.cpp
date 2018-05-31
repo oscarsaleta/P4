@@ -22,6 +22,7 @@
 
 #include "main.hpp"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QPixmap>
 #include <QPrinter>
@@ -129,6 +130,8 @@ void handleCommandLineArgument(char *arg)
 // -----------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
+    qSetMessagePattern("%{file}(%{line}): %{message}");
+
     int returnvalue;
     int v, i;
 

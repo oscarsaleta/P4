@@ -20,12 +20,7 @@
 #pragma once
 
 #include <QMainWindow>
-
 #include <QVector>
-
-#include <memory>
-
-#include "P4ZoomWnd.hpp"
 
 class QAction;
 class QBoxLayout;
@@ -43,6 +38,7 @@ class P4SepDlg;
 class P4StartDlg;
 class P4ViewDlg;
 class P4WinSphere;
+class P4ZoomWnd;
 
 class P4PlotWnd : public QMainWindow
 {
@@ -50,6 +46,7 @@ class P4PlotWnd : public QMainWindow
 
   public:
     P4PlotWnd(P4StartDlg *);
+    //    ~P4PlotWnd();
 
     P4IntParamsDlg *getIntParamsWindowPtr() const;
     P4ViewDlg *getViewParamsWindowPtr() const;
@@ -69,7 +66,19 @@ class P4PlotWnd : public QMainWindow
     P4IsoclinesDlg *isoclinesWindow_;
 
     QBoxLayout *mainLayout_;
+    QAction *actClose_;
+    QAction *actRefresh_;
+    QAction *actLegend_;
+    QAction *actOrbits_;
+    QAction *actIntParams_;
     QAction *actGCF_;
+    QAction *actCurve_;
+    QAction *actPlotSep_;
+    QAction *actPlotAllSeps_;
+    QAction *actLimitCycles_;
+    QAction *actIsoclines_;
+    QAction *actView_;
+    QAction *actPrint_;
 
     int numZooms_{0};
     int lastZoomIdentifier_{0};

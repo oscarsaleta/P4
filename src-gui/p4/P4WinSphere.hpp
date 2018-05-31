@@ -48,6 +48,7 @@ struct weak_focus;
 struct strong_focus;
 struct degenerate;
 } // namespace p4singularities
+
 struct P4POLYLINES;
 
 class P4WinSphere : public QWidget
