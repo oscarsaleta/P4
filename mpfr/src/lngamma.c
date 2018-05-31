@@ -1,6 +1,6 @@
 /* mpfr_lngamma -- lngamma function
 
-Copyright 2005-2017 Free Software Foundation, Inc.
+Copyright 2005-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -275,7 +275,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
           mpfr_const_euler (g, MPFR_IS_POS(z0) ? MPFR_RNDD : MPFR_RNDU); /* cached */
           mpfr_mul (g, g, z0, MPFR_RNDU);
           mpfr_sub (h, h, g, MPFR_RNDD);
-          mpfr_mul (g, z0, z0, MPFR_RNDU);
+          mpfr_sqr (g, z0, MPFR_RNDU);
           mpfr_add (h, h, g, MPFR_RNDU);
           inex1 = mpfr_prec_round (l, MPFR_PREC(y), rnd);
           inex2 = mpfr_prec_round (h, MPFR_PREC(y), rnd);
@@ -350,7 +350,10 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
              ulp(u)/2 + (2-z0)*max(1,log(2-z0))*2^(1-w)
              = (1/2 + (2-z0)*max(1,log(2-z0))*2^(1-E(u))) ulp(u) */
           d = (double) MPFR_GET_EXP(s) * 0.694; /* upper bound for log(2-z0) */
-          err_u = MPFR_GET_EXP(s) + __gmpfr_ceil_log2 (d) + 1 - MPFR_GET_EXP(u);
+          if (MPFR_IS_ZERO(u)) /* in that case the error on u is zero */
+            err_u = 0;
+          else
+            err_u = MPFR_GET_EXP(s) + __gmpfr_ceil_log2 (d) + 1 - MPFR_GET_EXP(u);
           err_u = (err_u >= 0) ? err_u + 1 : 0;
           /* now the error on u is bounded by 2^err_u ulps */
 
@@ -397,11 +400,15 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
             }
           else
             {
-              err_s += 1 - MPFR_GET_EXP(v);
+              /* if v = 0 here, it was 1 before the call to mpfr_log,
+                 thus the error on v was zero */
+              if (!MPFR_IS_ZERO(v))
+                err_s += 1 - MPFR_GET_EXP(v);
               err_s = (err_s >= 0) ? err_s + 1 : 0;
               /* the error on v is bounded by 2^err_s ulps */
               err_u += MPFR_GET_EXP(u); /* absolute error on u */
-              err_s += MPFR_GET_EXP(v); /* absolute error on v */
+              if (!MPFR_IS_ZERO(v)) /* same as above */
+                err_s += MPFR_GET_EXP(v); /* absolute error on v */
               mpfr_sub (s, v, u, MPFR_RNDN);
               /* the total error on s is bounded by ulp(s)/2 + 2^(err_u-w)
                  + 2^(err_s-w) <= ulp(s)/2 + 2^(max(err_u,err_s)+1-w) */
@@ -487,7 +494,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
       mpfr_set (v, t, MPFR_RNDN);        /* (1+u)^2, v < 2^(-5) */
       mpfr_add (s, s, v, MPFR_RNDN);     /* (1+u)^15 */
 
-      mpfr_mul (u, u, u, MPFR_RNDN); /* 1/z^2 * (1+u)^3 */
+      mpfr_sqr (u, u, MPFR_RNDN);        /* 1/z^2 * (1+u)^3 */
 
       /* m <= maxm ensures that 2*m*(2*m+1) <= ULONG_MAX */
       maxm = 1UL << (sizeof(unsigned long) * CHAR_BIT / 2 - 1);
@@ -565,7 +572,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
         mpz_t *c;
         for (j = 2; (j + 1) * (j + 1) < k; j++);
         /* Z[i] stores z0^i for i <= j */
-        Z = (mpfr_t *) (*__gmp_allocate_func) ((j + 1) * sizeof (mpfr_t));
+        Z = (mpfr_t *) mpfr_allocate_func ((j + 1) * sizeof (mpfr_t));
         for (i = 2; i <= j; i++)
           mpfr_init2 (Z[i], w);
         mpfr_sqr (Z[2], z0, MPFR_RNDN);
@@ -574,7 +581,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
             mpfr_sqr (Z[i], Z[i >> 1], MPFR_RNDN);
           else
             mpfr_mul (Z[i], Z[i-1], z0, MPFR_RNDN);
-        c = (mpz_t *) (*__gmp_allocate_func) ((j + 1) * sizeof (mpz_t));
+        c = (mpz_t *) mpfr_allocate_func ((j + 1) * sizeof (mpz_t));
         for (i = 0; i <= j; i++)
           mpz_init (c[i]);
         for (; l + j <= k; l += j)
@@ -606,10 +613,10 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
           }
         for (i = 0; i <= j; i++)
           mpz_clear (c[i]);
-        (*__gmp_free_func) (c, (j + 1) * sizeof (mpz_t));
+        mpfr_free_func (c, (j + 1) * sizeof (mpz_t));
         for (i = 2; i <= j; i++)
           mpfr_clear (Z[i]);
-        (*__gmp_free_func) (Z, (j + 1) * sizeof (mpfr_t));
+        mpfr_free_func (Z, (j + 1) * sizeof (mpfr_t));
       }
 #endif /* end of fast argument reconstruction */
 
@@ -621,7 +628,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
       /* now t: (1+u)^(2k-1) */
       /* instead of computing log(sqrt(2*Pi)/t), we compute
          1/2*log(2*Pi/t^2), which trades a square root for a square */
-      mpfr_mul (t, t, t, MPFR_RNDN); /* (z0*...*(z0+k-1))^2, (1+u)^(4k-1) */
+      mpfr_sqr (t, t, MPFR_RNDN); /* (z0*...*(z0+k-1))^2, (1+u)^(4k-1) */
       mpfr_div (v, v, t, MPFR_RNDN);
       /* 2*Pi/(z0*...*(z0+k-1))^2 (1+u)^(4k+1) */
 #ifdef IS_GAMMA
@@ -640,7 +647,7 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
          |h| <= (2m+48)*ulp(s), thus exp(s0) = exp(s) * exp(-h).
          For |h| <= 1/4, we have |exp(h)-1| <= 1.2*|h| thus
          |exp(s) - exp(s0)| <= 1.2 * exp(s) * (2m+48)* 2^(EXP(s)-w). */
-      d = 1.2 * (2.0 * (double) m + 48.0);
+      /* d = 1.2 * (2.0 * (double) m + 48.0); */
       /* the error on s is bounded by d*2^err_s * 2^(-w) */
       mpfr_sqrt (t, v, MPFR_RNDN);
       /* let v0 be the exact value of v. We have v = v0*(1+u)^(4k+1),
@@ -649,7 +656,13 @@ GAMMA_FUNC (mpfr_ptr y, mpfr_srcptr z0, mpfr_rnd_t rnd)
       /* the error on input s is bounded by (1+u)^(d*2^err_s),
          and that on t is (1+u)^(2k+3/2), thus the
          total error is (1+u)^(d*2^err_s+2k+5/2) */
-      err_s += __gmpfr_ceil_log2 (d);
+      /* err_s += __gmpfr_ceil_log2 (d); */
+      /* since d = 1.2 * (2m+48), ceil(log2(d)) = 2 + ceil(log2(0.6*m+14.4))
+         <= 2 + ceil(log2(0.6*m+15)) */
+      {
+        unsigned long mm = (1 + m / 5) * 3; /* 0.6*m <= mm */
+        err_s += 2 + __gmpfr_int_ceil_log2 (mm + 15);
+      }
       err_t = __gmpfr_ceil_log2 (2.0 * (double) k + 2.5);
       err_s = (err_s >= err_t) ? err_s + 1 : err_t + 1;
 #else
@@ -805,6 +818,9 @@ mpfr_lgamma (mpfr_ptr y, int *signp, mpfr_srcptr x, mpfr_rnd_t rnd)
           int ok, inex2;
           mpfr_prec_t w = MPFR_PREC (y) + 14;
           mpfr_exp_t expl;
+          MPFR_SAVE_EXPO_DECL (expo);
+
+          MPFR_SAVE_EXPO_MARK (expo);
 
           while (1)
             {
@@ -834,13 +850,18 @@ mpfr_lgamma (mpfr_ptr y, int *signp, mpfr_srcptr x, mpfr_rnd_t rnd)
               mpfr_clear (l);
               mpfr_clear (h);
               if (ok)
-                return inex;
+                {
+                  MPFR_SAVE_EXPO_FREE (expo);
+                  return mpfr_check_range (y, inex, rnd);
+                }
               /* if ulp(log(-x)) <= |x| there is no reason to loop,
                  since the width of [l, h] will be at least |x| */
-              if (expl < MPFR_EXP(x) + (mpfr_exp_t) w)
+              if (expl < MPFR_EXP (x) + w)
                 break;
               w += MPFR_INT_CEIL_LOG2(w) + 3;
             }
+
+          MPFR_SAVE_EXPO_FREE (expo);
         }
     }
 

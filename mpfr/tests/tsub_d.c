@@ -1,6 +1,6 @@
 /* Test file for mpfr_sub_d
 
-Copyright 2007-2017 Free Software Foundation, Inc.
+Copyright 2007-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -74,6 +74,7 @@ main (void)
   mpfr_t x, y, z;
   double d;
   int inexact;
+
   tests_start_mpfr ();
 
   /* check with enough precision */

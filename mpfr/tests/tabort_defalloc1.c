@@ -1,6 +1,6 @@
 /* tabort_defalloc1 -- Test for abort due to reaching out of memory
 
-Copyright 2012-2017 Free Software Foundation, Inc.
+Copyright 2012-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -40,7 +40,7 @@ main (int argc, char **argv)
 
   printf ("[tabort_defalloc1] Check for good handling of abort"
           " in memory function.\n");
-  (*__gmp_allocate_func) ((size_t) -1);
+  mpfr_allocate_func ((size_t) -1);
 
   tests_end_mpfr ();
   return -1; /* Should not be executed */

@@ -43,12 +43,13 @@ struct option_test {
   unsigned long prec;
   unsigned long seed;
   unsigned long stat;
-  long max_exp;
+  long max_exp;       /* exponent is in [-max_exp/2, max_exp/2] */
+  long exp_diff;      /* difference of exponents (for mpfr_add, mpfr_sub) */
   bool verbose;
   mpfr_rnd_t rnd;
   std::string export_base;
   std::string import_base;
-  option_test () : prec (53), seed (14528596), stat (100), verbose (false), rnd(MPFR_RNDN), export_base("") {}
+  option_test () : prec (53), seed (14528596), stat (100), max_exp (1), exp_diff (-1), verbose (false), rnd(MPFR_RNDN), export_base("") {}
 };
 
 class registered_test;
@@ -87,7 +88,7 @@ class timming {
   timming (unsigned long s) : size (s) {
     besttime = new unsigned long long[size];
     for (unsigned long i = 0 ; i < size ; i++) 
-      besttime[i] = 0xFFFFFFFFFFFFFFFLL;
+      besttime[i] = 0xFFFFFFFFFFFFFFFFLL;
   }
 
   ~timming () {
@@ -107,7 +108,7 @@ class timming {
   void print (const char *name, const option_test &opt) {
     unsigned long long min, max, moy;
     unsigned long imin = 0, imax = 0;
-    min = 0xFFFFFFFFFFFFFFFLL;
+    min = 0xFFFFFFFFFFFFFFFFLL;
     max = moy = 0;
     for(unsigned long i = 0 ; i < (size-1) ; i++) {
       if (besttime[i] < min) 

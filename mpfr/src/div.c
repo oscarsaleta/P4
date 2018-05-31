@@ -1,6 +1,6 @@
 /* mpfr_div -- divide two floating-point numbers
 
-Copyright 1999, 2001-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -71,7 +71,8 @@ mpfr_div2_approx (mpfr_limb_ptr Q1, mpfr_limb_ptr Q0,
 
   /* we ignore yy below, but first increment r0, to ensure we get a lower
      approximation of the remainder */
-  r0 += (yy != 0);
+  r0 += yy != 0;
+  r1 += r0 == 0 && yy != 0;
   r0 = u0 - r0;
   r1 = u1 - r1 - (r0 > u0);
 
@@ -205,10 +206,10 @@ mpfr_div_1 (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
 
   MPFR_EXP (q) = qx; /* Don't use MPFR_SET_EXP since qx might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(qx >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -232,15 +233,20 @@ mpfr_div_1 (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
     {
     add_one_ulp:
       qp[0] += MPFR_LIMB_ONE << sh;
-      if (qp[0] == 0)
-        {
-          qp[0] = MPFR_LIMB_HIGHBIT;
-          if (MPFR_UNLIKELY(qx + 1 > __gmpfr_emax))
-            return mpfr_overflow (q, rnd_mode, MPFR_SIGN(q));
-          MPFR_ASSERTD(qx + 1 <= __gmpfr_emax);
-          MPFR_ASSERTD(qx + 1 >= __gmpfr_emin);
-          MPFR_SET_EXP (q, qx + 1);
-        }
+      MPFR_ASSERTD(qp[0] != 0);
+      /* It is not possible to have an overflow in the addition above.
+         Proof: if p is the precision of the inputs, it would mean we have two
+         integers n and d with 2^(p-1) <= n, d < 2^p, such that the binary
+         expansion of n/d starts with p '1', and has at least one '1' later.
+         We distinguish two cases:
+         (1) if n/d < 1, it would mean 1-2^(-p) < n/d < 1
+         (2) if n/d >= 1, it would mean 2-2^(1-p) < n/d < 1
+         In case (1), multiplying by d we get 1-d/2^p < n < d,
+         which has no integer solution since d/2^p < 1.
+         In case (2), multiplying by d we get 2d-2d/2^p < n < 2d:
+         (2a) if d=2^(p-1), we get 2^p-1 < n < 2^p which has no solution;
+              if d>=2^(p-1)+1, then 2d-2d/2^p >= 2^p+2-2 = 2^p, thus there is
+              solution n < 2^p either. */
       MPFR_RET(MPFR_SIGN(q));
     }
 }
@@ -348,10 +354,10 @@ mpfr_div_1n (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
 
   MPFR_EXP (q) = qx; /* Don't use MPFR_SET_EXP since qx might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(qx >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -375,15 +381,9 @@ mpfr_div_1n (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
     {
     add_one_ulp:
       qp[0] += MPFR_LIMB_ONE;
-      if (qp[0] == 0)
-        {
-          qp[0] = MPFR_LIMB_HIGHBIT;
-          if (MPFR_UNLIKELY(qx + 1 > __gmpfr_emax))
-            return mpfr_overflow (q, rnd_mode, MPFR_SIGN(q));
-          MPFR_ASSERTD(qx + 1 <= __gmpfr_emax);
-          MPFR_ASSERTD(qx + 1 >= __gmpfr_emin);
-          MPFR_SET_EXP (q, qx + 1);
-        }
+      /* there can be no overflow in the addition above,
+         see the analysis of mpfr_div_1 */
+      MPFR_ASSERTD(qp[0] != 0);
       MPFR_RET(MPFR_SIGN(q));
     }
 }
@@ -611,10 +611,10 @@ mpfr_div_2 (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
 
   MPFR_EXP (q) = qx; /* Don't use MPFR_SET_EXP since qx might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(qx >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -635,36 +635,15 @@ mpfr_div_2 (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
     {
     add_one_ulp:
       qp[0] += MPFR_LIMB_ONE << sh;
-      qp[1] += (qp[0] == 0);
-      if (qp[1] == 0)
-        {
-          qp[1] = MPFR_LIMB_HIGHBIT;
-          if (MPFR_UNLIKELY(qx + 1 > __gmpfr_emax))
-            return mpfr_overflow (q, rnd_mode, MPFR_SIGN(q));
-          MPFR_ASSERTD(qx + 1 <= __gmpfr_emax);
-          MPFR_ASSERTD(qx + 1 >= __gmpfr_emin);
-          MPFR_SET_EXP (q, qx + 1);
-        }
+      qp[1] += qp[0] == 0;
+      /* there can be no overflow in the addition above,
+         see the analysis of mpfr_div_1 */
+      MPFR_ASSERTD(qp[1] != 0);
       MPFR_RET(MPFR_SIGN(q));
     }
 }
 
 #endif /* !defined(MPFR_GENERIC_ABI) */
-
-#ifdef DEBUG2
-#define mpfr_mpn_print(ap,n) mpfr_mpn_print3 (ap,n,MPFR_LIMB_ZERO)
-static void
-mpfr_mpn_print3 (mpfr_limb_ptr ap, mp_size_t n, mp_limb_t cy)
-{
-  mp_size_t i;
-  for (i = 0; i < n; i++)
-    printf ("+%lu*2^%lu", (unsigned long) ap[i], (unsigned long)
-            (GMP_NUMB_BITS * i));
-  if (cy)
-    printf ("+2^%lu", (unsigned long) (GMP_NUMB_BITS * n));
-  printf ("\n");
-}
-#endif
 
 /* check if {ap, an} is zero */
 static int
@@ -763,113 +742,6 @@ mpfr_mpn_sub_aux (mpfr_limb_ptr ap, mpfr_limb_ptr bp, mp_size_t n,
     }
   MPFR_ASSERTD (cy <= 1);
   return cy;
-}
-
-/* For large precision, mpz_tdiv_q (which computes only quotient)
-   is faster than mpn_divrem (which computes also the remainder).
-   Unfortunately as of GMP 6.0.0 the corresponding mpn_div_q function
-   is not in the public interface, thus we call mpz_tdiv_q.
-
-   If this function succeeds in computing the correct rounding, return 1,
-   and put the ternary value in inex.
-
-   Otherwise return 0 (and inex is undefined).
-*/
-static int
-mpfr_div_with_mpz_tdiv_q (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v,
-                          mpfr_rnd_t rnd_mode, int *inex)
-{
-  mpz_t qm, um, vm;
-  mpfr_exp_t ue, ve;
-  mpfr_prec_t qp = MPFR_PREC(q), wp = qp + GMP_NUMB_BITS;
-  mp_size_t up, vp, k;
-  int ok;
-
-  mpz_init (qm);
-  mpz_init (um);
-  mpz_init (vm);
-
-  ue = mpfr_get_z_2exp (um, u); /* u = um * 2^ue */
-  ve = mpfr_get_z_2exp (vm, v); /* v = vm * 2^ve */
-
-  vp = mpz_sizeinbase (vm, 2);
-  if (vp > wp)
-    {
-      k = vp - wp; /* truncate k bits of vm */
-      mpz_tdiv_q_2exp (vm, vm, k);
-      ve += k;
-      vp -= k;
-    }
-
-  /* we want about qp + GMP_NUMB_BITS bits of the quotient, thus um should
-     have qp + GMP_NUMB_BITS more bits than vm */
-
-  up = mpz_sizeinbase (um, 2);
-  if (up > vp + wp)
-    {
-      k = up - (vp + wp); /* truncate k bits of um */
-      mpz_tdiv_q_2exp (um, um, k);
-      ue += k;
-      up -= k;
-    }
-  else if (up < vp + wp) /* we need more bits */
-    {
-      k = (vp + wp) - up;
-      mpz_mul_2exp (um, um, k);
-      ue -= k;
-      up += k;
-    }
-
-  /* now um has exactly wp more bits than vp */
-  mpz_tdiv_q (qm, um, vm);
-  /* qm has either wp or wp+1 bits, and we have:
-     (a) um = u/2^ue*(1-tu) with tu=0 if no truncation of um,
-                            and 0 <= tu < 2^(1-wp) otherwise;
-     (b) vm = v/2^ve*(1-tv) with tv=0 if no truncation of vm,
-                             and 0 <= tv < 2^(1-wp) otherwise;
-     (c) um/vm - 1 < qm <= um/vm, thus qm = um/vm*(1-tq) with
-         0 <= tw < 2^(1-wp) since um/vm >= 2^(wp-1)
-     Altogether we have:
-     q = u/v*2^(ve-ue)*(1-tu)/(1-tv)*(1-tq)
-     Thus:
-     u/v*2^(ve-ue)*(1-2^(2-wp)) < q < u/v*2^(ve-ue)*(1+2^(2-wp)).
-     If q has wp bits, the error is less than 2^(wp-1)*2^(2-wp) <= 2.
-     If q has wp+1 bits, the error is less than 2^wp*2^(2-wp) <= 4.
-  */
-
-  k = mpz_sizeinbase (qm, 2) - wp; /* 0 or 1 */
-  /* Assume qm has wp bits (i.e. k=0) and a directed rounding: if the first
-     set bit after position 1 has position less than GMP_NUMB_BITS, then
-     subtracting 2 to qm will not change the bits beyond the GMP_NUMB_BITS
-     low ones, thus we get correct rounding.
-     For k=1, we need to start at position 2, and the first set bit has to be
-     in posiiton less than GMP_NUMB_BITS+1.
-     For rounding to nearest, the first set bit has to be in position less
-     than GMP_NUMB_BITS-1 for k=0 (or less than GMP_NUMB_BITS for k=1).
-  */
-  if (mpz_scan1 (qm, k + 1) < GMP_NUMB_BITS + k - (rnd_mode == MPFR_RNDN) &&
-      mpz_scan0 (qm, k + 1) < GMP_NUMB_BITS + k - (rnd_mode == MPFR_RNDN))
-    {
-      MPFR_SAVE_EXPO_DECL (expo);
-      ok = 1;
-      MPFR_SAVE_EXPO_MARK (expo);
-      *inex = mpfr_set_z (q, qm, rnd_mode);
-      MPFR_SAVE_EXPO_FREE (expo);
-      /* if we got an underflow or overflow, the result is not valid */
-      if (MPFR_IS_SINGULAR(q) || MPFR_EXP(q) == MPFR_EXT_EMIN ||
-          MPFR_EXP(q) == MPFR_EXT_EMAX)
-        ok =  0;
-      MPFR_EXP(q) += ue - ve;
-      *inex = mpfr_check_range (q, *inex, rnd_mode);
-    }
-  else
-    ok = 0;
-
-  mpz_clear (qm);
-  mpz_clear (um);
-  mpz_clear (vm);
-
-  return ok;
 }
 
 MPFR_HOT_FUNCTION_ATTR int
@@ -1021,10 +893,6 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
       return mpfr_check_range (q, inex, rnd_mode);
     }
 
-  /* for large precisions, try using truncated division first */
-  if (q0size >= 32 && mpfr_div_with_mpz_tdiv_q (q, u, v, rnd_mode, &inex))
-    return inex;
-
   MPFR_TMP_MARK(marker);
 
   /* set sign */
@@ -1052,9 +920,6 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
       else /* k=0: no more dividend limb */
         extra_bit = mpfr_mpn_cmpzero (vp, l) == 0;
     }
-#ifdef DEBUG
-  printf ("extra_bit=%d\n", extra_bit);
-#endif
 
   /* set exponent */
   qexp = MPFR_GET_EXP (u) - MPFR_GET_EXP (v) + extra_bit;
@@ -1099,6 +964,7 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
         }
 
       qp = MPFR_TMP_LIMBS_ALLOC (n);
+      /* since n = q0size + 1, we have n >= 2 here */
       qh = mpfr_divhigh_n (qp, ap, bp, n);
       MPFR_ASSERTD (qh == 0 || qh == 1);
       /* in all cases, the error is at most (2n+2) ulps on qh*B^n+{qp,n},
@@ -1225,10 +1091,6 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
   /* if Mulders' short division failed, we revert to division with remainder */
   qh = mpn_divrem (qp, 0, ap + k, qqsize - k, bp, qsize - k);
   /* warning: qh may be 1 if u1 == v1, but u < v */
-#ifdef DEBUG2
-  printf ("q="); mpfr_mpn_print (qp, qsize);
-  printf ("r="); mpfr_mpn_print (ap, qsize);
-#endif
 
   k = qsize;
   sticky_u = sticky_u || mpfr_mpn_cmpzero (ap, k);
@@ -1256,20 +1118,12 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
      including the round bit, and 1 <= sh2 <= GMP_NUMB_BITS
      is the number of bits in sticky3 */
   inex = (sticky != MPFR_LIMB_ZERO) || (sticky3 != MPFR_LIMB_ZERO);
-#ifdef DEBUG
-  printf ("sticky=%lu sticky3=%lu inex=%d\n",
-          (unsigned long) sticky, (unsigned long) sticky3, inex);
-#endif
 
   /* to round, we distinguish two cases:
      (a) vsize <= qsize: we used the full divisor
      (b) vsize > qsize: the divisor was truncated
   */
 
-#ifdef DEBUG
-  printf ("vsize=%lu qsize=%lu\n",
-          (unsigned long) vsize, (unsigned long) qsize);
-#endif
   if (MPFR_LIKELY(vsize <= qsize)) /* use the full divisor */
     {
       if (MPFR_LIKELY(rnd_mode == MPFR_RNDN))
@@ -1302,10 +1156,6 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
             {
               round_bit = sticky3 & (MPFR_LIMB_ONE << (sh2 - 1));
               sticky3   = sticky3 ^ round_bit;
-#ifdef DEBUG
-              printf ("rb=%lu sb=%lu\n",
-                      (unsigned long) round_bit, (unsigned long) sticky3);
-#endif
             }
           if (sticky3 != MPFR_LIMB_ZERO && sticky3 != MPFR_LIMB_ONE)
             {
@@ -1343,9 +1193,6 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
                     mpfr_mpn_cmp_aux (sp, k, up, usize - qqsize, extra_bit) :
                     mpfr_mpn_cmpzero (sp, k);
                 }
-#ifdef DEBUG
-              printf ("cmp(q*v0,r+u0)=%d\n", cmp_s_r);
-#endif
               /* now cmp_s_r > 0 if {sp, vsize} > {ap, qsize} + low(u)
                      cmp_s_r = 0 if {sp, vsize} = {ap, qsize} + low(u)
                      cmp_s_r < 0 if {sp, vsize} < {ap, qsize} + low(u) */
@@ -1403,9 +1250,6 @@ mpfr_div (mpfr_ptr q, mpfr_srcptr u, mpfr_srcptr v, mpfr_rnd_t rnd_mode)
                         cmp_s_r = 1; /* since in fact we subtracted
                                         less than 1 */
                     }
-#ifdef DEBUG
-                  printf ("cmp(q*v0-(r+u0),v)=%d\n", cmp_s_r);
-#endif
                   if (cmp_s_r <= 0) /* q1-1 <= u/v < q1 */
                     {
                       if (sticky3 == MPFR_LIMB_ONE)

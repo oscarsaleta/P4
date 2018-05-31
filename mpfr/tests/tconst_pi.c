@@ -1,6 +1,6 @@
 /* Test file for mpfr_const_pi.
 
-Copyright 1999, 2001-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -170,11 +170,13 @@ bug20091030 (void)
       mpfr_set_prec (x_ref, p);
       for (r = 0; r < MPFR_RND_MAX; r++)
         {
+          if (r == MPFR_RNDF)
+            continue; /* the test below makes no sense */
           inex = mpfr_const_pi (x, (mpfr_rnd_t) r);
           inex_ref = mpfr_const_pi_internal (x_ref, (mpfr_rnd_t) r);
           if (inex != inex_ref || mpfr_cmp (x, x_ref) != 0)
             {
-              printf ("mpfr_const_pi and mpfr_const_pi_internal disagree\n");
+              printf ("mpfr_const_pi and mpfr_const_pi_internal disagree for rnd=%s\n", mpfr_print_rnd_mode ((mpfr_rnd_t) r));
               printf ("mpfr_const_pi gives ");
               mpfr_dump (x);
               printf ("mpfr_const_pi_internal gives ");
@@ -243,7 +245,16 @@ main (int argc, char *argv[])
 
   RUN_PTHREAD_TEST();
 
+  /* the following is just to test mpfr_free_cache2 with MPFR_FREE_LOCAL_CACHE,
+     it should not hurt, since the call to mpfr_free_cache in tests_end_mpfr
+     will do nothing */
+  mpfr_free_cache2 (MPFR_FREE_LOCAL_CACHE);
+
   tests_end_mpfr ();
+
+  /* another test of mpfr_free_cache2 with MPFR_FREE_LOCAL_CACHE, to check
+     that we can call it when the caches are already freed */
+  mpfr_free_cache2 (MPFR_FREE_LOCAL_CACHE);
 
   return 0;
 }

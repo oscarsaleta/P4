@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_pow and mpfr_ui_pow_ui.
 
-Copyright 2001-2017 Free Software Foundation, Inc.
+Copyright 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -110,14 +110,11 @@ check1 (mpfr_ptr x, mpfr_prec_t prec, unsigned long nt, mpfr_rnd_t rnd)
           printf (" prec=%u rnd_mode=%s\n", (unsigned) prec,
                   mpfr_print_rnd_mode (rnd));
           printf ("got      ");
-          mpfr_out_str (stdout, 2, prec, z, MPFR_RNDN);
-          puts ("");
+          mpfr_dump (z);
           printf ("expected ");
-          mpfr_out_str (stdout, 2, prec, t, MPFR_RNDN);
-          puts ("");
-          printf ("approx  ");
-          mpfr_print_binary (y);
-          puts ("");
+          mpfr_dump (t);
+          printf ("approx   ");
+          mpfr_dump (y);
           exit (1);
         }
       compare2 = mpfr_cmp (t, y);
@@ -239,12 +236,12 @@ main (int argc, char *argv[])
   for (prec = p0; prec <= p1; prec++)
     {
       mpfr_set_prec (x, prec);
-      for (n=0; n<N; n++)
+      for (n = 0; n < N; n++)
         {
           int nt;
           nt = randlimb () & INT_MAX;
           mpfr_urandomb (x, RANDS);
-          rnd = RND_RAND ();
+          rnd = RND_RAND_NO_RNDF ();
           check1 (x, prec, nt, rnd);
         }
     }

@@ -1,6 +1,6 @@
 /* talloc -- test file concerning memory allocation
 
-Copyright 2015-2017 Free Software Foundation, Inc.
+Copyright 2015-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -31,6 +31,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 # define MPFR_ALLOCA_MAX 16384
 #endif
 
+/* ISO C99 is needed by MPFR_DECL_INIT. */
 #if __MPFR_STDC (199901L) && MPFR_ALLOCA_MAX <= 16384
 
 int

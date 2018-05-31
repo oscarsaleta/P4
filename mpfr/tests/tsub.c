@@ -1,6 +1,6 @@
 /* Test file for mpfr_sub.
 
-Copyright 2001-2017 Free Software Foundation, Inc.
+Copyright 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -22,12 +22,13 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-test.h"
 
-#ifdef CHECK_EXTERNAL
 static int
 test_sub (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
 {
+#ifdef CHECK_EXTERNAL
   int res;
   int ok = rnd_mode == MPFR_RNDN && mpfr_number_p (b) && mpfr_number_p (c);
+
   if (ok)
     {
       mpfr_print_raw (b);
@@ -42,10 +43,69 @@ test_sub (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
       printf ("\n");
     }
   return res;
-}
-#else
-#define test_sub mpfr_sub
+#else  /* reuse test */
+  int inex;
+
+  inex = mpfr_sub (a, b, c, rnd_mode);
+
+  if (a != b && a != c && ! MPFR_IS_NAN (a))
+    {
+      mpfr_t t;
+      int reuse_b, reuse_c, inex_r;
+
+      reuse_b = MPFR_PREC (a) == MPFR_PREC (b);
+      reuse_c = MPFR_PREC (a) == MPFR_PREC (c);
+
+      if (reuse_b || reuse_c)
+        mpfr_init2 (t, MPFR_PREC (a));
+
+      if (reuse_b)
+        {
+          mpfr_set (t, b, MPFR_RNDN);
+          inex_r = mpfr_sub (t, t, c, rnd_mode);
+          if (!(mpfr_equal_p (t, a) && SAME_SIGN (inex_r, inex)))
+            {
+              printf ("reuse of b error in b - c in %s for\n",
+                      mpfr_print_rnd_mode (rnd_mode));
+              printf ("b = ");
+              mpfr_dump (b);
+              printf ("c = ");
+              mpfr_dump (c);
+              printf ("Expected "); mpfr_dump (a);
+              printf ("  with inex = %d\n", inex);
+              printf ("Got      "); mpfr_dump (t);
+              printf ("  with inex = %d\n", inex_r);
+              exit (1);
+            }
+        }
+
+      if (reuse_c)
+        {
+          mpfr_set (t, c, MPFR_RNDN);
+          inex_r = mpfr_sub (t, b, t, rnd_mode);
+          if (!(mpfr_equal_p (t, a) && SAME_SIGN (inex_r, inex)))
+            {
+              printf ("reuse of c error in b - c in %s for\n",
+                      mpfr_print_rnd_mode (rnd_mode));
+              printf ("b = ");
+              mpfr_dump (b);
+              printf ("c = ");
+              mpfr_dump (c);
+              printf ("Expected "); mpfr_dump (a);
+              printf ("  with inex = %d\n", inex);
+              printf ("Got      "); mpfr_dump (t);
+              printf ("  with inex = %d\n", inex_r);
+              exit (1);
+            }
+        }
+
+      if (reuse_b || reuse_c)
+        mpfr_clear (t);
+    }
+
+  return inex;
 #endif
+}
 
 static void
 check_diverse (void)
@@ -82,6 +142,19 @@ check_diverse (void)
       printf ("Error in mpfr_sub(1,-2,RNDD)\n");
       exit (1);
     }
+
+  /* yet another coverage test */
+  mpfr_set_prec (x, 2);
+  mpfr_set_prec (y, 3);
+  mpfr_set_prec (z, 1);
+  mpfr_set_ui_2exp (y, 1, mpfr_get_emax (), MPFR_RNDZ);
+  /* y = (1 - 2^(-3))*2^emax */
+  mpfr_set_ui_2exp (z, 1, mpfr_get_emax () - 4, MPFR_RNDZ);
+  /* z = 2^(emax - 4) */
+  /* y - z = (1 - 2^(-3) - 2^(-4))*2^emax > (1-2^(-2))*2^emax */
+  inexact = mpfr_sub (x, y, z, MPFR_RNDU);
+  MPFR_ASSERTN(inexact > 0);
+  MPFR_ASSERTN(mpfr_inf_p (x) && mpfr_sgn (x) > 0);
 
   mpfr_set_prec (x, 288);
   mpfr_set_prec (y, 288);
@@ -264,7 +337,7 @@ check_diverse (void)
 
   mpfr_set_prec (x, 33);
   mpfr_set_ui (x, 1, MPFR_RNDN);
-  mpfr_div_2exp (x, x, 32, MPFR_RNDN);
+  mpfr_div_2ui (x, x, 32, MPFR_RNDN);
   mpfr_sub_ui (x, x, 1, MPFR_RNDN);
 
   mpfr_set_prec (x, 5);
@@ -325,7 +398,7 @@ bug_ddefour(void)
     mpfr_init2(tot1, 150);
 
     mpfr_set_ui( ex, 1, MPFR_RNDN);
-    mpfr_mul_2exp( ex, ex, 906, MPFR_RNDN);
+    mpfr_mul_2ui( ex, ex, 906, MPFR_RNDN);
     mpfr_log( tot, ex, MPFR_RNDN);
     mpfr_set( ex1, tot, MPFR_RNDN); /* ex1 = high(tot) */
     test_sub( ex2, tot, ex1, MPFR_RNDN); /* ex2 = high(tot - ex1) */
@@ -408,10 +481,10 @@ check_inexact (void)
 
   mpfr_set_prec (x, 2);
   mpfr_set_ui (x, 6, MPFR_RNDN);
-  mpfr_div_2exp (x, x, 4, MPFR_RNDN); /* x = 6/16 */
+  mpfr_div_2ui (x, x, 4, MPFR_RNDN); /* x = 6/16 */
   mpfr_set_prec (y, 2);
   mpfr_set_si (y, -1, MPFR_RNDN);
-  mpfr_div_2exp (y, y, 4, MPFR_RNDN); /* y = -1/16 */
+  mpfr_div_2ui (y, y, 4, MPFR_RNDN); /* y = -1/16 */
   inexact = test_sub (y, y, x, MPFR_RNDN); /* y = round(-7/16) = -1/2 */
   if (inexact >= 0)
     {
@@ -443,14 +516,14 @@ check_inexact (void)
                 : MPFR_EXP(u) - MPFR_EXP(x);
               pz = pz + MAX(MPFR_PREC(x), MPFR_PREC(u));
               mpfr_set_prec (z, pz);
-              rnd = RND_RAND ();
+              rnd = RND_RAND_NO_RNDF ();
               if (test_sub (z, x, u, rnd))
                 {
                   printf ("z <- x - u should be exact\n");
                   exit (1);
                 }
                 {
-                  rnd = RND_RAND ();
+                  rnd = RND_RAND_NO_RNDF ();
                   inexact = test_sub (y, x, u, rnd);
                   cmp = mpfr_cmp (y, z);
                   if (((inexact == 0) && (cmp != 0)) ||
@@ -535,8 +608,8 @@ bug20101017 (void)
     {
       printf ("Error in mpfr_sub for b-c for b=2^64+1+2^(-64), c=1\n");
       printf ("Expected result 2^64 with inex < 0\n");
-      printf ("Got "); mpfr_print_binary (a);
-      printf (" with inex=%d\n", inex);
+      printf ("Got "); mpfr_dump (a);
+      printf ("with inex=%d\n", inex);
       exit (1);
     }
 
@@ -683,7 +756,7 @@ check_max_almosteven (void)
           for (j = 1; j >= 0; j--)
             {
               mpfr_set_exp (b, __gmpfr_emax - j);
-              RND_LOOP (rnd)
+              RND_LOOP_NO_RNDF (rnd)
                 {
                   mpfr_flags_t flags1, flags2;
                   int inex1, inex2;
@@ -781,6 +854,322 @@ check_max_almosteven (void)
   set_emax (old_emax);
 }
 
+static void
+test_rndf (void)
+{
+  mpfr_t a, b, c, d;
+
+  mpfr_init2 (a, 7);
+  mpfr_init2 (b, 7);
+  mpfr_init2 (c, 7);
+  mpfr_init2 (d, 7);
+  mpfr_set_str_binary (b, "-1.000000e-7");
+  mpfr_set_str_binary (c, "-1.000000");
+  mpfr_sub (a, b, c, MPFR_RNDF);
+  MPFR_ASSERTN(MPFR_IS_NORMALIZED(a));
+  mpfr_sub (d, b, c, MPFR_RNDD);
+  if (!mpfr_equal_p (a, d))
+    {
+      mpfr_sub (d, b, c, MPFR_RNDU);
+      if (!mpfr_equal_p (a, d))
+        {
+          printf ("Error: mpfr_sub(a,b,c,RNDF) does not match RNDD/RNDU\n");
+          printf ("b="); mpfr_dump (b);
+          printf ("c="); mpfr_dump (c);
+          printf ("a="); mpfr_dump (a);
+          exit (1);
+        }
+    }
+  mpfr_clear (a);
+  mpfr_clear (b);
+  mpfr_clear (c);
+  mpfr_clear (d);
+}
+
+static void
+testall_rndf (mpfr_prec_t pmax)
+{
+  mpfr_t a, b, c, d;
+  mpfr_prec_t pa, pb, pc;
+  mpfr_exp_t eb;
+
+  for (pa = MPFR_PREC_MIN; pa <= pmax; pa++)
+    {
+      mpfr_init2 (a, pa);
+      mpfr_init2 (d, pa);
+      for (pb = MPFR_PREC_MIN; pb <= pmax; pb++)
+        {
+          mpfr_init2 (b, pb);
+          for (eb = 0; eb <= pmax + 3; eb ++)
+            {
+              mpfr_set_ui_2exp (b, 1, eb, MPFR_RNDN);
+              while (mpfr_cmp_ui_2exp (b, 1, eb + 1) < 0)
+                {
+                  for (pc = MPFR_PREC_MIN; pc <= pmax; pc++)
+                    {
+                      mpfr_init2 (c, pc);
+                      mpfr_set_ui (c, 1, MPFR_RNDN);
+                      while (mpfr_cmp_ui (c, 2) < 0)
+                        {
+                          mpfr_sub (a, b, c, MPFR_RNDF);
+                          mpfr_sub (d, b, c, MPFR_RNDD);
+                          if (!mpfr_equal_p (a, d))
+                            {
+                              mpfr_sub (d, b, c, MPFR_RNDU);
+                              if (!mpfr_equal_p (a, d))
+                                {
+                                  printf ("Error: mpfr_sub(a,b,c,RNDF) does not "
+                                          "match RNDD/RNDU\n");
+                                  printf ("b="); mpfr_dump (b);
+                                  printf ("c="); mpfr_dump (c);
+                                  printf ("a="); mpfr_dump (a);
+                                  exit (1);
+                                }
+                            }
+                          mpfr_nextabove (c);
+                        }
+                      mpfr_clear (c);
+                    }
+                  mpfr_nextabove (b);
+                }
+            }
+          mpfr_clear (b);
+        }
+      mpfr_clear (a);
+      mpfr_clear (d);
+    }
+}
+
+static void
+test_rndf_exact (mp_size_t pmax)
+{
+  mpfr_t a, b, c, d;
+  mpfr_prec_t pa, pb, pc;
+  mpfr_exp_t eb;
+
+  for (pa = MPFR_PREC_MIN; pa <= pmax; pa++)
+    {
+      /* only check pa mod GMP_NUMB_BITS = -2, -1, 0, 1, 2 */
+      if ((pa + 2) % GMP_NUMB_BITS > 4)
+        continue;
+      mpfr_init2 (a, pa);
+      mpfr_init2 (d, pa);
+      for (pb = MPFR_PREC_MIN; pb <= pmax; pb++)
+        {
+          if ((pb + 2) % GMP_NUMB_BITS > 4)
+            continue;
+          mpfr_init2 (b, pb);
+          for (eb = 0; eb <= pmax + 3; eb ++)
+            {
+              mpfr_urandomb (b, RANDS);
+              mpfr_mul_2ui (b, b, eb, MPFR_RNDN);
+              for (pc = MPFR_PREC_MIN; pc <= pmax; pc++)
+                {
+                  if ((pc + 2) % GMP_NUMB_BITS > 4)
+                    continue;
+                  mpfr_init2 (c, pc);
+                  mpfr_urandomb (c, RANDS);
+                  mpfr_sub (a, b, c, MPFR_RNDF);
+                  mpfr_sub (d, b, c, MPFR_RNDD);
+                  if (!mpfr_equal_p (a, d))
+                    {
+                      mpfr_sub (d, b, c, MPFR_RNDU);
+                      if (!mpfr_equal_p (a, d))
+                        {
+                          printf ("Error: mpfr_sub(a,b,c,RNDF) does not "
+                                  "match RNDD/RNDU\n");
+                          printf ("b="); mpfr_dump (b);
+                          printf ("c="); mpfr_dump (c);
+                          printf ("a="); mpfr_dump (a);
+                          exit (1);
+                        }
+                    }
+
+                  /* now make the low bits from c match those from b */
+                  mpfr_add (c, b, d, MPFR_RNDN);
+                  mpfr_sub (a, b, c, MPFR_RNDF);
+                  mpfr_sub (d, b, c, MPFR_RNDD);
+                  if (!mpfr_equal_p (a, d))
+                    {
+                      mpfr_sub (d, b, c, MPFR_RNDU);
+                      if (!mpfr_equal_p (a, d))
+                        {
+                          printf ("Error: mpfr_sub(a,b,c,RNDF) does not "
+                                  "match RNDD/RNDU\n");
+                          printf ("b="); mpfr_dump (b);
+                          printf ("c="); mpfr_dump (c);
+                          printf ("a="); mpfr_dump (a);
+                          exit (1);
+                        }
+                    }
+
+                  mpfr_clear (c);
+                }
+            }
+          mpfr_clear (b);
+        }
+      mpfr_clear (a);
+      mpfr_clear (d);
+    }
+}
+
+/* Bug in the case 2 <= d < p in generic code mpfr_sub1sp() introduced
+ * in r12242. Before this change, the special case that is failing was
+ * handled by the MPFR_UNLIKELY(ap[n-1] == MPFR_LIMB_HIGHBIT) in the
+ * "truncate:" code.
+ */
+static void
+bug20180215 (void)
+{
+  mpfr_t x, y, z1, z2;
+  mpfr_rnd_t r[] = { MPFR_RNDN, MPFR_RNDU, MPFR_RNDA };
+  int i, p;
+
+  for (p = 3; p <= 3 + 4 * GMP_NUMB_BITS; p++)
+    {
+      mpfr_inits2 (p, x, y, z1, z2, (mpfr_ptr) 0);
+      mpfr_set_ui_2exp (x, 1, p - 1, MPFR_RNDN);
+      mpfr_nextabove (x);
+      mpfr_set_ui_2exp (y, 3, -1, MPFR_RNDN);
+      mpfr_set (z1, x, MPFR_RNDN);
+      mpfr_nextbelow (z1);
+      mpfr_nextbelow (z1);
+      for (i = 0; i < numberof (r); i++)
+        {
+          test_sub (z2, x, y, r[i]);
+          if (! mpfr_equal_p (z1, z2))
+            {
+              printf ("Error in bug20180215 in precision %d, %s\n",
+                      p, mpfr_print_rnd_mode (r[i]));
+              printf ("expected "); mpfr_dump (z1);
+              printf ("got      "); mpfr_dump (z2);
+              exit (1);
+            }
+        }
+      mpfr_clears (x, y, z1, z2, (mpfr_ptr) 0);
+    }
+}
+
+static void
+bug20180216 (void)
+{
+  mpfr_t x, y, z1, z2;
+  int r, p, d, inex;
+
+  for (p = 3; p <= 3 + 4 * GMP_NUMB_BITS; p++)
+    {
+      mpfr_inits2 (p, x, y, z1, z2, (mpfr_ptr) 0);
+      for (d = 1; d <= p-2; d++)
+        {
+          inex = mpfr_set_ui_2exp (z1, 1, d, MPFR_RNDN);  /* z1 = 2^d */
+          MPFR_ASSERTN (inex == 0);
+          inex = mpfr_add_ui (x, z1, 1, MPFR_RNDN);
+          MPFR_ASSERTN (inex == 0);
+          mpfr_nextabove (x);  /* x = 2^d + 1 + epsilon */
+          inex = mpfr_sub (y, x, z1, MPFR_RNDN);  /* y = 1 + epsilon */
+          MPFR_ASSERTN (inex == 0);
+          inex = mpfr_add (z2, y, z1, MPFR_RNDN);
+          MPFR_ASSERTN (inex == 0);
+          MPFR_ASSERTN (mpfr_equal_p (z2, x));  /* consistency check */
+          RND_LOOP (r)
+            {
+              inex = test_sub (z2, x, y, (mpfr_rnd_t) r);
+              if (! mpfr_equal_p (z1, z2) || inex != 0)
+                {
+                  printf ("Error in bug20180216 with p=%d, d=%d, %s\n",
+                          p, d, mpfr_print_rnd_mode ((mpfr_rnd_t) r));
+                  printf ("expected "); mpfr_dump (z1);
+                  printf ("  with inex = 0\n");
+                  printf ("got      "); mpfr_dump (z2);
+                  printf ("  with inex = %d\n", inex);
+                  exit (1);
+                }
+            }
+        }
+      mpfr_clears (x, y, z1, z2, (mpfr_ptr) 0);
+    }
+}
+
+/* Fails with r12281: "reuse of c error in b - c in MPFR_RNDN".
+ *
+ * If the fix in r10697 (2016-07-29) is reverted, this test also fails
+ * (there were no non-regression tests for this bug until this one);
+ * note that if --enable-assert=full is used, the error message is:
+ * "sub1 & sub1sp return different values for MPFR_RNDN".
+ */
+static void
+bug20180217 (void)
+{
+  mpfr_t x, y, z1, z2;
+  int r, p, d, i, inex1, inex2;
+
+  for (p = 3; p <= 3 + 4 * GMP_NUMB_BITS; p++)
+    {
+      mpfr_inits2 (p, x, y, z1, z2, (mpfr_ptr) 0);
+      for (d = p; d <= p+4; d++)
+        {
+          mpfr_set_ui (x, 1, MPFR_RNDN);
+          mpfr_set_ui_2exp (y, 1, -d, MPFR_RNDN);
+          for (i = 0; i < 3; i++)
+            {
+              RND_LOOP_NO_RNDF (r)
+                {
+                  mpfr_set (z1, x, MPFR_RNDN);
+                  if (d == p)
+                    {
+                      mpfr_nextbelow (z1);
+                      if (i == 0)
+                        inex1 = 0;
+                      else if (r == MPFR_RNDD || r == MPFR_RNDZ ||
+                               (r == MPFR_RNDN && i > 1))
+                        {
+                          mpfr_nextbelow (z1);
+                          inex1 = -1;
+                        }
+                      else
+                        inex1 = 1;
+                    }
+                  else if (r == MPFR_RNDD || r == MPFR_RNDZ ||
+                           (r == MPFR_RNDN && d == p+1 && i > 0))
+                    {
+                      mpfr_nextbelow (z1);
+                      inex1 = -1;
+                    }
+                  else
+                    inex1 = 1;
+                  inex2 = test_sub (z2, x, y, (mpfr_rnd_t) r);
+                  if (!(mpfr_equal_p (z1, z2) && SAME_SIGN (inex1, inex2)))
+                    {
+                      printf ("Error in bug20180217 with "
+                              "p=%d, d=%d, i=%d, %s\n", p, d, i,
+                              mpfr_print_rnd_mode ((mpfr_rnd_t) r));
+                      printf ("x = ");
+                      mpfr_dump (x);
+                      printf ("y = ");
+                      mpfr_dump (y);
+                      printf ("Expected "); mpfr_dump (z1);
+                      printf ("  with inex = %d\n", inex1);
+                      printf ("Got      "); mpfr_dump (z2);
+                      printf ("  with inex = %d\n", inex2);
+                      exit (1);
+                    }
+                }
+              if (i == 0)
+                mpfr_nextabove (y);
+              else
+                {
+                  if (p < 6)
+                    break;
+                  mpfr_nextbelow (y);
+                  mpfr_mul_ui (y, y, 25, MPFR_RNDD);
+                  mpfr_div_2ui (y, y, 4, MPFR_RNDN);
+                }
+            }
+        }
+      mpfr_clears (x, y, z1, z2, (mpfr_ptr) 0);
+    }
+}
+
 #define TEST_FUNCTION test_sub
 #define TWO_ARGS
 #define RAND_FUNCTION(x) mpfr_random2(x, MPFR_LIMB_SIZE (x), randlimb () % 100, RANDS)
@@ -794,12 +1183,18 @@ main (void)
 
   tests_start_mpfr ();
 
+  test_rndf ();
+  testall_rndf (7);
+  test_rndf_exact (200);
   bug20101017 ();
   check_rounding ();
   check_diverse ();
   check_inexact ();
   check_max_almosteven ();
   bug_ddefour ();
+  bug20180215 ();
+  bug20180216 ();
+  bug20180217 ();
   for (p=2; p<200; p++)
     for (i=0; i<50; i++)
       check_two_sum (p);

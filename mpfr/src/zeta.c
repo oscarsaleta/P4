@@ -1,6 +1,6 @@
 /* mpfr_zeta -- compute the Riemann Zeta function
 
-Copyright 2003-2017 Free Software Foundation, Inc.
+Copyright 2003-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -82,16 +82,33 @@ mpfr_zeta_part_b (mpfr_t b, mpfr_srcptr s, int n, int p, mpfr_t *tc)
 /* Input: p - an integer
    Output: fills tc[1..p], tc[i] = bernoulli(2i)/(2i)!
    tc[1]=1/12, tc[2]=-1/720, tc[3]=1/30240, ...
+   Assumes all the tc[i] have the same precision.
+
+   Uses the recurrence (4.60) from the book "Modern Computer Arithmetic"
+   by Brent and Zimmermann for C_k = bernoulli(2k)/(2k)!:
+   sum(C_k/(2k+1-2j)!/4^(k-j), j=0..k) = 1/(2k)!/4^k
+   If we put together the terms involving C_0 and C_1 we get:
+   sum(D_k/(2k+1-2j)!/4^(k-j), j=1..k) = 0
+   with D_1 = C_0/4/(2k+1)/(2k)+C_1-1/(2k)/4=(k-1)/(12k+6),
+   and D_k = C_k for k >= 2.
+
+   FIXME: we have C_k = (-1)^(k-1) 2/(2pi)^(2k) * zeta(2k),
+   see for example formula (4.65) from the above book,
+   thus since |zeta(2k)-1| < 2^(1-2k) for k >= 2, we have:
+   |C_k - E_k| < E_k * 2^(1-2k) for k >= 2 and E_k := (-1)^(k-1) 2/(2pi)^(2k).
+   Then if 2k-1 >= prec we can evaluate E_k instead, which only requires one
+   multiplication per term, instead of O(k) small divisions.
 */
 static void
 mpfr_zeta_c (int p, mpfr_t *tc)
 {
   mpfr_t d;
   int k, l;
+  mpfr_prec_t prec = MPFR_PREC (tc[1]);
 
   if (p > 0)
     {
-      mpfr_init2 (d, MPFR_PREC (tc[1]));
+      mpfr_init2 (d, prec);
       mpfr_div_ui (tc[1], __gmpfr_one, 12, MPFR_RNDN);
       for (k = 2; k <= p; k++)
         {
@@ -203,8 +220,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
            where gamma is Euler's constant */
         {
           dint = MAX (d + 3, precs);
-          MPFR_TRACE (printf ("branch 1\ninternal precision=%lu\n",
-                              (unsigned long) dint));
+          /* branch 1, with internal precision dint */
           MPFR_GROUP_REPREC_4 (group, dint, b, c, z_pre, f);
           mpfr_div (z_pre, __gmpfr_one, s1, MPFR_RNDN);
           mpfr_const_euler (f, MPFR_RNDN);
@@ -214,7 +230,7 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
         {
           size_t size;
 
-          MPFR_TRACE (printf ("branch 2\n"));
+          /* branch 2 */
           /* Computation of parameters n, p and working precision */
           dnep = (double) d * LOG2;
           sd = mpfr_get_d (s, MPFR_RNDN);
@@ -234,7 +250,6 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
               p = 1 + (int) beta / 2;
               n = 1 + (int) ((sd + 2.0 * (double) p - 1.0) / 6.2832);
             }
-          MPFR_TRACE (printf ("\nn=%d\np=%d\n",n,p));
           /* add = 4 + floor(1.5 * log(d) / log (2)).
              We should have add >= 10, which is always fulfilled since
              d = precz + 11 >= 12, thus ceil(log2(d)) >= 4 */
@@ -244,17 +259,15 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
           if (dint < precs)
             dint = precs;
 
-          MPFR_TRACE (printf ("internal precision=%lu\n",
-                              (unsigned long) dint));
+          /* internal precision is dint */
 
           size = (p + 1) * sizeof(mpfr_t);
-          tc1 = (mpfr_t*) (*__gmp_allocate_func) (size);
+          tc1 = (mpfr_t*) mpfr_allocate_func (size);
           for (l=1; l<=p; l++)
             mpfr_init2 (tc1[l], dint);
           MPFR_GROUP_REPREC_4 (group, dint, b, c, z_pre, f);
 
-          MPFR_TRACE (printf ("precision of z = %lu\n",
-                              (unsigned long) precz));
+          /* precision of z is precz */
 
           /* Computation of the coefficients c_k */
           mpfr_zeta_c (p, tc1);
@@ -265,16 +278,14 @@ mpfr_zeta_pos (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
           mpfr_div (c, __gmpfr_one, s1, MPFR_RNDN);
           mpfr_ui_pow (f, n, s1, MPFR_RNDN);
           mpfr_div (c, c, f, MPFR_RNDN);
-          MPFR_TRACE (MPFR_DUMP (c));
           mpfr_add (z_pre, z_pre, c, MPFR_RNDN);
           mpfr_add (z_pre, z_pre, b, MPFR_RNDN);
           for (l=1; l<=p; l++)
             mpfr_clear (tc1[l]);
-          (*__gmp_free_func) (tc1, size);
+          mpfr_free_func (tc1, size);
           /* End branch 2 */
         }
 
-      MPFR_TRACE (MPFR_DUMP (z_pre));
       if (MPFR_LIKELY (MPFR_CAN_ROUND (z_pre, d-3, precz, rnd_mode)))
         break;
       MPFR_ZIV_NEXT (loop, d);
@@ -312,7 +323,7 @@ compute_add (mpfr_srcptr s, mpfr_prec_t precz)
   /* since 1/eps = 2^(precz+14), if EXP(sd) >= precz+14, then
      sd >= 1/2*2^(precz+14) thus 2*sd >= 2^(precz+14) >= 1/eps */
   if (mpfr_get_exp (t) >= precz + 14)
-    mpfr_mul_2exp (t, t, 1, MPFR_RNDU);
+    mpfr_mul_2ui (t, t, 1, MPFR_RNDU);
   else
     mpfr_set_ui_2exp (t, 1, precz + 14, MPFR_RNDU);
   /* now t = max(1/eps,2*sd) */
@@ -324,7 +335,7 @@ compute_add (mpfr_srcptr s, mpfr_prec_t precz)
   else
     mpfr_set (t, m1, MPFR_RNDU);
   /* now t = max(8,m1) */
-  mpfr_div_2exp (t, t, precz + 14, MPFR_RNDU); /* eps*max(8,m1) */
+  mpfr_div_2ui (t, t, precz + 14, MPFR_RNDU); /* eps*max(8,m1) */
   mpfr_add_ui (t, t, 1, MPFR_RNDU); /* 1+eps*max(8,m1) */
   mpfr_mul (t, t, u, MPFR_RNDU); /* t = c */
   mpfr_add_ui (u, m1, 13, MPFR_RNDU); /* 13+m1 */
@@ -424,7 +435,6 @@ int
 mpfr_zeta (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
 {
   mpfr_t z_pre, s1, y, p;
-  double sd, eps, m1, c;
   long add;
   mpfr_prec_t precz, prec1, precs, precs1;
   int inex;
@@ -534,32 +544,9 @@ mpfr_zeta (mpfr_t z, mpfr_srcptr s, mpfr_rnd_t rnd_mode)
       /* Precision precs1 needed to represent 1 - s, and s + 2,
          without any truncation */
       precs1 = precs + 2 + MAX (0, - MPFR_GET_EXP (s));
-      /* FIXME: For the error analysis, use MPFR instead of the native
-         double type. The code below can yield overflows on double's
-         when s is large enough (its precision also needs to be large
-         enough, otherwise s is an even integer, which has already been
-         taken into account). In particular, on platforms where overflow
-         is trapped (or if the user has chosen to trap overflow), this
-         can make the application crash.
-         Moreover, does the error computation need to be accurate, such as
-         the multiplications by (1.0 + eps)? If yes, what about rounding
-         directions when using double? If no, the expression could probably
-         be simplified, so that using native integer arithmetic with
-         mpfr_exp_t may be sufficient instead of using MPFR.
-         Note: This FIXME can be made obsolete by rewriting the code
-         (see algorithms.tex, still very incomplete). */
-      sd = mpfr_get_d (s, MPFR_RNDN) - 1.0;
-      if (sd < 0.0)
-        sd = -sd; /* now sd = abs(s-1.0) */
       /* Precision prec1 is the precision on elementary computations;
          it ensures a final precision prec1 - add for zeta(s) */
-      /* eps = pow (2.0, - (double) precz - 14.0); */
-      eps = __gmpfr_ceil_exp2 (- (double) precz - 14.0);
-      m1 = 1.0 + MAX(1.0 / eps, 2.0 * sd) * (1.0 + eps);
-      c = (1.0 + eps) * (1.0 + eps * MAX(8.0, m1));
-      /* add = 1 + floor(log(c*c*c*(13 + m1))/log(2)); */
-      c = c * c * c * (13.0 + m1);
-      add = (c <= DBL_MAX) ? __gmpfr_ceil_log2 (c) : compute_add (s, precz);
+      add = compute_add (s, precz);
       prec1 = precz + add;
       /* FIXME: To avoid that the working precision (prec1) depends on the
          input precision, one would need to take into account the error made

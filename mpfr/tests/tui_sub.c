@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_sub.
 
-Copyright 2000-2017 Free Software Foundation, Inc.
+Copyright 2000-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -275,39 +275,39 @@ check_overflow (void)
   mpfr_inits2 (32, x, y1, y2, (mpfr_ptr) 0);
   mpfr_setmax (x, MPFR_EMAX_MAX);
   mpfr_neg (x, x, MPFR_RNDN);
-  RND_LOOP (rnd_mode)
-  {
-    if (rnd_mode == MPFR_RNDU || rnd_mode == MPFR_RNDA)
-      {
-        inex1 = mpfr_overflow (y1, (mpfr_rnd_t) rnd_mode, 1);
-        flags1 = MPFR_FLAGS_OVERFLOW | MPFR_FLAGS_INEXACT;
-      }
-    else
-      {
-        mpfr_neg (y1, x, MPFR_RNDN);
-        inex1 = -1;
-        flags1 = MPFR_FLAGS_INEXACT;
-      }
-    mpfr_clear_flags ();
-    inex2 = mpfr_ui_sub (y2, 1, x, (mpfr_rnd_t) rnd_mode);
-    flags2 = __gmpfr_flags;
-    if (!(mpfr_equal_p (y1, y2) &&
-          SAME_SIGN (inex1, inex2) &&
-          flags1 == flags2))
-      {
-        printf ("Error in check_overflow for %s\n",
-                mpfr_print_rnd_mode ((mpfr_rnd_t) rnd_mode));
-        printf ("Expected ");
-        mpfr_dump (y1);
-        printf ("  with inex = %d, flags =", inex1);
-        flags_out (flags1);
-        printf ("Got      ");
-        mpfr_dump (y2);
-        printf ("  with inex = %d, flags =", inex2);
-        flags_out (flags2);
-        exit (1);
-      }
-  }
+  RND_LOOP_NO_RNDF (rnd_mode)
+    {
+      if (rnd_mode == MPFR_RNDU || rnd_mode == MPFR_RNDA)
+        {
+          inex1 = mpfr_overflow (y1, (mpfr_rnd_t) rnd_mode, 1);
+          flags1 = MPFR_FLAGS_OVERFLOW | MPFR_FLAGS_INEXACT;
+        }
+      else
+        {
+          mpfr_neg (y1, x, MPFR_RNDN);
+          inex1 = -1;
+          flags1 = MPFR_FLAGS_INEXACT;
+        }
+      mpfr_clear_flags ();
+      inex2 = mpfr_ui_sub (y2, 1, x, (mpfr_rnd_t) rnd_mode);
+      flags2 = __gmpfr_flags;
+      if (!(mpfr_equal_p (y1, y2) &&
+            SAME_SIGN (inex1, inex2) &&
+            flags1 == flags2))
+        {
+          printf ("Error in check_overflow for %s\n",
+                  mpfr_print_rnd_mode ((mpfr_rnd_t) rnd_mode));
+          printf ("Expected ");
+          mpfr_dump (y1);
+          printf ("  with inex = %d, flags =", inex1);
+          flags_out (flags1);
+          printf ("Got      ");
+          mpfr_dump (y2);
+          printf ("  with inex = %d, flags =", inex2);
+          flags_out (flags2);
+          exit (1);
+        }
+    }
   mpfr_clears (x, y1, y2, (mpfr_ptr) 0);
 
   set_emin (emin);

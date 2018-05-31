@@ -1,6 +1,6 @@
 /* auxiliary functions for MPFR tests.
 
-Copyright 1999-2017 Free Software Foundation, Inc.
+Copyright 1999-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -37,6 +37,9 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-impl.h"
 
+#define STRINGIZE(S) #S
+#define MAKE_STR(S) STRINGIZE(S)
+
 #if defined (__cplusplus)
 extern "C" {
 #endif
@@ -51,11 +54,18 @@ extern "C" {
 /* Generates a random rounding mode */
 #define RND_RAND() ((mpfr_rnd_t) (randlimb() % MPFR_RND_MAX))
 
+/* Ditto, excluding RNDF, assumed to be the last rounding mode */
+#define RND_RAND_NO_RNDF() ((mpfr_rnd_t) (randlimb() % MPFR_RNDF))
+
 /* Generates a random sign */
-#define SIGN_RAND() ( (randlimb()%2) ? MPFR_SIGN_POS : MPFR_SIGN_NEG)
+#define RAND_SIGN() (randlimb() % 2 ? MPFR_SIGN_POS : MPFR_SIGN_NEG)
 
 /* Loop for all rounding modes */
 #define RND_LOOP(_r) for((_r) = 0 ; (_r) < MPFR_RND_MAX ; (_r)++)
+
+/* Loop for all rounding modes except RNDF (assumed to be the last one),
+   which must be excluded from tests that rely on deterministic results. */
+#define RND_LOOP_NO_RNDF(_r) for((_r) = 0 ; (_r) < MPFR_RNDF ; (_r)++)
 
 /* Test whether two floating-point data have the same value,
    seen as an element of the set of the floating-point data
@@ -64,16 +74,24 @@ extern "C" {
   ((MPFR_IS_NAN (X) && MPFR_IS_NAN (Y)) ||                              \
    (mpfr_equal_p ((X), (Y)) && MPFR_INT_SIGN (X) == MPFR_INT_SIGN (Y)))
 
-/* The MAX, MIN and ABS macros may already be defined if gmp-impl.h has
-   been included. They have the same semantics as in gmp-impl.h, but the
-   expressions may be slightly different. So, it's better to undefine
-   them first, as required by the ISO C standard. */
-#undef MAX
-#undef MIN
-#undef ABS
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#define ABS(x) (((x)>0) ? (x) : -(x))
+/* In the tests, mpfr_sgn was sometimes used incorrectly, for instance:
+ *
+ *   if (mpfr_cmp_ui (y, 0) || mpfr_sgn (y) < 0)
+ *
+ * to check that y is +0. This does not make sense since on 0, mpfr_sgn
+ * yields 0, so that -0 would not be detected as an error. To make sure
+ * that mpfr_sgn is not used incorrectly, we choose to fail when this
+ * macro is used on a datum whose mathematical sign is not +1 or -1.
+ * This feature is disabled when MPFR_TESTS_TSGN is defined, typically
+ * in tsgn (to test mpfr_sgn itself).
+ */
+#ifndef MPFR_TESTS_TSGN
+# undef mpfr_sgn
+# define mpfr_sgn(x)                   \
+  (MPFR_ASSERTN (! MPFR_IS_NAN (x)),   \
+   MPFR_ASSERTN (! MPFR_IS_ZERO (x)),  \
+   MPFR_SIGN (x))
+#endif
 
 #define FLIST mpfr_ptr, mpfr_srcptr, mpfr_rnd_t
 
@@ -204,8 +222,6 @@ extern gmp_randstate_t  mpfr_rands;
         gmp_randclear (mpfr_rands);    \
       }                                 \
   } while (0)
-
-typedef __gmp_randstate_struct *mpfr_gmp_randstate_ptr;
 
 /* Memory Allocation */
 extern int tests_memory_disabled;

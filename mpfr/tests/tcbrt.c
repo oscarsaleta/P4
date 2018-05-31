@@ -1,6 +1,6 @@
 /* Test file for mpfr_cbrt.
 
-Copyright 2002-2017 Free Software Foundation, Inc.
+Copyright 2002-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -60,14 +60,14 @@ special (void)
   /* cbrt(+/-0) =  +/-0 */
   mpfr_set_ui (x, 0, MPFR_RNDN);
   mpfr_cbrt (y, x, MPFR_RNDN);
-  if (mpfr_cmp_ui (y, 0) || mpfr_sgn (y) < 0)
+  if (MPFR_NOTZERO (y) || MPFR_IS_NEG (y))
     {
       printf ("Error: cbrt(+0) <> +0\n");
       exit (1);
     }
   mpfr_neg (x, x, MPFR_RNDN);
   mpfr_cbrt (y, x, MPFR_RNDN);
-  if (mpfr_cmp_ui (y, 0) || mpfr_sgn (y) > 0)
+  if (MPFR_NOTZERO (y) || MPFR_IS_POS (y))
     {
       printf ("Error: cbrt(-0) <> -0\n");
       exit (1);

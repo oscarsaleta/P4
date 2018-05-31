@@ -1,6 +1,6 @@
 /* Test compatibility mpf-mpfr.
 
-Copyright 2003-2017 Free Software Foundation, Inc.
+Copyright 2003-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -224,10 +224,20 @@ main (void)
   mpz_clear (z);
   if (mpf_cmp_ui (x, 17) != 0)
     {
-      fprintf (stderr, "Error in conversion to/from mpz\n");
-      fprintf (stderr, "expected 17, got %1.16e\n", mpf_get_d (x));
+      printf ("Error in conversion to/from mpz\n");
+      printf ("expected 17, got %1.16e\n", mpf_get_d (x));
       exit (1);
     }
+
+  /* non-regression tests for bugs fixed in revision 11565 */
+  mpf_set_si (x, -1);
+  MPFR_ASSERTN(mpf_fits_ulong_p (x) == 0);
+  MPFR_ASSERTN(mpf_fits_slong_p (x) != 0);
+  MPFR_ASSERTN(mpf_fits_uint_p (x) == 0);
+  MPFR_ASSERTN(mpf_fits_sint_p (x) != 0);
+  MPFR_ASSERTN(mpf_fits_ushort_p (x) == 0);
+  MPFR_ASSERTN(mpf_fits_sshort_p (x) != 0);
+  MPFR_ASSERTN(mpf_get_si (x) == -1);
 
   /* clear all variables */
   mpf_clear (y);

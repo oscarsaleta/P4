@@ -1,6 +1,6 @@
 /* tremquo -- test file for mpfr_remquo, mpfr_remainder and mpfr_fmodquo.
 
-Copyright 2007-2017 Free Software Foundation, Inc.
+Copyright 2007-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -58,6 +58,8 @@ main (int argc, char *argv[])
   long q[1];
   int inex;
 
+  tests_start_mpfr ();
+
   if (argc == 3) /* usage: tremquo x y (rnd=MPFR_RNDN implicit) */
     {
       mpfr_init2 (x, GMP_NUMB_BITS);
@@ -74,8 +76,6 @@ main (int argc, char *argv[])
       mpfr_clear (r);
       return 0;
     }
-
-  tests_start_mpfr ();
 
   bug20090227 ();
 
@@ -320,7 +320,7 @@ main (int argc, char *argv[])
   mpfr_set_prec (x, 65);
   mpfr_set_prec (y, 65);
   mpfr_const_pi (x, MPFR_RNDN);
-  mpfr_mul_2exp (x, x, 63, MPFR_RNDN);
+  mpfr_mul_2ui (x, x, 63, MPFR_RNDN);
   mpfr_const_log2 (y, MPFR_RNDN);
   mpfr_set_prec (r, 10);
   mpfr_remquo (r, q, x, y, MPFR_RNDN);

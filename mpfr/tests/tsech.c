@@ -1,6 +1,6 @@
 /* Test file for mpfr_sech.
 
-Copyright 2005-2017 Free Software Foundation, Inc.
+Copyright 2005-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -114,7 +114,7 @@ overflowed_sech0 (void)
       set_emax (emax);  /* 1 is not representable. */
       /* and if emax < 0, 1 - eps is not representable either. */
       for (i = -1; i <= 1; i++)
-        RND_LOOP (rnd)
+        RND_LOOP_NO_RNDF (rnd)
           {
             mpfr_set_si_2exp (x, i, -512 * ABS (i), MPFR_RNDN);
             mpfr_clear_flags ();
@@ -139,9 +139,10 @@ overflowed_sech0 (void)
                 if (! mpfr_equal_p (x, y))
                   {
                     printf ("Error in overflowed_sech0 (i = %d, rnd = %s):\n"
-                            "  Got ", i, mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
-                    mpfr_print_binary (x);
-                    printf (" instead of 0.11111111E%d.\n", emax);
+                            "  Got        ", i,
+                            mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
+                    mpfr_dump (x);
+                    printf ("  instead of 0.11111111E%d.\n", emax);
                     err = 1;
                   }
               }
@@ -157,9 +158,10 @@ overflowed_sech0 (void)
                 if (! (mpfr_inf_p (x) && MPFR_IS_POS (x)))
                   {
                     printf ("Error in overflowed_sech0 (i = %d, rnd = %s):\n"
-                            "  Got ", i, mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
-                    mpfr_print_binary (x);
-                    printf (" instead of +Inf.\n");
+                            "  Got        ", i,
+                            mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
+                    mpfr_dump (x);
+                    printf ("  instead of +Inf.\n");
                     err = 1;
                   }
               }

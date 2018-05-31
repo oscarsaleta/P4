@@ -56,6 +56,7 @@ test_ext = ["Win32\\Release", "x64\\Release", "Win32\\Debug", "x64\\Debug" ]
 li = []
 for x in test_ext:
   p = lib_loc + x + lib_name
+  print(p)
   if os.path.exists(p):
     s = os.stat(p)
     li += [[s.st_mtime, x]]
@@ -78,8 +79,8 @@ else:
 # copy any required data into the test directory
 
 shutil.copy( "..\\tests\\inp_str.dat", test_dir )
-shutil.copy( "..\\tests\\mpfrtest.dat", test_dir )
-shutil.copy( "..\\tests\\mpfrtest2.dat", test_dir )
+shutil.copy( "..\\tests\\tfpif_r1.dat", test_dir )
+shutil.copy( "..\\tests\\tfpif_r2.dat", test_dir )
 shutil.copy( "..\\tests\\tmul.dat", test_dir )
 if (os.path.exists("..\\tests\\data\\")
     and not os.path.exists(test_dir + "\\data\\")):

@@ -1,6 +1,6 @@
 /* Test file for mpfr_pow.
 
-Copyright 2001-2017 Free Software Foundation, Inc.
+Copyright 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -61,7 +61,7 @@ main (int argc, char *argv[])
           mpfr_urandomb (s, RANDS);
           if (randlimb () % 2)
             mpfr_neg (s, s, MPFR_RNDN);
-          rnd = RND_RAND ();
+          rnd = RND_RAND_NO_RNDF ();
           mpfr_set_prec (y, yprec);
           compare = mpfr_pow (y, x, s, rnd);
           err = (rnd == MPFR_RNDN) ? yprec + 1 : yprec;
@@ -71,21 +71,19 @@ main (int argc, char *argv[])
               inexact = mpfr_pow (z, x, s, rnd);
               if (mpfr_cmp (t, z))
                 {
-                  printf ("results differ for x^y with x=");
-                  mpfr_out_str (stdout, 2, prec, x, MPFR_RNDN);
-                  printf (" y=");
-                  mpfr_out_str (stdout, 2, 0, s, MPFR_RNDN);
-                  printf (" prec=%u rnd_mode=%s\n", (unsigned int) prec,
+                  printf ("results differ for x^y with\n");
+                  printf ("  x=");
+                  mpfr_dump (x);
+                  printf ("  y=");
+                  mpfr_dump (s);
+                  printf ("  with prec=%u rnd_mode=%s\n", (unsigned int) prec,
                           mpfr_print_rnd_mode (rnd));
                   printf ("got      ");
-                  mpfr_out_str (stdout, 2, prec, z, MPFR_RNDN);
-                  puts ("");
+                  mpfr_dump (z);
                   printf ("expected ");
-                  mpfr_out_str (stdout, 2, prec, t, MPFR_RNDN);
-                  puts ("");
-                  printf ("approx  ");
-                  mpfr_print_binary (y);
-                  puts ("");
+                  mpfr_dump (t);
+                  printf ("approx   ");
+                  mpfr_dump (y);
                   exit (1);
                 }
               compare2 = mpfr_cmp (t, y);
