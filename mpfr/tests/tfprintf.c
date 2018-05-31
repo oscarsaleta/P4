@@ -1,6 +1,6 @@
 /* tfprintf.c -- test file for mpfr_fprintf and mpfr_vfprintf
 
-Copyright 2008-2017 Free Software Foundation, Inc.
+Copyright 2008-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -20,7 +20,7 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
 http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
-/* Include config.h before using ANY configure macros if needed. */
+/* Needed due to the tests on HAVE_STDARG and MPFR_USE_MINI_GMP */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -404,7 +404,7 @@ main (int argc, char *argv[])
       /* If we failed to open this device, try with a dummy file */
       if (fout == NULL)
         {
-          fout = fopen ("mpfrtest.txt", "w");
+          fout = fopen ("tfprintf_out.txt", "w");
 
           if (fout == NULL)
             {

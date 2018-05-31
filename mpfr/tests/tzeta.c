@@ -1,6 +1,6 @@
 /* tzeta -- test file for the Riemann Zeta function
 
-Copyright 2003-2017 Free Software Foundation, Inc.
+Copyright 2003-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -26,9 +26,12 @@ static void
 test1 (void)
 {
   mpfr_t x, y;
+  int inex;
 
   mpfr_init2 (x, 32);
   mpfr_init2 (y, 42);
+
+  mpfr_clear_flags ();
 
   mpfr_set_str_binary (x, "1.1111111101000111011010010010100e-1");
   mpfr_zeta (y, x, MPFR_RNDN); /* shouldn't crash */
@@ -91,15 +94,26 @@ test1 (void)
   mpfr_zeta (y, x, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_cmp_ui_2exp (y, 3, -1) == 0);
 
-  mpfr_set_nan (x);
-  mpfr_zeta (y, x, MPFR_RNDN);
-  MPFR_ASSERTN(mpfr_nan_p (y));
+  /* yet another coverage test (case beta <= 0.0) */
+  mpfr_set_prec (x, 10);
+  mpfr_set_ui (x, 23, MPFR_RNDN);
+  mpfr_set_prec (y, 15);
+  inex = mpfr_zeta (y, x, MPFR_RNDN);
+  MPFR_ASSERTN(inex < 0);
+  MPFR_ASSERTN(mpfr_cmp_ui (y, 1) == 0);
 
   mpfr_set_inf (x, 1);
   mpfr_zeta (y, x, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_cmp_ui (y, 1) == 0);
 
+  /* Since some tests don't really check that the result is not NaN... */
+  MPFR_ASSERTN (! mpfr_nanflag_p ());
+
   mpfr_set_inf (x, -1);
+  mpfr_zeta (y, x, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_nan_p (y));
+
+  mpfr_set_nan (x);
   mpfr_zeta (y, x, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_nan_p (y));
 
@@ -168,7 +182,7 @@ test2 (void)
       if (mpfr_cmp_str (y, val[i+1] , 2, MPFR_RNDZ))
         {
           printf("Wrong result for zeta(%s=", val[i]);
-          mpfr_print_binary (x);
+          mpfr_out_str (stdout, 2, 0, x, MPFR_RNDN);
           printf (").\nGot     : ");
           mpfr_dump (y);
           printf("Expected: ");

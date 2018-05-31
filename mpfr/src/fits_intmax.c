@@ -1,6 +1,6 @@
 /* mpfr_fits_intmax_p -- test whether an mpfr fits an intmax_t.
 
-Copyright 2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -41,7 +41,7 @@ mpfr_fits_intmax_p (mpfr_srcptr f, mpfr_rnd_t rnd)
   int res;
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (f)))
-    /* Zero always fits */
+    /* Zero always fit */
     return MPFR_IS_ZERO (f) ? 1 : 0;
 
   /* now it fits if either
@@ -88,7 +88,9 @@ mpfr_fits_intmax_p (mpfr_srcptr f, mpfr_rnd_t rnd)
   /* hard case: first round to prec bits, then check */
   saved_flags = __gmpfr_flags;
   mpfr_init2 (x, prec);
-  mpfr_set (x, f, rnd);
+  /* for RNDF, it is necessary and sufficient to check it fits when rounding
+     away from zero */
+  mpfr_set (x, f, (rnd == MPFR_RNDF) ? MPFR_RNDA : rnd);
 
   if (neg)
     {

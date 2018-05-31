@@ -1,6 +1,6 @@
 /* mpfr_digamma -- digamma function of a floating-point number
 
-Copyright 2009-2017 Free Software Foundation, Inc.
+Copyright 2009-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -44,15 +44,15 @@ mpfr_digamma_approx (mpfr_ptr s, mpfr_srcptr x)
 
   mpfr_log (s, x, MPFR_RNDN);         /* error <= 1/2 ulp */
   mpfr_ui_div (t, 1, x, MPFR_RNDN);   /* error <= 1/2 ulp */
-  mpfr_div_2exp (t, t, 1, MPFR_RNDN); /* exact */
+  mpfr_div_2ui (t, t, 1, MPFR_RNDN); /* exact */
   mpfr_sub (s, s, t, MPFR_RNDN);
   /* error <= 1/2 + 1/2*2^(EXP(olds)-EXP(s)) + 1/2*2^(EXP(t)-EXP(s)).
      For x >= 2, log(x) >= 2*(1/(2x)), thus olds >= 2t, and olds - t >= olds/2,
      thus 0 <= EXP(olds)-EXP(s) <= 1, and EXP(t)-EXP(s) <= 0, thus
      error <= 1/2 + 1/2*2 + 1/2 <= 2 ulps. */
   e = 2; /* initial error */
-  mpfr_mul (invxx, x, x, MPFR_RNDZ);     /* invxx = x^2 * (1 + theta)
-                                            for |theta| <= 2^(-p) */
+  mpfr_sqr (invxx, x, MPFR_RNDZ);     /* invxx = x^2 * (1 + theta)
+                                         for |theta| <= 2^(-p) */
   mpfr_ui_div (invxx, 1, invxx, MPFR_RNDU); /* invxx = 1/x^2 * (1 + theta)^2 */
 
   /* in the following we note err=xxx when the ratio between the approximation
@@ -136,9 +136,9 @@ mpfr_digamma_reflection (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
   MPFR_ASSERTN(inex == 0);
 
   /* if x is half an integer, cot(Pi*x) = 0, thus Digamma(x) = Digamma(1-x) */
-  mpfr_mul_2exp (u, u, 1, MPFR_RNDN);
+  mpfr_mul_2ui (u, u, 1, MPFR_RNDN);
   inex = mpfr_integer_p (u);
-  mpfr_div_2exp (u, u, 1, MPFR_RNDN);
+  mpfr_div_2ui (u, u, 1, MPFR_RNDN);
   if (inex)
     {
       inex = mpfr_digamma (y, u, rnd_mode);

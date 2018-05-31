@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_str.
 
-Copyright 1999, 2001-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -787,16 +787,17 @@ main (int argc, char *argv[])
 
   /* end of tests added by Alain Delplanque */
 
-  /* check that flags are correctly cleared */
   mpfr_set_nan (x);
   mpfr_set_str (x, "+0.0", 10, MPFR_RNDN);
-  if (!mpfr_number_p(x) || mpfr_cmp_ui (x, 0) != 0 || mpfr_sgn (x) < 0)
+  if (MPFR_NOTZERO (x) || MPFR_IS_NEG (x))
     {
       printf ("x <- +0.0 failed after x=NaN\n");
       exit (1);
     }
+
+  mpfr_set_nan (x);
   mpfr_set_str (x, "-0.0", 10, MPFR_RNDN);
-  if (!mpfr_number_p(x) || mpfr_cmp_ui (x, 0) != 0 || mpfr_sgn (x) > 0)
+  if (MPFR_NOTZERO (x) || MPFR_IS_POS (x))
     {
       printf ("x <- -0.0 failed after x=NaN\n");
       exit (1);

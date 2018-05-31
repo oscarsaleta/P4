@@ -102,6 +102,32 @@ fi
 
 ############################################################################
 
+# Note: In the source, ignore everything related to mini-gmp.
+srctests=({src,tests}/**/*.[ch]~*mini-gmp.*)
+#srctests=(`find src tests -name '*.[ch]' ! -name '*mini-gmp.*'`)
+
+# Detect the definition of reserved macro names.
+#
+# See ISO C 7.1.3 (Reserved identifiers) and 7.31 (Future library directions).
+# The definition of a reserved identifier is undefined behavior
+# (this includes the future library directions).
+#
+# Note: The following check may have false positives in some cases,
+# but this may also correspond to bad coding, in particular because
+# code moves. We assume that if a header is used somewhere, it may
+# be used everywhere in the MPFR code. This particularly concerns
+# macros defined via mpfr-impl.h or mpfr-test.h, which are included
+# in almost every tests.
+#
+# The case of EXP in src/mpfr-gmp.h is not really fixable due to the
+# possible use of gmp-impl.h, but we should make sure that <errno.h>
+# is never included in this case (see comment in the code).
+names='E[0-9A-Z]|FE_[A-Z]|LC_[A-Z]|(PRI|SCN)[Xa-z]|SIG_?[A-Z]|TIME_[A-Z]'
+msg='ISO C 7.1.3 (Reserved identifiers) and 7.31 (Future library directions).'
+grep -E "# *define ($names)" $srctests | \
+  grep -v 'src/mpfr-gmp.h:#define EXP(' | \
+  err-if-output --msg="$msg" "reserved identifiers (macro names)" cat
+
 # Detect the possible use of forbidden macros in mpfr.h, such as those
 # starting with "HAVE_" or "WANT_". Public macros defined by MPFR must
 # start with "MPFR_".
@@ -137,24 +163,30 @@ grconf '="`'
 grconf '[^a-z][ef]?grep[^a-z]'
 grconf '[^a-z]sed[^a-z]'
 
-# Note: In the source, ignore everything related to mini-gmp.
-srctests=({src,tests}/**/*.[ch]~*mini-gmp.*)
-#srctests=(`find src tests -name '*.[ch]' ! -name '*mini-gmp.*'`)
-
 err-if-output --msg="Use GMP_NUMB_BITS instead." \
   -t "GMP_LIMB_BITS" grep GMP_LIMB_BITS $srctests
 
 grep GMP_RND $srctests | err-if-output -t "GMP_RND*" grep -v '#define GMP_RND'
 
-# Note: GMP internals should not be used. There are some exceptions,
-# normally used only if WANT_GMP_INTERNALS is defined (this should be
-# checked manually).
-grep '__gmp[nz]_' $srctests | \
-  grep -v __gmpn_rootrem | \
-  grep -v __gmpn_sbpi1_divappr_q | \
-  grep -v __gmpn_invert_limb | \
-  grep -v __gmpn_rsblsh_n | \
-  err-if-output "GMP internals" cat
+# Use mpfr_div_2ui/mpfr_mul_2ui instead of mpfr_div_2exp/mpfr_mul_2exp.
+grep 'mpfr_\(div\|mul\)_2exp' {src,tests}/*.{c,h} |\
+  grep -v '^src/\(\(div\|mul\)_2exp\.c:\|mpf2mpfr\.h:#define mpf_\)' | \
+  grep -v '^src/mpfr\.h:\(__MPFR_DECLSPEC\|#define mpfr_..._2exp\)' | \
+  grep -v '^tests/\(reuse\|taway\)\.c: *test2ui (mpfr_..._2exp,' | \
+  err-if-output --msg="Use mpfr_div_2ui and mpfr_mul_2ui instead." \
+    "mpfr_div_2exp and mpfr_mul_2exp" cat
+
+# Note: GMP internals must not be used unless WANT_GMP_INTERNALS is defined.
+# The check below attempts to handle that, but this is a heuristic (it might
+# fail in case of nested #if's, but this is currently OK).
+for file in $srctests
+do
+  perl -e 'undef $/; $_ = <>;
+           s:/\*.*?\*/::sg;
+           s:# *(el)?if.*WANT_GMP_INTERNALS(.|\n)*?# *(else|endif)::g;
+           print' $file |
+    err-if-output -t "GMP internals in $file" grep '__gmp[nz]_'
+done
 
 err-if-output --msg="Use mpfr_limb_ptr and mpfr_limb_srcptr instead." \
   -t "mp_ptr and mp_srcptr" grep -E 'mp_(src)?ptr' $srctests
@@ -211,7 +243,8 @@ done
 # Even on platforms where it is available, the prototype
 # may not be included (e.g. with gcc -ansi), so that the
 # code may be compiled incorrectly.
-err-if-output -t "snprintf" grep '[^a-z_]snprintf *([^)]' $srctests
+grep '[^a-z_]snprintf *([^)]' $srctests | \
+  err-if-output -t "snprintf" grep -v '/\*.*[^a-z_]snprintf *([^)]'
 
 # Constant checking should use either MPFR_STAT_STATIC_ASSERT
 # or MPFR_ASSERTN(0) for not yet implemented corner cases.
@@ -238,7 +271,7 @@ err-if-output -t "Use MPFR_TMP_LIMBS_ALLOC" \
   grep 'MPFR_TMP_ALLOC.*\(BYTES_PER_MP_LIMB\|sizeof.*mp_limb_t\)' src/*.c
 
 # Use simple mp_limb_t constants: MPFR_LIMB_ZERO, MPFR_LIMB_ONE, etc.
-grep '(mp_limb_t) *-\?[01]' $srctests | grep -v '#define MPFR_LIMB_' | \
+grep '(mp_limb_t) *-\?[01][^0-9]' $srctests | grep -v '#define MPFR_LIMB_' | \
   grep -v 'MPFR_ASSERTN *(MPFR_MANT.*== *(mp_limb_t)' | \
   err-if-output -t "Use simple mp_limb_t constants" cat
 
@@ -288,6 +321,29 @@ do
     { echo "Missing '#include \"mpfr-impl.h\"' in $file?" && err=1 }
 done
 
+# Detect mpfr_mul with identical 2nd and 3rd arguments, which can be
+# replaced by mpfr_sqr. We exclude mul.c and sqr.c (which implement
+# these functions) because such a mpfr_mul can be used on purpose.
+err-if-output --msg='Use mpfr_sqr instead of mpfr_mul.' "mul/sqr" perl -ne \
+  '/__MPFR_DECLSPEC/ or ($u,$v) = /mpfr_mul *\([^,]*,([^,]*),([^,]*),/ and
+     do { $u =~ tr/ //d; $v =~ tr/ //d; $u eq $v and print "$ARGV: $_" }' \
+  src/*.[ch]~src/(mul|sqr).c
+
+# Re-seeding mpfr_rands in the tests is bad practice, as it would affect
+# later tests, defeating the purpose of GMP_CHECK_RANDOMIZE.
+err-if-output \
+  --msg='Do not re-seed mpfr_rands; use another gmp_randstate_t variable.' \
+  -t "mpfr_rands" grep --exclude=tests.c \
+    'gmp_randseed.*mpfr_rands' tests/*.{c,h}
+
+# "mpfr-impl.h" must not be included directly by the test programs.
+# Otherwise __MPFR_WITHIN_MPFR will be defined, yielding failures
+# under MS Windows with DLL.
+err-if-output \
+  --msg='Include "mpfr-test.h" instead of "mpfr-impl.h" to prevent __MPFR_WITHIN_MPFR from being defined.' \
+  -t "mpfr-impl.h inclusion" grep --exclude=mpfr-test.h \
+    '^ *# *include *"mpfr-impl.h"' tests/*.{c,h}
+
 # Check that the usual test programs call tests_start_mpfr and tests_end_mpfr.
 tprg=($(sed -n '/^check_PROGRAMS/,/[^\\]$/ {
   s/.*=//
@@ -299,10 +355,12 @@ for t in $tprg
 do
   [[ $t != mpf*_compat ]] || continue
   tc=tests/$t.c
-  for fn in tests_start_mpfr tests_end_mpfr
-  do
-    err-if-output "missing call to $fn in $tc" grep -q "$fn *();" $tc
-  done
+  if grep -q "main *(" $tc; then
+    for fn in tests_start_mpfr tests_end_mpfr
+    do
+      err-if-output "missing call to $fn in $tc" grep -q "$fn *();" $tc
+    done
+  fi
 done
 
 # mpfr_printf-like functions shouldn't be used in the tests,
@@ -371,22 +429,35 @@ autoconf minimal versions differ:
   acinclude.m4: $acv2
 EOF
 
+gmpv1=`sed -n 's/.*error "GMP \([0-9.]\+\) or .*/\1/p' configure.ac`
+gmpv2=`sed -n 's/.*AC_MSG_ERROR.*GMP \([0-9.]\+\) or .*/\1/p' configure.ac`
+gmpv3=`sed -n 's/.*MPFR requires GMP version \([0-9.]\+\) or .*/\1/p' INSTALL`
+gmpv4=`sed -n 's/.*GNU MP (version \([0-9.]\+\) or .*/\1/p' doc/mpfr.texi`
+[[ $gmpv1 == $gmpv2 && $gmpv1 == $gmpv3 && $gmpv1 == $gmpv4 ]] ||
+  { cat <<EOF && err=1 }
+Minimal GMP version mismatch:
+  configure.ac 1: $gmpv1
+  configure.ac 2: $gmpv2
+  INSTALL:        $gmpv3
+  doc/mpfr.texi:  $gmpv4
+EOF
+
 # In case of problems, one can also skip files or use "grep -v"...
 # In particular, skip the openout.* files, which are created by "make pdf"
 # (they are in the doc/mpfr.t2p/mpfr.t2d/pdf/check_recorder directory, and
 # unfortunately codespell can't skip directories such as mpfr.t2p).
 if which codespell > /dev/null 2> /dev/null; then
-  err-if-output "codespell" codespell ${term:+--enable-colors} -q3 -S \
-    'algorithm2e.sty,algorithms.tex,texinfo.tex,openout.*' \
+  err-if-output "codespell" codespell ${term:+--enable-colors} \
+    -q3 -I codespell.ignore \
+    -S 'algorithm2e.sty,algorithms.*,mpfr.t2p,texinfo.tex,openout.*' \
     AUTHORS BUGS INSTALL NEWS README TODO doc examples $srctests
 else
   echo "Warning! codespell is not installed. Cannot check spelling." >&2
 fi
 
 err-if-output "ck-clz_tab" tools/ck-clz_tab
-
-cd $oldpwd
-err-if-output "check_inits_clears" $0:h/check_inits_clears
+err-if-output "ck-inits-clears" tools/ck-inits-clears
+err-if-output "ck-version-info" tools/ck-version-info
 
 ############################################################################
 

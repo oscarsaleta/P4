@@ -1,7 +1,7 @@
 /* mpfr_get_float128 -- convert a multiple precision floating-point
-                        number to a __float128 number
+                        number to a _Float128 number
 
-Copyright 2012-2017 Free Software Foundation, Inc.
+Copyright 2012-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -26,45 +26,70 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #ifdef MPFR_WANT_FLOAT128
 
 /* generic code */
-__float128
+_Float128
 mpfr_get_float128 (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
 {
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))
-    return (__float128) mpfr_get_d (x, rnd_mode);
+    return (_Float128) mpfr_get_d (x, rnd_mode);
   else /* now x is a normal non-zero number */
     {
-      __float128 r; /* result */
-      __float128 m;
-      double s; /* part of result */
+      _Float128 r; /* result */
+      _Float128 m;
+      mpfr_exp_t e;  /* exponent of x (before rounding) */
       mpfr_exp_t sh; /* exponent shift, so that x/2^sh is in the double range */
-      mpfr_t y, z;
+      const int emin = -16381;
+      const int esub = emin - IEEE_FLOAT128_MANT_DIG;
       int sign;
 
-      /* first round x to the target __float128 precision, so that
-         all subsequent operations are exact (this avoids double rounding
-         problems) */
-      mpfr_init2 (y, IEEE_FLOAT128_MANT_DIG);
-      mpfr_init2 (z, IEEE_FLOAT128_MANT_DIG);
+      sign = MPFR_SIGN (x);
+      e = MPFR_GET_EXP (x);
 
-      mpfr_set (y, x, rnd_mode);
-      sh = MPFR_GET_EXP (y);
-      sign = MPFR_SIGN (y);
-      MPFR_SET_EXP (y, 0);
-      MPFR_SET_POS (y);
-
-      r = 0.0;
-      do
+      if (MPFR_UNLIKELY (e <= esub))
         {
-          s = mpfr_get_d (y, MPFR_RNDN); /* high part of y */
-          r += (__float128) s;
-          mpfr_set_d (z, s, MPFR_RNDN);  /* exact */
-          mpfr_sub (y, y, z, MPFR_RNDN); /* exact */
+          if (MPFR_IS_LIKE_RNDZ (rnd_mode, sign < 0) ||
+              (rnd_mode == MPFR_RNDN && (e < esub || mpfr_powerof2_raw (x))))
+            return sign < 0 ? -0.0 : 0.0;
+          r = 1.0;
+          sh = esub;
         }
-      while (MPFR_NOTZERO (y));
+      else
+        {
+          mpfr_t y;
+          mp_limb_t *yp;
+          int prec, i;  /* small enough to fit in an int */
+          MPFR_SAVE_EXPO_DECL (expo);
 
-      mpfr_clear (z);
-      mpfr_clear (y);
+          MPFR_SAVE_EXPO_MARK (expo);
+
+          /* First round x to the target _Float128 precision, taking the
+             reduced precision of the subnormals into account, so that all
+             subsequent operations are exact (this avoids double rounding
+             problems). */
+          prec = e < emin ? e - esub : IEEE_FLOAT128_MANT_DIG;
+          MPFR_ASSERTD (prec >= MPFR_PREC_MIN);
+          mpfr_init2 (y, prec);
+
+          mpfr_set (y, x, rnd_mode);
+          sh = MPFR_GET_EXP (y);
+          MPFR_SET_EXP (y, 0);
+          MPFR_SET_POS (y);
+          yp = MPFR_MANT (y);
+
+          r = 0.0;
+          for (i = 0; i < MPFR_LIMB_SIZE (y); i++)
+            {
+              /* Note: MPFR_LIMB_MAX is avoided below as it might not
+                 always work if GMP_NUMB_BITS > IEEE_FLOAT128_MANT_DIG.
+                 MPFR_LIMB_HIGHBIT has the advantage to fit on 1 bit. */
+              r += yp[i];
+              r *= 1 / (2 * (_Float128) MPFR_LIMB_HIGHBIT);
+            }
+
+          mpfr_clear (y);
+
+          MPFR_SAVE_EXPO_FREE (expo);
+        }
 
       /* we now have to multiply r by 2^sh */
       MPFR_ASSERTD (r > 0);

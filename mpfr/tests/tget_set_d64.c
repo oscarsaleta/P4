@@ -1,6 +1,6 @@
 /* Test file for mpfr_get_decimal64 and mpfr_set_decimal64.
 
-Copyright 2006-2017 Free Software Foundation, Inc.
+Copyright 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -20,6 +20,7 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
 http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
+/* Needed due to the test on MPFR_WANT_DECIMAL_FLOATS */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -31,8 +32,6 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #ifndef DEC64_MAX
 # define DEC64_MAX 9.999999999999999E384dd
 #endif
-
-/* #define DEBUG */
 
 #if _MPFR_IEEE_FLOATS
 static void
@@ -67,17 +66,17 @@ print_decimal64 (_Decimal64 d)
 }
 #endif /* _MPFR_IEEE_FLOATS */
 
-#define ERR_MISC(V)                                         \
+#define PRINT_ERR_MISC(V)                                   \
   do                                                        \
     {                                                       \
-      printf ("Error in check_misc for " V ".\n");          \
+      printf ("Error in check_misc for %s.\n", V);          \
       printf ("  mpfr_get_decimal64() returned: ");         \
       print_decimal64 (d);                                  \
       printf ("  mpfr_set_decimal64() set x to: ");         \
       mpfr_out_str (stdout, 10, 0, x, MPFR_RNDN);           \
       printf (" approx.\n    = ");                          \
       mpfr_dump (x);                                        \
-      err = 1;                                              \
+      exit (1);                                             \
     }                                                       \
  while (0)
 
@@ -86,11 +85,11 @@ check_misc (void)
 {
   mpfr_t  x, y;
   _Decimal64 d;
-  int err = 0;
 
   mpfr_init2 (x, 123);
   mpfr_init2 (y, 123);
 
+#if !defined(MPFR_ERRDIVZERO)
   mpfr_set_nan (x);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 1, MPFR_RNDZ);
@@ -102,21 +101,22 @@ check_misc (void)
   mpfr_set_ui (x, 1, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (! mpfr_inf_p (x) || MPFR_IS_NEG (x))
-    ERR_MISC ("+Inf");
+    PRINT_ERR_MISC ("+Inf");
 
   mpfr_set_inf (x, -1);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 1, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (! mpfr_inf_p (x) || MPFR_IS_POS (x))
-    ERR_MISC ("-Inf");
+    PRINT_ERR_MISC ("-Inf");
+#endif
 
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 1, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (MPFR_NOTZERO (x) || MPFR_IS_NEG (x))
-    ERR_MISC ("+0");
+    PRINT_ERR_MISC ("+0");
 
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_neg (x, x, MPFR_RNDZ);
@@ -124,35 +124,35 @@ check_misc (void)
   mpfr_set_ui (x, 1, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (MPFR_NOTZERO (x) || MPFR_IS_POS (x))
-    ERR_MISC ("-0");
+    PRINT_ERR_MISC ("-0");
 
   mpfr_set_ui (x, 1, MPFR_RNDZ);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (mpfr_cmp_ui (x, 1) != 0)
-    ERR_MISC ("+1");
+    PRINT_ERR_MISC ("+1");
 
   mpfr_set_si (x, -1, MPFR_RNDZ);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (mpfr_cmp_si (x, -1) != 0)
-    ERR_MISC ("-1");
+    PRINT_ERR_MISC ("-1");
 
   mpfr_set_ui (x, 2, MPFR_RNDZ);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (mpfr_cmp_ui (x, 2) != 0)
-    ERR_MISC ("2");
+    PRINT_ERR_MISC ("2");
 
   mpfr_set_ui (x, 99, MPFR_RNDZ);
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (mpfr_cmp_ui (x, 99) != 0)
-    ERR_MISC ("99");
+    PRINT_ERR_MISC ("99");
 
   mpfr_set_str (x, "9999999999999999", 10, MPFR_RNDZ);
   mpfr_set (y, x, MPFR_RNDZ);
@@ -160,7 +160,7 @@ check_misc (void)
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDZ);
   if (! mpfr_equal_p (x, y))
-    ERR_MISC ("9999999999999999");
+    PRINT_ERR_MISC ("9999999999999999");
 
   /* smallest normal number */
   mpfr_set_str (x, "1E-383", 10, MPFR_RNDU);
@@ -169,7 +169,7 @@ check_misc (void)
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDU);
   if (! mpfr_equal_p (x, y))
-    ERR_MISC ("1E-383");
+    PRINT_ERR_MISC ("1E-383");
 
   /* smallest subnormal number */
   mpfr_set_str (x, "1E-398", 10, MPFR_RNDU);
@@ -178,7 +178,48 @@ check_misc (void)
   mpfr_set_ui (x, 0, MPFR_RNDZ);
   mpfr_set_decimal64 (x, d, MPFR_RNDU);
   if (! mpfr_equal_p (x, y))
-    ERR_MISC ("1E-398");
+    PRINT_ERR_MISC ("1E-398");
+
+  /* exercise case e < -1323, i.e., x < 0.5*2^(-1323) */
+  mpfr_set_ui_2exp (x, 1, -1324, MPFR_RNDN);
+  mpfr_nextbelow (x);
+  d = mpfr_get_decimal64 (x, MPFR_RNDZ);
+  /* d should equal +0 */
+  mpfr_set_decimal64 (x, d, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (x) && mpfr_signbit (x) == 0);
+  /* check RNDA */
+  mpfr_set_ui_2exp (x, 1, -1324, MPFR_RNDN);
+  mpfr_nextbelow (x);
+  d = mpfr_get_decimal64 (x, MPFR_RNDA);
+  /* d should equal 1E-398 */
+  mpfr_set_decimal64 (x, d, MPFR_RNDN);
+  mpfr_set_str (y, "1E-398", 10, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_equal_p (x, y));
+  /* check negative number */
+  mpfr_set_ui_2exp (x, 1, -1324, MPFR_RNDN);
+  mpfr_nextbelow (x);
+  mpfr_neg (x, x, MPFR_RNDN);
+  d = mpfr_get_decimal64 (x, MPFR_RNDZ);
+  /* d should equal -0 */
+  mpfr_set_decimal64 (x, d, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (x) && mpfr_signbit (x) == 1);
+
+  /* exercise case e10 < -397 */
+  mpfr_set_ui_2exp (x, 1, -1323, MPFR_RNDN);
+  d = mpfr_get_decimal64 (x, MPFR_RNDZ);
+  mpfr_set_decimal64 (x, d, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_zero_p (x) && mpfr_signbit (x) == 0);
+  mpfr_set_ui_2exp (x, 1, -1323, MPFR_RNDN);
+  d = mpfr_get_decimal64 (x, MPFR_RNDU);
+  mpfr_set_str (y, "1E-398", 10, MPFR_RNDN);
+  mpfr_set_decimal64 (x, d, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_equal_p (x, y));
+  mpfr_set_ui_2exp (x, 1, -1323, MPFR_RNDN);
+  /* 2^(-1323) = 5.46154776930125e-399 thus should be rounded to 1E-398 */
+  d = mpfr_get_decimal64 (x, MPFR_RNDN);
+  mpfr_set_str (y, "1E-398", 10, MPFR_RNDN);
+  mpfr_set_decimal64 (x, d, MPFR_RNDN);
+  MPFR_ASSERTN(mpfr_equal_p (x, y));
 
   /* subnormal number with exponent change when we round back
      from 16 digits to 1 digit */
@@ -188,7 +229,7 @@ check_misc (void)
   mpfr_set_decimal64 (x, d, MPFR_RNDD);
   mpfr_set_str (y, "1E-397", 10, MPFR_RNDN);
   if (! mpfr_equal_p (x, y))
-    ERR_MISC ("9.9E-398");
+    PRINT_ERR_MISC ("9.9E-398");
 
   /* largest number */
   mpfr_set_str (x, "9.999999999999999E384", 10, MPFR_RNDZ);
@@ -199,14 +240,14 @@ check_misc (void)
       mpfr_set_ui (x, 0, MPFR_RNDZ);
       mpfr_set_decimal64 (x, d, MPFR_RNDZ);
       if (! mpfr_equal_p (x, y))
-        ERR_MISC ("DEC64_MAX");
+        PRINT_ERR_MISC ("DEC64_MAX");
     }
   else
     {
       printf ("Error in check_misc for DEC64_MAX.\n");
       printf ("  mpfr_get_decimal64() returned: ");
       print_decimal64 (d);
-      err = 1;
+      exit (1);
     }
 
   mpfr_set_str (x, "-9.999999999999999E384", 10, MPFR_RNDZ);
@@ -217,14 +258,14 @@ check_misc (void)
       mpfr_set_ui (x, 0, MPFR_RNDZ);
       mpfr_set_decimal64 (x, d, MPFR_RNDZ);
       if (! mpfr_equal_p (x, y))
-        ERR_MISC ("-DEC64_MAX");
+        PRINT_ERR_MISC ("-DEC64_MAX");
     }
   else
     {
       printf ("Error in check_misc for -DEC64_MAX.\n");
       printf ("  mpfr_get_decimal64() returned: ");
       print_decimal64 (d);
-      err = 1;
+      exit (1);
     }
 
   mpfr_set_prec (x, 53);
@@ -235,13 +276,10 @@ check_misc (void)
   d = mpfr_get_decimal64 (x, MPFR_RNDZ);
   mpfr_set_decimal64 (y, d, MPFR_RNDU);
   if (! mpfr_equal_p (x, y))
-    ERR_MISC ("DEC64_MAX (2)");
+    PRINT_ERR_MISC ("DEC64_MAX (2)");
 
   mpfr_clear (x);
   mpfr_clear (y);
-
-  if (err)
-    exit (1);
 }
 
 static void
@@ -260,7 +298,7 @@ check_random (void)
       /* the normal decimal64 range contains [2^(-1272), 2^1278] */
       mpfr_mul_2si (x, x, (i % 2550) - 1272, MPFR_RNDN);
       if (mpfr_get_exp (x) <= -1272)
-        mpfr_mul_2exp (x, x, -1271 - mpfr_get_exp (x), MPFR_RNDN);
+        mpfr_mul_2ui (x, x, -1271 - mpfr_get_exp (x), MPFR_RNDN);
       d = mpfr_get_decimal64 (x, MPFR_RNDN);
       mpfr_set_decimal64 (y, d, MPFR_RNDN);
       if (mpfr_cmp (x, y) != 0)
@@ -387,7 +425,7 @@ main (void)
   tests_start_mpfr ();
   mpfr_test_init ();
 
-#ifdef DEBUG
+#ifdef MPFR_DEBUG
 #ifdef DPD_FORMAT
   printf ("Using DPD format\n");
 #else
@@ -397,7 +435,9 @@ main (void)
   check_misc ();
   check_random ();
   check_native ();
+#if !defined(MPFR_ERRDIVZERO)
   check_overflow ();
+#endif
   check_tiny ();
 
   tests_end_mpfr ();

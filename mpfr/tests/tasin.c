@@ -1,6 +1,6 @@
 /* Test file for mpfr_asin.
 
-Copyright 2001-2017 Free Software Foundation, Inc.
+Copyright 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -79,14 +79,14 @@ special (void)
   /* asin(+/-0) = +/-0 */
   mpfr_set_ui (x, 0, MPFR_RNDN);
   mpfr_asin (y, x, MPFR_RNDN);
-  if (mpfr_cmp_ui (y, 0) || mpfr_sgn (y) < 0)
+  if (MPFR_NOTZERO (y) || MPFR_IS_NEG (y))
     {
       printf ("Error: mpfr_asin (+0) <> +0\n");
       exit (1);
     }
   mpfr_neg (x, x, MPFR_RNDN);
   mpfr_asin (y, x, MPFR_RNDN);
-  if (mpfr_cmp_ui (y, 0) || mpfr_sgn (y) > 0)
+  if (MPFR_NOTZERO (y) || MPFR_IS_POS (y))
     {
       printf ("Error: mpfr_asin (-0) <> -0\n");
       exit (1);
@@ -98,7 +98,7 @@ special (void)
       mpfr_set_ui (x, 1, MPFR_RNDN); /* exact */
       mpfr_asin (y, x, (mpfr_rnd_t) r);
       mpfr_const_pi (x, (mpfr_rnd_t) r);
-      mpfr_div_2exp (x, x, 1, MPFR_RNDN); /* exact */
+      mpfr_div_2ui (x, x, 1, MPFR_RNDN); /* exact */
       if (mpfr_cmp (x, y))
         {
           printf ("Error: asin(1) != Pi/2 for rnd=%s\n",
@@ -114,7 +114,7 @@ special (void)
       mpfr_asin (y, x, (mpfr_rnd_t) r);
       mpfr_const_pi (x, MPFR_INVERT_RND((mpfr_rnd_t) r));
       mpfr_neg (x, x, MPFR_RNDN); /* exact */
-      mpfr_div_2exp (x, x, 1, MPFR_RNDN); /* exact */
+      mpfr_div_2ui (x, x, 1, MPFR_RNDN); /* exact */
       if (mpfr_cmp (x, y))
         {
           printf ("Error: asin(-1) != -Pi/2 for rnd=%s\n",
@@ -242,7 +242,7 @@ reduced_expo_range (void)
   ex_inex = -1;
   ex_flags = MPFR_FLAGS_INEXACT;
 
-  if (SIGN (inex) != ex_inex || flags != ex_flags ||
+  if (VSIGN (inex) != ex_inex || flags != ex_flags ||
       ! mpfr_equal_p (y, ex_y))
     {
       printf ("Error in reduced_expo_range\non x = ");
@@ -252,7 +252,7 @@ reduced_expo_range (void)
       printf ("\n         inex = %d, flags = %u\n", ex_inex, ex_flags);
       printf ("Got      y = ");
       mpfr_out_str (stdout, 2, 0, y, MPFR_RNDN);
-      printf ("\n         inex = %d, flags = %u\n", SIGN (inex), flags);
+      printf ("\n         inex = %d, flags = %u\n", VSIGN (inex), flags);
       exit (1);
     }
 

@@ -1,6 +1,6 @@
 /* talloc-cache  -- test file concerning memory allocation and cache
 
-Copyright 2016-2017 Free Software Foundation, Inc.
+Copyright 2016-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -20,13 +20,6 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
 http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
-/* This test program is for temporary testing only. It is not in the
-   usual test suite (not in check_PROGRAMS from Makefile.am).
-   In the 3.1 branch, it crashes before r9467, and r9467 fixes the crash
-   (among other issues).
-   In the trunk, it crashes, which is not expected with the current code.
-*/
-
 #include <stdlib.h>
 
 #include "mpfr-test.h"
@@ -34,60 +27,94 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #define A 4096
 #define I 10000
 
+/* Variable v is used to check that the allocator is the current GMP one.
+   The assertions on v in would typically fail with MPFR 3.1.6, where the
+   allocation functions are memorized the first time they are seen. */
+static int v = 0;
+
 static void *
 my_alloc1 (size_t s)
 {
-return malloc (s);
+  void *p = malloc (s + A);
+  MPFR_ASSERTN (v == 1);
+  *(int *) p = 1;
+  return (void *) ((char *) p + A);
 }
 
 static void *
 my_realloc1 (void *p, size_t t, size_t s)
 {
-return realloc (p, s);
+  p = (void *) ((char *) p - A);
+  MPFR_ASSERTN (v == 1);
+  MPFR_ASSERTN (*(int *) p == 1);
+  return (void *) ((char *) realloc (p, s + A) + A);
 }
 
 static void
 my_free1 (void *p, size_t t)
 {
-  return free (p);
+  p = (void *) ((char *) p - A);
+  MPFR_ASSERTN (v == 1);
+  MPFR_ASSERTN (*(int *) p == 1);
+  free (p);
 }
 
 static void *
 my_alloc2 (size_t s)
 {
-  return (void *) ((char *) malloc (s + A) + A);
+  void *p = malloc (s + A);
+  MPFR_ASSERTN (v == 2);
+  *(int *) p = 2;
+  return (void *) ((char *) p + A);
 }
 
 static void *
 my_realloc2 (void *p, size_t t, size_t s)
 {
-  return (void *) ((char *) realloc ((char *) p - A, s + A) + A);
+  p = (void *) ((char *) p - A);
+  MPFR_ASSERTN (v == 2);
+  MPFR_ASSERTN (*(int *) p == 2);
+  return (void *) ((char *) realloc (p, s + A) + A);
 }
 
 static void
 my_free2 (void *p, size_t t)
 {
-  return free ((char *) p - A);
+  p = (void *) ((char *) p - A);
+  MPFR_ASSERTN (v == 2);
+  MPFR_ASSERTN (*(int *) p == 2);
+  free (p);
 }
 
 int
 main (void)
 {
   mpfr_t x;
+  int err;
 
+  tests_memory_disabled = 2;
+  tests_start_mpfr ();
+
+  err = mpfr_mp_memory_cleanup ();
+  MPFR_ASSERTN (err == 0);
   mp_set_memory_functions (my_alloc1, my_realloc1, my_free1);
+  v = 1;
 
   mpfr_init2 (x, 53);
   mpfr_set_ui (x, I, MPFR_RNDN);
   mpfr_sin (x, x, MPFR_RNDN);
   mpfr_clear (x);
 
+  err = mpfr_mp_memory_cleanup ();
+  MPFR_ASSERTN (err == 0);
   mp_set_memory_functions (my_alloc2, my_realloc2, my_free2);
+  v = 2;
 
   mpfr_init2 (x, 1000);
   mpfr_set_ui (x, I, MPFR_RNDN);
   mpfr_sin (x, x, MPFR_RNDN);
   mpfr_clear (x);
 
+  tests_end_mpfr ();
   return 0;
 }

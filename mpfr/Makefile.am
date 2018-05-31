@@ -1,4 +1,4 @@
-# Copyright 2000-2017 Free Software Foundation, Inc.
+# Copyright 2000-2018 Free Software Foundation, Inc.
 # This Makefile.am is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -27,9 +27,9 @@ nobase_dist_doc_DATA = AUTHORS BUGS COPYING COPYING.LESSER NEWS TODO \
   examples/ReadMe examples/divworst.c examples/rndo-add.c examples/sample.c \
   examples/version.c examples/can_round.c
 
-EXTRA_DIST = PATCHES VERSION doc/check-typography tools/ck-clz_tab \
-  tools/ck-copyright-notice tools/ck-news tools/ck-version-info \
-  tools/get_patches.sh \
+EXTRA_DIST = PATCHES VERSION doc/README.dev doc/check-typography \
+  tools/check_mparam.c tools/ck-clz_tab tools/ck-copyright-notice \
+  tools/ck-mparam tools/ck-news tools/ck-version-info tools/get_patches.sh \
   $(DATAFILES)
 
 bench:
@@ -41,9 +41,26 @@ bench:
 #   up-to-date. Note: this is a heuristic, to detect some mistakes.
 # * Check that copyright notices exist and appear to be correct.
 # * Check the NEWS file.
+# * Check the __clz_tab sizes.
+# * Check the mparam.h files.
+# * Check typography in mpfr.texi (Texinfo rules).
 dist-hook:
 	cd $(srcdir) && tools/ck-version-info
 	cd $(srcdir) && tools/ck-copyright-notice
 	cd $(srcdir) && tools/ck-news
 	cd $(srcdir) && tools/ck-clz_tab
+	cd $(srcdir) && tools/ck-mparam
 	cd $(srcdir)/doc && ./check-typography
+
+# Check that MPFR does not use GMP internal symbols. Of course, do not run
+# this rule if you use --with-gmp-build or --enable-gmp-internals.
+# This test does nothing if no libmpfr.so is generated.
+check-gmp-symbols:
+	cd src && $(MAKE) check-gmp-symbols
+
+# Check that MPFR does not define symbols with a GMP reserved prefix.
+# This test does nothing if no libmpfr.so is generated.
+check-exported-symbols:
+	cd src && $(MAKE) check-exported-symbols
+
+.PHONY: check-gmp-symbols check-exported-symbols

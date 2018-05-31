@@ -1,6 +1,6 @@
 /* MPFR internal header related to intmax_t.
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -47,9 +47,24 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 # include <inttypes.h>
 # define MPFR_USE_INTMAX_T
 #endif
+
 #if HAVE_STDINT_H
 # include <stdint.h>
 # define MPFR_USE_INTMAX_T
+#endif
+
+/* Largest signed integer type available for the MPFR build. */
+#if defined(MPFR_USE_INTMAX_T)
+typedef intmax_t mpfr_intmax_t;
+typedef uintmax_t mpfr_uintmax_t;
+#elif defined(HAVE_LONG_LONG)
+typedef long long mpfr_intmax_t;
+typedef unsigned long long mpfr_uintmax_t;
+# define MPFR_INTMAX_MAX LLONG_MAX
+#else
+typedef long mpfr_intmax_t;
+typedef unsigned long mpfr_uintmax_t;
+# define MPFR_INTMAX_MAX LONG_MAX
 #endif
 
 #endif

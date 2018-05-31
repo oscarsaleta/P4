@@ -1,6 +1,6 @@
 /* Utilities for MPFR developers, not exported.
 
-Copyright 1999-2017 Free Software Foundation, Inc.
+Copyright 1999-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -48,6 +48,11 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #else
 # include <stdio.h>
 # include <string.h>
+#endif
+
+/* Since <stdio.h> (<cstdio> for C++) is unconditionally included... */
+#ifndef MPFR_DONT_USE_FILE
+# define MPFR_USE_FILE
 #endif
 
 #include <stdlib.h>
@@ -449,7 +454,9 @@ __MPFR_DECLSPEC extern const mpfr_t __gmpfr_const_log2_RNDU;
    MPFR_DBGRES(assignment): to be used when the result is tested only
      in an MPFR_ASSERTD expression (in order to avoid a warning, e.g.
      with GCC's -Wunused-but-set-variable, in non-debug mode).
- */
+   Note: Evaluating expr might yield side effects, but such side effects
+   must not change the results (except by yielding an assertion failure).
+*/
 #ifndef MPFR_WANT_ASSERT
 # define MPFR_WANT_ASSERT 0
 #endif
@@ -459,7 +466,19 @@ __MPFR_DECLSPEC extern const mpfr_t __gmpfr_const_log2_RNDU;
 # define MPFR_ASSERTN(expr)  MPFR_ASSUME (expr)
 #else
 # define MPFR_ASSERTN(expr)  \
-  ((void) ((MPFR_LIKELY(expr)) || (ASSERT_FAIL(expr),0)))
+  ((void) ((MPFR_LIKELY(expr)) || (ASSERT_FAIL(expr),MPFR_ASSUME(expr),0)))
+/* Some explanations: mpfr_assert_fail is not marked as "no return",
+   so that ((void) ((MPFR_LIKELY(expr)) || (ASSERT_FAIL(expr),0)))
+   cannot be a way to tell the compiler that after this code, expr is
+   necessarily true. The MPFR_ASSUME(expr) is a way to tell the compiler
+   that if expr is false, then ASSERT_FAIL(expr) does not return
+   (otherwise they would be a contradiction / UB when MPFR_ASSUME(expr)
+   is reached). Such information is useful to avoid warnings like those
+   from -Wmaybe-uninitialized, e.g. in tests/turandom.c r11663 on t[0]
+   from "mpfr_equal_p (y, t[0])".
+   TODO: Remove the MPFR_ASSUME(expr) once mpfr_assert_fail is marked as
+   "no return".
+ */
 #endif
 
 #if MPFR_WANT_ASSERT > 0
@@ -477,10 +496,18 @@ __MPFR_DECLSPEC extern const mpfr_t __gmpfr_const_log2_RNDU;
    __builtin_unreachable has been introduced in GCC 4.5 but it works
    fine since 4.8 only (before it may generate unoptimized code if there
    are more than one decision).
-   The use of __builtin_constant_p is to avoid calling any function in
-   assertions: it detects if the expression can be reduced to a constant,
-   i.e. if the expression has any other effect than being false or true
-   which is wrong if there is any function call.
+   Note:
+     The goal of MPFR_ASSUME() is to allow the compiler to optimize even
+     more. Thus we need to make sure that its use in MPFR will never yield
+     code generation. Since MPFR_ASSUME() may be used by MPFR_ASSERTN()
+     and MPFR_ASSERTD(), whose expression might have side effects, we need
+     to make sure that the expression x is not evaluated in such a case.
+     This is done with __builtin_constant_p (!!(x) || !(x)), whose value
+     is 0 if x has side effects, and normally 1 if the compiler knows that
+     x has no side effects (since here, it can deduce that !!(x) || !(x)
+     is equivalent to the constant 1). In the former case, MPFR_ASSUME(x)
+     will give (void) 0, and in the latter case, it will give:
+       (x) ? (void) 0 : __builtin_unreachable()
    In the development code, it is better to use MPFR_ASSERTD than
    MPFR_ASSUME, since it'll check if the condition is true in debug
    build.
@@ -554,8 +581,8 @@ __MPFR_DECLSPEC extern const mpfr_t __gmpfr_const_log2_RNDU;
 # endif
 #endif
 
-/* With -DXDEBUG, exercise non IEEE floats */
-#ifdef XDEBUG
+/* With -DMPFR_DISABLE_IEEE_FLOATS, exercise non IEEE floats */
+#ifdef MPFR_DISABLE_IEEE_FLOATS
 # ifdef _MPFR_IEEE_FLOATS
 #  undef _MPFR_IEEE_FLOATS
 # endif
@@ -661,8 +688,6 @@ static double double_zero = 0.0;
 # define MPFR_LDBL_MANT_DIG \
   (sizeof(long double)*GMP_NUMB_BITS/sizeof(mp_limb_t))
 #endif
-#define MPFR_LIMBS_PER_LONG_DOUBLE \
-  ((sizeof(long double)-1)/sizeof(mp_limb_t)+1)
 
 /* LONGDOUBLE_NAN_ACTION executes the code "action" if x is a NaN. */
 
@@ -739,7 +764,7 @@ __MPFR_DECLSPEC long double
 # endif
 #endif
 
-/* Some special case for IEEE_EXT Litle Endian */
+/* Some special case for IEEE_EXT Little Endian */
 #if HAVE_LDOUBLE_IEEE_EXT_LITTLE
 
 typedef union {
@@ -753,18 +778,13 @@ typedef union {
   } s;
 } mpfr_long_double_t;
 
-/* #undef MPFR_LDBL_MANT_DIG */
-#undef MPFR_LIMBS_PER_LONG_DOUBLE
-/* #define MPFR_LDBL_MANT_DIG   64 */
-#define MPFR_LIMBS_PER_LONG_DOUBLE ((64-1)/GMP_NUMB_BITS+1)
-
-#endif
+#endif /* HAVE_LDOUBLE_IEEE_EXT_LITTLE */
 
 #endif  /* long double macros and typedef */
 
 
 /******************************************************
- ****************  __float128 support  ****************
+ *****************  _Float128 support  ****************
  ******************************************************/
 
 /* This is standardized by IEEE 754-2008. */
@@ -929,6 +949,11 @@ typedef uintmax_t mpfr_ueexp_t;
   (MPFR_LIMB_MSB (MPFR_MANT(x)[MPFR_LAST_LIMB(x)]) != 0)
 
 #define MPFR_IS_FP(x)       (!MPFR_IS_NAN(x) && !MPFR_IS_INF(x))
+/* Note: contrary to the MPFR_IS_PURE_*(x) macros, the MPFR_IS_SINGULAR*(x)
+   macros may be used even when x is being constructed, i.e. its exponent
+   field is already set (possibly out-of-range), but its significand field
+   may still contain arbitrary data. Thus MPFR_IS_PURE_FP(x) is not always
+   equivalent to !MPFR_IS_SINGULAR(x); see the code below. */
 #define MPFR_IS_SINGULAR(x) (MPFR_EXP(x) <= MPFR_EXP_INF)
 #define MPFR_IS_SINGULAR_OR_UBF(x) (MPFR_EXP(x) <= MPFR_EXP_UBF)
 #define MPFR_IS_PURE_FP(x)                          \
@@ -1002,8 +1027,9 @@ typedef uintmax_t mpfr_ueexp_t;
   (I) != 0 ? ((__gmpfr_flags |= MPFR_FLAGS_INEXACT), (I)) : 0
 #define MPFR_RET_NAN return (__gmpfr_flags |= MPFR_FLAGS_NAN), 0
 
-#define SIGN(I) ((I) < 0 ? -1 : (I) > 0)
-#define SAME_SIGN(I1,I2) (SIGN (I1) == SIGN (I2))
+/* Sign of a native value. */
+#define VSIGN(I) ((I) < 0 ? -1 : (I) > 0)
+#define SAME_SIGN(I1,I2) (VSIGN (I1) == VSIGN (I2))
 
 
 /******************************************************
@@ -1011,10 +1037,8 @@ typedef uintmax_t mpfr_ueexp_t;
  ******************************************************/
 
 /* MPFR_RND_MAX gives the number of supported rounding modes by all functions.
- * Once faithful rounding is implemented, MPFR_RNDA should be changed
- * to MPFR_RNDF. But this will also require more changes in the tests.
  */
-#define MPFR_RND_MAX ((mpfr_rnd_t)((MPFR_RNDA)+1))
+#define MPFR_RND_MAX ((mpfr_rnd_t)((MPFR_RNDF)+1))
 
 /* We want to test this :
  *  (rnd == MPFR_RNDU && test) || (rnd == RNDD && !test)
@@ -1052,7 +1076,8 @@ typedef uintmax_t mpfr_ueexp_t;
   } while (0)
 
 /* Transform RNDU and RNDD to RNDZ or RNDA according to sign,
-   leave the other modes unchanged */
+   leave the other modes unchanged.
+   Usage: MPFR_UPDATE2_RND_MODE (rnd_mode, MPFR_SIGN (x)) */
 #define MPFR_UPDATE2_RND_MODE(rnd, sign)                       \
   do {                                                         \
     if (rnd == MPFR_RNDU)                                      \
@@ -1178,8 +1203,9 @@ typedef union { mp_size_t s; mp_limb_t l; } mpfr_size_limb_t;
    Since one does not know what is behind the associated typedef name,
    one cannot provide an explicit initialization for such a type. Two
    possible solutions:
-     1. Use a union whose first member is a char and initialize the
-        union with: { 0 }
+     1. Encapsulate the type in a structure or a union and use the
+        universal zero initializer: { 0 }
+        But: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80454
      2. Use designated initializers when supported. But this needs a
         configure test.
 */
@@ -1203,6 +1229,17 @@ typedef union { mp_size_t s; mp_limb_t l; } mpfr_size_limb_t;
 /******************************************************
  ******************  Useful macros  *******************
  ******************************************************/
+
+/* The MAX, MIN and ABS macros may already be defined if gmp-impl.h has
+   been included. They have the same semantics as in gmp-impl.h, but the
+   expressions may be slightly different. So, it's better to undefine
+   them first, as required by the ISO C standard. */
+#undef MAX
+#undef MIN
+#undef ABS
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define ABS(x) (((x)>0) ? (x) : -(x))
 
 /* Theses macros help the compiler to determine if a test is
    likely or unlikely. The !! is necessary in case x is larger
@@ -1365,16 +1402,6 @@ do {                                                                  \
     }                                                                 \
   while (0)
 
-/* Use it only for debug reasons */
-/*   MPFR_TRACE (operation) : execute operation iff DEBUG flag is set */
-/*   MPFR_DUMP (x) : print x (a mpfr_t) on stdout */
-#ifdef DEBUG
-# define MPFR_TRACE(x) x
-#else
-# define MPFR_TRACE(x) (void) 0
-#endif
-#define MPFR_DUMP(x) ( printf(#x"="), mpfr_dump(x) )
-
 /* Test if X (positive) is a power of 2 */
 #define IS_POW2(X) (((X) & ((X) - 1)) == 0)
 #define NOT_POW2(X) (((X) & ((X) - 1)) != 0)
@@ -1415,15 +1442,28 @@ do {                                                                  \
 # endif
 #endif
 
+/* FIXME: Add support for multibyte decimal_point and thousands_sep since
+   this can be found in practice: https://reviews.llvm.org/D27167 says:
+   "I found this problem on FreeBSD 11, where thousands_sep in fr_FR.UTF-8
+   is a no-break space (U+00A0)."
+   Note, however, that this is not allowed by the C standard, which just
+   says "character" and not "multibyte character".
+   In the mean time, in case of non-single-byte character, revert to the
+   default value. */
 #if MPFR_LCONV_DPTS
 #include <locale.h>
 /* Warning! In case of signed char, the value of MPFR_DECIMAL_POINT may
    be negative (the ISO C99 does not seem to forbid negative values). */
-#define MPFR_DECIMAL_POINT (localeconv()->decimal_point[0])
-#define MPFR_THOUSANDS_SEPARATOR (localeconv()->thousands_sep[0])
+#define MPFR_DECIMAL_POINT                      \
+  (localeconv()->decimal_point[1] != '\0' ?     \
+   (char) '.' : localeconv()->decimal_point[0])
+#define MPFR_THOUSANDS_SEPARATOR                \
+  (localeconv()->thousands_sep[0] == '\0' ||    \
+   localeconv()->thousands_sep[1] != '\0' ?     \
+   (char) '\0' : localeconv()->thousands_sep[0])
 #else
 #define MPFR_DECIMAL_POINT ((char) '.')
-#define MPFR_THOUSANDS_SEPARATOR ('\0')
+#define MPFR_THOUSANDS_SEPARATOR ((char) '\0')
 #endif
 
 
@@ -1464,17 +1504,13 @@ typedef struct {
   mpfr_exp_t saved_emax;
 } mpfr_save_expo_t;
 
-/* Minimum and maximum exponents of the extended exponent range. */
-#define MPFR_EXT_EMIN MPFR_EMIN_MIN
-#define MPFR_EXT_EMAX MPFR_EMAX_MAX
-
 #define MPFR_SAVE_EXPO_DECL(x) mpfr_save_expo_t x
 #define MPFR_SAVE_EXPO_MARK(x)     \
  ((x).saved_flags = __gmpfr_flags, \
   (x).saved_emin = __gmpfr_emin,   \
   (x).saved_emax = __gmpfr_emax,   \
-  __gmpfr_emin = MPFR_EXT_EMIN,    \
-  __gmpfr_emax = MPFR_EXT_EMAX)
+  __gmpfr_emin = MPFR_EMIN_MIN,    \
+  __gmpfr_emax = MPFR_EMAX_MAX)
 #define MPFR_SAVE_EXPO_FREE(x)     \
  (__gmpfr_flags = (x).saved_flags, \
   __gmpfr_emin = (x).saved_emin,   \
@@ -1584,7 +1620,12 @@ typedef struct {
             _ulp = MPFR_LIMB_ONE;                                           \
           }                                                                 \
         /* Rounding */                                                      \
-        if (rnd == MPFR_RNDN)                                               \
+        if (rnd == MPFR_RNDF)                                               \
+          {                                                                 \
+            inexact = 0;                                                    \
+            goto trunc_doit;                                                \
+          }                                                                 \
+        else if (rnd == MPFR_RNDN)                                          \
           {                                                                 \
             if (_rb == 0)                                                   \
               {                                                             \
@@ -1985,7 +2026,7 @@ struct mpfr_group_t {
                 (unsigned long) (g).alloc));                     \
  if ((g).alloc != 0) {                                           \
    MPFR_ASSERTD ((g).mant != (g).tab);                           \
-   (*__gmp_free_func) ((g).mant, (g).alloc);                     \
+   mpfr_free_func ((g).mant, (g).alloc);                         \
  }} while (0)
 
 #define MPFR_GROUP_INIT_TEMPLATE(g, prec, num, handler) do {            \
@@ -1998,7 +2039,7 @@ struct mpfr_group_t {
  if (_size * (num) > MPFR_GROUP_STATIC_SIZE)                            \
    {                                                                    \
      (g).alloc = (num) * _size * sizeof (mp_limb_t);                    \
-     (g).mant = (mp_limb_t *) (*__gmp_allocate_func) ((g).alloc);       \
+     (g).mant = (mp_limb_t *) mpfr_allocate_func ((g).alloc);           \
    }                                                                    \
  else                                                                   \
    {                                                                    \
@@ -2048,10 +2089,10 @@ struct mpfr_group_t {
  _size = MPFR_PREC2LIMBS (_prec);                                       \
  (g).alloc = (num) * _size * sizeof (mp_limb_t);                        \
  if (_oalloc == 0)                                                      \
-   (g).mant = (mp_limb_t *) (*__gmp_allocate_func) ((g).alloc);         \
+   (g).mant = (mp_limb_t *) mpfr_allocate_func ((g).alloc);             \
  else                                                                   \
    (g).mant = (mp_limb_t *)                                             \
-     (*__gmp_reallocate_func) ((g).mant, _oalloc, (g).alloc);           \
+     mpfr_reallocate_func ((g).mant, _oalloc, (g).alloc);               \
  MPFR_LOG_MSG (("GROUP_REPREC: newptr = 0x%lX, newsize = %lu\n",        \
                 (unsigned long) (g).mant, (unsigned long) (g).alloc));  \
  handler;                                                               \
@@ -2132,9 +2173,8 @@ __MPFR_DECLSPEC long mpfr_mpn_exp (mp_limb_t *, mpfr_exp_t *, int,
                                    mpfr_exp_t, size_t);
 
 #ifdef _MPFR_H_HAVE_FILE
-__MPFR_DECLSPEC void mpfr_fprint_binary (FILE *, mpfr_srcptr);
+__MPFR_DECLSPEC void mpfr_fdump (FILE *, mpfr_srcptr);
 #endif
-__MPFR_DECLSPEC void mpfr_print_binary (mpfr_srcptr);
 __MPFR_DECLSPEC void mpfr_print_mant_binary (const char*, const mp_limb_t*,
                                              mpfr_prec_t);
 __MPFR_DECLSPEC void mpfr_set_str_binary (mpfr_ptr, const char*);
@@ -2223,30 +2263,29 @@ __MPFR_DECLSPEC int mpfr_vasnprintf_aux (char**, char*, size_t, const char*,
 #endif
 
 
-/******************************************************
- ***************  Internal mpz caching  ***************
- ******************************************************/
+/*****************************************************
+ ***************  Internal mpz_t pool  ***************
+ *****************************************************/
 
-/* don't use mpz caching with mini-gmp */
+/* don't use the mpz_t pool with mini-gmp */
 #ifdef MPFR_USE_MINI_GMP
-#define MPFR_MY_MPZ_INIT 0
+# define MPFR_POOL_NENTRIES 0
 #endif
 
-/* define MPFR_MY_MPZ_INIT to 0 here to disable the mpz_t pool
-   (see src/free_cache.c) */
-/* #define MPFR_MY_MPZ_INIT 0 */
+#ifndef MPFR_POOL_NENTRIES
+# define MPFR_POOL_NENTRIES 32  /* default number of entries of the pool */
+#endif
 
-/* Cache for mpz_t */
-#if !defined(MPFR_MY_MPZ_INIT) || MPFR_MY_MPZ_INIT != 0
+#if MPFR_POOL_NENTRIES && !defined(MPFR_POOL_DONT_REDEFINE)
 # undef mpz_init
 # undef mpz_init2
 # undef mpz_clear
+# undef mpz_init_set_ui
+# undef mpz_init_set
 # define mpz_init mpfr_mpz_init
 # define mpz_init2 mpfr_mpz_init2
 # define mpz_clear mpfr_mpz_clear
-# undef mpz_init_set_ui
 # define mpz_init_set_ui(a,b) do { mpz_init (a); mpz_set_ui (a, b); } while (0)
-# undef mpz_init_set
 # define mpz_init_set(a,b) do { mpz_init (a); mpz_set (a, b); } while (0)
 #endif
 
@@ -2301,6 +2340,7 @@ __MPFR_DECLSPEC int mpfr_vasnprintf_aux (char**, char*, size_t, const char*,
 extern "C" {
 #endif
 
+__MPFR_DECLSPEC extern int __gmpfr_cov_div_ui_sb[10][2];
 __MPFR_DECLSPEC extern int __gmpfr_cov_sum_tmd[MPFR_RND_MAX][2][2][3][2][2];
 
 #if defined (__cplusplus)
@@ -2361,6 +2401,6 @@ __MPFR_DECLSPEC mpfr_exp_t mpfr_ubf_diff_exp (mpfr_srcptr, mpfr_srcptr);
    ((mpfr_ubf_ptr) (x))->_mpfr_zexp)
 
 #define MPFR_UBF_CLEAR_EXP(x) \
-  ((void) (MPFR_IS_UBF (u) && (mpz_clear (MPFR_ZEXP (x)), 0)))
+  ((void) (MPFR_IS_UBF (x) && (mpz_clear (MPFR_ZEXP (x)), 0)))
 
 #endif /* __MPFR_IMPL_H__ */

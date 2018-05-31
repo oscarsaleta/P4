@@ -1,7 +1,7 @@
 /* mpfr_get_ld, mpfr_get_ld_2exp -- convert a multiple precision floating-point
                                     number to a machine long double
 
-Copyright 2002-2017 Free Software Foundation, Inc.
+Copyright 2002-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -125,6 +125,9 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
     {
       long double r; /* result */
       double s; /* part of result */
+      MPFR_SAVE_EXPO_DECL (expo);
+
+      MPFR_SAVE_EXPO_MARK (expo);
 
 #if defined(HAVE_LDOUBLE_MAYBE_DOUBLE_DOUBLE)
       if (MPFR_LDBL_MANT_DIG == 106)
@@ -227,6 +230,7 @@ mpfr_get_ld (mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           if (sign < 0)
             r = -r;
         }
+      MPFR_SAVE_EXPO_FREE (expo);
       return r;
     }
 }
@@ -247,28 +251,23 @@ mpfr_get_ld_2exp (long *expptr, mpfr_srcptr src, mpfr_rnd_t rnd_mode)
   MPFR_ALIAS (tmp, src, MPFR_SIGN (src), 0);
   ret = mpfr_get_ld (tmp, rnd_mode);
 
-  if (MPFR_IS_PURE_FP(src))
+  exp = MPFR_GET_EXP (src);
+
+  /* rounding can give 1.0, adjust back to 0.5 <= abs(ret) < 1.0 */
+  if (ret == 1.0)
     {
-      exp = MPFR_GET_EXP (src);
-
-      /* rounding can give 1.0, adjust back to 0.5 <= abs(ret) < 1.0 */
-      if (ret == 1.0)
-        {
-          ret = 0.5;
-          exp ++;
-        }
-      else if (ret ==  -1.0)
-        {
-          ret = -0.5;
-          exp ++;
-        }
-
-      MPFR_ASSERTN ((ret >= 0.5 && ret < 1.0)
-                    || (ret <= -0.5 && ret > -1.0));
-      MPFR_ASSERTN (exp >= LONG_MIN && exp <= LONG_MAX);
+      ret = 0.5;
+      exp ++;
     }
-  else
-    exp = 0;
+  else if (ret ==  -1.0)
+    {
+      ret = -0.5;
+      exp ++;
+    }
+
+  MPFR_ASSERTN ((ret >= 0.5 && ret < 1.0)
+                || (ret <= -0.5 && ret > -1.0));
+  MPFR_ASSERTN (exp >= LONG_MIN && exp <= LONG_MAX);
 
   *expptr = exp;
   return ret;

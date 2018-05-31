@@ -1,6 +1,6 @@
 /* mpfr_free_cache... - Free cache/pool memory used by MPFR.
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -22,75 +22,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-impl.h"
 
-/* Default number of entries for the mpz_t pool */
-#ifndef MPFR_MY_MPZ_INIT
-#  define MPFR_MY_MPZ_INIT 32
-#endif
-
-/* If the number of entries of the mpz_t pool is not zero */
-#if MPFR_MY_MPZ_INIT
-
-/* Index in the stack table of mpz_t and stack table of mpz_t */
-static MPFR_THREAD_ATTR int n_alloc = 0;
-static MPFR_THREAD_ATTR __mpz_struct mpz_tab[MPFR_MY_MPZ_INIT];
-
-MPFR_HOT_FUNCTION_ATTR void
-mpfr_mpz_init (mpz_t z)
-{
-  if (MPFR_LIKELY (n_alloc > 0))
-    {
-      /* Get a mpz_t from the MPFR stack of previously used mpz_t.
-         It reduces memory pressure, and it allows to reuse
-         a mpz_t which should be sufficiently big. */
-      MPFR_ASSERTD (n_alloc <= numberof (mpz_tab));
-      memcpy (z, &mpz_tab[--n_alloc], sizeof (mpz_t));
-      SIZ(z) = 0;
-    }
-  else
-    {
-      /* Call real GMP function */
-      (__gmpz_init)(z);
-    }
-}
-
-MPFR_HOT_FUNCTION_ATTR void
-mpfr_mpz_init2 (mpz_t z, mp_bitcnt_t n)
-{
-  if (MPFR_LIKELY (n_alloc > 0))
-    {
-      /* Get a mpz_t from the MPFR stack of previously used mpz_t.
-         It reduces memory pressure, and it allows to reuse
-         a mpz_t which should be sufficiently big. */
-      MPFR_ASSERTD (n_alloc <= numberof (mpz_tab));
-      memcpy (z, &mpz_tab[--n_alloc], sizeof (mpz_t));
-      SIZ(z) = 0;
-    }
-  else
-    {
-      /* Call real GMP function */
-      (__gmpz_init2)(z, n);
-    }
-}
-
-MPFR_HOT_FUNCTION_ATTR void
-mpfr_mpz_clear (mpz_t z)
-{
-  if (MPFR_LIKELY (n_alloc < numberof (mpz_tab)))
-    {
-      /* Push back the mpz_t inside the stack of the used mpz_t */
-      MPFR_ASSERTD (n_alloc >= 0);
-      memcpy (&mpz_tab[n_alloc++], z, sizeof (mpz_t));
-    }
-  else
-    {
-      /* Call real GMP function */
-      (__gmpz_clear)(z);
-    }
-}
-
-#endif
-
-/* Theses caches may be global to all threads or local to the current */
+/* Theses caches may be global to all threads or local to the current one. */
 static void
 mpfr_free_const_caches (void)
 {
@@ -107,45 +39,54 @@ mpfr_free_const_caches (void)
   mpfr_clear_cache (__gmpfr_cache_const_catalan);
 }
 
-/* Theses caches are always local to a thread */
+/* Theses caches/pools are always local to a thread. */
 static void
 mpfr_free_local_cache (void)
 {
-  /* Before mpz caching */
-  mpfr_bernoulli_freecache();
-
-#if MPFR_MY_MPZ_INIT
-  { /* Avoid mixed declarations and code for ISO C90 support. */
-    int i;
-    MPFR_ASSERTD (n_alloc >= 0 && n_alloc <= numberof (mpz_tab));
-    for (i = 0; i < n_alloc; i++)
-      (__gmpz_clear)(&mpz_tab[i]);
-    n_alloc = 0;
-  }
-#endif
+  /* Before freeing the mpz_t pool, we need to free any cache of
+     mpz_t numbers, since freeing such a cache may add entries to
+     the mpz_t pool. */
+  mpfr_bernoulli_freecache ();
+  mpfr_free_pool ();
 }
 
 void
 mpfr_free_cache (void)
 {
-  mpfr_free_local_cache();
+  mpfr_free_local_cache ();
   mpfr_free_const_caches ();
 }
 
 void
 mpfr_free_cache2 (mpfr_free_cache_t way)
 {
-  if (way & MPFR_FREE_LOCAL_CACHE)
+  if ((unsigned int) way & MPFR_FREE_LOCAL_CACHE)
     {
-      mpfr_free_local_cache();
+      mpfr_free_local_cache ();
 #if !defined (WANT_SHARED_CACHE)
       mpfr_free_const_caches ();
 #endif
     }
-  if (way & MPFR_FREE_GLOBAL_CACHE)
+  if ((unsigned int) way & MPFR_FREE_GLOBAL_CACHE)
     {
 #if defined (WANT_SHARED_CACHE)
       mpfr_free_const_caches ();
 #endif
     }
+}
+
+/* Function an application should call before mp_set_memory_functions().
+   This is currently equivalent to freeing the caches (and pools) since
+   they are allocated with GMP's current allocator. But this might change
+   in the future to avoid the drawback of having to free the caches just
+   because the allocators are changed: the caches could optionally be
+   allocated with malloc().
+   This function returns 0 in case of success, non-zero in case of error.
+   Errors are currently not possible. But let's avoid a prototype change
+   in the future, in case errors would be possible. */
+int
+mpfr_mp_memory_cleanup (void)
+{
+  mpfr_free_cache ();
+  return 0;
 }

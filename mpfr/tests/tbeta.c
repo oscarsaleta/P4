@@ -1,6 +1,6 @@
 /* Test file for the beta function
 
-Copyright 2017 Free Software Foundation, Inc.
+Copyright 2017-2018 Free Software Foundation, Inc.
 Contributed by ChemicalDevelopment.
 
 This file is part of the GNU MPFR Library.
@@ -24,10 +24,9 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 /* TODO: Test the ternary value and the flags. Add tgeneric tests. */
 
-/* FIXME: do not use mpfr_printf in the tests. */
 #define FAILED(p, r, z, w, expected, rnd_mode) do {                     \
-    mpfr_printf ("prec=%d, rnd=%s case failed for:",                    \
-                    p, mpfr_print_rnd_mode (rnd_mode));                 \
+    printf ("prec=%d, rnd=%s case failed for:",                         \
+            (int) p, mpfr_print_rnd_mode (rnd_mode));                   \
     printf("\n z  =");                                                  \
     mpfr_out_str (stdout, 2, 0, z, MPFR_RNDN);                          \
     printf("\n w  =");                                                  \
@@ -37,33 +36,15 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
     printf("\n ac.=");                                                  \
     mpfr_out_str (stdout, 2, 0, r, MPFR_RNDN);                          \
     printf("\n\n");                                                     \
-  } while (0)                                                           \
+  } while (0)
 
 #define TEST(p, r, z, w, expected) TESTRND(p, r, z, w, expected, MPFR_RNDN)
 
 #define TESTRND(p, r, z, w, expected, rnd_mode) do {                    \
     mpfr_beta (r, z, w, rnd_mode);                                      \
-    if (not_same (r, expected))                                         \
+    if (! SAME_VAL (r, expected))                                       \
       FAILED(p, r, z, w, expected, rnd_mode);                           \
   } while (0)
-
-static int
-not_same (mpfr_t a, mpfr_t b)
-{
-  int res = 0;
-
-  if (mpfr_cmp(a, b) != 0)
-    res = 1;
-  if (! mpfr_nan_p(a) != ! mpfr_nan_p(b))
-    res = 1;
-  if (! mpfr_equal_p(a, b) && (! mpfr_nan_p(a) && ! mpfr_nan_p(b)))
-    res = 1;
-  if ((! mpfr_signbit(a) != ! mpfr_signbit(b)) &&
-      (! mpfr_nan_p(a) && ! mpfr_nan_p(b)))
-    res = 1;
-
-  return res;
-}
 
 static void
 test_beta_special (mpfr_prec_t prec)

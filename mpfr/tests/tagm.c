@@ -1,6 +1,6 @@
 /* Test file for mpfr_agm.
 
-Copyright 1999, 2001-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -78,7 +78,7 @@ check4 (const char *as, const char *bs, mpfr_rnd_t rnd_mode,
       newflags = __gmpfr_flags;
       expflags |= MPFR_FLAGS_INEXACT;
 
-      if (SIGN (inex2) != inex || newflags != expflags ||
+      if (VSIGN (inex2) != inex || newflags != expflags ||
           ! mpfr_equal_p (tres, tc))
         {
           printf ("mpfr_agm failed in rnd_mode=%s for\n",
@@ -354,7 +354,6 @@ main (int argc, char* argv[])
   tests_start_mpfr ();
 
   check_special ();
-
   check_large ();
   check_eq ();
   check4 ("2.0", "1.0", MPFR_RNDN, "1.456791031046906869", -1);

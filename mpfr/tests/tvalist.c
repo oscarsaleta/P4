@@ -1,6 +1,6 @@
 /* Test file for multiple mpfr.h inclusion and va_list related functions
 
-Copyright 2011-2017 Free Software Foundation, Inc.
+Copyright 2011-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -28,8 +28,9 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 # include <stdint.h>
 #endif
 
+#define MPFR_DONT_USE_FILE  /* don't use FILE in mpfr-impl.h */
 #ifdef MPFR_USE_MINI_GMP
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 #endif
 
 /* One of the goals of this test is to detect potential issues with the
@@ -47,7 +48,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
  * was fixed in r7320.
  *
  * With mini-gmp, mpfr-impl.h is included first, but this should not
- * affect this test.
+ * affect this test thanks to MPFR_DONT_USE_FILE.
  */
 #include <mpfr.h>
 

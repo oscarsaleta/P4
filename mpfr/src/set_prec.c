@@ -1,6 +1,6 @@
 /* mpfr_set_prec -- reset the precision of a floating-point number
 
-Copyright 1999, 2001-2002, 2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2002, 2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -39,7 +39,7 @@ mpfr_set_prec (mpfr_ptr x, mpfr_prec_t p)
     {
       mpfr_size_limb_t *tmp;
 
-      tmp = (mpfr_size_limb_t *) (*__gmp_reallocate_func)
+      tmp = (mpfr_size_limb_t *) mpfr_reallocate_func
         (MPFR_GET_REAL_PTR(x),
          MPFR_MALLOC_SIZE(xoldsize),
          MPFR_MALLOC_SIZE(xsize));
