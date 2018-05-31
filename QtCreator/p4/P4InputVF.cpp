@@ -35,6 +35,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QtGlobal>
 
 #include "P4Application.hpp"
 #include "P4ArbitraryCurveDlg.hpp"
@@ -2037,7 +2038,11 @@ void P4InputVF::finishEvaluation(int exitCode)
             if (evalProcess_ != nullptr) {
                 if (evalProcess_->state() == QProcess::Running) {
                     evalProcess_->terminate();
+#if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
+                    QTimer::singleShot(5000, evalProcess_, SLOT(kill));
+#else
                     QTimer::singleShot(5000, evalProcess_, &QProcess::kill);
+#endif
                     buf = "Kill signal sent to process.\n";
                 } else {
                     if (!processFailed_)
@@ -2204,7 +2209,11 @@ void P4InputVF::onTerminateButton()
                         "-------------------\n"};
             processText_->append(buf);
             evalProcess_->terminate();
+#if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
+            QTimer::singleShot(2000, evalProcess_, SLOT(kill));
+#else
             QTimer::singleShot(2000, evalProcess_, &QProcess::kill);
+#endif
             buf = "Kill signal sent to process.\n";
             processText_->append(buf);
             processFailed_ = true;
