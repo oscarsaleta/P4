@@ -14,6 +14,8 @@ install:
   # Qt5
   - sudo apt-get install -qq libqt5webkit5-dev qtdeclarative5-dev
   - export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
+  # mpfr
+  - sudo apt-get install -qq libmpfr-dev
 
 script:
   - qmake -qt=qt5 -r P4.pro
