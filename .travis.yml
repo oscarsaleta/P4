@@ -1,0 +1,7 @@
+before_install:
+  - sudo apt install qtbase5-dev qtdeclarative5-dev
+  - sudo apt install qt5-default qttools5-dev-tools
+
+script:
+  - qmake -r P4.pro
+  - make
