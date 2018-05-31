@@ -20,6 +20,8 @@
 
 # P4 (Polynomial Planar Phase Portraits) version 7.0.1
 
+[![Build Status](https://travis-ci.org/oscarsaleta/P4.svg?branch=develop_p5)](https://travis-ci.org/oscarsaleta/P4)
+
 ## Description
 
 P4 is a software that is able to draw the planar phase portrait for any polynomial differential system on the Poincaré or Poincaré-Lyapunov compactified planes.
