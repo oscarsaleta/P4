@@ -1,7 +1,7 @@
 <!--
     This file is part of P4 
 
-    Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier, 
+    Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier, 
                              C. Herssens, J. Llibre, O. Saleta, J. Torregrosa 
 
     P4 is free software: you can redistribute it and/or modify 
@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 -->
 
-# P4 (Polynomial Planar Phase Portraits) version 7.0.1
+# P4 (Polynomial Planar Phase Portraits) version 8.0.0 - alpha
 
 [![Build Status](https://travis-ci.org/oscarsaleta/P4.svg?branch=develop_p5)](https://travis-ci.org/oscarsaleta/P4)
 
