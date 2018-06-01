@@ -44,7 +44,7 @@ P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *wnd,
                                    QLabel *lbl_status, QWidget *parent)
     : QWidget{parent}, status_{lbl_status}, parentWnd_{wnd}
 {
-    setAttribute(Qt::WA_PaintOnScreen);
+    //    setAttribute(Qt::WA_PaintOnScreen);
 
     setMinimumSize(MINWIDTHPLOTWINDOW, MINHEIGHTPLOTWINDOW); // minimum size
     w_ = width();
