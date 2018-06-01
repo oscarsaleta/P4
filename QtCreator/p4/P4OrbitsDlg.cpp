@@ -20,6 +20,7 @@
 #include "P4OrbitsDlg.hpp"
 
 #include <QBoxLayout>
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -205,6 +206,7 @@ void P4OrbitsDlg::onBtnContinue()
 
 void P4OrbitsDlg::onBtnForwards()
 {
+    qDebug() << "Orbits: button forwards";
     plotWnd_->getDlgData();
 
     if (!orbitStarted_) {

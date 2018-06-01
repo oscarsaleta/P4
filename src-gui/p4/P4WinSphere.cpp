@@ -83,7 +83,7 @@ P4WinSphere::P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1,
     : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
     qDebug() << "called constructor";
-    setAttribute(Qt::WA_PaintOnScreen);
+    // setAttribute(Qt::WA_PaintOnScreen);
 
     // FIXME: is next needed?
     if (!sM_sphereList.empty())
@@ -117,7 +117,6 @@ P4WinSphere::P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1,
 
 P4WinSphere::~P4WinSphere()
 {
-    qDebug() << "called destructor";
     int i;
 
     for (i = 0; i < sM_numSpheres; i++) {
@@ -151,7 +150,6 @@ P4WinSphere::~P4WinSphere()
 
 void P4WinSphere::keyPressEvent(QKeyEvent *e)
 {
-    qDebug() << "keypress event";
     int id;
     int *data1;
     Qt::KeyboardModifiers bs;
@@ -248,7 +246,6 @@ void P4WinSphere::keyPressEvent(QKeyEvent *e)
 
 static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart)
 {
-    qDebug() << "make chart string";
     QString buf;
 
     if (isu1v1chart) {
@@ -280,7 +277,6 @@ static QString makechartstring(int p, int q, bool isu1v1chart, bool negchart)
 
 void P4WinSphere::setupPlot()
 {
-    qDebug() << "setup plot";
     QPalette palette;
 
     spherebgcolor_ = bgColours::CBACKGROUND;
@@ -354,7 +350,6 @@ void P4WinSphere::setupPlot()
 
 void P4WinSphere::loadAnchorMap()
 {
-    qDebug() << "load anchor map";
     int x1, y1;
     int x2, y2;
     int aw, ah;
@@ -418,7 +413,6 @@ void P4WinSphere::loadAnchorMap()
 
 void P4WinSphere::saveAnchorMap()
 {
-    qDebug() << "save anchor map";
     int x1, y1;
     int x2, y2;
     int aw, ah;
@@ -474,7 +468,6 @@ void P4WinSphere::saveAnchorMap()
 
 void P4WinSphere::adjustToNewSize()
 {
-    qDebug() << "adjust to new size";
     QString buf;
 
     w_ = width();
@@ -555,7 +548,6 @@ void P4WinSphere::adjustToNewSize()
 
 void P4WinSphere::refreshAfterResize()
 {
-    qDebug() << "refresh after resize";
     if (refreshTimeout_ != nullptr) {
         delete refreshTimeout_;
         refreshTimeout_ = nullptr;
@@ -565,7 +557,6 @@ void P4WinSphere::refreshAfterResize()
 
 void P4WinSphere::resizeEvent(QResizeEvent *e)
 {
-    qDebug() << "resize event";
     if (e->size() == e->oldSize())
         return;
 
@@ -635,7 +626,6 @@ void P4WinSphere::paintEvent(QPaintEvent *p)
 void P4WinSphere::markSelection(int x1, int y1, int x2, int y2,
                                 int selectiontype)
 {
-    qDebug() << "mark selection";
     if (painterCache_ == nullptr)
         return;
 
@@ -678,7 +668,6 @@ void P4WinSphere::markSelection(int x1, int y1, int x2, int y2,
 
 void P4WinSphere::mouseMoveEvent(QMouseEvent *e)
 {
-    qDebug() << "mouse move event";
     QString buf;
 
     int x{e->x()};
@@ -871,7 +860,6 @@ int P4WinSphere::coWinY(double y)
 
 void P4WinSphere::mousePressEvent(QMouseEvent *e)
 {
-    qDebug() << "mouse press event";
     if (e->button() == Qt::LeftButton) {
         if (e->modifiers() == Qt::ControlModifier) {
             if (!selectingZoom_) {
@@ -925,7 +913,6 @@ void P4WinSphere::mousePressEvent(QMouseEvent *e)
 
 void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
 {
-    qDebug() << "mouse release event";
     if (e->button() == Qt::LeftButton) {
         // finish zoom window between zoomAnchor1_ and zoomAnchor2_
         if (selectingZoom_) {
@@ -959,7 +946,6 @@ void P4WinSphere::mouseReleaseEvent(QMouseEvent *e)
 
 bool P4WinSphere::getChartPos(int chart, double x0_, double y0_, double *pos)
 {
-    qDebug() << "get chart pos";
     double pcoord[3];
 
     switch (chart) {
@@ -988,7 +974,6 @@ bool P4WinSphere::getChartPos(int chart, double x0_, double y0_, double *pos)
 
 void P4WinSphere::updatePointSelection()
 {
-    qDebug() << "update point selection";
     if (selectingPointStep_ == 0) {
         selectingPointRadius_ = 0;
         update(selectingX_ - SELECTINGPOINTSTEPS * 4,
@@ -1008,7 +993,6 @@ void P4WinSphere::updatePointSelection()
 
 void P4WinSphere::selectNearestSingularity(const QPoint &winpos)
 {
-    qDebug() << "select nearest singularity";
     int x{winpos.x()}, y{winpos.y()};
 
     sM_sphereList.back()->prepareDrawing();
@@ -1550,7 +1534,6 @@ std::vector<P4POLYLINES> P4WinSphere::produceEllipse(double cx, double cy,
                                                      bool dotted, double resa,
                                                      double resb)
 {
-    qDebug() << "produce ellipse";
     // this is an exact copy of the plotEllipse routine, except that output
     // is stored in a list of points that is dynamically allocated.
 
@@ -2529,9 +2512,7 @@ void P4WinSphere::printPoint(double x, double y, int color)
 
 void P4WinSphere::refresh()
 {
-    qDebug() << "refresh";
     isPainterCacheDirty_ = true;
-    qDebug() << "calling update()";
     update();
 }
 
@@ -2539,7 +2520,6 @@ void P4WinSphere::calculateHeightFromWidth(int &width, int &height,
                                            int maxheight = -1,
                                            double aspectratio = 1)
 {
-    qDebug() << "calculate height from width";
     // given an optimal width in width, this procedure calculates the
     // corresponding height in order to maintain the given aspectratio. If
     // however the maximum height is violated, then we choose to have the
@@ -2809,16 +2789,14 @@ void P4WinSphere::finishDrawing()
     }
 }
 
-void P4WinSphere::signalEvaluating()
+/*void P4WinSphere::signalEvaluating()
 {
     qDebug() << "signal evaluating";
-    /*
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
        bgColours::CBACKGROUND) );
         setPalette(palette);
-    */
-}
+}*/
 
 void P4WinSphere::signalChanged()
 {

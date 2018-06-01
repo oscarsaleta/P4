@@ -3902,8 +3902,8 @@ int P4InputVF::getVFIndex_cyl(const double *y)
 // If z2<0, we are inside the chart VV1.
 int P4InputVF::getVFIndex_U1(const double *y)
 {
-    if (gVFResults.separatingCurves_.empty())
-        return -1;
+    //    if (gVFResults.separatingCurves_.empty())
+    //        return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_U1(vfRegions_[i].signs, y))
             return vfRegions_[i].vfIndex;
@@ -3924,8 +3924,8 @@ int P4InputVF::getVFIndex_U1(const double *y)
 // If z2<0, we are inside the chart UU1.
 int P4InputVF::getVFIndex_V1(const double *y)
 {
-    if (gVFResults.separatingCurves_.empty())
-        return -1;
+    //    if (gVFResults.separatingCurves_.empty())
+    //        return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_V1(vfRegions_[i].signs, y))
             return vfRegions_[i].vfIndex;
@@ -3946,8 +3946,8 @@ int P4InputVF::getVFIndex_V1(const double *y)
 // If z2<0, we are inside the chart VV2.
 int P4InputVF::getVFIndex_U2(const double *y)
 {
-    if (gVFResults.separatingCurves_.empty())
-        return -1;
+    //    if (gVFResults.separatingCurves_.empty())
+    //        return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_U2(vfRegions_[i].signs, y))
             return vfRegions_[i].vfIndex;
@@ -3969,8 +3969,8 @@ int P4InputVF::getVFIndex_U2(const double *y)
 // If z2<0, we are inside the chart UU2.
 int P4InputVF::getVFIndex_V2(const double *y)
 {
-    if (gVFResults.separatingCurves_.empty())
-        return -1;
+    //    if (gVFResults.separatingCurves_.empty())
+    //        return -1;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_V2(vfRegions_[i].signs, y))
             return vfRegions_[i].vfIndex;

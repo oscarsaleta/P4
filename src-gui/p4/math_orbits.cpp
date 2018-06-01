@@ -19,6 +19,8 @@
 
 #include "math_orbits.hpp"
 
+#include <QDebug>
+
 #include <cmath>
 
 #include "P4InputVF.hpp"
@@ -131,6 +133,8 @@ bool startOrbit(P4WinSphere *sphere, double x, double y, bool R)
                                     std::vector<p4orbits::orbits_points>{});
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
+    qDebug() << "draw point in (" << ucoord[0] << ", " << ucoord[1]
+             << ") with color " << bgColours::CORBIT;
     sphere->drawPoint(ucoord[0], ucoord[1], bgColours::CORBIT);
 
     return true;

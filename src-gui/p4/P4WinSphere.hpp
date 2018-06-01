@@ -84,8 +84,9 @@ class P4WinSphere : public QWidget
     QString chartstring_;
 
     int spherebgcolor_;
-    // FIXME: used?
+
     P4WinSphere *next_{nullptr}; // visible to PlotWnd
+
     int selectingX_{0}, selectingY_{0};
     int selectingPointStep_{0}, selectingPointRadius_{0};
     QTimer *selectingTimer_{nullptr};
@@ -103,7 +104,7 @@ class P4WinSphere : public QWidget
     bool getChartPos(int, double, double, double *);
     void adjustToNewSize();
 
-    void signalEvaluating();
+    //    void signalEvaluating();
     void signalChanged();
     void plotPoint(const p4singularities::saddle &);
     void plotPoint(const p4singularities::node &);
