@@ -215,10 +215,10 @@ void QStartDlg::onLoadSignal()
     if (settings.value("plotWindow").toBool()) {
         if (plotWindow_ != nullptr)
             plotWindow_->show();
-        else {
-            onPlot();
-            plotWindow_->onLoadSignal();
-        }
+        //        else {
+        //            onPlot();
+        //            plotWindow_->onLoadSignal();
+        //        }
     }
     if (settings.value("viewInfiniteWindow").toBool()) {
         if (viewInfiniteWindow_ != nullptr) {
@@ -266,9 +266,10 @@ void QStartDlg::onHelp()
 
     helpname = getP4HelpPath();
     if (helpname.isNull()) {
-        QMessageBox::critical(this, "P4", "Cannot determine P4 install "
-                                          "location!\nPlease re-check "
-                                          "installation.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot determine P4 install "
+                              "location!\nPlease re-check "
+                              "installation.\n");
         return;
     }
 
@@ -276,9 +277,10 @@ void QStartDlg::onHelp()
     helpname += P4HELPFILE;
 
     if (QFile(helpname).exists() == false) {
-        QMessageBox::critical(this, "P4", "Cannot find P4 help files in "
-                                          "install location!\nPlease re-check "
-                                          "installation.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot find P4 help files in "
+                              "install location!\nPlease re-check "
+                              "installation.\n");
         return;
     }
 
@@ -549,9 +551,10 @@ void QStartDlg::onViewFinite()
                 "A study at the finite region was not requested!\n");
             return;
         }
-        QMessageBox::critical(this, "P4", "Cannot open the result "
-                                          "file.\nPlease re-evaluate, or check "
-                                          "filename.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot open the result "
+                              "file.\nPlease re-evaluate, or check "
+                              "filename.\n");
         return;
     }
 
@@ -583,9 +586,10 @@ void QStartDlg::onViewInfinite()
                                   "A study at infinity was not requested!\n");
             return;
         }
-        QMessageBox::critical(this, "P4", "Cannot open the result "
-                                          "file.\nPlease re-evaluate, or check "
-                                          "filename.\n");
+        QMessageBox::critical(this, "P4",
+                              "Cannot open the result "
+                              "file.\nPlease re-evaluate, or check "
+                              "filename.\n");
         return;
     }
 
@@ -676,10 +680,11 @@ void QStartDlg::closeEvent(QCloseEvent *ce)
         return;
     }
 
-    result = QMessageBox::information(
-        this, "P4", "The vector field has been changed since "
-                    "the last save.",
-        "&Save Now", "&Cancel", "&Leave Anyway", 0, 1);
+    result =
+        QMessageBox::information(this, "P4",
+                                 "The vector field has been changed since "
+                                 "the last save.",
+                                 "&Save Now", "&Cancel", "&Leave Anyway", 0, 1);
 
     if (result == 2)
         ce->accept();
