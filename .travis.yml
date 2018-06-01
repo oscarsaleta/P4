@@ -13,14 +13,18 @@ matrix:
             - qtdeclarative5-dev
             - libmpfr-dev
       env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5 && QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake"
+        - SET_COMPILER="CC=gcc-5 && CXX=g++-5"
+        - SET_QMAKE="QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake"
+
     - os: osx
       osx_image: xcode8
       env:
-        - MATRIX_EVAL="brew update && brew install gcc && brew install qt && CC=gcc-7 && CXX=g++-7"
+        - SET_COMPILER="brew update && brew install gcc && env CC=gcc-7 && env CXX=g++-7"
+        - SET_QMAKE="brew update && brew install qt && env QMAKE=/usr/local/opt/qt/bin/qmake"
 
 before_script:
-  - eval "${MATRIX_EVAL}"
+  - eval "${SET_COMPILER}"
+  - eval "${SET_QMAKE}"
 
 script:
   - qmake -qt=qt5 -r P4.pro
