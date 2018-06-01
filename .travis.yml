@@ -29,5 +29,5 @@ matrix:
         - eval "${SET_QMAKE}"
 
 script:
-  - $QMAKE -qt=qt5 -r P4.pro
+  - $QMAKE -r P4.pro
   - make
