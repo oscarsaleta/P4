@@ -171,7 +171,9 @@ bool P4VFStudy::readIsoclines(QString basename)
 {
     int N, degree_curve;
     FILE *fp = nullptr;
+#ifndef Q_OS_DARWIN
     setlocale(LC_ALL, "C");
+#endif
 
     fp = fopen(QFile::encodeName(basename + "_vecisoclines.tab"), "rt");
     if (fp == nullptr) {
