@@ -29,6 +29,7 @@ green=$(tput setaf 2)
 red=$(tput setaf 1)
 cyan=$(tput setaf 6)
 magenta=$(tput setaf 5)
+yellow=$(tput setaf 11)
 
 # Check OS
 platform='unknown'
@@ -41,12 +42,6 @@ else
     echo "- This script only works in Linux and macOS systems, aborting."
     exit 1
 fi
-
-# Check qmake command
-if [[ -z ${QMAKE+x} ]]; then
-    QMAKE='qmake'
-fi
-
 
 # Functions
 function print_title {
@@ -456,20 +451,37 @@ if [[ ${only_uninstall} = true ]]; then
     exit 0
 fi
 
+
 # Check for dependencies
 echo ""
 echo "${bold}${cyan}===${normal}${bold} Checking for dependencies...${normal}"
 # qmake check
 echo "- Looking for qmake... "
-if (command -v ${QMAKE} >/dev/null 2>&1); then
-    echo "${green}[Success]${normal}"
-else
-    error_qmake
-    if [[ "${platform}" == 'linux' ]]; then
-        exit 1
-    elif [[ "${platform}" == 'darwin' ]]; then
-        install_qt
-    fi
+if [[ -z ${QMAKE+x} ]]; then
+	echo "${yellow}[Warning]${normal} Optional variable QMAKE not set. Use it to specify qmake command location"
+	if (command -v qmake >/dev/null 2>&1); then
+		QMAKE=qmake
+		echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
+		echo "${green}[Success]${normal}"
+	elif [[ -z ${QDIR+x} ]]; then
+		echo "${yellow}[Warning]${normal} Optional variable QDIR not set. Use it to specify Qt install directory"
+		error_qmake
+	    if [[ "${platform}" == 'linux' ]]; then
+    	    exit 1
+    	elif [[ "${platform}" == 'darwin' ]]; then
+        	install_qt
+    	fi
+    else
+    	#usar QDIR per definir QMAKE
+    	QMAKE="${QDIR}/bin/qmake"
+    	echo "[Info] Using Qt installation directory QDIR=${QDIR}"
+    	if (command -v ${QMAKE} >/dev/null 2>&1); then
+			echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
+    		echo "${green}[Success]${normal}"
+    	else
+    		error_qmake
+		fi
+	fi
 fi
 
 if [[ "${platform}" == 'linux' ]]; then
