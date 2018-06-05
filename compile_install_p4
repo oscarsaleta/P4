@@ -495,13 +495,13 @@ if [[ "${platform}" == 'linux' ]]; then
             echo "${green}[Success]${normal}"
         else
             echo "${yellow}[Warning]${normal} Qt5 modules not found in default pkg-config path"
-            if [[ -z ${QMAKE+x} ]]; then
+            if [[ -z ${QDIR+x} ]]; then
                 error_qtmodules
                 exit 1
             else
-                echo "[Info] Adding QDIR to PKG_CONFIG_PATH"
-                PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:${QDIR}/lib/pkgconfig"
-                if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
+                PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:${QDIR}/lib/pkgconfig/"
+                echo "[Info] Adding QDIR to PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
+                if (export PKG_CONFIG_PATH; pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
                     echo "${green}[Success]${normal}"
                 else
                     error_qtmodules
