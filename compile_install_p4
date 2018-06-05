@@ -248,15 +248,24 @@ echo "${bold}${red}[Error]${normal} Error during execution of ${QMAKE}. Possible
         echo "    - Your Linux distribution uses a different name for the qmake executable"
         echo "      (e.g. in Fedora-based distributions, it is called"
         echo "      qmake-qt5). In this case, run"
-        echo "        env QMAKE=/path/to/qmake ./compile_install_p4 --verbose"
+        echo "        env QMAKE=/path/to/qmake ./compile_install_p4"
         echo "      (where /path/to/qmake should be replaced by the actual path of qmake in"
         echo "      your system)."
+        echo "    - Your Qt installation is not placed in a system-wide accessible directory."
+        echo "      This happens for example when Qt is downloaded from their website"
+        echo "      instead of the repositories (to get a different version of Qt). In this"
+        echo "      case, use the QDIR variable to tell the installer where to find Qt:"
+        echo "        env QDIR=/path/to/Qt/QT_VERSION/QT_COMPILER/ ./compile_install_p4"
+        echo "      (where /path/to/Qt should be replaced by the actual path of the Qt"
+        echo "      installation in your system, QT_VERSION should be replaced by the"
+        echo "      installed Qt version, e.g. 5.10.1, and QT_COMPILER should be replaced"
+        echo "      by the compiler used by Qt, e.g. gcc_64)."
     elif [[ "${platform}" == 'darwin' ]]; then
         echo "    - Qt5 is not properly installed. In this case,"
         echo "      install Qt following the instructions of http://doc.qt.io/qt-5/osx.html or"
         echo "      using the Homebrew package manager (brew install qt)."
         echo "    - The binary was not found. In this case, run the script as:"
-        echo "        env QMAKE=/path/to/qmake ./compile_install_p4 --verbose"
+        echo "        env QMAKE=/path/to/qmake ./compile_install_p4"
         echo "      (where /path/to/qmake should be replaced by the actual path of qmake in"
         echo "      your system)."
         echo "    - macOS SDK related. This means that Xcode is not properly installed."
@@ -280,19 +289,6 @@ function error_compiler {
         echo "and then install the command-line tools running the following in a terminal:"
         echo "    xcode-select --install"
     fi
-}
-
-function error_boost {
-    echo "${bold}${red}[Error]${normal} Boost libraries are needed for some dynamic properties of P4 to work."
-    if [[ "${platform}" == 'linux' ]]; then
-        echo "Install them using the proper method for your distribution, e.g.:"
-        echo "    - Debian-based (Debian/Ubuntu/Mint): sudo apt-get install libboost-dev"
-        echo "    - Fedora-based (Fedora/Kokora/Arquetype): sudo dnf install boost-devel"
-        echo "    - Arch-based (Archlinux/Antergos): sudo pacman -S boost"
-    elif [[ "{platform}" == 'darwin' ]]; then
-        echo "You can install it using this command in a terminal: brew install boost"
-    fi
-    echo ""
 }
 
 if [[ "${platform}" == 'linux' ]]; then
@@ -458,30 +454,34 @@ echo "${bold}${cyan}===${normal}${bold} Checking for dependencies...${normal}"
 # qmake check
 echo "- Looking for qmake... "
 if [[ -z ${QMAKE+x} ]]; then
-	echo "${yellow}[Warning]${normal} Optional variable QMAKE not set. Use it to specify qmake command location"
-	if (command -v qmake >/dev/null 2>&1); then
-		QMAKE=qmake
-		echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
-		echo "${green}[Success]${normal}"
-	elif [[ -z ${QDIR+x} ]]; then
-		echo "${yellow}[Warning]${normal} Optional variable QDIR not set. Use it to specify Qt install directory"
-		error_qmake
-	    if [[ "${platform}" == 'linux' ]]; then
-    	    exit 1
-    	elif [[ "${platform}" == 'darwin' ]]; then
-        	install_qt
-    	fi
+    echo "${yellow}[Warning]${normal} Optional variable QMAKE not set. It can be used to specify qmake command location"
+    if (command -v qmake >/dev/null 2>&1); then
+        QMAKE=qmake
+        echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
+        echo "${green}[Success]${normal}"
+    elif [[ -z ${QDIR+x} ]]; then
+        echo "${yellow}[Warning]${normal} Optional variable QDIR not set. It can be used to specify Qt install directory"
+        error_qmake
+        if [[ "${platform}" == 'linux' ]]; then
+            exit 1
+        elif [[ "${platform}" == 'darwin' ]]; then
+            install_qt
+        fi
     else
-    	#usar QDIR per definir QMAKE
-    	QMAKE="${QDIR}/bin/qmake"
-    	echo "[Info] Using Qt installation directory QDIR=${QDIR}"
-    	if (command -v ${QMAKE} >/dev/null 2>&1); then
-			echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
-    		echo "${green}[Success]${normal}"
-    	else
-    		error_qmake
-		fi
-	fi
+        QMAKE="${QDIR}/bin/qmake"
+        echo "[Info] Using Qt installation directory QDIR=${QDIR}"
+        if (command -v ${QMAKE} >/dev/null 2>&1); then
+            echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
+            echo "${green}[Success]${normal}"
+        else
+            error_qmake
+            if [[ "${platform}" == 'linux' ]]; then
+                exit 1
+            elif [[ "${platform}" == 'darwin' ]]; then
+                install_qt
+        fi
+        fi
+    fi
 fi
 
 if [[ "${platform}" == 'linux' ]]; then
@@ -494,15 +494,28 @@ if [[ "${platform}" == 'linux' ]]; then
         if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
             echo "${green}[Success]${normal}"
         else
-            error_qtmodules
-            exit 1
+            echo "${yellow}[Warning]${normal} Qt5 modules not found in default pkg-config path"
+            if [[ -z ${QMAKE+x} ]]; then
+                error_qtmodules
+                exit 1
+            else
+                echo "[Info] Adding QDIR to PKG_CONFIG_PATH"
+                PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:${QDIR}/lib/pkgconfig"
+                if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
+                    echo "${green}[Success]${normal}"
+                else
+                    error_qtmodules
+                    exit 1
+                fi
+            fi
         fi
     else
         error_pkgconfig
         exit 1
     fi
-    echo "- Looking for ldconfig..."
+
     # ldconfig check
+    echo "- Looking for ldconfig..."
     if (command -v ldconfig >/dev/null 2>&1); then
         echo "${green}[Success]${normal}"
         # gcc libraries check
@@ -513,16 +526,8 @@ if [[ "${platform}" == 'linux' ]]; then
             error_compiler
             exit 1
         fi
-        # boost libs check
-        echo "- Looking for Boost libraries..."
-        if (ldconfig -p | grep libboost >/dev/null); then
-            echo "${green}[Success]${normal}"
-        else
-            error_boost
-            exit 1
-        fi
     else
-        echo "[Warning] ldconfig could not be executed, trying as super user..."
+        echo "${yellow}[Warning]${normal} ldconfig could not be executed, trying as super user..."
         # gcc libraries check
         echo "- Looking for compiler libraries..."
         if (sudo ldconfig -p | grep libstdc++ >/dev/null && sudo ldconfig -p | grep libgcc_s >/dev/null && sudo ldconfig -p | grep libc >/dev/null); then
@@ -531,22 +536,6 @@ if [[ "${platform}" == 'linux' ]]; then
             error_ldconfig
             exit 1
         fi
-        echo "- Looking for Boost libraries..."
-        # boost libs check
-        if (sudo ldconfig -p | grep libboost >/dev/null); then
-            echo "${green}[Success]${normal}"
-        else
-            error_boost
-            exit 1
-        fi
-    fi
-elif [[ ${platform} == 'darwin' ]]; then
-    echo "- Looking for Boost libraries..."
-    if (ls /usr/local/include | grep boost >/dev/null); then
-        echo "${green}[Success]${normal}"
-    else
-        error_boost
-        exit 1
     fi
 fi
 
