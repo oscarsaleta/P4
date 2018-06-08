@@ -22,7 +22,7 @@ QT += widgets
 QT += printsupport
 
 CONFIG += qt
-CONFIG += static
+#CONFIG += static
 CONFIG += c++14
 CONFIG += fwhopr
 
