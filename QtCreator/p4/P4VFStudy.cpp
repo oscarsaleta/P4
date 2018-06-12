@@ -299,6 +299,10 @@ bool P4VFStudy::readPoints(FILE *fp)
             if (!readWeakFocusPoint(fp))
                 return false;
             break;
+        case NON_ELEMENTARY:
+            if (!readDegeneratePoint(fp))
+                return false;
+            break;
         default:
             return false;
         }
