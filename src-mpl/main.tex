@@ -441,9 +441,12 @@ chooseParameterSet := proc(r)
 end proc:
 
 prepareArbitraryCurve := proc()
-    global user_curve, normalexit;
+    global user_curve, normalexit, rounded;
+    rounded := user_numeric;
     openfile(curve_table);
     write_curve(user_curve);
+    closefile(curve_table);
+    openfile(terminal);
     writef("\nWe have finished writing the curve as a C++ readable list.\n");    
     normalexit := 1;
 end:
@@ -460,6 +463,7 @@ save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
         normalexit, prepareArbitraryCurve, prepareIsoclines, "main.m");
 
 save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
+        prepareArbitraryCurve,
 #tools
         Hardware_precision, reduce_coeff, write_number, reduce_llt,
         reduce_evalf, reduce_gt, reduce_gteq, reduce_eeq, reduce_nneq,
