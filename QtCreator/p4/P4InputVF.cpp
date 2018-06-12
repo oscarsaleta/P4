@@ -3772,7 +3772,7 @@ void P4InputVF::resampleIsoclines(int i)
 int P4InputVF::getVFIndex_R2(const double *ucoord)
 {
     if (gVFResults.separatingCurves_.empty())
-        return -1;
+        return 0;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_R2(vfRegions_[i].signs, ucoord))
             return vfRegions_[i].vfIndex;
