@@ -37,8 +37,7 @@
 #include "math_polynom.hpp"
 
 P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
-    : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
-      mainSphere_{sp}, plotwnd_{plt}
+    : QWidget{nullptr}, mainSphere_{sp}, plotwnd_{plt}
 {
     edt_curve_ = new QLineEdit{"", this};
     auto lbl0 = new QLabel{"Curve: ", this};
