@@ -440,7 +440,7 @@ chooseParameterSet := proc(r)
     end do:
 end proc:
 
-prepareCurve := proc()
+prepareArbitraryCurve := proc()
     global user_curve, normalexit;
     openfile(curve_table);
     write_curve(user_curve);
@@ -457,7 +457,7 @@ prepareIsoclines := proc()
 end:
 
 save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
-        normalexit, prepareCurve, prepareIsoclines, "main.m");
+        normalexit, prepareArbitraryCurve, prepareIsoclines, "main.m");
 
 save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
 #tools

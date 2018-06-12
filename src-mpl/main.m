@@ -64,9 +64,9 @@ lF_^lFf^lF]_lFd_lFfpF[qF(F(,
 I6CheckIfGoodPolynomialf*6#%"fGF(F(F(O-Faq6$-F_oFF-%(polynomG6$%(numericG7$FYFi
 nF(F(F(F(,
 I+normalexitFaoF(,
-I-prepareCurvef*F(F(F(F(C&-F\r6#%,curve_tableG-%,write_curveG6#%+user_curveG-F`
-r6#Qgn|+We~have~finished~writing~the~curve~as~a~C++~readable~list.|+F(>FjqF,F(6
-$FfamFjqF(F(,
+I6prepareArbitraryCurvef*F(F(F(F(C&-F\r6#%,curve_tableG-%,write_curveG6#%+user_
+curveG-F`r6#Qgn|+We~have~finished~writing~the~curve~as~a~C++~readable~list.|+F(
+>FjqF,F(6$FfamFjqF(F(,
 I1prepareIsoclinesf*F(F(F(F(C&-F\r6#%0isoclines_tableG-%0write_isoclinesG6#%/us
 er_isoclinesG-F`r6#Qjn|+We~have~finished~writing~the~isoclines~as~C++~readable~
 lists.|+F(>FjqF,F(6$FebmFjqF(F(
