@@ -143,7 +143,10 @@ P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     }
 
     setP4WindowTitle(this, "Curve plot");
+    reset();
 }
+
+P4ArbitraryCurveDlg::~P4ArbitraryCurveDlg() {}
 
 void P4ArbitraryCurveDlg::reset()
 {

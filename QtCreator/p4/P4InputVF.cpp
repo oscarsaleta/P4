@@ -4086,13 +4086,22 @@ P4ArbitraryCurveDlg *P4InputVF::getArbitraryCurveDlgPtr() const
 // ---------------------------------------------------------------------
 void P4InputVF::setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
 {
-    if (newdlg != nullptr && newdlg != arbitraryCurveDlg_) {
-        arbitraryCurveDlg_ = newdlg;
-    } else {
-        if (arbitraryCurveDlg_ != nullptr)
-            delete arbitraryCurveDlg_;
-        arbitraryCurveDlg_ = nullptr;
-    }
+    auto olddlg = arbitraryCurveDlg_;
+    arbitraryCurveDlg_ = newdlg;
+    if (olddlg != nullptr)
+        delete olddlg;
+    //    if (newdlg != nullptr) {
+    //        if (newdlg != arbitraryCurveDlg_) {
+    //            if (arbitraryCurve_ != nullptr)
+    //                delete arbitraryCurveDlg_;
+    //            arbitraryCurveDlg_ = newdlg;
+    //        }
+    //    } else {
+    //        if (arbitraryCurveDlg_ != nullptr) {
+    //            delete arbitraryCurveDlg_;
+    //            arbitraryCurveDlg_ = nullptr;
+    //        }
+    //    }
 }
 
 // ---------------------------------------------------------------------

@@ -381,10 +381,10 @@ class P4InputVF : public QObject
 
   private:
     // P4 GUI ELEMENTS
-    P4FindDlg *findDlg_;
-    P4GcfDlg *gcfDlg_;
-    P4ArbitraryCurveDlg *arbitraryCurveDlg_;
-    P4IsoclinesDlg *isoclinesDlg_;
+    P4FindDlg *findDlg_{nullptr};
+    P4GcfDlg *gcfDlg_{nullptr};
+    P4ArbitraryCurveDlg *arbitraryCurveDlg_{nullptr};
+    P4IsoclinesDlg *isoclinesDlg_{nullptr};
 };
 
 extern P4InputVF *gThisVF;

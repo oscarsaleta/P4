@@ -39,6 +39,7 @@ class P4ArbitraryCurveDlg : public QWidget
         : P4ArbitraryCurveDlg(other->plotwnd_, other->mainSphere_)
     {
     }
+    ~P4ArbitraryCurveDlg();
 
     void reset();
     void finishArbitraryCurveEvaluation();
@@ -47,19 +48,19 @@ class P4ArbitraryCurveDlg : public QWidget
     P4WinSphere *mainSphere_;
     P4PlotWnd *plotwnd_;
 
-    QPushButton* btnEvaluate_;
-    QPushButton* btnPlot_;
-    QPushButton* btnDelLast_;
-    QPushButton* btnDelAll_;
+    QPushButton *btnEvaluate_;
+    QPushButton *btnPlot_;
+    QPushButton *btnDelLast_;
+    QPushButton *btnDelAll_;
 
-    QRadioButton* btn_dots_;
-    QRadioButton* btn_dashes_;
-    QLineEdit* edt_curve_;
-    QLineEdit* edt_points_;
-    QLineEdit* edt_precis_;
-    QLineEdit* edt_memory_;
+    QRadioButton *btn_dots_;
+    QRadioButton *btn_dashes_;
+    QLineEdit *edt_curve_;
+    QLineEdit *edt_points_;
+    QLineEdit *edt_precis_;
+    QLineEdit *edt_memory_;
 
-    QBoxLayout* mainLayout_;
+    QBoxLayout *mainLayout_;
 
     int evaluating_points_{false};
     int evaluating_memory_{false};
