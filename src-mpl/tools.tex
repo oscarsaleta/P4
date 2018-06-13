@@ -281,6 +281,7 @@ end:
 
 optimizepolynomial2 := proc( f, x, y )
     local g, j, L, z;
+    global rounded;
     g := norpoly2(f,x,y);
     if not rounded then
         g := convert( g, rational )
@@ -353,6 +354,7 @@ end:
 
 ddeg := proc( _f, x, y )
     local f;
+    global rounded;
     f := optimizepolynomial2( _f, x, y );
     if f = 0 then 0 else degree( f, {x,y} ) fi
 end:
