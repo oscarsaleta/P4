@@ -159,7 +159,7 @@ if [[ "${platform}" == 'darwin' ]]; then
         fi
     }
 
-    function install_qt {
+    function install_qt_mac {
         echo ""
         echo "    - This script can automatically install Qt in your system using"
         echo "      Homebrew."
@@ -170,6 +170,8 @@ if [[ "${platform}" == 'darwin' ]]; then
         else
             install_brew
             sh macOS-install-tools/qt.sh
+            echo "${yellow}Done. Restart this script to continue with the installation of P4${normal}"
+            exit 0
         fi
     }
 
@@ -184,6 +186,8 @@ if [[ "${platform}" == 'darwin' ]]; then
         else
             install_brew
             sh macOS-install-tools/mpfr.sh
+            echo "${yellow}Done. Restart this script to continue with the installation of P4${normal}"
+            exit 0
         fi
     }
 fi
@@ -453,64 +457,70 @@ echo ""
 echo "${bold}${cyan}===${normal}${bold} Checking for dependencies...${normal}"
 # qmake check
 echo "- Looking for qmake... "
-if [[ -z ${QMAKE+x} ]]; then
-    echo "${yellow}[Warning]${normal} Optional variable QMAKE not set. It can be used to specify qmake command location"
-    if (command -v qmake >/dev/null 2>&1); then
-        QMAKE=qmake
-        echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
+if [[ -z ${QDIR+x} ]]; then
+    # Look for system qmake
+    QMAKE="qmake"
+    if (command -v ${QMAKE} >/dev/null 2>&1); then
+        echo "[Info] Found qmake at $(which qmake)"
         echo "${green}[Success]${normal}"
-    elif [[ -z ${QDIR+x} ]]; then
-        echo "${yellow}[Warning]${normal} Optional variable QDIR not set. It can be used to specify Qt install directory"
-        error_qmake
-        if [[ "${platform}" == 'linux' ]]; then
-            exit 1
-        elif [[ "${platform}" == 'darwin' ]]; then
-            install_qt
-        fi
+        system_qt=false
     else
-        QMAKE="${QDIR}/bin/qmake"
-        echo "[Info] Using Qt installation directory QDIR=${QDIR}"
-        if (command -v ${QMAKE} >/dev/null 2>&1); then
-            echo "[Info] Using qmake executable at QMAKE=${QMAKE}"
-            echo "${green}[Success]${normal}"
-        else
-            error_qmake
-            if [[ "${platform}" == 'linux' ]]; then
-                exit 1
-            elif [[ "${platform}" == 'darwin' ]]; then
-                install_qt
+        # qmake not found
+        error_qmake
+        if [[ "${platform}" == 'darwin' ]]; then
+            install_qt_mac
         fi
+        exit 1
+    fi
+else
+    # Look for custom qmake
+    QMAKE="${QDIR}/bin/qmake"
+    if (command -v ${QMAKE} >/dev/null 2>&1); then
+        echo "[Info] Found qmake at ${QMAKE}"
+        echo "${green}[Success]${normal}"
+        system_qt=false
+    else
+        echo "${yellow}[Warning]${normal} Could not find a valid qmake in ${QDIR}/bin"
+        # Look for system qmake
+        QMAKE="qmake"
+        if (command -v ${QMAKE} >/dev/null 2>&1); then
+            echo "[Info] Found qmake at $(which qmake)"
+            echo "${green}[Success]${normal}"
+            system_qt=true
+        else
+            # qmake not found
+            error_qmake
+            if [[ "${platform}" == 'darwin' ]]; then
+                install_qt_mac
+            fi
+            exit 1
         fi
     fi
 fi
 
-if [[ "${platform}" == 'linux' ]]; then
-    # pkconfig check
+# Linux only checks
+if [[ "${platform}" = 'linux' ]]; then
+    # Look for pkg-config
     echo "- Looking for pkg-config... "
     if (command -v pkg-config >/dev/null 2>&1); then
         echo "${green}[Success]${normal}"
-        echo "- Looking for Qt5 modules... "
-        # Qt modules check
-        if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
-            echo "${green}[Success]${normal}"
-        else
-            echo "${yellow}[Warning]${normal} Qt5 modules not found in default pkg-config path"
-            if [[ -z ${QDIR+x} ]]; then
-                error_qtmodules
-                exit 1
-            else
-                PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:${QDIR}/lib/pkgconfig/"
-                echo "[Info] Adding QDIR to PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
-                if (export PKG_CONFIG_PATH; pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
-                    echo "${green}[Success]${normal}"
-                else
-                    error_qtmodules
-                    exit 1
-                fi
-            fi
-        fi
     else
+        # pkg-config not found
         error_pkgconfig
+        exit 1
+    fi
+
+    # Look for Qt modules
+    echo "- Looking for Qt modules..."
+    if [[ "${system_qt}" = 'false' ]]; then
+        # If custom Qt location, add it to pkg-config search path
+        PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:${QDIR}/lib/pkgconfig/"
+        export PKG_CONFIG_PATH
+    fi
+    if (pkg-config --exists Qt5Core && pkg-config --exists Qt5Gui && pkg-config --exists Qt5Widgets && pkg-config --exists Qt5PrintSupport); then
+        echo "${green}[Success]${normal}"
+    else
+        error_qtmodules
         exit 1
     fi
 
