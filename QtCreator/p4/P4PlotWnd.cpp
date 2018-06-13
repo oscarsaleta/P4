@@ -63,11 +63,11 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
         setWindowIcon(*gP4smallIcon);
 
     auto toolBar1 = new QToolBar{"PlotBar1", this};
-    //    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
 
     auto toolBar2 = new QToolBar{"PlotBar2", this};
-    //    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2->setMovable(false);
 
     actClose_ = new QAction{"Clos&e", this};
