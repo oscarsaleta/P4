@@ -353,18 +353,24 @@ class P4InputVF : public QObject
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
-    // get and set
-    P4FindDlg *getFindDlgPtr() const;
-    void setFindDlg(P4FindDlg *);
+    // get and set (observed pointers, so no memory freeing here)
+    P4FindDlg *getFindDlgPtr() const { return findDlg_; }
+    void setFindDlg(P4FindDlg *newdlg) { findDlg_ = newdlg; }
 
-    P4GcfDlg *getGcfDlgPtr() const;
-    void setGcfDlg(P4GcfDlg *);
+    P4GcfDlg *getGcfDlgPtr() const { return gcfDlg_; }
+    void setGcfDlg(P4GcfDlg *newdlg) { gcfDlg_ = newdlg; }
 
-    P4ArbitraryCurveDlg *getArbitraryCurveDlgPtr() const;
-    void setArbitraryCurveDlg(P4ArbitraryCurveDlg *);
+    P4ArbitraryCurveDlg *getArbitraryCurveDlgPtr() const
+    {
+        return arbitraryCurveDlg_;
+    }
+    void setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
+    {
+        arbitraryCurveDlg_ = newdlg;
+    }
 
-    P4IsoclinesDlg *getIsoclinesDlgPtr() const;
-    void setIsoclinesDlg(P4IsoclinesDlg *);
+    P4IsoclinesDlg *getIsoclinesDlgPtr() const { return isoclinesDlg_; }
+    void setIsoclinesDlg(P4IsoclinesDlg *newdlg) { isoclinesDlg_ = newdlg; }
 
   signals:
     void saveSignal();
