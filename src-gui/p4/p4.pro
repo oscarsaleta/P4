@@ -78,6 +78,7 @@ SOURCES += file_paths.cpp \
     P4ParentStudy.cpp \
     P4PlotWnd.cpp \
     P4PrintDlg.cpp \
+    P4ProcessWnd.cpp \
     P4SeparatingCurvesDlg.cpp \
     P4SepDlg.cpp \
     p4settings.cpp \
@@ -137,6 +138,7 @@ HEADERS +=  ../version.h \
     P4ParentStudy.hpp \
     P4PlotWnd.hpp \
     P4PrintDlg.hpp \
+    P4ProcessWnd.hpp \
     P4SeparatingCurvesDlg.hpp \
     P4SepDlg.hpp \
     P4SettingsDlg.hpp \

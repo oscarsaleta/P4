@@ -108,6 +108,7 @@ void P4ParentStudy::reset()
     selectedDeSepIndex_ = -1;
 
     separatingCurves_.clear();
+    arbitraryCurves_.clear();
 
     config_hma_ = DEFAULT_HMA;
     config_hmi_ = DEFAULT_HMI;

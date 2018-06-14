@@ -44,6 +44,7 @@
 #include "P4GcfDlg.hpp"
 #include "P4IsoclinesDlg.hpp"
 #include "P4ParentStudy.hpp"
+#include "P4ProcessWnd.hpp"
 #include "P4StartDlg.hpp"
 #include "P4VFStudy.hpp"
 #include "file_paths.hpp"
@@ -1749,13 +1750,13 @@ void P4InputVF::evaluate()
     else
         s = s.append(" \"").append(filedotmpl).append("\"");
 
-    if (outputWindow_ == nullptr || processText_ == nullptr)
+    if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n-----------------------------------------"
-                             "---------------------"
-                             "-----------------\n\n");
-        terminateProcessButton_->setEnabled(true);
+        outputWindow_->appendText(
+            "\n\n--------------------------------------------------------------"
+            "-----------------\n\n");
+        outputWindow_->enableTerminateProcessButton(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
@@ -1781,7 +1782,7 @@ void P4InputVF::evaluate()
 
     processFailed_ = false;
     QString pa = "External Command: " + getMapleExe() + " " + filedotmpl;
-    processText_->append(pa);
+    outputWindow_->appendText(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
@@ -1792,7 +1793,7 @@ void P4InputVF::evaluate()
         evalFile_ = "";
         evalFile2_ = "";
         gP4app->signalEvaluated(-1);
-        terminateProcessButton_->setEnabled(false);
+        outputWindow_->enableTerminateProcessButton(false);
     } else {
         evalProcess_ = proc;
         evalFile_ = std::move(filedotmpl);
@@ -1830,10 +1831,11 @@ void P4InputVF::evaluateArbitraryCurveTable()
     if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n-----------------------------------------"
-                             "---------------------"
-                             "-----------------\n\n");
-        terminateProcessButton_->setEnabled(true);
+        outputWindow_->appendText(
+            "\n\n-----------------------------------------"
+            "---------------------"
+            "-----------------\n\n");
+        outputWindow_->enableTerminateProcessButton(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
@@ -1858,7 +1860,7 @@ void P4InputVF::evaluateArbitraryCurveTable()
 
     processFailed_ = false;
     QString pa = "External Command: " + getMapleExe() + " " + filedotmpl;
-    processText_->append(pa);
+    outputWindow_->appendText(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
@@ -1869,7 +1871,7 @@ void P4InputVF::evaluateArbitraryCurveTable()
         evalFile_ = "";
         evalFile2_ = "";
         gP4app->signalEvaluated(-1);
-        terminateProcessButton_->setEnabled(false);
+        outputWindow_->enableTerminateProcessButton(false);
     } else {
         evalProcess_ = proc;
         evalFile_ = std::move(filedotmpl);
@@ -1913,13 +1915,14 @@ void P4InputVF::evaluateIsoclinesTable()
 
         /* Here a window for displaying the output text of the Maple process
          * is created */
-        if (outputWindow_ == nullptr || processText_ == nullptr)
+        if (outputWindow_ == nullptr)
             createProcessWindow();
         else {
-            processText_->append("\n\n--------------------------------------"
-                                 "-----------------------------------------"
-                                 "\n\n");
-            terminateProcessButton_->setEnabled(true);
+            outputWindow_->appendText(
+                "\n\n--------------------------------------"
+                "-----------------------------------------"
+                "\n\n");
+            outputWindow_->enableTerminateProcessButton(true);
             outputWindow_->show();
             outputWindow_->raise();
         }
@@ -1961,7 +1964,7 @@ void P4InputVF::evaluateIsoclinesTable()
         pa += getMapleExe();
         pa += " ";
         pa += filedotmpl;
-        processText_->append(pa);
+        outputWindow_->appendText(pa);
         proc->start(getMapleExe(), QStringList(filedotmpl),
                     QIODevice::ReadWrite);
 
@@ -1975,7 +1978,7 @@ void P4InputVF::evaluateIsoclinesTable()
             evalFile_ = "";
             evalFile2_ = "";
             gP4app->signalEvaluated(-1);
-            terminateProcessButton_->setEnabled(false);
+            outputWindow_->enableTerminateProcessButton(false);
         } else {
             evalProcess_ = proc;
             evalFile_ = std::move(filedotmpl);
@@ -2024,17 +2027,17 @@ void P4InputVF::finishEvaluation(int exitCode)
         evalFile2_ = "";
     }
 
-    if (terminateProcessButton_ != nullptr)
-        terminateProcessButton_->setEnabled(false);
+    if (outputWindow_ != nullptr)
+        outputWindow_->enableTerminateProcessButton(false);
 
     if (evalProcess_ != nullptr) {
-        if (processText_ != nullptr) {
+        if (outputWindow_ != nullptr) {
             outputWindow_->show();
             outputWindow_->raise();
             QString buf{"\n------------------------------------------------"
                         "------------"
                         "-------------------\n"};
-            processText_->append(buf);
+            outputWindow_->appendText(buf);
             if (evalProcess_ != nullptr) {
                 if (evalProcess_->state() == QProcess::Running) {
                     evalProcess_->terminate();
@@ -2062,7 +2065,7 @@ void P4InputVF::finishEvaluation(int exitCode)
                 else
                     buf = "";
             }
-            processText_->append(buf);
+            outputWindow_->appendText(buf);
         }
     }
 
@@ -2166,7 +2169,7 @@ void P4InputVF::readProcessStdout()
     QByteArray line;
     int i, j;
 
-    if (!evalProcess_ || !processText_)
+    if (evalProcess_ == nullptr || outputWindow_ == nullptr)
         return;
 
     while (1) {
@@ -2187,12 +2190,12 @@ void P4InputVF::readProcessStdout()
                 line = t.left(i);
                 t = t.mid(i + 1);
             }
-            processText_->append(line);
+            outputWindow_->appendText(line);
             i = t.indexOf('\n');
             j = t.indexOf('\r');
         }
         if (t.length() != 0)
-            processText_->append(t);
+            outputWindow_->appendText(t);
     }
 }
 
@@ -2207,7 +2210,7 @@ void P4InputVF::onTerminateButton()
             QString buf{"\n------------------------------------------------"
                         "------------"
                         "-------------------\n"};
-            processText_->append(buf);
+            outputWindow_->appendText(buf);
             evalProcess_->terminate();
 #if QT_VERSION < QT_VERSION_CHECK(5, 5, 0)
             QTimer::singleShot(2000, evalProcess_, SLOT(kill));
@@ -2215,7 +2218,7 @@ void P4InputVF::onTerminateButton()
             QTimer::singleShot(2000, evalProcess_, &QProcess::kill);
 #endif
             buf = "Kill signal sent to process.\n";
-            processText_->append(buf);
+            outputWindow_->appendText(buf);
             processFailed_ = true;
             processError_ = "Terminated by user";
         }
@@ -2235,57 +2238,10 @@ void P4InputVF::createProcessWindow()
         return;
     }
 
-    outputWindow_ = new QWidget{};
-    outputWindow_->setWindowTitle("Output window");
-    outputWindow_->resize(530, 344);
-    if (gP4smallIcon != nullptr)
-        outputWindow_->setWindowIcon(*gP4smallIcon);
+    outputWindow_ = new P4ProcessWnd{};
 
-    auto vLayout = new QVBoxLayout{outputWindow_};
-    vLayout->setSpacing(3);
-    vLayout->setContentsMargins(5, 5, 5, 5);
-    auto vLayout2 = new QVBoxLayout{};
-    vLayout2->setSpacing(3);
-
-    processText_ = new QTextEdit{outputWindow_};
-    processText_->setLineWrapMode(QTextEdit::FixedColumnWidth);
-    processText_->setWordWrapMode(QTextOption::WrapAnywhere);
-    processText_->setFont(gP4app->getCourierFont());
-    processText_->setLineWrapColumnOrWidth(82);
-    processText_->setReadOnly(true);
-    processText_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    vLayout2->addWidget(processText_);
-
-    auto hLayout = new QHBoxLayout{};
-    hLayout->setSpacing(6);
-
-    hLayout->addStretch();
-    terminateProcessButton_ = new QPushButton{"Terminate", outputWindow_};
-    terminateProcessButton_->setFont(gP4app->getBoldFont());
-    terminateProcessButton_->setToolTip(
-        "Terminates the process.  First tries to send a "
-        "safe signal to the process.\nIf this does not "
-        "work, then after 2 seconds, the program is "
-        "abruptly terminated.");
-    hLayout->addWidget(terminateProcessButton_);
-
-    clearProcessButton_ = new QPushButton{"Clear", outputWindow_};
-    clearProcessButton_->setFont(gP4app->getBoldFont());
-    clearProcessButton_->setToolTip("Clears this window");
-    hLayout->addWidget(clearProcessButton_);
-
-    vLayout2->addLayout(hLayout);
-    vLayout->addLayout(vLayout2);
-
-    outputWindow_->show();
-
-    QObject::connect(terminateProcessButton_, &QPushButton::clicked, this,
+    QObject::connect(outputWindow_, &P4ProcessWnd::terminateSignal, this,
                      &P4InputVF::onTerminateButton);
-    QObject::connect(clearProcessButton_, &QPushButton::clicked, this,
-                     [this]() {
-                         if (processText_ != nullptr)
-                             processText_->clear();
-                     });
 }
 
 // -----------------------------------------------------------------------
@@ -2298,12 +2254,13 @@ bool P4InputVF::evaluateGcf()
     // QString s = getMapleExe().append("
     // \"").append(filedotmpl).append("\"");
 
-    if (processText_ == nullptr)
+    if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
-        terminateProcessButton_->setEnabled(true);
+        outputWindow_->appendText(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
+        outputWindow_->enableTerminateProcessButton(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
@@ -2342,7 +2299,7 @@ bool P4InputVF::evaluateGcf()
     pa += getMapleExe();
     pa += " ";
     pa += filedotmpl;
-    processText_->append(pa);
+    outputWindow_->appendText(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
@@ -2354,7 +2311,7 @@ bool P4InputVF::evaluateGcf()
         evalFile_ = "";
         evalFile2_ = "";
         gP4app->signalCurveEvaluated(-1);
-        terminateProcessButton_->setEnabled(false);
+        outputWindow_->enableTerminateProcessButton(false);
         return false;
     } else {
         evalProcess_ = proc;
@@ -2565,12 +2522,13 @@ bool P4InputVF::evaluateArbitraryCurve()
         s = s.append(" \"").append(filedotmpl).append("\"");
     }
 
-    if (processText_ == nullptr)
+    if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
-        terminateProcessButton_->setEnabled(true);
+        outputWindow_->appendText(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
+        outputWindow_->enableTerminateProcessButton(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
@@ -2611,7 +2569,7 @@ bool P4InputVF::evaluateArbitraryCurve()
     pa += getMapleExe();
     pa += " ";
     pa += filedotmpl;
-    processText_->append(pa);
+    outputWindow_->appendText(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
@@ -2623,7 +2581,7 @@ bool P4InputVF::evaluateArbitraryCurve()
         evalFile_ = "";
         evalFile2_ = "";
         gP4app->signalCurveEvaluated(-1);
-        terminateProcessButton_->setEnabled(false);
+        outputWindow_->enableTerminateProcessButton(false);
         return false;
     } else {
         evalProcess_ = proc;
@@ -2651,7 +2609,6 @@ bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
         auto ba_mainmaple = maplepathformat(mainmaple);
 
-        QString user_platform{USERPLATFORM};
         auto user_file = getfilename_arbitrarycurve();
         auto ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
@@ -2833,12 +2790,13 @@ bool P4InputVF::evaluateIsoclines()
     } else
         s = s.append(filedotmpl);
 
-    if (processText_ == nullptr)
+    if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
-        terminateProcessButton_->setEnabled(true);
+        outputWindow_->appendText(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
+        outputWindow_->enableTerminateProcessButton(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
@@ -2878,7 +2836,7 @@ bool P4InputVF::evaluateIsoclines()
     pa += getMapleExe();
     pa += " ";
     pa += filedotmpl;
-    processText_->append(pa);
+    outputWindow_->appendText(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
     if (proc->state() != QProcess::Running &&
         proc->state() != QProcess::Starting) {
@@ -2890,7 +2848,7 @@ bool P4InputVF::evaluateIsoclines()
         evalFile_ = "";
         evalFile2_ = "";
         gP4app->signalCurveEvaluated(-1);
-        terminateProcessButton_->setEnabled(false);
+        outputWindow_->enableTerminateProcessButton(false);
         return false;
     } else {
         evalProcess_ = proc;
@@ -3094,8 +3052,8 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 {
     auto j0 = lst[selected_[0]];
-    for (int i = 1; i < numSelected_; i++) {
-        if (j0.compare(lst[selected_[i]]))
+    for (auto i : selected_) {
+        if (j0.compare(lst[i]))
             return false;
     }
     return true;
@@ -3449,12 +3407,13 @@ bool P4InputVF::evaluateSeparatingCurves()
     else
         s = s.append(" \"").append(filedotmpl).append("\"");
 
-    if (processText_ == nullptr)
+    if (outputWindow_ == nullptr)
         createProcessWindow();
     else {
-        processText_->append("\n\n------------------------------------------"
-                             "-------------------------------------\n\n");
-        terminateProcessButton_->setEnabled(true);
+        outputWindow_->appendText(
+            "\n\n------------------------------------------"
+            "-------------------------------------\n\n");
+        outputWindow_->enableTerminateProcessButton(true);
         outputWindow_->show();
         outputWindow_->raise();
     }
@@ -3481,7 +3440,7 @@ bool P4InputVF::evaluateSeparatingCurves()
 
     processFailed_ = false;
     QString pa{"External Command: " + getMapleExe() + " " + filedotmpl};
-    processText_->append(pa);
+    outputWindow_->appendText(pa);
     proc->start(getMapleExe(), QStringList(filedotmpl), QIODevice::ReadWrite);
 
     if (proc->state() != QProcess::Running &&
@@ -3494,7 +3453,7 @@ bool P4InputVF::evaluateSeparatingCurves()
         evalFile_ = "";
         evalFile2_ = "";
         gP4app->signalEvaluated(-1);
-        terminateProcessButton_->setEnabled(false);
+        outputWindow_->enableTerminateProcessButton(false);
         return false;
     } else {
         evalProcess_ = proc;
@@ -3772,7 +3731,7 @@ void P4InputVF::resampleIsoclines(int i)
 int P4InputVF::getVFIndex_R2(const double *ucoord)
 {
     if (gVFResults.separatingCurves_.empty())
-        return -1;
+        return 0;
     for (int i = numVFRegions_ - 1; i >= 0; i--) {
         if (isInsideRegion_R2(vfRegions_[i].signs, ucoord))
             return vfRegions_[i].vfIndex;
@@ -4034,83 +3993,6 @@ int P4InputVF::getVFIndex_VV2(const double *yy)
     y[0] = -yy[0];
     y[1] = -yy[1];
     return getVFIndex_V2(y);
-}
-
-// ---------------------------------------------------------------------
-//          getFindDlg
-// ---------------------------------------------------------------------
-P4FindDlg *P4InputVF::getFindDlgPtr() const { return findDlg_; }
-
-// ---------------------------------------------------------------------
-//          setFindDlg
-// ---------------------------------------------------------------------
-void P4InputVF::setFindDlg(P4FindDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != findDlg_ &&
-        newdlg->getParentPtr() != nullptr) {
-        findDlg_ = newdlg;
-    } else {
-        findDlg_ = nullptr;
-    }
-}
-
-// ---------------------------------------------------------------------
-//          getGcfDlgPtr
-// ---------------------------------------------------------------------
-P4GcfDlg *P4InputVF::getGcfDlgPtr() const { return gcfDlg_; }
-
-// ---------------------------------------------------------------------
-//          setGcfDlg
-// ---------------------------------------------------------------------
-void P4InputVF::setGcfDlg(P4GcfDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != gcfDlg_) {
-        gcfDlg_ = newdlg;
-    } else {
-        if (gcfDlg_ != nullptr)
-            delete gcfDlg_;
-        gcfDlg_ = nullptr;
-    }
-}
-
-// ---------------------------------------------------------------------
-//          getArbitraryCurveDlgPtr
-// ---------------------------------------------------------------------
-P4ArbitraryCurveDlg *P4InputVF::getArbitraryCurveDlgPtr() const
-{
-    return arbitraryCurveDlg_;
-}
-
-// ---------------------------------------------------------------------
-//          setArbitraryCurveDlg
-// ---------------------------------------------------------------------
-void P4InputVF::setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != arbitraryCurveDlg_) {
-        arbitraryCurveDlg_ = newdlg;
-    } else {
-        if (arbitraryCurveDlg_ != nullptr)
-            delete arbitraryCurveDlg_;
-        arbitraryCurveDlg_ = nullptr;
-    }
-}
-
-// ---------------------------------------------------------------------
-//          getIsoclinesDlgPtr
-// ---------------------------------------------------------------------
-P4IsoclinesDlg *P4InputVF::getIsoclinesDlgPtr() const { return isoclinesDlg_; }
-
-// ---------------------------------------------------------------------
-//          setIsoclinesDlg
-// ---------------------------------------------------------------------
-void P4InputVF::setIsoclinesDlg(P4IsoclinesDlg *newdlg)
-{
-    if (newdlg != nullptr && newdlg != isoclinesDlg_) {
-        isoclinesDlg_ = newdlg;
-    } else {
-        delete isoclinesDlg_;
-        isoclinesDlg_ = nullptr;
-    }
 }
 
 // ---------------------------------------------------------------------
