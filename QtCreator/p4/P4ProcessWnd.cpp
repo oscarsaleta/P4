@@ -29,6 +29,7 @@ P4ProcessWnd::P4ProcessWnd(QWidget *parent) : QWidget{parent}
     hLayout->addStretch();
 
     terminateProcessButton_ = new QPushButton{"Terminate", this};
+    terminateProcessButton_->setEnabled(false);
     terminateProcessButton_->setFont(gP4app->getBoldFont());
     terminateProcessButton_->setToolTip(
         "Terminates the process.  First tries to send a "

@@ -3052,8 +3052,8 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 {
     auto j0 = lst[selected_[0]];
-    for (int i = 1; i < numSelected_; i++) {
-        if (j0.compare(lst[selected_[i]]))
+    for (auto i : selected_) {
+        if (j0.compare(lst[i]))
             return false;
     }
     return true;
