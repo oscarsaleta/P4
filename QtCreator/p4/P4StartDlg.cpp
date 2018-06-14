@@ -40,6 +40,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
+#include "P4ProcessWnd.hpp"
 #include "P4SeparatingCurvesDlg.hpp"
 #include "P4VFSelectDlg.hpp"
 #include "custom.hpp"
@@ -167,6 +168,18 @@ P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
     setP4WindowTitle(this, cap);
 }
 
+P4StartDlg::~P4StartDlg()
+{
+    if (viewFiniteWindow_ != nullptr) {
+        delete viewFiniteWindow_;
+        viewFiniteWindow_ = nullptr;
+    }
+    if (viewInfiniteWindow_ != nullptr) {
+        delete viewInfiniteWindow_;
+        viewInfiniteWindow_ = nullptr;
+    }
+}
+
 void P4StartDlg::onSaveSignal()
 {
     QSettings settings(gThisVF->getbarefilename().append(".conf"),
@@ -198,11 +211,8 @@ void P4StartDlg::onSaveSignal()
                               gThisVF->outputWindow_->size());
             settings.setValue("outputWindow-pos",
                               gThisVF->outputWindow_->pos());
-        }
-        if (gThisVF->processText_) {
-            settings.setValue("processText", true);
-            settings.setValue("processText-contents",
-                              gThisVF->processText_->toPlainText());
+            settings.setValue("outputWindow-contents",
+                              gThisVF->outputWindow_->getText());
         }
     }
     settings.endGroup();
@@ -247,17 +257,16 @@ void P4StartDlg::onLoadSignal()
             viewFiniteWindow_->move(
                 settings.value("viewFiniteWindow-pos").toPoint());
         }
-        if (settings.value("outputWindow").toBool() &&
-            settings.value("processText").toBool()) {
+        if (settings.value("outputWindow").toBool()) {
             if (gThisVF != nullptr) {
                 gThisVF->createProcessWindow();
-                gThisVF->terminateProcessButton_->setDisabled(true);
+                gThisVF->outputWindow_->enableTerminateProcessButton(true);
                 gThisVF->outputWindow_->resize(
                     settings.value("outputWindow-size").toSize());
                 gThisVF->outputWindow_->move(
                     settings.value("outputWindow-pos").toPoint());
-                gThisVF->processText_->setPlainText(
-                    settings.value("processText-contents").toString());
+                gThisVF->outputWindow_->setText(
+                    settings.value("outputWindow-contents").toString());
             }
         }
     }
@@ -519,7 +528,7 @@ void P4StartDlg::onViewFinite()
 
     if (viewFiniteWindow_ != nullptr)
         delete viewFiniteWindow_;
-    viewFiniteWindow_ = new QTextEdit{this};
+    viewFiniteWindow_ = new QTextEdit{};
     showText(*viewFiniteWindow_, "View results at the finite region", fname);
     viewFiniteWindow_->show();
     viewFiniteWindow_->raise();
@@ -556,7 +565,7 @@ void P4StartDlg::onViewInfinite()
 
     if (viewInfiniteWindow_ != nullptr)
         delete viewInfiniteWindow_;
-    viewInfiniteWindow_ = new QTextEdit{this};
+    viewInfiniteWindow_ = new QTextEdit{};
     showText(*viewInfiniteWindow_, "View results at infinity", fname);
     viewInfiniteWindow_->show();
     viewInfiniteWindow_->raise();

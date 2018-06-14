@@ -84,6 +84,7 @@ SOURCES += file_paths.cpp \
     print_points.cpp \
     print_postscript.cpp \
     print_xfig.cpp \
+    P4ProcessWnd.cpp
 
 HEADERS += ../version.h \
     color.hpp \
@@ -142,6 +143,7 @@ HEADERS += ../version.h \
     print_points.hpp \
     print_postscript.hpp \
     print_xfig.hpp \
-    tables.hpp
+    tables.hpp \
+    P4ProcessWnd.hpp
 
 RC_FILE = p4.rc

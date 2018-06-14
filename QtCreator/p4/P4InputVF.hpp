@@ -53,6 +53,7 @@ class P4ArbitraryCurveDlg;
 class P4FindDlg;
 class P4GcfDlg;
 class P4IsoclinesDlg;
+class P4ProcessWnd;
 
 namespace p4polynom
 {
@@ -126,10 +127,10 @@ class P4InputVF : public QObject
     QMetaObject::Connection *evalProcessFinishedConnection_{nullptr};
 
     // QT GUI ELEMENTS FIXME need to be public?
-    QWidget *outputWindow_{nullptr};
-    QTextEdit *processText_{nullptr};
-    QPushButton *terminateProcessButton_{nullptr};
-    QPushButton *clearProcessButton_{nullptr};
+    P4ProcessWnd *outputWindow_{nullptr};
+    //    QTextEdit *processText_{nullptr};
+    //    QPushButton *terminateProcessButton_{nullptr};
+    //    QPushButton *clearProcessButton_{nullptr};
 
     // PARAMETER LIST
     int numParams_{0};
