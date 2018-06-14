@@ -60,7 +60,8 @@ class P4StartDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4StartDlg(const QString &);
+    explicit P4StartDlg(const QString &);
+    ~P4StartDlg();
 
     void closeEvent(QCloseEvent *);
 

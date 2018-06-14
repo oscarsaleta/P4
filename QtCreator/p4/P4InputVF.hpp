@@ -53,6 +53,7 @@ class P4ArbitraryCurveDlg;
 class P4FindDlg;
 class P4GcfDlg;
 class P4IsoclinesDlg;
+class P4ProcessWnd;
 
 namespace p4polynom
 {
@@ -126,10 +127,10 @@ class P4InputVF : public QObject
     QMetaObject::Connection *evalProcessFinishedConnection_{nullptr};
 
     // QT GUI ELEMENTS FIXME need to be public?
-    QWidget *outputWindow_{nullptr};
-    QTextEdit *processText_{nullptr};
-    QPushButton *terminateProcessButton_{nullptr};
-    QPushButton *clearProcessButton_{nullptr};
+    P4ProcessWnd *outputWindow_{nullptr};
+    //    QTextEdit *processText_{nullptr};
+    //    QPushButton *terminateProcessButton_{nullptr};
+    //    QPushButton *clearProcessButton_{nullptr};
 
     // PARAMETER LIST
     int numParams_{0};
@@ -352,18 +353,24 @@ class P4InputVF : public QObject
     bool prepareIsoclines_LyapunovR2(int precision, int numpoints, int index);
     bool evaluateIsoclines();
 
-    // get and set
-    P4FindDlg *getFindDlgPtr() const;
-    void setFindDlg(P4FindDlg *);
+    // get and set (observed pointers, so no memory freeing here)
+    P4FindDlg *getFindDlgPtr() const { return findDlg_; }
+    void setFindDlg(P4FindDlg *newdlg) { findDlg_ = newdlg; }
 
-    P4GcfDlg *getGcfDlgPtr() const;
-    void setGcfDlg(P4GcfDlg *);
+    P4GcfDlg *getGcfDlgPtr() const { return gcfDlg_; }
+    void setGcfDlg(P4GcfDlg *newdlg) { gcfDlg_ = newdlg; }
 
-    P4ArbitraryCurveDlg *getArbitraryCurveDlgPtr() const;
-    void setArbitraryCurveDlg(P4ArbitraryCurveDlg *);
+    P4ArbitraryCurveDlg *getArbitraryCurveDlgPtr() const
+    {
+        return arbitraryCurveDlg_;
+    }
+    void setArbitraryCurveDlg(P4ArbitraryCurveDlg *newdlg)
+    {
+        arbitraryCurveDlg_ = newdlg;
+    }
 
-    P4IsoclinesDlg *getIsoclinesDlgPtr() const;
-    void setIsoclinesDlg(P4IsoclinesDlg *);
+    P4IsoclinesDlg *getIsoclinesDlgPtr() const { return isoclinesDlg_; }
+    void setIsoclinesDlg(P4IsoclinesDlg *newdlg) { isoclinesDlg_ = newdlg; }
 
   signals:
     void saveSignal();
@@ -381,10 +388,10 @@ class P4InputVF : public QObject
 
   private:
     // P4 GUI ELEMENTS
-    P4FindDlg *findDlg_;
-    P4GcfDlg *gcfDlg_;
-    P4ArbitraryCurveDlg *arbitraryCurveDlg_;
-    P4IsoclinesDlg *isoclinesDlg_;
+    P4FindDlg *findDlg_{nullptr};
+    P4GcfDlg *gcfDlg_{nullptr};
+    P4ArbitraryCurveDlg *arbitraryCurveDlg_{nullptr};
+    P4IsoclinesDlg *isoclinesDlg_{nullptr};
 };
 
 extern P4InputVF *gThisVF;

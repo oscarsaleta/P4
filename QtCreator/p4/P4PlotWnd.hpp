@@ -62,7 +62,7 @@ class P4PlotWnd : public QMainWindow
     P4ViewDlg *viewParamsWindow_;
     P4LimitCyclesDlg *lcWindow_;
     P4GcfDlg *gcfWindow_;
-    P4ArbitraryCurveDlg *curveWindow_;
+    P4ArbitraryCurveDlg *curveWindow_{nullptr};
     P4IsoclinesDlg *isoclinesWindow_;
 
     QBoxLayout *mainLayout_;
