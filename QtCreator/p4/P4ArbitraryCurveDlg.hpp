@@ -25,6 +25,7 @@ class QBoxLayout;
 class QLineEdit;
 class QPushButton;
 class QRadioButton;
+class QSpinBox;
 
 class P4PlotWnd;
 class P4WinSphere;
@@ -39,7 +40,6 @@ class P4ArbitraryCurveDlg : public QWidget
         : P4ArbitraryCurveDlg(other->plotwnd_, other->mainSphere_)
     {
     }
-    ~P4ArbitraryCurveDlg();
 
     void reset();
     void finishArbitraryCurveEvaluation();
@@ -56,9 +56,9 @@ class P4ArbitraryCurveDlg : public QWidget
     QRadioButton *btn_dots_;
     QRadioButton *btn_dashes_;
     QLineEdit *edt_curve_;
-    QLineEdit *edt_points_;
-    QLineEdit *edt_precis_;
-    QLineEdit *edt_memory_;
+    QSpinBox *edt_points_;
+    QSpinBox *edt_precis_;
+    QSpinBox *edt_memory_;
 
     QBoxLayout *mainLayout_;
 

@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QSpinBox>
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
@@ -49,13 +50,16 @@ P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     btngrp->addButton(btn_dashes_);
     auto lbl1 = new QLabel{"Appearance: ", this};
 
-    edt_points_ = new QLineEdit{"", this};
+    edt_points_ = new QSpinBox{this};
+    edt_points_->setRange(MIN_CURVEPOINTS, MAX_CURVEPOINTS);
     auto lbl2 = new QLabel{"Num. Points: ", this};
 
-    edt_precis_ = new QLineEdit{"", this};
+    edt_precis_ = new QSpinBox{this};
+    edt_precis_->setRange(MIN_CURVEPRECIS, MAX_CURVEPRECIS);
     auto lbl3 = new QLabel{"Precision: ", this};
 
-    edt_memory_ = new QLineEdit{"", this};
+    edt_memory_ = new QSpinBox{this};
+    edt_memory_->setRange(MIN_CURVEMEMORY, MAX_CURVEMEMORY);
     auto lbl4 = new QLabel{"Max. Memory: ", this};
 
     btnEvaluate_ = new QPushButton{"Evaluate", this};
@@ -146,14 +150,12 @@ P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
     reset();
 }
 
-P4ArbitraryCurveDlg::~P4ArbitraryCurveDlg() {}
-
 void P4ArbitraryCurveDlg::reset()
 {
     edt_curve_->setText("");
-    edt_points_->setText(QString::number(DEFAULT_CURVEPOINTS));
-    edt_memory_->setText(QString::number(DEFAULT_CURVEMEMORY));
-    edt_precis_->setText(QString::number(DEFAULT_CURVEPRECIS));
+    edt_points_->setValue(DEFAULT_CURVEPOINTS);
+    edt_memory_->setValue(DEFAULT_CURVEMEMORY);
+    edt_precis_->setValue(DEFAULT_CURVEPRECIS);
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
@@ -189,41 +191,11 @@ void P4ArbitraryCurveDlg::onBtnEvaluate()
 void P4ArbitraryCurveDlg::onBtnPlot()
 {
     int points, precis, memory;
-    bool convertok;
     bool dashes{btn_dashes_->isChecked()};
-    bool ok{true};
 
-    QString buf{edt_points_->text()};
-    points = buf.toInt(&convertok);
-    if (!convertok || points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
-        buf += " ???";
-        edt_points_->setText(buf);
-        ok = false;
-    }
-
-    buf = edt_precis_->text();
-    precis = buf.toInt(&convertok);
-    if (!convertok || precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
-        buf += " ???";
-        edt_precis_->setText(buf);
-        ok = false;
-    }
-
-    buf = edt_memory_->text();
-    memory = buf.toInt(&convertok);
-    if (!convertok || memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
-        buf += " ???";
-        edt_memory_->setText(buf);
-        ok = false;
-    }
-
-    if (!ok) {
-        QMessageBox::information(
-            this, "P4",
-            "One of the fields has a value that is out of bounds.\n"
-            "Please correct before continuing.\n");
-        return;
-    }
+    points = edt_points_->value();
+    precis = edt_precis_->value();
+    memory = edt_memory_->value();
 
     // SECOND: read the resulting file and store the list
     if (!gVFResults.readArbitraryCurve(gThisVF->getbarefilename())) {
