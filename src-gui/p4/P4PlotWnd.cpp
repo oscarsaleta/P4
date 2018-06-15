@@ -63,11 +63,11 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
         setWindowIcon(*gP4smallIcon);
 
     auto toolBar1 = new QToolBar{"PlotBar1", this};
-    //    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    toolBar1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar1->setMovable(false);
 
     auto toolBar2 = new QToolBar{"PlotBar2", this};
-    //    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    toolBar2->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     toolBar2->setMovable(false);
 
     actClose_ = new QAction{"Clos&e", this};
@@ -186,7 +186,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
     viewParamsWindow_ = new P4ViewDlg{false, this};
     lcWindow_ = new P4LimitCyclesDlg{this, sphere_};
     gcfWindow_ = new P4GcfDlg{this, sphere_};
-    curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
+    //    curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
     isoclinesWindow_ = new P4IsoclinesDlg{this, sphere_};
     gLCWindowIsUp = false; // Limit cycles: initially hidden
 
@@ -371,6 +371,9 @@ void P4PlotWnd::onBtnGCF()
 void P4PlotWnd::onBtnCurve()
 {
     qDebug() << "button curve";
+    if (curveWindow_ == nullptr) {
+        curveWindow_ = new P4ArbitraryCurveDlg{this, sphere_};
+    }
     curveWindow_->show();
     curveWindow_->raise();
 }
@@ -457,7 +460,7 @@ void P4PlotWnd::configure()
     sepWindow_->reset();
     lcWindow_->reset();
     gcfWindow_->reset();
-    curveWindow_->reset();
+    //    curveWindow_->reset();
     isoclinesWindow_->reset();
 
     sphere_->update();
