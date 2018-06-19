@@ -897,7 +897,7 @@ plot_separatrice(P4WinSphere *spherewnd, double x0, double y0, double a11,
 void plot_all_sep(P4WinSphere *spherewnd)
 {
     if (!gVFResults.vf_.empty()) {
-        for (int i = 0; i < gThisVF->numVF_; i++) {
+        for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
             plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i]->saddlePoints_);
             plot_all_se_sep(spherewnd, i, gVFResults.vf_[i]->sePoints_);
             plot_all_de_sep(spherewnd, i, gVFResults.vf_[i]->dePoints_);

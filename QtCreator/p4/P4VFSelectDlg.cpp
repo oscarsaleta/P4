@@ -101,7 +101,7 @@ void P4VFSelectDlg::updateDlgData()
     QString s;
     int k;
 
-    for (k = 0; k < gThisVF->numVF_; k++) {
+    for (k = 0; k < static_cast<int>(gThisVF->numVF_); k++) {
         s.sprintf("%d", k + 1);
         if (cbb_vfselect_->count() > k)
             cbb_vfselect_->setItemText(k, s);
@@ -114,10 +114,10 @@ void P4VFSelectDlg::updateDlgData()
             cbb_vfselect_->setItemText(k, s);
         else
             cbb_vfselect_->addItem(s);
-        while (cbb_vfselect_->count() > gThisVF->numVF_ + 1)
+        while (cbb_vfselect_->count() > static_cast<int>(gThisVF->numVF_) + 1)
             cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
     } else {
-        while (cbb_vfselect_->count() > gThisVF->numVF_ + 1)
+        while (cbb_vfselect_->count() > static_cast<int>(gThisVF->numVF_) + 1)
             cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
     }
 
@@ -187,11 +187,13 @@ void P4VFSelectDlg::onBtnDel()
 void P4VFSelectDlg::onBtnPrev()
 {
     parent_->getDataFromDlg();
-    int j{gThisVF->selected_[0]};
+    unsigned int j{gThisVF->selected_[0]};
     gThisVF->selected_.clear();
     if (gThisVF->numSelected_ > 1)
         gThisVF->numSelected_ = 1;
-    if (--j < 0)
+    if (j > 0)
+        j--;
+    else
         j = 0;
     gThisVF->selected_.push_back(j);
     parent_->updateDlgData();
@@ -200,7 +202,7 @@ void P4VFSelectDlg::onBtnPrev()
 void P4VFSelectDlg::onBtnNext()
 {
     parent_->getDataFromDlg();
-    int j{gThisVF->selected_[0]};
+    unsigned int j{gThisVF->selected_[0]};
     gThisVF->selected_.clear();
     if (gThisVF->numSelected_ > 1)
         gThisVF->numSelected_ = 1;
@@ -212,7 +214,7 @@ void P4VFSelectDlg::onBtnNext()
 
 void P4VFSelectDlg::onVfSelectionChanged(int index)
 {
-    if (index < gThisVF->numVF_) {
+    if (index < static_cast<int>(gThisVF->numVF_)) {
         if (index != gThisVF->selected_[0] || gThisVF->numSelected_ > 1) {
             parent_->getDataFromDlg();
             gThisVF->selected_.clear();
@@ -220,12 +222,12 @@ void P4VFSelectDlg::onVfSelectionChanged(int index)
             gThisVF->numSelected_ = 1;
             parent_->updateDlgData();
         }
-    } else if (index >= gThisVF->numVF_) {
+    } else if (index >= static_cast<int>(gThisVF->numVF_)) {
         // selected all
         if (gThisVF->numSelected_ != gThisVF->numVF_) {
             parent_->getDataFromDlg();
             gThisVF->selected_.clear();
-            for (int k = 0; k < gThisVF->numVF_; k++)
+            for (unsigned int k = 0; k < gThisVF->numVF_; k++)
                 gThisVF->selected_.push_back(k);
             gThisVF->numSelected_ = gThisVF->numVF_;
             parent_->updateDlgData();

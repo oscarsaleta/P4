@@ -259,7 +259,7 @@ void P4SeparatingCurvesDlg::onBtnDel()
 
     int r{lst_curves_->currentRow()};
     QListWidgetItem *itm;
-    if (r >= 0 && r < gThisVF->numSeparatingCurves_) {
+    if (r >= 0 && r < static_cast<int>(gThisVF->numSeparatingCurves_)) {
         itm = lst_curves_->takeItem(r);
         delete itm;
     }
@@ -279,12 +279,12 @@ void P4SeparatingCurvesDlg::onBtnEdit()
 void P4SeparatingCurvesDlg::updateDlgData()
 {
     QListWidgetItem *itm;
-    int i, v;
+    int v;
     QString s;
 
     lst_curves_->clear();
 
-    for (i = 0; i < gThisVF->numSeparatingCurves_; i++) {
+    for (unsigned int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
         if (gThisVF->separatingCurves_[i].isEmpty())
             itm = new QListWidgetItem{"polynomial", lst_curves_};
         else
@@ -294,7 +294,8 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     if (!lst_curves_->selectedItems().isEmpty()) {
         int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-        if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_ ||
+        if (curveindex < 0 ||
+            curveindex >= static_cast<int>(gThisVF->numSeparatingCurves_) ||
             gThisVF->numPointsSeparatingCurve_.empty())
             v = -1;
         else
@@ -312,7 +313,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     lst_vfs_->clear();
 
-    for (i = 0; i < gThisVF->numVF_; i++) {
+    for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
         s = "x' = ";
         s = s.append(gThisVF->xdot_[i]);
         s = s.append("\ny' = ");
@@ -329,7 +330,7 @@ void P4SeparatingCurvesDlg::updateDlgData()
 void P4SeparatingCurvesDlg::onCurveChanged(QListWidgetItem *itm)
 {
     int r{lst_curves_->row(itm)};
-    if (r < 0 || r >= gThisVF->numSeparatingCurves_)
+    if (r < 0 || r >= static_cast<int>(gThisVF->numSeparatingCurves_))
         return;
     QString s{itm->text().trimmed()};
     if (gThisVF->separatingCurves_[r].compare(s)) {
@@ -359,7 +360,8 @@ void P4SeparatingCurvesDlg::onCurvesSelectionChanged()
             markingvf_ = false;
         }
         int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-        if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_ ||
+        if (curveindex < 0 ||
+            curveindex >= static_cast<int>(gThisVF->numSeparatingCurves_) ||
             gThisVF->numPointsSeparatingCurve_.empty())
             v = -1;
         else
@@ -653,7 +655,8 @@ void P4SeparatingCurvesDlg::onNumpointsEditingFinished()
     if (lst_curves_->selectedItems().isEmpty())
         return;
     int curveindex{lst_curves_->row(lst_curves_->selectedItems()[0])};
-    if (curveindex < 0 || curveindex >= gThisVF->numSeparatingCurves_)
+    if (curveindex < 0 ||
+        curveindex >= static_cast<int>(gThisVF->numSeparatingCurves_))
         return;
 
     QString s{edt_numpoints_->text()};

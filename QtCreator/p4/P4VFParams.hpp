@@ -46,9 +46,9 @@ class P4VFParams : public QWidget
     bool updateDlgData();
 
   private:
-    int currentNumParams_;
-    int currentShownParams_;
-    int currentPageIndex_{0};
+    unsigned int currentNumParams_;
+    unsigned int currentShownParams_;
+    unsigned int currentPageIndex_{0};
 
     QScrollBar *sb_params_;
     QBoxLayout *mainLayout_;

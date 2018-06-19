@@ -38,7 +38,7 @@ static int sIsoclinesTask{EVAL_ISOCLINES_NONE};
 static P4WinSphere *sIsoclinesSphere{nullptr};
 static int sIsoclinesDashes{0};
 static bool sIsoclinesError{false};
-static int sIsoclinesVfIndex{0};
+static unsigned int sIsoclinesVfIndex{0};
 
 // static functions
 static void insert_isocline_vector_point(double x0, double y0, double z0,
@@ -108,7 +108,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
         // resample isoclines to avoid drawing out of region
-        for (int index = 0; index < gThisVF->numVF_; index++) {
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
             gThisVF->resampleIsoclines(index);
         }
         // start drawing the last isocline for every VF

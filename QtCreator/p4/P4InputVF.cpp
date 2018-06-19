@@ -237,7 +237,7 @@ bool P4InputVF::load()
 
     FILE *fp;
     char scanbuf[2560];
-    int i, k, c;
+    int c;
     int flag_numeric, flag_testsep, aux;
 
     QString fname{getfilename()};
@@ -357,7 +357,7 @@ bool P4InputVF::load()
         }
 
         std::vector<QString> auxvec;
-        for (i = 0; i < numParams_; i++) {
+        for (unsigned int i = 0; i < numParams_; i++) {
             if (fscanf(fp, "%s", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -450,7 +450,7 @@ bool P4InputVF::load()
 
         if (numSeparatingCurves_ > 0) {
             int npoints;
-            for (k = 0; k < numSeparatingCurves_; k++) {
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
                     fscanf(fp, "%d\n", &npoints) != 1) {
                     reset(1);
@@ -471,7 +471,7 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        for (i = 0; i < numParams_; i++) {
+        for (unsigned int i = 0; i < numParams_; i++) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -479,7 +479,7 @@ bool P4InputVF::load()
             }
             parlabel_[i] = QString{scanbuf};
         }
-        for (i = numParams_; i < MAXNUMPARAMS; i++)
+        for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
             parlabel_[i] = QString{};
 
         if (fscanf(fp, "%d\n", &numVFRegions_) != 1 || numVFRegions_ < 0) {
@@ -487,10 +487,11 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        for (i = 0; i < numVFRegions_; i++) {
+        for (unsigned int i = 0; i < numVFRegions_; i++) {
             // read index
             int indx;
-            if (fscanf(fp, "%d", &indx) != 1 || indx < 0 || indx >= numVF_) {
+            if (fscanf(fp, "%d", &indx) != 1 || indx < 0 ||
+                indx >= static_cast<int>(numVF_)) {
                 reset(1);
                 fclose(fp);
                 return false;
@@ -498,7 +499,7 @@ bool P4InputVF::load()
             // read signs
             std::vector<int> sgns;
             int aux;
-            for (k = 0; k < numSeparatingCurves_; k++) {
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &aux) != 1 || (aux != 1 && aux != -1)) {
                     reset(1);
                     fclose(fp);
@@ -516,11 +517,11 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        for (i = 0; i < numCurveRegions_; i++) {
+        for (unsigned int i = 0; i < numCurveRegions_; i++) {
             // read index
             int indx;
             if (fscanf(fp, "%d", &indx) != 1 || indx < 0 ||
-                indx >= numSeparatingCurves_) {
+                indx >= static_cast<int>(numSeparatingCurves_)) {
                 reset(1);
                 fclose(fp);
                 return false;
@@ -528,7 +529,7 @@ bool P4InputVF::load()
             // read signs
             std::vector<int> sgns;
             int aux;
-            for (k = 0; k < numSeparatingCurves_; k++) {
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++) {
                 if (fscanf(fp, "%d", &aux) != 1 || aux > 1 || aux < -1) {
                     reset(1);
                     fclose(fp);
@@ -540,7 +541,7 @@ bool P4InputVF::load()
             curveRegions_.emplace_back(indx, std::move(sgns));
         }
 
-        for (k = 0; k < numVF_; k++) {
+        for (unsigned int k = 0; k < numVF_; k++) {
             if (fscanf(fp, "%d\n", &flag_numeric) != 1 ||
                 fscanf(fp, "%d\n", &aux) != 1 ||
                 fscanf(fp, "%[^\n]\n", scanbuf) != 1 ||
@@ -614,7 +615,7 @@ bool P4InputVF::load()
                 epsilon_[k] = "";
 
             std::vector<QString> auxvec;
-            for (i = 0; i < numParams_; i++) {
+            for (unsigned int i = 0; i < numParams_; i++) {
                 if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                     reset(1);
                     fclose(fp);
@@ -684,8 +685,6 @@ bool P4InputVF::checkevaluated()
 // -----------------------------------------------------------------------
 bool P4InputVF::save()
 {
-    int i, k;
-
     QSettings settings{getbarefilename().append(".conf"),
                        QSettings::NativeFormat};
     settings.clear();
@@ -717,7 +716,7 @@ bool P4InputVF::save()
 
         out << numVF_ << "\n";
         out << numSeparatingCurves_ << "\n";
-        for (i = 0; i < numSeparatingCurves_; i++) {
+        for (unsigned int i = 0; i < numSeparatingCurves_; i++) {
             if (separatingCurves_[i].isEmpty())
                 out << "(null)\n";
             else
@@ -726,7 +725,7 @@ bool P4InputVF::save()
         }
 
         out << numParams_ << "\n";
-        for (i = 0; i < numParams_; i++) {
+        for (unsigned int i = 0; i < numParams_; i++) {
             if (parlabel_[i].isEmpty())
                 out << "(null)\n";
             else
@@ -734,22 +733,22 @@ bool P4InputVF::save()
         }
 
         out << numVFRegions_ << "\n";
-        for (i = 0; i < numVFRegions_; i++) {
+        for (unsigned int i = 0; i < numVFRegions_; i++) {
             out << vfRegions_[i].vfIndex;
-            for (k = 0; k < numSeparatingCurves_; k++)
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++)
                 out << vfRegions_[i].signs[k];
             out << "\n";
         }
 
         out << numCurveRegions_ << "\n";
-        for (i = 0; i < numCurveRegions_; i++) {
+        for (unsigned int i = 0; i < numCurveRegions_; i++) {
             out << curveRegions_[i].curveIndex;
-            for (k = 0; k < numSeparatingCurves_; k++)
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++)
                 out << curveRegions_[i].signs[k];
             out << "\n";
         }
 
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             out << numeric_[i] << "\n";
             out << precision_[i] << "\n";
             if (epsilon_[i].isEmpty())
@@ -774,7 +773,7 @@ bool P4InputVF::save()
             else
                 out << gcf_[i] << "\n";
 
-            for (k = 0; k < numParams_; k++) {
+            for (unsigned int k = 0; k < numParams_; k++) {
                 if (parvalue_[i][k].isEmpty())
                     out << "(null)\n";
                 else
@@ -940,11 +939,10 @@ bool P4InputVF::fileExists(QString fname)
 void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
 {
     QString s;
-    int i;
 
     if (!forArbitraryCurves) {
         fp << "user_numeric_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << booleanString(numeric_[i]);
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -953,7 +951,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "epsilon_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << epsilon_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -962,7 +960,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "test_sep_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << booleanString(testsep_[i]);
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -971,7 +969,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "user_precision_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << precision_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -980,7 +978,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "taylor_level_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << taylorlevel_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -989,7 +987,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "numeric_level_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << numericlevel_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -998,7 +996,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "max_level_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << maxlevel_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -1007,7 +1005,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         }
 
         fp << "weakness_level_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             fp << weakness_[i];
             if (i == numVF_ - 1)
                 fp << " ]:\n";
@@ -1062,10 +1060,9 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
 void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 {
     QString myxdot, myydot, mygcf, lbl, val;
-    int k, i;
 
     fp << "user_f_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
+    for (unsigned int i = 0; i < numVF_; i++) {
         myxdot = convertMapleUserParameterLabels(xdot_[i]);
         myydot = convertMapleUserParameterLabels(ydot_[i]);
         fp << "[" << myxdot << "," << myydot << "]";
@@ -1076,7 +1073,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
     }
 
     fp << "user_gcf_pieces := [ ";
-    for (i = 0; i < numVF_; i++) {
+    for (unsigned int i = 0; i < numVF_; i++) {
         mygcf = convertMapleUserParameterLabels(gcf_[i]);
         fp << mygcf;
         if (i == numVF_ - 1)
@@ -1086,7 +1083,7 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
     }
 
     fp << "user_parameters := [ ";
-    for (k = 0; k < numParams_; k++) {
+    for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         fp << lbl;
         if (k == numParams_ - 1)
@@ -1097,12 +1094,12 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
     if (numParams_ == 0)
         fp << " ]:\n";
 
-    for (k = 0; k < numParams_; k++) {
+    for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         if (lbl.length() == 0)
             continue;
         fp << lbl << "_pieces := [ ";
-        for (i = 0; i < numVF_; i++) {
+        for (unsigned int i = 0; i < numVF_; i++) {
             val = convertMapleUserParameterLabels(parvalue_[i][k]);
             if (!numeric_[i])
                 fp << val;
@@ -1121,12 +1118,11 @@ void P4InputVF::prepareMapleVectorField(QTextStream &fp)
 // -----------------------------------------------------------------------
 void P4InputVF::prepareMapleSeparatingCurves(QTextStream &fp)
 {
-    int i;
     QString s;
 
     fp << "user_curves := [ ";
     if (numSeparatingCurves_ > 0)
-        for (i = 0; i < numSeparatingCurves_; i++) {
+        for (unsigned int i = 0; i < numSeparatingCurves_; i++) {
             s = convertMapleUserParameterLabels(separatingCurves_[i]);
             fp << s;
             if (i == numSeparatingCurves_ - 1)
@@ -1139,7 +1135,7 @@ void P4InputVF::prepareMapleSeparatingCurves(QTextStream &fp)
 
     fp << "user_numpointscurves :=[ ";
     if (numSeparatingCurves_ > 0)
-        for (i = 0; i < numSeparatingCurves_; i++) {
+        for (unsigned int i = 0; i < numSeparatingCurves_; i++) {
             fp << numPointsSeparatingCurve_[i];
             if (i == numSeparatingCurves_ - 1)
                 fp << " ]:\n";
@@ -1159,7 +1155,7 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
     fp << "user_curve := " << mycurve << ":\n";
 
     QString lbl, val;
-    for (int k = 0; k < numParams_; k++) {
+    for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         // FIXME: s'ha d'iterar per tots els parvalues?
         val = convertMapleUserParameterLabels(parvalue_[0][k]);
@@ -1185,7 +1181,6 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
     QString myisoclines;
     QString lbl;
     QString val;
-    int k;
 
     fp << "user_isoclines := [";
     for (auto s : isoclines_) {
@@ -1193,7 +1188,7 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
         fp << s; // FIXME
     }
 
-    for (k = 0; k < numParams_; k++) {
+    for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
         // FIXME: en aquest cas segur q està malament perquè hem de fer-ho amb
         // cada VF per separat (cada VF té les seves isoclines)
@@ -1215,15 +1210,13 @@ void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 // -----------------------------------------------------------------------
 void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
 {
-    int i, k;
-
     fp << "vfregions := [ ";
     if (numVFRegions_ == 0)
         fp << "]:\n";
     else {
-        for (i = 0; i < numVFRegions_; i++) {
+        for (unsigned int i = 0; i < numVFRegions_; i++) {
             fp << "[" << vfRegions_[i].vfIndex << ", [ ";
-            for (k = 0; k < numSeparatingCurves_; k++) {
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++) {
                 fp << vfRegions_[i].signs[k];
                 if (k < numSeparatingCurves_ - 1)
                     fp << ",";
@@ -1239,9 +1232,9 @@ void P4InputVF::prepareMaplePiecewiseConfig(QTextStream &fp)
     if (numCurveRegions_ == 0)
         fp << "]:\n";
     else {
-        for (i = 0; i < numCurveRegions_; i++) {
+        for (unsigned int i = 0; i < numCurveRegions_; i++) {
             fp << "[" << curveRegions_[i].curveIndex << ", [ ";
-            for (k = 0; k < numSeparatingCurves_; k++) {
+            for (unsigned int k = 0; k < numSeparatingCurves_; k++) {
                 fp << curveRegions_[i].signs[k];
                 if (k < numSeparatingCurves_ - 1)
                     fp << ",";
@@ -1298,9 +1291,9 @@ QString P4InputVF::convertMapleUserParameterLabels(QString src)
     QString s{std::move(src)};
     QString t;
     QString p, newlabel;
-    int i, k;
+    int i;
 
-    for (k = 0; k < numParams_; k++) {
+    for (unsigned int k = 0; k < numParams_; k++) {
         p = parlabel_[k];
         if (p.length() == 0)
             continue;
@@ -1328,10 +1321,10 @@ QString P4InputVF::convertMapleUserParameterLabels(QString src)
 // -----------------------------------------------------------------------
 QString P4InputVF::convertMapleUserParametersLabelsToValues(QString src)
 {
-    QString t, p, newlabel;
     int i;
+    QString t, p, newlabel;
     QString s{std::move(src)};
-    for (int k = 0; k < numParams_; k++) {
+    for (unsigned int k = 0; k < numParams_; k++) {
         p = parlabel_[k];
         if (p.length() == 0)
             continue;
@@ -3064,7 +3057,7 @@ bool P4InputVF::hasCommonString(const std::vector<QString> &lst)
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonInt(const std::vector<int> &lst)
 {
-    for (int i = 1; i < numSelected_; i++) {
+    for (unsigned int i = 1; i < numSelected_; i++) {
         if (lst[selected_[i]] != lst[selected_[0]])
             return false;
     }
@@ -3076,7 +3069,7 @@ bool P4InputVF::hasCommonInt(const std::vector<int> &lst)
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonBool(const std::vector<bool> &lst)
 {
-    for (int i = 1; i < numSelected_; i++) {
+    for (unsigned int i = 1; i < numSelected_; i++) {
         if (lst[selected_[i]] != lst[selected_[0]])
             return false;
     }
@@ -3088,7 +3081,7 @@ bool P4InputVF::hasCommonBool(const std::vector<bool> &lst)
 // -----------------------------------------------------------------------
 bool P4InputVF::hasCommonParValue(int index)
 {
-    for (int i = 1; i < numSelected_; i++) {
+    for (unsigned int i = 1; i < numSelected_; i++) {
         if (parvalue_[selected_[0]][index].compare(
                 parvalue_[selected_[i]][index]))
             return false;
@@ -3133,7 +3126,7 @@ QString P4InputVF::commonParValue(int index)
 // -----------------------------------------------------------------------
 void P4InputVF::setCommonString(std::vector<QString> &lst, QString val)
 {
-    for (int i = 0; i < numSelected_; i++)
+    for (unsigned int i = 0; i < numSelected_; i++)
         lst[selected_[i]] = val;
 }
 
@@ -3142,7 +3135,7 @@ void P4InputVF::setCommonString(std::vector<QString> &lst, QString val)
 // -----------------------------------------------------------------------
 void P4InputVF::setCommonInt(std::vector<int> &lst, int val)
 {
-    for (int i = 0; i < numSelected_; i++)
+    for (unsigned int i = 0; i < numSelected_; i++)
         lst[selected_[i]] = val;
 }
 
@@ -3151,7 +3144,7 @@ void P4InputVF::setCommonInt(std::vector<int> &lst, int val)
 // -----------------------------------------------------------------------
 void P4InputVF::setCommonBool(std::vector<bool> &lst, bool val)
 {
-    for (int i = 0; i < numSelected_; i++) {
+    for (unsigned int i = 0; i < numSelected_; i++) {
         lst[selected_[i]] = val;
     }
 }
@@ -3161,7 +3154,7 @@ void P4InputVF::setCommonBool(std::vector<bool> &lst, bool val)
 // -----------------------------------------------------------------------
 void P4InputVF::setCommonParValue(int index, QString val)
 {
-    for (int i = 0; i < numSelected_; i++) {
+    for (unsigned int i = 0; i < numSelected_; i++) {
         parvalue_[selected_[i]][index] = val;
     }
 }
@@ -3227,18 +3220,15 @@ void P4InputVF::addVectorField()
 // -----------------------------------------------------------------------
 //          P4InputVF::deleteVectorField
 // -----------------------------------------------------------------------
-void P4InputVF::deleteVectorField(int index)
+void P4InputVF::deleteVectorField(unsigned int index)
 {
     // first disconnect from other structures
-
-    int k;
-
     if (!gVFResults.vf_.empty()) {
         gVFResults.clearVFs();
         gVFResults.K_ = 0;
     }
 
-    for (k = 0; k < numVFRegions_; k++) {
+    for (unsigned int k = 0; k < numVFRegions_; k++) {
         if (vfRegions_[k].vfIndex == index) {
             vfRegions_.erase(std::begin(vfRegions_) + k);
             numVFRegions_--;
@@ -3250,9 +3240,9 @@ void P4InputVF::deleteVectorField(int index)
             vfRegions_[k].vfIndex--;
     }
 
-    for (k = 0; k < numSelected_; k++) {
+    for (int k = 0; k < static_cast<int>(numSelected_); k++) {
         if (selected_[k] == index) {
-            if (k < numSelected_ - 1)
+            if (k < static_cast<int>(numSelected_) - 1)
                 selected_.erase(std::begin(selected_) + k);
             numSelected_--;
             k--;
@@ -3282,7 +3272,7 @@ void P4InputVF::deleteVectorField(int index)
         numericlevel_[0] = DEFAULTNUMLEVEL;
         maxlevel_[0] = DEFAULTMAXLEVEL;
         weakness_[0] = DEFAULTWEAKNESS;
-        for (k = 0; k < MAXNUMPARAMS; k++) {
+        for (int k = 0; k < MAXNUMPARAMS; k++) {
             parvalue_[0][k] = QString{};
             parlabel_[k] = QString{};
         }
@@ -3322,11 +3312,10 @@ void P4InputVF::addSeparatingCurve()
     numPointsSeparatingCurve_.push_back(DEFAULT_CURVEPOINTS);
     numSeparatingCurves_++;
 
-    int i;
-    for (i = 0; i < numVFRegions_; i++)
+    for (unsigned int i = 0; i < numVFRegions_; i++)
         vfRegions_[i].signs.push_back(1);
 
-    for (i = 0; i < numCurveRegions_; i++)
+    for (unsigned int i = 0; i < numCurveRegions_; i++)
         curveRegions_[i].signs.push_back(1);
 }
 
@@ -3335,9 +3324,7 @@ void P4InputVF::addSeparatingCurve()
 // -----------------------------------------------------------------------
 void P4InputVF::deleteSeparatingCurve(int index)
 {
-    int i;
-
-    if (index < 0 || index >= numSeparatingCurves_)
+    if (index < 0 || index >= static_cast<int>(numSeparatingCurves_))
         return;
 
     if (!gVFResults.separatingCurves_.empty()) {
@@ -3350,9 +3337,9 @@ void P4InputVF::deleteSeparatingCurve(int index)
         separatingCurves_.clear();
         numPointsSeparatingCurve_.clear();
 
-        for (i = 0; i < numVFRegions_; i++)
+        for (unsigned int i = 0; i < numVFRegions_; i++)
             vfRegions_[i].signs.clear();
-        for (i = 0; i < numCurveRegions_; i++)
+        for (unsigned int i = 0; i < numCurveRegions_; i++)
             curveRegions_[i].signs.clear();
         if (numVFRegions_ == 0 && numVF_ == 1) {
             numVFRegions_ = 1;
@@ -3480,7 +3467,7 @@ void P4InputVF::finishSeparatingCurvesEvaluation()
 // -----------------------------------------------------------------------
 //          P4InputVF::markVFRegion
 // -----------------------------------------------------------------------
-void P4InputVF::markVFRegion(int index, const double *p)
+void P4InputVF::markVFRegion(unsigned int index, const double *p)
 {
     int i;
 
@@ -3511,7 +3498,7 @@ void P4InputVF::markVFRegion(int index, const double *p)
 // -----------------------------------------------------------------------
 //          P4InputVF::unmarkVFRegion
 // -----------------------------------------------------------------------
-void P4InputVF::unmarkVFRegion(int index, const double *p)
+void P4InputVF::unmarkVFRegion(unsigned int index, const double *p)
 {
     int i;
 
@@ -3538,15 +3525,14 @@ void P4InputVF::unmarkVFRegion(int index, const double *p)
 // -----------------------------------------------------------------------
 //          P4InputVF::markCurveRegion
 // -----------------------------------------------------------------------
-void P4InputVF::markCurveRegion(int index, const double *p)
+void P4InputVF::markCurveRegion(unsigned int index, const double *p)
 {
-    int i;
     std::vector<int> signs;
 
     if (numSeparatingCurves_ == 0 || gVFResults.separatingCurves_.empty())
         return;
 
-    for (i = 0; i < numSeparatingCurves_; i++) {
+    for (unsigned int i = 0; i < numSeparatingCurves_; i++) {
         if (i == index)
             signs.push_back(0);
         else if (eval_curve(gVFResults.separatingCurves_[i], p) < 0)
@@ -3569,7 +3555,7 @@ void P4InputVF::markCurveRegion(int index, const double *p)
 // -----------------------------------------------------------------------
 //          P4InputVF::unmarkCurveRegion
 // -----------------------------------------------------------------------
-void P4InputVF::unmarkCurveRegion(int index, const double *p)
+void P4InputVF::unmarkCurveRegion(unsigned int index, const double *p)
 {
     std::vector<int> signs;
 
@@ -3579,7 +3565,7 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
     // NOTE: es pot fer així? reservar i accedir com si existissin?
     signs.reserve(sizeof(int) * numSeparatingCurves_);
     for (int i = numSeparatingCurves_ - 1; i >= 0; i--) {
-        if (i == index)
+        if (i == static_cast<int>(index))
             signs[i] = 0;
         else if (eval_curve(gVFResults.separatingCurves_[i], p) < 0)
             signs[i] = -1;
@@ -3587,7 +3573,7 @@ void P4InputVF::unmarkCurveRegion(int index, const double *p)
             signs[i] = 1;
     }
 
-    for (int i = 0; i < numCurveRegions_; i++) {
+    for (unsigned int i = 0; i < numCurveRegions_; i++) {
         if (signs == curveRegions_[i].signs &&
             index == curveRegions_[i].curveIndex) {
             // curve mark exists
@@ -3620,7 +3606,7 @@ void P4InputVF::clearCurveMarks()
 // -----------------------------------------------------------------------
 //          P4InputVF::isCurvePointDrawn
 // -----------------------------------------------------------------------
-bool P4InputVF::isCurvePointDrawn(int index, const double *pcoord)
+bool P4InputVF::isCurvePointDrawn(unsigned int index, const double *pcoord)
 {
     int k;
 
