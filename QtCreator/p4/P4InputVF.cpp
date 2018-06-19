@@ -441,8 +441,7 @@ bool P4InputVF::load()
 
         gVFResults.resetSeparatingCurveInfo();
 
-        if (fscanf(fp, "%d\n", &numSeparatingCurves_) != 1 ||
-            numSeparatingCurves_ < 0) {
+        if (fscanf(fp, "%ud\n", &numSeparatingCurves_) != 1) {
             reset(1);
             fclose(fp);
             return false;
@@ -465,7 +464,7 @@ bool P4InputVF::load()
             numPointsSeparatingCurve_.clear();
         }
 
-        if (fscanf(fp, "%d\n", &numParams_) != 1 || numParams_ < 0 ||
+        if (fscanf(fp, "%ud\n", &numParams_) != 1 ||
             numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
@@ -482,7 +481,7 @@ bool P4InputVF::load()
         for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
             parlabel_[i] = QString{};
 
-        if (fscanf(fp, "%d\n", &numVFRegions_) != 1 || numVFRegions_ < 0) {
+        if (fscanf(fp, "%ud\n", &numVFRegions_) != 1) {
             reset(1);
             fclose(fp);
             return false;
@@ -511,8 +510,7 @@ bool P4InputVF::load()
             vfRegions_.emplace_back(indx, std::move(sgns));
         }
 
-        if (fscanf(fp, "%d\n", &numCurveRegions_) != 1 ||
-            numCurveRegions_ < 0) {
+        if (fscanf(fp, "%d\n", &numCurveRegions_) != 1) {
             reset(1);
             fclose(fp);
             return false;
@@ -3249,10 +3247,13 @@ void P4InputVF::deleteVectorField(unsigned int index)
             if (numSelected_ == 0) {
                 numSelected_ = 1;
                 selected_[0] = index;
-                if (selected_[0] >= numVF_ - 1)
-                    selected_[0] = numVF_ - 2;
-                if (selected_[0] < 0)
-                    selected_[0] = 0;
+                if (selected_[0] >= numVF_ - 1) {
+                    if (numVF_ < 2) {
+                        selected_[0] = 0;
+                    } else {
+                        selected_[0] = numVF_ - 2;
+                    }
+                }
                 break;
             }
         } else if (selected_[k] > index)
@@ -3608,8 +3609,6 @@ void P4InputVF::clearCurveMarks()
 // -----------------------------------------------------------------------
 bool P4InputVF::isCurvePointDrawn(unsigned int index, const double *pcoord)
 {
-    int k;
-
     if (numSeparatingCurves_ == 0)
         return true;
     if (gVFResults.separatingCurves_.empty())
@@ -3618,8 +3617,8 @@ bool P4InputVF::isCurvePointDrawn(unsigned int index, const double *pcoord)
 
     for (auto const &curve : curveRegions_) {
         if (curve.curveIndex == index) {
-            for (k = numSeparatingCurves_ - 1; k >= 0; k--) {
-                if (k == index)
+            for (int k = numSeparatingCurves_ - 1; k >= 0; k--) {
+                if (k == static_cast<int>(index))
                     continue;
                 if (eval_curve(gVFResults.separatingCurves_[k], pcoord) < 0) {
                     if (curve.signs[k] > 0)

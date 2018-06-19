@@ -140,7 +140,8 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *parent)
 
 void P4VectorFieldDlg::numParamsChanged(int val)
 {
-    if (val < 0 || val > MAXNUMPARAMS || val == gThisVF->numParams_)
+    if (val < 0 || val > MAXNUMPARAMS ||
+        val == static_cast<int>(gThisVF->numParams_))
         return;
 
     delete params_;

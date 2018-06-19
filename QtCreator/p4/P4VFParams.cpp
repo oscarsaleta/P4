@@ -134,7 +134,7 @@ void P4VFParams::paramsSliderChanged(int value)
     if (value > static_cast<int>(currentNumParams_) - MAXNUMPARAMSSHOWN)
         value = static_cast<int>(currentNumParams_) - MAXNUMPARAMSSHOWN;
 
-    if (value != currentPageIndex_) {
+    if (value != static_cast<int>(currentPageIndex_)) {
         currentPageIndex_ = value;
 
         for (unsigned int i = 0; i < currentShownParams_; i++) {

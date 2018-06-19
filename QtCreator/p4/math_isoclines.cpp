@@ -130,7 +130,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
     return true;
 }
 
-bool runTaskIsoclines(int task, int precision, int points, int index)
+bool runTaskIsoclines(int task, int precision, int points, unsigned int index)
 {
     bool value;
 

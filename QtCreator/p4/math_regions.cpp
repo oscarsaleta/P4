@@ -520,7 +520,7 @@ bool isInTheSameRegion(double *testpt, double *refpos)
 // ---------------------------------------------------------------------
 //          isARealSingularity
 // ---------------------------------------------------------------------
-bool isARealSingularity(double *pcoord, int vfindex)
+bool isARealSingularity(double *pcoord, unsigned int vfindex)
 {
     //    if (gVFResults.separatingCurves_.empty())
     //        return true;

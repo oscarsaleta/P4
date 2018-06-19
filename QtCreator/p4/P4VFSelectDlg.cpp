@@ -215,7 +215,8 @@ void P4VFSelectDlg::onBtnNext()
 void P4VFSelectDlg::onVfSelectionChanged(int index)
 {
     if (index < static_cast<int>(gThisVF->numVF_)) {
-        if (index != gThisVF->selected_[0] || gThisVF->numSelected_ > 1) {
+        if (index != static_cast<int>(gThisVF->selected_[0]) ||
+            gThisVF->numSelected_ > 1) {
             parent_->getDataFromDlg();
             gThisVF->selected_.clear();
             gThisVF->selected_.push_back(index);

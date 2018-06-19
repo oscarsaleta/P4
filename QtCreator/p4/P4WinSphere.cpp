@@ -1474,7 +1474,6 @@ void P4WinSphere::plotGcf()
 void P4WinSphere::plotSeparatingCurves()
 {
     qDebug() << "plot separating curves";
-    int k;
     bool dashes;
     double pcoord[3];
 

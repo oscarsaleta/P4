@@ -131,7 +131,7 @@ bool evalGcfFinish() // return false in case an error occured
     return true;
 }
 
-bool runTask(int task, int precision, int points, int index)
+bool runTask(int task, int precision, int points, unsigned int index)
 {
     bool value;
 
