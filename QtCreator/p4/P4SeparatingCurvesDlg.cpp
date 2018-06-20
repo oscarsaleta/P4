@@ -284,12 +284,11 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     lst_curves_->clear();
 
-    for (unsigned int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
-        if (gThisVF->separatingCurves_[i].isEmpty())
+    for (auto curve : gThisVF->separatingCurves_) {
+        if (curve.isEmpty())
             itm = new QListWidgetItem{"polynomial", lst_curves_};
         else
-            itm =
-                new QListWidgetItem{gThisVF->separatingCurves_[i], lst_curves_};
+            itm = new QListWidgetItem{curve, lst_curves_};
     }
 
     if (!lst_curves_->selectedItems().isEmpty()) {
