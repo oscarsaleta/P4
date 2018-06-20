@@ -221,7 +221,7 @@ void P4VectorFieldDlg::updateDlgData()
         }
     }
 
-    if (gThisVF->numParams_ != 0 && !params_) {
+    if (gThisVF->numParams_ != 0 && params_ == nullptr) {
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
             sb_params_ = new QScrollBar{Qt::Vertical, this};
             sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);
