@@ -99,39 +99,31 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
 void P4VFSelectDlg::updateDlgData()
 {
     QString s;
-    int k;
-
-    for (k = 0; k < static_cast<int>(gThisVF->numVF_); k++) {
-        s.sprintf("%d", k + 1);
-        if (cbb_vfselect_->count() > k)
-            cbb_vfselect_->setItemText(k, s);
-        else
-            cbb_vfselect_->addItem(s);
+    // Clear combobox
+    while (cbb_vfselect_->count() > 0) {
+        cbb_vfselect_->removeItem(0);
     }
+    // Add number for each VF
+    for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
+        s.sprintf("%d", i + 1);
+        cbb_vfselect_->addItem(s);
+    }
+    // Add select all
     if (gThisVF->numVF_ > 1) {
         s = "Select All";
-        if (cbb_vfselect_->count() > k)
-            cbb_vfselect_->setItemText(k, s);
-        else
-            cbb_vfselect_->addItem(s);
-        while (cbb_vfselect_->count() > static_cast<int>(gThisVF->numVF_) + 1)
-            cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
-    } else {
-        while (cbb_vfselect_->count() > static_cast<int>(gThisVF->numVF_) + 1)
-            cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
+        cbb_vfselect_->addItem(s);
     }
-
+    // Set current index to selected VF (or last one if several)
     if (gThisVF->numSelected_ == 1)
         cbb_vfselect_->setCurrentIndex(gThisVF->selected_[0]);
     else
-        cbb_vfselect_->setCurrentIndex(gThisVF->numSelected_);
-
+        cbb_vfselect_->setCurrentIndex(gThisVF->numSelected_ - 1);
+    // Set prev and next buttons depending on VF count and selection
     if (gThisVF->numVF_ > 1) {
         if (gThisVF->selected_[0] == 0 && gThisVF->numSelected_ == 1)
             btn_prev_->setEnabled(false);
         else
             btn_prev_->setEnabled(true);
-
         if ((gThisVF->selected_[0] == gThisVF->numVF_ - 1 &&
              gThisVF->numSelected_) == 1)
             btn_next_->setEnabled(false);
@@ -141,7 +133,7 @@ void P4VFSelectDlg::updateDlgData()
         btn_prev_->setEnabled(false);
         btn_next_->setEnabled(false);
     }
-
+    // Update separating curves window data
     if (win_curves_ != nullptr)
         win_curves_->updateDlgData();
 }
