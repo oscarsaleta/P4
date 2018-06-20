@@ -481,11 +481,10 @@ double eval_curve(const p4curves::curves &c, const double *pcoord)
 QString describeRegion(double *pcoord)
 {
     QString s;
-    int k;
     double v;
 
     s = "";
-    for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
+    for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
         v = eval_curve(gVFResults.separatingCurves_[k], pcoord);
         if (fabs(v) <= 1.e-8)
             s += "0";
@@ -521,7 +520,7 @@ bool isInTheSameRegion(double *testpt, double *refpos)
 // ---------------------------------------------------------------------
 //          isARealSingularity
 // ---------------------------------------------------------------------
-bool isARealSingularity(double *pcoord, int vfindex)
+bool isARealSingularity(double *pcoord, unsigned int vfindex)
 {
     //    if (gVFResults.separatingCurves_.empty())
     //        return true;

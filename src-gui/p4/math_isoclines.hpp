@@ -45,7 +45,7 @@ struct orbits_points;
 bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
-bool runTaskIsoclines(int task, int precision, int points, int index);
+bool runTaskIsoclines(int task, int precision, int points, unsigned int index);
 void draw_isoclines(P4WinSphere *spherewnd,
                     const std::vector<p4orbits::orbits_points> &isoc, int color,
                     int dashes);

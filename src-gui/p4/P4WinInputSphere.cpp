@@ -955,7 +955,7 @@ P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
 void P4WinInputSphere::plotSeparatingCurves()
 {
     if (!gVFResults.separatingCurves_.empty())
-        for (int r = 0; r < gThisVF->numSeparatingCurves_; r++)
+        for (unsigned int r = 0; r < gThisVF->numSeparatingCurves_; r++)
             plotSeparatingCurve(gVFResults.separatingCurves_[r], r);
 }
 

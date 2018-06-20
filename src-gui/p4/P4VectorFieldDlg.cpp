@@ -140,7 +140,8 @@ P4VectorFieldDlg::P4VectorFieldDlg(P4FindDlg *parent)
 
 void P4VectorFieldDlg::numParamsChanged(int val)
 {
-    if (val < 0 || val > MAXNUMPARAMS || val == gThisVF->numParams_)
+    if (val < 0 || val > MAXNUMPARAMS ||
+        val == static_cast<int>(gThisVF->numParams_))
         return;
 
     delete params_;
@@ -220,7 +221,7 @@ void P4VectorFieldDlg::updateDlgData()
         }
     }
 
-    if (gThisVF->numParams_ != 0 && !params_) {
+    if (gThisVF->numParams_ != 0 && params_ == nullptr) {
         if (gThisVF->numParams_ > MAXNUMPARAMSSHOWN) {
             sb_params_ = new QScrollBar{Qt::Vertical, this};
             sb_params_->setRange(0, gThisVF->numParams_ - MAXNUMPARAMSSHOWN);

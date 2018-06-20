@@ -45,7 +45,7 @@ struct orbits_points;
 bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points);
 bool evalGcfContinue(int precision, int points);
 bool evalGcfFinish();
-bool runTask(int task, int precision, int points, int index);
+bool runTask(int task, int precision, int points, unsigned int index);
 void draw_gcf(P4WinSphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep, int color,
               int dashes);

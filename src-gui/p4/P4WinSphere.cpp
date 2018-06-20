@@ -1474,14 +1474,13 @@ void P4WinSphere::plotGcf()
 void P4WinSphere::plotSeparatingCurves()
 {
     qDebug() << "plot separating curves";
-    int k;
     bool dashes;
     double pcoord[3];
 
     if (gVFResults.separatingCurves_.empty())
         return;
 
-    for (k = 0; k < gThisVF->numSeparatingCurves_; k++) {
+    for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
         dashes = true;
 
         auto &sep = gVFResults.separatingCurves_[k].points;
@@ -2304,7 +2303,7 @@ void P4WinSphere::printSeparatingCurves()
     if (gThisVF->numSeparatingCurves_ > 0 &&
         !gVFResults.separatingCurves_.empty()) {
         print_comment("Printing separating curves:");
-        for (int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
+        for (unsigned int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;
