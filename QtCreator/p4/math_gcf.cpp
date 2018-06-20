@@ -38,7 +38,7 @@ static int sGcfTask{EVAL_GCF_NONE};
 static P4WinSphere *sGcfSphere{nullptr};
 static int sGcfDashes{0};
 static bool sGcfError{false};
-static int sGcfVfIndex{0};
+static unsigned int sGcfVfIndex{0};
 
 // static functions
 static void insert_gcf_point(double x0, double y0, double z0, int dashes,
@@ -49,9 +49,8 @@ static bool read_gcf(void (*chart)(double, double, double *), int index);
 // function definitions
 bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points)
 {
-    int r;
     sp->prepareDrawing();
-    for (r = 0; r < gThisVF->numVF_; r++) {
+    for (unsigned int r = 0; r < gThisVF->numVF_; r++) {
         if (!gVFResults.vf_[r]->gcf_points_.empty()) {
             draw_gcf(sp, gVFResults.vf_[r]->gcf_points_, bgColours::CBACKGROUND,
                      sGcfDashes);
@@ -111,12 +110,11 @@ bool evalGcfContinue(int precision, int points)
 
 bool evalGcfFinish() // return false in case an error occured
 {
-    int index;
     if (sGcfTask != EVAL_GCF_NONE) {
-        for (index = 0; index < gThisVF->numVF_; index++)
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++)
             gThisVF->resampleGcf(index);
         sGcfSphere->prepareDrawing();
-        for (index = 0; index < gThisVF->numVF_; index++) {
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
             if (!gVFResults.vf_[index]->gcf_points_.empty())
                 draw_gcf(sGcfSphere, gVFResults.vf_[index]->gcf_points_, CSING,
                          1);
@@ -133,7 +131,7 @@ bool evalGcfFinish() // return false in case an error occured
     return true;
 }
 
-bool runTask(int task, int precision, int points, int index)
+bool runTask(int task, int precision, int points, unsigned int index)
 {
     bool value;
 

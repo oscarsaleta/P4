@@ -229,7 +229,7 @@ bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
         if (distance == -1)
             break;
     }
-    if (distance == -1 && vfindex0 != gThisVF->numVF_ - 1) {
+    if (distance == -1 && vfindex0 != static_cast<int>(gThisVF->numVF_) - 1) {
         for (vfindex = gThisVF->numVF_ - 1; vfindex > vfindex0; vfindex--) {
             distance =
                 find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_, x,
