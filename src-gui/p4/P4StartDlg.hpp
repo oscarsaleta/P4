@@ -34,7 +34,7 @@ class QString;
 class P4FindDlg;
 class P4PlotWnd;
 
-#define TYPE_SIGNAL_CURVESEVALUATED (QEvent::User + 1)
+#define TYPE_SIGNAL_SEPARATINGCURVESEVALUATED (QEvent::User + 1)
 #define TYPE_SIGNAL_EVALUATED (QEvent::User + 2)
 #define TYPE_SIGNAL_CHANGED (QEvent::User + 3)
 #define TYPE_SIGNAL_LOADED (QEvent::User + 4)

@@ -129,14 +129,14 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
     int s;
     if (gThisVF->numSeparatingCurves_ == 0)
         return true;
-    if (fscanf(fp, "%ud\n", &v) != 1)
+    if (fscanf(fp, "%u\n", &v) != 1)
         return false;
     if (v != gThisVF->numVFRegions_)
         return false;
 
     if (gThisVF->numVFRegions_ > 0) {
         for (unsigned int j = 0; j < gThisVF->numVFRegions_; j++) {
-            if (fscanf(fp, "%ud", &v) != 1 ||
+            if (fscanf(fp, "%u", &v) != 1 ||
                 v != gThisVF->vfRegions_[j].vfIndex)
                 return false;
             for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
@@ -148,11 +148,11 @@ bool P4ParentStudy::readPiecewiseData(FILE *fp)
         }
     }
 
-    if (fscanf(fp, "%ud\n", &v) != 1 || v != gThisVF->numCurveRegions_)
+    if (fscanf(fp, "%u\n", &v) != 1 || v != gThisVF->numCurveRegions_)
         return false;
     if (gThisVF->numCurveRegions_ > 0) {
         for (unsigned int j = 0; j < gThisVF->numCurveRegions_; j++) {
-            if (fscanf(fp, "%ud", &v) != 1 ||
+            if (fscanf(fp, "%u", &v) != 1 ||
                 v != gThisVF->curveRegions_[j].curveIndex)
                 return false;
             for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
@@ -203,7 +203,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         if (fpcurv == nullptr)
             return false;
 
-        if (fscanf(fpcurv, "p5\n%d %d %d %ud\n", &p, &q, &prec, &numcurves) !=
+        if (fscanf(fpcurv, "p5\n%d %d %d %u\n", &p, &q, &prec, &numcurves) !=
             4) {
             fclose(fpcurv);
             return false;
@@ -259,7 +259,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
     if (fpvec == nullptr)
         return false;
 
-    if (fscanf(fpvec, "P5\n%ud %ud\n", &numvf, &v) != 2) {
+    if (fscanf(fpvec, "P5\n%u %u\n", &numvf, &v) != 2) {
         fclose(fpvec);
         return false;
     }

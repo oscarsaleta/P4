@@ -684,6 +684,9 @@ void P4StartDlg::customEvent(QEvent *e)
     case TYPE_CLOSE_PLOTWINDOW:
         closePlotWindow();
         break;
+    case TYPE_SIGNAL_SEPARATINGCURVESEVALUATED:
+        signalSeparatingCurvesEvaluated();
+        break;
     default:
         QWidget::customEvent(e);
     }

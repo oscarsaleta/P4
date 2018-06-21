@@ -441,7 +441,7 @@ bool P4InputVF::load()
 
         gVFResults.resetSeparatingCurveInfo();
 
-        if (fscanf(fp, "%ud\n", &numSeparatingCurves_) != 1) {
+        if (fscanf(fp, "%u\n", &numSeparatingCurves_) != 1) {
             reset(1);
             fclose(fp);
             return false;
@@ -464,7 +464,7 @@ bool P4InputVF::load()
             numPointsSeparatingCurve_.clear();
         }
 
-        if (fscanf(fp, "%ud\n", &numParams_) != 1 ||
+        if (fscanf(fp, "%u\n", &numParams_) != 1 ||
             numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
@@ -481,7 +481,7 @@ bool P4InputVF::load()
         for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
             parlabel_[i] = QString{};
 
-        if (fscanf(fp, "%ud\n", &numVFRegions_) != 1) {
+        if (fscanf(fp, "%u\n", &numVFRegions_) != 1) {
             reset(1);
             fclose(fp);
             return false;
