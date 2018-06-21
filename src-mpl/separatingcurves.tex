@@ -314,7 +314,8 @@ end:
 \end{lstlisting}
 
 \begin{lstlisting}[name=separatingcurves]
-findSeparatingCurveInChart := proc(fp)ff   global u, v, returnvalue, facs, fac, user_f, user_numpoints;
+findSeparatingCurveInChart := proc(fp)
+    global u, v, returnvalue, facs, fac, user_f, user_numpoints;
     local m, n, P, k, i, j, s, f, CURVES_ARRAY_TO_LISTLIST, SimplifyPlot;
 
     CURVES_ARRAY_TO_LISTLIST := proc()
