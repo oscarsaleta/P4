@@ -25,7 +25,7 @@
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
@@ -33,7 +33,7 @@
 
 // static global variables
 static int sCurveTask = EVAL_CURVE_NONE;
-static P4WinSphere *sCurveSphere = nullptr;
+static P4Sphere *sCurveSphere = nullptr;
 static int sCurveDashes = 0;
 static bool sCurveError = false;
 
@@ -43,7 +43,7 @@ static bool readTaskResults(int);
 static bool read_curve(void (*chart)(double, double, double *));
 
 // function definitions
-bool evalArbitraryCurveStart(P4WinSphere *sp, int dashes, int precision,
+bool evalArbitraryCurveStart(P4Sphere *sp, int dashes, int precision,
                              int points)
 {
     if (gVFResults.plweights_)
@@ -197,7 +197,7 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void drawArbitraryCurve(P4WinSphere *spherewnd,
+void drawArbitraryCurve(P4Sphere *spherewnd,
                         const std::vector<p4orbits::orbits_points> &sep,
                         int color, int dashes)
 {
@@ -250,7 +250,7 @@ static bool read_curve(void (*chart)(double, double, double *))
     return true;
 }
 
-void deleteLastArbitraryCurve(P4WinSphere *sp)
+void deleteLastArbitraryCurve(P4Sphere *sp)
 {
     if (gVFResults.arbitraryCurves_.empty())
         return;

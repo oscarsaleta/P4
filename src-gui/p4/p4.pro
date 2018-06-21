@@ -89,8 +89,8 @@ SOURCES += file_paths.cpp \
     P4VFSelectDlg.cpp \
     P4VFStudy.cpp \
     P4ViewDlg.cpp \
-    P4WinInputSphere.cpp \
-    P4WinSphere.cpp \
+    P4InputSphere.cpp \
+    P4Sphere.cpp \
     P4ZoomWnd.cpp \
     plot_points.cpp \
     plot_tools.cpp \
@@ -149,8 +149,8 @@ HEADERS +=  ../version.h \
     P4VFSelectDlg.hpp \
     P4VFStudy.hpp \
     P4ViewDlg.hpp \
-    P4WinInputSphere.hpp \
-    P4WinSphere.hpp \
+    P4InputSphere.hpp \
+    P4Sphere.hpp \
     P4ZoomWnd.hpp \
     plot_points.hpp \
     plot_tools.hpp \

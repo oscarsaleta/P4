@@ -24,7 +24,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_numerics.hpp"
@@ -80,7 +80,7 @@ void make_transformations(const std::vector<p4blowup::transformations> &trans,
 //          integrate_blow_up
 // ---------------------------------------------------------------------------
 std::vector<p4orbits::orbits_points>
-integrate_blow_up(P4WinSphere *spherewnd, double *pcoord2,
+integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
                   p4blowup::blow_up_points &de_sep, double step, int dir,
                   int type, int chart)
 {
@@ -316,7 +316,7 @@ integrate_blow_up(P4WinSphere *spherewnd, double *pcoord2,
 //
 // At the end, a normal integration cycle is added.
 static std::vector<p4orbits::orbits_points>
-plot_sep_blow_up(P4WinSphere *spherewnd, double x0, double y0, int chart,
+plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
                  double epsilon, p4blowup::blow_up_points &de_sep, int vfindex)
 {
     double h, t{0}, y, pcoord[3], pcoord2[3], point[2];
@@ -557,7 +557,7 @@ plot_sep_blow_up(P4WinSphere *spherewnd, double x0, double y0, int chart,
 // ---------------------------------------------------------------------------
 //          change_epsilon_de
 // ---------------------------------------------------------------------------
-void change_epsilon_de(P4WinSphere *spherewnd, double epsilon)
+void change_epsilon_de(P4Sphere *spherewnd, double epsilon)
 {
     int deid{gVFResults.selectedDePointIndex_};
     gVFResults.dePoints_[deid].epsilon = epsilon;
@@ -573,7 +573,7 @@ void change_epsilon_de(P4WinSphere *spherewnd, double epsilon)
 // ---------------------------------------------------------------------------
 //          start_plot_de_sep
 // ---------------------------------------------------------------------------
-void start_plot_de_sep(P4WinSphere *spherewnd, int vfindex)
+void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
 {
     auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
     auto &de_poi = gVFResults.dePoints_[gVFResults.selectedDePointIndex_];
@@ -616,7 +616,7 @@ void start_plot_de_sep(P4WinSphere *spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 //          cont_plot_de_sep
 // ---------------------------------------------------------------------------
-void cont_plot_de_sep(P4WinSphere *spherewnd)
+void cont_plot_de_sep(P4Sphere *spherewnd)
 {
     double p[3];
     auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
@@ -644,7 +644,7 @@ void cont_plot_de_sep(P4WinSphere *spherewnd)
 // ---------------------------------------------------------------------------
 //          plot_next_de_sep
 // ---------------------------------------------------------------------------
-void plot_next_de_sep(P4WinSphere *spherewnd, int vfindex)
+void plot_next_de_sep(P4Sphere *spherewnd, int vfindex)
 {
     int &desepid{gVFResults.selectedDeSepIndex_};
     const int &depointid{gVFResults.selectedDePointIndex_};
@@ -665,7 +665,7 @@ void plot_next_de_sep(P4WinSphere *spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 //          select_next_de_sep
 // ---------------------------------------------------------------------------
-void select_next_de_sep(P4WinSphere *spherewnd)
+void select_next_de_sep(P4Sphere *spherewnd)
 {
     int &desepid{gVFResults.selectedDeSepIndex_};
     const int &depointid{gVFResults.selectedDePointIndex_};
@@ -687,7 +687,7 @@ void select_next_de_sep(P4WinSphere *spherewnd)
 // ---------------------------------------------------------------------------
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
-void plot_all_de_sep(P4WinSphere *spherewnd, int vfindex,
+void plot_all_de_sep(P4Sphere *spherewnd, int vfindex,
                      const std::vector<p4singularities::degenerate> &point)
 {
     double p[3];

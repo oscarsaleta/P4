@@ -25,7 +25,7 @@
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
 #include "P4StartDlg.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "math_charts.hpp"
 #include "tables.hpp"
 

@@ -19,16 +19,16 @@
 
 #pragma once
 
-class P4WinSphere;
+class P4Sphere;
 
-extern void (*plot_l)(P4WinSphere *, const double *, const double *, int);
-extern void (*plot_p)(P4WinSphere *, const double *, int);
+extern void (*plot_l)(P4Sphere *, const double *, const double *, int);
+extern void (*plot_p)(P4Sphere *, const double *, int);
 
-void spherePlotLine(P4WinSphere *sp, const double *p1, const double *p2,
+void spherePlotLine(P4Sphere *sp, const double *p1, const double *p2,
                     int color);
-void spherePlotPoint(P4WinSphere *sp, const double *p, int color);
-void spherePrintLine(P4WinSphere *sp, const double *p1, const double *p2,
+void spherePlotPoint(P4Sphere *sp, const double *p, int color);
+void spherePrintLine(P4Sphere *sp, const double *p1, const double *p2,
                      int color);
-void spherePrintPoint(P4WinSphere *sp, const double *p, int color);
+void spherePrintPoint(P4Sphere *sp, const double *p, int color);
 bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
                             double xmin, double xmax, double ymin, double ymax);

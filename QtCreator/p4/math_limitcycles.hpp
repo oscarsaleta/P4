@@ -19,13 +19,13 @@
 
 #pragma once
 
-class P4WinSphere;
+class P4Sphere;
 
-void drawLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
+void drawLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
                     double b, double c);
-void searchLimitCycle(P4WinSphere *spherewnd, double x0, double y0, double x1,
+void searchLimitCycle(P4Sphere *spherewnd, double x0, double y0, double x1,
                       double y1, double grid);
-void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
+void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
                      double b, double c);
-void drawLimitCycles(P4WinSphere *spherewnd);
-void deleteLastLimitCycle(P4WinSphere *spherewnd);
+void drawLimitCycles(P4Sphere *spherewnd);
+void deleteLastLimitCycle(P4Sphere *spherewnd);

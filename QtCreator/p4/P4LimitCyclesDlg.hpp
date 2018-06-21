@@ -29,7 +29,7 @@ class QPushButton;
 class QSpinBox;
 
 class P4PlotWnd;
-class P4WinSphere;
+class P4Sphere;
 
 bool stop_search_limit();
 void write_to_limit_window();
@@ -39,7 +39,7 @@ class P4LimitCyclesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4LimitCyclesDlg(P4PlotWnd *, P4WinSphere *);
+    P4LimitCyclesDlg(P4PlotWnd *, P4Sphere *);
     void reset();
     void setSection(double, double, double, double);
     void showEvent(QShowEvent *);
@@ -47,7 +47,7 @@ class P4LimitCyclesDlg : public QWidget
 
   private:
     P4PlotWnd *plotwnd_;
-    P4WinSphere *mainSphere_;
+    P4Sphere *mainSphere_;
 
     QPushButton *btn_start_;
     QPushButton *btn_cancel_;

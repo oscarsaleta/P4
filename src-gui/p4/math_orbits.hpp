@@ -21,7 +21,7 @@
 
 #include <vector>
 
-class P4WinSphere;
+class P4Sphere;
 
 namespace p4orbits
 {
@@ -38,16 +38,16 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
                               double &hhi, int &dashes, int &dir, double h_min,
                               double h_max);
 
-void integrateOrbit(P4WinSphere *, int);
+void integrateOrbit(P4Sphere *, int);
 
-std::vector<p4orbits::orbits_points> integrate_orbit(P4WinSphere *, double *,
+std::vector<p4orbits::orbits_points> integrate_orbit(P4Sphere *, double *,
                                                      double, int, int, int);
 
-void drawOrbit(P4WinSphere *spherewnd, const double *pcoord,
+void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
                const std::vector<p4orbits::orbits_points> &points, int color);
 
-bool startOrbit(P4WinSphere *sphere, double x, double y, bool R);
+bool startOrbit(P4Sphere *sphere, double x, double y, bool R);
 
-void drawOrbits(P4WinSphere *spherewnd);
+void drawOrbits(P4Sphere *spherewnd);
 
-void deleteLastOrbit(P4WinSphere *spherewnd);
+void deleteLastOrbit(P4Sphere *spherewnd);

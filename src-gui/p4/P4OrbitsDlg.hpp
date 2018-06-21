@@ -25,7 +25,7 @@ class QBoxLayout;
 class QLineEdit;
 class QPushButton;
 
-class P4WinSphere;
+class P4Sphere;
 class P4PlotWnd;
 
 class P4OrbitsDlg : public QWidget
@@ -33,13 +33,13 @@ class P4OrbitsDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4OrbitsDlg(P4PlotWnd *, P4WinSphere *);
+    P4OrbitsDlg(P4PlotWnd *, P4Sphere *);
 
     void reset();
 
   private:
     P4PlotWnd *plotWnd_;
-    P4WinSphere *mainSphere_;
+    P4Sphere *mainSphere_;
 
     QPushButton *btnForwards_;
     QPushButton *btnContinue_;

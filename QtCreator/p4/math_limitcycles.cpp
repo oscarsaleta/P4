@@ -23,7 +23,7 @@
 
 #include "P4LimitCyclesDlg.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_orbits.hpp"
@@ -151,7 +151,7 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 //
 // Loop to find limit cycles cutting some transverse section determined by two
 // end points.
-void searchLimitCycle(P4WinSphere *spherewnd, double x0, double y0, double x1,
+void searchLimitCycle(P4Sphere *spherewnd, double x0, double y0, double x1,
                       double y1, double grid)
 {
     double p1[3], pf1[3], pb1[3], rf1[2], rb1[2];
@@ -374,7 +374,7 @@ void searchLimitCycle(P4WinSphere *spherewnd, double x0, double y0, double x1,
 // The found limit cycle is re-integrated, and stored in memory.
 // It is meanwhile drawn on the screen.
 // The limit cycle is found through forward integration.
-void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
+void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
                      double b, double c)
 {
     double p1[3], p2[3];
@@ -466,7 +466,7 @@ void storeLimitCycle(P4WinSphere *spherewnd, double x, double y, double a,
 // -----------------------------------------------------------------------
 // Draw limit cycles that were calculated earlier.  This is called during
 // a repaint (but also during a print command).
-void drawLimitCycles(P4WinSphere *spherewnd)
+void drawLimitCycles(P4Sphere *spherewnd)
 {
     for (auto const &it : gVFResults.limCycles_)
         drawOrbit(spherewnd, it.pcoord, it.points, it.color);
@@ -475,7 +475,7 @@ void drawLimitCycles(P4WinSphere *spherewnd)
 // -----------------------------------------------------------------------
 //          deleteLastLimitCycle
 // -----------------------------------------------------------------------
-void deleteLastLimitCycle(P4WinSphere *spherewnd)
+void deleteLastLimitCycle(P4Sphere *spherewnd)
 {
     if (gVFResults.limCycles_.empty())
         return;

@@ -26,7 +26,7 @@
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
@@ -34,7 +34,7 @@
 QString gCurrentSingularityInfo[4]{"", "", "", ""};
 double gCurrentSeparatriceEpsilon{0};
 
-P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4SepDlg::P4SepDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget(plt, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}
 {

@@ -22,12 +22,12 @@
 #include <cmath>
 
 #include "P4ParentStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "math_p4.hpp"
 #include "tables.hpp"
 
-void (*plot_l)(P4WinSphere *, const double *, const double *, int) = nullptr;
-void (*plot_p)(P4WinSphere *, const double *, int) = nullptr;
+void (*plot_l)(P4Sphere *, const double *, const double *, int) = nullptr;
+void (*plot_p)(P4Sphere *, const double *, int) = nullptr;
 
 /*
 void plotEllipse( QPainter * p, int cx, int cy, int a, int b, int color, bool
@@ -56,7 +56,7 @@ WHEN ZOOMING
 */
 
 // FIXME: com fer que ho faci per cada sphere del vector?
-void spherePlotLine(P4WinSphere *sp, const double *p1, const double *p2,
+void spherePlotLine(P4Sphere *sp, const double *p1, const double *p2,
                     int color)
 {
     double ucoord1[2], ucoord2[2], ucoord3[2], ucoord4[2];
@@ -74,7 +74,7 @@ void spherePlotLine(P4WinSphere *sp, const double *p1, const double *p2,
     }
 }
 
-void spherePlotPoint(P4WinSphere *sp, const double *p, int color)
+void spherePlotPoint(P4Sphere *sp, const double *p, int color)
 {
     double ucoord[2];
 
@@ -85,7 +85,7 @@ void spherePlotPoint(P4WinSphere *sp, const double *p, int color)
     }
 }
 
-void spherePrintLine(P4WinSphere *sp, const double *p1, const double *p2,
+void spherePrintLine(P4Sphere *sp, const double *p1, const double *p2,
                      int color)
 {
     double ucoord1[2];
@@ -102,7 +102,7 @@ void spherePrintLine(P4WinSphere *sp, const double *p1, const double *p2,
     }
 }
 
-void spherePrintPoint(P4WinSphere *sp, const double *p, int color)
+void spherePrintPoint(P4Sphere *sp, const double *p, int color)
 {
     double ucoord[2];
 

@@ -28,14 +28,14 @@ class QRadioButton;
 class QSpinBox;
 
 class P4PlotWnd;
-class P4WinSphere;
+class P4Sphere;
 
 class P4ArbitraryCurveDlg : public QWidget
 {
     Q_OBJECT
 
   public:
-    P4ArbitraryCurveDlg(P4PlotWnd *, P4WinSphere *);
+    P4ArbitraryCurveDlg(P4PlotWnd *, P4Sphere *);
     P4ArbitraryCurveDlg(const P4ArbitraryCurveDlg *other)
         : P4ArbitraryCurveDlg(other->plotwnd_, other->mainSphere_)
     {
@@ -45,7 +45,7 @@ class P4ArbitraryCurveDlg : public QWidget
     void finishArbitraryCurveEvaluation();
 
   private:
-    P4WinSphere *mainSphere_;
+    P4Sphere *mainSphere_;
     P4PlotWnd *plotwnd_;
 
     QPushButton *btnEvaluate_;

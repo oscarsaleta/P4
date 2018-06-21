@@ -37,7 +37,7 @@ class P4OrbitsDlg;
 class P4SepDlg;
 class P4StartDlg;
 class P4ViewDlg;
-class P4WinSphere;
+class P4Sphere;
 class P4ZoomWnd;
 
 class P4PlotWnd : public QMainWindow
@@ -54,7 +54,7 @@ class P4PlotWnd : public QMainWindow
   private:
     P4StartDlg *parent_;
 
-    P4WinSphere *sphere_; // main sphere
+    P4Sphere *sphere_; // main sphere
     P4LegendWnd *legendWindow_;
     P4OrbitsDlg *orbitsWindow_;
     P4SepDlg *sepWindow_;

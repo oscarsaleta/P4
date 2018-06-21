@@ -39,12 +39,12 @@ class QResizeEvent;
 
 class P4SeparatingCurvesDlg;
 
-class P4WinInputSphere : public QWidget
+class P4InputSphere : public QWidget
 {
     Q_OBJECT
 
   public:
-    P4WinInputSphere(P4SeparatingCurvesDlg *wnd, QLabel *lbl_status,
+    P4InputSphere(P4SeparatingCurvesDlg *wnd, QLabel *lbl_status,
                      QWidget *parent);
 
     //////////////////////

@@ -34,19 +34,19 @@
 #define EVAL_CURVE_CYL4 11
 #define EVAL_CURVE_FINISHLYAPUNOV 12
 
-class P4WinSphere;
+class P4Sphere;
 
 namespace p4orbits
 {
 struct orbits_points;
 }
 
-bool evalArbitraryCurveStart(P4WinSphere *sp, int dashes, int precision,
+bool evalArbitraryCurveStart(P4Sphere *sp, int dashes, int precision,
                              int points);
 bool evalArbitraryCurveContinue(int precision, int points);
 bool evalArbitraryCurveFinish();
 bool runTaskArbitraryCurve(int task, int precision, int points);
-void drawArbitraryCurve(P4WinSphere *spherewnd,
+void drawArbitraryCurve(P4Sphere *spherewnd,
                         const std::vector<p4orbits::orbits_points> &sep,
                         int color, int dashes);
-void deleteLastArbitraryCurve(P4WinSphere *);
+void deleteLastArbitraryCurve(P4Sphere *);
