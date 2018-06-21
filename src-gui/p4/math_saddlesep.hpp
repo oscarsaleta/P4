@@ -21,17 +21,17 @@
 
 #include <vector>
 
-class P4WinSphere;
+class P4Sphere;
 
 namespace p4singularities
 {
 struct saddle;
 }
 
-void start_plot_saddle_sep(P4WinSphere *spherewnd, int vfindex);
-void cont_plot_saddle_sep(P4WinSphere *spherewnd);
-void plot_next_saddle_sep(P4WinSphere *spherewnd, int vfindex);
-void select_next_saddle_sep(P4WinSphere *spherewnd);
-void plot_all_saddle_sep(P4WinSphere *spherewnd, int vfindex,
+void start_plot_saddle_sep(P4Sphere *spherewnd, int vfindex);
+void cont_plot_saddle_sep(P4Sphere *spherewnd);
+void plot_next_saddle_sep(P4Sphere *spherewnd, int vfindex);
+void select_next_saddle_sep(P4Sphere *spherewnd);
+void plot_all_saddle_sep(P4Sphere *spherewnd, int vfindex,
                          std::vector<p4singularities::saddle> &point);
-void change_epsilon_saddle(P4WinSphere *spherewnd, double epsilon);
+void change_epsilon_saddle(P4Sphere *spherewnd, double epsilon);

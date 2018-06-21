@@ -51,7 +51,7 @@ struct degenerate;
 
 struct P4POLYLINES;
 
-class P4WinSphere : public QWidget
+class P4Sphere : public QWidget
 {
     Q_OBJECT
 
@@ -59,11 +59,11 @@ class P4WinSphere : public QWidget
 
   public:
     /* Constructor and destructor */
-    P4WinSphere(QStatusBar *bar, bool isZoom, double x1, double y1, double x2,
+    P4Sphere(QStatusBar *bar, bool isZoom, double x1, double y1, double x2,
                 double y2, QWidget *parent);
-    ~P4WinSphere();
+    ~P4Sphere();
 
-    static QVector<P4WinSphere *> sM_sphereList;
+    static QVector<P4Sphere *> sM_sphereList;
 
     /* Member variables */
     double horPixelsPerMM_;
@@ -85,7 +85,7 @@ class P4WinSphere : public QWidget
 
     int spherebgcolor_;
 
-    P4WinSphere *next_{nullptr}; // visible to PlotWnd
+    P4Sphere *next_{nullptr}; // visible to PlotWnd
 
     int selectingX_{0}, selectingY_{0};
     int selectingPointStep_{0}, selectingPointRadius_{0};

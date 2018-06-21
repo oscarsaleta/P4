@@ -45,7 +45,7 @@
 #include "P4SepDlg.hpp"
 #include "P4StartDlg.hpp"
 #include "P4ViewDlg.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "P4ZoomWnd.hpp"
 #include "main.hpp"
 #include "math_separatrice.hpp"
@@ -178,7 +178,7 @@ P4PlotWnd::P4PlotWnd(P4StartDlg *main) : QMainWindow{}, parent_{main}
 
     statusBar()->showMessage("Ready");
 
-    sphere_ = new P4WinSphere{statusBar(), false, 0, 0, 0, 0, this};
+    sphere_ = new P4Sphere{statusBar(), false, 0, 0, 0, 0, this};
     legendWindow_ = new P4LegendWnd{this};
     orbitsWindow_ = new P4OrbitsDlg{this, sphere_};
     sepWindow_ = new P4SepDlg{this, sphere_};

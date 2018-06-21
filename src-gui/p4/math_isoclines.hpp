@@ -35,18 +35,18 @@
 #define EVAL_ISOCLINES_CYL4 11
 #define EVAL_ISOCLINES_FINISHLYAPUNOV 12
 
-class P4WinSphere;
+class P4Sphere;
 
 namespace p4orbits
 {
 struct orbits_points;
 }
 
-bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points);
+bool evalIsoclinesStart(P4Sphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
-bool runTaskIsoclines(int task, int precision, int points, int index);
-void draw_isoclines(P4WinSphere *spherewnd,
+bool runTaskIsoclines(int task, int precision, int points, unsigned int index);
+void draw_isoclines(P4Sphere *spherewnd,
                     const std::vector<p4orbits::orbits_points> &isoc, int color,
                     int dashes);
-void deleteLastIsocline(P4WinSphere *sp);
+void deleteLastIsocline(P4Sphere *sp);

@@ -27,11 +27,11 @@
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "main.hpp"
 #include "math_orbits.hpp"
 
-P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget(plt, Qt::Tool | Qt::WindowStaysOnTopHint), plotWnd_{plt},
       mainSphere_{sp}
 {

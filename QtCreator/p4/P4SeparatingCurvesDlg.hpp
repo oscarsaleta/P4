@@ -31,7 +31,7 @@ class QPushButton;
 
 class P4FindDlg;
 class P4ViewDlg;
-class P4WinInputSphere;
+class P4InputSphere;
 
 class P4SeparatingCurvesDlg : public QMainWindow
 {
@@ -73,7 +73,7 @@ class P4SeparatingCurvesDlg : public QMainWindow
     QListWidget *lst_curves_;
     QListWidget *lst_vfs_;
 
-    P4WinInputSphere *isphere_;
+    P4InputSphere *isphere_;
 
     QLineEdit *edt_numpoints_;
 

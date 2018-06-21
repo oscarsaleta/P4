@@ -33,7 +33,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4ViewDlg.hpp"
-#include "P4WinInputSphere.hpp"
+#include "P4InputSphere.hpp"
 #include "main.hpp"
 
 P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
@@ -79,7 +79,7 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     lst_curves_ = new QListWidget{mainWidget_};
     lst_vfs_ = new QListWidget{mainWidget_};
 
-    isphere_ = new P4WinInputSphere{this, lbl_status_, mainWidget_};
+    isphere_ = new P4InputSphere{this, lbl_status_, mainWidget_};
     isphere_->setupPlot();
 
     viewParamsWindow_ = new P4ViewDlg{false, mainWidget_};
@@ -284,12 +284,11 @@ void P4SeparatingCurvesDlg::updateDlgData()
 
     lst_curves_->clear();
 
-    for (unsigned int i = 0; i < gThisVF->numSeparatingCurves_; i++) {
-        if (gThisVF->separatingCurves_[i].isEmpty())
+    for (auto curve : gThisVF->separatingCurves_) {
+        if (curve.isEmpty())
             itm = new QListWidgetItem{"polynomial", lst_curves_};
         else
-            itm =
-                new QListWidgetItem{gThisVF->separatingCurves_[i], lst_curves_};
+            itm = new QListWidgetItem{curve, lst_curves_};
     }
 
     if (!lst_curves_->selectedItems().isEmpty()) {

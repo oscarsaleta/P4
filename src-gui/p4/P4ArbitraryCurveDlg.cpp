@@ -31,13 +31,13 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "main.hpp"
 #include "math_arbitrarycurve.hpp"
 #include "math_polynom.hpp"
 
-P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4ArbitraryCurveDlg::P4ArbitraryCurveDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget{nullptr}, mainSphere_{sp}, plotwnd_{plt}
 {
     edt_curve_ = new QLineEdit{"", this};

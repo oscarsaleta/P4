@@ -26,7 +26,7 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 
-class P4WinSphere;
+class P4Sphere;
 class P4PlotWnd;
 
 extern QString gCurrentSingularityInfo[];
@@ -37,12 +37,12 @@ class P4SepDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4SepDlg(P4PlotWnd *, P4WinSphere *);
+    P4SepDlg(P4PlotWnd *, P4Sphere *);
     void reset();
 
   private:
     P4PlotWnd *plotWnd_;
-    P4WinSphere *mainSphere_;
+    P4Sphere *mainSphere_;
 
     QPushButton *btn_selectnext_;
     QPushButton *btn_intnext_;

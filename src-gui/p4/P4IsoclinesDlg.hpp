@@ -22,7 +22,7 @@
 #include <QWidget>
 
 class P4PlotWnd;
-class P4WinSphere;
+class P4Sphere;
 
 class QPushButton;
 class QRadioButton;
@@ -34,7 +34,7 @@ class P4IsoclinesDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4IsoclinesDlg(P4PlotWnd *, P4WinSphere *);
+    P4IsoclinesDlg(P4PlotWnd *, P4Sphere *);
     P4IsoclinesDlg(const P4IsoclinesDlg *other)
         : P4IsoclinesDlg(other->plotwnd_, other->mainSphere_)
     {
@@ -44,7 +44,7 @@ class P4IsoclinesDlg : public QWidget
     void finishIsoclinesEvaluation();
 
   private:
-    P4WinSphere *mainSphere_;
+    P4Sphere *mainSphere_;
     P4PlotWnd *plotwnd_;
 
     QPushButton *btnEvaluate_;

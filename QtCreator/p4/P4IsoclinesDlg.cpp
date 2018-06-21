@@ -32,11 +32,11 @@
 
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "main.hpp"
 #include "math_isoclines.hpp"
 
-P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
       mainSphere_{sp}, plotwnd_{plt}
 {

@@ -34,7 +34,7 @@
 #include "math_gcf.hpp"
 #include "tables.hpp"
 
-P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4WinSphere *sp)
+P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotwnd_{plt},
       mainSphere_{sp}
 {

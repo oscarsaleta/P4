@@ -63,7 +63,7 @@ double eval_curve(const p4curves::curves &c, const double *pcoord);
 
 QString describeRegion(double *pcoord);
 bool isInTheSameRegion(double *testpt, double *refpos);
-bool isARealSingularity(double *pcoord, int vfIndex);
+bool isARealSingularity(double *pcoord, unsigned int vfIndex);
 bool isARealSingularity(double x0, double y0, int chart, int vfIndex);
 
 void markSingularity(p4singularities::saddle &s,

@@ -26,7 +26,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
@@ -35,10 +35,10 @@
 
 // static global variables
 static int sIsoclinesTask{EVAL_ISOCLINES_NONE};
-static P4WinSphere *sIsoclinesSphere{nullptr};
+static P4Sphere *sIsoclinesSphere{nullptr};
 static int sIsoclinesDashes{0};
 static bool sIsoclinesError{false};
-static int sIsoclinesVfIndex{0};
+static unsigned int sIsoclinesVfIndex{0};
 
 // static functions
 static void insert_isocline_vector_point(double x0, double y0, double z0,
@@ -47,7 +47,7 @@ static bool readTaskResults(int, int);
 static bool read_isoclines(void (*chart)(double, double, double *), int index);
 
 // function definitions
-bool evalIsoclinesStart(P4WinSphere *sp, int dashes, int precision, int points)
+bool evalIsoclinesStart(P4Sphere *sp, int dashes, int precision, int points)
 {
     if (gVFResults.plweights_)
         sIsoclinesTask = EVAL_ISOCLINES_LYP_R2;
@@ -108,7 +108,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
         // resample isoclines to avoid drawing out of region
-        for (int index = 0; index < gThisVF->numVF_; index++) {
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
             gThisVF->resampleIsoclines(index);
         }
         // start drawing the last isocline for every VF
@@ -130,7 +130,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
     return true;
 }
 
-bool runTaskIsoclines(int task, int precision, int points, int index)
+bool runTaskIsoclines(int task, int precision, int points, unsigned int index)
 {
     bool value;
 
@@ -234,7 +234,7 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_isoclines(P4WinSphere *spherewnd,
+void draw_isoclines(P4Sphere *spherewnd,
                     const std::vector<p4orbits::orbits_points> &isoc, int color,
                     int dashes)
 {
@@ -290,7 +290,7 @@ static bool read_isoclines(void (*chart)(double, double, double *), int index)
     return true;
 }
 
-void deleteLastIsocline(P4WinSphere *sp)
+void deleteLastIsocline(P4Sphere *sp)
 {
     for (auto &vf : gVFResults.vf_) {
         if (vf->isocline_vector_.empty())

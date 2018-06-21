@@ -441,7 +441,7 @@ bool P4InputVF::load()
 
         gVFResults.resetSeparatingCurveInfo();
 
-        if (fscanf(fp, "%ud\n", &numSeparatingCurves_) != 1) {
+        if (fscanf(fp, "%u\n", &numSeparatingCurves_) != 1) {
             reset(1);
             fclose(fp);
             return false;
@@ -464,7 +464,7 @@ bool P4InputVF::load()
             numPointsSeparatingCurve_.clear();
         }
 
-        if (fscanf(fp, "%ud\n", &numParams_) != 1 ||
+        if (fscanf(fp, "%u\n", &numParams_) != 1 ||
             numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
@@ -481,7 +481,7 @@ bool P4InputVF::load()
         for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
             parlabel_[i] = QString{};
 
-        if (fscanf(fp, "%ud\n", &numVFRegions_) != 1) {
+        if (fscanf(fp, "%u\n", &numVFRegions_) != 1) {
             reset(1);
             fclose(fp);
             return false;
@@ -1523,7 +1523,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
 
     if (prepareforcurves) {
         fp << "user_precision := 8:\n"
-              "try FindAllCurves() catch:\n"
+              "try findAllSeparatingCurves() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
               "lastexception[2] );\n"
               "finally:\n"
@@ -3413,7 +3413,7 @@ bool P4InputVF::evaluateSeparatingCurves()
     evalProcessFinishedConnection_ =
         new QMetaObject::Connection{QObject::connect(
             proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
-            gP4app, &P4Application::signalCurveEvaluated)};
+            gP4app, &P4Application::signalSeparatingCurvesEvaluated)};
 #ifdef QT_QPROCESS_OLD
     QObject::connect(proc,
                      static_cast<void (QProcess::*)(QProcess::ProcessError)>(
@@ -3460,8 +3460,9 @@ bool P4InputVF::evaluateSeparatingCurves()
 void P4InputVF::finishSeparatingCurvesEvaluation()
 {
     evaluatingPiecewiseConfig_ = false;
-    auto e = new P4Event{static_cast<QEvent::Type>(TYPE_SIGNAL_CURVESEVALUATED),
-                         nullptr};
+    auto e = new P4Event{
+        static_cast<QEvent::Type>(TYPE_SIGNAL_SEPARATINGCURVESEVALUATED),
+        nullptr};
     gP4app->postEvent(gP4startDlg, e);
 }
 

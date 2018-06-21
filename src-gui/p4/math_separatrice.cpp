@@ -35,11 +35,11 @@
 #include "plot_tools.hpp"
 #include "tables.hpp"
 
-void (*change_epsilon)(P4WinSphere *, double) = nullptr;
-void (*start_plot_sep)(P4WinSphere *, int) = nullptr;
-void (*cont_plot_sep)(P4WinSphere *) = nullptr;
-void (*plot_next_sep)(P4WinSphere *, int) = nullptr;
-void (*select_next_sep)(P4WinSphere *) = nullptr;
+void (*change_epsilon)(P4Sphere *, double) = nullptr;
+void (*start_plot_sep)(P4Sphere *, int) = nullptr;
+void (*cont_plot_sep)(P4Sphere *) = nullptr;
+void (*plot_next_sep)(P4Sphere *, int) = nullptr;
+void (*select_next_sep)(P4Sphere *) = nullptr;
 
 // ---------------------------------------------------------------------------
 //          findSepColor2
@@ -456,7 +456,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
 // result is valid before operating on it.
 //
 // The vector field vfK need not be prepared
-std::vector<p4orbits::orbits_points> integrate_sep(P4WinSphere *spherewnd,
+std::vector<p4orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
                                                    double pcoord[3],
                                                    double step, int dir,
                                                    int type, int points_to_int)
@@ -606,7 +606,7 @@ static double findInitialSepPoint(const std::vector<p4polynom::term1> &sep,
 //
 // The vector field vfK needs not be prepared.
 std::vector<p4orbits::orbits_points>
-plot_separatrice(P4WinSphere *spherewnd, double x0, double y0, double a11,
+plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                  double a12, double a21, double a22, double epsilon,
                  const p4blowup::sep &sep1, short int chart, int vfindex)
 {
@@ -894,10 +894,10 @@ plot_separatrice(P4WinSphere *spherewnd, double x0, double y0, double a11,
 // ---------------------------------------------------------------------------
 // Plots all separatrices.  If the separatrix plotting has not started yet,
 // it will be started; otherwhise it will be continued.
-void plot_all_sep(P4WinSphere *spherewnd)
+void plot_all_sep(P4Sphere *spherewnd)
 {
     if (!gVFResults.vf_.empty()) {
-        for (int i = 0; i < gThisVF->numVF_; i++) {
+        for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
             plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i]->saddlePoints_);
             plot_all_se_sep(spherewnd, i, gVFResults.vf_[i]->sePoints_);
             plot_all_de_sep(spherewnd, i, gVFResults.vf_[i]->dePoints_);
@@ -910,7 +910,7 @@ void plot_all_sep(P4WinSphere *spherewnd)
 // ---------------------------------------------------------------------------
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in the color according to the type and stability.
-void draw_sep(P4WinSphere *spherewnd,
+void draw_sep(P4Sphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep)
 {
     double pcoord[3];
@@ -931,7 +931,7 @@ void draw_sep(P4WinSphere *spherewnd,
 // ---------------------------------------------------------------------------
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in a specified color.
-void draw_selected_sep(P4WinSphere *spherewnd,
+void draw_selected_sep(P4Sphere *spherewnd,
                        const std::vector<p4orbits::orbits_points> &sep,
                        int color)
 {

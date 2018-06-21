@@ -19,6 +19,6 @@
 
 #pragma once
 
-class P4WinSphere;
+class P4Sphere;
 
-bool find_critical_point(P4WinSphere *spherewnd, double x, double y);
+bool find_critical_point(P4Sphere *spherewnd, double x, double y);

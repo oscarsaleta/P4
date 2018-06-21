@@ -82,7 +82,7 @@ P4ZoomWnd::P4ZoomWnd(P4PlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = new P4WinSphere{statusBar(), true, x1_, y1_, x2_, y2_, this};
+    sphere_ = new P4Sphere{statusBar(), true, x1_, y1_, x2_, y2_, this};
     sphere_->show();
     setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);

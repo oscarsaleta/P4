@@ -21,17 +21,17 @@
 
 #include <vector>
 
-class P4WinSphere;
+class P4Sphere;
 
 namespace p4singularities
 {
 struct semi_elementary;
 }
 
-void start_plot_se_sep(P4WinSphere *, int);
-void cont_plot_se_sep(P4WinSphere *);
-void plot_next_se_sep(P4WinSphere *, int);
-void select_next_se_sep(P4WinSphere *);
-void change_epsilon_se(P4WinSphere *, double);
-void plot_all_se_sep(P4WinSphere *, int,
+void start_plot_se_sep(P4Sphere *, int);
+void cont_plot_se_sep(P4Sphere *);
+void plot_next_se_sep(P4Sphere *, int);
+void select_next_se_sep(P4Sphere *);
+void change_epsilon_se(P4Sphere *, double);
+void plot_all_se_sep(P4Sphere *, int,
                      std::vector<p4singularities::semi_elementary> &);

@@ -26,7 +26,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_numerics.hpp"
@@ -54,7 +54,7 @@ bool prepareVfForIntegration(double *pcoord)
 // -----------------------------------------------------------------------
 // dir = -1: backwards, dir=0: continue, dir=+1: forwards
 // Continues orbit integration
-void integrateOrbit(P4WinSphere *sphere, int dir)
+void integrateOrbit(P4Sphere *sphere, int dir)
 {
     // std::vector<p4orbits::orbits_points> pts;
     double pcoord[3], ucoord[2];
@@ -116,7 +116,7 @@ void integrateOrbit(P4WinSphere *sphere, int dir)
 //          startOrbit
 // -----------------------------------------------------------------------
 /* R=0 then point selected in the drawing canvas else in the orbit window */
-bool startOrbit(P4WinSphere *sphere, double x, double y, bool R)
+bool startOrbit(P4Sphere *sphere, double x, double y, bool R)
 {
     double pcoord[3];
     double ucoord[2];
@@ -143,7 +143,7 @@ bool startOrbit(P4WinSphere *sphere, double x, double y, bool R)
 // -----------------------------------------------------------------------
 //          drawOrbit
 // -----------------------------------------------------------------------
-void drawOrbit(P4WinSphere *spherewnd, const double *pcoord,
+void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
                const std::vector<p4orbits::orbits_points> &points, int color)
 {
     double pcoord1[3];
@@ -164,7 +164,7 @@ void drawOrbit(P4WinSphere *spherewnd, const double *pcoord,
 // -----------------------------------------------------------------------
 //                      DRAWORBITS
 // -----------------------------------------------------------------------
-void drawOrbits(P4WinSphere *spherewnd)
+void drawOrbits(P4Sphere *spherewnd)
 {
     for (auto const &it : gVFResults.orbits_)
         drawOrbit(spherewnd, it.pcoord, it.points, it.color);
@@ -173,7 +173,7 @@ void drawOrbits(P4WinSphere *spherewnd)
 // -----------------------------------------------------------------------
 //          deleteLastOrbit
 // -----------------------------------------------------------------------
-void deleteLastOrbit(P4WinSphere *spherewnd)
+void deleteLastOrbit(P4Sphere *spherewnd)
 {
     if (gVFResults.orbits_.empty())
         return;
@@ -442,7 +442,7 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
 // ---------------------------------------------------------------------------
 // Integrate a number of points (user-dependent)
 std::vector<p4orbits::orbits_points>
-integrate_orbit(P4WinSphere *spherewnd, double pcoord[3], double step, int dir,
+integrate_orbit(P4Sphere *spherewnd, double pcoord[3], double step, int dir,
                 int color, int points_to_int)
 {
     int d, h;

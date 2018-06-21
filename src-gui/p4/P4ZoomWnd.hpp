@@ -21,7 +21,7 @@
 
 #include <QMainWindow>
 
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 
 class QBoxLayout;
 class QEvent;
@@ -47,7 +47,7 @@ class P4ZoomWnd : public QMainWindow
 
     double x1_, x2_, y1_, y2_;
 
-    P4WinSphere *sphere_; // main sphere
+    P4Sphere *sphere_; // main sphere
 
   public slots:
     // void signalEvaluating();

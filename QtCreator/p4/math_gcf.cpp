@@ -26,7 +26,7 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
@@ -35,7 +35,7 @@
 
 // static global variables
 static int sGcfTask{EVAL_GCF_NONE};
-static P4WinSphere *sGcfSphere{nullptr};
+static P4Sphere *sGcfSphere{nullptr};
 static int sGcfDashes{0};
 static bool sGcfError{false};
 static unsigned int sGcfVfIndex{0};
@@ -47,7 +47,7 @@ static bool readTaskResults(int task, int index);
 static bool read_gcf(void (*chart)(double, double, double *), int index);
 
 // function definitions
-bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points)
+bool evalGcfStart(P4Sphere *sp, int dashes, int precision, int points)
 {
     sp->prepareDrawing();
     for (unsigned int r = 0; r < gThisVF->numVF_; r++) {
@@ -236,7 +236,7 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_gcf(P4WinSphere *spherewnd,
+void draw_gcf(P4Sphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep, int color,
               int dashes)
 {

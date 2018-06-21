@@ -99,39 +99,42 @@ P4VFSelectDlg::P4VFSelectDlg(P4FindDlg *finddlg)
 void P4VFSelectDlg::updateDlgData()
 {
     QString s;
-    int k;
 
-    for (k = 0; k < gThisVF->numVF_; k++) {
-        s.sprintf("%d", k + 1);
-        if (cbb_vfselect_->count() > k)
-            cbb_vfselect_->setItemText(k, s);
-        else
-            cbb_vfselect_->addItem(s);
+    // Clear combobox
+    // We need to disconnect the currentIndexChanged signal first because it
+    // would call onVfSelectionChanged on the empty QComboBox, causing a
+    // segmentation fault
+    QObject::disconnect(
+        cbb_vfselect_,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &P4VFSelectDlg::onVfSelectionChanged);
+
+    cbb_vfselect_->clear();
+
+    // Add number for each VF
+    for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
+        s.sprintf("%d", i + 1);
+        cbb_vfselect_->addItem(s);
     }
+
+    // Add select all
     if (gThisVF->numVF_ > 1) {
         s = "Select All";
-        if (cbb_vfselect_->count() > k)
-            cbb_vfselect_->setItemText(k, s);
-        else
-            cbb_vfselect_->addItem(s);
-        while (cbb_vfselect_->count() > gThisVF->numVF_ + 1)
-            cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
-    } else {
-        while (cbb_vfselect_->count() > gThisVF->numVF_ + 1)
-            cbb_vfselect_->removeItem(gThisVF->numVF_ + 1);
+        cbb_vfselect_->addItem(s);
     }
 
+    // Set current index to selected VF (or last one if several)
     if (gThisVF->numSelected_ == 1)
         cbb_vfselect_->setCurrentIndex(gThisVF->selected_[0]);
     else
-        cbb_vfselect_->setCurrentIndex(gThisVF->numSelected_);
+        cbb_vfselect_->setCurrentIndex(gThisVF->numSelected_ - 1);
 
+    // Set prev and next buttons depending on VF count and selection
     if (gThisVF->numVF_ > 1) {
         if (gThisVF->selected_[0] == 0 && gThisVF->numSelected_ == 1)
             btn_prev_->setEnabled(false);
         else
             btn_prev_->setEnabled(true);
-
         if ((gThisVF->selected_[0] == gThisVF->numVF_ - 1 &&
              gThisVF->numSelected_) == 1)
             btn_next_->setEnabled(false);
@@ -142,8 +145,14 @@ void P4VFSelectDlg::updateDlgData()
         btn_next_->setEnabled(false);
     }
 
+    // Update separating curves window data
     if (win_curves_ != nullptr)
         win_curves_->updateDlgData();
+
+    QObject::connect(
+        cbb_vfselect_,
+        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        this, &P4VFSelectDlg::onVfSelectionChanged);
 }
 
 void P4VFSelectDlg::onBtnAdd()
@@ -153,10 +162,8 @@ void P4VFSelectDlg::onBtnAdd()
         return;
 
     gThisVF->addVectorField();
-    if (gThisVF->numSelected_ > 1) {
-        gThisVF->selected_.clear();
-        gThisVF->numSelected_ = 1;
-    }
+    gThisVF->numSelected_ = 1;
+    gThisVF->selected_.clear();
     gThisVF->selected_.push_back(gThisVF->numVF_ - 1);
 
     parent_->updateDlgData();
@@ -187,11 +194,13 @@ void P4VFSelectDlg::onBtnDel()
 void P4VFSelectDlg::onBtnPrev()
 {
     parent_->getDataFromDlg();
-    int j{gThisVF->selected_[0]};
+    unsigned int j{gThisVF->selected_[0]};
     gThisVF->selected_.clear();
     if (gThisVF->numSelected_ > 1)
         gThisVF->numSelected_ = 1;
-    if (--j < 0)
+    if (j > 0)
+        j--;
+    else
         j = 0;
     gThisVF->selected_.push_back(j);
     parent_->updateDlgData();
@@ -200,7 +209,7 @@ void P4VFSelectDlg::onBtnPrev()
 void P4VFSelectDlg::onBtnNext()
 {
     parent_->getDataFromDlg();
-    int j{gThisVF->selected_[0]};
+    unsigned int j{gThisVF->selected_[0]};
     gThisVF->selected_.clear();
     if (gThisVF->numSelected_ > 1)
         gThisVF->numSelected_ = 1;
@@ -212,20 +221,21 @@ void P4VFSelectDlg::onBtnNext()
 
 void P4VFSelectDlg::onVfSelectionChanged(int index)
 {
-    if (index < gThisVF->numVF_) {
-        if (index != gThisVF->selected_[0] || gThisVF->numSelected_ > 1) {
+    if (index < static_cast<int>(gThisVF->numVF_)) {
+        if (index != static_cast<int>(gThisVF->selected_[0]) ||
+            gThisVF->numSelected_ > 1) {
             parent_->getDataFromDlg();
             gThisVF->selected_.clear();
             gThisVF->selected_.push_back(index);
             gThisVF->numSelected_ = 1;
             parent_->updateDlgData();
         }
-    } else if (index >= gThisVF->numVF_) {
+    } else {
         // selected all
         if (gThisVF->numSelected_ != gThisVF->numVF_) {
             parent_->getDataFromDlg();
             gThisVF->selected_.clear();
-            for (int k = 0; k < gThisVF->numVF_; k++)
+            for (unsigned int k = 0; k < gThisVF->numVF_; k++)
                 gThisVF->selected_.push_back(k);
             gThisVF->numSelected_ = gThisVF->numVF_;
             parent_->updateDlgData();

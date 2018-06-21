@@ -63,15 +63,19 @@ struct term2;
 namespace p4InputVFRegions
 {
 struct vfRegion {
-    int vfIndex;
+    unsigned int vfIndex;
     std::vector<int> signs;
-    vfRegion(int i, std::vector<int> s) : vfIndex{i}, signs{std::move(s)} {}
+    vfRegion(unsigned int i, std::vector<int> s)
+        : vfIndex{i}, signs{std::move(s)}
+    {
+    }
 };
 
 struct curveRegion {
-    int curveIndex;
+    unsigned int curveIndex;
     std::vector<int> signs;
-    curveRegion(int i, std::vector<int> s) : curveIndex{i}, signs{std::move(s)}
+    curveRegion(unsigned int i, std::vector<int> s)
+        : curveIndex{i}, signs{std::move(s)}
     {
     }
 };
@@ -133,7 +137,7 @@ class P4InputVF : public QObject
     //    QPushButton *clearProcessButton_{nullptr};
 
     // PARAMETER LIST
-    int numParams_{0};
+    unsigned int numParams_{0};
     // list of parameter names
     QString parlabel_[MAXNUMPARAMS];
     // a list of parameter values for every VF (thus vector of vectors)
@@ -142,23 +146,23 @@ class P4InputVF : public QObject
     // PIECEWISE VARIABLES: vector fields
     // indicates length of P4ParentStudy::vf_ (not really necessary but too much
     // work to get rid of atm)
-    int numVF_{1};
+    unsigned int numVF_{1};
     // same but for this->vfRegions_
-    int numVFRegions_{1};
+    unsigned int numVFRegions_{1};
     std::vector<p4InputVFRegions::vfRegion> vfRegions_;
 
     // PIECEWISE VARIABLES: separating curves
     // same as above but for this->separatingCurves_
-    int numSeparatingCurves_{0};
+    unsigned int numSeparatingCurves_{0};
     std::vector<QString> separatingCurves_;
     std::vector<int> numPointsSeparatingCurve_;
     // same as above but for this->curveRegions_
-    int numCurveRegions_{0};
+    unsigned int numCurveRegions_{0};
     std::vector<p4InputVFRegions::curveRegion> curveRegions_;
 
     // PIECEWISE VARIABLES: selected regions
-    int numSelected_{0};
-    std::vector<int> selected_;
+    unsigned int numSelected_{0};
+    std::vector<unsigned int> selected_;
 
     // STATUS VARIABLES
     // set when data needs to be saved
@@ -188,7 +192,7 @@ class P4InputVF : public QObject
 
     // MANAGE VECTOR FIELDS
     void addVectorField();
-    void deleteVectorField(int);
+    void deleteVectorField(unsigned int);
 
     // MANAGE SEPARATING CURVES
     void addSeparatingCurve();
@@ -215,13 +219,13 @@ class P4InputVF : public QObject
     int getVFIndex_cyl(const double *);
 
     // MANAGE REGIONS
-    void markVFRegion(int, const double *);
-    void unmarkVFRegion(int, const double *);
-    void markCurveRegion(int, const double *);
-    void unmarkCurveRegion(int, const double *);
+    void markVFRegion(unsigned int, const double *);
+    void unmarkVFRegion(unsigned int, const double *);
+    void markCurveRegion(unsigned int, const double *);
+    void unmarkCurveRegion(unsigned int, const double *);
     void clearVFMarks();
     void clearCurveMarks();
-    bool isCurvePointDrawn(int, const double *);
+    bool isCurvePointDrawn(unsigned int, const double *);
 
     // COMMON ELEMENTS BETWEEN VFs
     bool hasCommonString(const std::vector<QString> &);

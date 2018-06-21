@@ -29,8 +29,6 @@
 P4VFParams::P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent)
     : QWidget{parent}, currentNumParams_{gThisVF->numParams_}, sb_params_{sb}
 {
-    int i;
-
     auto label0 = new QLabel{"Enter values for all parameters"};
     label0->setFont(gP4app->getTitleFont());
 
@@ -41,7 +39,7 @@ P4VFParams::P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent)
     // strLabels_ = gThisVF->parlabel_;
     // strValues_ = gThisVF->parvalue_;
 
-    for (i = 0; i < currentShownParams_; i++) {
+    for (unsigned int i = 0; i < currentShownParams_; i++) {
         // parlabel_ and parvalue_ might (or not) be filled from the input file
         paramNames_.emplace_back(
             std::make_unique<QLineEdit>(gThisVF->parlabel_[i], this));
@@ -56,7 +54,7 @@ P4VFParams::P4VFParams(QScrollBar *sb, P4VectorFieldDlg *parent)
 
     mainLayout_ = new QBoxLayout{QBoxLayout::TopToBottom, this};
     mainLayout_->addWidget(label0);
-    for (i = 0; i < currentShownParams_; i++) {
+    for (unsigned int i = 0; i < currentShownParams_; i++) {
         paramLayouts_.emplace_back(std::make_unique<QHBoxLayout>());
         paramLayouts_[i]->addWidget(paramNames_[i].get());
         paramLayouts_[i]->addWidget(paramEqual_[i].get());
@@ -97,7 +95,7 @@ void P4VFParams::paramsEditingFinished()
     bool changed{false};
     QString lbl;
 
-    for (int i = 0; i < currentShownParams_; i++) {
+    for (unsigned int i = 0; i < currentShownParams_; i++) {
         lbl = paramNames_[i]->text().trimmed();
         if (lbl.compare(gThisVF->parlabel_[i + currentPageIndex_])) {
             gThisVF->parlabel_[i + currentPageIndex_] = lbl;
@@ -121,7 +119,7 @@ bool P4VFParams::updateDlgData()
     if (gThisVF->numParams_ != currentNumParams_)
         return false;
 
-    for (int i = 0; i < currentShownParams_; i++) {
+    for (unsigned int i = 0; i < currentShownParams_; i++) {
         paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
         setLineEditCommonParValue(paramValues_[i].get(), i + currentPageIndex_);
     }
@@ -133,13 +131,13 @@ void P4VFParams::paramsSliderChanged(int value)
 {
     if (value < 0)
         value = 0;
-    if (value > currentNumParams_ - MAXNUMPARAMSSHOWN)
-        value = currentNumParams_ - MAXNUMPARAMSSHOWN;
+    if (value > static_cast<int>(currentNumParams_) - MAXNUMPARAMSSHOWN)
+        value = static_cast<int>(currentNumParams_) - MAXNUMPARAMSSHOWN;
 
-    if (value != currentPageIndex_) {
+    if (value != static_cast<int>(currentPageIndex_)) {
         currentPageIndex_ = value;
 
-        for (int i = 0; i < currentShownParams_; i++) {
+        for (unsigned int i = 0; i < currentShownParams_; i++) {
             paramNames_[i]->setText(gThisVF->parlabel_[i + currentPageIndex_]);
             setLineEditCommonParValue(paramValues_[i].get(),
                                       i + currentPageIndex_);

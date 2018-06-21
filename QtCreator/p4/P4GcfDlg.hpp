@@ -26,7 +26,7 @@ class QLineEdit;
 class QPushButton;
 class QRadioButton;
 
-class P4WinSphere;
+class P4Sphere;
 class P4PlotWnd;
 
 class P4GcfDlg : public QWidget
@@ -34,7 +34,7 @@ class P4GcfDlg : public QWidget
     Q_OBJECT
 
   public:
-    P4GcfDlg(P4PlotWnd *, P4WinSphere *);
+    P4GcfDlg(P4PlotWnd *, P4Sphere *);
     P4GcfDlg(const P4GcfDlg *other)
         : P4GcfDlg(other->plotwnd_, other->mainSphere_)
     {
@@ -45,7 +45,7 @@ class P4GcfDlg : public QWidget
 
   private:
     P4PlotWnd *plotwnd_;
-    P4WinSphere *mainSphere_;
+    P4Sphere *mainSphere_;
 
     QPushButton *btn_evaluate_;
 

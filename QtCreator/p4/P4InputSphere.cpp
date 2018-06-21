@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "P4WinInputSphere.hpp"
+#include "P4InputSphere.hpp"
 
 #include <QKeyEvent>
 #include <QLabel>
@@ -40,7 +40,7 @@
 #include "math_regions.hpp"
 #include "plot_tools.hpp"
 
-P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *wnd,
+P4InputSphere::P4InputSphere(P4SeparatingCurvesDlg *wnd,
                                    QLabel *lbl_status, QWidget *parent)
     : QWidget{parent}, status_{lbl_status}, parentWnd_{wnd}
 {
@@ -61,9 +61,9 @@ P4WinInputSphere::P4WinInputSphere(P4SeparatingCurvesDlg *wnd,
     setupPlot();
 }
 
-void P4WinInputSphere::keyPressEvent(QKeyEvent *e) { e->ignore(); }
+void P4InputSphere::keyPressEvent(QKeyEvent *e) { e->ignore(); }
 
-void P4WinInputSphere::setupPlot()
+void P4InputSphere::setupPlot()
 {
     QPalette palette;
 
@@ -113,7 +113,7 @@ void P4WinInputSphere::setupPlot()
     isPainterCacheDirty_ = true;
 }
 
-void P4WinInputSphere::loadAnchorMap()
+void P4InputSphere::loadAnchorMap()
 {
     if (!selectingZoom_)
         return;
@@ -155,7 +155,7 @@ void P4WinInputSphere::loadAnchorMap()
     paint.drawPixmap(0, 0, aw, ah, *painterCache_, x1, y1, aw, ah);
 }
 
-void P4WinInputSphere::saveAnchorMap()
+void P4InputSphere::saveAnchorMap()
 {
     if (!anchorMap_ || !painterCache_ || !selectingZoom_)
         return;
@@ -186,7 +186,7 @@ void P4WinInputSphere::saveAnchorMap()
     update(x1, y1, aw, ah);
 }
 
-void P4WinInputSphere::adjustToNewSize()
+void P4InputSphere::adjustToNewSize()
 {
     w_ = width();
     h_ = height();
@@ -251,13 +251,13 @@ void P4WinInputSphere::adjustToNewSize()
         else {
             refreshTimeout_ = new QTimer{};
             QObject::connect(refreshTimeout_, &QTimer::timeout, this,
-                             &P4WinInputSphere::refreshAfterResize);
+                             &P4InputSphere::refreshAfterResize);
         }
         refreshTimeout_->start(500);
     }
 }
 
-void P4WinInputSphere::refreshAfterResize()
+void P4InputSphere::refreshAfterResize()
 {
     if (refreshTimeout_ != nullptr) {
         delete refreshTimeout_;
@@ -266,14 +266,14 @@ void P4WinInputSphere::refreshAfterResize()
     refresh();
 }
 
-void P4WinInputSphere::resizeEvent(QResizeEvent *e)
+void P4InputSphere::resizeEvent(QResizeEvent *e)
 {
     if (e->size() == e->oldSize())
         return;
     adjustToNewSize();
 }
 
-void P4WinInputSphere::paintEvent(QPaintEvent *p)
+void P4InputSphere::paintEvent(QPaintEvent *p)
 {
     if (gThisVF->evaluating_)
         return;
@@ -309,7 +309,7 @@ void P4WinInputSphere::paintEvent(QPaintEvent *p)
     widgetpaint.drawPixmap(0, 0, *painterCache_);
 }
 
-void P4WinInputSphere::markSelection(int x1, int y1, int x2, int y2)
+void P4InputSphere::markSelection(int x1, int y1, int x2, int y2)
 {
     if (painterCache_ == nullptr)
         return;
@@ -342,7 +342,7 @@ void P4WinInputSphere::markSelection(int x1, int y1, int x2, int y2)
     update(bx1, by1, bx2 - bx1 + 1, by2 - by1 + 1);
 }
 
-void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
+void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
 {
     int x{e->x()}, y{e->y()};
     double wx{coWorldX(x)}, wy{coWorldY(y)};
@@ -467,19 +467,19 @@ void P4WinInputSphere::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-double P4WinInputSphere::coWorldX(int x)
+double P4InputSphere::coWorldX(int x)
 {
     double wx{(static_cast<double>(x)) / (w_ - 1)};
     return wx * dx_ + x0_;
 }
 
-double P4WinInputSphere::coWorldY(int y)
+double P4InputSphere::coWorldY(int y)
 {
     double wy{(static_cast<double>(h_ - 1 - y)) / (h_ - 1)};
     return wy * dy_ + y0_;
 }
 
-int P4WinInputSphere::coWinX(double x)
+int P4InputSphere::coWinX(double x)
 {
     double wx{((x - x0_) / dx_) * (w_ - 1)};
     int iwx{static_cast<int>(wx + 0.5)};
@@ -488,7 +488,7 @@ int P4WinInputSphere::coWinX(double x)
     return iwx;
 }
 
-int P4WinInputSphere::coWinY(double y)
+int P4InputSphere::coWinY(double y)
 {
     double wy{((y - y0_) / dy_) * (h_ - 1)};
     int iwy{static_cast<int>(wy + 0.5)};
@@ -497,19 +497,19 @@ int P4WinInputSphere::coWinY(double y)
     return h_ - 1 - iwy;
 }
 
-int P4WinInputSphere::coWinH(double deltax)
+int P4InputSphere::coWinH(double deltax)
 {
     double wx{(deltax / dx_) * (w_ - 1)};
     return static_cast<int>(std::round(wx));
 }
 
-int P4WinInputSphere::coWinV(double deltay)
+int P4InputSphere::coWinV(double deltay)
 {
     double wy{(deltay / dy_) * (h_ - 1)};
     return static_cast<int>(std::round(wy));
 }
 
-void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
+void P4InputSphere::mousePressEvent(QMouseEvent *e)
 {
     if (e->modifiers() == Qt::ControlModifier &&
         e->button() == Qt::LeftButton) {
@@ -561,7 +561,7 @@ void P4WinInputSphere::mousePressEvent(QMouseEvent *e)
     QWidget::mousePressEvent(e);
 }
 
-void P4WinInputSphere::mouseReleaseEvent(QMouseEvent *e)
+void P4InputSphere::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
         // finish zoom window between zoomAnchor1 and zoomAnchor2
@@ -583,7 +583,7 @@ void P4WinInputSphere::mouseReleaseEvent(QMouseEvent *e)
     QWidget::mouseReleaseEvent(e);
 }
 
-void P4WinInputSphere::drawLine(double x1, double y1, double x2, double y2,
+void P4InputSphere::drawLine(double x1, double y1, double x2, double y2,
                                 int color)
 {
     int wx1, wy1, wx2, wy2;
@@ -709,7 +709,7 @@ void P4WinInputSphere::drawLine(double x1, double y1, double x2, double y2,
     }
 }
 
-void P4WinInputSphere::drawPoint(double x, double y, int color)
+void P4InputSphere::drawPoint(double x, double y, int color)
 {
     if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
@@ -731,7 +731,7 @@ void P4WinInputSphere::drawPoint(double x, double y, int color)
     }
 }
 
-void P4WinInputSphere::prepareDrawing()
+void P4InputSphere::prepareDrawing()
 {
     if (painterCache_ == nullptr) {
         isPainterCacheDirty_ = true;
@@ -745,7 +745,7 @@ void P4WinInputSphere::prepareDrawing()
     paintedYMax_ = 0;
 }
 
-void P4WinInputSphere::finishDrawing()
+void P4InputSphere::finishDrawing()
 {
     if (staticPainter_) {
         staticPainter_->end();
@@ -767,13 +767,13 @@ void P4WinInputSphere::finishDrawing()
     }
 }
 
-void P4WinInputSphere::refresh()
+void P4InputSphere::refresh()
 {
     isPainterCacheDirty_ = true;
     update();
 }
 
-void P4WinInputSphere::plotPoincareSphere()
+void P4InputSphere::plotPoincareSphere()
 {
     int color{CLINEATINFINITY};
 
@@ -783,7 +783,7 @@ void P4WinInputSphere::plotPoincareSphere()
                                  coWinY(it.y2));
 }
 
-void P4WinInputSphere::plotPoincareLyapunovSphere()
+void P4InputSphere::plotPoincareLyapunovSphere()
 {
     staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
 
@@ -796,7 +796,7 @@ void P4WinInputSphere::plotPoincareLyapunovSphere()
                                  coWinY(it.y2));
 }
 
-void P4WinInputSphere::plotLineAtInfinity()
+void P4InputSphere::plotLineAtInfinity()
 {
     switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
@@ -817,7 +817,7 @@ void P4WinInputSphere::plotLineAtInfinity()
 }
 
 std::vector<P4POLYLINES>
-P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
+P4InputSphere::produceEllipse(double cx, double cy, double a, double b,
                                  bool dotted, double resa, double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output is
@@ -952,14 +952,14 @@ P4WinInputSphere::produceEllipse(double cx, double cy, double a, double b,
     return result;
 }
 
-void P4WinInputSphere::plotSeparatingCurves()
+void P4InputSphere::plotSeparatingCurves()
 {
     if (!gVFResults.separatingCurves_.empty())
-        for (int r = 0; r < gThisVF->numSeparatingCurves_; r++)
+        for (unsigned int r = 0; r < gThisVF->numSeparatingCurves_; r++)
             plotSeparatingCurve(gVFResults.separatingCurves_[r], r);
 }
 
-void P4WinInputSphere::plotSeparatingCurve(const p4curves::curves &crv,
+void P4InputSphere::plotSeparatingCurve(const p4curves::curves &crv,
                                            int index)
 {
     double pcoord[3];
@@ -975,7 +975,7 @@ void P4WinInputSphere::plotSeparatingCurve(const p4curves::curves &crv,
     }
 }
 
-void P4WinInputSphere::plotLine(const double *p1, const double *p2, int color)
+void P4InputSphere::plotLine(const double *p1, const double *p2, int color)
 {
     double ucoord1[2];
     double ucoord2[2];
@@ -991,14 +991,14 @@ void P4WinInputSphere::plotLine(const double *p1, const double *p2, int color)
     }
 }
 
-void P4WinInputSphere::plotPoint(const double *p, int color)
+void P4InputSphere::plotPoint(const double *p, int color)
 {
     double ucoord[2];
     MATHFUNC(sphere_to_viewcoord)(p[0], p[1], p[2], ucoord);
     drawPoint(ucoord[0], ucoord[1], color);
 }
 
-void P4WinInputSphere::setupCoordinateTransformations()
+void P4InputSphere::setupCoordinateTransformations()
 {
     gVFResults.setupCoordinateTransformations();
 }

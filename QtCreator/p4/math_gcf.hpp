@@ -35,17 +35,17 @@
 #define EVAL_GCF_CYL4 11
 #define EVAL_GCF_FINISHLYAPUNOV 12
 
-class P4WinSphere;
+class P4Sphere;
 
 namespace p4orbits
 {
 struct orbits_points;
 }
 
-bool evalGcfStart(P4WinSphere *sp, int dashes, int precision, int points);
+bool evalGcfStart(P4Sphere *sp, int dashes, int precision, int points);
 bool evalGcfContinue(int precision, int points);
 bool evalGcfFinish();
 bool runTask(int task, int precision, int points, unsigned int index);
-void draw_gcf(P4WinSphere *spherewnd,
+void draw_gcf(P4Sphere *spherewnd,
               const std::vector<p4orbits::orbits_points> &sep, int color,
               int dashes);

@@ -25,7 +25,7 @@
 #include "P4ParentStudy.hpp"
 #include "P4SepDlg.hpp"
 #include "P4VFStudy.hpp"
-#include "P4WinSphere.hpp"
+#include "P4Sphere.hpp"
 #include "custom.hpp"
 #include "math_desep.hpp"
 #include "math_p4.hpp"
@@ -197,7 +197,7 @@ find_distance_de(const std::vector<p4singularities::degenerate> &points,
     return (distance);
 }
 
-bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
+bool find_critical_point(P4Sphere *spherewnd, double x, double y)
 {
     int type;
     double distance, epsilon, pcoord[3];
@@ -229,7 +229,7 @@ bool find_critical_point(P4WinSphere *spherewnd, double x, double y)
         if (distance == -1)
             break;
     }
-    if (distance == -1 && vfindex0 != gThisVF->numVF_ - 1) {
+    if (distance == -1 && vfindex0 != static_cast<int>(gThisVF->numVF_) - 1) {
         for (vfindex = gThisVF->numVF_ - 1; vfindex > vfindex0; vfindex--) {
             distance =
                 find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_, x,
