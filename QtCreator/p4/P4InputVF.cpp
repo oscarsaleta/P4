@@ -1523,7 +1523,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
 
     if (prepareforcurves) {
         fp << "user_precision := 8:\n"
-              "try FindAllSeparatingCurves() catch:\n"
+              "try findAllSeparatingCurves() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
               "lastexception[2] );\n"
               "finally:\n"

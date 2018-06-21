@@ -199,7 +199,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
 
         separatingCurves_.clear();
 
-        fpcurv = fopen(QFile::encodeName(basename + "_curves.tab"), "rt");
+        fpcurv = fopen(QFile::encodeName(basename + "_sepcurves.tab"), "rt");
         if (fpcurv == nullptr)
             return false;
 
