@@ -79,7 +79,7 @@ QVector<P4Sphere *> P4Sphere::sM_sphereList;
 // parameters x1,... are irrelevant if isZoom is false
 
 P4Sphere::P4Sphere(QStatusBar *bar, bool isZoom, double x1, double y1,
-                         double x2, double y2, QWidget *parent)
+                   double x2, double y2, QWidget *parent)
     : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
     qDebug() << "called constructor";
@@ -565,18 +565,19 @@ void P4Sphere::resizeEvent(QResizeEvent *e)
 
 void P4Sphere::paintEvent(QPaintEvent *p)
 {
-    qDebug() << "paint event";
+    //    qDebug() << "paint event";
     if (gThisVF->evaluating_)
         return;
 
     if (painterCache_ == nullptr || isPainterCacheDirty_) {
         if (painterCache_ == nullptr) {
-            qDebug() << "  creating new QPixmap painterCache_...";
+            //            qDebug() << "  creating new QPixmap painterCache_...";
             painterCache_ = new QPixmap{size()};
         }
         isPainterCacheDirty_ = false;
 
-        qDebug() << "creating new QPainter from QPixmap painterCache_...";
+        //        qDebug() << "creating new QPainter from QPixmap
+        //        painterCache_...";
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
@@ -623,8 +624,7 @@ void P4Sphere::paintEvent(QPaintEvent *p)
     }
 }
 
-void P4Sphere::markSelection(int x1, int y1, int x2, int y2,
-                                int selectiontype)
+void P4Sphere::markSelection(int x1, int y1, int x2, int y2, int selectiontype)
 {
     if (painterCache_ == nullptr)
         return;
@@ -1428,8 +1428,7 @@ void P4Sphere::plotPoints()
     }
 }
 
-void P4Sphere::plotPointSeparatrices(
-    const p4singularities::semi_elementary &p)
+void P4Sphere::plotPointSeparatrices(const p4singularities::semi_elementary &p)
 {
     qDebug() << "plot point separatrices (semi elementary)";
     for (auto const &it : p.separatrices)
@@ -1529,9 +1528,9 @@ void P4Sphere::plotIsoclines()
 // -----------------------------------------------------------------------
 
 std::vector<P4POLYLINES> P4Sphere::produceEllipse(double cx, double cy,
-                                                     double a, double b,
-                                                     bool dotted, double resa,
-                                                     double resb)
+                                                  double a, double b,
+                                                  bool dotted, double resa,
+                                                  double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output
     // is stored in a list of points that is dynamically allocated.
@@ -1718,8 +1717,7 @@ void P4Sphere::plotLineAtInfinity()
     }
 }
 
-void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
-                           int color)
+void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
 {
     qDebug() << "draw line";
     int wx1, wy1, wx2, wy2;
@@ -2227,8 +2225,7 @@ void P4Sphere::printPoints()
     }
 }
 
-void P4Sphere::printPointSeparatrices(
-    const p4singularities::semi_elementary &p)
+void P4Sphere::printPointSeparatrices(const p4singularities::semi_elementary &p)
 {
     qDebug() << "print point separatrices (semi elementary)";
     for (auto const &it : p.separatrices) {
@@ -2451,8 +2448,7 @@ void P4Sphere::printLimitCycles()
     }
 }
 
-void P4Sphere::printLine(double x1, double y1, double x2, double y2,
-                            int color)
+void P4Sphere::printLine(double x1, double y1, double x2, double y2, int color)
 {
     qDebug() << "print line";
     int wx1, wy1, wx2, wy2;
@@ -2516,8 +2512,8 @@ void P4Sphere::refresh()
 }
 
 void P4Sphere::calculateHeightFromWidth(int &width, int &height,
-                                           int maxheight = -1,
-                                           double aspectratio = 1)
+                                        int maxheight = -1,
+                                        double aspectratio = 1)
 {
     // given an optimal width in width, this procedure calculates the
     // corresponding height in order to maintain the given aspectratio. If
@@ -2539,8 +2535,8 @@ void P4Sphere::calculateHeightFromWidth(int &width, int &height,
 }
 
 void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
-                                  int myresolution, double mylinewidth,
-                                  double mysymbolsize)
+                               int myresolution, double mylinewidth,
+                               double mysymbolsize)
 {
     qDebug() << "prepare printing";
     double pagewidth, pageheight;
