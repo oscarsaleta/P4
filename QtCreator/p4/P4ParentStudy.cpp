@@ -445,8 +445,6 @@ bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 
     if (fscanf(fp, "%d", &degree_sep) != 1 || degree_sep < 0)
         return false;
-    if (degree_sep == 0)
-        return true;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
