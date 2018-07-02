@@ -501,19 +501,29 @@ QString describeRegion(double *pcoord)
 // ---------------------------------------------------------------------
 bool isInTheSameRegion(double *testpt, double *refpos)
 {
-    int i;
     if (refpos == nullptr || gVFResults.separatingCurves_.empty())
         return true;
 
-    for (i = gThisVF->numSeparatingCurves_ - 1; i >= 0; i--) {
-        if (eval_curve(gVFResults.separatingCurves_[i], refpos) < 0) {
-            if (eval_curve(gVFResults.separatingCurves_[i], testpt) > 1e-8)
+    // reverse iteration through separating curves
+    for (auto i = std::rbegin(gVFResults.separatingCurves_);
+         i != std::rend(gVFResults.separatingCurves_); ++i) {
+        if (eval_curve(*i, refpos) < 0) {
+            if (eval_curve(*i, testpt) < 1e-8)
                 return false;
         } else {
-            if (eval_curve(gVFResults.separatingCurves_[i], testpt) < -1e-8)
+            if (eval_curve(*i, testpt) < -1e-8)
                 return false;
         }
     }
+    //  for (i = gThisVF->numSeparatingCurves_ - 1; i >= 0; i--) {
+    //    if (eval_curve(gVFResults.separatingCurves_[i], refpos) < 0) {
+    //      if (eval_curve(gVFResults.separatingCurves_[i], testpt) > 1e-8)
+    //        return false;
+    //    } else {
+    //      if (eval_curve(gVFResults.separatingCurves_[i], testpt) < -1e-8)
+    //        return false;
+    //    }
+    //  }
     return true;
 }
 
