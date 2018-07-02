@@ -24,8 +24,8 @@
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4SepDlg.hpp"
-#include "P4VFStudy.hpp"
 #include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
 #include "math_desep.hpp"
 #include "math_p4.hpp"
@@ -78,7 +78,7 @@ find_distance_saddle(const std::vector<p4singularities::saddle> &points,
 
         d = (x - ucoord[0]) * (x - ucoord[0]) +
             (y - ucoord[1]) * (y - ucoord[1]);
-        if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
+        if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
             (distance == -1)) {
             distance = d;
             gVFResults.selectedSaddlePointIndex_ = i;
@@ -128,7 +128,7 @@ find_distance_se(const std::vector<p4singularities::semi_elementary> &points,
             (pcoord[0], pcoord[1], pcoord[2], ucoord);
             d = (x - ucoord[0]) * (x - ucoord[0]) +
                 (y - ucoord[1]) * (y - ucoord[1]);
-            if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
+            if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
                 (distance == -1)) {
                 distance = d;
                 gVFResults.selectedSePointIndex_ = i;
@@ -179,7 +179,7 @@ find_distance_de(const std::vector<p4singularities::degenerate> &points,
             (pcoord[0], pcoord[1], pcoord[2], ucoord);
             d = (x - ucoord[0]) * (x - ucoord[0]) +
                 (y - ucoord[1]) * (y - ucoord[1]);
-            if ((d < distance && !std::isnan(d) && p4_finite(d)) ||
+            if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
                 (distance == -1)) {
                 if ((d < distance) || (distance == -1)) {
                     distance = d;
@@ -207,6 +207,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
 
     if (gVFResults.vf_.empty())
         return false;
+
     MATHFUNC(viewcoord_to_sphere)(x, y, pcoord);
 
     gCurrentSingularityInfo[0] = "";
@@ -226,7 +227,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
                                     distance, type, pcoord);
         distance = find_distance_de(gVFResults.vf_[vfindex]->dePoints_, x, y,
                                     distance, type, pcoord);
-        if (distance == -1)
+        if (distance != -1)
             break;
     }
     if (distance == -1 && vfindex0 != static_cast<int>(gThisVF->numVF_) - 1) {
@@ -238,7 +239,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
                                         y, distance, type, pcoord);
             distance = find_distance_de(gVFResults.vf_[vfindex]->dePoints_, x,
                                         y, distance, type, pcoord);
-            if (distance == -1)
+            if (distance != -1)
                 break;
         }
     }
