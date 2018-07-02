@@ -92,7 +92,7 @@ void plot_next_se_sep(P4Sphere *spherewnd, int vfindex)
     int seid{gVFResults.selectedSePointIndex_};
     draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
     sepid++;
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
+    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
         gVFResults.seps_ = gVFResults.sePoints_[seid].separatrices;
         sepid = 0;
     }
@@ -108,7 +108,7 @@ void select_next_se_sep(P4Sphere *spherewnd)
     int seid{gVFResults.selectedSePointIndex_};
     draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
     sepid++;
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
+    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
         gVFResults.seps_ = gVFResults.sePoints_[seid].separatrices;
         sepid = 0;
     }

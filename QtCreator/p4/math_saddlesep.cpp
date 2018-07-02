@@ -100,7 +100,7 @@ void plot_next_saddle_sep(P4Sphere *spherewnd, int vfindex)
 
     sepid++;
 
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
+    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
         gVFResults.seps_ = gVFResults.saddlePoints_[sadid].separatrices;
         sepid = 0;
     }
@@ -119,7 +119,7 @@ void select_next_saddle_sep(P4Sphere *spherewnd)
 
     sepid++;
 
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
+    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
         gVFResults.seps_ = gVFResults.saddlePoints_[sadid].separatrices;
         sepid = 0;
     }
