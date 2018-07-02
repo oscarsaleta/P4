@@ -25,8 +25,8 @@
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4VFStudy.hpp"
 #include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_numerics.hpp"
@@ -67,6 +67,7 @@ void integrateOrbit(P4Sphere *sphere, int dir)
         copy_x_into_y(currentpt.pcoord, pcoord);
         if (!prepareVfForIntegration(pcoord))
             return;
+        qDebug() << "VF selected is" << gVFResults.K_;
 
         auto pts =
             integrate_orbit(sphere, pcoord, gVFResults.config_currentstep_, dir,
@@ -459,6 +460,7 @@ integrate_orbit(P4Sphere *spherewnd, double pcoord[3], double step, int dir,
     for (int i = 1; i <= points_to_int; ++i) {
         if (!prepareVfForIntegration(pcoord))
             break;
+        qDebug() << "VF selected is" << gVFResults.K_;
 
         MATHFUNC(integrate_sphere_orbit)
         (pcoord[0], pcoord[1], pcoord[2], pcoord, hhi, dashes, d, h_min, h_max);

@@ -40,8 +40,9 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
 
 void integrateOrbit(P4Sphere *, int);
 
-std::vector<p4orbits::orbits_points> integrate_orbit(P4Sphere *, double *,
-                                                     double, int, int, int);
+std::vector<p4orbits::orbits_points>
+integrate_orbit(P4Sphere *spherewnd, double pcoord[3], double step, int dir,
+                int color, int points_to_int);
 
 void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
                const std::vector<p4orbits::orbits_points> &points, int color);
