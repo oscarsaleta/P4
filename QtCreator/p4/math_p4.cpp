@@ -24,8 +24,8 @@
 #include "P4IntParamsDlg.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4PlotWnd.hpp"
-#include "P4StartDlg.hpp"
 #include "P4Sphere.hpp"
+#include "P4StartDlg.hpp"
 #include "math_charts.hpp"
 #include "tables.hpp"
 
@@ -74,8 +74,8 @@ void set_current_step(double curstep)
 {
     gVFResults.config_currentstep_ = curstep;
 
-    if (gP4startDlg) {
-        auto *p = gP4startDlg->getPlotWindowPtr();
+    if (gP4startDlg != nullptr) {
+        auto p = gP4startDlg->getPlotWindowPtr();
         if (p != nullptr) {
             p->getIntParamsWindowPtr()->setCurrentStep(curstep);
         }

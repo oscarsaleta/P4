@@ -34,7 +34,7 @@
 
 void win_plot_saddle(QPainter *p, int x, int y)
 {
-    qDebug() << "called win plot saddle";
+    //    qDebug() << "called win plot saddle";
     p->setPen(QXFIGCOLOR(CSADDLE));
     p->setBrush(QXFIGCOLOR(CSADDLE));
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,

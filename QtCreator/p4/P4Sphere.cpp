@@ -82,7 +82,7 @@ P4Sphere::P4Sphere(QStatusBar *bar, bool isZoom, double x1, double y1,
                    double x2, double y2, QWidget *parent)
     : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
-    qDebug() << "called constructor";
+    // qDebug() << "called constructor";
     // setAttribute(Qt::WA_PaintOnScreen);
 
     // FIXME: is next needed?
@@ -565,19 +565,18 @@ void P4Sphere::resizeEvent(QResizeEvent *e)
 
 void P4Sphere::paintEvent(QPaintEvent *p)
 {
-    //    qDebug() << "paint event";
+    // qDebug() << "paint event";
     if (gThisVF->evaluating_)
         return;
 
     if (painterCache_ == nullptr || isPainterCacheDirty_) {
         if (painterCache_ == nullptr) {
-            //            qDebug() << "  creating new QPixmap painterCache_...";
+            // qDebug() << "  creating new QPixmap painterCache_...";
             painterCache_ = new QPixmap{size()};
         }
         isPainterCacheDirty_ = false;
 
-        //        qDebug() << "creating new QPainter from QPixmap
-        //        painterCache_...";
+        // qDebug() << "creating new QPainter from QPixmap painterCache_...";
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
                        QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
@@ -1037,7 +1036,7 @@ void P4Sphere::selectNearestSingularity(const QPoint &winpos)
 
 void P4Sphere::plotPoint(const p4singularities::saddle &p)
 {
-    qDebug() << "plot point saddle";
+    // qDebug() << "plot point saddle";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1075,7 +1074,7 @@ void P4Sphere::plotPoint(const p4singularities::saddle &p)
 
 void P4Sphere::plotPoint(const p4singularities::node &p)
 {
-    qDebug() << "plot point node";
+    // qDebug() << "plot point node";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1132,7 +1131,7 @@ void P4Sphere::plotPoint(const p4singularities::node &p)
 
 void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
 {
-    qDebug() << "plot point weak focus";
+    // qDebug() << "plot point weak focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1226,7 +1225,7 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
 
 void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
 {
-    qDebug() << "plot point strong focus";
+    // qDebug() << "plot point strong focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1283,7 +1282,7 @@ void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
 
 void P4Sphere::plotPoint(const p4singularities::degenerate &p)
 {
-    qDebug() << "plot point degenerate";
+    // qDebug() << "plot point degenerate";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1322,7 +1321,7 @@ void P4Sphere::plotPoint(const p4singularities::degenerate &p)
 
 void P4Sphere::plotPoint(const p4singularities::semi_elementary &p)
 {
-    qDebug() << "plot point semi elementary";
+    // qDebug() << "plot point semi elementary";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1411,7 +1410,7 @@ void P4Sphere::plotPoint(const p4singularities::semi_elementary &p)
 
 void P4Sphere::plotPoints()
 {
-    qDebug() << "plot points";
+    // qDebug() << "plot points";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf->saddlePoints_)
             plotPoint(sp);
@@ -1430,28 +1429,28 @@ void P4Sphere::plotPoints()
 
 void P4Sphere::plotPointSeparatrices(const p4singularities::semi_elementary &p)
 {
-    qDebug() << "plot point separatrices (semi elementary)";
+    // qDebug() << "plot point separatrices (semi elementary)";
     for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
 void P4Sphere::plotPointSeparatrices(const p4singularities::saddle &p)
 {
-    qDebug() << "plot point separatrices (saddle)";
+    // qDebug() << "plot point separatrices (saddle)";
     for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
 void P4Sphere::plotPointSeparatrices(const p4singularities::degenerate &p)
 {
-    qDebug() << "plot point separatrices (degenerate)";
+    // qDebug() << "plot point separatrices (degenerate)";
     for (auto const &it : p.blow_up)
         draw_sep(this, it.sep_points);
 }
 
 void P4Sphere::plotSeparatrices()
 {
-    qDebug() << "plot separatrices";
+    // qDebug() << "plot separatrices";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf->saddlePoints_)
             plotPointSeparatrices(sp);
@@ -1464,7 +1463,7 @@ void P4Sphere::plotSeparatrices()
 
 void P4Sphere::plotGcf()
 {
-    qDebug() << "plot gcf";
+    // qDebug() << "plot gcf";
     for (auto const &vf : gVFResults.vf_) {
         draw_gcf(this, vf->gcf_points_, CSING, 1);
     }
@@ -1472,7 +1471,7 @@ void P4Sphere::plotGcf()
 
 void P4Sphere::plotSeparatingCurves()
 {
-    qDebug() << "plot separating curves";
+    // qDebug() << "plot separating curves";
     bool dashes;
     double pcoord[3];
 
@@ -1507,7 +1506,7 @@ void P4Sphere::plotSeparatingCurves()
 
 void P4Sphere::plotArbitraryCurves()
 {
-    qDebug() << "plot arbitrary curves";
+    // qDebug() << "plot arbitrary curves";
     for (auto const &it : gVFResults.arbitraryCurves_) {
         drawArbitraryCurve(this, it.points, CCURV, 1);
     }
@@ -1515,7 +1514,7 @@ void P4Sphere::plotArbitraryCurves()
 
 void P4Sphere::plotIsoclines()
 {
-    qDebug() << "plot isoclines";
+    // qDebug() << "plot isoclines";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &it : vf->isocline_vector_) {
             draw_isoclines(this, it.points, it.color, 1);
@@ -1663,7 +1662,7 @@ std::vector<P4POLYLINES> P4Sphere::produceEllipse(double cx, double cy,
 
 void P4Sphere::plotPoincareSphere()
 {
-    qDebug() << "plot poincare sphere";
+    // qDebug() << "plot poincare sphere";
     int color{CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
@@ -1675,7 +1674,7 @@ void P4Sphere::plotPoincareSphere()
 
 void P4Sphere::plotPoincareLyapunovSphere()
 {
-    qDebug() << "plot poincare-lyapunov sphere";
+    // qDebug() << "plot poincare-lyapunov sphere";
     int color{CLINEATINFINITY};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
@@ -1693,7 +1692,7 @@ void P4Sphere::plotPoincareLyapunovSphere()
 
 void P4Sphere::plotLineAtInfinity()
 {
-    qDebug() << "plot line at infinity";
+    // qDebug() << "plot line at infinity";
     switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
@@ -1719,7 +1718,7 @@ void P4Sphere::plotLineAtInfinity()
 
 void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
 {
-    qDebug() << "draw line";
+    // qDebug() << "draw line";
     int wx1, wy1, wx2, wy2;
 
     if (staticPainter_ != nullptr) {
@@ -1851,7 +1850,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
 
 void P4Sphere::drawPoint(double x, double y, int color)
 {
-    qDebug() << "draw point";
+    // qDebug() << "draw point";
     if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
@@ -1877,7 +1876,7 @@ void P4Sphere::drawPoint(double x, double y, int color)
 //---------------------------------------------------------------------
 void P4Sphere::printPoint(const p4singularities::saddle &p)
 {
-    qDebug() << "print point saddle";
+    // qDebug() << "print point saddle";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1903,7 +1902,7 @@ void P4Sphere::printPoint(const p4singularities::saddle &p)
 
 void P4Sphere::printPoint(const p4singularities::node &p)
 {
-    qDebug() << "print point node";
+    // qDebug() << "print point node";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -1948,7 +1947,7 @@ void P4Sphere::printPoint(const p4singularities::node &p)
 
 void P4Sphere::printPoint(const p4singularities::weak_focus &p)
 {
-    qDebug() << "print point weak focus";
+    // qDebug() << "print point weak focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2030,7 +2029,7 @@ void P4Sphere::printPoint(const p4singularities::weak_focus &p)
 
 void P4Sphere::printPoint(const p4singularities::strong_focus &p)
 {
-    qDebug() << "print point strong focus";
+    // qDebug() << "print point strong focus";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2075,7 +2074,7 @@ void P4Sphere::printPoint(const p4singularities::strong_focus &p)
 
 void P4Sphere::printPoint(const p4singularities::degenerate &p)
 {
-    qDebug() << "print point degenerate";
+    // qDebug() << "print point degenerate";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2102,7 +2101,7 @@ void P4Sphere::printPoint(const p4singularities::degenerate &p)
 
 void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
 {
-    qDebug() << "print point semi elementary";
+    // qDebug() << "print point semi elementary";
     double pos[2];
 
     getChartPos(p.chart, p.x0, p.y0, pos);
@@ -2206,7 +2205,7 @@ void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
 
 void P4Sphere::printPoints()
 {
-    qDebug() << "print points";
+    // qDebug() << "print points";
     print_comment("Printing symbols at all singular points:");
 
     for (auto const &vf : gVFResults.vf_) {
@@ -2227,7 +2226,7 @@ void P4Sphere::printPoints()
 
 void P4Sphere::printPointSeparatrices(const p4singularities::semi_elementary &p)
 {
-    qDebug() << "print point separatrices (semi elementary)";
+    // qDebug() << "print point separatrices (semi elementary)";
     for (auto const &it : p.separatrices) {
         print_comment("Next separatrix of degenerate point:");
         draw_sep(this, it.sep_points);
@@ -2236,7 +2235,7 @@ void P4Sphere::printPointSeparatrices(const p4singularities::semi_elementary &p)
 
 void P4Sphere::printPointSeparatrices(const p4singularities::saddle &p)
 {
-    qDebug() << "print point separatrices (saddle)";
+    // qDebug() << "print point separatrices (saddle)";
     for (auto const &it : p.separatrices) {
         print_comment("Next separatrix of saddle point:");
         draw_sep(this, it.sep_points);
@@ -2245,7 +2244,7 @@ void P4Sphere::printPointSeparatrices(const p4singularities::saddle &p)
 
 void P4Sphere::printPointSeparatrices(const p4singularities::degenerate &p)
 {
-    qDebug() << "print point separatrices (degenerate)";
+    // qDebug() << "print point separatrices (degenerate)";
     for (auto const &it : p.blow_up) {
         print_comment("Next separatrix of degenerate point:");
         draw_sep(this, it.sep_points);
@@ -2254,7 +2253,7 @@ void P4Sphere::printPointSeparatrices(const p4singularities::degenerate &p)
 
 void P4Sphere::printSeparatrices()
 {
-    qDebug() << "print separatrices";
+    // qDebug() << "print separatrices";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &sp : vf->saddlePoints_) {
             print_comment("Printing separatrice for saddle singularity:");
@@ -2274,7 +2273,7 @@ void P4Sphere::printSeparatrices()
 
 void P4Sphere::printGcf()
 {
-    qDebug() << "print gcf";
+    // qDebug() << "print gcf";
     bool isagcf{false};
     for (auto const &vf : gVFResults.vf_) {
         if (!vf->gcf_points_.empty()) {
@@ -2292,7 +2291,7 @@ void P4Sphere::printGcf()
 
 void P4Sphere::printSeparatingCurves()
 {
-    qDebug() << "print separating curve";
+    // qDebug() << "print separating curve";
     QString comment;
     bool dashes;
     double pcoord[3];
@@ -2330,7 +2329,7 @@ void P4Sphere::printSeparatingCurves()
 
 void P4Sphere::printArbitraryCurves()
 {
-    qDebug() << "print arbitrary curves";
+    // qDebug() << "print arbitrary curves";
     QString comment;
     int i{1};
     for (auto const &it : gVFResults.arbitraryCurves_) {
@@ -2342,7 +2341,7 @@ void P4Sphere::printArbitraryCurves()
 
 void P4Sphere::printIsoclines()
 {
-    qDebug() << "print isoclines";
+    // qDebug() << "print isoclines";
     QString comment;
     int i{1};
     for (auto const &vf : gVFResults.vf_) {
@@ -2356,7 +2355,7 @@ void P4Sphere::printIsoclines()
 
 void P4Sphere::printPoincareSphere()
 {
-    qDebug() << "print poincare sphere";
+    // qDebug() << "print poincare sphere";
     print_comment("Printing Poincare Sphere:");
     auto p =
         produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
@@ -2372,7 +2371,7 @@ void P4Sphere::printPoincareSphere()
 
 void P4Sphere::printPoincareLyapunovSphere()
 {
-    qDebug() << "print poincare-lyapunov sphere";
+    // qDebug() << "print poincare-lyapunov sphere";
     print_comment("Printing Poincare Lyapunov-Sphere (circle at infinity):");
 
     auto p =
@@ -2405,7 +2404,7 @@ void P4Sphere::printPoincareLyapunovSphere()
 
 void P4Sphere::printLineAtInfinity()
 {
-    qDebug() << "print line at infinity";
+    // qDebug() << "print line at infinity";
     switch (gVFResults.typeofview_) {
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
@@ -2424,7 +2423,7 @@ void P4Sphere::printLineAtInfinity()
 
 void P4Sphere::printOrbits()
 {
-    qDebug() << "print orbits";
+    // qDebug() << "print orbits";
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
@@ -2437,7 +2436,7 @@ void P4Sphere::printOrbits()
 
 void P4Sphere::printLimitCycles()
 {
-    qDebug() << "print limit cycles";
+    // qDebug() << "print limit cycles";
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
@@ -2450,7 +2449,7 @@ void P4Sphere::printLimitCycles()
 
 void P4Sphere::printLine(double x1, double y1, double x2, double y2, int color)
 {
-    qDebug() << "print line";
+    // qDebug() << "print line";
     int wx1, wy1, wx2, wy2;
 
     if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
@@ -2498,7 +2497,7 @@ void P4Sphere::printLine(double x1, double y1, double x2, double y2, int color)
 
 void P4Sphere::printPoint(double x, double y, int color)
 {
-    qDebug() << "print point";
+    // qDebug() << "print point";
     if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
         return;
 
@@ -2538,7 +2537,7 @@ void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
                                int myresolution, double mylinewidth,
                                double mysymbolsize)
 {
-    qDebug() << "prepare printing";
+    // qDebug() << "prepare printing";
     double pagewidth, pageheight;
     double aspectratio{1}; // assume aspect ratio 1
 
@@ -2665,7 +2664,7 @@ void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
 
 void P4Sphere::finishPrinting()
 {
-    qDebug() << "finish printing";
+    // qDebug() << "finish printing";
     if (printMethod_ == P4PRINT_EPSIMAGE) {
         finishPostscriptPrinting();
         reverseYAxis_ = false;
@@ -2717,7 +2716,7 @@ void P4Sphere::finishPrinting()
 // TODO call from paintEvent with a printFlag or something
 void P4Sphere::print()
 {
-    qDebug() << "print";
+    // qDebug() << "print";
     if (printMethod_ == P4PRINT_JPEGIMAGE && sP4pixmap == nullptr)
         return;
 
@@ -2742,7 +2741,7 @@ void P4Sphere::print()
 
 void P4Sphere::prepareDrawing()
 {
-    qDebug() << "prepare drawing";
+    // qDebug() << "prepare drawing";
     if (painterCache_ == nullptr) {
         isPainterCacheDirty_ = true;
         painterCache_ = new QPixmap{size()};
@@ -2760,7 +2759,7 @@ void P4Sphere::prepareDrawing()
 
 void P4Sphere::finishDrawing()
 {
-    qDebug() << "finish drawing";
+    // qDebug() << "finish drawing";
     if (next_ != nullptr)
         next_->finishDrawing();
 
@@ -2786,7 +2785,7 @@ void P4Sphere::finishDrawing()
 
 /*void P4Sphere::signalEvaluating()
 {
-    qDebug() << "signal evaluating";
+    //qDebug() << "signal evaluating";
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
        bgColours::CBACKGROUND) );
@@ -2795,7 +2794,7 @@ void P4Sphere::finishDrawing()
 
 void P4Sphere::signalChanged()
 {
-    qDebug() << "signal changed";
+    // qDebug() << "signal changed";
     /*
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =

@@ -74,7 +74,6 @@ findAllSeparatingCurves := proc()
     rounded := true;
     numcurves := nops(user_curves);
     numcurveregions := nops(curveregions);
-    printf("The curves file is %a\n",user_curvesfile);
     fp := fopen(user_curvesfile, WRITE, TEXT);
 
     for r from 1 to numcurves do

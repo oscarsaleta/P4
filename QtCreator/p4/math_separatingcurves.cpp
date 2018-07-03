@@ -19,6 +19,8 @@
 
 #include "math_separatingcurves.hpp"
 
+#include <QDebug>
+
 #include "P4ParentStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
@@ -26,15 +28,8 @@
 static void insert_curve_point(double x0, double y0, double z0, int dashes,
                                std::vector<p4orbits::orbits_points> &lastpt)
 {
-    p4orbits::orbits_points newpt;
-
-    newpt.pcoord[0] = x0;
-    newpt.pcoord[1] = y0;
-    newpt.pcoord[2] = z0;
-    newpt.dashes = dashes;
-    newpt.color = CSEPCURVE;
-
-    lastpt.push_back(newpt);
+    double pcoord[] = {x0, y0, z0};
+    lastpt.emplace_back(CSEPCURVE, pcoord, dashes, 0, 0);
 }
 
 bool readSeparatingCurvePoints(FILE *fp,
