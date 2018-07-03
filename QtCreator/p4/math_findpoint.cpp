@@ -388,8 +388,10 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
         gVFResults.deSeps_ =
             gVFResults.dePoints_[gVFResults.selectedDePointIndex_].blow_up;
         gVFResults.selectedDeSepIndex_ = 0;
-        draw_selected_sep(spherewnd, gVFResults.deSeps_.front().sep_points,
-                          CW_SEP);
+        draw_selected_sep(
+            spherewnd,
+            gVFResults.deSeps_[gVFResults.selectedDeSepIndex_].sep_points,
+            CW_SEP);
 
         start_plot_sep = start_plot_de_sep;
         cont_plot_sep = cont_plot_de_sep;

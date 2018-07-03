@@ -936,7 +936,7 @@ void draw_selected_sep(P4Sphere *spherewnd,
                        int color)
 {
     double pcoord[3];
-
+    qDebug() << "sep is size" << sep.size();
     if (!sep.empty()) {
         for (auto const &it : sep) {
             if (it.dashes)

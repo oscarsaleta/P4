@@ -608,10 +608,9 @@ void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
                                          std::begin(v), std::end(v));
         }
     } else {
-        auto v = plot_sep_blow_up(spherewnd, de_poi.x0, de_poi.y0, de_poi.chart,
-                                  de_poi.epsilon, de_sep, vfindex);
-        if (!v.empty())
-            de_sep.sep_points = std::move(v);
+        de_sep.sep_points =
+            plot_sep_blow_up(spherewnd, de_poi.x0, de_poi.y0, de_poi.chart,
+                             de_poi.epsilon, de_sep, vfindex);
     }
 }
 
