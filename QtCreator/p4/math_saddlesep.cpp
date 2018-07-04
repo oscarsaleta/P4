@@ -19,6 +19,8 @@
 
 #include "math_saddlesep.hpp"
 
+#include <QDebug>
+
 #include "P4ParentStudy.hpp"
 #include "math_charts.hpp"
 #include "math_orbits.hpp"
@@ -29,14 +31,23 @@
 // ---------------------------------------------------------------------------
 //      start_plot_saddle_sep
 // ---------------------------------------------------------------------------
+// Start plotting a separatrice for a saddle singular point
 void start_plot_saddle_sep(P4Sphere *spherewnd, int vfindex)
 {
     double p[3];
     const int &sepid{gVFResults.selectedSepIndex_};
     const int &sadid{gVFResults.selectedSaddlePointIndex_};
 
+    qDebug() << "START PLOT SADDLE SEPARATRICE:";
+    qDebug() << "   sep index" << sepid;
+    qDebug() << "   saddle point index" << sadid;
+
+    qDebug() << "   seps[" << sepid << "].sep_points.size()="
+             << gVFResults.seps_[sepid].sep_points.size();
     draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
 
+    // If there are already computed points for this separatrice, use the last
+    // point's direction and type to integrate the next points.
     if (!gVFResults.seps_[sepid].sep_points.empty()) {
         auto &last_sep_point = gVFResults.seps_[sepid].sep_points.back();
 
@@ -44,11 +55,15 @@ void start_plot_saddle_sep(P4Sphere *spherewnd, int vfindex)
         auto v = integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
                                last_sep_point.dir, last_sep_point.type,
                                gVFResults.config_intpoints_);
+        // if the integration was successful then append the computed points to
+        // the end of the separatrice points vector
         if (!v.empty())
             gVFResults.seps_[sepid].sep_points.insert(
                 std::end(gVFResults.seps_[sepid].sep_points), std::begin(v),
                 std::end(v));
     } else {
+        // if there are no computed points, start the integration from the
+        // selected saddle singularity
         gVFResults.seps_[sepid].sep_points = plot_separatrice(
             spherewnd, gVFResults.saddlePoints_[sadid].x0,
             gVFResults.saddlePoints_[sadid].y0,
@@ -100,7 +115,7 @@ void plot_next_saddle_sep(P4Sphere *spherewnd, int vfindex)
 
     sepid++;
 
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
+    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
         gVFResults.seps_ = gVFResults.saddlePoints_[sadid].separatrices;
         sepid = 0;
     }
@@ -119,7 +134,7 @@ void select_next_saddle_sep(P4Sphere *spherewnd)
 
     sepid++;
 
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
+    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
         gVFResults.seps_ = gVFResults.saddlePoints_[sadid].separatrices;
         sepid = 0;
     }

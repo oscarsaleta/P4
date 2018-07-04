@@ -332,13 +332,13 @@ void rk78(void (*deriv)(const double *, double *), double y[2], double *hh,
         d = d / 2;
         e3 = e1 * (1.0 + dd * 1.E-2);
         if (((fabs(h) <= hmi) || (d < e3)) && !(std::isnan(f[0])) &&
-            !(std::isnan(f[1])) && p4_finite(f[0]) && p4_finite(f[1]))
+            !(std::isnan(f[1])) && std::isfinite(f[0]) && std::isfinite(f[1]))
             break;
 
         h = h * 0.9 * sqrt(sqrt(sqrt(e3 / d)));
 
         if ((fabs(h) < hmi) || std::isnan(h) ||
-            !p4_finite(h)) /* h=hmi*h/fabs(h); */
+            !std::isfinite(h)) /* h=hmi*h/fabs(h); */
             h = hmi * direction;
     }
     if (d < e3 / 512)
@@ -351,7 +351,7 @@ void rk78(void (*deriv)(const double *, double *), double y[2], double *hh,
     if (fabs(h) > hma)
         h = hma * direction;
 
-    if ((fabs(h) < hmi) || std::isnan(h) || !p4_finite(h))
+    if ((fabs(h) < hmi) || std::isnan(h) || !std::isfinite(h))
         h = hmi * direction;
     *hh = h;
 }

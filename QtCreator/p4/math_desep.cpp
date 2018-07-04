@@ -21,10 +21,12 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4VFStudy.hpp"
 #include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_numerics.hpp"
@@ -575,6 +577,7 @@ void change_epsilon_de(P4Sphere *spherewnd, double epsilon)
 // ---------------------------------------------------------------------------
 void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
 {
+    // FIXME: de_sep and de_poi can be undefined and cause issues
     auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
     auto &de_poi = gVFResults.dePoints_[gVFResults.selectedDePointIndex_];
     double p[3];
@@ -606,10 +609,9 @@ void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
                                          std::begin(v), std::end(v));
         }
     } else {
-        auto v = plot_sep_blow_up(spherewnd, de_poi.x0, de_poi.y0, de_poi.chart,
-                                  de_poi.epsilon, de_sep, vfindex);
-        if (!v.empty())
-            de_sep.sep_points = std::move(v);
+        de_sep.sep_points =
+            plot_sep_blow_up(spherewnd, de_poi.x0, de_poi.y0, de_poi.chart,
+                             de_poi.epsilon, de_sep, vfindex);
     }
 }
 
@@ -653,8 +655,7 @@ void plot_next_de_sep(P4Sphere *spherewnd, int vfindex)
 
     desepid++;
 
-    if (static_cast<std::string::size_type>(desepid) >
-        gVFResults.deSeps_.size()) {
+    if (static_cast<std::size_t>(desepid) >= gVFResults.deSeps_.size()) {
         gVFResults.deSeps_ = gVFResults.dePoints_[depointid].blow_up;
         desepid = 0;
     }
@@ -669,13 +670,26 @@ void select_next_de_sep(P4Sphere *spherewnd)
 {
     int &desepid{gVFResults.selectedDeSepIndex_};
     const int &depointid{gVFResults.selectedDePointIndex_};
+    //    qDebug() << "desepid=" << desepid
+    //             << "; deSeps_.size()=" << gVFResults.deSeps_.size() << ";
+    //             deSeps_["
+    //             << desepid << "].sep_points.size()="
+    //             << gVFResults.deSeps_[desepid].sep_points.size();
+    //    qDebug() << "depointid=" << depointid
+    //             << "; dePoints_.size()=" << gVFResults.dePoints_.size()
+    //             << "; dePoints_[" << depointid << "].blow_up.size()="
+    //             << gVFResults.dePoints_[depointid].blow_up.size()
+    //             << "; dePoints_.[" << depointid
+    //             << "].blow_up[0].sep_points.size()="
+    //             <<
+    //             gVFResults.dePoints_[depointid].blow_up[0].sep_points.size();
 
     draw_sep(spherewnd, gVFResults.deSeps_[desepid].sep_points);
 
     desepid++;
 
-    if (static_cast<std::string::size_type>(desepid) >
-        gVFResults.deSeps_.size()) {
+    if (static_cast<std::size_t>(desepid) >= gVFResults.deSeps_.size() /*&&
+        depointid > 0*/) {
         gVFResults.deSeps_ = gVFResults.dePoints_[depointid].blow_up;
         desepid = 0;
     }
