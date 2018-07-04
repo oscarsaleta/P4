@@ -29,6 +29,7 @@ namespace p4polynom
 struct term1 {
     int exp;
     double coeff;
+    term1 *next_term1{nullptr};
 
     term1(int ex = 0, double co = 0.0) : exp{ex}, coeff{co} {}
 };
@@ -38,6 +39,7 @@ struct term2 {
     int exp_x;
     int exp_y;
     double coeff;
+    term2 *next_term2{nullptr}
 
     term2(int xx = 0, int xy = 0, double co = 0.0)
         : exp_x{xx}, exp_y{xy}, coeff{co}
@@ -51,6 +53,7 @@ struct term3 {
     int exp_Co;
     int exp_Si;
     double coeff;
+    term3 *next_term3{nullptr};
 
     term3(int xr = 0, int xc = 0, int xs = 0, double co = 0.0)
         : exp_r{xr}, exp_Co{xc}, exp_Si{xs}, coeff{co}
