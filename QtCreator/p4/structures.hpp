@@ -19,6 +19,8 @@
 
 #pragma once
 
+// FIXME: add deleters? smart pointers? try again using vectors/lists?
+
 // -----------------------------------------------------------------------
 //                      General polynomial expressions
 // -----------------------------------------------------------------------
@@ -29,9 +31,13 @@ namespace p4polynom
 struct term1 {
     int exp;
     double coeff;
+
     term1 *next_term1{nullptr};
 
-    term1(int ex = 0, double co = 0.0) : exp{ex}, coeff{co} {}
+    term1(int ex = 0, double co = 0.0, term1 *next = nullptr)
+        : exp{ex}, coeff{co}, next_term1{next}
+    {
+    }
 };
 
 // Linked list of terms a*x^i*y^j
@@ -39,10 +45,11 @@ struct term2 {
     int exp_x;
     int exp_y;
     double coeff;
-    term2 *next_term2{nullptr}
 
-    term2(int xx = 0, int xy = 0, double co = 0.0)
-        : exp_x{xx}, exp_y{xy}, coeff{co}
+    term2 *next_term2{nullptr};
+
+    term2(int xx = 0, int xy = 0, double co = 0.0, term2 *next = nullptr)
+        : exp_x{xx}, exp_y{xy}, coeff{co}, next_term2{next}
     {
     }
 };
@@ -53,10 +60,12 @@ struct term3 {
     int exp_Co;
     int exp_Si;
     double coeff;
+
     term3 *next_term3{nullptr};
 
-    term3(int xr = 0, int xc = 0, int xs = 0, double co = 0.0)
-        : exp_r{xr}, exp_Co{xc}, exp_Si{xs}, coeff{co}
+    term3(int xr = 0, int xc = 0, int xs = 0, double co = 0.0,
+          term3 *next = nullptr)
+        : exp_r{xr}, exp_Co{xc}, exp_Si{xs}, coeff{co}, next_term3{next}
     {
     }
 };
@@ -73,14 +82,18 @@ struct orbits_points {
     double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
                       // or on the poincare-lyapunov sphere
                       // -> p=(0,x,y) or p=(1,r,theta)
-    int dashes;
-    int dir; // if we have a line of sing at infinity and have to change
-             // the direction if we integrate the orbit of separatrice
-             // and sometimes the type
-    int type;
+    int dashes;       // plotted in dots or dashes
+    int dir;  // if we have a line of sing at infinity and have to change
+              // the direction if we integrate the orbit of separatrice
+              // and sometimes the type
+    int type; // type (stability) of orbit
+
+    orbits_points *nextpt{nullptr}; // linked list to new orbit_points
+
     orbits_points() {}
-    orbits_points(int co, double pc[3], int da, int di, int ty)
-        : color{co}, dashes{da}, dir{di}, type{ty}
+    orbits_points(int co, double pc[3], int da, int di, int ty,
+                  orbits_points *next = nullptr)
+        : color{co}, dashes{da}, dir{di}, type{ty}, nextpt{next}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
@@ -90,12 +103,14 @@ struct orbits_points {
 
 struct orbits {
     double pcoord[3]; // startpoint
-    int color;
-    std::vector<orbits_points> points; // orbit
+    int color;        // color of orbit
+
+    orbits_points *firstpt{nullptr};   // first orbit in this list
+    orbits_points *currentpt{nullptr}; // current used orbit for computation
+    orbits *next{nullptr};             // linked list to new orbit
 
     orbits() {}
-    orbits(double pc[3], int co, std::vector<orbits_points> fo)
-        : color{co}, points{fo}
+    orbits(double pc[3], int co, orbits *nxt = nullptr) : color{co}, next{nxt}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
@@ -110,16 +125,19 @@ struct orbits {
 namespace p4curves
 {
 struct curves { // NOTE: curveResult es identica, usarem aquesta
-    std::vector<p4polynom::term2> r2, u1, u2, v1, v2;
-    std::vector<p4polynom::term3> c;
-    std::vector<p4orbits::orbits_points> points;
+    p4polynom::term2 *r2{nullptr};
+    p4polynom::term2 *u1{nullptr};
+    p4polynom::term2 *u2{nullptr};
+    p4polynom::term2 *v1{nullptr};
+    p4polynom::term2 *v2{nullptr};
+    p4polynom::term3 *c{nullptr};
+    p4orbits::orbits_points *points{nullptr};
 
     curves() {}
-    curves(std::vector<p4polynom::term2> _r2, std::vector<p4polynom::term2> _u1,
-           std::vector<p4polynom::term2> _u2, std::vector<p4polynom::term2> _v1,
-           std::vector<p4polynom::term2> _v2, std::vector<p4polynom::term3> _c,
-           std::vector<p4orbits::orbits_points> po)
-        : r2{_r2}, u1{_u1}, u2{_u2}, v1{_v1}, v2{_v2}, c{_c}, points{po}
+    curves(p4polynom::term2 *_r2, p4polynom::term2 *_u1, p4polynom::term2 *_u2,
+           p4polynom::term2 *_v1, p4polynom::term2 *_v2, p4polynom::term3 *_c,
+           p4orbits::orbits_points *_points)
+        : r2{_r2}, u1{_u1}, u2{_u2}, v1{_v1}, v2{_v2}, c{_c}, points{_points}
     {
     }
 };
@@ -128,14 +146,12 @@ struct isoclines : curves {
     int color;
 
     isoclines() {}
-    isoclines(std::vector<p4polynom::term2> _r2,
-              std::vector<p4polynom::term2> _u1,
-              std::vector<p4polynom::term2> _u2,
-              std::vector<p4polynom::term2> _v1,
-              std::vector<p4polynom::term2> _v2,
-              std::vector<p4polynom::term3> _c,
-              std::vector<p4orbits::orbits_points> _po, int co)
-        : curves(_r2, _u1, _u2, _v1, _v2, _c, _po), color{co}
+    isoclines(int co, p4polynom::term2 *_r2 = nullptr,
+              p4polynom::term2 *_u1 = nullptr, p4polynom::term2 *_u2 = nullptr,
+              p4polynom::term2 *_v1 = nullptr, p4polynom::term2 *_v2 = nullptr,
+              p4polynom::term3 *_c = nullptr,
+              p4orbits::orbits_points *_points = nullptr)
+        : curves(_r2, _u1, _u2, _v1, _v2, _c, _points), color{co}
     {
     }
 };
@@ -151,11 +167,13 @@ struct transformations {
     int c1, c2, d1, d2, d3, d4; // F(x,y)=(c1*x^d1*y^d2,c2*x^d3*y^d4)
     int d;                      // X/x^d
 
+    transformations *next_trans{nullptr};
+
     transformations() {}
     transformations(double _x0, double _y0, int _c1, int _c2, int _d1, int _d2,
-                    int _d3, int _d4, int _d)
+                    int _d3, int _d4, int _d, transformations *next = nullptr)
         : x0{_x0}, y0{_y0}, c1{_c1}, c2{_c2}, d1{_d1}, d2{_d2}, d3{_d3},
-          d4{_d4}, d{_d}
+          d4{_d4}, d{_d}, next_trans{next}
     {
     }
 };
@@ -163,16 +181,11 @@ struct transformations {
 struct blow_up_points {
     // number of transformations
     int n;
-    std::vector<transformations> trans;
+    transformations *trans{nullptr};
     // last point that is not degenerate
     double x0, y0;
     // transformation matrix
     double a11, a12, a21, a22;
-    // vector field
-    std::vector<p4polynom::term2> vector_field_0;
-    std::vector<p4polynom::term2> vector_field_1;
-    // sep (t,g(t))
-    std::vector<p4polynom::term1> sep;
     // type of seperatrice (STYPE_STABLE, ...)
     int type;
     // if true then use the blow up vector field if the modulus of the last
@@ -181,39 +194,54 @@ struct blow_up_points {
     // end point sep in blow up chart
     double point[2];
 
-    std::vector<p4orbits::orbits_points> sep_points;
+    // vector field
+    p4polynom::term2 *vector_field[2]{nullptr, nullptr};
+    // sep (t,g(t))
+    p4polynom::term1 *sep{nullptr};
+    p4orbits::orbits_points *first_sep_point{nullptr};
+    p4orbits::orbits_points *last_sep_point{nullptr};
+    blow_up_points *next_blow_up_point{nullptr};
 
     blow_up_points() {}
-    blow_up_points(int _n, std::vector<transformations> tr, double _x0,
-                   double _y0, double _a11, double _a12, double _a21,
-                   double _a22, std::vector<p4polynom::term2> ve0,
-                   std::vector<p4polynom::term2> ve1,
-                   std::vector<p4polynom::term1> se, int ty, bool in,
-                   double po[2], std::vector<p4orbits::orbits_points> sp)
+    blow_up_points(int _n, transformations *tr, double _x0, double _y0,
+                   double _a11, double _a12, double _a21, double _a22, int ty,
+                   bool in, double po[2], p4polynom::term2 *ve[2] = nullptr,
+                   p4polynom::term1 *se = nullptr,
+                   p4orbits::orbits_points *fsp = nullptr,
+                   p4orbits::orbits_points *lsp = nullptr,
+                   blow_up_points *next = nullptr)
         : n{_n}, trans{tr}, x0{_x0}, y0{_y0}, a11{_a11}, a12{_a12}, a21{_a21},
-          a22{_a22}, vector_field_0{ve0}, vector_field_1{ve1}, sep{se},
-          type{ty}, integrating_in_local_chart{in}, sep_points{sp}
+          a22{_a22}, type{ty}, integrating_in_local_chart{in}, sep{se},
+          first_sep_point{fsp}, last_sep_point{lsp}, next_blow_up_point{next}
     {
         point[0] = po[0];
         point[1] = po[1];
+        if (ve != nullptr) {
+            vector_field[0] = nullptr;
+            vector_field[1] = nullptr;
+        }
     }
 };
 
 struct sep {
-    std::vector<p4orbits::orbits_points> sep_points;
     int type; // STYPE_STABLE, UNSTABLE, CENSTABLE or CENUNSTABLE
     int direction;
     int d;
     bool notadummy; // false if separatrice is a copy of a structure (obtained
                     // through a symmetry)
-    std::vector<p4polynom::term1> separatrice;
+
+    p4orbits::orbits_points *first_sep_point{nullptr};
+    p4orbits::orbits_points *last_sep_point{nullptr};
     // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
+    p4polynom::term1 *separatrice{nullptr};
+    sep *next_sep{nullptr};
 
     sep() {}
-    sep(std::vector<p4orbits::orbits_points> sp, int ty, int di, int _d,
-        bool no, std::vector<p4polynom::term1> se)
-        : sep_points{sp}, type{ty}, direction{di}, d{_d}, notadummy{no},
-          separatrice{se}
+    sep(int ty, int di, int _d, bool no, p4orbits::orbits_points *fsp = nullptr,
+        p4orbits::orbits_points *lsp = nullptr, p4polynom::term1 *se = nullptr,
+        sep *next = nullptr)
+        : type{ty}, direction{di}, d{_d}, notadummy{no}, first_sep_point{fsp},
+          last_sep_point{lsp}, separatrice{se}, next_sep{next}
     {
     }
 };
@@ -223,7 +251,6 @@ struct sep {
 //                          Singularities
 // -----------------------------------------------------------------------
 
-// (taken from P5 source code) ----------
 // in a piecewise system, singularities may coincide along the bifurcation
 // lines.  In that case, we mark the singularity in a different way.
 // Of course, on screen it need only be marked once and not several times.
@@ -236,8 +263,7 @@ struct sep {
     3 // is a virtual singularity, but coincides with a real one so do not plot
       // at all
 #define POSITION_COINCIDING 4 // singularity coincides, but is already drawn
-// --------------------------------------
-//
+
 namespace p4singularities
 {
 // part of the structure that is the same for all types
@@ -247,10 +273,12 @@ struct genericsingularity {
     // struct genericsingularity *next;
     int chart;
     int position; // POSITION_ constants
+    genericsingularity *next;
 
     genericsingularity() {}
-    genericsingularity(double _x0, double _y0, int ch, int po)
-        : x0{_x0}, y0{_y0}, chart{ch}, position{po}
+    genericsingularity(double _x0, double _y0, int ch, int po,
+                       genericsingularity *n = nullptr)
+        : x0{_x0}, y0{_y0}, chart{ch}, position{po}, next{n}
     {
     }
 };
@@ -258,46 +286,54 @@ struct genericsingularity {
 struct saddle : genericsingularity {
     double epsilon;
     bool notadummy;
-
-    std::vector<p4blowup::sep> separatrices;
-    std::vector<p4polynom::term2> vector_field_0;
-    std::vector<p4polynom::term2> vector_field_1;
     double a11, a12, a21, a22; // transformation matrix
+
+    p4blowup::sep *separatrices{nullptr};
+    p4polynom::term2 *vector_field[2]{nullptr, nullptr};
+    saddle *next_saddle{nullptr};
 
     saddle() {}
     saddle(double _x0, double _y0, int ch, int po, double ep, bool no,
-           std::vector<p4blowup::sep> se, std::vector<p4polynom::term2> ve0,
-           std::vector<p4polynom::term2> ve1, double _a11, double _a12,
-           double _a21, double _a22)
-        : genericsingularity(_x0, _y0, ch, po), epsilon{ep}, notadummy{no},
-          separatrices{se}, vector_field_0{ve0},
-          vector_field_1{ve1}, a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22}
+
+           double _a11, double _a12, double _a21, double _a22,
+           p4blowup::sep *se = nullptr, p4polynom::term2 *ve[2] = nullptr,
+           saddle *next = nullptr)
+        : genericsingularity(_x0, _y0, ch, po, next), epsilon{ep},
+          notadummy{no}, a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22},
+          separatrices{se}, next_saddle{next}
     {
+        if (ve != nullptr) {
+            vector_field[0] = ve[0];
+            vector_field[1] = ve[1];
+        }
     }
 };
 
 struct semi_elementary : genericsingularity {
     double epsilon;
     bool notadummy;
+    double a11, a12, a21, a22; // transformation matrix
+    int type;                  // type of semi-elementary point
 
     // center sep (t,f(t)), sep (g(t),t)
-    std::vector<p4blowup::sep> separatrices;
-    std::vector<p4polynom::term2> vector_field_0; // vector field
-    std::vector<p4polynom::term2> vector_field_1; // vector field
-    double a11, a12, a21, a22;                    // transformation matrix
-
-    int type; // type of semi-elementary point
+    p4blowup::sep *separatrices{nullptr};
+    p4polynom::term2 *vector_field[2]{nullptr, nullptr}; // vector field
+    semi_elementary *next_se{nullptr};
 
     semi_elementary() {}
     semi_elementary(double _x0, double _y0, int ch, int po, double ep, bool no,
-                    std::vector<p4blowup::sep> se,
-                    std::vector<p4polynom::term2> ve0,
-                    std::vector<p4polynom::term2> ve1, double _a11, double _a12,
-                    double _a21, double _a22, int ty)
-        : genericsingularity(_x0, _y0, ch, po), epsilon{ep}, notadummy{no},
-          separatrices{se}, vector_field_0{ve0}, vector_field_1{ve1}, a11{_a11},
-          a12{_a12}, a21{_a21}, a22{_a22}, type{ty}
+                    double _a11, double _a12, double _a21, double _a22, int ty,
+                    p4blowup::sep *se = nullptr,
+                    p4polynom::term2 *vf[2] = nullptr,
+                    semi_elementary *next = nullptr)
+        : genericsingularity(_x0, _y0, ch, po, next), epsilon{ep},
+          notadummy{no}, a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22}, type{ty},
+          separatrices{se}, next_se{next}
     {
+        if (vf != nullptr) {
+            vector_field[0] = vf[0];
+            vector_field[1] = vf[1];
+        }
     }
 };
 
@@ -305,13 +341,15 @@ struct degenerate : genericsingularity {
     double epsilon;
     bool notadummy;
 
-    std::vector<p4blowup::blow_up_points> blow_up;
+    p4blowup::blow_up_points *blow_up{nullptr};
+    degenerate *next_de{nullptr};
 
     degenerate() {}
     degenerate(double _x0, double _y0, int ch, int po, double ep, bool no,
-               std::vector<p4blowup::blow_up_points> bl)
+               p4blowup::blow_up_points *bl = nullptr,
+               degenerate *next = nullptr)
         : genericsingularity(_x0, _y0, ch, po), epsilon{ep}, notadummy{no},
-          blow_up{bl}
+          blow_up{bl}, next_de{next}
     {
     }
 };
