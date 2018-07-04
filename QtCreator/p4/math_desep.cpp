@@ -577,6 +577,7 @@ void change_epsilon_de(P4Sphere *spherewnd, double epsilon)
 // ---------------------------------------------------------------------------
 void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
 {
+    // FIXME: de_sep and de_poi can be undefined and cause issues
     auto &de_sep = gVFResults.deSeps_[gVFResults.selectedDeSepIndex_];
     auto &de_poi = gVFResults.dePoints_[gVFResults.selectedDePointIndex_];
     double p[3];

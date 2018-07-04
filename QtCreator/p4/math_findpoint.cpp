@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4SepDlg.hpp"
@@ -388,10 +390,17 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
         gVFResults.deSeps_ =
             gVFResults.dePoints_[gVFResults.selectedDePointIndex_].blow_up;
         gVFResults.selectedDeSepIndex_ = 0;
-        draw_selected_sep(
-            spherewnd,
-            gVFResults.deSeps_[gVFResults.selectedDeSepIndex_].sep_points,
-            CW_SEP);
+
+        qDebug() << "deSeps_.size()=" << gVFResults.deSeps_.size();
+        //        qDebug() <<
+        //        "deSeps_[0].sep_points.size()="<<gVFResults.deSeps_[0].sep_points;
+
+        if (!gVFResults.deSeps_.empty()) {
+            draw_selected_sep(
+                spherewnd,
+                gVFResults.deSeps_[gVFResults.selectedDeSepIndex_].sep_points,
+                CW_SEP);
+        }
 
         start_plot_sep = start_plot_de_sep;
         cont_plot_sep = cont_plot_de_sep;
