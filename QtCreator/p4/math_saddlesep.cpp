@@ -26,7 +26,7 @@
 #include "math_orbits.hpp"
 #include "math_regions.hpp"
 #include "math_separatrice.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // ---------------------------------------------------------------------------
 //      start_plot_saddle_sep

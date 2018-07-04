@@ -30,7 +30,7 @@
 
 #include <cmath>
 
-#include "tables.hpp"
+#include "structures.hpp"
 
 // -----------------------------------------------------------------------
 //          eval_term1

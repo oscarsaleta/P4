@@ -35,7 +35,7 @@
 #include "math_regions.hpp"
 #include "math_separatrice.hpp"
 #include "plot_tools.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 static std::vector<p4polynom::term2> sVecField_0;
 static std::vector<p4polynom::term2> sVecField_1;

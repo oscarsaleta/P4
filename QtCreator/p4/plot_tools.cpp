@@ -24,7 +24,7 @@
 #include "P4ParentStudy.hpp"
 #include "P4Sphere.hpp"
 #include "math_p4.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 void (*plot_l)(P4Sphere *, const double *, const double *, int) = nullptr;
 void (*plot_p)(P4Sphere *, const double *, int) = nullptr;

@@ -21,7 +21,7 @@
 
 #include <vector>
 
-#include "tables.hpp"
+#include "structures.hpp"
 
 class QString;
 

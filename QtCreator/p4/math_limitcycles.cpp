@@ -29,7 +29,7 @@
 #include "math_orbits.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // static functions
 

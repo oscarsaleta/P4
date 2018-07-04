@@ -31,7 +31,7 @@
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // static global variables
 static int sIsoclinesTask{EVAL_ISOCLINES_NONE};

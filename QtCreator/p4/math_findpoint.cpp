@@ -35,7 +35,7 @@
 #include "math_saddlesep.hpp"
 #include "math_separatrice.hpp"
 #include "math_sesep.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // -----------------------------------------------------------------------
 //

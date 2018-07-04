@@ -34,7 +34,7 @@
 #include "custom.hpp"
 #include "main.hpp"
 #include "math_p4.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 P4ViewDlg::~P4ViewDlg() { getDataFromDlg(); }
 

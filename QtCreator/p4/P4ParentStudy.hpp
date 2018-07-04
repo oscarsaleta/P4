@@ -24,7 +24,7 @@
 
 #include "P4InputVF.hpp"
 #include "P4VFStudy.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 class P4ParentStudy : public QObject
 {

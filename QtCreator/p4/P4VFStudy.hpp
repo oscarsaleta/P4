@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-#include "tables.hpp"
+#include "structures.hpp"
 
 class QTextEdit;
 

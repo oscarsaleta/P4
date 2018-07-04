@@ -31,7 +31,7 @@
 #include "plot_tools.hpp"
 #include "print_bitmap.hpp"
 #include "print_points.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 static bool sPSBlackWhitePrint{true};
 

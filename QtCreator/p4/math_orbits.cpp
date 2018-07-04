@@ -33,7 +33,7 @@
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
 #include "plot_tools.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // -----------------------------------------------------------------------
 //          prepareVfForIntegration

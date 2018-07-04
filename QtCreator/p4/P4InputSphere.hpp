@@ -27,7 +27,7 @@
 #include <vector>
 
 #include "main.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 class QKeyEvent;
 class QLabel;

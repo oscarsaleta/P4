@@ -27,7 +27,7 @@
 #include "P4Sphere.hpp"
 #include "P4StartDlg.hpp"
 #include "math_charts.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 bool less_poincare(double *p1, double *p2)
 {

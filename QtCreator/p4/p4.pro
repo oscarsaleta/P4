@@ -143,7 +143,7 @@ HEADERS += ../version.h \
     print_points.hpp \
     print_postscript.hpp \
     print_xfig.hpp \
-    tables.hpp \
+    structures.hpp \
     P4ProcessWnd.hpp
 
 RC_FILE = p4.rc

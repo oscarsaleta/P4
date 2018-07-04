@@ -28,7 +28,7 @@
 #include "math_numerics.hpp"
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // -----------------------------------------------------------------------
 //                      FUNCTION PROTOTYPES

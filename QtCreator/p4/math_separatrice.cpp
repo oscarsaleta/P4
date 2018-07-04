@@ -35,7 +35,7 @@
 #include "math_saddlesep.hpp"
 #include "math_sesep.hpp"
 #include "plot_tools.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 void (*change_epsilon)(P4Sphere *, double) = nullptr;
 void (*start_plot_sep)(P4Sphere *, int) = nullptr;
