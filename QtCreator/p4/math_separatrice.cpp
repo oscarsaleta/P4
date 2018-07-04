@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 #include "P4ParentStudy.hpp"
 #include "P4VFStudy.hpp"
 #include "custom.hpp"
