@@ -80,6 +80,6 @@ void markSingularity(p4singularities::strong_focus &s,
 void markSingularity(p4singularities::weak_focus &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights);
-void markSingularity(p4singularities::degenerate &s,
+void markSingularity(p4singularities::degenerate *s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights);
