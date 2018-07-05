@@ -48,10 +48,10 @@
 #include "p4settings.hpp"
 
 // initialise background colors
-int bgColours::CBACKGROUND = BLACK;
-int bgColours::CFOREGROUND = WHITE;
-int bgColours::CORBIT = YELLOW;
-bool bgColours::PRINT_WHITE_BG = true;
+int P4ColourSettings::colour_background = BLACK;
+int P4ColourSettings::colour_foreground = WHITE;
+int P4ColourSettings::colour_orbit = YELLOW;
+bool P4ColourSettings::print_white_bg = true;
 
 P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 {

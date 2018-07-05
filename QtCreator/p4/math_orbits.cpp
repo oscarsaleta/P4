@@ -71,7 +71,7 @@ void integrateOrbit(P4Sphere *sphere, int dir)
 
         auto pts =
             integrate_orbit(sphere, pcoord, gVFResults.config_currentstep_, dir,
-                            bgColours::CORBIT, gVFResults.config_intpoints_);
+                            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
         auto &gpoints = gVFResults.orbits_.back().points;
         gpoints.insert(std::end(gpoints), std::begin(pts), std::end(pts));
 
@@ -91,16 +91,16 @@ void integrateOrbit(P4Sphere *sphere, int dir)
     if (gVFResults.orbits_.back().points.empty()) {
         auto pts =
             integrate_orbit(sphere, pcoord, gVFResults.config_step_, dir,
-                            bgColours::CORBIT, gVFResults.config_intpoints_);
+                            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
         gVFResults.orbits_.back().points = std::move(pts);
     } else {
         // create an orbit point
         auto pts =
-            P4Orbits::orbits_points{bgColours::CORBIT, pcoord, 0, dir, 0};
+            P4Orbits::orbits_points{P4ColourSettings::colour_orbit, pcoord, 0, dir, 0};
         // integrate more points
         auto int_pts =
             integrate_orbit(sphere, pcoord, gVFResults.config_step_, dir,
-                            bgColours::CORBIT, gVFResults.config_intpoints_);
+                            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
         // create a vector starting by the first point and appending the
         // integrated ones to the end
         std::vector<P4Orbits::orbits_points> orbit_result{pts};
@@ -130,13 +130,13 @@ bool startOrbit(P4Sphere *sphere, double x, double y, bool R)
     if (!prepareVfForIntegration(pcoord))
         return false;
 
-    gVFResults.orbits_.emplace_back(pcoord, bgColours::CORBIT,
+    gVFResults.orbits_.emplace_back(pcoord, P4ColourSettings::colour_orbit,
                                     std::vector<P4Orbits::orbits_points>{});
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     qDebug() << "draw point in (" << ucoord[0] << ", " << ucoord[1]
-             << ") with color " << bgColours::CORBIT;
-    sphere->drawPoint(ucoord[0], ucoord[1], bgColours::CORBIT);
+             << ") with color " << P4ColourSettings::colour_orbit;
+    sphere->drawPoint(ucoord[0], ucoord[1], P4ColourSettings::colour_orbit);
 
     return true;
 }

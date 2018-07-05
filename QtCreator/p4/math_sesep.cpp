@@ -112,7 +112,7 @@ void select_next_se_sep(P4Sphere *spherewnd)
         gVFResults.seps_ = gVFResults.sePoints_[seid].separatrices;
         sepid = 0;
     }
-    draw_selected_sep(spherewnd, gVFResults.seps_[sepid].sep_points, CW_SEP);
+    draw_selected_sep(spherewnd, gVFResults.seps_[sepid].sep_points, P4ColourSettings::colour_selected_separatrice);
 }
 
 // ---------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void change_epsilon_se(P4Sphere *spherewnd, double epsilon)
     gVFResults.sePoints_[seid].epsilon = epsilon;
 
     for (auto &it : separatrice) {
-        draw_selected_sep(spherewnd, it.sep_points, bgColours::CBACKGROUND);
+        draw_selected_sep(spherewnd, it.sep_points, P4ColourSettings::colour_background);
         it.sep_points.clear();
     }
 }

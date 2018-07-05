@@ -87,7 +87,7 @@ bool evalArbitraryCurveFinish() // return false in case an error occured
     if (sCurveTask != EVAL_CURVE_NONE) {
         sCurveSphere->prepareDrawing();
         drawArbitraryCurve(sCurveSphere,
-                           gVFResults.arbitraryCurves_.back().points, CCURV, 1);
+                           gVFResults.arbitraryCurves_.back().points, P4ColourSettings::colour_arbitrary_curve, 1);
         sCurveSphere->finishDrawing();
 
         sCurveTask = EVAL_CURVE_NONE;
@@ -215,7 +215,7 @@ void drawArbitraryCurve(P4Sphere *spherewnd,
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
     double pcoord[3]{x0, y0, z0};
-    gVFResults.arbitraryCurves_.back().points.emplace_back(CCURV, pcoord,
+    gVFResults.arbitraryCurves_.back().points.emplace_back(P4ColourSettings::colour_arbitrary_curve, pcoord,
                                                            dashes, 0, 0);
 }
 

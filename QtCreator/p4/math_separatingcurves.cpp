@@ -33,7 +33,7 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes,
         (*lastpt) = (*lastpt)->nextpt;
     }
     *lastpt =
-        new P4Orbits::orbits_points{CSEPCURVE, pcoord, dashes, 0, 0, nullptr};
+        new P4Orbits::orbits_points{P4ColourSettings::colour_separating_curve, pcoord, dashes, 0, 0, nullptr};
 }
 
 bool readSeparatingCurvePoints(FILE *fp, P4Orbits::orbits_points **psep,

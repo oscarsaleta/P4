@@ -103,7 +103,7 @@ bool evalIsoclinesFinish() // return false in case an error occured
     // set color for the last isocline of each VF
     for (auto &vf : gVFResults.vf_) {
         int nisocs{static_cast<int>((vf->isocline_vector_.size() - 1) % 4)};
-        vf->isocline_vector_.back().color = CISOC + nisocs;
+        vf->isocline_vector_.back().color = P4ColourSettings::colour_isoclines + nisocs;
     }
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
@@ -255,7 +255,7 @@ static void insert_isocline_vector_point(double x0, double y0, double z0,
     double pcoord[3]{x0, y0, z0};
 
     gVFResults.vf_[index]->isocline_vector_.back().points.emplace_back(
-        CISOC, pcoord, dashes, 0, 0);
+        P4ColourSettings::colour_isoclines, pcoord, dashes, 0, 0);
 }
 
 static bool read_isoclines(void (*chart)(double, double, double *), int index)

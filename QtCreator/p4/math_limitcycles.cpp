@@ -385,8 +385,8 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
 
     MATHFUNC(R2_to_sphere)(x, y, p1);
     copy_x_into_y(p1, LC.pcoord);
-    LC.color = CLIMIT;
-    (*plot_p)(spherewnd, p1, CLIMIT);
+    LC.color = P4ColourSettings::colour_limit_cycle;
+    (*plot_p)(spherewnd, p1, P4ColourSettings::colour_limit_cycle);
 
     hhi = gVFResults.config_step_;
     h_max = gVFResults.config_hma_;
@@ -397,14 +397,14 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
     (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
     copy_x_into_y(p2, LCpoints.pcoord);
-    LCpoints.color = CLIMIT;
+    LCpoints.color = P4ColourSettings::colour_limit_cycle;
     LCpoints.dashes = gVFResults.config_dashes_;
     LC.points.push_back(LCpoints);
     // LC.current_point_index = 0;
     if (gVFResults.config_dashes_)
-        (*plot_l)(spherewnd, p1, p2, CLIMIT);
+        (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
     else
-        (*plot_p)(spherewnd, p2, CLIMIT);
+        (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
 
     while (1) {
         copy_x_into_y(p2, p1);
@@ -412,14 +412,14 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
         (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
         copy_x_into_y(p2, LCpoints.pcoord);
-        LCpoints.color = CLIMIT;
+        LCpoints.color = P4ColourSettings::colour_limit_cycle;
         LCpoints.dashes = gVFResults.config_dashes_;
         LC.points.push_back(LCpoints);
         // LC.current_point_index++;
         if (gVFResults.config_dashes_)
-            (*plot_l)(spherewnd, p1, p2, CLIMIT);
+            (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
         else
-            (*plot_p)(spherewnd, p2, CLIMIT);
+            (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
@@ -439,7 +439,7 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
         (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
         copy_x_into_y(p2, LCpoints.pcoord);
-        LCpoints.color = CLIMIT;
+        LCpoints.color = P4ColourSettings::colour_limit_cycle;
         LCpoints.dashes = gVFResults.config_dashes_;
         LC.points.push_back(LCpoints);
 
@@ -447,16 +447,16 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
             0)
             break;
         if (gVFResults.config_dashes_)
-            (*plot_l)(spherewnd, p1, p2, CLIMIT);
+            (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
         else
-            (*plot_p)(spherewnd, p2, CLIMIT);
+            (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
     }
     MATHFUNC(R2_to_sphere)(x, y, p2);
     copy_x_into_y(p2, gVFResults.limCycles_.back().pcoord);
     if (gVFResults.config_dashes_)
-        (*plot_l)(spherewnd, p1, p2, CLIMIT);
+        (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
     else
-        (*plot_p)(spherewnd, p2, CLIMIT);
+        (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
 
     gVFResults.limCycles_.push_back(LC);
 }

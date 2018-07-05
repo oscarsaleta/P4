@@ -3643,9 +3643,9 @@ void P4InputVF::resampleSeparatingCurve(int i)
 
     for (auto &sep : gVFResults.separatingCurves_[i].points) {
         if (isCurvePointDrawn(i, sep.pcoord))
-            sep.color = CSEPCURVE;
+            sep.color = P4ColourSettings::colour_separating_curve;
         else
-            sep.color = CSHADEDCURVE;
+            sep.color = P4ColourSettings::colour_shaded_curve;
     }
 }
 

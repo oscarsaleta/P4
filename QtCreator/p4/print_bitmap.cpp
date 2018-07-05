@@ -57,7 +57,7 @@ int printColorTable(int color)
         CYAN2,  CYAN3,  RED1,   RED2,  RED3,   MAGENTA1, MAGENTA2, MAGENTA3,
         BROWN1, BROWN2, BROWN3, PINK1, PINK2,  PINK3,    PINK4,    GOLD};
 
-    if (bgColours::PRINT_WHITE_BG)
+    if (P4ColourSettings::print_white_bg)
         return colorTable[color];
     else
         return colorTableReverse[color];
@@ -75,9 +75,9 @@ static void p4Print_print_saddle(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSADDLE);
+        color = printColorTable(P4ColourSettings::colour_saddle);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -98,9 +98,9 @@ static void p4Print_print_virtualsaddle(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSADDLE);
+        color = printColorTable(P4ColourSettings::colour_saddle);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -119,9 +119,9 @@ static void p4Print_print_stablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_S);
+        color = printColorTable(P4ColourSettings::colour_node_stable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -142,9 +142,9 @@ static void p4Print_print_virtualstablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_S);
+        color = printColorTable(P4ColourSettings::colour_node_stable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -163,9 +163,9 @@ static void p4Print_print_unstablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_U);
+        color = printColorTable(P4ColourSettings::colour_node_unstable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -186,9 +186,9 @@ static void p4Print_print_virtualunstablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_U);
+        color = printColorTable(P4ColourSettings::colour_node_unstable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -207,9 +207,9 @@ static void p4Print_print_stableweakfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CWEAK_FOCUS_S);
+        color = printColorTable(P4ColourSettings::colour_weak_focus_stable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -234,9 +234,9 @@ static void p4Print_print_virtualstableweakfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CWEAK_FOCUS_S);
+        color = printColorTable(P4ColourSettings::colour_weak_focus_stable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -258,9 +258,9 @@ static void p4Print_print_unstableweakfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CWEAK_FOCUS_U);
+        color = printColorTable(P4ColourSettings::colour_weak_focus_unstable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -284,9 +284,9 @@ static void p4Print_print_virtualunstableweakfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CWEAK_FOCUS_U);
+        color = printColorTable(P4ColourSettings::colour_weak_focus_unstable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -308,9 +308,9 @@ static void p4Print_print_weakfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CWEAK_FOCUS);
+        color = printColorTable(P4ColourSettings::colour_weak_focus);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -334,9 +334,9 @@ static void p4Print_print_virtualweakfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CWEAK_FOCUS);
+        color = printColorTable(P4ColourSettings::colour_weak_focus);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -358,9 +358,9 @@ static void p4Print_print_center(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CCENTER);
+        color = printColorTable(P4ColourSettings::colour_center);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -384,9 +384,9 @@ static void p4Print_print_virtualcenter(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CCENTER);
+        color = printColorTable(P4ColourSettings::colour_center);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -408,9 +408,9 @@ static void p4Print_print_stablestrongfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSTRONG_FOCUS_S);
+        color = printColorTable(P4ColourSettings::colour_strong_focus_stable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -434,9 +434,9 @@ static void p4Print_print_virtualstablestrongfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSTRONG_FOCUS_S);
+        color = printColorTable(P4ColourSettings::colour_strong_focus_stable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -458,9 +458,9 @@ static void p4Print_print_unstablestrongfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSTRONG_FOCUS_U);
+        color = printColorTable(P4ColourSettings::colour_strong_focus_unstable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -484,9 +484,9 @@ static void p4Print_print_virtualunstablestrongfocus(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSTRONG_FOCUS_U);
+        color = printColorTable(P4ColourSettings::colour_strong_focus_unstable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -508,9 +508,9 @@ static void p4Print_print_sesaddle(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSADDLE);
+        color = printColorTable(P4ColourSettings::colour_saddle);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -534,9 +534,9 @@ static void p4Print_print_virtualsesaddle(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSADDLE);
+        color = printColorTable(P4ColourSettings::colour_saddle);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -558,9 +558,9 @@ static void p4Print_print_sesaddlenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSADDLE_NODE);
+        color = printColorTable(colour_saddle_node);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -584,9 +584,9 @@ static void p4Print_print_virtualsesaddlenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CSADDLE_NODE);
+        color = printColorTable(colour_saddle_node);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -608,9 +608,9 @@ static void p4Print_print_sestablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_S);
+        color = printColorTable(P4ColourSettings::colour_node_stable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -634,9 +634,9 @@ static void p4Print_print_virtualsestablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_S);
+        color = printColorTable(P4ColourSettings::colour_node_stable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -658,9 +658,9 @@ static void p4Print_print_seunstablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_U);
+        color = printColorTable(P4ColourSettings::colour_node_unstable);
 
     sP4PrintPainter->setPen(QXFIGCOLOR(color));
     sP4PrintPainter->setBrush(QXFIGCOLOR(color));
@@ -684,9 +684,9 @@ static void p4Print_print_virtualseunstablenode(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CNODE_U);
+        color = printColorTable(P4ColourSettings::colour_node_unstable);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -708,9 +708,9 @@ static void p4Print_print_degen(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CDEGEN);
+        color = printColorTable(P4ColourSettings::colour_degen);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -734,9 +734,9 @@ static void p4Print_print_virtualdegen(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CDEGEN);
+        color = printColorTable(P4ColourSettings::colour_degen);
 
     QPen p{QXFIGCOLOR(color), std::floor(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -757,9 +757,9 @@ static void p4Print_print_coinciding(double _x, double _y)
     int color;
 
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
     else
-        color = printColorTable(CDEGEN);
+        color = printColorTable(P4ColourSettings::colour_degen);
 
     QPen p{QXFIGCOLOR(color), std::round(sP4PrintLineWidth * 26 / 20)};
     sP4PrintPainter->setPen(p);
@@ -783,7 +783,7 @@ static void p4Print_print_elips(double x0, double y0, double a, double b,
 {
     color = printColorTable(color);
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     QPen p{QXFIGCOLOR(color), static_cast<qreal>(sP4PrintLineWidth)};
     p.setCapStyle(Qt::RoundCap);
@@ -805,7 +805,7 @@ static void p4Print_print_line(double _x0, double _y0, double _x1, double _y1,
 {
     color = printColorTable(color);
     if (sP4PrintBlackWhite)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     int x0{static_cast<int>(_x0)};
     int x1{static_cast<int>(_x1)};
@@ -825,7 +825,7 @@ static void p4Print_print_line(double _x0, double _y0, double _x1, double _y1,
 static void p4Print_print_point(double _x0, double _y0, int color)
 {
     if (sP4PrintBlackWhite)
-        color = bgColours::CFOREGROUND;
+        color = P4ColourSettings::colour_foreground;
     color = printColorTable(color);
 
     int x0{static_cast<int>(_x0)};
@@ -917,7 +917,7 @@ void prepareP4Printing(int w, int h, bool isblackwhite, QPainter *p4paint,
 
     p4paint->fillRect(
         0, 0, w, h,
-        QBrush(QXFIGCOLOR(printColorTable(bgColours::CBACKGROUND))));
+        QBrush(QXFIGCOLOR(printColorTable(P4ColourSettings::colour_background))));
 }
 
 void finishP4Printing()

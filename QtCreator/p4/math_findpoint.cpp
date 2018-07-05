@@ -262,7 +262,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
                 .separatrices;
         gVFResults.seps_ = sepc;
         gVFResults.selectedSepIndex_ = 0;
-        draw_selected_sep(spherewnd, sepc.front().sep_points, CW_SEP);
+        draw_selected_sep(spherewnd, sepc.front().sep_points, P4ColourSettings::colour_selected_separatrice);
 
         start_plot_sep = start_plot_saddle_sep;
         cont_plot_sep = cont_plot_saddle_sep;
@@ -331,7 +331,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
             gVFResults.sePoints_[gVFResults.selectedSePointIndex_].separatrices;
         gVFResults.seps_ = sepc;
         gVFResults.selectedSepIndex_ = 0;
-        draw_selected_sep(spherewnd, sepc.front().sep_points, CW_SEP);
+        draw_selected_sep(spherewnd, sepc.front().sep_points, P4ColourSettings::colour_selected_separatrice);
 
         start_plot_sep = start_plot_se_sep;
         cont_plot_sep = cont_plot_se_sep;
@@ -399,7 +399,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
             draw_selected_sep(
                 spherewnd,
                 gVFResults.deSeps_[gVFResults.selectedDeSepIndex_].sep_points,
-                CW_SEP);
+                P4ColourSettings::colour_selected_separatrice);
         }
 
         start_plot_sep = start_plot_de_sep;

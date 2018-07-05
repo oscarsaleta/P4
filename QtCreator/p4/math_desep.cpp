@@ -402,7 +402,7 @@ plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
                               de_sep.type, point);
         break;
     default:
-        color = bgColours::CBACKGROUND;
+        color = P4ColourSettings::colour_background;
     }
 
     // P5 addition: check if one can start with this separatrice
@@ -567,7 +567,7 @@ void change_epsilon_de(P4Sphere *spherewnd, double epsilon)
     // for (auto it = std::begin(gVFResults.dePoints_[deid].blow_up);
     //     it != std::end(gVFResults.dePoints_[deid].blow_up); ++it) {
     for (auto &it : gVFResults.dePoints_[deid].blow_up) {
-        draw_selected_sep(spherewnd, it.sep_points, bgColours::CBACKGROUND);
+        draw_selected_sep(spherewnd, it.sep_points, P4ColourSettings::colour_background);
         it.sep_points.clear();
     }
 }
@@ -695,7 +695,7 @@ void select_next_de_sep(P4Sphere *spherewnd)
     }
 
     draw_selected_sep(spherewnd, gVFResults.deSeps_[desepid].sep_points,
-                      CW_SEP);
+                      P4ColourSettings::colour_selected_separatrice);
 }
 
 // ---------------------------------------------------------------------------

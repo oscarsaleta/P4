@@ -60,16 +60,16 @@ int findSepColor2(const std::vector<P4Polynom::term2> &f, int type, double y[2])
     if (eval_term2(f, y) >= 0) {
         switch (type) {
         case OT_STABLE:
-            color = CSTABLE;
+            color = P4ColourSettings::colour_separatrice_stable;
             break;
         case OT_UNSTABLE:
-            color = CUNSTABLE;
+            color = P4ColourSettings::colour_separatrice_unstable;
             break;
         case OT_CENT_STABLE:
-            color = CCENT_STABLE;
+            color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         case OT_CENT_UNSTABLE:
-            color = CCENT_UNSTABLE;
+            color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         default:
             color = 0;
@@ -78,16 +78,16 @@ int findSepColor2(const std::vector<P4Polynom::term2> &f, int type, double y[2])
     } else {
         switch (type) {
         case OT_STABLE:
-            color = CUNSTABLE;
+            color = P4ColourSettings::colour_separatrice_unstable;
             break;
         case OT_UNSTABLE:
-            color = CSTABLE;
+            color = P4ColourSettings::colour_separatrice_stable;
             break;
         case OT_CENT_STABLE:
-            color = CCENT_UNSTABLE;
+            color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         case OT_CENT_UNSTABLE:
-            color = CCENT_STABLE;
+            color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         default:
             color = 0;
@@ -104,16 +104,16 @@ int findSepColor3(const std::vector<P4Polynom::term3> &f, int type, double y[2])
     if (eval_term3(f, y) >= 0) {
         switch (type) {
         case OT_STABLE:
-            color = CSTABLE;
+            color = P4ColourSettings::colour_separatrice_stable;
             break;
         case OT_UNSTABLE:
-            color = CUNSTABLE;
+            color = P4ColourSettings::colour_separatrice_unstable;
             break;
         case OT_CENT_STABLE:
-            color = CCENT_STABLE;
+            color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         case OT_CENT_UNSTABLE:
-            color = CCENT_UNSTABLE;
+            color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         default:
             color = 0;
@@ -122,16 +122,16 @@ int findSepColor3(const std::vector<P4Polynom::term3> &f, int type, double y[2])
     } else {
         switch (type) {
         case OT_STABLE:
-            color = CUNSTABLE;
+            color = P4ColourSettings::colour_separatrice_unstable;
             break;
         case OT_UNSTABLE:
-            color = CSTABLE;
+            color = P4ColourSettings::colour_separatrice_stable;
             break;
         case OT_CENT_STABLE:
-            color = CCENT_UNSTABLE;
+            color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         case OT_CENT_UNSTABLE:
-            color = CCENT_STABLE;
+            color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         default:
             color = 0;

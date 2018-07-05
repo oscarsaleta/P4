@@ -52,7 +52,7 @@ bool evalGcfStart(P4Sphere *sp, int dashes, int precision, int points)
     sp->prepareDrawing();
     for (unsigned int r = 0; r < gThisVF->numVF_; r++) {
         if (!gVFResults.vf_[r]->gcf_points_.empty()) {
-            draw_gcf(sp, gVFResults.vf_[r]->gcf_points_, bgColours::CBACKGROUND,
+            draw_gcf(sp, gVFResults.vf_[r]->gcf_points_, P4ColourSettings::colour_background,
                      sGcfDashes);
             gVFResults.vf_[r]->gcf_points_.clear();
         }
@@ -116,7 +116,7 @@ bool evalGcfFinish() // return false in case an error occured
         sGcfSphere->prepareDrawing();
         for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
             if (!gVFResults.vf_[index]->gcf_points_.empty())
-                draw_gcf(sGcfSphere, gVFResults.vf_[index]->gcf_points_, CSING,
+                draw_gcf(sGcfSphere, gVFResults.vf_[index]->gcf_points_, P4ColourSettings::colour_curve_singularities,
                          1);
         }
         sGcfSphere->finishDrawing();
@@ -256,7 +256,7 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes,
 {
     double pcoord[3]{x0, y0, z0};
 
-    gVFResults.vf_[index]->gcf_points_.emplace_back(CSING, pcoord, dashes, 0,
+    gVFResults.vf_[index]->gcf_points_.emplace_back(P4ColourSettings::colour_curve_singularities, pcoord, dashes, 0,
                                                     0);
 }
 

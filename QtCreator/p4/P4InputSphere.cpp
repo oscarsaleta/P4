@@ -69,7 +69,7 @@ void P4InputSphere::setupPlot()
 
     setupCoordinateTransformations();
 
-    spherebgcolor_ = bgColours::CBACKGROUND;
+    spherebgcolor_ = P4ColourSettings::colour_background;
     palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_));
     setPalette(palette);
 
@@ -222,8 +222,8 @@ void P4InputSphere::adjustToNewSize()
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+                       QColor(QXFIGCOLOR(P4ColourSettings::colour_background)));
+        paint.setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
@@ -285,8 +285,8 @@ void P4InputSphere::paintEvent(QPaintEvent *p)
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+                       QColor(QXFIGCOLOR(P4ColourSettings::colour_background)));
+        paint.setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
@@ -775,7 +775,7 @@ void P4InputSphere::refresh()
 
 void P4InputSphere::plotPoincareSphere()
 {
-    int color{CLINEATINFINITY};
+    int color{P4ColourSettings::colour_line_at_infinity};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
     for (auto const &it : circleAtInfinity_)
@@ -785,7 +785,7 @@ void P4InputSphere::plotPoincareSphere()
 
 void P4InputSphere::plotPoincareLyapunovSphere()
 {
-    staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+    staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
 
     for (auto const &it : circleAtInfinity_)
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
@@ -802,14 +802,14 @@ void P4InputSphere::plotLineAtInfinity()
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+            staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(coWinX(0.0), 0, coWinY(0.0), h_ - 1);
         }
         break;
     case TYPEOFVIEW_U2:
     case TYPEOFVIEW_V2:
         if (y0_ < 0.0 && y1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+            staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(0, coWinY(0.0), w_ - 1, coWinY(0.0));
         }
         break;

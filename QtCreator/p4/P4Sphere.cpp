@@ -279,7 +279,7 @@ void P4Sphere::setupPlot()
 {
     QPalette palette;
 
-    spherebgcolor_ = bgColours::CBACKGROUND;
+    spherebgcolor_ = P4ColourSettings::colour_background;
     palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_));
     setPalette(palette);
 
@@ -502,9 +502,9 @@ void P4Sphere::adjustToNewSize()
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+                       QColor(QXFIGCOLOR(P4ColourSettings::colour_background)));
 
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+        paint.setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
         staticPainter_ = &paint;
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
@@ -579,9 +579,9 @@ void P4Sphere::paintEvent(QPaintEvent *p)
         // qDebug() << "creating new QPainter from QPixmap painterCache_...";
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+                       QColor(QXFIGCOLOR(P4ColourSettings::colour_background)));
 
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+        paint.setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
@@ -1465,7 +1465,7 @@ void P4Sphere::plotGcf()
 {
     // qDebug() << "plot gcf";
     for (auto const &vf : gVFResults.vf_) {
-        draw_gcf(this, vf->gcf_points_, CSING, 1);
+        draw_gcf(this, vf->gcf_points_, P4ColourSettings::colour_curve_singularities, 1);
     }
 }
 
@@ -1483,14 +1483,14 @@ void P4Sphere::plotSeparatingCurves()
 
         auto &sep = gVFResults.separatingCurves_[k].points;
         for (auto it = std::begin(sep); it != std::end(sep); ++it) {
-            if (it->color == CSEPCURVE) {
+            if (it->color == P4ColourSettings::colour_separating_curve) {
                 if (it->dashes && dashes)
                     (*plot_l)(this, pcoord, it->pcoord, it->color);
                 else {
                     auto nextpt = it + 1;
                     if (nextpt == std::end(sep))
                         (*plot_p)(this, it->pcoord, it->color);
-                    else if (!(nextpt->dashes && nextpt->color == CSEPCURVE &&
+                    else if (!(nextpt->dashes && nextpt->color == P4ColourSettings::colour_separating_curve &&
                                dashes))
                         (*plot_p)(this, it->pcoord, it->color);
                     // draw nothing when the next point is a dash
@@ -1508,7 +1508,7 @@ void P4Sphere::plotArbitraryCurves()
 {
     // qDebug() << "plot arbitrary curves";
     for (auto const &it : gVFResults.arbitraryCurves_) {
-        drawArbitraryCurve(this, it.points, CCURV, 1);
+        drawArbitraryCurve(this, it.points, P4ColourSettings::colour_arbitrary_curve, 1);
     }
 }
 
@@ -1663,7 +1663,7 @@ std::vector<P4POLYLINES> P4Sphere::produceEllipse(double cx, double cy,
 void P4Sphere::plotPoincareSphere()
 {
     // qDebug() << "plot poincare sphere";
-    int color{CLINEATINFINITY};
+    int color{P4ColourSettings::colour_line_at_infinity};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
     for (auto const &it : circleAtInfinity_) {
@@ -1675,7 +1675,7 @@ void P4Sphere::plotPoincareSphere()
 void P4Sphere::plotPoincareLyapunovSphere()
 {
     // qDebug() << "plot poincare-lyapunov sphere";
-    int color{CLINEATINFINITY};
+    int color{P4ColourSettings::colour_line_at_infinity};
 
     staticPainter_->setPen(QXFIGCOLOR(color));
     for (auto const &it : circleAtInfinity_) {
@@ -1697,14 +1697,14 @@ void P4Sphere::plotLineAtInfinity()
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+            staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(coWinX(0.0), 0, coWinX(0.0), h_ - 1);
         }
         break;
     case TYPEOFVIEW_U2:
     case TYPEOFVIEW_V2:
         if (y0_ < 0.0 && y1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+            staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(0, coWinY(0.0), w_ - 1, coWinY(0.0));
         }
 
@@ -2284,7 +2284,7 @@ void P4Sphere::printGcf()
     if (isagcf) {
         for (auto const &vf : gVFResults.vf_) {
             print_comment("Printing greatest common factor:");
-            draw_gcf(this, vf->gcf_points_, CSING, 1);
+            draw_gcf(this, vf->gcf_points_, P4ColourSettings::colour_curve_singularities, 1);
         }
     }
 }
@@ -2305,7 +2305,7 @@ void P4Sphere::printSeparatingCurves()
             dashes = true;
             auto &sep = gVFResults.separatingCurves_[i].points;
             for (auto it = std::begin(sep); it != std::end(sep); ++it) {
-                if (it->color == CSEPCURVE) {
+                if (it->color == P4ColourSettings::colour_separating_curve) {
                     if (it->dashes && dashes)
                         (*plot_l)(this, pcoord, it->pcoord, it->color);
                     else {
@@ -2313,7 +2313,7 @@ void P4Sphere::printSeparatingCurves()
                         if (nextpt == std::end(sep))
                             (*plot_p)(this, it->pcoord, it->color);
                         else if (!nextpt->dashes ||
-                                 nextpt->color != CSEPCURVE || !dashes)
+                                 nextpt->color != P4ColourSettings::colour_separating_curve || !dashes)
                             (*plot_p)(this, it->pcoord, it->color);
                         // draw nothing when the next point is a dash
                     }
@@ -2335,7 +2335,7 @@ void P4Sphere::printArbitraryCurves()
     for (auto const &it : gVFResults.arbitraryCurves_) {
         comment.sprintf("Printing curve %d:", i++);
         print_comment(comment);
-        drawArbitraryCurve(this, it.points, CCURV, 1);
+        drawArbitraryCurve(this, it.points, P4ColourSettings::colour_arbitrary_curve, 1);
     }
 }
 
@@ -2365,7 +2365,7 @@ void P4Sphere::printPoincareSphere()
         q.x2 = coWinX(q.x2);
         q.y2 = coWinY(q.y2);
     }
-    print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1), CLINEATINFINITY,
+    print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1), P4ColourSettings::colour_line_at_infinity,
                 false, p);
 }
 
@@ -2383,7 +2383,7 @@ void P4Sphere::printPoincareLyapunovSphere()
         q.y2 = coWinY(q.y2);
     }
     print_elips(coWinX(0.0), coWinY(0.0), coWinH(1.0), coWinV(1.0),
-                CLINEATINFINITY, false, p);
+                P4ColourSettings::colour_line_at_infinity, false, p);
 
     p.clear();
 
@@ -2399,7 +2399,7 @@ void P4Sphere::printPoincareLyapunovSphere()
         q.y2 = coWinY(q.y2);
     }
     print_elips(coWinX(0.0), coWinY(0.0), coWinH(RADIUS), coWinV(RADIUS),
-                CLINEATINFINITY, true, p);
+                P4ColourSettings::colour_line_at_infinity, true, p);
 }
 
 void P4Sphere::printLineAtInfinity()
@@ -2410,13 +2410,13 @@ void P4Sphere::printLineAtInfinity()
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0)
             print_line(coWinX(0.0), coWinY(y0_), coWinX(0.0), coWinY(y1_),
-                       CLINEATINFINITY);
+                       P4ColourSettings::colour_line_at_infinity);
         break;
     case TYPEOFVIEW_U2:
     case TYPEOFVIEW_V2:
         if (y0_ < 0.0 && y1_ > 0.0)
             print_line(coWinX(x0_), coWinY(0.0), coWinX(x1_), coWinY(0.0),
-                       CLINEATINFINITY);
+                       P4ColourSettings::colour_line_at_infinity);
         break;
     }
 }
@@ -2624,7 +2624,7 @@ void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
 
         staticPainter_->translate(tx, ty);
         if (iszoom_ || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p{QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)),
+            QPen p{QXFIGCOLOR(printColorTable(P4ColourSettings::colour_foreground)),
                    std::round(lw)};
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
@@ -2788,7 +2788,7 @@ void P4Sphere::finishDrawing()
     //qDebug() << "signal evaluating";
         QPalette palette;
         palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
-       bgColours::CBACKGROUND) );
+       P4ColourSettings::colour_background) );
         setPalette(palette);
 }*/
 

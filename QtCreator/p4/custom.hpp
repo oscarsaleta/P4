@@ -212,44 +212,47 @@
 // Choose one of the constants defined in COLOR.H
 
 // Color of singular points:
-namespace bgColours
+namespace P4ColourSettings
 {
-extern int CFOREGROUND; // foreground color
-extern int CBACKGROUND; // background color
-extern int CORBIT;      // orbits (use GREEN1 when background is white)
+extern int colour_foreground; // foreground color
+extern int colour_background; // background color
+extern int colour_orbit;      // orbits (use GREEN1 when background is white)
+
 // IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
 // printing.
 // For example, when printing, BLACK can be reversed with WHITE, so that the
 // BLACK background on screen is not printed black.
-extern bool PRINT_WHITE_BG;
-} // namespace bgColours
+extern bool print_white_bg;
 
-#define CSADDLE_NODE MAGENTA                   // saddle-node
-#define CSADDLE GREEN2                         // saddle
-#define CNODE_S BLUE                           // stable node
-#define CNODE_U RED                            // unstable node
-#define CWEAK_FOCUS bgColours::CFOREGROUND     // weak focus
-#define CWEAK_FOCUS_S BLUE2                    // stable weak focus
-#define CWEAK_FOCUS_U RED2                     // unstable weak focus
-#define CSTRONG_FOCUS_S BLUE                   // stable strong focus
-#define CSTRONG_FOCUS_U RED                    // unstable strong focus
-#define CCENTER GREEN2                         // center
-#define CDEGEN bgColours::CFOREGROUND          // degenerated
-#define CLINEATINFINITY bgColours::CFOREGROUND // color of poincare sphere
-
-#define CSTABLE BLUE        // stable separatrice
-#define CUNSTABLE RED       // unstable separatrice
-#define CCENT_STABLE BLUE2  // center-stable separatrice
-#define CCENT_UNSTABLE RED1 // center-unstable separatrice
-
-#define CW_SEP GOLD     // selected separatrice
-#define CLIMIT MAGENTA2 // limit cycles
-#define CSING GREEN     // curve of singularities
-#define CCURV CYAN
-#define CISOC PINK1
-
-#define CSEPCURVE BROWN3
-#define CSHADEDCURVE BROWN1
+// FIXED COLOURS
+const int colour_saddle_node = P4Colours::magenta;      // saddle-node
+const int colour_saddle = P4Colours::green2;            // saddle
+const int colour_node_stable = P4Colours::blue;         // stable node
+const int colour_node_unstable = P4Colours::red;        // unstable node
+const int &colour_weak_focus = colour_foreground;       // weak focus generic
+const int colour_weak_focus_stable = P4Colours::blue2;  // stable weak focus
+const int colour_weak_focus_unstable = P4Colours::red2; // unstable weak focus
+const int colour_strong_focus_stable = P4Colours::blue; // stable strong focus
+const int colour_strong_focus_unstable =
+    P4Colours::red;                                     // unstable strong focus
+const int colour_center = P4Colours::green2;            // center
+const int &colour_degen = colour_foreground;            // degenerate point
+const int &colour_line_at_infinity = colour_foreground; // poincare sphere
+const int colour_separatrice_stable = P4Colours::blue;  // stable separatrice
+const int colour_separatrice_unstable = P4Colours::red; // unstable separatrice
+const int colour_separatrice_center_stable =
+    P4Colours::blue2; // center-stable sep
+const int colour_separatrice_center_unstable =
+    P4Colours::red2;                                     // center-unstable sep
+const int colour_selected_separatrice = P4Colours::gold; // selected separatrice
+const int colour_limit_cycle = P4Colours::magenta2;      // limit cycle
+const int colour_curve_singularities =
+    P4Colours::green;                               // curve of singularities
+const int colour_arbitrary_curve = P4Colours::cyan; // arbitrary curve
+const int colour_isoclines = P4Colours::pink1;      // colour of first isocline
+const int colour_separating_curve = P4Colours::brown3; // separating curve
+const int colour_shaded_curve = P4Colours::brown1;     // shaded curve
+} // namespace P4ColourSettings
 
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 
@@ -328,7 +331,7 @@ enum {
 };
 }
 
-namespace SeparatriceType
+namespace P4SeparatriceType
 {
 enum {
     stype_unstable = 1,
@@ -339,28 +342,28 @@ enum {
 };
 }
 
-namespace SingularityStability
+namespace P4SingularityStability
 {
 enum {
-    singtype_unstable = SeparatriceType::stype_unstable,
-    singtype_stable = SeparatriceType::stype_stable,
+    singtype_unstable = P4SeparatriceType::stype_unstable,
+    singtype_stable = P4SeparatriceType::stype_stable,
     singtype_center = 4
 };
 }
 
-namespace SaddleNodeSepType
+namespace P4SaddleNodeSepType
 {
 enum { setype_saddlenode_unstabsep = 1, setype_saddlenode_unstabsep2 = 2 };
 }
 
-namespace OrbitType
+namespace P4OrbitType
 {
 enum {
-    ot_stable = SeparatriceType::stype_stable,
-    ot_unstable = SeparatriceType::stype_unstable,
-    ot_cent_stable = SeparatriceType::stype_censtable,
-    ot_cent_unstable = SeparatriceType::stype_cenunstable,
-    ot_orbit = SeparatriceType::stype_orbit
+    ot_stable = P4SeparatriceType::stype_stable,
+    ot_unstable = P4SeparatriceType::stype_unstable,
+    ot_cent_stable = P4SeparatriceType::stype_censtable,
+    ot_cent_unstable = P4SeparatriceType::stype_cenunstable,
+    ot_orbit = P4SeparatriceType::stype_orbit
 };
 }
 
