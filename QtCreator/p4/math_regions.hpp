@@ -66,20 +66,6 @@ bool isInTheSameRegion(double *testpt, double *refpos);
 bool isARealSingularity(double *pcoord, unsigned int vfIndex);
 bool isARealSingularity(double x0, double y0, int chart, int vfIndex);
 
-void markSingularity(P4Singularities::saddle &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(P4Singularities::semi_elementary &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(P4Singularities::node &s, std::vector<positionitem> &plist,
-                     int &numpos, int vfindex, bool plweights);
-void markSingularity(P4Singularities::strong_focus &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(P4Singularities::weak_focus &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(P4Singularities::degenerate *s,
+void markSingularity(P4Singularities::genericsingularity *s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights);

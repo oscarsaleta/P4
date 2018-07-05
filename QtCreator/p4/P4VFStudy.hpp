@@ -58,13 +58,12 @@ class P4VFStudy : public QObject
     std::vector<P4Polynom::term3> vec_field_C_1_;
 
     // singular points and their properties:
-    // FIXME arreglar llocs on s'usen
-    std::vector<P4Singularities::saddle> saddlePoints_;
-    std::vector<P4Singularities::semi_elementary> sePoints_;
-    std::vector<P4Singularities::node> nodePoints_;
-    std::vector<P4Singularities::strong_focus> sfPoints_;
-    std::vector<P4Singularities::weak_focus> wfPoints_;
-    std::vector<P4Singularities::degenerate> dePoints_;
+    P4Singularities::saddle *firstSaddlePoint_;
+    P4Singularities::semi_elementary *firstSePoint_;
+    P4Singularities::node *firstNodePoint_;
+    P4Singularities::strong_focus *firstSfPoint_;
+    P4Singularities::weak_focus *firstWfPoint_;
+    P4Singularities::degenerate *firstDePoint_;
 
     // Greatest common factor if present:
     std::vector<P4Polynom::term2> gcf_;
