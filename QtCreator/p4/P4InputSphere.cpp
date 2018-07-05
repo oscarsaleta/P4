@@ -959,7 +959,7 @@ void P4InputSphere::plotSeparatingCurves()
             plotSeparatingCurve(gVFResults.separatingCurves_[r], r);
 }
 
-void P4InputSphere::plotSeparatingCurve(const p4curves::curves &crv,
+void P4InputSphere::plotSeparatingCurve(const P4Curves::curves &crv,
                                            int index)
 {
     double pcoord[3];

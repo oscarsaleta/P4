@@ -119,7 +119,7 @@ void select_next_se_sep(P4Sphere *spherewnd)
 //          plot_all_se_sep
 // ---------------------------------------------------------------------------
 void plot_all_se_sep(P4Sphere *spherewnd, int vfindex,
-                     std::vector<p4singularities::semi_elementary> &point)
+                     std::vector<P4Singularities::semi_elementary> &point)
 {
     double p[3];
 

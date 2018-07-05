@@ -146,7 +146,7 @@ void select_next_saddle_sep(P4Sphere *spherewnd)
 //          plot_all_saddle_sep
 // ---------------------------------------------------------------------------
 void plot_all_saddle_sep(P4Sphere *spherewnd, int vfindex,
-                         std::vector<p4singularities::saddle> &point)
+                         std::vector<P4Singularities::saddle> &point)
 {
     double p[3];
 

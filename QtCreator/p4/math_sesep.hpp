@@ -23,7 +23,7 @@
 
 class P4Sphere;
 
-namespace p4singularities
+namespace P4Singularities
 {
 struct semi_elementary;
 }
@@ -34,4 +34,4 @@ void plot_next_se_sep(P4Sphere *, int);
 void select_next_se_sep(P4Sphere *);
 void change_epsilon_se(P4Sphere *, double);
 void plot_all_se_sep(P4Sphere *, int,
-                     std::vector<p4singularities::semi_elementary> &);
+                     std::vector<P4Singularities::semi_elementary> &);

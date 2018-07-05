@@ -36,7 +36,7 @@
 //          eval_term1
 // -----------------------------------------------------------------------
 // Calculates p(t) for a polynomial p and a value t.
-double eval_term1(const std::vector<p4polynom::term1> &p, const double t)
+double eval_term1(const std::vector<P4Polynom::term1> &p, const double t)
 {
     double s = 0;
     for (auto const &q : p) {
@@ -53,7 +53,7 @@ double eval_term1(const std::vector<p4polynom::term1> &p, const double t)
 // -----------------------------------------------------------------------
 // Calculates f(x,y) for a polynomial f and values x and y.
 // value refers to an array containing x and y: value[0]=x, value[1]=y
-double eval_term2(const std::vector<p4polynom::term2> &f, const double *value)
+double eval_term2(const std::vector<P4Polynom::term2> &f, const double *value)
 {
     double s = 0;
     for (auto const &it : f) {
@@ -76,7 +76,7 @@ double eval_term2(const std::vector<p4polynom::term2> &f, const double *value)
 // Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
 // of r and theta.
 // value refers to an array containing r and theta: value[0]=r, value[1]=theta
-double eval_term3(const std::vector<p4polynom::term3> &F, const double *value)
+double eval_term3(const std::vector<P4Polynom::term3> &F, const double *value)
 {
     double s = 0;
     double t;
@@ -104,7 +104,7 @@ double eval_term3(const std::vector<p4polynom::term3> &F, const double *value)
 // -----------------------------------------------------------------------
 // Make a string representation of a polynomial in one variable.
 // The variable name to be used is given as a parameter
-const char *dumpPoly1(const std::vector<p4polynom::term1> &f, const char *x)
+const char *dumpPoly1(const std::vector<P4Polynom::term1> &f, const char *x)
 {
     static QByteArray _s;
 
@@ -156,7 +156,7 @@ const char *dumpPoly1(const std::vector<p4polynom::term1> &f, const char *x)
 // -----------------------------------------------------------------------
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
-const char *dumpPoly2(const std::vector<p4polynom::term2> &f, const char *x,
+const char *dumpPoly2(const std::vector<P4Polynom::term2> &f, const char *x,
                       const char *y)
 {
     static QByteArray _s;
@@ -220,7 +220,7 @@ const char *dumpPoly2(const std::vector<p4polynom::term2> &f, const char *x,
 // -----------------------------------------------------------------------
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
-const char *dumpPoly3(const std::vector<p4polynom::term3> &f, const char *x,
+const char *dumpPoly3(const std::vector<P4Polynom::term3> &f, const char *x,
                       const char *y, const char *z)
 {
     static QByteArray _s;
@@ -292,7 +292,7 @@ const char *dumpPoly3(const std::vector<p4polynom::term3> &f, const char *x,
 // -----------------------------------------------------------------------
 //          printterm2
 // -----------------------------------------------------------------------
-char *printterm2(char *buf, const p4polynom::term2 &f, bool isfirst,
+char *printterm2(char *buf, const P4Polynom::term2 &f, bool isfirst,
                  const char *x, const char *y)
 {
     if (f.coeff == 0) {
@@ -357,7 +357,7 @@ char *printterm2(char *buf, const p4polynom::term2 &f, bool isfirst,
 // -----------------------------------------------------------------------
 //          printterm3
 // -----------------------------------------------------------------------
-char *printterm3(char *buf, const p4polynom::term3 &f, bool isfirst,
+char *printterm3(char *buf, const P4Polynom::term3 &f, bool isfirst,
                  const char *r, const char *Co, const char *Si)
 {
     if (f.coeff == 0) {
@@ -447,7 +447,7 @@ char *printterm3(char *buf, const p4polynom::term3 &f, bool isfirst,
 // -----------------------------------------------------------------------
 //          readTerm1
 // -----------------------------------------------------------------------
-bool readTerm1(FILE *fp, p4polynom::term1 *p, int N)
+bool readTerm1(FILE *fp, P4Polynom::term1 *p, int N)
 {
     auto q = p;
 
@@ -458,7 +458,7 @@ bool readTerm1(FILE *fp, p4polynom::term1 *p, int N)
         return false;
 
     for (int i = 2; i <= N; i++) {
-        p->next_term1 = new p4polynom::term1;
+        p->next_term1 = new P4Polynom::term1;
         p = p->next_term1;
         if (fscanf(fp, "%d %lf", &(p->exp), &(p->coeff)) != 2 || p->exp < 0) {
             delete q->next_term1;
@@ -473,7 +473,7 @@ bool readTerm1(FILE *fp, p4polynom::term1 *p, int N)
 // -----------------------------------------------------------------------
 //          readTerm2
 // -----------------------------------------------------------------------
-bool readTerm2(FILE *fp, p4polynom::term2 *p, int N)
+bool readTerm2(FILE *fp, P4Polynom::term2 *p, int N)
 {
     auto q = p;
 
@@ -485,7 +485,7 @@ bool readTerm2(FILE *fp, p4polynom::term2 *p, int N)
         return false;
 
     for (int i = 2; i <= N; i++) {
-        p->next_term2 = new p4polynom::term2;
+        p->next_term2 = new P4Polynom::term2;
         p = p->next_term2;
         if (fscanf(fp, "%d %d %lf", &(p->exp_x), &(p->exp_y), &(p->coeff)) !=
                 3 ||
@@ -501,7 +501,7 @@ bool readTerm2(FILE *fp, p4polynom::term2 *p, int N)
 // -----------------------------------------------------------------------
 //          readTerm3
 // -----------------------------------------------------------------------
-bool readTerm3(FILE *fp, p4polynom::term3 *p, int N)
+bool readTerm3(FILE *fp, P4Polynom::term3 *p, int N)
 {
     auto q = p;
 
@@ -514,7 +514,7 @@ bool readTerm3(FILE *fp, p4polynom::term3 *p, int N)
         return false;
 
     for (int i = 2; i <= N; i++) {
-        p->next_term3 = new p4polynom::term3;
+        p->next_term3 = new P4Polynom::term3;
         p = p->next_term3;
         if (fscanf(fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si),
                    &(p->coeff)) != 4 ||

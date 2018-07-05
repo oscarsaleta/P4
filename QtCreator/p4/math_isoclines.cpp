@@ -235,7 +235,7 @@ static bool readTaskResults(int task, int index)
 }
 
 void draw_isoclines(P4Sphere *spherewnd,
-                    const std::vector<p4orbits::orbits_points> &isoc, int color,
+                    const std::vector<P4Orbits::orbits_points> &isoc, int color,
                     int dashes)
 {
     double pcoord[3];

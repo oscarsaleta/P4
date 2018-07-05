@@ -37,7 +37,7 @@
 
 class P4Sphere;
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
@@ -47,6 +47,6 @@ bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points, unsigned int index);
 void draw_isoclines(P4Sphere *spherewnd,
-                    const std::vector<p4orbits::orbits_points> &isoc, int color,
+                    const std::vector<P4Orbits::orbits_points> &isoc, int color,
                     int dashes);
 void deleteLastIsocline(P4Sphere *sp);

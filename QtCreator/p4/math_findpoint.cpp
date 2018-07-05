@@ -47,7 +47,7 @@
 // -----------------------------------------------------------------------
 
 static double
-find_distance_saddle(const std::vector<p4singularities::saddle> &points,
+find_distance_saddle(const std::vector<P4Singularities::saddle> &points,
                      double x, double y, double distance, int &type,
                      double *refpos)
 {
@@ -95,7 +95,7 @@ find_distance_saddle(const std::vector<p4singularities::saddle> &points,
 }
 
 static double
-find_distance_se(const std::vector<p4singularities::semi_elementary> &points,
+find_distance_se(const std::vector<P4Singularities::semi_elementary> &points,
                  double x, double y, double distance, int &type,
                  double refpos[])
 {
@@ -146,7 +146,7 @@ find_distance_se(const std::vector<p4singularities::semi_elementary> &points,
 }
 
 static double
-find_distance_de(const std::vector<p4singularities::degenerate> &points,
+find_distance_de(const std::vector<P4Singularities::degenerate> &points,
                  double x, double y, double distance, int &type,
                  double refpos[])
 {
@@ -204,7 +204,7 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
     int type;
     double distance, epsilon, pcoord[3];
     QString s, sx, sy, sz;
-    std::vector<p4blowup::sep> sepc;
+    std::vector<P4Blowup::sep> sepc;
     int vfindex, vfindex0;
 
     if (gVFResults.vf_.empty())

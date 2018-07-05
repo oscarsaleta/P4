@@ -42,7 +42,7 @@ class P4ParentStudy : public QObject
     // K_ will be throughout the current vector field selected
     int K_{0};
 
-    std::vector<p4curves::curves> separatingCurves_;
+    std::vector<P4Curves::curves> separatingCurves_;
 
     int typeofstudy_{P4TypeOfStudy::typeofstudy_all};
     // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
@@ -65,24 +65,24 @@ class P4ParentStudy : public QObject
     double ymax_{1.0};
 
     // curves
-    std::vector<p4curves::curves> arbitraryCurves_;
+    std::vector<P4Curves::curves> arbitraryCurves_;
 
     // limit cycles and orbits
-    p4orbits::orbits *firstLimCycle_{nullptr};
-    p4orbits::orbits *firstOrbit_{nullptr};
+    P4Orbits::orbits *firstLimCycle_{nullptr};
+    P4Orbits::orbits *firstOrbit_{nullptr};
     // runtime when plotting
-    p4orbits::orbits *currentLimCycle_{nullptr};
-    p4orbits::orbits *currentOrbit_{nullptr};
+    P4Orbits::orbits *currentLimCycle_{nullptr};
+    P4Orbits::orbits *currentOrbit_{nullptr};
 
     double selected_ucoord_[2];
 
     // runtime! these lists are not owned so no delete please
-    p4singularities::saddle *selectedSaddlePoint_{nullptr};
-    p4singularities::semi_elementary *selectedSePoint_{nullptr};
-    p4singularities::degenerate *selectedDePoint_{nullptr};
+    P4Singularities::saddle *selectedSaddlePoint_{nullptr};
+    P4Singularities::semi_elementary *selectedSePoint_{nullptr};
+    P4Singularities::degenerate *selectedDePoint_{nullptr};
 
-    p4blowup::sep *selectedSep_{nullptr};
-    p4blowup::blow_up_points *selectedDeSep_{nullptr};
+    P4Blowup::sep *selectedSep_{nullptr};
+    P4Blowup::blow_up_points *selectedDeSep_{nullptr};
 
     int selected_sep_vfindex_;
 

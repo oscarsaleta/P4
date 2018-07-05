@@ -388,7 +388,7 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
         return false;
     }
 
-    p4curves::curves new_curve;
+    P4Curves::curves new_curve;
     if (fscanf(fp, "%d", &degree_curve) != 1 || degree_curve < 0)
         return false;
     if (degree_curve == 0)
@@ -438,7 +438,7 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
 bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 {
     int N, degree_sep;
-    p4curves::curves dummy;
+    P4Curves::curves dummy;
 
     setlocale(LC_ALL, "C");
 

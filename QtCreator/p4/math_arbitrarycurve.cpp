@@ -198,7 +198,7 @@ static bool readTaskResults(int task)
 }
 
 void drawArbitraryCurve(P4Sphere *spherewnd,
-                        const std::vector<p4orbits::orbits_points> &sep,
+                        const std::vector<P4Orbits::orbits_points> &sep,
                         int color, int dashes)
 {
     double pcoord[3];

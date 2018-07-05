@@ -437,7 +437,7 @@ bool isInsideRegion_sphere_epsilon(const std::vector<int> &signs,
 // the polynomial by a rescaled one if the point lies close to infinity.
 //
 // So we first determine where the point lies.
-double eval_curve(const p4curves::curves &c, const double *pcoord)
+double eval_curve(const P4Curves::curves &c, const double *pcoord)
 {
     double ucoord[2], theta;
     if (!gVFResults.plweights_) {
@@ -653,7 +653,7 @@ static double plSphereDistance(double *p, double *q)
 //          markSingularity
 // ---------------------------------------------------------------------
 // generic version
-void markSingularity(p4singularities::degenerate *s,
+void markSingularity(P4Singularities::degenerate *s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -689,7 +689,7 @@ void markSingularity(p4singularities::degenerate *s,
 }
 
 // saddle version
-void markSingularity(p4singularities::saddle &s,
+void markSingularity(P4Singularities::saddle &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -755,7 +755,7 @@ void markSingularity(p4singularities::saddle &s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // semi elementary version
-void markSingularity(p4singularities::semi_elementary &s,
+void markSingularity(P4Singularities::semi_elementary &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -825,7 +825,7 @@ void markSingularity(p4singularities::semi_elementary &s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // node version
-void markSingularity(p4singularities::node &s, std::vector<positionitem> &plist,
+void markSingularity(P4Singularities::node &s, std::vector<positionitem> &plist,
                      int &numpos, int vfindex, bool plweights)
 {
     double pcoord[3];
@@ -894,7 +894,7 @@ void markSingularity(p4singularities::node &s, std::vector<positionitem> &plist,
 //          markSingularity
 // ---------------------------------------------------------------------
 // strong focus version
-void markSingularity(p4singularities::strong_focus &s,
+void markSingularity(P4Singularities::strong_focus &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -964,7 +964,7 @@ void markSingularity(p4singularities::strong_focus &s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // weak focus version
-void markSingularity(p4singularities::weak_focus &s,
+void markSingularity(P4Singularities::weak_focus &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {
@@ -1034,7 +1034,7 @@ void markSingularity(p4singularities::weak_focus &s,
 //          markSingularity
 // ---------------------------------------------------------------------
 // degenerate version
-void markSingularity(p4singularities::degenerate &s,
+void markSingularity(P4Singularities::degenerate &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights)
 {

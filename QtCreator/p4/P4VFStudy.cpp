@@ -181,7 +181,7 @@ bool P4VFStudy::readIsoclines(QString basename)
         return false;
     }
 
-    p4curves::isoclines new_isocline;
+    P4Curves::isoclines new_isocline;
     if (fscanf(fp, "%d", &degree_curve) != 1)
         return false;
 
@@ -236,8 +236,8 @@ bool P4VFStudy::readIsoclines(QString basename)
 // -----------------------------------------------------------------------
 //          P4VFStudy::readVectorField
 // -----------------------------------------------------------------------
-bool P4VFStudy::readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
-                                std::vector<p4polynom::term2> &vf1)
+bool P4VFStudy::readVectorField(FILE *fp, std::vector<P4Polynom::term2> &vf0,
+                                std::vector<P4Polynom::term2> &vf1)
 {
     int M, N;
 
@@ -252,8 +252,8 @@ bool P4VFStudy::readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
 //          P4VFStudy::readVectorFieldCylinder
 // -----------------------------------------------------------------------
 bool P4VFStudy::readVectorFieldCylinder(FILE *fp,
-                                        std::vector<p4polynom::term3> &vf0,
-                                        std::vector<p4polynom::term3> &vf1)
+                                        std::vector<P4Polynom::term3> &vf0,
+                                        std::vector<P4Polynom::term3> &vf1)
 {
     int M, N;
 
@@ -317,17 +317,17 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
 {
     int N;
 
-    // variables for constructing a p4singularities::saddle
+    // variables for constructing a P4Singularities::saddle
     double x0, y0;
     int chart;
     double a11, a12, a21, a22;
     double epsilon;
-    std::vector<p4blowup::sep> psep;
-    std::vector<p4polynom::term2> vf0, vf1;
+    std::vector<P4Blowup::sep> psep;
+    std::vector<P4Polynom::term2> vf0, vf1;
 
-    // variables for constructing a p4blowup::sep
+    // variables for constructing a P4Blowup::sep
     int stype;
-    std::vector<p4polynom::term1> ssep;
+    std::vector<P4Polynom::term1> ssep;
 
     if (fscanf(fp, "%lf %lf", &x0, &y0) != 2 ||
         fscanf(fp, "%lf %lf %lf %lf", &a11, &a12, &a21, &a22) != 4 ||
@@ -338,7 +338,7 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
     if (!readTerm1(fp, ssep, N))
         return false;
 
-    psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, 1, 0, true,
+    psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, 1, 0, true,
                       ssep);
 
     if (chart == CHART_R2 || singinf_) {
@@ -346,17 +346,17 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
         // singularities at infinity and hence we have also 4 separatrices if we
         // delete the line
         // #2
-        psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, -1, 0,
+        psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, -1, 0,
                           false, ssep);
         // #3
         if (fscanf(fp, "%d", &stype) != 1 || fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
         if (!readTerm1(fp, ssep, N))
             return false;
-        psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, 1, 1,
+        psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, 1, 1,
                           true, ssep);
         // #4
-        psep.emplace_back(std::vector<p4orbits::orbits_points>{}, stype, -1, 1,
+        psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, -1, 1,
                           false, ssep);
     }
     if (fscanf(fp, "%lf ", &epsilon) != 1)
@@ -383,22 +383,22 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
 {
     int s, N;
 
-    // variables for constructing a p4singularities::semi_elementary
+    // variables for constructing a P4Singularities::semi_elementary
     double x0, y0;
     int chart;
     double epsilon;
     double a11, a12, a21, a22;
     int ptype;
-    std::vector<p4polynom::term2> vf0, vf1;
-    std::vector<p4blowup::sep> pseps;
+    std::vector<P4Polynom::term2> vf0, vf1;
+    std::vector<P4Blowup::sep> pseps;
 
-    // variables for constructing a p4blowup::sep
+    // variables for constructing a P4Blowup::sep
     int stype;
     int sdirection;
-    std::vector<p4polynom::term1> ssep;
+    std::vector<P4Polynom::term1> ssep;
 
-    // p4singularities::semi_elementary point;
-    // std::vector<p4blowup::sep> sepvec;
+    // P4Singularities::semi_elementary point;
+    // std::vector<P4Blowup::sep> sepvec;
 
     if (fscanf(fp, "%lf %lf", &x0, &y0) != 2 ||
         fscanf(fp, "%lf %lf %lf %lf", &a11, &a12, &a21, &a22) != 4 ||
@@ -424,7 +424,7 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
             if (!readTerm1(fp, ssep, N))
                 return false;
 
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 0, true, ssep);
 
             if (chart == CHART_R2) {
@@ -434,11 +434,11 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                     return false;
                 if (!readTerm1(fp, ssep, N))
                     return false;
-                pseps.emplace_back(std::vector<p4orbits::orbits_points>{},
+                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
                                    stype, sdirection, 1, true, ssep);
 
                 sdirection = -1;
-                pseps.emplace_back(std::vector<p4orbits::orbits_points>{},
+                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
                                    stype, sdirection, 1, false, ssep);
             }
         }
@@ -458,7 +458,7 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
             return false;
         if (!readTerm1(fp, ssep, N))
             return false;
-        pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                            sdirection, 0, true, ssep);
 
         if (chart == CHART_R2) {
@@ -468,10 +468,10 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 return false;
             if (!readTerm1(fp, ssep, N))
                 return false;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, true, ssep);
 
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, false, ssep);
         }
     } break;
@@ -489,7 +489,7 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
             return false;
         if (!readTerm1(fp, ssep, N))
             return false;
-        pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                            sdirection, 0, true, ssep);
 
         if (chart == CHART_R2) {
@@ -499,11 +499,11 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 return false;
             if (!readTerm1(fp, ssep, N))
                 return false;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, true, ssep);
 
             sdirection = -1;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, false, ssep);
         }
     } break;
@@ -524,7 +524,7 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 return false;
             if (!readTerm1(fp, ssep, N))
                 return false;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 0, true, ssep);
 
             if (chart == CHART_R2) {
@@ -534,11 +534,11 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                     return false;
                 if (!readTerm1(fp, ssep, N))
                     return false;
-                pseps.emplace_back(std::vector<p4orbits::orbits_points>{},
+                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
                                    stype, sdirection, 1, true, ssep);
 
                 sdirection = -1;
-                pseps.emplace_back(std::vector<p4orbits::orbits_points>{},
+                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
                                    stype, sdirection, 1, false, ssep);
             }
         }
@@ -557,13 +557,13 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
             return false;
         if (!readTerm1(fp, ssep, N))
             return false;
-        pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                            sdirection, 0, true, ssep);
 
         if (chart == CHART_R2) {
             stype = STYPE_CENUNSTABLE;
             sdirection = -1;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 0, false, ssep);
 
             stype = STYPE_STABLE;
@@ -572,10 +572,10 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 return false;
             if (!readTerm1(fp, ssep, N))
                 return false;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, true, ssep);
 
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, false, ssep);
         }
     } break;
@@ -593,13 +593,13 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
             return false;
         if (!readTerm1(fp, ssep, N))
             return false;
-        pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                            sdirection, 0, true, ssep);
 
         if (chart == CHART_R2) {
             stype = STYPE_CENSTABLE;
             sdirection = -1;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 0, false, ssep);
 
             stype = STYPE_UNSTABLE;
@@ -608,11 +608,11 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
                 return false;
             if (!readTerm1(fp, ssep, N))
                 return false;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, true, ssep);
 
             sdirection = -1;
-            pseps.emplace_back(std::vector<p4orbits::orbits_points>{}, stype,
+            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
                                sdirection, 1, false, ssep);
         }
     } break;
@@ -707,7 +707,7 @@ bool P4VFStudy::readNodePoint(FILE *fp)
 {
     double y[2];
 
-    // variables for constructing a p4singularities::node
+    // variables for constructing a P4Singularities::node
     double x0, y0;
     int chart;
     int stable;
@@ -767,7 +767,7 @@ bool P4VFStudy::readStrongFocusPoint(FILE *fp)
 {
     double y[2];
 
-    // variables for constructing a p4singularities::strong_focus
+    // variables for constructing a P4Singularities::strong_focus
     double x0, y0;
     int chart;
     int stable;
@@ -828,7 +828,7 @@ bool P4VFStudy::readWeakFocusPoint(FILE *fp)
 {
     double y[2];
 
-    // variables for constructing a p4singularities::weak_focus
+    // variables for constructing a P4Singularities::weak_focus
     double x0, y0;
     int chart;
     int type;
@@ -898,12 +898,12 @@ bool P4VFStudy::readDegeneratePoint(FILE *fp)
 {
     int n;
 
-    // variables for constructing a p4singularities::degenerate
+    // variables for constructing a P4Singularities::degenerate
     double x0, y0;
     int chart;
     double epsilon;
     bool notadummy;
-    std::vector<p4blowup::blow_up_points> pblw;
+    std::vector<P4Blowup::blow_up_points> pblw;
 
     if (fscanf(fp, "%lf %lf %lf %d ", &x0, &y0, &epsilon, &n) != 4)
         return false;
@@ -934,7 +934,7 @@ bool P4VFStudy::readDegeneratePoint(FILE *fp)
 //          P4VFStudy::readTransformations
 // -----------------------------------------------------------------------
 bool P4VFStudy::readTransformations(
-    FILE *fp, std::vector<p4blowup::transformations> &trans, int n)
+    FILE *fp, std::vector<P4Blowup::transformations> &trans, int n)
 {
     double x0, y0;
     int c1, c2, d1, d2, d3, d4;
@@ -952,19 +952,19 @@ bool P4VFStudy::readTransformations(
 //          P4VFStudy::readBlowupPoints
 // -----------------------------------------------------------------------
 bool P4VFStudy::readBlowupPoints(FILE *fp,
-                                 std::vector<p4blowup::blow_up_points> &blowup,
+                                 std::vector<P4Blowup::blow_up_points> &blowup,
                                  int n)
 {
     int N, typ;
     double p[2]{0, 0};
 
-    // variables per construir p4blowup::blow_up_points
+    // variables per construir P4Blowup::blow_up_points
     int pn;
-    std::vector<p4blowup::transformations> ptrans;
+    std::vector<P4Blowup::transformations> ptrans;
     double x0, y0;
     double a11, a12, a21, a22;
-    std::vector<p4polynom::term2> vf0, vf1;
-    std::vector<p4polynom::term1> psep;
+    std::vector<P4Polynom::term2> vf0, vf1;
+    std::vector<P4Polynom::term1> psep;
     int ptype;
 
     for (int i = 0; i < n; i++) {
@@ -1002,7 +1002,7 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
         }
         blowup.emplace_back(pn, ptrans, x0, y0, a11, a12, a21, a22, vf0, vf1,
                             psep, ptype, true, p,
-                            std::vector<p4orbits::orbits_points>{});
+                            std::vector<P4Orbits::orbits_points>{});
     }
     return true;
 }
@@ -1012,7 +1012,7 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
 // -----------------------------------------------------------------------
 
 void P4VFStudy::dumpSeparatrices(QTextEdit &m,
-                                 const std::vector<p4blowup::sep> &separ,
+                                 const std::vector<P4Blowup::sep> &separ,
                                  int margin)
 {
     QString s;
@@ -1057,7 +1057,7 @@ void P4VFStudy::dumpSeparatrices(QTextEdit &m,
 
 // dump saddle singularities
 void P4VFStudy::dumpSingularities(QTextEdit &m,
-                                  const std::vector<p4singularities::saddle> &p,
+                                  const std::vector<P4Singularities::saddle> &p,
                                   bool longversion)
 {
     const char *chart;
@@ -1106,7 +1106,7 @@ void P4VFStudy::dumpSingularities(QTextEdit &m,
 
 // dump degenerate singularities
 void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<p4singularities::degenerate> &p,
+    QTextEdit &m, const std::vector<P4Singularities::degenerate> &p,
     bool longversion)
 {
     const char *chart;
@@ -1145,7 +1145,7 @@ void P4VFStudy::dumpSingularities(
 
 // dump strong focus singularities
 void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<p4singularities::strong_focus> &p,
+    QTextEdit &m, const std::vector<P4Singularities::strong_focus> &p,
     bool longversion)
 {
     const char *chart;
@@ -1192,7 +1192,7 @@ void P4VFStudy::dumpSingularities(
 
 // dump weak focus singularities
 void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<p4singularities::weak_focus> &p,
+    QTextEdit &m, const std::vector<P4Singularities::weak_focus> &p,
     bool longversion)
 {
     const char *chart;
@@ -1230,7 +1230,7 @@ void P4VFStudy::dumpSingularities(
 
 // dump node singularities
 void P4VFStudy::dumpSingularities(QTextEdit &m,
-                                  const std::vector<p4singularities::node> &p,
+                                  const std::vector<P4Singularities::node> &p,
                                   bool longversion)
 {
     const char *chart;
@@ -1277,7 +1277,7 @@ void P4VFStudy::dumpSingularities(QTextEdit &m,
 
 // dump semi elementary singularities
 void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<p4singularities::semi_elementary> &p,
+    QTextEdit &m, const std::vector<P4Singularities::semi_elementary> &p,
     bool longversion)
 {
     const char *chart;

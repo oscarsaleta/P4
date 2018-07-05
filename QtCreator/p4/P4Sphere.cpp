@@ -1034,7 +1034,7 @@ void P4Sphere::selectNearestSingularity(const QPoint &winpos)
 //                          PLOT SINGULAR POINTS
 // -----------------------------------------------------------------------
 
-void P4Sphere::plotPoint(const p4singularities::saddle &p)
+void P4Sphere::plotPoint(const P4Singularities::saddle &p)
 {
     // qDebug() << "plot point saddle";
     double pos[2];
@@ -1072,7 +1072,7 @@ void P4Sphere::plotPoint(const p4singularities::saddle &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::node &p)
+void P4Sphere::plotPoint(const P4Singularities::node &p)
 {
     // qDebug() << "plot point node";
     double pos[2];
@@ -1129,7 +1129,7 @@ void P4Sphere::plotPoint(const p4singularities::node &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
+void P4Sphere::plotPoint(const P4Singularities::weak_focus &p)
 {
     // qDebug() << "plot point weak focus";
     double pos[2];
@@ -1223,7 +1223,7 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
+void P4Sphere::plotPoint(const P4Singularities::strong_focus &p)
 {
     // qDebug() << "plot point strong focus";
     double pos[2];
@@ -1280,7 +1280,7 @@ void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::degenerate &p)
+void P4Sphere::plotPoint(const P4Singularities::degenerate &p)
 {
     // qDebug() << "plot point degenerate";
     double pos[2];
@@ -1319,7 +1319,7 @@ void P4Sphere::plotPoint(const p4singularities::degenerate &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::semi_elementary &p)
+void P4Sphere::plotPoint(const P4Singularities::semi_elementary &p)
 {
     // qDebug() << "plot point semi elementary";
     double pos[2];
@@ -1427,21 +1427,21 @@ void P4Sphere::plotPoints()
     }
 }
 
-void P4Sphere::plotPointSeparatrices(const p4singularities::semi_elementary &p)
+void P4Sphere::plotPointSeparatrices(const P4Singularities::semi_elementary &p)
 {
     // qDebug() << "plot point separatrices (semi elementary)";
     for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
-void P4Sphere::plotPointSeparatrices(const p4singularities::saddle &p)
+void P4Sphere::plotPointSeparatrices(const P4Singularities::saddle &p)
 {
     // qDebug() << "plot point separatrices (saddle)";
     for (auto const &it : p.separatrices)
         draw_sep(this, it.sep_points);
 }
 
-void P4Sphere::plotPointSeparatrices(const p4singularities::degenerate &p)
+void P4Sphere::plotPointSeparatrices(const P4Singularities::degenerate &p)
 {
     // qDebug() << "plot point separatrices (degenerate)";
     for (auto const &it : p.blow_up)
@@ -1874,7 +1874,7 @@ void P4Sphere::drawPoint(double x, double y, int color)
 //---------------------------------------------------------------------
 //                  PRINTING METHODS
 //---------------------------------------------------------------------
-void P4Sphere::printPoint(const p4singularities::saddle &p)
+void P4Sphere::printPoint(const P4Singularities::saddle &p)
 {
     // qDebug() << "print point saddle";
     double pos[2];
@@ -1900,7 +1900,7 @@ void P4Sphere::printPoint(const p4singularities::saddle &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::node &p)
+void P4Sphere::printPoint(const P4Singularities::node &p)
 {
     // qDebug() << "print point node";
     double pos[2];
@@ -1945,7 +1945,7 @@ void P4Sphere::printPoint(const p4singularities::node &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::weak_focus &p)
+void P4Sphere::printPoint(const P4Singularities::weak_focus &p)
 {
     // qDebug() << "print point weak focus";
     double pos[2];
@@ -2027,7 +2027,7 @@ void P4Sphere::printPoint(const p4singularities::weak_focus &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::strong_focus &p)
+void P4Sphere::printPoint(const P4Singularities::strong_focus &p)
 {
     // qDebug() << "print point strong focus";
     double pos[2];
@@ -2072,7 +2072,7 @@ void P4Sphere::printPoint(const p4singularities::strong_focus &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::degenerate &p)
+void P4Sphere::printPoint(const P4Singularities::degenerate &p)
 {
     // qDebug() << "print point degenerate";
     double pos[2];
@@ -2099,7 +2099,7 @@ void P4Sphere::printPoint(const p4singularities::degenerate &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
+void P4Sphere::printPoint(const P4Singularities::semi_elementary &p)
 {
     // qDebug() << "print point semi elementary";
     double pos[2];
@@ -2224,7 +2224,7 @@ void P4Sphere::printPoints()
     }
 }
 
-void P4Sphere::printPointSeparatrices(const p4singularities::semi_elementary &p)
+void P4Sphere::printPointSeparatrices(const P4Singularities::semi_elementary &p)
 {
     // qDebug() << "print point separatrices (semi elementary)";
     for (auto const &it : p.separatrices) {
@@ -2233,7 +2233,7 @@ void P4Sphere::printPointSeparatrices(const p4singularities::semi_elementary &p)
     }
 }
 
-void P4Sphere::printPointSeparatrices(const p4singularities::saddle &p)
+void P4Sphere::printPointSeparatrices(const P4Singularities::saddle &p)
 {
     // qDebug() << "print point separatrices (saddle)";
     for (auto const &it : p.separatrices) {
@@ -2242,7 +2242,7 @@ void P4Sphere::printPointSeparatrices(const p4singularities::saddle &p)
     }
 }
 
-void P4Sphere::printPointSeparatrices(const p4singularities::degenerate &p)
+void P4Sphere::printPointSeparatrices(const P4Singularities::degenerate &p)
 {
     // qDebug() << "print point separatrices (degenerate)";
     for (auto const &it : p.blow_up) {

@@ -37,7 +37,7 @@
 
 class P4Sphere;
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
@@ -47,5 +47,5 @@ bool evalGcfContinue(int precision, int points);
 bool evalGcfFinish();
 bool runTask(int task, int precision, int points, unsigned int index);
 void draw_gcf(P4Sphere *spherewnd,
-              const std::vector<p4orbits::orbits_points> &sep, int color,
+              const std::vector<P4Orbits::orbits_points> &sep, int color,
               int dashes);

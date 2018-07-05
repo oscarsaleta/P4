@@ -56,7 +56,7 @@ bool prepareVfForIntegration(double *pcoord)
 // Continues orbit integration
 void integrateOrbit(P4Sphere *sphere, int dir)
 {
-    // std::vector<p4orbits::orbits_points> pts;
+    // std::vector<P4Orbits::orbits_points> pts;
     double pcoord[3], ucoord[2];
     auto &currentpt = gVFResults.orbits_.back().points.back();
 
@@ -96,14 +96,14 @@ void integrateOrbit(P4Sphere *sphere, int dir)
     } else {
         // create an orbit point
         auto pts =
-            p4orbits::orbits_points{bgColours::CORBIT, pcoord, 0, dir, 0};
+            P4Orbits::orbits_points{bgColours::CORBIT, pcoord, 0, dir, 0};
         // integrate more points
         auto int_pts =
             integrate_orbit(sphere, pcoord, gVFResults.config_step_, dir,
                             bgColours::CORBIT, gVFResults.config_intpoints_);
         // create a vector starting by the first point and appending the
         // integrated ones to the end
-        std::vector<p4orbits::orbits_points> orbit_result{pts};
+        std::vector<P4Orbits::orbits_points> orbit_result{pts};
         orbit_result.insert(std::end(orbit_result), std::begin(int_pts),
                             std::end(int_pts));
         // append this vector to gVFResults.orbits_.back().points
@@ -131,7 +131,7 @@ bool startOrbit(P4Sphere *sphere, double x, double y, bool R)
         return false;
 
     gVFResults.orbits_.emplace_back(pcoord, bgColours::CORBIT,
-                                    std::vector<p4orbits::orbits_points>{});
+                                    std::vector<P4Orbits::orbits_points>{});
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
     qDebug() << "draw point in (" << ucoord[0] << ", " << ucoord[1]
@@ -145,7 +145,7 @@ bool startOrbit(P4Sphere *sphere, double x, double y, bool R)
 //          drawOrbit
 // -----------------------------------------------------------------------
 void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
-               const std::vector<p4orbits::orbits_points> &points, int color)
+               const std::vector<P4Orbits::orbits_points> &points, int color)
 {
     double pcoord1[3];
 
@@ -442,14 +442,14 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
 //          integrate_orbit
 // ---------------------------------------------------------------------------
 // Integrate a number of points (user-dependent)
-std::vector<p4orbits::orbits_points>
+std::vector<P4Orbits::orbits_points>
 integrate_orbit(P4Sphere *spherewnd, double pcoord[3], double step, int dir,
                 int color, int points_to_int)
 {
     int d, h;
     int dashes;
     double pcoord2[3];
-    std::vector<p4orbits::orbits_points> orbit_result;
+    std::vector<P4Orbits::orbits_points> orbit_result;
 
     double hhi{dir * step};
     double h_min{gVFResults.config_hmi_};

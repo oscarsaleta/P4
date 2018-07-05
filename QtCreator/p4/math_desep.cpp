@@ -37,8 +37,8 @@
 #include "plot_tools.hpp"
 #include "structures.hpp"
 
-static std::vector<p4polynom::term2> sVecField_0;
-static std::vector<p4polynom::term2> sVecField_1;
+static std::vector<P4Polynom::term2> sVecField_0;
+static std::vector<P4Polynom::term2> sVecField_1;
 
 // ---------------------------------------------------------------------------
 //          eval_blow_vec_field
@@ -64,7 +64,7 @@ static double power(double a, int b)
 // ---------------------------------------------------------------------------
 //          make_transformations
 // ---------------------------------------------------------------------------
-void make_transformations(const std::vector<p4blowup::transformations> &trans,
+void make_transformations(const std::vector<P4Blowup::transformations> &trans,
                           double x0, double y0, double *point)
 {
     double x{x0}, y{y0};
@@ -81,9 +81,9 @@ void make_transformations(const std::vector<p4blowup::transformations> &trans,
 // ---------------------------------------------------------------------------
 //          integrate_blow_up
 // ---------------------------------------------------------------------------
-std::vector<p4orbits::orbits_points>
+std::vector<P4Orbits::orbits_points>
 integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
-                  p4blowup::blow_up_points &de_sep, double step, int dir,
+                  P4Blowup::blow_up_points &de_sep, double step, int dir,
                   int type, int chart)
 {
     int i;
@@ -93,8 +93,8 @@ integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
     double point[2], pcoord[3];
     int color;
     bool dashes, ok{true};
-    p4orbits::orbits_points last_orbit;
-    std::vector<p4orbits::orbits_points> orbit_result;
+    P4Orbits::orbits_points last_orbit;
+    std::vector<P4Orbits::orbits_points> orbit_result;
 
     sVecField_0 = de_sep.vector_field_0;
     sVecField_1 = de_sep.vector_field_1;
@@ -125,7 +125,7 @@ integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
     }
 
     if (!prepareVfForIntegration(pcoord))
-        return std::vector<p4orbits::orbits_points>{};
+        return std::vector<P4Orbits::orbits_points>{};
 
     if (gVFResults.plweights_ == false &&
         (chart == CHART_V1 || chart == CHART_V2))
@@ -317,14 +317,14 @@ integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
 // by the user.
 //
 // At the end, a normal integration cycle is added.
-static std::vector<p4orbits::orbits_points>
+static std::vector<P4Orbits::orbits_points>
 plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
-                 double epsilon, p4blowup::blow_up_points &de_sep, int vfindex)
+                 double epsilon, P4Blowup::blow_up_points &de_sep, int vfindex)
 {
     double h, t{0}, y, pcoord[3], pcoord2[3], point[2];
     int i, color, dir, dashes, type, ok{true};
-    p4orbits::orbits_points last_orbit;
-    std::vector<p4orbits::orbits_points> orbit_result;
+    P4Orbits::orbits_points last_orbit;
+    std::vector<P4Orbits::orbits_points> orbit_result;
 
     switch (chart) {
     case CHART_R2:
@@ -341,7 +341,7 @@ plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
         break;
     }
     if (!prepareVfForIntegration(pcoord))
-        return std::vector<p4orbits::orbits_points>{};
+        return std::vector<P4Orbits::orbits_points>{};
 
     /* if we have a line of singularities at infinity then we have to change the
      * chart if the chart is V1 or V2 */
@@ -436,7 +436,7 @@ plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
     }
 
     if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex)
-        return std::vector<p4orbits::orbits_points>{};
+        return std::vector<P4Orbits::orbits_points>{};
 
     // end of P5 addition
 
@@ -702,7 +702,7 @@ void select_next_de_sep(P4Sphere *spherewnd)
 //          plot_all_de_sep
 // ---------------------------------------------------------------------------
 void plot_all_de_sep(P4Sphere *spherewnd, int vfindex,
-                     const std::vector<p4singularities::degenerate> &point)
+                     const std::vector<P4Singularities::degenerate> &point)
 {
     double p[3];
 

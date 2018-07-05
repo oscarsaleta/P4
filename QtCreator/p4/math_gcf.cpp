@@ -237,7 +237,7 @@ static bool readTaskResults(int task, int index)
 }
 
 void draw_gcf(P4Sphere *spherewnd,
-              const std::vector<p4orbits::orbits_points> &sep, int color,
+              const std::vector<P4Orbits::orbits_points> &sep, int color,
               int dashes)
 {
     double pcoord[3];

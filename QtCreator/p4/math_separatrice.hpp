@@ -23,18 +23,18 @@
 
 class P4Sphere;
 
-namespace p4polynom
+namespace P4Polynom
 {
 struct term2;
 struct term3;
 }
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
 
-namespace p4blowup
+namespace P4Blowup
 {
 struct sep;
 }
@@ -47,14 +47,14 @@ extern void (*select_next_sep)(P4Sphere *);
 
 void plot_all_sep(P4Sphere *spherewnd);
 void draw_sep(P4Sphere *spherewnd,
-              const std::vector<p4orbits::orbits_points> &sep);
+              const std::vector<P4Orbits::orbits_points> &sep);
 void draw_selected_sep(P4Sphere *spherewnd,
-                       const std::vector<p4orbits::orbits_points> &sep,
+                       const std::vector<P4Orbits::orbits_points> &sep,
                        int color);
 
-int findSepColor2(const std::vector<p4polynom::term2> &f, int type,
+int findSepColor2(const std::vector<P4Polynom::term2> &f, int type,
                   double y[2]);
-int findSepColor3(const std::vector<p4polynom::term3> &f, int type,
+int findSepColor3(const std::vector<P4Polynom::term3> &f, int type,
                   double y[2]);
 
 void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
@@ -64,14 +64,14 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
                             double &hhi, int &type, int &color, int &dashes,
                             int &dir, double h_min, double h_max);
 
-std::vector<p4orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
+std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
                                                    double pcoord[3],
                                                    double step, int dir,
                                                    int type, int points_to_int);
 
 int change_type(int type);
 
-std::vector<p4orbits::orbits_points>
+std::vector<P4Orbits::orbits_points>
 plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                  double a12, double a21, double a22, double epsilon,
-                 const p4blowup::sep &sep1, short int chart, int index);
+                 const P4Blowup::sep &sep1, short int chart, int index);

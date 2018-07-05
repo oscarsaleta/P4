@@ -380,8 +380,8 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
     double p1[3], p2[3];
     double hhi, h_max, h_min;
     int dashes, d;
-    p4orbits::orbits LC;
-    p4orbits::orbits_points LCpoints;
+    P4Orbits::orbits LC;
+    P4Orbits::orbits_points LCpoints;
 
     MATHFUNC(R2_to_sphere)(x, y, p1);
     copy_x_into_y(p1, LC.pcoord);
@@ -480,7 +480,7 @@ void deleteLastLimitCycle(P4Sphere *spherewnd)
     if (gVFResults.limCycles_.empty())
         return;
 
-    p4orbits::orbits &orbit1 = gVFResults.limCycles_.back();
+    P4Orbits::orbits &orbit1 = gVFResults.limCycles_.back();
     drawOrbit(spherewnd, orbit1.pcoord, orbit1.points,
               spherewnd->spherebgcolor_);
 

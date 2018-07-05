@@ -2320,7 +2320,7 @@ bool P4InputVF::evaluateGcf()
 //
 // Prepare files in case of calculating GCF in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
+bool P4InputVF::prepareGcf(const std::vector<P4Polynom::term2> &f, double y1,
                            double y2, int precision, int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
@@ -2587,7 +2587,7 @@ bool P4InputVF::evaluateArbitraryCurve()
 // -----------------------------------------------------------------------
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
+bool P4InputVF::prepareArbitraryCurve(const std::vector<P4Polynom::term2> &f,
                                       double y1, double y2, int precision,
                                       int numpoints)
 {
@@ -2855,7 +2855,7 @@ bool P4InputVF::evaluateIsoclines()
 //
 // Prepare files in case of calculating isoclines in plane/U1/U2 charts.
 // This is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
+bool P4InputVF::prepareIsoclines(const std::vector<P4Polynom::term2> &f,
                                  double y1, double y2, int precision,
                                  int numpoints)
 {

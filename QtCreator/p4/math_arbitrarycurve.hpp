@@ -36,7 +36,7 @@
 
 class P4Sphere;
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
@@ -47,6 +47,6 @@ bool evalArbitraryCurveContinue(int precision, int points);
 bool evalArbitraryCurveFinish();
 bool runTaskArbitraryCurve(int task, int precision, int points);
 void drawArbitraryCurve(P4Sphere *spherewnd,
-                        const std::vector<p4orbits::orbits_points> &sep,
+                        const std::vector<P4Orbits::orbits_points> &sep,
                         int color, int dashes);
 void deleteLastArbitraryCurve(P4Sphere *);

@@ -53,7 +53,7 @@ void (*select_next_sep)(P4Sphere *) = nullptr;
 // of this common factor to determine the plot color of the separatrice.
 //
 // The point y is a point in one of the charts.
-int findSepColor2(const std::vector<p4polynom::term2> &f, int type, double y[2])
+int findSepColor2(const std::vector<P4Polynom::term2> &f, int type, double y[2])
 {
     int color;
 
@@ -97,7 +97,7 @@ int findSepColor2(const std::vector<p4polynom::term2> &f, int type, double y[2])
     return (color);
 }
 
-int findSepColor3(const std::vector<p4polynom::term3> &f, int type, double y[2])
+int findSepColor3(const std::vector<P4Polynom::term3> &f, int type, double y[2])
 {
     int color;
 
@@ -458,7 +458,7 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
 // result is valid before operating on it.
 //
 // The vector field vfK need not be prepared
-std::vector<p4orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
+std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
                                                    double pcoord[3],
                                                    double step, int dir,
                                                    int type, int points_to_int)
@@ -468,8 +468,8 @@ std::vector<p4orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
     double hhi;
     double pcoord2[3];
     double h_min{gVFResults.config_hmi_}, h_max{gVFResults.config_hma_};
-    p4orbits::orbits_points last_orbit;
-    std::vector<p4orbits::orbits_points> orbit_result;
+    P4Orbits::orbits_points last_orbit;
+    std::vector<P4Orbits::orbits_points> orbit_result;
 
     /* if we intergrate a separatrice and use the original vector field
     then it is possible that we have to change the direction of the
@@ -534,7 +534,7 @@ std::vector<p4orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
 //
 // More precisely we find a t such that the Norm2^2 lies in a 1% - error
 // interval from epsilon^2
-static double findInitialSepPoint(const std::vector<p4polynom::term1> &sep,
+static double findInitialSepPoint(const std::vector<P4Polynom::term1> &sep,
                                   double epsilon, int dir)
 {
     double t, t1, t2, r0, a, b;
@@ -607,17 +607,17 @@ static double findInitialSepPoint(const std::vector<p4polynom::term1> &sep,
 // At the end, a normal integration cycle is added.
 //
 // The vector field vfK needs not be prepared.
-std::vector<p4orbits::orbits_points>
+std::vector<P4Orbits::orbits_points>
 plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                  double a12, double a21, double a22, double epsilon,
-                 const p4blowup::sep &sep1, short int chart, int vfindex)
+                 const P4Blowup::sep &sep1, short int chart, int vfindex)
 {
     double t{0.0}, h, y;
     double pcoord[3], pcoord2[3], point[2];
     int i, color, type, dir;
     bool dashes, ok{true}, prepok;
-    std::vector<p4orbits::orbits_points> orbit_result;
-    p4orbits::orbits_points new_orbit;
+    std::vector<P4Orbits::orbits_points> orbit_result;
+    P4Orbits::orbits_points new_orbit;
     auto &vfResultsK = gVFResults.vf_[gVFResults.K_];
 
     switch (chart) {
@@ -913,7 +913,7 @@ void plot_all_sep(P4Sphere *spherewnd)
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in the color according to the type and stability.
 void draw_sep(P4Sphere *spherewnd,
-              const std::vector<p4orbits::orbits_points> &sep)
+              const std::vector<P4Orbits::orbits_points> &sep)
 {
     double pcoord[3];
 
@@ -934,7 +934,7 @@ void draw_sep(P4Sphere *spherewnd,
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in a specified color.
 void draw_selected_sep(P4Sphere *spherewnd,
-                       const std::vector<p4orbits::orbits_points> &sep,
+                       const std::vector<P4Orbits::orbits_points> &sep,
                        int color)
 {
     double pcoord[3];
