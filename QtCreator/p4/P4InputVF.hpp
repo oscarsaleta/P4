@@ -29,14 +29,6 @@
 
 #include "custom.hpp"
 
-#define TYPEOFSTUDY_ALL 0
-#define TYPEOFSTUDY_FIN 1
-#define TYPEOFSTUDY_INF 2
-#define TYPEOFSTUDY_ONE 3
-
-#define PACKAGE_MAPLE 1
-#define PACKAGE_REDUCE 0
-
 /* Check Qt version for compatibility with QProcess::errorOccurred */
 #if QT_VERSION_MINOR < 6
 #define QT_QPROCESS_OLD
@@ -95,8 +87,8 @@ class P4InputVF : public QObject
 
     QString filename_{DEFAULTFILENAME};
 
-    int symbolicpackage_{PACKAGE_MAPLE}; // 0 for reduce, 1 for maple
-    int typeofstudy_;                    // 0, 1, 2, 3 = all, inf, fin, one
+    //    int symbolicpackage_{PACKAGE_MAPLE}; // 0 for reduce, 1 for maple
+    int typeofstudy_; // 0, 1, 2, 3 = all, inf, fin, one
 
     // MAPLE EXECUTION PARAMETERS
     std::vector<bool> numeric_;

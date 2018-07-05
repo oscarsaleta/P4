@@ -26,14 +26,17 @@
 #include "math_charts.hpp"
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes,
-                               std::vector<p4orbits::orbits_points> &lastpt)
+                               p4orbits::orbits_points **lastpt)
 {
     double pcoord[] = {x0, y0, z0};
-    lastpt.emplace_back(CSEPCURVE, pcoord, dashes, 0, 0);
+    while (*lastpt != nullptr) {
+        (*lastpt) = (*lastpt)->nextpt;
+    }
+    *lastpt =
+        new p4orbits::orbits_points{CSEPCURVE, pcoord, dashes, 0, 0, nullptr};
 }
 
-bool readSeparatingCurvePoints(FILE *fp,
-                               std::vector<p4orbits::orbits_points> &psep,
+bool readSeparatingCurvePoints(FILE *fp, p4orbits::orbits_points **psep,
                                int index)
 {
     int k;
@@ -50,6 +53,7 @@ bool readSeparatingCurvePoints(FILE *fp,
         cylinder_to_plsphere,   cylinder_to_plsphere, nullptr};
 
     chartindex = (gVFResults.plweights_) ? 6 : 0;
+
     while (1) {
         chart = charts[chartindex];
         if (chart == nullptr)

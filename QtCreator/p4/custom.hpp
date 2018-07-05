@@ -204,6 +204,9 @@
 #define MAINMAPLEFILE "p4.m"
 #define MAINMAPLEGCFFILE "p4gcf.m"
 
+#define LINESTYLE_DASHES 1
+#define LINESTYLE_POINTS 0
+
 // Defining colors.
 //
 // Choose one of the constants defined in COLOR.H
@@ -219,7 +222,7 @@ extern int CORBIT;      // orbits (use GREEN1 when background is white)
 // For example, when printing, BLACK can be reversed with WHITE, so that the
 // BLACK background on screen is not printed black.
 extern bool PRINT_WHITE_BG;
-}
+} // namespace bgColours
 
 #define CSADDLE_NODE MAGENTA                   // saddle-node
 #define CSADDLE GREEN2                         // saddle
@@ -307,3 +310,85 @@ extern bool PRINT_WHITE_BG;
 // will appear
 
 #define TOOLTIPS
+
+namespace P4Charts
+{
+enum { chart_R2 = 0, chart_U1 = 1, chart_U2 = 2, chart_V1 = 3, chart_V2 = 4 };
+}
+
+namespace P4SingularityType
+{
+enum {
+    saddle = 1,
+    node = 2,
+    weak_focus = 3,
+    strong_focus = 4,
+    semi_hyperbolic = 5,
+    non_elementary = 6
+};
+}
+
+namespace SeparatriceType
+{
+enum {
+    stype_unstable = 1,
+    stype_stable = -1,
+    stype_cenunstable = 2,
+    stype_censtable = -2,
+    stype_orbit = 3
+};
+}
+
+namespace SingularityStability
+{
+enum {
+    singtype_unstable = SeparatriceType::stype_unstable,
+    singtype_stable = SeparatriceType::stype_stable,
+    singtype_center = 4
+};
+}
+
+namespace SaddleNodeSepType
+{
+enum { setype_saddlenode_unstabsep = 1, setype_saddlenode_unstabsep2 = 2 };
+}
+
+namespace OrbitType
+{
+enum {
+    ot_stable = SeparatriceType::stype_stable,
+    ot_unstable = SeparatriceType::stype_unstable,
+    ot_cent_stable = SeparatriceType::stype_censtable,
+    ot_cent_unstable = SeparatriceType::stype_cenunstable,
+    ot_orbit = SeparatriceType::stype_orbit
+};
+}
+
+namespace P4TypeOfView
+{
+enum {
+    typeofview_plane = 0,
+    typeofview_sphere = 1,
+    typeofview_U1 = 2,
+    typeofview_U2 = 3,
+    typeofview_V1 = 4,
+    typeofview_V2 = 5,
+    typeofview_U1U2 = 6,
+    typeofview_V1V2 = 7
+};
+}
+
+namespace P4TypeOfStudy
+{
+enum {
+    typeofstudy_all = 0,
+    typeofstudy_fin = 1,
+    typeofstudy_inf = 2,
+    typeofstudy_one = 3
+};
+}
+
+// namespace P4SymbolicPackage
+//{
+// enum { package_maple = 1, package_reduce = 0 };
+//}

@@ -447,33 +447,53 @@ char *printterm3(char *buf, const p4polynom::term3 &f, bool isfirst,
 // -----------------------------------------------------------------------
 //          readTerm1
 // -----------------------------------------------------------------------
-bool readTerm1(FILE *fp, std::vector<p4polynom::term1> &p, int N)
+bool readTerm1(FILE *fp, p4polynom::term1 *p, int N)
 {
-    int exp;
-    double coeff;
-    p.clear();
-    for (int i = 0; i < N; i++) {
-        if (fscanf(fp, "%d %lf", &exp, &coeff) != 2) {
+    auto q = p;
+
+    if (N < 1)
+        return false;
+
+    if (fscanf(fp, "%d %lf", &(p->exp), &(p->coeff)) != 2 || p->exp < 0)
+        return false;
+
+    for (int i = 2; i <= N; i++) {
+        p->next_term1 = new p4polynom::term1;
+        p = p->next_term1;
+        if (fscanf(fp, "%d %lf", &(p->exp), &(p->coeff)) != 2 || p->exp < 0) {
+            delete q->next_term1;
+            q->next_term1 = nullptr;
             return false;
         }
-        p.emplace_back(exp, coeff);
     }
+
     return true;
 }
 
 // -----------------------------------------------------------------------
 //          readTerm2
 // -----------------------------------------------------------------------
-bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N)
+bool readTerm2(FILE *fp, p4polynom::term2 *p, int N)
 {
-    int xx, xy;
-    double coeff;
-    p.clear();
-    for (int i = 0; i < N; i++) {
-        if (fscanf(fp, "%d %d %lf", &xx, &xy, &coeff) != 3) {
+    auto q = p;
+
+    if (N < 1)
+        return false;
+
+    if (fscanf(fp, "%d %d %lf", &(p->exp_x), &(p->exp_y), &(p->coeff)) != 3 ||
+        p->exp_x < 0 || p->exp_y < 0)
+        return false;
+
+    for (int i = 2; i <= N; i++) {
+        p->next_term2 = new p4polynom::term2;
+        p = p->next_term2;
+        if (fscanf(fp, "%d %d %lf", &(p->exp_x), &(p->exp_y), &(p->coeff)) !=
+                3 ||
+            p->exp_x < 0 || p->exp_y < 0) {
+            delete q->next_term2;
+            q->next_term2 = nullptr;
             return false;
         }
-        p.emplace_back(xx, xy, coeff);
     }
     return true;
 }
@@ -481,16 +501,29 @@ bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N)
 // -----------------------------------------------------------------------
 //          readTerm3
 // -----------------------------------------------------------------------
-bool readTerm3(FILE *fp, std::vector<p4polynom::term3> &p, int N)
+bool readTerm3(FILE *fp, p4polynom::term3 *p, int N)
 {
-    int xr, xc, xs;
-    double coeff;
-    p.clear();
-    for (int i = 0; i < N; i++) {
-        if (fscanf(fp, "%d %d %d %lf", &xr, &xc, &xs, &coeff) != 4) {
+    auto q = p;
+
+    if (N < 1)
+        return false;
+
+    if (fscanf(fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si),
+               &(p->coeff)) != 4 ||
+        p->exp_r < 0 || p->exp_Co < 0 || p->exp_Si < 0)
+        return false;
+
+    for (int i = 2; i <= N; i++) {
+        p->next_term3 = new p4polynom::term3;
+        p = p->next_term3;
+        if (fscanf(fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si),
+                   &(p->coeff)) != 4 ||
+            p->exp_r < 0 || p->exp_Co < 0 || p->exp_Si < 0) {
+            delete q->next_term3;
+            q->next_term3 = nullptr;
             return false;
         }
-        p.emplace_back(xr, xc, xs, coeff);
     }
+
     return true;
 }

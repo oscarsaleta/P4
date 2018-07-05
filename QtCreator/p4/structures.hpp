@@ -38,6 +38,13 @@ struct term1 {
         : exp{ex}, coeff{co}, next_term1{next}
     {
     }
+    ~term1()
+    {
+        if (next_term1 != nullptr) {
+            delete next_term1;
+            next_term1 = nullptr;
+        }
+    }
 };
 
 // Linked list of terms a*x^i*y^j
@@ -51,6 +58,13 @@ struct term2 {
     term2(int xx = 0, int xy = 0, double co = 0.0, term2 *next = nullptr)
         : exp_x{xx}, exp_y{xy}, coeff{co}, next_term2{next}
     {
+    }
+    ~term2()
+    {
+        if (next_term2 != nullptr) {
+            delete next_term2;
+            next_term2 = nullptr;
+        }
     }
 };
 
@@ -67,6 +81,13 @@ struct term3 {
           term3 *next = nullptr)
         : exp_r{xr}, exp_Co{xc}, exp_Si{xs}, coeff{co}, next_term3{next}
     {
+    }
+    ~term3()
+    {
+        if (next_term3 != nullptr) {
+            delete next_term3;
+            next_term3 = nullptr;
+        }
     }
 };
 } // namespace p4polynom
@@ -99,7 +120,25 @@ struct orbits_points {
         pcoord[1] = pc[1];
         pcoord[2] = pc[2];
     }
+    ~orbits_points()
+    {
+        if (nextpt != nullptr) {
+            delete nextpt;
+            nextpt = nullptr;
+        }
+    }
 };
+
+// delete a linked list of orbits_points
+// void deleteOrbitPoints(orbits_points *p)
+//{
+//    orbits_points *q;
+//    while (p != nullptr) {
+//        q = p;
+//        p = p->nextpt;
+//        delete q;
+//    }
+//}
 
 struct orbits {
     double pcoord[3]; // startpoint
@@ -116,7 +155,30 @@ struct orbits {
         pcoord[1] = pc[1];
         pcoord[2] = pc[2];
     }
+    ~orbits()
+    {
+        if (firstpt != nullptr) {
+            delete firstpt;
+            firstpt = nullptr;
+        }
+        if (next != nullptr) {
+            delete next;
+            next = nullptr;
+        }
+    }
 };
+
+// delete a linked list of orbits
+// void deleteOrbits(orbits *p)
+//{
+//    orbits *q;
+//    while (p != nullptr) {
+//        q = p;
+//        p = p->next;
+//        deleteOrbitPoints(q->firstpt);
+//        delete q;
+//    }
+//}
 } // namespace p4orbits
 
 // -----------------------------------------------------------------------
@@ -139,6 +201,33 @@ struct curves { // NOTE: curveResult es identica, usarem aquesta
            p4orbits::orbits_points *_points)
         : r2{_r2}, u1{_u1}, u2{_u2}, v1{_v1}, v2{_v2}, c{_c}, points{_points}
     {
+    }
+    ~curves()
+    {
+        if (r2 != nullptr) {
+            delete r2;
+            r2 = nullptr;
+        }
+        if (u1 != nullptr) {
+            delete u1;
+            u1 = nullptr;
+        }
+        if (u2 != nullptr) {
+            delete u2;
+            u2 = nullptr;
+        }
+        if (v1 != nullptr) {
+            delete v1;
+            v1 = nullptr;
+        }
+        if (v2 != nullptr) {
+            delete v2;
+            v2 = nullptr;
+        }
+        if (c != nullptr) {
+            delete c;
+            c = nullptr;
+        }
     }
 };
 
@@ -176,12 +265,18 @@ struct transformations {
           d4{_d4}, d{_d}, next_trans{next}
     {
     }
+    ~transformations()
+    {
+        if (next_trans != nullptr) {
+            delete next_trans;
+            next_trans = nullptr;
+        }
+    }
 };
 
 struct blow_up_points {
     // number of transformations
     int n;
-    transformations *trans{nullptr};
     // last point that is not degenerate
     double x0, y0;
     // transformation matrix
@@ -194,6 +289,7 @@ struct blow_up_points {
     // end point sep in blow up chart
     double point[2];
 
+    transformations *trans{nullptr};
     // vector field
     p4polynom::term2 *vector_field[2]{nullptr, nullptr};
     // sep (t,g(t))
@@ -203,15 +299,16 @@ struct blow_up_points {
     blow_up_points *next_blow_up_point{nullptr};
 
     blow_up_points() {}
-    blow_up_points(int _n, transformations *tr, double _x0, double _y0,
-                   double _a11, double _a12, double _a21, double _a22, int ty,
-                   bool in, double po[2], p4polynom::term2 *ve[2] = nullptr,
+    blow_up_points(int _n, double _x0, double _y0, double _a11, double _a12,
+                   double _a21, double _a22, int ty, bool in, double po[2],
+                   transformations *tr = nullptr,
+                   p4polynom::term2 *ve[2] = nullptr,
                    p4polynom::term1 *se = nullptr,
                    p4orbits::orbits_points *fsp = nullptr,
                    p4orbits::orbits_points *lsp = nullptr,
                    blow_up_points *next = nullptr)
-        : n{_n}, trans{tr}, x0{_x0}, y0{_y0}, a11{_a11}, a12{_a12}, a21{_a21},
-          a22{_a22}, type{ty}, integrating_in_local_chart{in}, sep{se},
+        : n{_n}, x0{_x0}, y0{_y0}, a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22},
+          type{ty}, integrating_in_local_chart{in}, trans{tr}, sep{se},
           first_sep_point{fsp}, last_sep_point{lsp}, next_blow_up_point{next}
     {
         point[0] = po[0];
@@ -219,6 +316,29 @@ struct blow_up_points {
         if (ve != nullptr) {
             vector_field[0] = nullptr;
             vector_field[1] = nullptr;
+        }
+    }
+    ~blow_up_points()
+    {
+        if (trans != nullptr) {
+            delete trans;
+            trans = nullptr;
+        }
+        if (vector_field[0] != nullptr) {
+            delete vector_field[0];
+            vector_field[0] = nullptr;
+        }
+        if (vector_field[1] != nullptr) {
+            delete vector_field[1];
+            vector_field[1] = nullptr;
+        }
+        if (first_sep_point != nullptr) {
+            delete first_sep_point;
+            first_sep_point = nullptr;
+        }
+        if (next_blow_up_point != nullptr) {
+            delete next_blow_up_point;
+            next_blow_up_point = nullptr;
         }
     }
 };
@@ -244,9 +364,26 @@ struct sep {
           last_sep_point{lsp}, separatrice{se}, next_sep{next}
     {
     }
+    ~sep()
+    {
+        if (first_sep_point != nullptr) {
+            delete first_sep_point;
+            first_sep_point = nullptr;
+        }
+        if (separatrice != nullptr) {
+            delete separatrice;
+            separatrice = nullptr;
+        }
+        if (next_sep != nullptr) {
+            delete next_sep;
+            next_sep = nullptr;
+        }
+    }
 };
 } // namespace p4blowup
 
+namespace p4singularities
+{
 // -----------------------------------------------------------------------
 //                          Singularities
 // -----------------------------------------------------------------------
@@ -254,31 +391,25 @@ struct sep {
 // in a piecewise system, singularities may coincide along the bifurcation
 // lines.  In that case, we mark the singularity in a different way.
 // Of course, on screen it need only be marked once and not several times.
+enum {
+    position_virtual = 0,            // virtual singularity
+    position_standalone = 1,         // stand-alone singularity
+    position_coinciding_main = 2,    // singularity coincides and will be drawn
+    position_coinciding_virtual = 3, // is a virtual singularity, but coincides
+                                     // with a real one so do not plot at all
+    position_coinciding = 4 // singularity coincides, but is already drawn
+};
 
-#define POSITION_VIRTUAL 0         // virtual singularity
-#define POSITION_STANDALONE 1      // stand-alone singularity
-#define POSITION_COINCIDING_MAIN 2 // singularity coincides and will be drawn
-
-#define POSITION_COINCIDING_VIRTUAL                                            \
-    3 // is a virtual singularity, but coincides with a real one so do not plot
-      // at all
-#define POSITION_COINCIDING 4 // singularity coincides, but is already drawn
-
-namespace p4singularities
-{
 // part of the structure that is the same for all types
 struct genericsingularity {
     double x0;
     double y0;
-    // struct genericsingularity *next;
     int chart;
-    int position; // POSITION_ constants
-    genericsingularity *next;
+    int position; // position_ constants
 
     genericsingularity() {}
-    genericsingularity(double _x0, double _y0, int ch, int po,
-                       genericsingularity *n = nullptr)
-        : x0{_x0}, y0{_y0}, chart{ch}, position{po}, next{n}
+    genericsingularity(double _x0, double _y0, int ch, int po)
+        : x0{_x0}, y0{_y0}, chart{ch}, position{po}
     {
     }
 };
@@ -294,17 +425,35 @@ struct saddle : genericsingularity {
 
     saddle() {}
     saddle(double _x0, double _y0, int ch, int po, double ep, bool no,
-
            double _a11, double _a12, double _a21, double _a22,
            p4blowup::sep *se = nullptr, p4polynom::term2 *ve[2] = nullptr,
            saddle *next = nullptr)
-        : genericsingularity(_x0, _y0, ch, po, next), epsilon{ep},
-          notadummy{no}, a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22},
-          separatrices{se}, next_saddle{next}
+        : genericsingularity(_x0, _y0, ch, po), epsilon{ep}, notadummy{no},
+          a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22}, separatrices{se},
+          next_saddle{next}
     {
         if (ve != nullptr) {
             vector_field[0] = ve[0];
             vector_field[1] = ve[1];
+        }
+    }
+    ~saddle()
+    {
+        if (separatrices != nullptr) {
+            delete separatrices;
+            separatrices = nullptr;
+        }
+        if (vector_field[0] != nullptr) {
+            delete vector_field[0];
+            vector_field[0] = nullptr;
+        }
+        if (vector_field[1] != nullptr) {
+            delete vector_field[1];
+            vector_field[1] = nullptr;
+        }
+        if (next_saddle != nullptr) {
+            delete next_saddle;
+            next_saddle = nullptr;
         }
     }
 };
@@ -326,13 +475,32 @@ struct semi_elementary : genericsingularity {
                     p4blowup::sep *se = nullptr,
                     p4polynom::term2 *vf[2] = nullptr,
                     semi_elementary *next = nullptr)
-        : genericsingularity(_x0, _y0, ch, po, next), epsilon{ep},
-          notadummy{no}, a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22}, type{ty},
+        : genericsingularity(_x0, _y0, ch, po), epsilon{ep}, notadummy{no},
+          a11{_a11}, a12{_a12}, a21{_a21}, a22{_a22}, type{ty},
           separatrices{se}, next_se{next}
     {
         if (vf != nullptr) {
             vector_field[0] = vf[0];
             vector_field[1] = vf[1];
+        }
+    }
+    ~semi_elementary()
+    {
+        if (separatrices != nullptr) {
+            delete separatrices;
+            separatrices = nullptr;
+        }
+        if (vector_field[0] != nullptr) {
+            delete vector_field[0];
+            vector_field[0] = nullptr;
+        }
+        if (vector_field[1] != nullptr) {
+            delete vector_field[1];
+            vector_field[1] = nullptr;
+        }
+        if (next_se != nullptr) {
+            delete next_se;
+            next_se = nullptr;
         }
     }
 };
@@ -352,84 +520,75 @@ struct degenerate : genericsingularity {
           blow_up{bl}, next_de{next}
     {
     }
+    ~degenerate()
+    {
+        if (blow_up != nullptr) {
+            delete blow_up;
+            blow_up = nullptr;
+        }
+        if (next_de != nullptr) {
+            delete next_de;
+            next_de = nullptr;
+        }
+    }
 };
 
 struct node : genericsingularity {
     int stable;
+    node *next_node;
 
     node() {}
-    node(double _x0, double _y0, int ch, int po, int st)
-        : genericsingularity(_x0, _y0, ch, po), stable{st}
+    node(double _x0, double _y0, int ch, int po, int st, node *next = nullptr)
+        : genericsingularity(_x0, _y0, ch, po), stable{st}, next_node{next}
     {
+    }
+    ~node()
+    {
+        if (next_node != nullptr) {
+            delete next_node;
+            next_node = nullptr;
+        }
     }
 };
 
 struct strong_focus : genericsingularity {
     int stable;
+    strong_focus *next_sf;
 
     strong_focus() {}
-    strong_focus(double _x0, double _y0, int ch, int po, int st)
-        : genericsingularity(_x0, _y0, ch, po), stable{st}
+    strong_focus(double _x0, double _y0, int ch, int po, int st,
+                 strong_focus *next = nullptr)
+        : genericsingularity(_x0, _y0, ch, po), stable{st}, next_sf{next}
     {
+    }
+    ~strong_focus()
+    {
+        if (next_sf != nullptr) {
+            delete next_sf;
+            next_sf = nullptr;
+        }
     }
 };
 
 struct weak_focus : genericsingularity {
     int type;
+    weak_focus *next_wf;
 
     weak_focus() {}
-    weak_focus(double _x0, double _y0, int ch, int po, int ty)
-        : genericsingularity(_x0, _y0, ch, po), type{ty}
+    weak_focus(double _x0, double _y0, int ch, int po, int ty,
+               weak_focus *next = nullptr)
+        : genericsingularity(_x0, _y0, ch, po), type{ty}, next_wf{next}
     {
+    }
+    ~weak_focus()
+    {
+        if (next_wf != nullptr) {
+            delete next_wf;
+            next_wf = nullptr;
+        }
     }
 };
 } // namespace p4singularities
-// -----------------------------------------------------------------------
-//                          Some definitions
-// -----------------------------------------------------------------------
-
-#define CHART_R2 0
-#define CHART_U1 1
-#define CHART_U2 2
-#define CHART_V1 3
-#define CHART_V2 4
-
-#define SADDLE 1
-#define NODE 2
-#define WEAK_FOCUS 3
-#define STRONG_FOCUS 4
-#define SEMI_HYPERBOLIC 5
-#define NON_ELEMENTARY 6
-
-#define STYPE_UNSTABLE (1) // separatrice type
-#define STYPE_STABLE (-1)
-#define STYPE_CENUNSTABLE 2
-#define STYPE_CENSTABLE (-2)
-#define STYPE_ORBIT 3
-
-#define SINGTYPE_UNSTABLE STYPE_UNSTABLE
-#define SINGTYPE_STABLE STYPE_STABLE
-#define SINGTYPE_CENTER 4
-
-#define SETYPE_SADDLENODE_UNSTABSEP 1
-#define SETYPE_SADDLENODE_UNSTABSEP2 2
-
-#define OT_STABLE STYPE_STABLE
-#define OT_UNSTABLE STYPE_UNSTABLE
-#define OT_CENT_STABLE STYPE_CENSTABLE
-#define OT_CENT_UNSTABLE STYPE_CENUNSTABLE
-#define OT_ORBIT STYPE_ORBIT
-
-enum TYPEOFVIEWS {
-    TYPEOFVIEW_PLANE = 0,
-    TYPEOFVIEW_SPHERE = 1,
-    TYPEOFVIEW_U1 = 2,
-    TYPEOFVIEW_U2 = 3,
-    TYPEOFVIEW_V1 = 4,
-    TYPEOFVIEW_V2 = 5,
-    TYPEOFVIEW_U1U2 = 6,
-    TYPEOFVIEW_V1V2 = 7
-};
 
 namespace p4curveRegions
 {
@@ -438,56 +597,24 @@ struct vfRegionResult {
     int vfIndex; // which vector field
     std::vector<int> signs;
     vfRegionResult() {}
-    vfRegionResult(int vf, std::vector<int> si) : vfIndex{vf}, signs{si} {}
+    vfRegionResult(int vf, std::vector<int> si)
+        : vfIndex{vf}, signs{std::move(si)}
+    {
+    }
 };
 // TODO: podria ser redundant amb p4VFStudyRegions::curveRegion
 struct curveRegionResult {
     int curveIndex; // which curve are we talking about
     std::vector<int> signs;
     curveRegionResult() {}
-    curveRegionResult(int cu, std::vector<int> si) : curveIndex{cu}, signs{si}
+    curveRegionResult(int cu, std::vector<int> si)
+        : curveIndex{cu}, signs{std::move(si)}
     {
     }
 };
 
-// FIXME: canviar tots els CURVERESULT per p4curves::curve
-/*struct curveResult {
-    std::vector<p4polynom::term2> sep;
-    std::vector<p4polynom::term2> sep_U1;
-    std::vector<p4polynom::term2> sep_U2;
-    std::vector<p4polynom::term2> sep_V1;
-    std::vector<p4polynom::term2> sep_V2;
-    std::vector<p4polynom::term3> sep_C;
-    std::vector<p4orbits::orbits_points> sep_points;
-
-    curveResult() {}
-    curveResult(std::vector<p4polynom::term2> _sep,
-                std::vector<p4polynom::term2> _sep_U1,
-                std::vector<p4polynom::term2> _sep_U2,
-                std::vector<p4polynom::term2> _sep_V1,
-                std::vector<p4polynom::term2> _sep_V2,
-                std::vector<p4polynom::term3> _sep_C,
-                std::vector<p4orbits::orbits_points> _sep_points)
-        : sep(_sep), sep_U1(_sep_U1), sep_U2(_sep_U2), sep_V1(_sep_V1),
-          sep_V2(_sep_V2), sep_C(_sep_C), sep_points(_sep_points)
-    {
-    }
-    ~curveResult()
-    {
-        sep.clear();
-        sep_U1.clear();
-        sep_U2.clear();
-        sep_V1.clear();
-        sep_V2.clear();
-        sep_C.clear();
-        sep_points.clear();
-    }
-};*/
 } // namespace p4curveRegions
 
 #define DUMP(x) m->append(s.sprintf x);
 #define DUMPSTR(x) m->append(x);
 #define MATHFUNC(function) (*(gVFResults.function))
-
-#define LINESTYLE_DASHES 1
-#define LINESTYLE_POINTS 0

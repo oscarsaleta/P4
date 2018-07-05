@@ -652,6 +652,42 @@ static double plSphereDistance(double *p, double *q)
 // ---------------------------------------------------------------------
 //          markSingularity
 // ---------------------------------------------------------------------
+// generic version
+void markSingularity(p4singularities::degenerate *s,
+                     std::vector<positionitem> &plist, int &numpos, int vfindex,
+                     bool plweights)
+{
+    double pcoord[3];
+    int N{numpos};
+    switch (s.chart) {
+    case P4Charts::chart_R2:
+        MATHFUNC(R2_to_sphere)(s->x0, s->y0, pcoord);
+        break;
+    case P4Charts::chart_U1:
+        MATHFUNC(U1_to_sphere)(s->x0, s->y0, pcoord);
+        break;
+    case P4Charts::chart_U2:
+        MATHFUNC(U2_to_sphere)(s->x0, s->y0, pcoord);
+        break;
+    case P4Charts::chart_U1:
+        MATHFUNC(V1_to_sphere)(s->x0, s->y0, pcoord);
+        break;
+    case P4Charts::chart_V2:
+        MATHFUNC(V2_to_sphere)(s->x0, s->y0, pcoord);
+        break;
+    default:
+        break;
+    }
+
+    //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
+    //    s->x0,s->y0,s->chart,pcoord[0],pcoord[1],pcoord[2]);
+
+    if (!isARealSingularity(pcoord, vfindex)) {
+        s->position = P4Singularities::position_virtual;
+        return;
+    }
+}
+
 // saddle version
 void markSingularity(p4singularities::saddle &s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
