@@ -47,14 +47,14 @@ extern void (*select_next_sep)(P4Sphere *);
 
 void plot_all_sep(P4Sphere *spherewnd);
 void draw_sep(P4Sphere *spherewnd,
-              const std::vector<P4Orbits::orbits_points> &sep);
+              P4Orbits::orbits_points *sep);
 void draw_selected_sep(P4Sphere *spherewnd,
-                       const std::vector<P4Orbits::orbits_points> &sep,
+                       P4Orbits::orbits_points *sep,
                        int color);
 
-int findSepColor2(const std::vector<P4Polynom::term2> &f, int type,
+int findSepColor2(P4Polynom::term2 *f, int type,
                   double y[2]);
-int findSepColor3(const std::vector<P4Polynom::term3> &f, int type,
+int findSepColor3(P4Polynom::term3 *f, int type,
                   double y[2]);
 
 void integrate_poincare_sep(double p0, double p1, double p2, double *pcoord,
@@ -64,10 +64,10 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
                             double &hhi, int &type, int &color, int &dashes,
                             int &dir, double h_min, double h_max);
 
-std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
+P4Orbits::orbits_points *integrate_sep(P4Sphere *spherewnd,
                                                    double pcoord[3],
                                                    double step, int dir,
-                                                   int type, int points_to_int);
+                                                   int type, int points_to_int, P4Orbits::orbits_points **orbit);
 
 int change_type(int type);
 

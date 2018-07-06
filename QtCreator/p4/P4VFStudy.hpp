@@ -44,18 +44,12 @@ class P4VFStudy : public QObject
 
     // vector field in various charts
     // FIXME arreglar tots els llocs on s'usen
-    std::vector<P4Polynom::term2> f_vec_field_0_;
-    std::vector<P4Polynom::term2> f_vec_field_1_;
-    std::vector<P4Polynom::term2> vec_field_U1_0_;
-    std::vector<P4Polynom::term2> vec_field_U1_1_;
-    std::vector<P4Polynom::term2> vec_field_U2_0_;
-    std::vector<P4Polynom::term2> vec_field_U2_1_;
-    std::vector<P4Polynom::term2> vec_field_V1_0_;
-    std::vector<P4Polynom::term2> vec_field_V1_1_;
-    std::vector<P4Polynom::term2> vec_field_V2_0_;
-    std::vector<P4Polynom::term2> vec_field_V2_1_;
-    std::vector<P4Polynom::term3> vec_field_C_0_;
-    std::vector<P4Polynom::term3> vec_field_C_1_;
+    P4Polynom::term2 *f_vec_field_[2];
+    P4Polynom::term2 *vec_field_U1_[2];
+    P4Polynom::term2 *vec_field_U2_[2];
+    P4Polynom::term2 *vec_field_V1_[2];
+    P4Polynom::term2 *vec_field_V2_[2];
+    P4Polynom::term3 *vec_field_C_[2];
 
     // singular points and their properties:
     P4Singularities::saddle *firstSaddlePoint_;
@@ -66,13 +60,13 @@ class P4VFStudy : public QObject
     P4Singularities::degenerate *firstDePoint_;
 
     // Greatest common factor if present:
-    std::vector<P4Polynom::term2> gcf_;
-    std::vector<P4Polynom::term2> gcf_U1_;
-    std::vector<P4Polynom::term2> gcf_U2_;
-    std::vector<P4Polynom::term2> gcf_V1_;
-    std::vector<P4Polynom::term2> gcf_V2_;
-    std::vector<P4Polynom::term3> gcf_C_;
-    std::vector<P4Orbits::orbits_points> gcf_points_;
+    P4Polynom::term2 *gcf_;
+    P4Polynom::term2 *gcf_U1_;
+    P4Polynom::term2 *gcf_U2_;
+    P4Polynom::term2 *gcf_V1_;
+    P4Polynom::term2 *gcf_V2_;
+    P4Polynom::term3 *gcf_C_;
+    P4Orbits::orbits_points *gcf_points_;
 
     // isoclines
     std::vector<P4Curves::isoclines> isocline_vector_;

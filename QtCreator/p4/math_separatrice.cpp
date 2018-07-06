@@ -53,22 +53,22 @@ void (*select_next_sep)(P4Sphere *) = nullptr;
 // of this common factor to determine the plot color of the separatrice.
 //
 // The point y is a point in one of the charts.
-int findSepColor2(const std::vector<P4Polynom::term2> &f, int type, double y[2])
+int findSepColor2(P4Polynom::term2 *f, int type, double y[2])
 {
     int color;
 
     if (eval_term2(f, y) >= 0) {
         switch (type) {
-        case OT_STABLE:
+        case P4OrbitType::ot_stable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case OT_UNSTABLE:
+        case P4OrbitType::ot_unstable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case OT_CENT_STABLE:
+        case P4OrbitType::ot_cent_stable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
-        case OT_CENT_UNSTABLE:
+        case P4OrbitType::ot_cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         default:
@@ -77,16 +77,16 @@ int findSepColor2(const std::vector<P4Polynom::term2> &f, int type, double y[2])
         }
     } else {
         switch (type) {
-        case OT_STABLE:
+        case P4OrbitType::ot_stable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case OT_UNSTABLE:
+        case P4OrbitType::ot_unstable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case OT_CENT_STABLE:
+        case P4OrbitType::ot_cent_stable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
-        case OT_CENT_UNSTABLE:
+        case P4OrbitType::ot_cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         default:
@@ -97,22 +97,22 @@ int findSepColor2(const std::vector<P4Polynom::term2> &f, int type, double y[2])
     return (color);
 }
 
-int findSepColor3(const std::vector<P4Polynom::term3> &f, int type, double y[2])
+int findSepColor3(P4Polynom::term3 *f, int type, double y[2])
 {
     int color;
 
     if (eval_term3(f, y) >= 0) {
         switch (type) {
-        case OT_STABLE:
+        case P4OrbitType::ot_stable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case OT_UNSTABLE:
+        case P4OrbitType::ot_unstable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case OT_CENT_STABLE:
+        case P4OrbitType::ot_cent_stable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
-        case OT_CENT_UNSTABLE:
+        case P4OrbitType::ot_cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         default:
@@ -121,16 +121,16 @@ int findSepColor3(const std::vector<P4Polynom::term3> &f, int type, double y[2])
         }
     } else {
         switch (type) {
-        case OT_STABLE:
+        case P4OrbitType::ot_stable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case OT_UNSTABLE:
+        case P4OrbitType::ot_unstable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case OT_CENT_STABLE:
+        case P4OrbitType::ot_cent_stable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
-        case OT_CENT_UNSTABLE:
+        case P4OrbitType::ot_cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         default:
@@ -154,17 +154,17 @@ int change_type(int type)
     int t;
 
     switch (type) {
-    case OT_STABLE:
-        t = OT_UNSTABLE;
+    case P4OrbitType::ot_stable:
+        t = P4OrbitType::ot_unstable;
         break;
-    case OT_UNSTABLE:
-        t = OT_STABLE;
+    case P4OrbitType::ot_unstable:
+        t = P4OrbitType::ot_stable;
         break;
-    case OT_CENT_STABLE:
-        t = OT_CENT_UNSTABLE;
+    case P4OrbitType::ot_cent_stable:
+        t = P4OrbitType::ot_cent_unstable;
         break;
-    case OT_CENT_UNSTABLE:
-        t = OT_CENT_STABLE;
+    case P4OrbitType::ot_cent_unstable:
+        t = P4OrbitType::ot_cent_stable;
         break;
     case OT_ORBIT:
         t = OT_ORBIT;
@@ -458,18 +458,17 @@ void integrate_lyapunov_sep(double p0, double p1, double p2, double *pcoord,
 // result is valid before operating on it.
 //
 // The vector field vfK need not be prepared
-std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
-                                                   double pcoord[3],
-                                                   double step, int dir,
-                                                   int type, int points_to_int)
+P4Orbits::orbits_points *integrate_sep(P4Sphere *spherewnd, double pcoord[3],
+                                       double step, int dir, int type,
+                                       int points_to_int,
+                                       P4Orbits::orbits_points **orbit)
 {
     int i, d, h;
     int color, dashes;
     double hhi;
     double pcoord2[3];
     double h_min{gVFResults.config_hmi_}, h_max{gVFResults.config_hma_};
-    P4Orbits::orbits_points last_orbit;
-    std::vector<P4Orbits::orbits_points> orbit_result;
+    P4Orbits::orbits_points *first_orbit{nullptr}, *last_orbit{nullptr};
 
     /* if we intergrate a separatrice and use the original vector field
     then it is possible that we have to change the direction of the
@@ -477,7 +476,7 @@ std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
     vector field
     */
     if (!prepareVfForIntegration(pcoord))
-        return {};
+        return nullptr;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
         MATHFUNC(change_dir)(pcoord))
@@ -494,16 +493,19 @@ std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
         if ((i % UPDATEFREQ_STEPSIZE) == 0)
             set_current_step(fabs(hhi));
 
-        if (orbit_result.empty())
+        if (last_orbit == nullptr) {
             h = dir;
-        else
-            h = orbit_result.back().dir;
-
-        copy_x_into_y(pcoord, last_orbit.pcoord);
-        last_orbit.color = color;
-        last_orbit.dashes = dashes && gVFResults.config_dashes_;
-        last_orbit.dir = d * h;
-        last_orbit.type = type;
+            first_orbit = new P4Orbits::orbits_points{
+                color, pcoord, dashes && gVFResults.config_dashes_, d * h,
+                type};
+            last_orbit = first_orbit;
+        } else {
+            h = last_orbit->dir;
+            last_orbit->nextpt = new P4Orbits::orbits_points{
+                color, pcoord, dashes && gVFResults.config_dashes_, d * h,
+                type};
+            last_orbit = last_orbit->nextpt;
+        }
 
         if (dashes && gVFResults.config_dashes_)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
@@ -511,13 +513,14 @@ std::vector<P4Orbits::orbits_points> integrate_sep(P4Sphere *spherewnd,
             (*plot_p)(spherewnd, pcoord, color);
         copy_x_into_y(pcoord, pcoord2);
 
-        orbit_result.push_back(std::move(last_orbit));
-
         if (!prepareVfForIntegration(pcoord))
             break;
     }
     set_current_step(fabs(hhi));
-    return orbit_result;
+
+    if (first_orbit != nullptr)
+        *orbit = last_orbit;
+    return first_orbit;
 }
 
 // ---------------------------------------------------------------------------
@@ -688,17 +691,17 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
     copy_x_into_y(pcoord, new_orbit.pcoord);
     type = sep1.type;
     switch (sep1.type) {
-    case OT_STABLE:
-        dir = OT_STABLE;
+    case P4OrbitType::ot_stable:
+        dir = P4OrbitType::ot_stable;
         break;
-    case OT_UNSTABLE:
-        dir = OT_UNSTABLE;
+    case P4OrbitType::ot_unstable:
+        dir = P4OrbitType::ot_unstable;
         break;
-    case OT_CENT_STABLE:
-        dir = OT_STABLE;
+    case P4OrbitType::ot_cent_stable:
+        dir = P4OrbitType::ot_stable;
         break;
-    case OT_CENT_UNSTABLE:
-        dir = OT_UNSTABLE;
+    case P4OrbitType::ot_cent_unstable:
+        dir = P4OrbitType::ot_unstable;
         break;
     default:
         dir = 0;
@@ -900,9 +903,10 @@ void plot_all_sep(P4Sphere *spherewnd)
 {
     if (!gVFResults.vf_.empty()) {
         for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
-            plot_all_saddle_sep(spherewnd, i, gVFResults.vf_[i]->saddlePoints_);
-            plot_all_se_sep(spherewnd, i, gVFResults.vf_[i]->sePoints_);
-            plot_all_de_sep(spherewnd, i, gVFResults.vf_[i]->dePoints_);
+            plot_all_saddle_sep(spherewnd, i,
+                                gVFResults.vf_[i]->firstSaddlePoint_);
+            plot_all_se_sep(spherewnd, i, gVFResults.vf_[i]->firstSePoint_);
+            plot_all_de_sep(spherewnd, i, gVFResults.vf_[i]->firstDePoint_);
         }
     }
 }
@@ -912,19 +916,17 @@ void plot_all_sep(P4Sphere *spherewnd)
 // ---------------------------------------------------------------------------
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in the color according to the type and stability.
-void draw_sep(P4Sphere *spherewnd,
-              const std::vector<P4Orbits::orbits_points> &sep)
+void draw_sep(P4Sphere *spherewnd, P4Orbits::orbits_points *sep)
 {
     double pcoord[3];
 
-    if (!sep.empty()) {
-        for (auto const &it : sep) {
-            if (it.dashes)
-                (*plot_l)(spherewnd, it.pcoord, pcoord, it.color);
-            else
-                (*plot_p)(spherewnd, it.pcoord, it.color);
-            copy_x_into_y(it.pcoord, pcoord);
-        }
+    while (sep != nullptr) {
+        if (sep->dashes)
+            (*plot_l)(spherewnd, sep->pcoord, pcoord, sep->color);
+        else
+            (*plot_p)(spherewnd, sep->pcoord, sep->color);
+        copy_x_into_y(sep->pcoord, pcoord);
+        sep = sep->nextpt;
     }
 }
 
@@ -933,19 +935,17 @@ void draw_sep(P4Sphere *spherewnd,
 // ---------------------------------------------------------------------------
 // Does the plotting of a separatrix that was previously calculated.
 // The separatrix is plotted in a specified color.
-void draw_selected_sep(P4Sphere *spherewnd,
-                       const std::vector<P4Orbits::orbits_points> &sep,
+void draw_selected_sep(P4Sphere *spherewnd, P4Orbits::orbits_points *sep,
                        int color)
 {
     double pcoord[3];
-    qDebug() << "sep is size" << sep.size();
-    if (!sep.empty()) {
-        for (auto const &it : sep) {
-            if (it.dashes)
-                (*plot_l)(spherewnd, it.pcoord, pcoord, color);
-            else
-                (*plot_p)(spherewnd, it.pcoord, color);
-            copy_x_into_y(it.pcoord, pcoord);
-        }
+
+    while (sep != nullptr) {
+        if (sep->dashes)
+            (*plot_l)(spherewnd, sep->pcoord, pcoord, color);
+        else
+            (*plot_p)(spherewnd, sep->pcoord, color);
+        copy_x_into_y(sep->pcoord, pcoord);
+        sep = sep->nextpt;
     }
 }

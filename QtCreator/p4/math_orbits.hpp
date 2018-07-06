@@ -45,7 +45,7 @@ integrate_orbit(P4Sphere *spherewnd, double pcoord[3], double step, int dir,
                 int color, int points_to_int);
 
 void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
-               const std::vector<P4Orbits::orbits_points> &points, int color);
+               P4Orbits::orbits_points *points, int color);
 
 bool startOrbit(P4Sphere *sphere, double x, double y, bool R);
 

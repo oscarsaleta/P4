@@ -25,13 +25,16 @@
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4VFStudy.hpp"
 #include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
 #include "structures.hpp"
+
+// global variables
+P4Orbits::orbits_points *gLastGcfPoint{nullptr};
 
 // static global variables
 static int sGcfTask{EVAL_GCF_NONE};
@@ -51,10 +54,11 @@ bool evalGcfStart(P4Sphere *sp, int dashes, int precision, int points)
 {
     sp->prepareDrawing();
     for (unsigned int r = 0; r < gThisVF->numVF_; r++) {
-        if (!gVFResults.vf_[r]->gcf_points_.empty()) {
-            draw_gcf(sp, gVFResults.vf_[r]->gcf_points_, P4ColourSettings::colour_background,
-                     sGcfDashes);
-            gVFResults.vf_[r]->gcf_points_.clear();
+        if (gVFResults.vf_[r]->gcf_points_ != nullptr) {
+            draw_gcf(sp, gVFResults.vf_[r]->gcf_points_,
+                     P4ColourSettings::colour_background, sGcfDashes);
+            delete gVFResults.vf_[r]->gcf_points_;
+            gVFResults.vf_[r]->gcf_points_ = nullptr;
         }
     }
     sp->finishDrawing();
@@ -87,7 +91,7 @@ bool evalGcfContinue(int precision, int points)
         while (1) {
             if (++sGcfVfIndex >= gThisVF->numVF_)
                 break;
-            if (!gVFResults.vf_[sGcfVfIndex]->gcf_.empty())
+            if (gVFResults.vf_[sGcfVfIndex]->gcf_ != nullptr)
                 break;
         }
         if (sGcfVfIndex >= gThisVF->numVF_)
@@ -115,9 +119,9 @@ bool evalGcfFinish() // return false in case an error occured
             gThisVF->resampleGcf(index);
         sGcfSphere->prepareDrawing();
         for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
-            if (!gVFResults.vf_[index]->gcf_points_.empty())
-                draw_gcf(sGcfSphere, gVFResults.vf_[index]->gcf_points_, P4ColourSettings::colour_curve_singularities,
-                         1);
+            if (gVFResults.vf_[index]->gcf_points_ != nullptr)
+                draw_gcf(sGcfSphere, gVFResults.vf_[index]->gcf_points_,
+                         P4ColourSettings::colour_curve_singularities, 1);
         }
         sGcfSphere->finishDrawing();
 
@@ -135,7 +139,7 @@ bool runTask(int task, int precision, int points, unsigned int index)
 {
     bool value;
 
-    while (!gVFResults.vf_[index]->gcf_.empty()) {
+    while (gVFResults.vf_[index]->gcf_ == nullptr) {
         if (++index == gThisVF->numVF_)
             return false;
     }
@@ -236,18 +240,18 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_gcf(P4Sphere *spherewnd,
-              const std::vector<P4Orbits::orbits_points> &sep, int color,
+void draw_gcf(P4Sphere *spherewnd, P4Orbits::orbits_points *sep, int color,
               int dashes)
 {
     double pcoord[3];
 
-    for (auto const &it : sep) {
-        if (it.dashes && dashes)
-            (*plot_l)(spherewnd, pcoord, it.pcoord, color);
+    while (sep != nullptr) {
+        if (sep->dashes && dashes)
+            (*plot_l)(spherewnd, pcoord, sep->pcoord, color);
         else
-            (*plot_p)(spherewnd, it.pcoord, color);
-        copy_x_into_y(it.pcoord, pcoord);
+            (*plot_p)(spherewnd, sep->pcoord, color);
+        copy_x_into_y(sep->pcoord, pcoord);
+        sep = sep->nextpt;
     }
 }
 
@@ -256,8 +260,15 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes,
 {
     double pcoord[3]{x0, y0, z0};
 
-    gVFResults.vf_[index]->gcf_points_.emplace_back(P4ColourSettings::colour_curve_singularities, pcoord, dashes, 0,
-                                                    0);
+    if (gVFResults.vf_[index]->gcf_points_ != nullptr) {
+        gLastGcfPoint->nextpt = new P4Orbits::orbits_points{
+            P4ColourSettings::colour_curve_singularities, pcoord, dashes, 0, 0};
+        gLastGcfPoint = gLastGcfPoint->nextpt;
+    } else {
+        gLastGcfPoint = new P4Orbits::orbits_points{
+            P4ColourSettings::colour_curve_singularities, pcoord, dashes, 0, 0};
+        gVFResults.vf_[index]->gcf_points_ = gLastGcfPoint;
+    }
 }
 
 static bool read_gcf(void (*chart)(double, double, double *), int index)

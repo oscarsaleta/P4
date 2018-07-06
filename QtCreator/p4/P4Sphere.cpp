@@ -280,7 +280,7 @@ void P4Sphere::setupPlot()
     QPalette palette;
 
     spherebgcolor_ = P4ColourSettings::colour_background;
-    palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_));
+    palette.setColor(backgroundRole(), P4Colours::p4XfigColour(spherebgcolor_));
     setPalette(palette);
 
     circleAtInfinity_.clear();
@@ -502,9 +502,9 @@ void P4Sphere::adjustToNewSize()
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(P4ColourSettings::colour_background)));
+                       QColor(P4Colours::p4XfigColour(P4ColourSettings::colour_background)));
 
-        paint.setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
+        paint.setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
         staticPainter_ = &paint;
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
@@ -527,7 +527,7 @@ void P4Sphere::adjustToNewSize()
         //      DrawLimitCycles(this);
         plotPoints();
 
-        QColor c{QXFIGCOLOR(WHITE)};
+        QColor c{P4Colours::p4XfigColour(WHITE)};
         c.setAlpha(128);
         paint.setPen(c);
         paint.drawText(0, 0, width(), height(),
@@ -579,9 +579,9 @@ void P4Sphere::paintEvent(QPaintEvent *p)
         // qDebug() << "creating new QPainter from QPixmap painterCache_...";
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(P4ColourSettings::colour_background)));
+                       QColor(P4Colours::p4XfigColour(P4ColourSettings::colour_background)));
 
-        paint.setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
+        paint.setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
@@ -614,7 +614,7 @@ void P4Sphere::paintEvent(QPaintEvent *p)
     widgetpaint.drawPixmap(0, 0, *painterCache_);
 
     if (selectingPointStep_ != 0) {
-        widgetpaint.setPen(QXFIGCOLOR(WHITE));
+        widgetpaint.setPen(P4Colours::p4XfigColour(WHITE));
         widgetpaint.setBrush(Qt::NoBrush);
         widgetpaint.drawEllipse(selectingX_ - selectingPointRadius_,
                                 selectingY_ - selectingPointRadius_,
@@ -647,9 +647,9 @@ void P4Sphere::markSelection(int x1, int y1, int x2, int y2, int selectiontype)
 
     switch (selectiontype) {
     case 0:
-        c = QXFIGCOLOR(WHITE);
+        c = P4Colours::p4XfigColour(WHITE);
         c.setAlpha(32);
-        p.setPen(QXFIGCOLOR(WHITE));
+        p.setPen(P4Colours::p4XfigColour(WHITE));
         p.setBrush(c);
         if (bx1 == bx2 || by1 == by2)
             p.drawLine(bx1, by1, bx2, by2);
@@ -658,7 +658,7 @@ void P4Sphere::markSelection(int x1, int y1, int x2, int y2, int selectiontype)
         break;
 
     case 1:
-        p.setPen(QXFIGCOLOR(WHITE));
+        p.setPen(P4Colours::p4XfigColour(WHITE));
         p.drawLine(x1, y1, x2, y2);
         break;
     }
@@ -1665,7 +1665,7 @@ void P4Sphere::plotPoincareSphere()
     // qDebug() << "plot poincare sphere";
     int color{P4ColourSettings::colour_line_at_infinity};
 
-    staticPainter_->setPen(QXFIGCOLOR(color));
+    staticPainter_->setPen(P4Colours::p4XfigColour(color));
     for (auto const &it : circleAtInfinity_) {
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
@@ -1677,7 +1677,7 @@ void P4Sphere::plotPoincareLyapunovSphere()
     // qDebug() << "plot poincare-lyapunov sphere";
     int color{P4ColourSettings::colour_line_at_infinity};
 
-    staticPainter_->setPen(QXFIGCOLOR(color));
+    staticPainter_->setPen(P4Colours::p4XfigColour(color));
     for (auto const &it : circleAtInfinity_) {
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
@@ -1697,14 +1697,14 @@ void P4Sphere::plotLineAtInfinity()
     case TYPEOFVIEW_U1:
     case TYPEOFVIEW_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
+            staticPainter_->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(coWinX(0.0), 0, coWinX(0.0), h_ - 1);
         }
         break;
     case TYPEOFVIEW_U2:
     case TYPEOFVIEW_V2:
         if (y0_ < 0.0 && y1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(P4ColourSettings::colour_line_at_infinity));
+            staticPainter_->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(0, coWinY(0.0), w_ - 1, coWinY(0.0));
         }
 
@@ -1749,7 +1749,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
                 if (paintedYMax_ < wy2)
                     paintedYMax_ = wy2;
 
-                staticPainter_->setPen(QXFIGCOLOR(color));
+                staticPainter_->setPen(P4Colours::p4XfigColour(color));
                 staticPainter_->drawLine(wx1, wy1, wx2, wy2);
             } else {
                 // only (x2,y2) is not visible
@@ -1760,7 +1760,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
                     wy1 = coWinY(y1);
                     wx2 = coWinX(x2);
                     wy2 = coWinY(y2);
-                    staticPainter_->setPen(QXFIGCOLOR(color));
+                    staticPainter_->setPen(P4Colours::p4XfigColour(color));
 
                     if (paintedXMin_ > wx1)
                         paintedXMin_ = wx1;
@@ -1792,7 +1792,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
                     wy1 = coWinY(y1);
                     wx2 = coWinX(x2);
                     wy2 = coWinY(y2);
-                    staticPainter_->setPen(QXFIGCOLOR(color));
+                    staticPainter_->setPen(P4Colours::p4XfigColour(color));
 
                     if (paintedXMin_ > wx1)
                         paintedXMin_ = wx1;
@@ -1822,7 +1822,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
                     wy1 = coWinY(y1);
                     wx2 = coWinX(x2);
                     wy2 = coWinY(y2);
-                    staticPainter_->setPen(QXFIGCOLOR(color));
+                    staticPainter_->setPen(P4Colours::p4XfigColour(color));
 
                     if (paintedXMin_ > wx1)
                         paintedXMin_ = wx1;
@@ -1854,7 +1854,7 @@ void P4Sphere::drawPoint(double x, double y, int color)
     if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
-        staticPainter_->setPen(QXFIGCOLOR(color));
+        staticPainter_->setPen(P4Colours::p4XfigColour(color));
         auto _x = coWinX(x);
         auto _y = coWinY(y);
 
@@ -2624,7 +2624,7 @@ void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
 
         staticPainter_->translate(tx, ty);
         if (iszoom_ || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p{QXFIGCOLOR(printColorTable(P4ColourSettings::colour_foreground)),
+            QPen p{P4Colours::p4XfigColour(printColorTable(P4ColourSettings::colour_foreground)),
                    std::round(lw)};
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
@@ -2787,7 +2787,7 @@ void P4Sphere::finishDrawing()
 {
     //qDebug() << "signal evaluating";
         QPalette palette;
-        palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
+        palette.setColor(backgroundRole(), P4Colours::p4XfigColour(spherebgcolor_ =
        P4ColourSettings::colour_background) );
         setPalette(palette);
 }*/
@@ -2797,7 +2797,7 @@ void P4Sphere::signalChanged()
     // qDebug() << "signal changed";
     /*
         QPalette palette;
-        palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
+        palette.setColor(backgroundRole(), P4Colours::p4XfigColour(spherebgcolor_ =
        DARKGRAY)
        );
         setPalette(palette);

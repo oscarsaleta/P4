@@ -38,7 +38,7 @@ dotted,
 WHEN ZOOMING
 //  (SOMETIMES, WHEN A PART OF THE SPHERE IS VISIBLE, NOTHING IS DRAWN)
 
-    QPen pen( (QColor)(QXFIGCOLOR(color)) );
+    QPen pen( (QColor)(P4Colours::p4XfigColour(color)) );
     if( dotted )
         pen.setStyle( Qt::DashLine );
     else

@@ -46,6 +46,7 @@ bool evalGcfStart(P4Sphere *sp, int dashes, int precision, int points);
 bool evalGcfContinue(int precision, int points);
 bool evalGcfFinish();
 bool runTask(int task, int precision, int points, unsigned int index);
-void draw_gcf(P4Sphere *spherewnd,
-              const std::vector<P4Orbits::orbits_points> &sep, int color,
+void draw_gcf(P4Sphere *spherewnd, P4Orbits::orbits_points *sep, int color,
               int dashes);
+
+extern P4Orbits::orbits_points *gLastGcfPoint;

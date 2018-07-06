@@ -308,7 +308,7 @@ class P4InputVF : public QObject
     void createProcessWindow();
 
     // EVALUATION: gcf
-    bool prepareGcf(const std::vector<P4Polynom::term2> &f, double y1,
+    bool prepareGcf(P4Polynom::term2 *f, double y1,
                     double y2, int precision, int numpoints);
     bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
                                 int numpoints, int index);
@@ -329,7 +329,7 @@ class P4InputVF : public QObject
     // called from prepareCurveFile
     void prepareMapleArbitraryCurve(QTextStream &);
     // the following are called from math_curve.cpp
-    bool prepareArbitraryCurve(const std::vector<P4Polynom::term2> &f,
+    bool prepareArbitraryCurve(P4Polynom::term2 *f,
                                double y1, double y2, int precision,
                                int numpoints);
     bool prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
@@ -342,7 +342,7 @@ class P4InputVF : public QObject
     void prepareIsoclines();
     void prepareIsoclinesFile(QTextStream &);
     void prepareMapleIsoclines(QTextStream &);
-    bool prepareIsoclines(const std::vector<P4Polynom::term2> &f, double y1,
+    bool prepareIsoclines(P4Polynom::term2 *f, double y1,
                           double y2, int precision, int numpoints); // FIXME
     bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                       int precision, int numpoints, int index);

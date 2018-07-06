@@ -112,7 +112,7 @@ struct orbits_points {
     orbits_points *nextpt{nullptr}; // linked list to new orbit_points
 
     orbits_points() {}
-    orbits_points(int co, double pc[3], int da, int di, int ty,
+    orbits_points(int co, double pc[3], int da, int di = 0, int ty = 0,
                   orbits_points *next = nullptr)
         : color{co}, dashes{da}, dir{di}, type{ty}, nextpt{next}
     {
@@ -149,7 +149,9 @@ struct orbits {
     orbits *next{nullptr};             // linked list to new orbit
 
     orbits() {}
-    orbits(double pc[3], int co, orbits *nxt = nullptr) : color{co}, next{nxt}
+    orbits(double pc[3], int co, orbits_points *frst = nullptr,
+           orbits_points *curr = nullptr, orbits *nxt = nullptr)
+        : color{co}, firstpt{frst}, currentpt{curr}, next{nxt}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];

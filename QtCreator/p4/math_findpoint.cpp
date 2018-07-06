@@ -46,154 +46,150 @@
 //
 // -----------------------------------------------------------------------
 
-static double
-find_distance_saddle(const std::vector<P4Singularities::saddle> &points,
-                     double x, double y, double distance, int &type,
-                     double *refpos)
-{
-    double d, pcoord[3], ucoord[2];
-    int i{0};
-
-    for (auto const &it : points) {
-        if (it.position == POSITION_VIRTUAL)
-            continue;
-        switch (it.chart) {
-        case CHART_R2:
-            MATHFUNC(R2_to_sphere)(it.x0, it.y0, pcoord);
-            break;
-        case CHART_U1:
-            MATHFUNC(U1_to_sphere)(it.x0, it.y0, pcoord);
-            break;
-        case CHART_V1:
-            MATHFUNC(V1_to_sphere)(it.x0, it.y0, pcoord);
-            break;
-        case CHART_U2:
-            MATHFUNC(U2_to_sphere)(it.x0, it.y0, pcoord);
-            break;
-        case CHART_V2:
-            MATHFUNC(V2_to_sphere)(it.x0, it.y0, pcoord);
-            break;
-        }
-        MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-        if (!isInTheSameRegion(pcoord, refpos))
-            continue;
-
-        d = (x - ucoord[0]) * (x - ucoord[0]) +
-            (y - ucoord[1]) * (y - ucoord[1]);
-        if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
-            (distance == -1)) {
-            distance = d;
-            gVFResults.selectedSaddlePointIndex_ = i;
-            gVFResults.saddlePoints_ = points;
-            gVFResults.selected_ucoord_[0] = ucoord[0];
-            gVFResults.selected_ucoord_[1] = ucoord[1];
-            type = SADDLE;
-        }
-        i++;
-    }
-    return (distance);
-}
-
-static double
-find_distance_se(const std::vector<P4Singularities::semi_elementary> &points,
-                 double x, double y, double distance, int &type,
-                 double refpos[])
+static double find_distance_saddle(P4Singularities::saddle *point, double x,
+                                   double y, double distance, int &type,
+                                   double *refpos)
 {
     double d, pcoord[3], ucoord[2];
 
-    int i{0};
-    for (auto const &it : points) {
-        if (it.position == POSITION_VIRTUAL)
-            continue;
-        if (!(it.separatrices).empty()) {
-            switch (it.chart) {
-            case CHART_R2:
-                MATHFUNC(R2_to_sphere)(it.x0, it.y0, pcoord);
+    if (point != nullptr) {
+
+        do {
+            if (point->position == P4Singularities::position_virtual)
+                continue;
+            switch (point->chart) {
+            case P4Charts::chart_R2:
+                MATHFUNC(R2_to_sphere)(point->x0, point->y0, pcoord);
                 break;
-            case CHART_U1:
-                MATHFUNC(U1_to_sphere)(it.x0, it.y0, pcoord);
+            case P4Charts::chart_U1:
+                MATHFUNC(U1_to_sphere)(point->x0, point->y0, pcoord);
                 break;
-            case CHART_V1:
-                MATHFUNC(V1_to_sphere)(it.x0, it.y0, pcoord);
+            case P4Charts::chart_V1:
+                MATHFUNC(V1_to_sphere)(point->x0, point->y0, pcoord);
                 break;
-            case CHART_U2:
-                MATHFUNC(U2_to_sphere)(it.x0, it.y0, pcoord);
+            case P4Charts::chart_U2:
+                MATHFUNC(U2_to_sphere)(point->x0, point->y0, pcoord);
                 break;
-            case CHART_V2:
-                MATHFUNC(V2_to_sphere)(it.x0, it.y0, pcoord);
+            case P4Charts::chart_V2:
+                MATHFUNC(V2_to_sphere)(point->x0, point->y0, pcoord);
                 break;
             }
+            MATHFUNC(sphere_to_viewcoord)
+            (pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (!isInTheSameRegion(pcoord, refpos))
                 continue;
 
-            MATHFUNC(sphere_to_viewcoord)
-            (pcoord[0], pcoord[1], pcoord[2], ucoord);
             d = (x - ucoord[0]) * (x - ucoord[0]) +
                 (y - ucoord[1]) * (y - ucoord[1]);
             if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
                 (distance == -1)) {
                 distance = d;
-                gVFResults.selectedSePointIndex_ = i;
-                gVFResults.sePoints_ = points;
+                gVFResults.selectedSaddlePoint_ = point;
                 gVFResults.selected_ucoord_[0] = ucoord[0];
                 gVFResults.selected_ucoord_[1] = ucoord[1];
-                type = SEMI_HYPERBOLIC;
+                type = P4SingularityType::saddle;
             }
-        }
-        i++;
+        } while ((point = point->next_saddle) != nullptr);
     }
     return (distance);
 }
 
-static double
-find_distance_de(const std::vector<P4Singularities::degenerate> &points,
-                 double x, double y, double distance, int &type,
-                 double refpos[])
+static double find_distance_se(P4Singularities::semi_elementary *point,
+                               double x, double y, double distance, int &type,
+                               double *refpos)
 {
     double d, pcoord[3], ucoord[2];
 
-    int i{0};
-    for (auto const &it : points) {
-        if (it.position == POSITION_VIRTUAL)
-            continue;
-        if (!(it.blow_up).empty()) {
-            switch (it.chart) {
-            case CHART_R2:
-                MATHFUNC(R2_to_sphere)(it.x0, it.y0, pcoord);
-                break;
-            case CHART_U1:
-                MATHFUNC(U1_to_sphere)(it.x0, it.y0, pcoord);
-                break;
-            case CHART_V1:
-                MATHFUNC(V1_to_sphere)(it.x0, it.y0, pcoord);
-                break;
-            case CHART_U2:
-                MATHFUNC(U2_to_sphere)(it.x0, it.y0, pcoord);
-                break;
-            case CHART_V2:
-                MATHFUNC(V2_to_sphere)(it.x0, it.y0, pcoord);
-                break;
-            }
-            if (!isInTheSameRegion(pcoord, refpos))
+    if (point != nullptr) {
+        do {
+            if (point->position == P4Singularities::position_virtual)
                 continue;
+            if (point->separatrices != nullptr) {
+                switch (point->chart) {
+                case P4Charts::chart_R2:
+                    MATHFUNC(R2_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_U1:
+                    MATHFUNC(U1_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_V1:
+                    MATHFUNC(V1_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_U2:
+                    MATHFUNC(U2_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_V2:
+                    MATHFUNC(V2_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                }
+                if (!isInTheSameRegion(pcoord, refpos))
+                    continue;
 
-            MATHFUNC(sphere_to_viewcoord)
-            (pcoord[0], pcoord[1], pcoord[2], ucoord);
-            d = (x - ucoord[0]) * (x - ucoord[0]) +
-                (y - ucoord[1]) * (y - ucoord[1]);
-            if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
-                (distance == -1)) {
-                if ((d < distance) || (distance == -1)) {
+                MATHFUNC(sphere_to_viewcoord)
+                (pcoord[0], pcoord[1], pcoord[2], ucoord);
+                d = (x - ucoord[0]) * (x - ucoord[0]) +
+                    (y - ucoord[1]) * (y - ucoord[1]);
+                if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
+                    (distance == -1)) {
                     distance = d;
+                    gVFResults.selectedSePoint_ = point;
                     gVFResults.selected_ucoord_[0] = ucoord[0];
                     gVFResults.selected_ucoord_[1] = ucoord[1];
-                    gVFResults.dePoints_ = points;
-                    gVFResults.selectedDePointIndex_ = i;
-                    type = NON_ELEMENTARY;
+                    type = P4SingularityType::semi_hyperbolic;
                 }
             }
-        }
-        i++;
+        } while ((point = point->next_se) != nullptr);
+    }
+    return (distance);
+}
+
+static double find_distance_de(P4Singularities::degenerate *point, double x,
+                               double y, double distance, int &type,
+                               double *refpos)
+{
+    double d, pcoord[3], ucoord[2];
+
+    if (point != nullptr) {
+        do {
+            if (point->position == P4Singularities::position_virtual)
+                continue;
+            if (point->blow_up != nullptr) {
+                switch (point->chart) {
+                case P4Charts::chart_R2:
+                    MATHFUNC(R2_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_U1:
+                    MATHFUNC(U1_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_V1:
+                    MATHFUNC(V1_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_U2:
+                    MATHFUNC(U2_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                case P4Charts::chart_V2:
+                    MATHFUNC(V2_to_sphere)(point->x0, point->y0, pcoord);
+                    break;
+                }
+                if (!isInTheSameRegion(pcoord, refpos))
+                    continue;
+
+                MATHFUNC(sphere_to_viewcoord)
+                (pcoord[0], pcoord[1], pcoord[2], ucoord);
+                d = (x - ucoord[0]) * (x - ucoord[0]) +
+                    (y - ucoord[1]) * (y - ucoord[1]);
+                if ((d < distance && !std::isnan(d) && std::isfinite(d)) ||
+                    (distance == -1)) {
+                    if ((d < distance) || (distance == -1)) {
+                        distance = d;
+                        gVFResults.selectedDePoint_ = point;
+                        gVFResults.selected_ucoord_[0] = ucoord[0];
+                        gVFResults.selected_ucoord_[1] = ucoord[1];
+                        type = P4SingularityType::non_elementary;
+                    }
+                }
+            }
+        } while ((point = point->next_de) != nullptr);
     }
 
     return (distance);
@@ -204,7 +200,6 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
     int type;
     double distance, epsilon, pcoord[3];
     QString s, sx, sy, sz;
-    std::vector<P4Blowup::sep> sepc;
     int vfindex, vfindex0;
 
     if (gVFResults.vf_.empty())
@@ -223,28 +218,30 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
         vfindex0 = gThisVF->numVF_ - 1;
 
     for (vfindex = vfindex0; vfindex >= 0; vfindex--) {
-        distance = find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_,
-                                        x, y, distance, type, pcoord);
-        distance = find_distance_se(gVFResults.vf_[vfindex]->sePoints_, x, y,
-                                    distance, type, pcoord);
-        distance = find_distance_de(gVFResults.vf_[vfindex]->dePoints_, x, y,
-                                    distance, type, pcoord);
+        distance =
+            find_distance_saddle(gVFResults.vf_[vfindex]->firstSaddlePoint_, x,
+                                 y, distance, type, pcoord);
+        distance = find_distance_se(gVFResults.vf_[vfindex]->firstSePoint_, x,
+                                    y, distance, type, pcoord);
+        distance = find_distance_de(gVFResults.vf_[vfindex]->firstDePoint_, x,
+                                    y, distance, type, pcoord);
         if (distance != -1)
             break;
     }
     if (distance == -1 && vfindex0 != static_cast<int>(gThisVF->numVF_) - 1) {
         for (vfindex = gThisVF->numVF_ - 1; vfindex > vfindex0; vfindex--) {
             distance =
-                find_distance_saddle(gVFResults.vf_[vfindex]->saddlePoints_, x,
-                                     y, distance, type, pcoord);
-            distance = find_distance_se(gVFResults.vf_[vfindex]->sePoints_, x,
-                                        y, distance, type, pcoord);
-            distance = find_distance_de(gVFResults.vf_[vfindex]->dePoints_, x,
-                                        y, distance, type, pcoord);
+                find_distance_saddle(gVFResults.vf_[vfindex]->firstSaddlePoint_,
+                                     x, y, distance, type, pcoord);
+            distance = find_distance_se(gVFResults.vf_[vfindex]->firstSePoint_,
+                                        x, y, distance, type, pcoord);
+            distance = find_distance_de(gVFResults.vf_[vfindex]->firstDePoint_,
+                                        x, y, distance, type, pcoord);
             if (distance != -1)
                 break;
         }
     }
+
     if (distance == -1)
         return false;
 
@@ -256,61 +253,41 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
     gVFResults.selected_sep_vfindex_ = vfindex;
 
     switch (type) {
-    case SADDLE: {
-        auto &sepc =
-            gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                .separatrices;
-        gVFResults.seps_ = sepc;
-        gVFResults.selectedSepIndex_ = 0;
-        draw_selected_sep(spherewnd, sepc.front().sep_points, P4ColourSettings::colour_selected_separatrice);
+    case P4SingularityType::saddle: {
+        gVFResults.selectedSep_ = gVFResults.selectedSaddlePoint_->separatrices;
+        auto sepc = gVFResults.selectedSep_;
+        draw_selected_sep(spherewnd, sepc->first_sep_point,
+                          P4ColourSettings::colour_selected_separatrice);
 
         start_plot_sep = start_plot_saddle_sep;
         cont_plot_sep = cont_plot_saddle_sep;
         plot_next_sep = plot_next_saddle_sep;
         select_next_sep = select_next_saddle_sep;
         s = "SADDLE";
-        epsilon = gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                      .epsilon;
+        epsilon = gVFResults.selectedSaddlePoint_->epsilon;
         change_epsilon = change_epsilon_saddle;
 
-        if (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                .chart == CHART_R2) {
-            sx.sprintf(
-                "x = %8.5g",
-                gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                    .x0);
-            sy.sprintf(
-                "y = %8.5g",
-                gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                    .y0);
+        if (gVFResults.selectedSaddlePoint_->chart == P4Charts::chart_R2) {
+            sx.sprintf("x = %8.5g", gVFResults.selectedSaddlePoint_->x0);
+            sy.sprintf("y = %8.5g", gVFResults.selectedSaddlePoint_->y0);
             sz = "";
         } else {
-            switch (
-                gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                    .chart) {
-            case CHART_U1:
+            switch (gVFResults.selectedSaddlePoint_->chart) {
+            case P4Charts::chart_U1:
                 MATHFUNC(U1_to_sphere)
-                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                     .x0,
-                 0.0, pcoord);
+                (gVFResults.selectedSaddlePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_V1:
+            case P4Charts::chart_V1:
                 MATHFUNC(V1_to_sphere)
-                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                     .x0,
-                 0.0, pcoord);
+                (gVFResults.selectedSaddlePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_U2:
+            case P4Charts::chart_U2:
                 MATHFUNC(U2_to_sphere)
-                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                     .x0,
-                 0.0, pcoord);
+                (gVFResults.selectedSaddlePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_V2:
+            case P4Charts::chart_V2:
                 MATHFUNC(V2_to_sphere)
-                (gVFResults.saddlePoints_[gVFResults.selectedSaddlePointIndex_]
-                     .x0,
-                 0.0, pcoord);
+                (gVFResults.selectedSaddlePoint_->x0, 0.0, pcoord);
                 break;
             }
 
@@ -326,52 +303,40 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
         }
     } break;
 
-    case SEMI_HYPERBOLIC: {
-        auto &sepc =
-            gVFResults.sePoints_[gVFResults.selectedSePointIndex_].separatrices;
-        gVFResults.seps_ = sepc;
-        gVFResults.selectedSepIndex_ = 0;
-        draw_selected_sep(spherewnd, sepc.front().sep_points, P4ColourSettings::colour_selected_separatrice);
+    case P4SingularityType::semi_hyperbolic: {
+        gVFResults.selectedSep_ = gVFResults.selectedSePoint_->separatrices;
+        auto sepc = gVFResults.selectedSep_;
+        draw_selected_sep(spherewnd, sepc->first_sep_point,
+                          P4ColourSettings::colour_selected_separatrice);
 
         start_plot_sep = start_plot_se_sep;
         cont_plot_sep = cont_plot_se_sep;
         plot_next_sep = plot_next_se_sep;
         select_next_sep = select_next_se_sep;
         s = "SEMI-HYPERBOLIC";
-        epsilon =
-            gVFResults.sePoints_[gVFResults.selectedSePointIndex_].epsilon;
+        epsilon = gVFResults.selectedSePoint_->epsilon;
         change_epsilon = change_epsilon_se;
-        if (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].chart ==
-            CHART_R2) {
-            sx.sprintf(
-                "x=%8.5g",
-                gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0);
-            sy.sprintf(
-                "y=%8.5g",
-                gVFResults.sePoints_[gVFResults.selectedSePointIndex_].y0);
+        if (gVFResults.selectedSePoint_->chart == P4Charts::chart_R2) {
+            sx.sprintf("x=%8.5g", gVFResults.selectedSePoint_->x0);
+            sy.sprintf("y=%8.5g", gVFResults.selectedSePoint_->y0);
             sz = "";
         } else {
-            switch (
-                gVFResults.sePoints_[gVFResults.selectedSePointIndex_].chart) {
-            case CHART_U1:
+            switch (gVFResults.selectedSePoint_->chart) {
+            case P4Charts::chart_U1:
                 MATHFUNC(U1_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedSePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_V1:
+            case P4Charts::chart_V1:
                 MATHFUNC(V1_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedSePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_U2:
+            case P4Charts::chart_U2:
                 MATHFUNC(U2_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedSePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_V2:
+            case P4Charts::chart_V2:
                 MATHFUNC(V2_to_sphere)
-                (gVFResults.sePoints_[gVFResults.selectedSePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedSePoint_->x0, 0.0, pcoord);
                 break;
             }
             if (gVFResults.plweights_ == false) {
@@ -386,61 +351,40 @@ bool find_critical_point(P4Sphere *spherewnd, double x, double y)
         }
     } break;
 
-    case NON_ELEMENTARY:
-        gVFResults.deSeps_ =
-            gVFResults.dePoints_[gVFResults.selectedDePointIndex_].blow_up;
-        gVFResults.selectedDeSepIndex_ = 0;
+    case P4SingularityType::non_elementary:
+        gVFResults.selectedDeSep_ = gVFResults.selectedDePoint_->blow_up;
 
-        qDebug() << "deSeps_.size()=" << gVFResults.deSeps_.size();
-        //        qDebug() <<
-        //        "deSeps_[0].sep_points.size()="<<gVFResults.deSeps_[0].sep_points;
-
-        if (!gVFResults.deSeps_.empty()) {
-            draw_selected_sep(
-                spherewnd,
-                gVFResults.deSeps_[gVFResults.selectedDeSepIndex_].sep_points,
-                P4ColourSettings::colour_selected_separatrice);
-        }
+        draw_selected_sep(spherewnd, gVFResults.selectedDeSep_->first_sep_point,
+                          P4ColourSettings::colour_selected_separatrice);
 
         start_plot_sep = start_plot_de_sep;
         cont_plot_sep = cont_plot_de_sep;
         plot_next_sep = plot_next_de_sep;
         select_next_sep = select_next_de_sep;
         s = "NON-ELEMENTARY";
-        epsilon =
-            gVFResults.dePoints_[gVFResults.selectedDePointIndex_].epsilon;
+        epsilon = gVFResults.selectedDePoint_->epsilon;
         change_epsilon = change_epsilon_de;
-        if (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].chart ==
-            CHART_R2) {
-            sx.sprintf(
-                "x=%8.5g",
-                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0);
-            sy.sprintf(
-                "y=%8.5g",
-                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].y0);
+        if (gVFResults.selectedDePoint_->chart == P4Charts::chart_R2) {
+            sx.sprintf("x=%8.5g", gVFResults.selectedDePoint_->x0);
+            sy.sprintf("y=%8.5g", gVFResults.selectedDePoint_->y0);
             sz = "";
         } else {
-            switch (
-                gVFResults.dePoints_[gVFResults.selectedDePointIndex_].chart) {
-            case CHART_U1:
+            switch (gVFResults.selectedDePoint_->chart) {
+            case P4Charts::chart_U1:
                 MATHFUNC(U1_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedDePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_V1:
+            case P4Charts::chart_V1:
                 MATHFUNC(V1_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedDePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_U2:
+            case P4Charts::chart_U2:
                 MATHFUNC(U2_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedDePoint_->x0, 0.0, pcoord);
                 break;
-            case CHART_V2:
+            case P4Charts::chart_V2:
                 MATHFUNC(V2_to_sphere)
-                (gVFResults.dePoints_[gVFResults.selectedDePointIndex_].x0, 0.0,
-                 pcoord);
+                (gVFResults.selectedDePoint_->x0, 0.0, pcoord);
                 break;
             }
             if (gVFResults.plweights_ == false) {

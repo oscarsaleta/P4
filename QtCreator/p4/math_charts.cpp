@@ -979,11 +979,11 @@ void eval_r_vec_field(const double *y, double *f)
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        !gVFResults.vf_.back()->gcf_.empty())
+        gVFResults.vf_[gVFResults.K_]->gcf_ != nullptr)
         s = eval_term2(gVFResults.vf_.back()->gcf_, y);
 
-    f[0] = s * eval_term2(gVFResults.vf_.back()->f_vec_field_0_, y);
-    f[1] = s * eval_term2(gVFResults.vf_.back()->f_vec_field_1_, y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->f_vec_field_[0], y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->f_vec_field_[1], y);
 }
 
 void eval_U1_vec_field(const double *y, double *f)
@@ -991,15 +991,15 @@ void eval_U1_vec_field(const double *y, double *f)
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        !gVFResults.vf_.back()->gcf_U1_.empty())
-        s = eval_term2(gVFResults.vf_.back()->gcf_U1_, y);
+        gVFResults.vf_[gVFResults.K_]->gcf_U1_ != nullptr)
+        s = eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_U1_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_.back()->singinf_)
+        gVFResults.vf_[gVFResults.K_]->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_U1_0_, y);
-    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_U1_1_, y);
+    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_U1_[0], y);
+    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_U1_[1], y);
 }
 
 void eval_U2_vec_field(const double *y, double *f)
@@ -1007,15 +1007,15 @@ void eval_U2_vec_field(const double *y, double *f)
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        !gVFResults.vf_.back()->gcf_U2_.empty())
-        s = eval_term2(gVFResults.vf_.back()->gcf_U2_, y);
+        gVFResults.vf_[gVFResults.K_]->gcf_U2_ != nullptr)
+        s = eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_U2_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_.back()->singinf_)
+        gVFResults.vf_[gVFResults.K_]->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_U2_0_, y);
-    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_U2_1_, y);
+    f[0] = s * eval_term2(gVFResults.vf_[gVFResults.K_]->vec_field_U2_[0], y);
+    f[1] = s * eval_term2(gVFResults.vf_[gVFResults.K_]->vec_field_U2_[1], y);
 }
 
 void eval_V1_vec_field(const double *y, double *f)
@@ -1023,15 +1023,15 @@ void eval_V1_vec_field(const double *y, double *f)
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        !gVFResults.vf_.back()->gcf_V1_.empty())
-        s = eval_term2(gVFResults.vf_.back()->gcf_V1_, y);
+        gVFResults.vf_[gVFResults.K_]->gcf_V1_ != nullptr)
+        s = eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_V1_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_.back()->singinf_)
+        gVFResults.vf_[gVFResults.K_]->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_V1_0_, y);
-    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_V1_1_, y);
+    f[0] = s * eval_term2(gVFResults.vf_[gVFResults.K_]->vec_field_V1_[0], y);
+    f[1] = s * eval_term2(gVFResults.vf_[gVFResults.K_]->vec_field_V1_[1], y);
 }
 
 void eval_V2_vec_field(const double *y, double *f)
@@ -1039,15 +1039,15 @@ void eval_V2_vec_field(const double *y, double *f)
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        !gVFResults.vf_.back()->gcf_V2_.empty())
-        s = eval_term2(gVFResults.vf_.back()->gcf_V2_, y);
+        gVFResults.vf_[gVFResults.K_]->gcf_V2_ != nullptr)
+        s = eval_term2(gVFResults.vf_[gVFResults.K_]->gcf_V2_, y);
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        gVFResults.vf_.back()->singinf_)
+        gVFResults.vf_[gVFResults.K_]->singinf_)
         s *= y[1];
 
-    f[0] = s * eval_term2(gVFResults.vf_.back()->vec_field_V2_0_, y);
-    f[1] = s * eval_term2(gVFResults.vf_.back()->vec_field_V2_1_, y);
+    f[0] = s * eval_term2(gVFResults.vf_[gVFResults.K_]->vec_field_V2_[0], y);
+    f[1] = s * eval_term2(gVFResults.vf_[gVFResults.K_]->vec_field_V2_[1], y);
 }
 
 void eval_vec_field_cyl(const double *y, double *f)
@@ -1055,11 +1055,11 @@ void eval_vec_field_cyl(const double *y, double *f)
     double s = 1.0;
 
     if (gVFResults.config_kindvf_ == INTCONFIG_ORIGINAL &&
-        !gVFResults.vf_.back()->gcf_C_.empty())
-        s = eval_term3(gVFResults.vf_.back()->gcf_C_, y);
+        gVFResults.vf_[gVFResults.K_]->gcf_C_ != nullptr)
+        s = eval_term3(gVFResults.vf_[gVFResults.K_]->gcf_C_, y);
 
-    f[0] = s * eval_term3(gVFResults.vf_.back()->vec_field_C_0_, y);
-    f[1] = s * eval_term3(gVFResults.vf_.back()->vec_field_C_1_, y);
+    f[0] = s * eval_term3(gVFResults.vf_[gVFResults.K_]->vec_field_C_[0], y);
+    f[1] = s * eval_term3(gVFResults.vf_[gVFResults.K_]->vec_field_C_[1], y);
 }
 
 void default_finite_to_viewcoord(double x, double y, double *ucoord)

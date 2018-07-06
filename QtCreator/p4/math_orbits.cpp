@@ -69,9 +69,9 @@ void integrateOrbit(P4Sphere *sphere, int dir)
             return;
         qDebug() << "VF selected is" << gVFResults.K_;
 
-        auto pts =
-            integrate_orbit(sphere, pcoord, gVFResults.config_currentstep_, dir,
-                            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
+        auto pts = integrate_orbit(
+            sphere, pcoord, gVFResults.config_currentstep_, dir,
+            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
         auto &gpoints = gVFResults.orbits_.back().points;
         gpoints.insert(std::end(gpoints), std::begin(pts), std::end(pts));
 
@@ -89,18 +89,18 @@ void integrateOrbit(P4Sphere *sphere, int dir)
             dir = -dir;
 
     if (gVFResults.orbits_.back().points.empty()) {
-        auto pts =
-            integrate_orbit(sphere, pcoord, gVFResults.config_step_, dir,
-                            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
+        auto pts = integrate_orbit(sphere, pcoord, gVFResults.config_step_, dir,
+                                   P4ColourSettings::colour_orbit,
+                                   gVFResults.config_intpoints_);
         gVFResults.orbits_.back().points = std::move(pts);
     } else {
         // create an orbit point
-        auto pts =
-            P4Orbits::orbits_points{P4ColourSettings::colour_orbit, pcoord, 0, dir, 0};
+        auto pts = P4Orbits::orbits_points{P4ColourSettings::colour_orbit,
+                                           pcoord, 0, dir, 0};
         // integrate more points
-        auto int_pts =
-            integrate_orbit(sphere, pcoord, gVFResults.config_step_, dir,
-                            P4ColourSettings::colour_orbit, gVFResults.config_intpoints_);
+        auto int_pts = integrate_orbit(sphere, pcoord, gVFResults.config_step_,
+                                       dir, P4ColourSettings::colour_orbit,
+                                       gVFResults.config_intpoints_);
         // create a vector starting by the first point and appending the
         // integrated ones to the end
         std::vector<P4Orbits::orbits_points> orbit_result{pts};
@@ -145,20 +145,21 @@ bool startOrbit(P4Sphere *sphere, double x, double y, bool R)
 //          drawOrbit
 // -----------------------------------------------------------------------
 void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
-               const std::vector<P4Orbits::orbits_points> &points, int color)
+               P4Orbits::orbits_points *points, int color)
 {
     double pcoord1[3];
 
     copy_x_into_y(pcoord, pcoord1);
     (*plot_p)(spherewnd, pcoord, color);
 
-    for (auto const &it : points) {
-        if (it.dashes) {
-            (*plot_l)(spherewnd, pcoord1, it.pcoord, color);
+    while (points != nullptr) {
+        if (points->dashes) {
+            (*plot_l)(spherewnd, pcoord1, points->pcoord, color);
         } else {
-            (*plot_p)(spherewnd, it.pcoord, color);
+            (*plot_p)(spherewnd, points->pcoord, color);
         }
-        copy_x_into_y(it.pcoord, pcoord1);
+        copy_x_into_y(points->pcoord, pcoord1);
+        points = points->nextpt;
     }
 }
 
