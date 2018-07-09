@@ -371,17 +371,17 @@ plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
 
     type = de_sep->type;
     switch (type) {
-    case P4OrbitType::ot_stable:
-        dir = P4OrbitType::ot_stable;
+    case P4OrbitType::stable:
+        dir = P4OrbitType::stable;
         break;
-    case P4OrbitType::ot_unstable:
-        dir = P4OrbitType::ot_unstable;
+    case P4OrbitType::unstable:
+        dir = P4OrbitType::unstable;
         break;
-    case P4OrbitType::ot_cent_stable:
-        dir = P4OrbitType::ot_cent_stable;
+    case P4OrbitType::cent_stable:
+        dir = P4OrbitType::cent_stable;
         break;
-    case P4OrbitType::ot_cent_unstable:
-        dir = P4OrbitType::ot_cent_unstable;
+    case P4OrbitType::cent_unstable:
+        dir = P4OrbitType::cent_unstable;
         break;
     default:
         dir = 0;

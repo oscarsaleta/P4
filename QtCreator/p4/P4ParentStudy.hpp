@@ -45,7 +45,7 @@ class P4ParentStudy : public QObject
     std::vector<P4Curves::curves> separatingCurves_;
 
     int typeofstudy_{P4TypeOfStudy::typeofstudy_all};
-    // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
+    // P4TypeOfView::typeofview_plane or P4TypeOfView::typeofview_sphere
     int typeofview_{P4TypeOfView::typeofview_sphere};
     bool plotVirtualSingularities_{DEFAULTPLOTVIRTUALSINGULARITIES};
     int p_{1};

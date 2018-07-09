@@ -59,16 +59,16 @@ int findSepColor2(P4Polynom::term2 *f, int type, double y[2])
 
     if (eval_term2(f, y) >= 0) {
         switch (type) {
-        case P4OrbitType::ot_stable:
+        case P4OrbitType::stable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case P4OrbitType::ot_unstable:
+        case P4OrbitType::unstable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case P4OrbitType::ot_cent_stable:
+        case P4OrbitType::cent_stable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
-        case P4OrbitType::ot_cent_unstable:
+        case P4OrbitType::cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         default:
@@ -77,16 +77,16 @@ int findSepColor2(P4Polynom::term2 *f, int type, double y[2])
         }
     } else {
         switch (type) {
-        case P4OrbitType::ot_stable:
+        case P4OrbitType::stable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case P4OrbitType::ot_unstable:
+        case P4OrbitType::unstable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case P4OrbitType::ot_cent_stable:
+        case P4OrbitType::cent_stable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
-        case P4OrbitType::ot_cent_unstable:
+        case P4OrbitType::cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         default:
@@ -103,16 +103,16 @@ int findSepColor3(P4Polynom::term3 *f, int type, double y[2])
 
     if (eval_term3(f, y) >= 0) {
         switch (type) {
-        case P4OrbitType::ot_stable:
+        case P4OrbitType::stable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case P4OrbitType::ot_unstable:
+        case P4OrbitType::unstable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case P4OrbitType::ot_cent_stable:
+        case P4OrbitType::cent_stable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
-        case P4OrbitType::ot_cent_unstable:
+        case P4OrbitType::cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
         default:
@@ -121,16 +121,16 @@ int findSepColor3(P4Polynom::term3 *f, int type, double y[2])
         }
     } else {
         switch (type) {
-        case P4OrbitType::ot_stable:
+        case P4OrbitType::stable:
             color = P4ColourSettings::colour_separatrice_unstable;
             break;
-        case P4OrbitType::ot_unstable:
+        case P4OrbitType::unstable:
             color = P4ColourSettings::colour_separatrice_stable;
             break;
-        case P4OrbitType::ot_cent_stable:
+        case P4OrbitType::cent_stable:
             color = P4ColourSettings::colour_separatrice_center_unstable;
             break;
-        case P4OrbitType::ot_cent_unstable:
+        case P4OrbitType::cent_unstable:
             color = P4ColourSettings::colour_separatrice_center_stable;
             break;
         default:
@@ -154,20 +154,20 @@ int change_type(int type)
     int t;
 
     switch (type) {
-    case P4OrbitType::ot_stable:
-        t = P4OrbitType::ot_unstable;
+    case P4OrbitType::stable:
+        t = P4OrbitType::unstable;
         break;
-    case P4OrbitType::ot_unstable:
-        t = P4OrbitType::ot_stable;
+    case P4OrbitType::unstable:
+        t = P4OrbitType::stable;
         break;
-    case P4OrbitType::ot_cent_stable:
-        t = P4OrbitType::ot_cent_unstable;
+    case P4OrbitType::cent_stable:
+        t = P4OrbitType::cent_unstable;
         break;
-    case P4OrbitType::ot_cent_unstable:
-        t = P4OrbitType::ot_cent_stable;
+    case P4OrbitType::cent_unstable:
+        t = P4OrbitType::cent_stable;
         break;
-    case P4OrbitType::ot_orbit:
-        t = P4OrbitType::ot_orbit;
+    case P4OrbitType::orbit:
+        t = P4OrbitType::orbit;
         break;
     default:
         t = type;
@@ -690,17 +690,17 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
 
     type = sep1->type;
     switch (sep1->type) {
-    case P4OrbitType::ot_stable:
-        dir = P4OrbitType::ot_stable;
+    case P4OrbitType::stable:
+        dir = P4OrbitType::stable;
         break;
-    case P4OrbitType::ot_unstable:
-        dir = P4OrbitType::ot_unstable;
+    case P4OrbitType::unstable:
+        dir = P4OrbitType::unstable;
         break;
-    case P4OrbitType::ot_cent_stable:
-        dir = P4OrbitType::ot_stable;
+    case P4OrbitType::cent_stable:
+        dir = P4OrbitType::stable;
         break;
-    case P4OrbitType::ot_cent_unstable:
-        dir = P4OrbitType::ot_unstable;
+    case P4OrbitType::cent_unstable:
+        dir = P4OrbitType::unstable;
         break;
     default:
         dir = 0;

@@ -399,39 +399,39 @@ bool P4ViewDlg::getDataFromDlg()
 
     changed_ = false;
     if (btn_sphere_->isChecked()) {
-        if (gVFResults.typeofview_ != TYPEOFVIEW_SPHERE) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_sphere) {
             changed_ = true;
-            gVFResults.typeofview_ = TYPEOFVIEW_SPHERE;
+            gVFResults.typeofview_ = P4TypeOfView::typeofview_sphere;
         }
     }
     if (btn_plane_->isChecked()) {
-        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_plane) {
             changed_ = true;
-            gVFResults.typeofview_ = TYPEOFVIEW_PLANE;
+            gVFResults.typeofview_ = P4TypeOfView::typeofview_plane;
         }
     }
     if (btn_U1_->isChecked()) {
-        if (gVFResults.typeofview_ != TYPEOFVIEW_U1) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_U1) {
             changed_ = true;
-            gVFResults.typeofview_ = TYPEOFVIEW_U1;
+            gVFResults.typeofview_ = P4TypeOfView::typeofview_U1;
         }
     }
     if (btn_U2_->isChecked()) {
-        if (gVFResults.typeofview_ != TYPEOFVIEW_U2) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_U2) {
             changed_ = true;
-            gVFResults.typeofview_ = TYPEOFVIEW_U2;
+            gVFResults.typeofview_ = P4TypeOfView::typeofview_U2;
         }
     }
     if (btn_V1_->isChecked()) {
-        if (gVFResults.typeofview_ != TYPEOFVIEW_V1) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_V1) {
             changed_ = true;
-            gVFResults.typeofview_ = TYPEOFVIEW_V1;
+            gVFResults.typeofview_ = P4TypeOfView::typeofview_V1;
         }
     }
     if (btn_V2_->isChecked()) {
-        if (gVFResults.typeofview_ != TYPEOFVIEW_V2) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_V2) {
             changed_ = true;
-            gVFResults.typeofview_ = TYPEOFVIEW_V2;
+            gVFResults.typeofview_ = P4TypeOfView::typeofview_V2;
         }
     }
 
@@ -482,27 +482,28 @@ void P4ViewDlg::updateDlgData()
 
     changed_ = false;
 
-    if (gVFResults.typeofview_ == TYPEOFVIEW_PLANE)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_plane)
         btn_plane_->toggle();
-    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere)
         btn_sphere_->toggle();
-    if (gVFResults.typeofview_ == TYPEOFVIEW_U1)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_U1)
         btn_U1_->toggle();
-    if (gVFResults.typeofview_ == TYPEOFVIEW_U2)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_U2)
         btn_U2_->toggle();
-    if (gVFResults.typeofview_ == TYPEOFVIEW_V1)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_V1)
         btn_V1_->toggle();
-    if (gVFResults.typeofview_ == TYPEOFVIEW_V2)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_V2)
         btn_V2_->toggle();
 
-    if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+    if (gVFResults.typeofstudy_ == P4TypeOfStudy::typeofstudy_one)
         btn_sphere_->setEnabled(false);
     else
         btn_sphere_->setEnabled(true);
 
     buf.sprintf("%g", gVFResults.config_projection_);
     edt_projection_->setText(buf);
-    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE && !gVFResults.plweights_)
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere &&
+        !gVFResults.plweights_)
         edt_projection_->setEnabled(true);
     else
         edt_projection_->setEnabled(false);

@@ -293,7 +293,7 @@ bool P4InputVF::load()
             return false;
         }
 
-        if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+        if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -397,7 +397,7 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        if (_typeofstudy == TYPEOFSTUDY_ONE) {
+        if (_typeofstudy == P4TypeOfStudy::typeofstudy_one) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -654,7 +654,7 @@ bool P4InputVF::checkevaluated()
     if (dtvec.secsTo(dt) > 0 || dtvec.daysTo(dt) > 0)
         return false;
 
-    if (typeofstudy_ != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != P4TypeOfStudy::typeofstudy_inf) {
         auto fifin =
             std::make_unique<QFileInfo>(getbarefilename() + "_fin.tab");
         if (!fifin->exists())
@@ -664,7 +664,8 @@ bool P4InputVF::checkevaluated()
             return false;
     }
 
-    if (typeofstudy_ == TYPEOFSTUDY_INF || typeofstudy_ == TYPEOFSTUDY_ALL) {
+    if (typeofstudy_ == P4TypeOfStudy::typeofstudy_inf ||
+        typeofstudy_ == P4TypeOfStudy::typeofstudy_all) {
         auto fiinf =
             std::make_unique<QFileInfo>(getbarefilename() + "_inf.tab");
         if (!fiinf->exists())
@@ -697,7 +698,7 @@ bool P4InputVF::save()
 
         out << "P5\n";
         out << typeofstudy_ << "\n";
-        if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+        if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
             if (x0_.isEmpty())
                 out << "(null)\n";
             else
@@ -1029,7 +1030,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         fp << s;
     }
 
-    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
         fp << "user_p := 1:\n";
         fp << "user_q := 1:\n";
 
@@ -2998,7 +2999,7 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
         int i;
         char buf[100];
         for (i = 0; f != nullptr; i++) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
+            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
             f = f->next_term2;
         }
         if (i == 0)
@@ -3625,11 +3626,13 @@ void P4InputVF::resampleSeparatingCurve(int i)
     if (gVFResults.separatingCurves_.empty())
         return;
 
-    for (auto &sep : gVFResults.separatingCurves_[i].points) {
-        if (isCurvePointDrawn(i, sep.pcoord))
-            sep.color = P4ColourSettings::colour_separating_curve;
+    auto sep = gVFResults.separatingCurves_[i].points;
+    while (sep != nullptr) {
+        if (isCurvePointDrawn(i, sep->pcoord))
+            sep->color = P4ColourSettings::colour_separating_curve;
         else
-            sep.color = P4ColourSettings::colour_shaded_curve;
+            sep->color = P4ColourSettings::colour_shaded_curve;
+        sep = sep->nextpt;
     }
 }
 
@@ -3643,12 +3646,16 @@ void P4InputVF::resampleGcf(int i)
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
-    for (auto it = std::begin(gVFResults.vf_[i]->gcf_points_);
-         it != std::end(gVFResults.vf_[i]->gcf_points_); ++it) {
-        it->dashes = 0;
-        if (getVFIndex_sphere(it->pcoord) != i) {
-            gVFResults.vf_[i]->gcf_points_.erase(it);
-        }
+    auto &sep = gVFResults.vf_[i]->gcf_points_;
+    while (sep != nullptr) {
+        if (getVFIndex_sphere(sep->pcoord) != i) {
+            auto sepx = sep;
+            sep = sep->nextpt;
+            delete sepx;
+            if (sep != nullptr)
+                sep->dashes = 0;
+        } else
+            sep = sep->nextpt;
     }
 }
 
@@ -3661,13 +3668,18 @@ void P4InputVF::resampleIsoclines(int i)
 {
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
-    for (auto isoc = std::begin(gVFResults.vf_[i]->isocline_vector_);
-         isoc != std::end(gVFResults.vf_[i]->isocline_vector_); ++isoc) {
-        for (auto it = std::begin(isoc->points); it != std::end(isoc->points);
-             ++it) {
-            it->dashes = 0;
-            if (getVFIndex_sphere(it->pcoord) != i) {
-                isoc->points.erase(it);
+
+    for (auto isoc : gVFResults.vf_[i]->isocline_vector_) {
+        auto &pts = isoc.points;
+        while (pts != nullptr) {
+            if (getVFIndex_sphere(pts->pcoord) != i) {
+                auto sepx = pts;
+                pts = pts->nextpt;
+                delete sepx;
+                if (pts != nullptr)
+                    pts->dashes = 0;
+            } else {
+                pts = pts->nextpt;
             }
         }
     }

@@ -302,7 +302,7 @@ void P4OrbitsDlg::reset()
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (gVFResults.orbits_.empty()) {
+    if (gVFResults.firstOrbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }

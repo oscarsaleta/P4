@@ -40,8 +40,8 @@
 #include "math_regions.hpp"
 #include "plot_tools.hpp"
 
-P4InputSphere::P4InputSphere(P4SeparatingCurvesDlg *wnd,
-                                   QLabel *lbl_status, QWidget *parent)
+P4InputSphere::P4InputSphere(P4SeparatingCurvesDlg *wnd, QLabel *lbl_status,
+                             QWidget *parent)
     : QWidget{parent}, status_{lbl_status}, parentWnd_{wnd}
 {
     //    setAttribute(Qt::WA_PaintOnScreen);
@@ -79,17 +79,17 @@ void P4InputSphere::setupPlot()
 
     if (!isZoom_) {
         switch (gVFResults.typeofview_) {
-        case TYPEOFVIEW_PLANE:
-        case TYPEOFVIEW_U1:
-        case TYPEOFVIEW_U2:
-        case TYPEOFVIEW_V1:
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_plane:
+        case P4TypeOfView::typeofview_U1:
+        case P4TypeOfView::typeofview_U2:
+        case P4TypeOfView::typeofview_V1:
+        case P4TypeOfView::typeofview_V2:
             x0_ = gVFResults.xmin_;
             y0_ = gVFResults.ymin_;
             x1_ = gVFResults.xmax_;
             y1_ = gVFResults.ymax_;
             break;
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             x0_ = -1.1;
             y0_ = -1.1;
             x1_ = 1.1;
@@ -103,7 +103,7 @@ void P4InputSphere::setupPlot()
     double idealhd{w_ / dx_ * dy_};
     idealh_ = std::round(idealhd);
 
-    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
         circleAtInfinity_ =
             produceEllipse(0., 0., 1., 1., false, coWinH(1.), coWinV(1.));
         if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
@@ -207,7 +207,7 @@ void P4InputSphere::adjustToNewSize()
     circleAtInfinity_.clear();
     plCircle_.clear();
 
-    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
         circleAtInfinity_ =
             produceEllipse(0., 0., 1., 1., false, coWinH(1.), coWinV(1.));
         if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
@@ -222,13 +222,15 @@ void P4InputSphere::adjustToNewSize()
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(P4Colours::p4XfigColour(P4ColourSettings::colour_background)));
-        paint.setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
+                       QColor(P4Colours::p4XfigColour(
+                           P4ColourSettings::colour_background)));
+        paint.setPen(
+            P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
-        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_plane) {
+            if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
                 if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
                     plotPoincareLyapunovSphere();
                 else
@@ -238,7 +240,7 @@ void P4InputSphere::adjustToNewSize()
         }
 
         // during resizing: only plot essential information
-        QColor c = P4Colours::p4XfigColour(WHITE);
+        QColor c = P4Colours::p4XfigColour(P4Colours::white);
         c.setAlpha(128);
         paint.setPen(c);
         paint.drawText(0, 0, width(), height(),
@@ -285,13 +287,15 @@ void P4InputSphere::paintEvent(QPaintEvent *p)
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(P4Colours::p4XfigColour(P4ColourSettings::colour_background)));
-        paint.setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
+                       QColor(P4Colours::p4XfigColour(
+                           P4ColourSettings::colour_background)));
+        paint.setPen(
+            P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
-        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_plane) {
+            if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
                 if (gThisVF->p_ != 1 || gThisVF->q_ != 1)
                     plotPoincareLyapunovSphere();
                 else
@@ -329,9 +333,9 @@ void P4InputSphere::markSelection(int x1, int y1, int x2, int y2)
         by2 = height() - 1;
 
     QPainter p{painterCache_};
-    QColor c{P4Colours::p4XfigColour(WHITE)};
+    QColor c{P4Colours::p4XfigColour(P4Colours::white)};
     c.setAlpha(32);
-    p.setPen(P4Colours::p4XfigColour(WHITE));
+    p.setPen(P4Colours::p4XfigColour(P4Colours::white));
     p.setBrush(c);
 
     if (bx1 == bx2 || by1 == by2)
@@ -352,13 +356,13 @@ void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
 
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
         switch (gVFResults.typeofview_) {
-        case TYPEOFVIEW_PLANE:
-            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+        case P4TypeOfView::typeofview_plane:
+            if (gVFResults.typeofstudy_ == P4TypeOfStudy::typeofstudy_one)
                 buf.sprintf("Local study   (x,y) = (%8.5g,%8.5g)", wx, wy);
             else
                 buf.sprintf("Planar view   (x,y) = (%8.5g,%8.5g)", wx, wy);
             break;
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere   (x,y) = (%8.5g,%8.5g)",
@@ -368,7 +372,7 @@ void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
                     "The P-L sphere of type (%d,%d)   (x,y) = (%8.5g,%8.5g)",
                     gVFResults.p_, gVFResults.q_, ucoord[0], ucoord[1]);
             break;
-        case TYPEOFVIEW_U1:
+        case P4TypeOfView::typeofview_U1:
             MATHFUNC(sphere_to_U1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (ucoord[1] >= 0)
                 buf.sprintf("The U1 chart   (z1,z2) = (%8.5g,%8.5g) ",
@@ -377,7 +381,7 @@ void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
                 buf.sprintf("The V1' chart   (z1,z2) = (%8.5g,%8.5g) ",
                             ucoord[1], ucoord[0]);
             break;
-        case TYPEOFVIEW_V1:
+        case P4TypeOfView::typeofview_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
@@ -390,7 +394,7 @@ void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
                 buf.sprintf("The U1' chart   (z1,z2) = (%8.5g,%8.5g) ",
                             ucoord[1], ucoord[0]);
             break;
-        case TYPEOFVIEW_U2:
+        case P4TypeOfView::typeofview_U2:
             MATHFUNC(sphere_to_U2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (ucoord[1] >= 0)
                 buf.sprintf("The U2 chart   (z1,z2) = (%8.5g,%8.5g) ",
@@ -399,7 +403,7 @@ void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
                 buf.sprintf("The V2' chart   (z1,z2) = (%8.5g,%8.5g) ",
                             ucoord[1], ucoord[0]);
             break;
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
@@ -428,29 +432,29 @@ void P4InputSphere::mouseMoveEvent(QMouseEvent *e)
         }
     } else {
         switch (gVFResults.typeofview_) {
-        case TYPEOFVIEW_PLANE:
-            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+        case P4TypeOfView::typeofview_plane:
+            if (gVFResults.typeofstudy_ == P4TypeOfStudy::typeofstudy_one)
                 buf.sprintf("Local study");
             else
                 buf.sprintf("Planar view");
             break;
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere");
             else
                 buf.sprintf("The P-L sphere of type (%d,%d)", gVFResults.p_,
                             gVFResults.q_);
             break;
-        case TYPEOFVIEW_U1:
+        case P4TypeOfView::typeofview_U1:
             buf.sprintf("The U1 chart");
             break;
-        case TYPEOFVIEW_V1:
+        case P4TypeOfView::typeofview_V1:
             buf.sprintf("The V1 chart");
             break;
-        case TYPEOFVIEW_U2:
+        case P4TypeOfView::typeofview_U2:
             buf.sprintf("The U2 chart");
             break;
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_V2:
             buf.sprintf("The V2 chart");
             break;
         }
@@ -584,7 +588,7 @@ void P4InputSphere::mouseReleaseEvent(QMouseEvent *e)
 }
 
 void P4InputSphere::drawLine(double x1, double y1, double x2, double y2,
-                                int color)
+                             int color)
 {
     int wx1, wy1, wx2, wy2;
 
@@ -785,7 +789,8 @@ void P4InputSphere::plotPoincareSphere()
 
 void P4InputSphere::plotPoincareLyapunovSphere()
 {
-    staticPainter_->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
+    staticPainter_->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
 
     for (auto const &it : circleAtInfinity_)
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
@@ -799,26 +804,29 @@ void P4InputSphere::plotPoincareLyapunovSphere()
 void P4InputSphere::plotLineAtInfinity()
 {
     switch (gVFResults.typeofview_) {
-    case TYPEOFVIEW_U1:
-    case TYPEOFVIEW_V1:
+    case P4TypeOfView::typeofview_U1:
+    case P4TypeOfView::typeofview_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
-            staticPainter_->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
+            staticPainter_->setPen(P4Colours::p4XfigColour(
+                P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(coWinX(0.0), 0, coWinY(0.0), h_ - 1);
         }
         break;
-    case TYPEOFVIEW_U2:
-    case TYPEOFVIEW_V2:
+    case P4TypeOfView::typeofview_U2:
+    case P4TypeOfView::typeofview_V2:
         if (y0_ < 0.0 && y1_ > 0.0) {
-            staticPainter_->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
+            staticPainter_->setPen(P4Colours::p4XfigColour(
+                P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(0, coWinY(0.0), w_ - 1, coWinY(0.0));
         }
         break;
     }
 }
 
-std::vector<P4POLYLINES>
-P4InputSphere::produceEllipse(double cx, double cy, double a, double b,
-                                 bool dotted, double resa, double resb)
+std::vector<P4POLYLINES> P4InputSphere::produceEllipse(double cx, double cy,
+                                                       double a, double b,
+                                                       bool dotted, double resa,
+                                                       double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output is
     // stored in a list of points that is dynamically allocated.
@@ -959,19 +967,20 @@ void P4InputSphere::plotSeparatingCurves()
             plotSeparatingCurve(gVFResults.separatingCurves_[r], r);
 }
 
-void P4InputSphere::plotSeparatingCurve(const P4Curves::curves &crv,
-                                           int index)
+void P4InputSphere::plotSeparatingCurve(const P4Curves::curves &crv, int index)
 {
     double pcoord[3];
-    auto &sep = crv.points;
+    auto sep = crv.points;
 
-    for (auto const &it : sep) {
-        if (it.dashes)
-            plotLine(pcoord, it.pcoord, it.color);
+    while (sep != nullptr) {
+        if (sep->dashes)
+            plotLine(pcoord, sep->pcoord, sep->color);
         else
-            plotPoint(it.pcoord, it.color);
+            plotPoint(sep->pcoord, sep->color);
 
-        copy_x_into_y(it.pcoord, pcoord);
+        copy_x_into_y(sep->pcoord, pcoord);
+
+        sep = sep->nextpt;
     }
 }
 
