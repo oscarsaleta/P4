@@ -71,7 +71,6 @@ P4Orbits::orbits_points *integrate_sep(P4Sphere *spherewnd,
 
 int change_type(int type);
 
-std::vector<P4Orbits::orbits_points>
-plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
+P4Orbits::orbits_points *plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                  double a12, double a21, double a22, double epsilon,
-                 const P4Blowup::sep &sep1, short int chart, int index);
+                 const P4Blowup::sep *sep1, P4Orbits::orbits_points **orbit, short int chart, int index);

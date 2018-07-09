@@ -262,11 +262,11 @@ static void insert_gcf_point(double x0, double y0, double z0, int dashes,
 
     if (gVFResults.vf_[index]->gcf_points_ != nullptr) {
         gLastGcfPoint->nextpt = new P4Orbits::orbits_points{
-            P4ColourSettings::colour_curve_singularities, pcoord, dashes, 0, 0};
+            pcoord, P4ColourSettings::colour_curve_singularities, dashes, 0, 0};
         gLastGcfPoint = gLastGcfPoint->nextpt;
     } else {
         gLastGcfPoint = new P4Orbits::orbits_points{
-            P4ColourSettings::colour_curve_singularities, pcoord, dashes, 0, 0};
+            pcoord, P4ColourSettings::colour_curve_singularities, dashes, 0, 0};
         gVFResults.vf_[index]->gcf_points_ = gLastGcfPoint;
     }
 }

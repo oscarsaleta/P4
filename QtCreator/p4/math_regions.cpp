@@ -551,19 +551,19 @@ bool isARealSingularity(double x0, double y0, int chart, int vfindex)
     double pcoord[3];
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
         break;
     default:

@@ -62,11 +62,12 @@ static void ps_print_saddle(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g box\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_saddle;
-            s.sprintf("col%d %8.5g %8.5g box\n", printColorTable(P4ColourSettings::colour_saddle), x,
-                      y);
+            s.sprintf("col%d %8.5g %8.5g box\n",
+                      printColorTable(P4ColourSettings::colour_saddle), x, y);
         }
         sPSFileStream << s;
     }
@@ -81,11 +82,12 @@ static void ps_print_virtualsaddle(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vbox\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_saddle;
-            s.sprintf("col%d %8.5g %8.5g vbox\n", printColorTable(P4ColourSettings::colour_saddle), x,
-                      y);
+            s.sprintf("col%d %8.5g %8.5g vbox\n",
+                      printColorTable(P4ColourSettings::colour_saddle), x, y);
         }
         sPSFileStream << s;
     }
@@ -98,10 +100,12 @@ static void ps_print_stablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g box\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_stable;
-            s.sprintf("col%d %8.5g %8.5g box\n", printColorTable(P4ColourSettings::colour_node_stable), x,
+            s.sprintf("col%d %8.5g %8.5g box\n",
+                      printColorTable(P4ColourSettings::colour_node_stable), x,
                       y);
         }
         sPSFileStream << s;
@@ -117,10 +121,12 @@ static void ps_print_virtualstablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vbox\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_stable;
-            s.sprintf("col%d %8.5g %8.5g vbox\n", printColorTable(P4ColourSettings::colour_node_stable), x,
+            s.sprintf("col%d %8.5g %8.5g vbox\n",
+                      printColorTable(P4ColourSettings::colour_node_stable), x,
                       y);
         }
         sPSFileStream << s;
@@ -134,11 +140,13 @@ static void ps_print_unstablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g box\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_unstable;
-            s.sprintf("col%d %8.5g %8.5g box\n", printColorTable(P4ColourSettings::colour_node_unstable), x,
-                      y);
+            s.sprintf("col%d %8.5g %8.5g box\n",
+                      printColorTable(P4ColourSettings::colour_node_unstable),
+                      x, y);
         }
         sPSFileStream << s;
     }
@@ -153,11 +161,13 @@ static void ps_print_virtualunstablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vbox\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_unstable;
-            s.sprintf("col%d %8.5g %8.5g vbox\n", printColorTable(P4ColourSettings::colour_node_unstable), x,
-                      y);
+            s.sprintf("col%d %8.5g %8.5g vbox\n",
+                      printColorTable(P4ColourSettings::colour_node_unstable),
+                      x, y);
         }
         sPSFileStream << s;
     }
@@ -170,11 +180,14 @@ static void ps_print_stableweakfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_weak_focus_stable;
-            s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_weak_focus_stable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g diamond\n",
+                printColorTable(P4ColourSettings::colour_weak_focus_stable), x,
+                y);
         }
         sPSFileStream << s;
     }
@@ -189,11 +202,14 @@ static void ps_print_virtualstableweakfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_weak_focus_stable;
-            s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_weak_focus_stable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g vdiamond\n",
+                printColorTable(P4ColourSettings::colour_weak_focus_stable), x,
+                y);
         }
         sPSFileStream << s;
     }
@@ -206,11 +222,14 @@ static void ps_print_unstableweakfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_weak_focus_unstable;
-            s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_weak_focus_unstable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g diamond\n",
+                printColorTable(P4ColourSettings::colour_weak_focus_unstable),
+                x, y);
         }
         sPSFileStream << s;
     }
@@ -225,11 +244,14 @@ static void ps_print_virtualunstableweakfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_weak_focus_unstable;
-            s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_weak_focus_unstable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g vdiamond\n",
+                printColorTable(P4ColourSettings::colour_weak_focus_unstable),
+                x, y);
         }
         sPSFileStream << s;
     }
@@ -242,11 +264,13 @@ static void ps_print_weakfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_weak_focus;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_weak_focus), x, y);
+                      printColorTable(P4ColourSettings::colour_weak_focus), x,
+                      y);
         }
         sPSFileStream << s;
     }
@@ -261,11 +285,13 @@ static void ps_print_virtualweakfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_weak_focus;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_weak_focus), x, y);
+                      printColorTable(P4ColourSettings::colour_weak_focus), x,
+                      y);
         }
         sPSFileStream << s;
     }
@@ -278,11 +304,12 @@ static void ps_print_center(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_center;
-            s.sprintf("col%d %8.5g %8.5g diamond\n", printColorTable(P4ColourSettings::colour_center),
-                      x, y);
+            s.sprintf("col%d %8.5g %8.5g diamond\n",
+                      printColorTable(P4ColourSettings::colour_center), x, y);
         }
         sPSFileStream << s;
     }
@@ -297,11 +324,12 @@ static void ps_print_virtualcenter(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_center;
-            s.sprintf("col%d %8.5g %8.5g vdiamond\n", printColorTable(P4ColourSettings::colour_center),
-                      x, y);
+            s.sprintf("col%d %8.5g %8.5g vdiamond\n",
+                      printColorTable(P4ColourSettings::colour_center), x, y);
         }
         sPSFileStream << s;
     }
@@ -314,11 +342,14 @@ static void ps_print_stablestrongfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_strong_focus_stable;
-            s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_strong_focus_stable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g diamond\n",
+                printColorTable(P4ColourSettings::colour_strong_focus_stable),
+                x, y);
         }
         sPSFileStream << s;
     }
@@ -333,11 +364,14 @@ static void ps_print_virtualstablestrongfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_strong_focus_stable;
-            s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_strong_focus_stable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g vdiamond\n",
+                printColorTable(P4ColourSettings::colour_strong_focus_stable),
+                x, y);
         }
         sPSFileStream << s;
     }
@@ -350,11 +384,14 @@ static void ps_print_unstablestrongfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_strong_focus_unstable;
-            s.sprintf("col%d %8.5g %8.5g diamond\n",
-                      printColorTable(P4ColourSettings::colour_strong_focus_unstable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g diamond\n",
+                printColorTable(P4ColourSettings::colour_strong_focus_unstable),
+                x, y);
         }
         sPSFileStream << s;
     }
@@ -369,11 +406,14 @@ static void ps_print_virtualunstablestrongfocus(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_strong_focus_unstable;
-            s.sprintf("col%d %8.5g %8.5g vdiamond\n",
-                      printColorTable(P4ColourSettings::colour_strong_focus_unstable), x, y);
+            s.sprintf(
+                "col%d %8.5g %8.5g vdiamond\n",
+                printColorTable(P4ColourSettings::colour_strong_focus_unstable),
+                x, y);
         }
         sPSFileStream << s;
     }
@@ -386,11 +426,12 @@ static void ps_print_sesaddle(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_saddle;
-            s.sprintf("col%d %8.5g %8.5g triangle\n", printColorTable(P4ColourSettings::colour_saddle),
-                      x, y);
+            s.sprintf("col%d %8.5g %8.5g triangle\n",
+                      printColorTable(P4ColourSettings::colour_saddle), x, y);
         }
         sPSFileStream << s;
     }
@@ -405,11 +446,12 @@ static void ps_print_virtualsesaddle(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_saddle;
-            s.sprintf("col%d %8.5g %8.5g vtriangle\n", printColorTable(P4ColourSettings::colour_saddle),
-                      x, y);
+            s.sprintf("col%d %8.5g %8.5g vtriangle\n",
+                      printColorTable(P4ColourSettings::colour_saddle), x, y);
         }
         sPSFileStream << s;
     }
@@ -422,11 +464,13 @@ static void ps_print_sesaddlenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
-            sLastPSColor = colour_saddle_node;
+            sLastPSColor = P4ColourSettings::colour_saddle_node;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
-                      printColorTable(colour_saddle_node), x, y);
+                      printColorTable(P4ColourSettings::colour_saddle_node), x,
+                      y);
         }
         sPSFileStream << s;
     }
@@ -441,11 +485,13 @@ static void ps_print_virtualsesaddlenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
-            sLastPSColor = colour_saddle_node;
+            sLastPSColor = P4ColourSettings::colour_saddle_node;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
-                      printColorTable(colour_saddle_node), x, y);
+                      printColorTable(P4ColourSettings::colour_saddle_node), x,
+                      y);
         }
         sPSFileStream << s;
     }
@@ -458,11 +504,13 @@ static void ps_print_sestablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_stable;
-            s.sprintf("col%d %8.5g %8.5g triangle\n", printColorTable(P4ColourSettings::colour_node_stable),
-                      x, y);
+            s.sprintf("col%d %8.5g %8.5g triangle\n",
+                      printColorTable(P4ColourSettings::colour_node_stable), x,
+                      y);
         }
         sPSFileStream << s;
     }
@@ -477,11 +525,13 @@ static void ps_print_virtualsestablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_stable;
-            s.sprintf("col%d %8.5g %8.5g vtriangle\n", printColorTable(P4ColourSettings::colour_node_stable),
-                      x, y);
+            s.sprintf("col%d %8.5g %8.5g vtriangle\n",
+                      printColorTable(P4ColourSettings::colour_node_stable), x,
+                      y);
         }
         sPSFileStream << s;
     }
@@ -494,10 +544,12 @@ static void ps_print_seunstablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g triangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_unstable;
-            s.sprintf("col%d %8.5g %8.5g triangle\n", printColorTable(P4ColourSettings::colour_node_unstable),
+            s.sprintf("col%d %8.5g %8.5g triangle\n",
+                      printColorTable(P4ColourSettings::colour_node_unstable),
                       x, y);
         }
         sPSFileStream << s;
@@ -513,10 +565,12 @@ static void ps_print_virtualseunstablenode(double x, double y)
         if (sPSBlackWhitePrint) {
             sLastPSColor = P4ColourSettings::colour_foreground;
             s.sprintf("col%d %8.5g %8.5g vtriangle\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_node_unstable;
-            s.sprintf("col%d %8.5g %8.5g vtriangle\n", printColorTable(P4ColourSettings::colour_node_unstable),
+            s.sprintf("col%d %8.5g %8.5g vtriangle\n",
+                      printColorTable(P4ColourSettings::colour_node_unstable),
                       x, y);
         }
         sPSFileStream << s;
@@ -532,7 +586,8 @@ static void ps_print_degen(double x, double y)
             s.sprintf("LW 2.6 mul setlinewidth\n"
                       "col%d %8.5g %8.5g cross\n"
                       "LW setlinewidth\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_degen;
             s.sprintf("LW 2.6 mul setlinewidth\n"
@@ -555,7 +610,8 @@ static void ps_print_virtualdegen(double x, double y)
             s.sprintf("LW 1.3 mul setlinewidth\n"
                       "col%d %8.5g %8.5g cross\n"
                       "LW setlinewidth\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_degen;
             s.sprintf("LW 1.3 mul setlinewidth\n"
@@ -576,7 +632,8 @@ static void ps_print_coinciding(double x, double y)
             s.sprintf("LW 1.3 mul setlinewidth\n"
                       "col%d %8.5g %8.5g doublecross\n"
                       "LW setlinewidth\n",
-                      printColorTable(P4ColourSettings::colour_foreground), x, y);
+                      printColorTable(P4ColourSettings::colour_foreground), x,
+                      y);
         } else {
             sLastPSColor = P4ColourSettings::colour_degen;
             s.sprintf("LW 1.3 mul setlinewidth\n"
@@ -603,7 +660,8 @@ static void ps_print_elips(double x0, double y0, double a, double b, int color,
             sPSFileStream << "gsave\n";
 
         if (sPSBlackWhitePrint)
-            s.sprintf("col%d\n", printColorTable(P4ColourSettings::colour_foreground));
+            s.sprintf("col%d\n",
+                      printColorTable(P4ColourSettings::colour_foreground));
         else
             s.sprintf("col%d\n", printColorTable(color));
 
@@ -656,7 +714,8 @@ static void ps_print_line(double x0, double y0, double x1, double y1, int color)
                 sLastPSColor = P4ColourSettings::colour_foreground;
                 s.sprintf(
                     "%8.5g %8.5g moveto\n%8.5g %8.5g lineto col%d stroke\n", x0,
-                    y0, x1, y1, printColorTable(P4ColourSettings::colour_foreground));
+                    y0, x1, y1,
+                    printColorTable(P4ColourSettings::colour_foreground));
             }
         } else {
             if (sLastPSColor == color) {
@@ -695,7 +754,8 @@ static void ps_print_point(double x0, double y0, int color)
             } else {
                 sLastPSColor = P4ColourSettings::colour_foreground;
                 s.sprintf("col%d %8.5g %8.5g dot\n",
-                          printColorTable(P4ColourSettings::colour_foreground), x0, y0);
+                          printColorTable(P4ColourSettings::colour_foreground),
+                          x0, y0);
             }
         } else {
             if (sLastPSColor == color) {
@@ -994,7 +1054,8 @@ void preparePostscriptPrinting(int x0, int y0, int w, int h, bool iszoom,
             sPSFileStream << s;
         }
 
-        if (iszoom || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
+        if (iszoom ||
+            gVFResults.typeofview_ == P4TypeOfView::typeofview_plane) {
             sPSFileStream << "frame\n";
         }
 

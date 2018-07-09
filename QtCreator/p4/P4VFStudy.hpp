@@ -80,10 +80,8 @@ class P4VFStudy : public QObject
     bool readGCF(FILE *fp);               // TODO
     bool readIsoclines(QString basename); // TODO
 
-    bool readVectorField(FILE *fp, std::vector<P4Polynom::term2> &vf0,
-                         std::vector<P4Polynom::term2> &vf1);
-    bool readVectorFieldCylinder(FILE *fp, std::vector<P4Polynom::term3> &vf0,
-                                 std::vector<P4Polynom::term3> &vf1);
+    bool readVectorField(FILE *fp, P4Polynom::term2 *vf[]);
+    bool readVectorFieldCylinder(FILE *fp, P4Polynom::term3 *vf[]);
 
     bool readPoints(FILE *fp);
     bool readSaddlePoint(FILE *fp);

@@ -260,11 +260,11 @@ static void insert_isocline_vector_point(double x0, double y0, double z0,
 
     if (gVFResults.vf_[index]->isocline_vector_.back().points != nullptr) {
         gLastIsoclinePoint->nextpt = new P4Orbits::orbits_points{
-            P4ColourSettings::colour_isoclines, pcoord, dashes, 0, 0};
+            pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0};
         gLastIsoclinePoint = gLastIsoclinePoint->nextpt;
     } else {
         gLastIsoclinePoint = new P4Orbits::orbits_points{
-            P4ColourSettings::colour_isoclines, pcoord, dashes, 0, 0};
+            pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0};
         gVFResults.vf_[index]->isocline_vector_.back().points =
             gLastIsoclinePoint;
     }

@@ -38,35 +38,63 @@ P4VFStudy::P4VFStudy(P4ParentStudy *parent) : parent_{parent} {}
 void P4VFStudy::reset()
 {
     // Delete Vector Field
-    f_vec_field_0_.clear();
-    f_vec_field_1_.clear();
-    vec_field_U1_0_.clear();
-    vec_field_U1_1_.clear();
-    vec_field_U2_0_.clear();
-    vec_field_U2_1_.clear();
-    vec_field_V1_0_.clear();
-    vec_field_V1_1_.clear();
-    vec_field_V2_0_.clear();
-    vec_field_V2_1_.clear();
-    vec_field_C_0_.clear();
-    vec_field_C_1_.clear();
+    delete f_vec_field_[0];
+    delete f_vec_field_[1];
+    delete vec_field_U1_[0];
+    delete vec_field_U1_[1];
+    delete vec_field_U2_[0];
+    delete vec_field_U2_[1];
+    delete vec_field_V1_[0];
+    delete vec_field_V1_[1];
+    delete vec_field_V2_[0];
+    delete vec_field_V2_[1];
+    delete vec_field_C_[0];
+    delete vec_field_C_[1];
+
+    f_vec_field_[0] = nullptr;
+    f_vec_field_[1] = nullptr;
+    vec_field_U1_[0] = nullptr;
+    vec_field_U1_[1] = nullptr;
+    vec_field_U2_[0] = nullptr;
+    vec_field_U2_[1] = nullptr;
+    vec_field_V1_[0] = nullptr;
+    vec_field_V1_[1] = nullptr;
+    vec_field_V2_[0] = nullptr;
+    vec_field_V2_[1] = nullptr;
+    vec_field_C_[0] = nullptr;
+    vec_field_C_[1] = nullptr;
 
     // Delete singular points
-    saddlePoints_.clear();
-    sePoints_.clear();
-    nodePoints_.clear();
-    dePoints_.clear();
-    sfPoints_.clear();
-    wfPoints_.clear();
+    delete firstSaddlePoint_;
+    delete firstSePoint_;
+    delete firstNodePoint_;
+    delete firstDePoint_;
+    delete firstSfPoint_;
+    delete firstWfPoint_;
+
+    firstSaddlePoint_ = nullptr;
+    firstSePoint_ = nullptr;
+    firstNodePoint_ = nullptr;
+    firstDePoint_ = nullptr;
+    firstSfPoint_ = nullptr;
+    firstWfPoint_ = nullptr;
 
     // Delete GCF:
-    gcf_.clear();
-    gcf_U1_.clear();
-    gcf_U2_.clear();
-    gcf_V1_.clear();
-    gcf_V2_.clear();
-    gcf_C_.clear();
-    gcf_points_.clear();
+    delete gcf_;
+    delete gcf_U1_;
+    delete gcf_U2_;
+    delete gcf_V1_;
+    delete gcf_V2_;
+    delete gcf_C_;
+    delete gcf_points_;
+
+    gcf_ = nullptr;
+    gcf_U1_ = nullptr;
+    gcf_U2_ = nullptr;
+    gcf_V1_ = nullptr;
+    gcf_V2_ = nullptr;
+    gcf_C_ = nullptr;
+    gcf_points_ = nullptr;
 
     // reset others
     singinf_ = false;
@@ -79,16 +107,15 @@ void P4VFStudy::reset()
 bool P4VFStudy::readTables(FILE *fpvec, FILE *fpfin, FILE *fpinf)
 {
     int j;
-    if (!readGCF(fpvec) ||
-        !readVectorField(fpvec, f_vec_field_0_, f_vec_field_1_) ||
-        !readVectorField(fpvec, vec_field_U1_0_, vec_field_U1_1_) ||
-        !readVectorField(fpvec, vec_field_V1_0_, vec_field_V1_1_) ||
-        !readVectorField(fpvec, vec_field_U2_0_, vec_field_U2_1_) ||
-        !readVectorField(fpvec, vec_field_V2_0_, vec_field_V2_1_))
+    if (!readGCF(fpvec) || !readVectorField(fpvec, f_vec_field_) ||
+        !readVectorField(fpvec, vec_field_U1_) ||
+        !readVectorField(fpvec, vec_field_V1_) ||
+        !readVectorField(fpvec, vec_field_U2_) ||
+        !readVectorField(fpvec, vec_field_V2_))
         return false;
 
     if (parent_->plweights_) {
-        if (!readVectorFieldCylinder(fpvec, vec_field_C_0_, vec_field_C_1_))
+        if (!readVectorFieldCylinder(fpvec, vec_field_C_))
             return false;
         singinf_ = 0;
     } else {
@@ -236,13 +263,15 @@ bool P4VFStudy::readIsoclines(QString basename)
 // -----------------------------------------------------------------------
 //          P4VFStudy::readVectorField
 // -----------------------------------------------------------------------
-bool P4VFStudy::readVectorField(FILE *fp, std::vector<P4Polynom::term2> &vf0,
-                                std::vector<P4Polynom::term2> &vf1)
+bool P4VFStudy::readVectorField(FILE *fp, P4Polynom::term2 *vf[2])
 {
     int M, N;
 
-    if (fscanf(fp, "%d", &M) != 1 || M < 0 || !readTerm2(fp, vf0, M) ||
-        fscanf(fp, "%d", &N) != 1 || N < 0 || !readTerm2(fp, vf1, N))
+    vf[0] = new P4Polynom::term2;
+    vf[1] = new P4Polynom::term2;
+
+    if (fscanf(fp, "%d", &M) != 1 || M < 0 || !readTerm2(fp, vf[0], M) ||
+        fscanf(fp, "%d", &N) != 1 || N < 0 || !readTerm2(fp, vf[1], N))
         return false;
 
     return true;
@@ -251,14 +280,15 @@ bool P4VFStudy::readVectorField(FILE *fp, std::vector<P4Polynom::term2> &vf0,
 // -----------------------------------------------------------------------
 //          P4VFStudy::readVectorFieldCylinder
 // -----------------------------------------------------------------------
-bool P4VFStudy::readVectorFieldCylinder(FILE *fp,
-                                        std::vector<P4Polynom::term3> &vf0,
-                                        std::vector<P4Polynom::term3> &vf1)
+bool P4VFStudy::readVectorFieldCylinder(FILE *fp, P4Polynom::term3 *vf[2])
 {
     int M, N;
 
-    if (fscanf(fp, "%d", &M) != 1 || M < 0 || !readTerm3(fp, vf0, M) ||
-        fscanf(fp, "%d", &N) != 1 || N < 0 || !readTerm3(fp, vf1, N))
+    vf[0] = new P4Polynom::term3;
+    vf[1] = new P4Polynom::term3;
+
+    if (fscanf(fp, "%d", &M) != 1 || M < 0 || !readTerm3(fp, vf[0], M) ||
+        fscanf(fp, "%d", &N) != 1 || N < 0 || !readTerm3(fp, vf[1], N))
         return false;
 
     return true;
@@ -279,27 +309,27 @@ bool P4VFStudy::readPoints(FILE *fp)
             return false;
 
         switch (typ) {
-        case SADDLE:
+        case P4SingularityType::saddle:
             if (!readSaddlePoint(fp))
                 return false;
             break;
-        case SEMI_HYPERBOLIC:
+        case P4SingularityType::semi_hyperbolic:
             if (!readSemiElementaryPoint(fp))
                 return false;
             break;
-        case NODE:
+        case P4SingularityType::node:
             if (!readNodePoint(fp))
                 return false;
             break;
-        case STRONG_FOCUS:
+        case P4SingularityType::strong_focus:
             if (!readStrongFocusPoint(fp))
                 return false;
             break;
-        case WEAK_FOCUS:
+        case P4SingularityType::weak_focus:
             if (!readWeakFocusPoint(fp))
                 return false;
             break;
-        case NON_ELEMENTARY:
+        case P4SingularityType::non_elementary:
             if (!readDegeneratePoint(fp))
                 return false;
             break;
@@ -317,61 +347,91 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
 {
     int N;
 
-    // variables for constructing a P4Singularities::saddle
-    double x0, y0;
-    int chart;
-    double a11, a12, a21, a22;
-    double epsilon;
-    std::vector<P4Blowup::sep> psep;
-    std::vector<P4Polynom::term2> vf0, vf1;
+    P4Blowup::sep *sep2{nullptr};
+    P4Singularities::saddle *last{nullptr}, *point{firstSaddlePoint_};
 
-    // variables for constructing a P4Blowup::sep
-    int stype;
-    std::vector<P4Polynom::term1> ssep;
+    while (point != nullptr) {
+        last = point;
+        point = point->next_saddle;
+    }
+    point = new P4Singularities::saddle;
+    if (last == nullptr)
+        firstSaddlePoint_ = point;
+    else
+        last->next_saddle = point;
 
-    if (fscanf(fp, "%lf %lf", &x0, &y0) != 2 ||
-        fscanf(fp, "%lf %lf %lf %lf", &a11, &a12, &a21, &a22) != 4 ||
-        !readVectorField(fp, vf0, vf1) || fscanf(fp, "%d ", &chart) != 1 ||
-        fscanf(fp, "%d ", &stype) != 1 || fscanf(fp, "%d ", &N) != 1 || N < 0)
+    // Create sep with:
+    //   type: 0 (will be read from file)
+    //   direction: 1
+    //   d: 0
+    //   notadummy: true
+    //   separatrice: new P4Polynom::term1 (will be read from file)
+    //   first_sep_point: nullptr
+    //   last_sep_point: nullptr
+    //   next_sep: nullptr
+    point->separatrices =
+        new P4Blowup::sep{0, 1, 0, true, new P4Polynom::term1};
+    auto sep1 = point->separatrices;
+
+    // fill structure
+    if (fscanf(fp, "%lf %lf", &(point->x0), &(point->y0)) != 2 ||
+        fscanf(fp, "%lf %lf %lf %lf", &(point->a11), &(point->a12),
+               &(point->a21), &(point->a22)) != 4 ||
+        !readVectorField(fp, point->vector_field) ||
+        fscanf(fp, "%d ", &(point->chart)) != 1 ||
+        fscanf(fp, "%d ", &(sep1->type)) != 1 || fscanf(fp, "%d ", &N) != 1 ||
+        N < 0 || !readTerm1(fp, sep1->separatrice, N)) {
+        delete point;
+        point = nullptr;
         return false;
+    }
 
-    if (!readTerm1(fp, ssep, N))
-        return false;
-
-    psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, 1, 0, true,
-                      ssep);
-
-    if (chart == CHART_R2 || singinf_) {
+    if (point->chart == P4Charts::chart_R2 || singinf_) {
         // point is finite hence we have 4 separatrices or we have a line of
         // singularities at infinity and hence we have also 4 separatrices if we
         // delete the line
-        // #2
-        psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, -1, 0,
-                          false, ssep);
-        // #3
-        if (fscanf(fp, "%d", &stype) != 1 || fscanf(fp, "%d", &N) != 1 || N < 0)
+
+        // Create sep (will not outline each member in the constructor anymore)
+        sep2 = new P4Blowup::sep{sep1->type, -1, 0, false, sep1->separatrice};
+        sep1->next_sep = sep2;
+
+        sep1 = sep2->next_sep =
+            new P4Blowup::sep{0, 1, 1, true, new P4Polynom::term1};
+        if (fscanf(fp, "%d", &(sep1->type)) != 1 || fscanf(fp, "%d", &N) != 1 ||
+            N < 0 || !readTerm1(fp, sep1->separatrice, N)) {
+            delete point;
+            point = nullptr;
             return false;
-        if (!readTerm1(fp, ssep, N))
-            return false;
-        psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, 1, 1,
-                          true, ssep);
-        // #4
-        psep.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype, -1, 1,
-                          false, ssep);
+        }
+
+        sep2 = new P4Blowup::sep{sep1->type, -1, 1, false, sep1->separatrice};
+        sep1->next_sep = sep2;
     }
-    if (fscanf(fp, "%lf ", &epsilon) != 1)
+
+    if (fscanf(fp, "%lf ", &(point->epsilon)) != 1) {
+        delete point;
+        point = nullptr;
         return false;
-    saddlePoints_.emplace_back(x0, y0, chart, 0, epsilon, true, psep, vf0, vf1,
-                               a11, a12, a21, a22);
+    }
 
     // line at infinity a line of singularities in poincare disc
-    if (singinf_ && chart != CHART_R2) {
-        y0 = 0.0;
-        chart = ((chart == CHART_U1) ? CHART_V1 : CHART_V2);
-        vf0.clear();
-        vf1.clear();
-        saddlePoints_.emplace_back(x0, y0, chart, 0, epsilon, false, psep, vf0,
-                                   vf1, a11, a12, a21, a22);
+
+    if (singinf_ && point->chart != P4Charts::chart_R2) {
+        last = point;
+        point = new P4Singularities::saddle{last->x0,
+                                            0.0,
+                                            ((last->chart == P4Charts::chart_U1)
+                                                 ? P4Charts::chart_V1
+                                                 : P4Charts::chart_V2),
+                                            0,
+                                            last->epsilon,
+                                            false,
+                                            last->a11,
+                                            last->a12,
+                                            last->a21,
+                                            last->a22,
+                                            last->separatrices};
+        last->next_saddle = point;
     }
     return true;
 }
@@ -381,322 +441,352 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
 // -----------------------------------------------------------------------
 bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
 {
-    int s, N;
+    int s, N, typ, dir;
+    double y[2];
+    bool ok;
 
-    // variables for constructing a P4Singularities::semi_elementary
-    double x0, y0;
-    int chart;
-    double epsilon;
-    double a11, a12, a21, a22;
-    int ptype;
-    std::vector<P4Polynom::term2> vf0, vf1;
-    std::vector<P4Blowup::sep> pseps;
+    P4Singularities::semi_elementary *last{nullptr}, *point{firstSePoint_};
+    P4Blowup::sep *sep1{nullptr};
 
-    // variables for constructing a P4Blowup::sep
-    int stype;
-    int sdirection;
-    std::vector<P4Polynom::term1> ssep;
+    while (point != nullptr) {
+        last = point;
+        point = point->next_se;
+    }
+    point = new P4Singularities::semi_elementary;
+    if (last == nullptr)
+        firstSePoint_ = point;
+    else
+        last->next_se = point;
 
-    // P4Singularities::semi_elementary point;
-    // std::vector<P4Blowup::sep> sepvec;
-
-    if (fscanf(fp, "%lf %lf", &x0, &y0) != 2 ||
-        fscanf(fp, "%lf %lf %lf %lf", &a11, &a12, &a21, &a22) != 4 ||
-        !readVectorField(fp, vf0, vf1) ||
-        fscanf(fp, "%d %d %d", &ptype, &s, &chart) != 3)
+    if (fscanf(fp, "%lf %lf ", &(point->x0), &(point->y0)) != 2 ||
+        fscanf(fp, "%lf %lf %lf %lf ", &(point->a11), &(point->a12),
+               &(point->a21), &(point->a22)) != 4 ||
+        !readVectorField(fp, point->vector_field) ||
+        fscanf(fp, "%d %d %d", &(point->type), &s, &(point->chart)) != 3) {
+        delete point;
+        point = nullptr;
         return false;
+    }
 
-    switch (ptype) {
-    case 1: { // sadle-node
-        if (!s || (chart == CHART_R2)) {
-            if (s)
-                stype = OT_CENT_STABLE;
-            else
-                stype = OT_UNSTABLE;
-            if (((parent_->p_ == 1) && (parent_->q_ == 1) &&
-                 ((chart == CHART_V1) || (chart == CHART_V2))) ||
-                (chart == CHART_R2))
-                sdirection = -1;
-            else
-                sdirection = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
+    if ((parent_->p_ == 1) && (parent_->q_ == 1) &&
+        ((point->chart == P4Charts::chart_V1) ||
+         (point->chart == P4Charts::chart_V2))) {
+        dir = -1;
+    } else {
+        dir = 1;
+    }
+
+    switch (point->type) {
+
+    case 1: // saddle-node
+        if (!s || (point->chart == P4Charts::chart_R2)) {
+
+            if (s) {
+                typ = P4SeparatriceType::cent_stable;
+            } else {
+                typ = P4SeparatriceType::unstable;
+            }
+
+            point->separatrices =
+                new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
+            sep1 = point->separatrices;
+
+            if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                !readTerm1(fp, sep1->separatrice, N)) {
+                delete point;
+                point = nullptr;
                 return false;
-            if (!readTerm1(fp, ssep, N))
-                return false;
+            }
 
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 0, true, ssep);
-
-            if (chart == CHART_R2) {
-                stype = OT_UNSTABLE;
-                sdirection = 1;
-                if (fscanf(fp, "%d", &N) != 1)
+            if (point->chart == P4Charts::chart_R2) {
+                sep1->next_sep =
+                    new P4Blowup::sep{P4SeparatriceType::unstable, 1, 1, true,
+                                      new P4Polynom::term1};
+                sep1 = sep1->next_sep;
+                if (!readTerm1(fp, sep1->separatrice, N)) {
+                    delete point;
+                    point = nullptr;
                     return false;
-                if (!readTerm1(fp, ssep, N))
-                    return false;
-                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
-                                   stype, sdirection, 1, true, ssep);
-
-                sdirection = -1;
-                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
-                                   stype, sdirection, 1, false, ssep);
+                }
+                sep1->next_sep =
+                    new P4Blowup::sep{P4SeparatriceType::unstable, -1, 1, false,
+                                      sep1->separatrice};
             }
         }
-    } break;
-    case 2: { // saddle-node
-        if (s)
-            stype = STYPE_CENUNSTABLE;
-        else
-            stype = STYPE_STABLE;
-        if ((parent_->p_ == 1) && (parent_->q_ == 1) &&
-            ((chart == CHART_V1) || (chart == CHART_V2)))
-            sdirection = -1;
-        else
-            sdirection = 1;
+        break;
 
-        if (fscanf(fp, "%d", &N) != 1)
-            return false;
-        if (!readTerm1(fp, ssep, N))
-            return false;
-        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                           sdirection, 0, true, ssep);
-
-        if (chart == CHART_R2) {
-            stype = STYPE_STABLE;
-            sdirection = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            if (!readTerm1(fp, ssep, N))
-                return false;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, true, ssep);
-
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, false, ssep);
+    case 2: // saddle-node
+        if (s) {
+            typ = P4SeparatriceType::cent_unstable;
+        } else {
+            typ = P4SeparatriceType::stable;
         }
-    } break;
-    case 3: { // saddle-node
-        if (s)
-            stype = STYPE_CENSTABLE;
-        else
-            stype = STYPE_UNSTABLE;
-        if ((parent_->p_ == 1) && (parent_->q_ == 1) &&
-            ((chart == CHART_V1) || (chart == CHART_V2)))
-            sdirection = -1;
-        else
-            sdirection = 1;
-        if (fscanf(fp, "%d ", &N) != 1)
-            return false;
-        if (!readTerm1(fp, ssep, N))
-            return false;
-        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                           sdirection, 0, true, ssep);
 
-        if (chart == CHART_R2) {
-            stype = STYPE_UNSTABLE;
-            sdirection = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            if (!readTerm1(fp, ssep, N))
-                return false;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, true, ssep);
+        point->separatrices =
+            new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
+        sep1 = point->separatrices;
 
-            sdirection = -1;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, false, ssep);
+        if (fscanf(fp, "%N", &N) != 1 || N < 0 ||
+            !readTerm1(fp, sep1->separatrice, N)) {
+            delete point;
+            point = nullptr;
+            return false;
         }
-    } break;
-    case 4: { // saddle-node
-        if (!s || chart == CHART_R2) {
-            if (s)
-                stype = STYPE_CENUNSTABLE;
-            else
-                stype = STYPE_STABLE;
-            if (((parent_->p_ == 1) && (parent_->q_ == 1) &&
-                 ((chart == CHART_V1) || (chart == CHART_V2))) ||
-                (chart == CHART_R2))
-                sdirection = -1;
-            else
-                sdirection = 1;
 
-            if (fscanf(fp, "%d ", &N) != 1)
+        if (point->chart == P4Charts::chart_R2) {
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::stable, 1, 1,
+                                               true, new P4Polynom::term1};
+            sep1 = sep1->next_sep;
+            if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                !readTerm1(fp, sep1->separatrice, N)) {
+                delete point;
+                point = nullptr;
                 return false;
-            if (!readTerm1(fp, ssep, N))
+            }
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::stable, -1, 1,
+                                               false, sep1->separatrice};
+        }
+        break;
+
+    case 3: // saddle-node
+        if (s) {
+            typ = P4SeparatriceType::cent_stable;
+        } else {
+            typ = P4SeparatriceType::unstable;
+        }
+
+        point->separatrices =
+            new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
+        sep1 = point->separatrices;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+            !readTerm1(fp, sep1->separatrice, N)) {
+            delete point;
+            point = nullptr;
+            return false;
+        }
+
+        if (point->chart == P4Charts::chart_R2) {
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::unstable, 1,
+                                               1, true, new P4Polynom::term1};
+            sep1 = sep1->next_sep;
+            if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                !readTerm1(fp, sep1->separatrice, N)) {
+                delete point;
+                point = nullptr;
                 return false;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 0, true, ssep);
+            }
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::unstable, -1,
+                                               1, false, sep1->separatrice};
+        }
+        break;
 
-            if (chart == CHART_R2) {
-                stype = STYPE_STABLE;
-                sdirection = 1;
-                if (fscanf(fp, "%d ", &N) != 1)
-                    return false;
-                if (!readTerm1(fp, ssep, N))
-                    return false;
-                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
-                                   stype, sdirection, 1, true, ssep);
+    case 4: // saddle-node
+        if (!s || (point->chart == P4Charts::chart_R2)) {
+            int typ, direction;
 
-                sdirection = -1;
-                pseps.emplace_back(std::vector<P4Orbits::orbits_points>{},
-                                   stype, sdirection, 1, false, ssep);
+            if (s) {
+                typ = P4SeparatriceType::cent_unstable;
+            } else {
+                typ = P4SeparatriceType::stable;
+            }
+
+            point->separatrices =
+                new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
+            sep1 = point->separatrices;
+
+            if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                !readTerm1(fp, sep1->separatrice, N)) {
+                delete point;
+                point = nullptr;
+                return false;
+            }
+
+            if (point->chart == P4Charts::chart_R2) {
+                sep1->next_sep =
+                    new P4Blowup::sep{P4SeparatriceType::stable, 1, 1, true,
+                                      new P4Polynom::term1};
+                sep1 = sep1->next_sep;
+                if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                    !readTerm1(fp, sep1->separatrice, N)) {
+                    delete point;
+                    point = nullptr;
+                    return false;
+                }
+
+                sep1->next_sep = new P4Blowup::sep{
+                    P4SeparatriceType::stable, -1, 1, false, sep1->separatrice};
             }
         }
-    } break;
-    case 6: { // saddle
-        if (s)
-            stype = STYPE_CENUNSTABLE;
-        else
-            stype = STYPE_STABLE;
-        if ((parent_->p_ == 1) && (parent_->q_ == 1) &&
-            ((chart == CHART_V1) || (chart == CHART_V2)))
-            sdirection = -1;
-        else
-            sdirection = 1;
-        if (fscanf(fp, "%d ", &N) != 1)
-            return false;
-        if (!readTerm1(fp, ssep, N))
-            return false;
-        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                           sdirection, 0, true, ssep);
+        break;
 
-        if (chart == CHART_R2) {
-            stype = STYPE_CENUNSTABLE;
-            sdirection = -1;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 0, false, ssep);
-
-            stype = STYPE_STABLE;
-            sdirection = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            if (!readTerm1(fp, ssep, N))
-                return false;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, true, ssep);
-
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, false, ssep);
+    case 6: // saddle
+        if (s) {
+            typ = P4SeparatriceType::cent_unstable;
+        } else {
+            typ = P4SeparatriceType::stable;
         }
-    } break;
-    case 7: { // saddle
-        if (s)
-            stype = STYPE_CENSTABLE;
-        else
-            stype = STYPE_UNSTABLE;
-        if ((parent_->p_ == 1) && (parent_->q_ == 1) &&
-            ((chart == CHART_V1) || (chart == CHART_V2)))
-            sdirection = -1;
-        else
-            sdirection = 1;
-        if (fscanf(fp, "%d ", &N) != 1)
+
+        point->separatrices =
+            new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
+        sep1 = point->separatrices;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+            !readTerm1(fp, sep1->separatrice, N)) {
+            delete point;
+            point = nullptr;
             return false;
-        if (!readTerm1(fp, ssep, N))
-            return false;
-        pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                           sdirection, 0, true, ssep);
-
-        if (chart == CHART_R2) {
-            stype = STYPE_CENSTABLE;
-            sdirection = -1;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 0, false, ssep);
-
-            stype = STYPE_UNSTABLE;
-            sdirection = 1;
-            if (fscanf(fp, "%d ", &N) != 1)
-                return false;
-            if (!readTerm1(fp, ssep, N))
-                return false;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, true, ssep);
-
-            sdirection = -1;
-            pseps.emplace_back(std::vector<P4Orbits::orbits_points>{}, stype,
-                               sdirection, 1, false, ssep);
         }
-    } break;
-    default: { // change type of node if we have a gcf ?
-        double y[2]{x0, y0};
-        bool ok{false};
-        switch (chart) {
-        case CHART_R2:
+
+        if (point->chart == P4Charts::chart_R2) {
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::cent_unstable,
+                                               -1, 0, false, sep1->separatrice};
+            sep1->next_sep->next_sep = new P4Blowup::sep{
+                P4SeparatriceType::stable, 1, 1, true, new P4Polynom::term1};
+            sep1 = sep1->next_sep->next_sep;
+
+            if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                !readTerm1(fp, sep1->separatrice, N)) {
+                delete point;
+                point = nullptr;
+                return false;
+            }
+
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::stable, -1, 1,
+                                               false, sep1->separatrice};
+        }
+        break;
+
+    case 7: // saddle
+        if (s) {
+            typ = P4SeparatriceType::cent_stable;
+        } else {
+            typ = P4SeparatriceType::unstable;
+        }
+
+        point->separatrices =
+            new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
+        sep1 = point->separatrices;
+
+        if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+            !readTerm1(fp, sep1->separatrice, N)) {
+            delete point;
+            point = nullptr;
+            return false;
+        }
+
+        if (point->chart == P4Charts::chart_R2) {
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::cent_stable,
+                                               -1, 0, false, sep1->separatrice};
+            sep1->next_sep->next_sep = new P4Blowup::sep{
+                P4SeparatriceType::unstable, 1, 1, true, new P4Polynom::term1};
+            sep1 = sep1->next_sep->next_sep;
+
+            if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
+                !readTerm1(fp, sep1->separatrice, N)) {
+                delete point;
+                point = nullptr;
+                return false;
+            }
+
+            sep1->next_sep = new P4Blowup::sep{P4SeparatriceType::unstable, -1,
+                                               1, false, sep1->separatrice};
+        }
+        break;
+
+    default:
+        point->separatrices = nullptr;
+
+        // change type of node if we have a gcf ?
+        y[0] = point->x0;
+        y[1] = point->y0;
+        ok = false;
+
+        switch (point->chart) {
+        case P4Charts::chart_R2:
             if (eval_term2(gcf_, y) < 0)
                 ok = true;
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             if (eval_term2(gcf_U1_, y) < 0)
                 ok = true;
             break;
-        case CHART_V1:
-            if (parent_->p_ == 1 && parent_->q_ == 1)
+        case P4Charts::chart_V1:
+            if ((parent_->p_ == 1) && (parent_->q_ == 1))
                 y[0] = -y[0];
             if (eval_term2(gcf_V1_, y) < 0)
                 ok = true;
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             if (eval_term2(gcf_U2_, y) < 0)
                 ok = true;
             break;
-        case CHART_V2:
-            if (parent_->p_ == 1 && parent_->q_ == 1)
+        case P4Charts::chart_V2:
+            if ((parent_->p_ == 1) && (parent_->q_ == 1))
                 y[0] = -y[0];
-            if (eval_term2(gcf_V2_, y) < 0)
+            if (eval_term2(gcf_U2_, y) < 0)
                 ok = true;
             break;
         }
         if (ok) {
-            if (ptype == 5)
-                ptype = 8;
+            if (point->type == 5)
+                point->type = 8;
             else
-                ptype = 5;
+                point->type = 5;
         }
     }
-    }
 
-    if (fscanf(fp, "%lf", &epsilon) != 1)
+    if (fscanf(fp, "%lf ", &(point->epsilon)) != 1) {
+        delete point;
+        point = nullptr;
         return false;
-
-    // point.notadummy = true;
-    sePoints_.emplace_back(x0, y0, chart, 0, epsilon, true, pseps, vf0, vf1,
-                           a11, a12, a21, a22, ptype);
+    }
+    point->notadummy = true;
 
     // line at infinity a line of singularities in poincare disc
-    if (singinf_ && chart != CHART_R2) {
-        y0 = 0.0;
-        if (dir_vec_field_ != 1) {
-            int tp;
-            switch (ptype) {
+    if (singinf_ && (point->chart != P4Charts::chart_R2)) {
+        if (dir_vec_field_ == 1) {
+            typ = point->type;
+        } else {
+            switch (point->type) {
             case 1:
-                tp = 3;
+                typ = 3;
                 break;
             case 2:
-                tp = 4;
+                typ = 4;
                 break;
             case 3:
-                tp = 1;
+                typ = 1;
                 break;
             case 4:
-                tp = 2;
+                typ = 2;
                 break;
             case 6:
-                tp = 7;
+                typ = 7;
                 break;
             case 7:
-                tp = 6;
+                typ = 6;
                 break;
             default:
-                tp = ptype;
+                typ = point->type;
             }
-            ptype = tp;
         }
-        chart = (chart == CHART_U1) ? CHART_V1 : CHART_V2;
-        // point.notadummy = false;
-        vf0.clear();
-        vf1.clear();
-        sePoints_.emplace_back(x0, y0, chart, 0, epsilon, false, pseps, vf0,
-                               vf1, a11, a12, a21, a22, ptype);
+
+        point->next_se = new P4Singularities::semi_elementary{
+            point->x0,
+            0.0,
+            (point->chart == P4Charts::chart_U1) ? P4Charts::chart_V1
+                                                 : P4Charts::chart_V2,
+            0,
+            point->epsilon,
+            false,
+            point->a11,
+            point->a12,
+            point->a21,
+            point->a22,
+            typ};
     }
+
     return true;
 }
 

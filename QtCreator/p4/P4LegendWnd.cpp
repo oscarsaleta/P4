@@ -111,7 +111,8 @@ void P4LegendWnd::paintEvent(QPaintEvent *p)
     win_plot_unstablestrongfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
                                  vmargin2_ - SYMBOLHEIGHT / 2 + 8 * interline_);
 
-    paint.setPen(QPen(P4Colours::p4XfigColour(colour_saddle_node)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle_node)));
     paint.drawText(hmargin5_, vmargin2_, "Saddle-Node");
     paint.setPen(
         QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable)));

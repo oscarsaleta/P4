@@ -404,7 +404,7 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
     (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
     LC->firstpt = new P4Orbits::orbits_points{
-        P4ColourSettings::colour_limit_cycle, p2, gVFResults.config_dashes_};
+        p2, P4ColourSettings::colour_limit_cycle, gVFResults.config_dashes_};
     LC->currentpt = LC->firstpt;
 
     if (gVFResults.config_dashes_)
@@ -417,9 +417,9 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
-        LC->currentpt->nextpt =
-            new P4Orbits::orbits_points{P4ColourSettings::colour_limit_cycle,
-                                        p2, gVFResults.config_dashes_};
+        LC->currentpt->nextpt = new P4Orbits::orbits_points{
+            p2, P4ColourSettings::colour_limit_cycle,
+            gVFResults.config_dashes_};
         LC->currentpt = LC->currentpt->nextpt;
 
         if (gVFResults.config_dashes_)
@@ -446,9 +446,9 @@ void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
         MATHFUNC(integrate_sphere_orbit)
         (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
 
-        LC->currentpt->nextpt =
-            new P4Orbits::orbits_points{P4ColourSettings::colour_limit_cycle,
-                                        p2, gVFResults.config_dashes_};
+        LC->currentpt->nextpt = new P4Orbits::orbits_points{
+            p2, P4ColourSettings::colour_limit_cycle,
+            gVFResults.config_dashes_};
         LC->currentpt = LC->currentpt->nextpt;
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=

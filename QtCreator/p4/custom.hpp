@@ -34,7 +34,8 @@
 
 // Defaults, Minima and Maxima regarding Find Parameters
 
-#define DEFAULTTYPE TYPEOFSTUDY_ALL // choose _ALL, _ONE, _FIN or _INF
+#define DEFAULTTYPE                                                            \
+    P4TypeOfStudy::typeofstudy_all // choose _ALL, _ONE, _FIN or _INF
 #define DEFAULTNUMERIC true
 #define DEFAULTTESTSEP false
 #define DEFAULTSAVEALL false
@@ -334,11 +335,11 @@ enum {
 namespace P4SeparatriceType
 {
 enum {
-    stype_unstable = 1,
-    stype_stable = -1,
-    stype_cenunstable = 2,
-    stype_censtable = -2,
-    stype_orbit = 3
+    unstable = 1,
+    stable = -1,
+    cent_unstable = 2,
+    cent_stable = -2,
+    orbit = 3
 };
 }
 
@@ -359,11 +360,11 @@ enum { setype_saddlenode_unstabsep = 1, setype_saddlenode_unstabsep2 = 2 };
 namespace P4OrbitType
 {
 enum {
-    ot_stable = P4SeparatriceType::stype_stable,
-    ot_unstable = P4SeparatriceType::stype_unstable,
-    ot_cent_stable = P4SeparatriceType::stype_censtable,
-    ot_cent_unstable = P4SeparatriceType::stype_cenunstable,
-    ot_orbit = P4SeparatriceType::stype_orbit
+    stable = P4SeparatriceType::stable,
+    unstable = P4SeparatriceType::unstable,
+    cent_stable = P4SeparatriceType::cent_stable,
+    cent_unstable = P4SeparatriceType::cent_unstable,
+    orbit = P4SeparatriceType::orbit
 };
 }
 

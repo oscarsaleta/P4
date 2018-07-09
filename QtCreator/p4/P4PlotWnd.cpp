@@ -468,7 +468,7 @@ void P4PlotWnd::configure()
     actGCF_->setEnabled(false);
     if (!gVFResults.vf_.empty()) {
         for (int i = gThisVF->numVF_ - 1; i >= 0; i--) {
-            if (!gVFResults.vf_[i]->gcf_.empty()) {
+            if (gVFResults.vf_[i]->gcf_ != nullptr) {
                 actGCF_->setEnabled(true);
                 break;
             }

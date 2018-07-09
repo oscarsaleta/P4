@@ -117,7 +117,7 @@ P4OrbitsDlg::P4OrbitsDlg(P4PlotWnd *plt, P4Sphere *sp)
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (gVFResults.orbits_.empty()) {
+    if (gVFResults.firstOrbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -244,7 +244,9 @@ void P4OrbitsDlg::onBtnDelAll()
     btnDelAll_->setEnabled(false);
     btnDelLast_->setEnabled(false);
 
-    gVFResults.orbits_.clear();
+    delete gVFResults.firstOrbit_;
+    gVFResults.firstOrbit_ = nullptr;
+    gVFResults.currentOrbit_ = nullptr;
 
     mainSphere_->refresh();
 }
@@ -263,7 +265,7 @@ void P4OrbitsDlg::onBtnDelLast()
     btnBackwards_->setEnabled(false);
     btnContinue_->setEnabled(false);
 
-    if (gVFResults.orbits_.empty()) {
+    if (gVFResults.firstOrbit_ == nullptr) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }

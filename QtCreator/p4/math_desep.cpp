@@ -283,12 +283,12 @@ P4Orbits::orbits_points *integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
         // create or append the new orbit to the linked list
         if (last_orbit == nullptr) {
             first_orbit = new P4Orbits::orbits_points{
-                color, pcoord, dashes * gVFResults.config_dashes_, newdir,
+                pcoord, color, dashes * gVFResults.config_dashes_, newdir,
                 type};
             last_orbit = first_orbit;
         } else {
             last_orbit->nextpt = new P4Orbits::orbits_points{
-                color, pcoord, dashes * gVFResults.config_dashes_, newdir,
+                pcoord, color, dashes * gVFResults.config_dashes_, newdir,
                 type};
             last_orbit = last_orbit->nextpt;
         }
@@ -568,25 +568,6 @@ plot_sep_blow_up(P4Sphere *spherewnd, double x0, double y0, int chart,
 }
 
 // ---------------------------------------------------------------------------
-//          change_epsilon_de
-// ---------------------------------------------------------------------------
-void change_epsilon_de(P4Sphere *spherewnd, double epsilon)
-{
-    gVFResults.selectedDePoint_->epsilon = epsilon;
-    auto separatrice{gVFResults.selectedDePoint_->blow_up};
-
-    while (separatrice != nullptr) {
-        draw_selected_sep(spherewnd, separatrice->first_sep_point,
-                          P4ColourSettings::colour_background);
-        delete separatrice->first_sep_point;
-        separatrice->first_sep_point = nullptr;
-        separatrice->last_sep_point = nullptr;
-        separatrice = separatrice->next_blow_up_point;
-        // FIXME FINISH THIS
-    }
-}
-
-// ---------------------------------------------------------------------------
 //          start_plot_de_sep
 // ---------------------------------------------------------------------------
 void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
@@ -715,5 +696,23 @@ void plot_all_de_sep(P4Sphere *spherewnd, int vfindex,
             }
             de_sep = de_sep->next_blow_up_point;
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+//          change_epsilon_de
+// ---------------------------------------------------------------------------
+void change_epsilon_de(P4Sphere *spherewnd, double epsilon)
+{
+    gVFResults.selectedDePoint_->epsilon = epsilon;
+    auto separatrice = gVFResults.selectedDePoint_->blow_up;
+
+    while (separatrice != nullptr) {
+        draw_selected_sep(spherewnd, separatrice->first_sep_point,
+                          P4ColourSettings::colour_background);
+        delete separatrice->first_sep_point;
+        separatrice->first_sep_point = nullptr;
+        separatrice->last_sep_point = nullptr;
+        separatrice = separatrice->next_blow_up_point;
     }
 }

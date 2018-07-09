@@ -166,8 +166,8 @@ int change_type(int type)
     case P4OrbitType::ot_cent_unstable:
         t = P4OrbitType::ot_cent_stable;
         break;
-    case OT_ORBIT:
-        t = OT_ORBIT;
+    case P4OrbitType::ot_orbit:
+        t = P4OrbitType::ot_orbit;
         break;
     default:
         t = type;
@@ -496,13 +496,13 @@ P4Orbits::orbits_points *integrate_sep(P4Sphere *spherewnd, double pcoord[3],
         if (last_orbit == nullptr) {
             h = dir;
             first_orbit = new P4Orbits::orbits_points{
-                color, pcoord, dashes && gVFResults.config_dashes_, d * h,
+                pcoord, color, dashes && gVFResults.config_dashes_, d * h,
                 type};
             last_orbit = first_orbit;
         } else {
             h = last_orbit->dir;
             last_orbit->nextpt = new P4Orbits::orbits_points{
-                color, pcoord, dashes && gVFResults.config_dashes_, d * h,
+                pcoord, color, dashes && gVFResults.config_dashes_, d * h,
                 type};
             last_orbit = last_orbit->nextpt;
         }
@@ -537,8 +537,8 @@ P4Orbits::orbits_points *integrate_sep(P4Sphere *spherewnd, double pcoord[3],
 //
 // More precisely we find a t such that the Norm2^2 lies in a 1% - error
 // interval from epsilon^2
-static double findInitialSepPoint(const std::vector<P4Polynom::term1> &sep,
-                                  double epsilon, int dir)
+static double findInitialSepPoint(P4Polynom::term1 *sep, double epsilon,
+                                  int dir)
 {
     double t, t1, t2, r0, a, b;
 
@@ -610,87 +610,86 @@ static double findInitialSepPoint(const std::vector<P4Polynom::term1> &sep,
 // At the end, a normal integration cycle is added.
 //
 // The vector field vfK needs not be prepared.
-std::vector<P4Orbits::orbits_points>
+P4Orbits::orbits_points *
 plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                  double a12, double a21, double a22, double epsilon,
-                 const P4Blowup::sep &sep1, short int chart, int vfindex)
+                 const P4Blowup::sep *sep1, P4Orbits::orbits_points **orbit,
+                 short int chart, int vfindex)
 {
     double t{0.0}, h, y;
     double pcoord[3], pcoord2[3], point[2];
     int i, color, type, dir;
     bool dashes, ok{true}, prepok;
-    std::vector<P4Orbits::orbits_points> orbit_result;
-    P4Orbits::orbits_points new_orbit;
-    auto &vfResultsK = gVFResults.vf_[gVFResults.K_];
+    P4Orbits::orbits_points *first_orbit{nullptr}, *last_orbit{nullptr};
+    auto vfResultsK = gVFResults.vf_[gVFResults.K_].get();
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
         break;
     }
     if (!prepareVfForIntegration(pcoord))
-        return {};
+        return nullptr;
 
     /* if we have a line of singularities at infinity then we have to change
     the chart if the chart is V1 or V2 */
     if (vfResultsK->singinf_) {
-        if (chart == CHART_V1)
-            chart = CHART_U1;
-        else if (chart == CHART_V2)
-            chart = CHART_U2;
+        if (chart == P4Charts::chart_V1)
+            chart = P4Charts::chart_U1;
+        else if (chart == P4Charts::chart_V2)
+            chart = P4Charts::chart_U2;
     }
 
     /* h=(epsilon/100)*sep1->direction; */
-    h = findInitialSepPoint(sep1.separatrice, epsilon, sep1.direction) / 100;
+    h = findInitialSepPoint(sep1->separatrice, epsilon, sep1->direction) / 100;
 
     point[0] = x0;
     point[1] = y0;
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(vfResultsK->gcf_, sep1.type, point);
+        color = findSepColor2(vfResultsK->gcf_, sep1->type, point);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(vfResultsK->gcf_U1_, sep1.type, point);
+        color = findSepColor2(vfResultsK->gcf_U1_, sep1->type, point);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
         if ((gVFResults.p_ == 1) && (gVFResults.q_ == 1))
             psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(vfResultsK->gcf_V1_, sep1.type, point);
+        color = findSepColor2(vfResultsK->gcf_V1_, sep1->type, point);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
-        color = findSepColor2(vfResultsK->gcf_U2_, sep1.type, point);
+        color = findSepColor2(vfResultsK->gcf_U2_, sep1->type, point);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
         if ((gVFResults.p_ == 1) && (gVFResults.q_ == 1))
             psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-        color = findSepColor2(vfResultsK->gcf_U2_, sep1.type, point);
+        color = findSepColor2(vfResultsK->gcf_U2_, sep1->type, point);
         break;
     default:
         color = 0;
         break;
     }
 
-    copy_x_into_y(pcoord, new_orbit.pcoord);
-    type = sep1.type;
-    switch (sep1.type) {
+    type = sep1->type;
+    switch (sep1->type) {
     case P4OrbitType::ot_stable:
         dir = P4OrbitType::ot_stable;
         break;
@@ -707,16 +706,13 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
         dir = 0;
         break;
     }
-    new_orbit.color = color;
-    new_orbit.dashes = 0;
-    new_orbit.dir = dir;
-    new_orbit.type = type;
-    orbit_result.push_back(std::move(new_orbit));
+    first_orbit = new P4Orbits::orbits_points{pcoord, color, 0, dir, type};
+    last_orbit = first_orbit;
 
     // P5 addition: check if we can start with this separatrix
 
-    y = eval_term1(sep1.separatrice, 100 * h);
-    if (sep1.d) {
+    y = eval_term1(sep1->separatrice, 100 * h);
+    if (sep1->d) {
         point[0] = x0 + a11 * y + a12 * 100 * h;
         point[1] = y0 + a21 * y + a22 * 100 * h;
     } else {
@@ -725,40 +721,42 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
     }
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord2);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         if (point[1] >= 0 || !vfResultsK->singinf_)
             MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord2);
         else
             VV1_to_psphere(point[0], point[1], pcoord2);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord2);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         if (point[1] >= 0 || !vfResultsK->singinf_)
             MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord2);
         else
             VV2_to_psphere(point[0], point[1], pcoord2);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord2);
         break;
     }
-    if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex)
-        return {};
+    if (gThisVF->getVFIndex_sphere(pcoord2) != vfindex) {
+        delete first_orbit;
+        return nullptr;
+    }
 
     // end of P5 addition
 
     copy_x_into_y(pcoord, pcoord2);
     for (i = 0; i <= 99; i++) {
         t = t + h;
-        y = eval_term1(sep1.separatrice, t);
+        y = eval_term1(sep1->separatrice, t);
         if ((t * t + y * y) > epsilon * epsilon)
             break;
-        if (sep1.d) {
+        if (sep1->d) {
             point[0] = x0 + a11 * y + a12 * t;
             point[1] = y0 + a21 * y + a22 * t;
         } else {
@@ -768,14 +766,14 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
         dashes = true;
 
         switch (chart) {
-        case CHART_R2:
+        case P4Charts::chart_R2:
             MATHFUNC(R2_to_sphere)(point[0], point[1], pcoord);
             prepok = prepareVfForIntegration(pcoord);
             if (!prepok)
                 break;
-            color = findSepColor2(vfResultsK->gcf_, sep1.type, point);
+            color = findSepColor2(vfResultsK->gcf_, sep1->type, point);
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             if (point[1] >= 0 || !vfResultsK->singinf_) {
                 MATHFUNC(U1_to_sphere)(point[0], point[1], pcoord);
                 prepok = prepareVfForIntegration(pcoord);
@@ -787,7 +785,7 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                     if (vfResultsK->dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                type = sep1.type;
+                type = sep1->type;
                 color = findSepColor2(vfResultsK->gcf_U1_, type, point);
             } else {
                 VV1_to_psphere(point[0], point[1], pcoord);
@@ -805,22 +803,22 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                 if (!prepok)
                     break;
                 if (vfResultsK->dir_vec_field_ == 1)
-                    type = change_type(sep1.type);
+                    type = change_type(sep1->type);
                 else
-                    type = sep1.type;
+                    type = sep1->type;
                 color = findSepColor2(vfResultsK->gcf_V1_, type, point);
             }
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             MATHFUNC(V1_to_sphere)(point[0], point[1], pcoord);
             prepok = prepareVfForIntegration(pcoord);
             if (!prepok)
                 break;
             if (!gVFResults.plweights_)
                 psphere_to_V1(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(vfResultsK->gcf_V1_, sep1.type, point);
+            color = findSepColor2(vfResultsK->gcf_V1_, sep1->type, point);
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             if (point[1] >= 0 || !vfResultsK->singinf_) {
                 MATHFUNC(U2_to_sphere)(point[0], point[1], pcoord);
                 prepok = prepareVfForIntegration(pcoord);
@@ -832,7 +830,7 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                     if (vfResultsK->dir_vec_field_ == 1)
                         dir *= -1;
                 }
-                type = sep1.type;
+                type = sep1->type;
                 color = findSepColor2(vfResultsK->gcf_U2_, type, point);
             } else {
                 VV2_to_psphere(point[0], point[1], pcoord);
@@ -847,51 +845,45 @@ plot_separatrice(P4Sphere *spherewnd, double x0, double y0, double a11,
                 }
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
                 if (vfResultsK->dir_vec_field_ == 1)
-                    type = change_type(sep1.type);
+                    type = change_type(sep1->type);
                 else
-                    type = sep1.type;
+                    type = sep1->type;
                 color = findSepColor2(vfResultsK->gcf_V2_, type, point);
             }
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             MATHFUNC(V2_to_sphere)(point[0], point[1], pcoord);
             prepok = prepareVfForIntegration(pcoord);
             if (!prepok)
                 break;
             if (!gVFResults.plweights_)
                 psphere_to_V2(pcoord[0], pcoord[1], pcoord[2], point);
-            color = findSepColor2(vfResultsK->gcf_V2_, sep1.type, point);
+            color = findSepColor2(vfResultsK->gcf_V2_, sep1->type, point);
             break;
         default:
             prepok = false;
             break;
         }
 
-        copy_x_into_y(pcoord, new_orbit.pcoord);
-        new_orbit.color = color;
-        new_orbit.dashes = dashes && gVFResults.config_dashes_;
-        new_orbit.dir = dir;
-        new_orbit.type = type;
-        if (new_orbit.dashes)
+        last_orbit->nextpt = new P4Orbits::orbits_points{
+            pcoord, color, dashes && gVFResults.config_dashes_, dir, type};
+        last_orbit = last_orbit->nextpt;
+        if (last_orbit->dashes)
             (*plot_l)(spherewnd, pcoord, pcoord2, color);
         else
             (*plot_p)(spherewnd, pcoord, color);
         copy_x_into_y(pcoord, pcoord2);
 
-        orbit_result.push_back(std::move(new_orbit));
-
         if (!prepok)
             break;
     }
 
-    auto lastpoints = integrate_sep(spherewnd, pcoord, gVFResults.config_step_,
-                                    orbit_result.back().dir, type,
-                                    gVFResults.config_intpoints_);
-    if (!lastpoints.empty())
-        orbit_result.insert(std::end(orbit_result), std::begin(lastpoints),
-                            std::end(lastpoints));
+    *orbit = last_orbit;
+    last_orbit->nextpt = integrate_sep(
+        spherewnd, pcoord, gVFResults.config_step_, last_orbit->dir, type,
+        gVFResults.config_intpoints_, orbit);
 
-    return (orbit_result);
+    return first_orbit;
 }
 
 // ---------------------------------------------------------------------------
@@ -915,7 +907,8 @@ void plot_all_sep(P4Sphere *spherewnd)
 //          draw_sep
 // ---------------------------------------------------------------------------
 // Does the plotting of a separatrix that was previously calculated.
-// The separatrix is plotted in the color according to the type and stability.
+// The separatrix is plotted in the color according to the type and
+// stability.
 void draw_sep(P4Sphere *spherewnd, P4Orbits::orbits_points *sep)
 {
     double pcoord[3];

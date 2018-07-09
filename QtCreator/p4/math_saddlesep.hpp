@@ -33,5 +33,5 @@ void cont_plot_saddle_sep(P4Sphere *spherewnd);
 void plot_next_saddle_sep(P4Sphere *spherewnd, int vfindex);
 void select_next_saddle_sep(P4Sphere *spherewnd);
 void plot_all_saddle_sep(P4Sphere *spherewnd, int vfindex,
-                         std::vector<P4Singularities::saddle> &point);
+                         P4Singularities::saddle *point);
 void change_epsilon_saddle(P4Sphere *spherewnd, double epsilon);

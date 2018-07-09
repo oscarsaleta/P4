@@ -98,11 +98,10 @@ struct term3 {
 namespace P4Orbits
 {
 struct orbits_points {
-    int color; // color of seperatrice
-
     double pcoord[3]; // point on the poincare sphere -> p=(X,Y,Z)
                       // or on the poincare-lyapunov sphere
                       // -> p=(0,x,y) or p=(1,r,theta)
+    int color;        // color of seperatrice
     int dashes;       // plotted in dots or dashes
     int dir;  // if we have a line of sing at infinity and have to change
               // the direction if we integrate the orbit of separatrice
@@ -112,9 +111,9 @@ struct orbits_points {
     orbits_points *nextpt{nullptr}; // linked list to new orbit_points
 
     orbits_points() {}
-    orbits_points(int co, double pc[3], int da, int di = 0, int ty = 0,
+    orbits_points(double pc[3], int co, int da, int di = 0, int ty = 0,
                   orbits_points *next = nullptr)
-        : color{co}, dashes{da}, dir{di}, type{ty}, nextpt{next}
+        : dashes{da}, color{co}, dir{di}, type{ty}, nextpt{next}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
@@ -352,18 +351,18 @@ struct sep {
     bool notadummy; // false if separatrice is a copy of a structure (obtained
                     // through a symmetry)
 
+    P4Polynom::term1 *separatrice{nullptr};
     P4Orbits::orbits_points *first_sep_point{nullptr};
     P4Orbits::orbits_points *last_sep_point{nullptr};
     // if d=0 -> (t,f(t)), d=1 ->(f(t),t)
-    P4Polynom::term1 *separatrice{nullptr};
     sep *next_sep{nullptr};
 
     sep() {}
-    sep(int ty, int di, int _d, bool no, P4Orbits::orbits_points *fsp = nullptr,
-        P4Orbits::orbits_points *lsp = nullptr, P4Polynom::term1 *se = nullptr,
-        sep *next = nullptr)
-        : type{ty}, direction{di}, d{_d}, notadummy{no}, first_sep_point{fsp},
-          last_sep_point{lsp}, separatrice{se}, next_sep{next}
+    sep(int ty, int di, int _d, bool no, P4Polynom::term1 *se = nullptr,
+        P4Orbits::orbits_points *fsp = nullptr,
+        P4Orbits::orbits_points *lsp = nullptr, sep *next = nullptr)
+        : type{ty}, direction{di}, d{_d}, notadummy{no}, separatrice{se},
+          first_sep_point{fsp}, last_sep_point{lsp}, next_sep{next}
     {
     }
     ~sep()

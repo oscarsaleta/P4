@@ -189,7 +189,7 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
     bgbuttons->addWidget(btn_bgblack_);
     bgbuttons->addWidget(btn_bgwhite_);
 
-    if (P4ColourSettings::colour_background == BLACK)
+    if (P4ColourSettings::colour_background == P4Colours::black)
         btn_bgblack_->toggle();
     else
         btn_bgwhite_->toggle();
@@ -219,14 +219,14 @@ P4SettingsDlg::P4SettingsDlg(QWidget *parent, Qt::WindowFlags f)
                      &P4SettingsDlg::onCancel);
 
     QObject::connect(btn_bgblack_, &QRadioButton::toggled, this, []() {
-        P4ColourSettings::colour_foreground = WHITE;
-        P4ColourSettings::colour_background = BLACK;
-        P4ColourSettings::colour_orbit = YELLOW;
+        P4ColourSettings::colour_foreground = P4Colours::white;
+        P4ColourSettings::colour_background = P4Colours::black;
+        P4ColourSettings::colour_orbit = P4Colours::yellow;
     });
     QObject::connect(btn_bgwhite_, &QRadioButton::toggled, this, []() {
-        P4ColourSettings::colour_foreground = BLACK;
-        P4ColourSettings::colour_background = WHITE;
-        P4ColourSettings::colour_orbit = GREEN1;
+        P4ColourSettings::colour_foreground = P4Colours::black;
+        P4ColourSettings::colour_background = P4Colours::white;
+        P4ColourSettings::colour_orbit = P4Colours::green1;
     });
 
     setP4WindowTitle(this, "Main Program Settings");

@@ -222,11 +222,11 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes)
 
     if (gVFResults.arbitraryCurves_.back().points != nullptr) {
         gLastArbitraryCurvePoint->nextpt = new P4Orbits::orbits_points{
-            P4ColourSettings::colour_arbitrary_curve, pcoord, dashes, 0, 0};
+            pcoord, P4ColourSettings::colour_arbitrary_curve, dashes, 0, 0};
         gLastArbitraryCurvePoint = gLastArbitraryCurvePoint->nextpt;
     } else {
         gLastArbitraryCurvePoint = new P4Orbits::orbits_points{
-            P4ColourSettings::colour_arbitrary_curve, pcoord, dashes, 0, 0};
+            pcoord, P4ColourSettings::colour_arbitrary_curve, dashes, 0, 0};
         gVFResults.arbitraryCurves_.back().points = gLastArbitraryCurvePoint;
     }
 }
