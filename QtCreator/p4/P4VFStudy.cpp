@@ -526,7 +526,7 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
             new P4Blowup::sep{typ, dir, 0, true, new P4Polynom::term1};
         sep1 = point->separatrices;
 
-        if (fscanf(fp, "%N", &N) != 1 || N < 0 ||
+        if (fscanf(fp, "%d", &N) != 1 || N < 0 ||
             !readTerm1(fp, sep1->separatrice, N)) {
             delete point;
             point = nullptr;
