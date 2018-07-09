@@ -90,36 +90,25 @@ class P4VFStudy : public QObject
     bool readWeakFocusPoint(FILE *fp);
     bool readDegeneratePoint(FILE *fp);
     bool readNodePoint(FILE *fp);
-    bool readBlowupPoints(FILE *fp, std::vector<P4Blowup::blow_up_points> &b,
-                          int n);
-    bool readTransformations(FILE *fp,
-                             std::vector<P4Blowup::transformations> &trans,
-                             int n);
+    bool readBlowupPoints(FILE *fp, P4Blowup::blow_up_points *b, int n);
+    bool readTransformations(FILE *fp, P4Blowup::transformations *trans, int n);
 
     void setupCoordinateTransformations(); // see math_p4.cpp
 
     void dump(QTextEdit &m);
 
   private:
-    void dumpSeparatrices(QTextEdit &m, const std::vector<P4Blowup::sep> &separ,
-                          int margin);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<P4Singularities::saddle> &p,
+    void dumpSeparatrices(QTextEdit &m, P4Blowup::sep *separ, int margin);
+    void dumpSingularities(QTextEdit &m, P4Singularities::saddle *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<P4Singularities::degenerate> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::degenerate *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<P4Singularities::strong_focus> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::strong_focus *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<P4Singularities::weak_focus> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::weak_focus *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<P4Singularities::node> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::node *p,
                            bool longversion);
-    void
-    dumpSingularities(QTextEdit &m,
-                      const std::vector<P4Singularities::semi_elementary> &p,
-                      bool longversion);
+    void dumpSingularities(QTextEdit &m, P4Singularities::semi_elementary *p,
+                           bool longversion);
 };

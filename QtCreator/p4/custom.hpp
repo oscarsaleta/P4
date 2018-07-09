@@ -346,9 +346,9 @@ enum {
 namespace P4SingularityStability
 {
 enum {
-    singtype_unstable = P4SeparatriceType::stype_unstable,
-    singtype_stable = P4SeparatriceType::stype_stable,
-    singtype_center = 4
+    unstable = P4SeparatriceType::unstable,
+    stable = P4SeparatriceType::stable,
+    center = 4
 };
 }
 

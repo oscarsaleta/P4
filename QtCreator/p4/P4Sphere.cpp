@@ -948,22 +948,22 @@ bool P4Sphere::getChartPos(int chart, double x0_, double y0_, double *pos)
     double pcoord[3];
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(finite_to_viewcoord)(x0_, y0_, pos);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         MATHFUNC(U1_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         MATHFUNC(U2_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;

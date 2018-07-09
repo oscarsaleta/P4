@@ -583,7 +583,6 @@ bool P4VFStudy::readSemiElementaryPoint(FILE *fp)
 
     case 4: // saddle-node
         if (!s || (point->chart == P4Charts::chart_R2)) {
-            int typ, direction;
 
             if (s) {
                 typ = P4SeparatriceType::cent_unstable;
@@ -797,55 +796,70 @@ bool P4VFStudy::readNodePoint(FILE *fp)
 {
     double y[2];
 
-    // variables for constructing a P4Singularities::node
-    double x0, y0;
-    int chart;
-    int stable;
+    P4Singularities::node *last{nullptr}, *point{firstNodePoint_};
 
-    if (fscanf(fp, "%lf %lf %d ", &x0, &y0, &stable) != 3 ||
-        fscanf(fp, "%d ", &chart) != 1)
+    while (point != nullptr) {
+        last = point;
+        point = point->next_node;
+    }
+
+    point = new P4Singularities::node;
+    if (last == nullptr)
+        firstNodePoint_ = point;
+    else
+        last->next_node = point;
+
+    // load point structure
+
+    if (fscanf(fp, "%lf %lf %d ", &(point->x0), &(point->y0),
+               &(point->stable)) != 3 ||
+        fscanf(fp, "%d ", &(point->chart)) != 1) {
+        delete point;
+        point = nullptr;
         return false;
+    }
 
-    // change type of node if we have a gcf?
-    y[0] = x0;
-    y[1] = y0;
+    // change type of node if we have a gcf ?
+    y[0] = point->x0;
+    y[1] = point->y0;
 
-    switch (chart) {
-    case CHART_R2:
+    switch (point->chart) {
+    case P4Charts::chart_R2:
         if (eval_term2(gcf_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         if (eval_term2(gcf_U1_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         if (parent_->p_ == 1 && parent_->q_ == 1)
             y[0] = -y[0];
         if (eval_term2(gcf_V1_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         if (eval_term2(gcf_U2_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         if (parent_->p_ == 1 && parent_->q_ == 1)
             y[0] = -y[0];
         if (eval_term2(gcf_V2_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
     }
 
-    nodePoints_.emplace_back(x0, y0, chart, 0, stable);
-
-    // if line at infinity is a line of singularities in Poincare disk:
-    // duplicate singularity using symmetry
-    if (singinf_ != 0 && chart != CHART_R2) {
-        y0 = 0.0;
-        chart = ((chart == CHART_U1) ? CHART_V1 : CHART_V2);
-        stable = stable * ((dir_vec_field_ == -1) ? -1 : 1);
-        nodePoints_.emplace_back(x0, y0, chart, 0, stable);
+    // if line at infinity a line of singularities in poincare disc:
+    // duplicate singularity by using a symmetry
+    if (singinf_ && point->chart != P4Charts::chart_R2) {
+        last = point;
+        point = new P4Singularities::node{
+            last->x0, 0.0,
+            (last->chart == P4Charts::chart_U1) ? P4Charts::chart_V1
+                                                : P4Charts::chart_V2,
+            0, last->stable * ((dir_vec_field_ == -1) ? -1 : 1)};
+        last->next_node = point;
     }
     return true;
 }
@@ -857,57 +871,70 @@ bool P4VFStudy::readStrongFocusPoint(FILE *fp)
 {
     double y[2];
 
-    // variables for constructing a P4Singularities::strong_focus
-    double x0, y0;
-    int chart;
-    int stable;
+    P4Singularities::strong_focus *last{nullptr}, *point{firstSfPoint_};
 
-    if (fscanf(fp, "%d %lf %lf ", &stable, &x0, &y0) != 3 ||
-        fscanf(fp, "%d ", &chart) != 1)
+    while (point != nullptr) {
+        last = point;
+        point = point->next_sf;
+    }
+
+    point = new P4Singularities::strong_focus;
+    if (last == nullptr)
+        firstSfPoint_ = point;
+    else
+        last->next_sf = point;
+
+    // fill structure
+    if (fscanf(fp, "%d %lf %lf ", &(point->stable), &(point->x0),
+               &(point->y0)) != 3 ||
+        fscanf(fp, "%d ", &(point->chart)) != 1) {
+        delete point;
+        point = nullptr;
         return false;
+    }
 
-    // change type of node if we have a gcf?
-    y[0] = x0;
-    y[1] = y0;
+    // change type of node if we have a gcf ?
 
-    switch (chart) {
-    case CHART_R2:
+    y[0] = point->x0;
+    y[1] = point->y0;
+
+    switch (point->chart) {
+    case P4Charts::chart_R2:
         if (eval_term2(gcf_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         if (eval_term2(gcf_U1_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         if (parent_->p_ == 1 && parent_->q_ == 1)
             y[0] = -y[0];
         if (eval_term2(gcf_V1_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         if (eval_term2(gcf_U2_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         if (parent_->p_ == 1 && parent_->q_ == 1)
             y[0] = -y[0];
         if (eval_term2(gcf_V2_, y) < 0)
-            stable *= -1;
+            point->stable *= -1;
         break;
     }
 
-    sfPoints_.emplace_back(x0, y0, chart, 0, stable);
-
-    // if line at infinity is a line of singularities in Poincare disk:
-    // duplicate singularity using symmetry
-    if (singinf_ && chart != CHART_R2) {
-        y0 = 0.0;
-        chart = ((chart == CHART_U1) ? CHART_V1 : CHART_V2);
-        stable = stable * ((dir_vec_field_ == -1) ? -1 : 1);
-        sfPoints_.emplace_back(x0, y0, chart, 0, stable);
+    // line at infinity a line of singularities in poincare disc
+    if (singinf_ && point->chart != P4Charts::chart_R2) {
+        last = point;
+        point = new P4Singularities::strong_focus{
+            last->x0, 0.0,
+            ((point->chart == P4Charts::chart_U1) ? P4Charts::chart_V1
+                                                  : P4Charts::chart_V2),
+            0, last->stable * ((dir_vec_field_ == -1) ? -1 : 1)};
+        last->next_sf = point;
     }
-
     return true;
 }
 
@@ -917,67 +944,90 @@ bool P4VFStudy::readStrongFocusPoint(FILE *fp)
 bool P4VFStudy::readWeakFocusPoint(FILE *fp)
 {
     double y[2];
+    int typ;
 
-    // variables for constructing a P4Singularities::weak_focus
-    double x0, y0;
-    int chart;
-    int type;
+    P4Singularities::weak_focus *last{nullptr}, *point{firstWfPoint_};
 
-    if (fscanf(fp, "%lf %lf ", &x0, &y0) != 2 ||
-        fscanf(fp, "%d %d ", &type, &chart) != 2)
+    while (point != nullptr) {
+        last = point;
+        point = point->next_wf;
+    }
+
+    point = new P4Singularities::weak_focus;
+    if (last == nullptr)
+        firstWfPoint_ = point;
+    else
+        last->next_wf = point;
+
+    // fill structure
+    if (fscanf(fp, "%lf %lf ", &(point->x0), &(point->y0)) != 2 ||
+        fscanf(fp, "%d %d ", &(point->type), &(point->chart)) != 2) {
+        delete point;
+        point = nullptr;
         return false;
+    }
 
-    // change node type if we have a gcf?
+    // change type of node if we have a gcf ?
 
-    if ((type == STYPE_STABLE) || (type == STYPE_UNSTABLE)) {
-        y[0] = x0;
-        y[1] = y0;
-        switch (chart) {
-        case CHART_R2:
+    if ((point->type == P4SingularityStability::stable) ||
+        (point->type == P4SingularityStability::unstable)) {
+
+        y[0] = point->x0;
+        y[1] = point->y0;
+
+        switch (point->chart) {
+        case P4Charts::chart_R2:
             if (eval_term2(gcf_, y) < 0)
-                type *= -1;
+                point->type *= -1;
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             if (eval_term2(gcf_U1_, y) < 0)
-                type *= -1;
+                point->type *= -1;
             break;
-        case CHART_V1:
-            if ((parent_->p_ == 1) && (parent_->q_ == 1))
+        case P4Charts::chart_V1:
+            if (parent_->p_ == 1 && parent_->q_ == 1)
                 y[0] = -y[0];
             if (eval_term2(gcf_V1_, y) < 0)
-                type *= -1;
+                point->type *= -1;
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             if (eval_term2(gcf_U2_, y) < 0)
-                type *= -1;
+                point->type *= -1;
             break;
-        case CHART_V2:
-            if ((parent_->p_ == 1) && (parent_->q_ == 1))
+        case P4Charts::chart_V2:
+            if (parent_->p_ == 1 && parent_->q_ == 1)
                 y[0] = -y[0];
             if (eval_term2(gcf_V2_, y) < 0)
-                type *= -1;
+                point->type *= -1;
             break;
         }
     }
-    wfPoints_.emplace_back(x0, y0, chart, 0, type);
 
-    // if line at infinity is a line of singularities in Poincare disk:
-    // duplicate singularity using symmetry
-    if (singinf_ && (chart != CHART_R2)) {
-        if (dir_vec_field_ != 1) {
-            switch (type) {
-            case STYPE_STABLE:
-                type = STYPE_UNSTABLE;
+    // line at infinity a line of singularities in poincare disc
+    if (singinf_ && point->chart != P4Charts::chart_R2) {
+        if (dir_vec_field_ == 1) {
+            typ = point->type;
+
+        } else {
+            switch (point->type) {
+            case P4SingularityStability::stable:
+                typ = P4SingularityStability::unstable;
                 break;
-            case STYPE_UNSTABLE:
-                type = STYPE_STABLE;
+            case P4SingularityStability::unstable:
+                typ = P4SingularityStability::stable;
+                break;
+            default:
+                typ = point->type;
                 break;
             }
         }
-        chart = ((chart == CHART_U1) ? CHART_V1 : CHART_V2);
-        wfPoints_.emplace_back(x0, y0, chart, 0, type);
+        point->next_wf = new P4Singularities::weak_focus{
+            point->x0, 0.0,
+            ((point->chart == P4Charts::chart_U1) ? P4Charts::chart_V1
+                                                  : P4Charts::chart_V2),
+            1, typ};
+        point = point->next_wf;
     }
-
     return true;
 }
 
@@ -988,33 +1038,54 @@ bool P4VFStudy::readDegeneratePoint(FILE *fp)
 {
     int n;
 
-    // variables for constructing a P4Singularities::degenerate
-    double x0, y0;
-    int chart;
-    double epsilon;
-    bool notadummy;
-    std::vector<P4Blowup::blow_up_points> pblw;
+    // make room in structure
+    P4Singularities::degenerate *last{nullptr}, *point{firstDePoint_};
 
-    if (fscanf(fp, "%lf %lf %lf %d ", &x0, &y0, &epsilon, &n) != 4)
-        return false;
-    if (n) {
-        if (!readBlowupPoints(fp, pblw, n))
-            return false;
-        pblw.back().integrating_in_local_chart = true;
+    while (point != nullptr) {
+        last = point;
+        point->next_de;
     }
-    if (fscanf(fp, "%d ", &chart) != 1)
+
+    point = new P4Singularities::degenerate;
+    if (last == nullptr)
+        firstDePoint_ = point;
+    else
+        last->next_de = point;
+
+    // load structure
+    if (fscanf(fp, "%lf %lf %lf %d ", &(point->x0), &(point->y0),
+               &(point->epsilon), &n) != 4) {
+        delete point;
+        point = nullptr;
         return false;
-    notadummy = true;
+    }
 
-    dePoints_.emplace_back(x0, y0, chart, 0, epsilon, notadummy, pblw);
+    if (n) {
+        point->blow_up = new P4Blowup::blow_up_points;
+        readBlowupPoints(fp, point->blow_up, n);
+        point->blow_up->integrating_in_local_chart = true;
+    }
 
-    // if line at infinity is a line of singularities in Poincare disk:
-    // duplicate singularity using symmetry
-    if (singinf_ && chart != CHART_R2) {
-        y0 = 0.0;
-        chart = ((chart == CHART_U1) ? CHART_V1 : CHART_V2);
-        notadummy = false;
-        dePoints_.emplace_back(x0, y0, chart, 0, epsilon, notadummy, pblw);
+    if (fscanf(fp, "%d ", &(point->chart)) != 1) {
+        delete point;
+        point = nullptr;
+        return false;
+    }
+    point->notadummy = true;
+
+    // line at infinity a line of singularities in poincare disc
+    if (singinf_ && point->chart != P4Charts::chart_R2) {
+        last = point;
+        point = new P4Singularities::degenerate{
+            last->x0,
+            0.0,
+            ((last->chart == P4Charts::chart_U1) ? P4Charts::chart_V1
+                                                 : P4Charts::chart_V2),
+            1,
+            last->epsilon,
+            false,
+            last->blow_up};
+        last->next_de = point;
     }
 
     return true;
@@ -1023,17 +1094,28 @@ bool P4VFStudy::readDegeneratePoint(FILE *fp)
 // -----------------------------------------------------------------------
 //          P4VFStudy::readTransformations
 // -----------------------------------------------------------------------
-bool P4VFStudy::readTransformations(
-    FILE *fp, std::vector<P4Blowup::transformations> &trans, int n)
+bool P4VFStudy::readTransformations(FILE *fp, P4Blowup::transformations *trans,
+                                    int n)
 {
-    double x0, y0;
-    int c1, c2, d1, d2, d3, d4;
-    int d;
-    for (int i = 0; i < n; i++) {
-        if (fscanf(fp, "%lf %lf %d %d %d %d %d %d %d", &x0, &y0, &c1, &c2, &d1,
-                   &d2, &d3, &d4, &d) != 9)
+    if (fscanf(fp, "%lf %lf %d %d %d %d %d %d %d", &(trans->x0), &(trans->y0),
+               &(trans->c1), &(trans->c2), &(trans->d1), &(trans->d2),
+               &(trans->d3), &(trans->d4), &(trans->d)) != 9) {
+        delete trans;
+        trans = nullptr;
+        return false;
+    }
+
+    for (int i = 2; i <= n; i++) {
+        trans = new P4Blowup::transformations;
+        trans = trans->next_trans;
+        if (fscanf(fp, "%lf %lf %d %d %d %d %d %d %d", &(trans->x0),
+                   &(trans->y0), &(trans->c1), &(trans->c2), &(trans->d1),
+                   &(trans->d2), &(trans->d3), &(trans->d4),
+                   &(trans->d)) != 9) {
+            delete trans;
+            trans = nullptr;
             return false;
-        trans.emplace_back(x0, y0, c1, c2, d1, d2, d3, d4, d);
+        }
     }
     return true;
 }
@@ -1041,58 +1123,53 @@ bool P4VFStudy::readTransformations(
 // -----------------------------------------------------------------------
 //          P4VFStudy::readBlowupPoints
 // -----------------------------------------------------------------------
-bool P4VFStudy::readBlowupPoints(FILE *fp,
-                                 std::vector<P4Blowup::blow_up_points> &blowup,
-                                 int n)
+bool P4VFStudy::readBlowupPoints(FILE *fp, P4Blowup::blow_up_points *b, int n)
 {
     int N, typ;
-    double p[2]{0, 0};
 
-    // variables per construir P4Blowup::blow_up_points
-    int pn;
-    std::vector<P4Blowup::transformations> ptrans;
-    double x0, y0;
-    double a11, a12, a21, a22;
-    std::vector<P4Polynom::term2> vf0, vf1;
-    std::vector<P4Polynom::term1> psep;
-    int ptype;
-
-    for (int i = 0; i < n; i++) {
-        if (fscanf(fp, "%d ", &pn) != 1 ||
-            !readTransformations(fp, ptrans, pn) ||
-            fscanf(fp, "%lf %lf ", &x0, &y0) != 2 ||
-            fscanf(fp, "%lf %lf %lf %lf ", &a11, &a12, &a21, &a22) != 4 ||
-            !readVectorField(fp, vf0, vf1) || fscanf(fp, "%d ", &N) != 1 ||
-            !readTerm1(fp, psep, N) || fscanf(fp, "%d ", &typ) != 1)
+    for (int i = 1; i <= n; i++) {
+        b->trans = new P4Blowup::transformations;
+        b->sep = new P4Polynom::term1;
+        if (fscanf(fp, "%d ", &(b->n)) != 1 ||
+            !readTransformations(fp, b->trans, b->n) ||
+            fscanf(fp, "%lf %lf ", &(b->x0), &(b->y0)) != 2 ||
+            fscanf(fp, "%lf %lf %lf %lf ", &(b->a11), &(b->a12), &(b->a21),
+                   &(b->a22)) != 4 ||
+            !readVectorField(fp, b->vector_field) ||
+            fscanf(fp, "%d ", &N) != 1 || !readTerm1(fp, b->sep, N) ||
+            fscanf(fp, "%d ", &typ) != 1) {
             return false;
+        }
 
         switch (typ) {
         case 1:
         case 3:
         case 9:
         case 10:
-            ptype = STYPE_UNSTABLE;
+            b->type = P4SeparatriceType::unstable;
             break;
         case 2:
         case 4:
         case 11:
         case 12:
-            ptype = STYPE_STABLE;
+            b->type = P4SeparatriceType::stable;
             break;
         case 5:
         case 7:
-            ptype = STYPE_CENUNSTABLE;
+            b->type = P4SeparatriceType::cent_unstable;
             break;
         case 6:
         case 8:
-            ptype = STYPE_CENSTABLE;
+            b->type = P4SeparatriceType::cent_stable;
             break;
         default:
             return false;
         }
-        blowup.emplace_back(pn, ptrans, x0, y0, a11, a12, a21, a22, vf0, vf1,
-                            psep, ptype, true, p,
-                            std::vector<P4Orbits::orbits_points>{});
+
+        if (i < n) {
+            b->next_blow_up_point = new P4Blowup::blow_up_points;
+            b = b->next_blow_up_point;
+        }
     }
     return true;
 }
@@ -1101,9 +1178,7 @@ bool P4VFStudy::readBlowupPoints(FILE *fp,
 //          DUMP FUNCTIONS
 // -----------------------------------------------------------------------
 
-void P4VFStudy::dumpSeparatrices(QTextEdit &m,
-                                 const std::vector<P4Blowup::sep> &separ,
-                                 int margin)
+void P4VFStudy::dumpSeparatrices(QTextEdit &m, P4Blowup::sep *separ, int margin)
 {
     QString s;
     char smargin[80];
@@ -1111,23 +1186,23 @@ void P4VFStudy::dumpSeparatrices(QTextEdit &m,
     strcpy(smargin, "                              ");
     smargin[margin] = 0;
 
-    if (separ.empty()) {
+    if (separ == nullptr) {
         m.append(s.sprintf("%s/", smargin));
         return;
     }
 
-    for (auto const &it : separ) {
-        switch (it.type) {
-        case STYPE_STABLE:
+    while (separ != nullptr) {
+        switch (separ->type) {
+        case P4SeparatriceType::stable:
             stype = "stable         ";
             break;
-        case STYPE_UNSTABLE:
+        case P4SeparatriceType::unstable:
             stype = "unstable       ";
             break;
-        case STYPE_CENSTABLE:
+        case P4SeparatriceType::cent_stable:
             stype = "center-stable  ";
             break;
-        case STYPE_CENUNSTABLE:
+        case P4SeparatriceType::cent_unstable:
             stype = "center-unstable";
             break;
         default:
@@ -1135,213 +1210,215 @@ void P4VFStudy::dumpSeparatrices(QTextEdit &m,
             break;
         }
         m.append(s.sprintf("%sType=%s  Dir=%-2d  original=%d", smargin,
-                           stype.data(), it.direction, it.notadummy));
-        if (it.d == 0)
+                           stype.data(), separ->direction, separ->notadummy));
+        if (separ->d == 0) {
             m.append(s.sprintf("%sTaylor: (x,y)=(t,%s)", smargin,
-                               dumpPoly1(it.separatrice, "t")));
-        else
+                               dumpPoly1(separ->separatrice, "t")));
+        } else {
             m.append(s.sprintf("%sTaylor: (x,y)=(%s,t)", smargin,
-                               dumpPoly1(it.separatrice, "t")));
+                               dumpPoly1(separ->separatrice, "t")));
+        }
+        separ = separ->next_sep;
     }
 }
 
 // dump saddle singularities
-void P4VFStudy::dumpSingularities(QTextEdit &m,
-                                  const std::vector<P4Singularities::saddle> &p,
+void P4VFStudy::dumpSingularities(QTextEdit &m, P4Singularities::saddle *p,
                                   bool longversion)
 {
     const char *chart;
     QString s;
 
-    for (auto const &it : p) {
-        switch (it.chart) {
-        case CHART_R2:
+    while (p != nullptr) {
+        switch (p->chart) {
+        case P4Charts::chart_R2:
             chart = "R2";
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             chart = "U1";
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             chart = "U2";
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             chart = "V1";
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             chart = "V2";
             break;
         default:
             chart = "?";
             break;
         }
-        m.append(s.sprintf("SADDLE:\t(x0,y0)=(%g,%g)  Chart %s", it.x0, it.y0,
+        m.append(s.sprintf("SADDLE:\t(x0,y0)=(%g,%g)  Chart %s", p->x0, p->y0,
                            chart));
         if (longversion) {
-            m.append(s.sprintf("   Epsilon = %g  original=%d", it.epsilon,
-                               it.notadummy));
+            m.append(s.sprintf("   Epsilon = %g  original=%d", p->epsilon,
+                               p->notadummy));
             m.append(
                 s.sprintf("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
-                          it.a11, it.a12, it.a21, it.a22));
+                          p->a11, p->a12, p->a21, p->a22));
             m.append(s.sprintf("   Vector Field:"));
             m.append(s.sprintf("      x' = %s",
-                               dumpPoly2(it.vector_field_0, "x", "y")));
+                               dumpPoly2(p->vector_field[0], "x", "y")));
             m.append(s.sprintf("      y' = %s",
-                               dumpPoly2(it.vector_field_1, "x", "y")));
+                               dumpPoly2(p->vector_field[1], "x", "y")));
             m.append(s.sprintf("   Separatrices:"));
-            dumpSeparatrices(m, it.separatrices, 6);
+            dumpSeparatrices(m, p->separatrices, 6);
             m.append(s.sprintf(" "));
         }
+        p = p->next_saddle;
     }
 }
 
 // dump degenerate singularities
-void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<P4Singularities::degenerate> &p,
-    bool longversion)
+void P4VFStudy::dumpSingularities(QTextEdit &m, P4Singularities::degenerate *p,
+                                  bool longversion)
 {
     const char *chart;
     QString s;
 
-    for (auto const &it : p) {
-        switch (it.chart) {
-        case CHART_R2:
+    while (p != nullptr) {
+        switch (p->chart) {
+        case P4Charts::chart_R2:
             chart = "R2";
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             chart = "U1";
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             chart = "U2";
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             chart = "V1";
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             chart = "V2";
             break;
         default:
             chart = "?";
             break;
         }
-        m.append(s.sprintf("DEGENERATE:\t(x0,y0)=(%g,%g)  Chart %s", it.x0,
-                           it.y0, chart));
+        m.append(s.sprintf("DEGENERATE:\t(x0,y0)=(%g,%g)  Chart %s", p->x0,
+                           p->y0, chart));
         if (longversion) {
-            m.append(s.sprintf("   Epsilon = %g  original=%d", it.epsilon,
-                               it.notadummy));
+            m.append(s.sprintf("   Epsilon = %g  original=%d", p->epsilon,
+                               p->notadummy));
             m.append(s.sprintf(" "));
         }
+        p = p->next_de;
     }
 }
 
 // dump strong focus singularities
-void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<P4Singularities::strong_focus> &p,
-    bool longversion)
+void P4VFStudy::dumpSingularities(QTextEdit &m,
+                                  P4Singularities::strong_focus *p,
+                                  bool longversion)
 {
     const char *chart;
     QString s;
     QByteArray ss;
 
-    for (auto const &it : p) {
-        switch (it.chart) {
-        case CHART_R2:
+    while (p != nullptr) {
+        switch (p->chart) {
+        case P4Charts::chart_R2:
             chart = "R2";
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             chart = "U1";
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             chart = "U2";
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             chart = "V1";
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             chart = "V2";
             break;
         default:
             chart = "?";
             break;
         }
-        m.append(s.sprintf("STRONG FOCUS:\t(x0,y0)=(%g,%g)  Chart %s", it.x0,
-                           it.y0, chart));
+        m.append(s.sprintf("STRONG FOCUS:\t(x0,y0)=(%g,%g)  Chart %s", p->x0,
+                           p->y0, chart));
         if (longversion) {
-            if (it.stable == -1)
+            if (p->stable == -1)
                 s = "(stable)";
-            else if (it.stable == +1)
+            else if (p->stable == +1)
                 s = "(unstable)";
             else
                 s = "( ??? )";
             ss = s.toLatin1();
             m.append(
-                s.sprintf("    Stability = %d %s", it.stable, ss.constData()));
+                s.sprintf("    Stability = %d %s", p->stable, ss.constData()));
             m.append(s.sprintf(" "));
         }
+        p = p->next_sf;
     }
 }
 
 // dump weak focus singularities
-void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<P4Singularities::weak_focus> &p,
-    bool longversion)
+void P4VFStudy::dumpSingularities(QTextEdit &m, P4Singularities::weak_focus *p,
+                                  bool longversion)
 {
     const char *chart;
     QString s;
 
-    for (auto const &it : p) {
-        switch (it.chart) {
-        case CHART_R2:
+    while (p != nullptr) {
+        switch (p->chart) {
+        case P4Charts::chart_R2:
             chart = "R2";
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             chart = "U1";
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             chart = "U2";
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             chart = "V1";
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             chart = "V2";
             break;
         default:
             chart = "?";
             break;
         }
-        m.append(s.sprintf("WEAK FOCUS:\t(x0,y0)=(%g,%g)  Chart %s", it.x0,
-                           it.y0, chart));
+        m.append(s.sprintf("WEAK FOCUS:\t(x0,y0)=(%g,%g)  Chart %s", p->x0,
+                           p->y0, chart));
         if (longversion) {
-            m.append(s.sprintf("    Type = %d", it.type));
+            m.append(s.sprintf("    Type = %d", p->type));
             m.append(s.sprintf(" "));
         }
+        p = p->next_wf;
     }
 }
 
 // dump node singularities
-void P4VFStudy::dumpSingularities(QTextEdit &m,
-                                  const std::vector<P4Singularities::node> &p,
+void P4VFStudy::dumpSingularities(QTextEdit &m, P4Singularities::node *p,
                                   bool longversion)
 {
     const char *chart;
     QString s;
     QByteArray ss;
 
-    for (auto const &it : p) {
-        switch (it.chart) {
-        case CHART_R2:
+    while (p != nullptr) {
+        switch (p->chart) {
+        case P4Charts::chart_R2:
             chart = "R2";
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             chart = "U1";
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             chart = "U2";
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             chart = "V1";
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             chart = "V2";
             break;
         default:
@@ -1349,70 +1426,72 @@ void P4VFStudy::dumpSingularities(QTextEdit &m,
             break;
         }
         m.append(
-            s.sprintf("NODE:\t(x0,y0)=(%g,%g)  Chart %s", it.x0, it.y0, chart));
+            s.sprintf("NODE:\t(x0,y0)=(%g,%g)  Chart %s", p->x0, p->y0, chart));
         if (longversion) {
-            if (it.stable == -1)
+            if (p->stable == -1)
                 s = "(stable)";
-            else if (it.stable == +1)
+            else if (p->stable == +1)
                 s = "(unstable)";
             else
                 s = "( ??? )";
             ss = s.toLatin1();
             m.append(
-                s.sprintf("    Stability = %d %s", it.stable, ss.constData()));
+                s.sprintf("    Stability = %d %s", p->stable, ss.constData()));
             m.append(s.sprintf(" "));
         }
+        p = p->next_node;
     }
 }
 
 // dump semi elementary singularities
-void P4VFStudy::dumpSingularities(
-    QTextEdit &m, const std::vector<P4Singularities::semi_elementary> &p,
-    bool longversion)
+void P4VFStudy::dumpSingularities(QTextEdit &m,
+                                  P4Singularities::semi_elementary *p,
+                                  bool longversion)
 {
     const char *chart;
     QString s;
     QByteArray ss;
 
-    for (auto const &it : p) {
-        switch (it.chart) {
-        case CHART_R2:
+    while (p != nullptr) {
+        switch (p->chart) {
+        case P4Charts::chart_R2:
             chart = "R2";
             break;
-        case CHART_U1:
+        case P4Charts::chart_U1:
             chart = "U1";
             break;
-        case CHART_U2:
+        case P4Charts::chart_U2:
             chart = "U2";
             break;
-        case CHART_V1:
+        case P4Charts::chart_V1:
             chart = "V1";
             break;
-        case CHART_V2:
+        case P4Charts::chart_V2:
             chart = "V2";
             break;
         default:
             chart = "?";
             break;
         }
-        m.append(s.sprintf("SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s", it.x0,
-                           it.y0, chart));
+        m.append(s.sprintf("SEMI ELEMENTARY:\t(x0,y0)=(%g,%g)  Chart %s", p->x0,
+                           p->y0, chart));
         if (longversion) {
-            m.append(s.sprintf("   Type    = %d", it.type));
-            m.append(s.sprintf("   Epsilon = %g  original=%d", it.epsilon,
-                               it.notadummy));
+            m.append(s.sprintf("   Type    = %d", p->type));
+            m.append(s.sprintf("   Epsilon = %g  original=%d", p->epsilon,
+                               p->notadummy));
             m.append(
                 s.sprintf("   Transformation Matrix = [ [%g,%g], [%g,%g] ]",
-                          it.a11, it.a12, it.a21, it.a22));
+                          p->a11, p->a12, p->a21, p->a22));
             m.append(s.sprintf("   Vector Field = "));
             m.append(s.sprintf("      x' = %s",
-                               dumpPoly2(it.vector_field_0, "x", "y")));
+                               dumpPoly2(p->vector_field[0], "x", "y")));
             m.append(s.sprintf("      y' = %s",
-                               dumpPoly2(it.vector_field_1, "x", "y")));
+                               dumpPoly2(p->vector_field[1], "x", "y")));
             m.append(s.sprintf("   Separatrices:"));
-            dumpSeparatrices(m, it.separatrices, 6);
+            dumpSeparatrices(m, p->separatrices, 6);
             m.append(s.sprintf(" "));
         }
+        p = p->next_se;
     }
 }
 
@@ -1429,25 +1508,25 @@ void P4VFStudy::dump(QTextEdit &m)
     m.append(s.sprintf("Vector Fields"));
     m.append(s.sprintf("-------------"));
     m.append(s.sprintf("  Finite chart:"));
-    m.append(s.sprintf("     x' = %s", dumpPoly2(f_vec_field_0_, "x", "y")));
-    m.append(s.sprintf("     y' = %s", dumpPoly2(f_vec_field_1_, "x", "y")));
+    m.append(s.sprintf("     x' = %s", dumpPoly2(f_vec_field_[0], "x", "y")));
+    m.append(s.sprintf("     y' = %s", dumpPoly2(f_vec_field_[1], "x", "y")));
     m.append(s.sprintf("  U1 chart:"));
-    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_U1_0_, "x", "y")));
-    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_U1_1_, "x", "y")));
+    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_U1_[0], "x", "y")));
+    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_U1_[1], "x", "y")));
     m.append(s.sprintf("  U2 chart:"));
-    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_U2_0_, "x", "y")));
-    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_U2_1_, "x", "y")));
+    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_U2_[0], "x", "y")));
+    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_U2_[1], "x", "y")));
     m.append(s.sprintf("  V1 chart:"));
-    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_V1_0_, "x", "y")));
-    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_V1_1_, "x", "y")));
+    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_V1_[0], "x", "y")));
+    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_V1_[1], "x", "y")));
     m.append(s.sprintf("  V2 chart:"));
-    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_V2_0_, "x", "y")));
-    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_V2_1_, "x", "y")));
+    m.append(s.sprintf("     x' = %s", dumpPoly2(vec_field_V2_[0], "x", "y")));
+    m.append(s.sprintf("     y' = %s", dumpPoly2(vec_field_V2_[1], "x", "y")));
     m.append(s.sprintf("  Cylinder chart: (Co=cos(theta),Si=sin(theta))"));
     m.append(s.sprintf("     r'     = %s",
-                       dumpPoly3(vec_field_C_0_, "r", "Co", "Si")));
+                       dumpPoly3(vec_field_C_[0], "r", "Co", "Si")));
     m.append(s.sprintf("     theta' = %s",
-                       dumpPoly3(vec_field_C_1_, "r", "Co", "Si")));
+                       dumpPoly3(vec_field_C_[1], "r", "Co", "Si")));
     m.append(s.sprintf(" "));
     m.append(s.sprintf("Greatest Common Factor"));
     m.append(s.sprintf("----------------------"));
@@ -1462,20 +1541,20 @@ void P4VFStudy::dump(QTextEdit &m)
     m.append(s.sprintf("Singular points - summary"));
     m.append(s.sprintf("-------------------------"));
     m.append(s.sprintf(" "));
-    dumpSingularities(m, saddlePoints_, false);
-    dumpSingularities(m, sePoints_, false);
-    dumpSingularities(m, nodePoints_, false);
-    dumpSingularities(m, wfPoints_, false);
-    dumpSingularities(m, sfPoints_, false);
-    dumpSingularities(m, dePoints_, false);
+    dumpSingularities(m, firstSaddlePoint_, false);
+    dumpSingularities(m, firstSePoint_, false);
+    dumpSingularities(m, firstNodePoint_, false);
+    dumpSingularities(m, firstWfPoint_, false);
+    dumpSingularities(m, firstSfPoint_, false);
+    dumpSingularities(m, firstDePoint_, false);
     m.append(s.sprintf(" "));
     m.append(s.sprintf("Singular points - full description"));
     m.append(s.sprintf("----------------------------------"));
     m.append(s.sprintf(" "));
-    dumpSingularities(m, saddlePoints_, true);
-    dumpSingularities(m, sePoints_, true);
-    dumpSingularities(m, nodePoints_, true);
-    dumpSingularities(m, wfPoints_, true);
-    dumpSingularities(m, sfPoints_, true);
-    dumpSingularities(m, dePoints_, true);
+    dumpSingularities(m, firstSaddlePoint_, true);
+    dumpSingularities(m, firstSePoint_, true);
+    dumpSingularities(m, firstNodePoint_, true);
+    dumpSingularities(m, firstWfPoint_, true);
+    dumpSingularities(m, firstSfPoint_, true);
+    dumpSingularities(m, firstDePoint_, true);
 }
