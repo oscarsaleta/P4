@@ -24,7 +24,7 @@
 
 #include "P4InputVF.hpp"
 #include "P4VFStudy.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 class P4ParentStudy : public QObject
 {
@@ -42,11 +42,11 @@ class P4ParentStudy : public QObject
     // K_ will be throughout the current vector field selected
     int K_{0};
 
-    std::vector<p4curves::curves> separatingCurves_;
+    std::vector<P4Curves::curves> separatingCurves_;
 
-    int typeofstudy_{TYPEOFSTUDY_ALL};
-    // TYPEOFVIEW_PLANE or TYPEOFVIEW_SPHERE
-    int typeofview_{TYPEOFVIEW_SPHERE};
+    int typeofstudy_{P4TypeOfStudy::typeofstudy_all};
+    // P4TypeOfView::typeofview_plane or P4TypeOfView::typeofview_sphere
+    int typeofview_{P4TypeOfView::typeofview_sphere};
     bool plotVirtualSingularities_{DEFAULTPLOTVIRTUALSINGULARITIES};
     int p_{1};
     int q_{1};
@@ -65,25 +65,24 @@ class P4ParentStudy : public QObject
     double ymax_{1.0};
 
     // curves
-    std::vector<p4curves::curves> arbitraryCurves_;
+    std::vector<P4Curves::curves> arbitraryCurves_;
 
     // limit cycles and orbits
-    std::vector<p4orbits::orbits> limCycles_;
-    std::vector<p4orbits::orbits> orbits_;
+    P4Orbits::orbits *firstLimCycle_{nullptr};
+    P4Orbits::orbits *firstOrbit_{nullptr};
+    // runtime when plotting
+    P4Orbits::orbits *currentLimCycle_{nullptr};
+    P4Orbits::orbits *currentOrbit_{nullptr};
 
     double selected_ucoord_[2];
 
-    std::vector<p4singularities::saddle> saddlePoints_;
-    int selectedSaddlePointIndex_;
-    std::vector<p4singularities::semi_elementary> sePoints_;
-    int selectedSePointIndex_;
-    std::vector<p4singularities::degenerate> dePoints_;
-    int selectedDePointIndex_;
+    // runtime! these lists are not owned so no delete please
+    P4Singularities::saddle *selectedSaddlePoint_{nullptr};
+    P4Singularities::semi_elementary *selectedSePoint_{nullptr};
+    P4Singularities::degenerate *selectedDePoint_{nullptr};
 
-    std::vector<p4blowup::sep> seps_;
-    int selectedSepIndex_;
-    std::vector<p4blowup::blow_up_points> deSeps_;
-    int selectedDeSepIndex_;
+    P4Blowup::sep *selectedSep_{nullptr};
+    P4Blowup::blow_up_points *selectedDeSep_{nullptr};
 
     int selected_sep_vfindex_;
 

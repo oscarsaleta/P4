@@ -28,48 +28,6 @@
 #include "plot_points.hpp"
 
 // -----------------------------------------------------------------------
-//                          Define Colors in RGB
-// -----------------------------------------------------------------------
-
-P4RGBITEM gXFigToRGB[NUMXFIGCOLORS] = {
-    // 8 pure colours:
-    {0, 0, 0},       // BLACK
-    {0, 0, 255},     // BLUE
-    {0, 255, 0},     // GREEN
-    {0, 255, 255},   // CYAN
-    {255, 0, 0},     // RED
-    {255, 0, 255},   // MAGENTA
-    {255, 255, 0},   // YELLOW
-    {255, 255, 255}, // WHITE
-
-    // shaded colours (ordered from dark to light):
-    {0, 0, 143},     // BLUE1
-    {0, 0, 176},     // BLUE2
-    {0, 0, 209},     // BLUE3
-    {135, 207, 255}, // BLUE4
-    {0, 143, 0},     // GREEN1
-    {0, 176, 0},     // GREEN2
-    {0, 209, 0},     // GREEN3
-    {0, 143, 143},   // CYAN1
-    {0, 176, 176},   // CYAN2
-    {0, 209, 209},   // CYAN3
-    {143, 0, 0},     // RED1
-    {176, 0, 0},     // RED2
-    {209, 0, 0},     // RED3
-    {143, 0, 143},   // MAGENTA1
-    {176, 0, 176},   // MAGENTA2
-    {209, 32, 209},  // MAGENTA3
-    {128, 48, 0},    // BROWN1
-    {161, 64, 0},    // BROWN2
-    {191, 97, 0},    // BROWN3
-    {255, 128, 128}, // PINK1
-    {255, 161, 161}, // PINK2
-    {255, 191, 191}, // PINK3
-    {255, 224, 224}, // PINK4
-    {255, 214, 0}    // GOLD
-};
-
-// -----------------------------------------------------------------------
 //                              LEGEND
 // -----------------------------------------------------------------------
 
@@ -92,7 +50,8 @@ void P4LegendWnd::paintEvent(QPaintEvent *p)
     QPainter paint{this};
     paint.setFont(gP4app->getLegendFont());
 
-    paint.setPen(QPen(QXFIGCOLOR(bgColours::CFOREGROUND)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_foreground)));
     paint.drawText(hmargin1_, vmargin1_, "Non-Degenerate:");
     paint.drawText(hmargin4_, vmargin1_, "Semi-hyperbolic:");
     paint.drawText(hmargin1_, vmargin3_, "Separatrices:");
@@ -101,26 +60,35 @@ void P4LegendWnd::paintEvent(QPaintEvent *p)
     paint.drawText(hmargin4_, vmargin4_, "Limit Cycles:");
     paint.drawText(hmargin4_, vmargin4_ + 2 * interline_, "Arbitrary Curve:");
 
-    paint.setPen(QPen(QXFIGCOLOR(CSADDLE)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle)));
     paint.drawText(hmargin2_, vmargin2_, "Saddle");
-    paint.setPen(QPen(QXFIGCOLOR(CNODE_S)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable)));
     paint.drawText(hmargin2_, vmargin2_ + 1 * interline_, "Stable Node");
-    paint.setPen(QPen(QXFIGCOLOR(CNODE_U)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable)));
     paint.drawText(hmargin2_, vmargin2_ + 2 * interline_, "Unstable Node");
-    paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus)));
     paint.drawText(hmargin2_, vmargin2_ + 3 * interline_,
                    "Weak Focus or center");
-    paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS_S)));
+    paint.setPen(QPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_stable)));
     paint.drawText(hmargin2_, vmargin2_ + 4 * interline_, "Stable Weak Focus");
-    paint.setPen(QPen(QXFIGCOLOR(CWEAK_FOCUS_U)));
+    paint.setPen(QPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_unstable)));
     paint.drawText(hmargin2_, vmargin2_ + 5 * interline_,
                    "Unstable Weak Focus");
-    paint.setPen(QPen(QXFIGCOLOR(CCENTER)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_center)));
     paint.drawText(hmargin2_, vmargin2_ + 6 * interline_, "Center");
-    paint.setPen(QPen(QXFIGCOLOR(CSTRONG_FOCUS_S)));
+    paint.setPen(QPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_strong_focus_stable)));
     paint.drawText(hmargin2_, vmargin2_ + 7 * interline_,
                    "Stable Strong Focus");
-    paint.setPen(QPen(QXFIGCOLOR(CSTRONG_FOCUS_U)));
+    paint.setPen(QPen(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_strong_focus_unstable)));
     paint.drawText(hmargin2_, vmargin2_ + 8 * interline_,
                    "Unstable Strong Focus");
 
@@ -143,15 +111,19 @@ void P4LegendWnd::paintEvent(QPaintEvent *p)
     win_plot_unstablestrongfocus(&paint, hmargin1_ + SYMBOLWIDTH / 2,
                                  vmargin2_ - SYMBOLHEIGHT / 2 + 8 * interline_);
 
-    paint.setPen(QPen(QXFIGCOLOR(CSADDLE_NODE)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle_node)));
     paint.drawText(hmargin5_, vmargin2_, "Saddle-Node");
-    paint.setPen(QPen(QXFIGCOLOR(CNODE_S)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable)));
     paint.drawText(hmargin5_, vmargin2_ + 1 * interline_, "Stable-Node");
-    paint.setPen(QPen(QXFIGCOLOR(CNODE_U)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable)));
     paint.drawText(hmargin5_, vmargin2_ + 2 * interline_, "Unstable-Node");
-    paint.setPen(QPen(QXFIGCOLOR(CSADDLE)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle)));
     paint.drawText(hmargin5_, vmargin2_ + 3 * interline_, "Saddle");
-    paint.setPen(QPen(QXFIGCOLOR(CDEGEN)));
+    paint.setPen(QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_degen)));
     paint.drawText(hmargin5_, vmargin2_ + 5 * interline_, "Non-elementary");
 
     win_plot_sesaddlenode(&paint, hmargin4_ + SYMBOLWIDTH / 2,
@@ -165,39 +137,46 @@ void P4LegendWnd::paintEvent(QPaintEvent *p)
     win_plot_degen(&paint, hmargin4_ + SYMBOLWIDTH / 2,
                    vmargin2_ - SYMBOLHEIGHT / 2 + 5 * interline_);
 
-    paint.setPen(QPen(QXFIGCOLOR(CSTABLE)));
+    paint.setPen(QPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_separatrice_stable)));
     paint.drawText(hmargin3_, vmargin4_, "Stable");
     paint.drawLine(hmargin1_, vmargin4_ - xheight_, hmargin1_ + sepwidth_ - 1,
                    vmargin4_ - xheight_);
-    paint.setPen(QPen(QXFIGCOLOR(CUNSTABLE)));
+    paint.setPen(QPen(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_separatrice_unstable)));
     paint.drawText(hmargin3_, vmargin4_ + 1 * interline_, "Unstable");
     paint.drawLine(hmargin1_, vmargin4_ + interline_ - xheight_,
                    hmargin1_ + sepwidth_ - 1,
                    vmargin4_ + interline_ - xheight_);
-    paint.setPen(QPen(QXFIGCOLOR(CCENT_STABLE)));
+    paint.setPen(QPen(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_separatrice_center_stable)));
     paint.drawText(hmargin3_, vmargin4_ + 2 * interline_, "Center-Stable");
     paint.drawLine(hmargin1_, vmargin4_ + 2 * interline_ - xheight_,
                    hmargin1_ + sepwidth_ - 1,
                    vmargin4_ + 2 * interline_ - xheight_);
-    paint.setPen(QPen(QXFIGCOLOR(CCENT_UNSTABLE)));
+    paint.setPen(QPen(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_separatrice_center_unstable)));
     paint.drawText(hmargin3_, vmargin4_ + 3 * interline_, "Center-Unstable");
     paint.drawLine(hmargin1_, vmargin4_ + 3 * interline_ - xheight_,
                    hmargin1_ + sepwidth_ - 1,
                    vmargin4_ + 3 * interline_ - xheight_);
 
-    paint.setPen(QPen(QXFIGCOLOR(bgColours::CORBIT)));
+    paint.setPen(QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_orbit)));
     paint.drawLine(hmargin4_, vmargin25_ + interline_ - xheight_,
                    hmargin4_ + orbitwidth_ - 1,
                    vmargin25_ + interline_ - xheight_);
-    paint.setPen(QPen(QXFIGCOLOR(CSING)));
+    paint.setPen(QPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_curve_singularities)));
     paint.drawLine(hmargin4_, vmargin3_ + interline_ - xheight_,
                    hmargin4_ + orbitwidth_ - 1,
                    vmargin3_ + interline_ - xheight_);
-    paint.setPen(QPen(QXFIGCOLOR(CLIMIT)));
+    paint.setPen(
+        QPen(P4Colours::p4XfigColour(P4ColourSettings::colour_limit_cycle)));
     paint.drawLine(hmargin4_, vmargin4_ + interline_ - xheight_,
                    hmargin4_ + orbitwidth_ - 1,
                    vmargin4_ + interline_ - xheight_);
-    paint.setPen(QPen(QXFIGCOLOR(CCURV)));
+    paint.setPen(QPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_arbitrary_curve)));
     paint.drawLine(hmargin4_, vmargin4_ + 3 * interline_ - xheight_,
                    hmargin4_ + orbitwidth_ - 1,
                    vmargin4_ + 3 * interline_ - xheight_);
@@ -246,7 +225,9 @@ void P4LegendWnd::calculateGeometry()
     QFontMetrics fm{gP4app->getLegendFont()};
 
     QPalette palette;
-    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND));
+    palette.setColor(
+        backgroundRole(),
+        P4Colours::p4XfigColour(P4ColourSettings::colour_background));
     setPalette(palette);
 
     hmargin1_ = fm.maxWidth();

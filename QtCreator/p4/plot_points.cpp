@@ -35,8 +35,8 @@
 void win_plot_saddle(QPainter *p, int x, int y)
 {
     //    qDebug() << "called win plot saddle";
-    p->setPen(QXFIGCOLOR(CSADDLE));
-    p->setBrush(QXFIGCOLOR(CSADDLE));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle));
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,
                 SYMBOLHEIGHT);
 }
@@ -45,7 +45,7 @@ void win_plot_virtualsaddle(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CSADDLE));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle));
     p->setBrush(Qt::NoBrush);
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,
                 SYMBOLHEIGHT);
@@ -53,8 +53,8 @@ void win_plot_virtualsaddle(QPainter *p, int x, int y)
 
 void win_plot_stablenode(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CNODE_S));
-    p->setBrush(QXFIGCOLOR(CNODE_S));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable));
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,
                 SYMBOLHEIGHT);
 }
@@ -63,7 +63,7 @@ void win_plot_virtualstablenode(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CNODE_S));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable));
     p->setBrush(Qt::NoBrush);
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,
                 SYMBOLHEIGHT);
@@ -71,8 +71,9 @@ void win_plot_virtualstablenode(QPainter *p, int x, int y)
 
 void win_plot_unstablenode(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CNODE_U));
-    p->setBrush(QXFIGCOLOR(CNODE_U));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable));
+    p->setBrush(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable));
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,
                 SYMBOLHEIGHT);
 }
@@ -81,7 +82,7 @@ void win_plot_virtualunstablenode(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CNODE_U));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable));
     p->setBrush(Qt::NoBrush);
     p->drawRect(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, SYMBOLWIDTH,
                 SYMBOLHEIGHT);
@@ -89,8 +90,8 @@ void win_plot_virtualunstablenode(QPainter *p, int x, int y)
 
 void win_plot_weakfocus(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS));
-    p->setBrush(QXFIGCOLOR(CWEAK_FOCUS));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus));
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
@@ -102,7 +103,7 @@ void win_plot_virtualweakfocus(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -113,8 +114,10 @@ void win_plot_virtualweakfocus(QPainter *p, int x, int y)
 
 void win_plot_stableweakfocus(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_S));
-    p->setBrush(QXFIGCOLOR(CWEAK_FOCUS_S));
+    p->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_stable));
+    p->setBrush(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_stable));
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
@@ -126,7 +129,8 @@ void win_plot_virtualstableweakfocus(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_S));
+    p->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_stable));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -137,8 +141,10 @@ void win_plot_virtualstableweakfocus(QPainter *p, int x, int y)
 
 void win_plot_unstableweakfocus(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
-    p->setBrush(QXFIGCOLOR(CWEAK_FOCUS_U));
+    p->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_unstable));
+    p->setBrush(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_unstable));
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
@@ -150,7 +156,8 @@ void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CWEAK_FOCUS_U));
+    p->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_weak_focus_unstable));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -161,8 +168,8 @@ void win_plot_virtualunstableweakfocus(QPainter *p, int x, int y)
 
 void win_plot_center(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CCENTER));
-    p->setBrush(QXFIGCOLOR(CCENTER));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_center));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_center));
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
@@ -174,7 +181,7 @@ void win_plot_virtualcenter(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CCENTER));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_center));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -185,8 +192,10 @@ void win_plot_virtualcenter(QPainter *p, int x, int y)
 
 void win_plot_stablestrongfocus(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_S));
-    p->setBrush(QXFIGCOLOR(CSTRONG_FOCUS_S));
+    p->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_strong_focus_stable));
+    p->setBrush(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_strong_focus_stable));
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
@@ -198,7 +207,8 @@ void win_plot_virtualstablestrongfocus(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_S));
+    p->setPen(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_strong_focus_stable));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -209,8 +219,10 @@ void win_plot_virtualstablestrongfocus(QPainter *p, int x, int y)
 
 void win_plot_unstablestrongfocus(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_U));
-    p->setBrush(QXFIGCOLOR(CSTRONG_FOCUS_U));
+    p->setPen(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_strong_focus_unstable));
+    p->setBrush(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_strong_focus_unstable));
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
                   y + SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2, y);
@@ -222,7 +234,8 @@ void win_plot_virtualunstablestrongfocus(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CSTRONG_FOCUS_U));
+    p->setPen(P4Colours::p4XfigColour(
+        P4ColourSettings::colour_strong_focus_unstable));
     p->setBrush(Qt::NoBrush);
     QPolygon qpa(4);
     qpa.setPoints(4, x, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2, y, x,
@@ -234,8 +247,8 @@ void win_plot_virtualunstablestrongfocus(QPainter *p, int x, int y)
 void win_plot_sesaddlenode(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CSADDLE_NODE));
-    p->setBrush(QXFIGCOLOR(CSADDLE_NODE));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle_node));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle_node));
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
                   y - SYMBOLHEIGHT / 2);
@@ -248,7 +261,7 @@ void win_plot_virtualsesaddlenode(QPainter *p, int x, int y)
     if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CSADDLE_NODE));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle_node));
     p->setBrush(Qt::NoBrush);
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
@@ -260,8 +273,8 @@ void win_plot_virtualsesaddlenode(QPainter *p, int x, int y)
 void win_plot_sestablenode(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CNODE_S));
-    p->setBrush(QXFIGCOLOR(CNODE_S));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable));
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
                   y - SYMBOLHEIGHT / 2);
@@ -274,7 +287,7 @@ void win_plot_virtualsestablenode(QPainter *p, int x, int y)
     if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CNODE_S));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_stable));
     p->setBrush(Qt::NoBrush);
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
@@ -286,8 +299,9 @@ void win_plot_virtualsestablenode(QPainter *p, int x, int y)
 void win_plot_seunstablenode(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CNODE_U));
-    p->setBrush(QXFIGCOLOR(CNODE_U));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable));
+    p->setBrush(
+        P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable));
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
                   y - SYMBOLHEIGHT / 2);
@@ -300,7 +314,7 @@ void win_plot_virtualseunstablenode(QPainter *p, int x, int y)
     if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CNODE_U));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_node_unstable));
     p->setBrush(Qt::NoBrush);
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
@@ -312,8 +326,8 @@ void win_plot_virtualseunstablenode(QPainter *p, int x, int y)
 void win_plot_sesaddle(QPainter *p, int x, int y)
 {
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CSADDLE));
-    p->setBrush(QXFIGCOLOR(CSADDLE));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle));
+    p->setBrush(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle));
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
                   y - SYMBOLHEIGHT / 2);
@@ -326,7 +340,7 @@ void win_plot_virtualsesaddle(QPainter *p, int x, int y)
     if (!gVFResults.plotVirtualSingularities_)
         return;
     QPolygon qpa(3);
-    p->setPen(QXFIGCOLOR(CSADDLE));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_saddle));
     p->setBrush(Qt::NoBrush);
     qpa.setPoints(3, x - SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2,
                   x + SYMBOLWIDTH / 2, y + SYMBOLHEIGHT / 2, x,
@@ -337,7 +351,7 @@ void win_plot_virtualsesaddle(QPainter *p, int x, int y)
 
 void win_plot_degen(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CDEGEN));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_degen));
     p->drawLine(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2,
                 y + SYMBOLHEIGHT / 2);
     p->drawLine(x + SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2,
@@ -348,7 +362,7 @@ void win_plot_virtualdegen(QPainter *p, int x, int y)
 {
     if (!gVFResults.plotVirtualSingularities_)
         return;
-    p->setPen(QXFIGCOLOR(CDEGEN));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_degen));
     p->drawLine(x - SYMBOLWIDTH / 3, y - SYMBOLHEIGHT / 3, x + SYMBOLWIDTH / 3,
                 y + SYMBOLHEIGHT / 3);
     p->drawLine(x + SYMBOLWIDTH / 3, y - SYMBOLHEIGHT / 3, x - SYMBOLWIDTH / 3,
@@ -357,12 +371,12 @@ void win_plot_virtualdegen(QPainter *p, int x, int y)
 
 void win_plot_coinciding(QPainter *p, int x, int y)
 {
-    p->setPen(QXFIGCOLOR(CDEGEN));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_degen));
     p->drawLine(x - SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, x + SYMBOLWIDTH / 2,
                 y + SYMBOLHEIGHT / 2);
     p->drawLine(x + SYMBOLWIDTH / 2, y - SYMBOLHEIGHT / 2, x - SYMBOLWIDTH / 2,
                 y + SYMBOLHEIGHT / 2);
-    p->setPen(QXFIGCOLOR(CDEGEN));
+    p->setPen(P4Colours::p4XfigColour(P4ColourSettings::colour_degen));
     p->drawLine(x, y - (SYMBOLHEIGHT * 3) / 4, x, y + (SYMBOLHEIGHT * 3) / 4);
     p->drawLine(x + (SYMBOLWIDTH * 3) / 4, y, x - (SYMBOLWIDTH * 3) / 4, y);
 }

@@ -27,7 +27,7 @@
 #include <vector>
 
 #include "main.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 class QKeyEvent;
 class QLabel;
@@ -118,7 +118,7 @@ class P4InputSphere : public QWidget
     void markSelection(int x1, int y1, int x2, int y2);
 
     void plotSeparatingCurves();
-    void plotSeparatingCurve(const p4curves::curves &, int);
+    void plotSeparatingCurve(const P4Curves::curves &, int);
     void plotLine(const double *, const double *, int);
     void plotPoint(const double *, int);
     void setupCoordinateTransformations();

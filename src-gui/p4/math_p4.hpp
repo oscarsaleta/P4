@@ -22,8 +22,6 @@
 #define MIN_FLOAT -1.0E32
 #define MAX_FLOAT 1.0E32
 
-#define p4_finite std::isfinite
-
 #define PI 3.1415926535897932384626433832
 #define PI_DIV2 (PI / 2.)
 #define PI_DIV4 (PI / 4.)

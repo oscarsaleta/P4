@@ -43,7 +43,8 @@ macx {
 
 DESTDIR = $$BUILD_DIR/p4/
 
-SOURCES += file_paths.cpp \
+SOURCES += color.cpp \
+    file_paths.cpp \
     main.cpp \
     math_arbitrarycurve.cpp \
     math_changedir.cpp \
@@ -158,6 +159,7 @@ HEADERS +=  ../version.h \
     print_points.hpp \
     print_postscript.hpp \
     print_xfig.hpp \
+    structures.hpp \
     tables.hpp
 
 RC_FILE = p4.rc

@@ -190,16 +190,16 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
         btn_actionrun_->toggle();
 
     switch (gThisVF->typeofstudy_) {
-    case TYPEOFSTUDY_ALL:
+    case P4TypeOfStudy::typeofstudy_all:
         btn_all_->toggle();
         break;
-    case TYPEOFSTUDY_FIN:
+    case P4TypeOfStudy::typeofstudy_fin:
         btn_fin_->toggle();
         break;
-    case TYPEOFSTUDY_INF:
+    case P4TypeOfStudy::typeofstudy_inf:
         btn_inf_->toggle();
         break;
-    case TYPEOFSTUDY_ONE:
+    case P4TypeOfStudy::typeofstudy_one:
         btn_one_->toggle();
         break;
     }
@@ -229,8 +229,8 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
 
     QObject::connect(btn_all_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ALL) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_ALL;
+            if (gThisVF->typeofstudy_ != P4TypeOfStudy::typeofstudy_all) {
+                gThisVF->typeofstudy_ = P4TypeOfStudy::typeofstudy_all;
                 if (gThisVF->changed_ == false) {
                     gThisVF->changed_ = true;
                     gP4app->signalChanged();
@@ -244,8 +244,8 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     });
     QObject::connect(btn_one_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_ONE) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_ONE;
+            if (gThisVF->typeofstudy_ != P4TypeOfStudy::typeofstudy_one) {
+                gThisVF->typeofstudy_ = P4TypeOfStudy::typeofstudy_one;
                 if (gThisVF->changed_ == false) {
                     gThisVF->changed_ = true;
                     gP4app->signalChanged();
@@ -259,8 +259,8 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     });
     QObject::connect(btn_fin_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+            if (gThisVF->typeofstudy_ != P4TypeOfStudy::typeofstudy_fin) {
+                gThisVF->typeofstudy_ = P4TypeOfStudy::typeofstudy_fin;
                 if (gThisVF->changed_ == false) {
                     gThisVF->changed_ = true;
                     gP4app->signalChanged();
@@ -274,8 +274,8 @@ P4FindDlg::P4FindDlg(P4StartDlg *startdlg)
     });
     QObject::connect(btn_inf_, &QRadioButton::toggled, this, [this](bool on) {
         if (on) {
-            if (gThisVF->typeofstudy_ != TYPEOFSTUDY_FIN) {
-                gThisVF->typeofstudy_ = TYPEOFSTUDY_FIN;
+            if (gThisVF->typeofstudy_ != P4TypeOfStudy::typeofstudy_inf) {
+                gThisVF->typeofstudy_ = P4TypeOfStudy::typeofstudy_inf;
                 if (gThisVF->changed_ == false) {
                     gThisVF->changed_ = true;
                     gP4app->signalChanged();
@@ -423,16 +423,16 @@ void P4FindDlg::getDataFromDlg()
 void P4FindDlg::updateDlgData()
 {
     switch (gThisVF->typeofstudy_) {
-    case TYPEOFSTUDY_ALL:
+    case P4TypeOfStudy::typeofstudy_all:
         btn_all_->toggle();
         break;
-    case TYPEOFSTUDY_FIN:
+    case P4TypeOfStudy::typeofstudy_fin:
         btn_fin_->toggle();
         break;
-    case TYPEOFSTUDY_INF:
+    case P4TypeOfStudy::typeofstudy_inf:
         btn_inf_->toggle();
         break;
-    case TYPEOFSTUDY_ONE:
+    case P4TypeOfStudy::typeofstudy_one:
         btn_one_->toggle();
         break;
     }

@@ -24,7 +24,7 @@
 #include "P4ParentStudy.hpp"
 #include "P4Sphere.hpp"
 #include "math_p4.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 void (*plot_l)(P4Sphere *, const double *, const double *, int) = nullptr;
 void (*plot_p)(P4Sphere *, const double *, int) = nullptr;
@@ -38,7 +38,7 @@ dotted,
 WHEN ZOOMING
 //  (SOMETIMES, WHEN A PART OF THE SPHERE IS VISIBLE, NOTHING IS DRAWN)
 
-    QPen pen( (QColor)(QXFIGCOLOR(color)) );
+    QPen pen( (QColor)(P4Colours::p4XfigColour(color)) );
     if( dotted )
         pen.setStyle( Qt::DashLine );
     else

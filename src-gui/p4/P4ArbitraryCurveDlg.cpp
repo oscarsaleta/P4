@@ -182,7 +182,7 @@ void P4ArbitraryCurveDlg::onBtnEvaluate()
     gThisVF->arbitraryCurve_ = edt_curve_->text().trimmed();
 
     // FIRST: create filename_veccurve.tab for transforming the curve QString to
-    // a list of p4polynom::term2
+    // a list of P4Polynom::term2
     gThisVF->setArbitraryCurveDlg(this);
     gThisVF->evaluateArbitraryCurveTable();
     btnPlot_->setEnabled(true);

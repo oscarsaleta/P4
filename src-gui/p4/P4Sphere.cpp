@@ -79,10 +79,10 @@ QVector<P4Sphere *> P4Sphere::sM_sphereList;
 // parameters x1,... are irrelevant if isZoom is false
 
 P4Sphere::P4Sphere(QStatusBar *bar, bool isZoom, double x1, double y1,
-                         double x2, double y2, QWidget *parent)
+                   double x2, double y2, QWidget *parent)
     : QWidget{parent}, parentWnd_{parent}, msgBar_{bar}, iszoom_{isZoom}
 {
-    qDebug() << "called constructor";
+    // qDebug() << "called constructor";
     // setAttribute(Qt::WA_PaintOnScreen);
 
     // FIXME: is next needed?
@@ -279,8 +279,8 @@ void P4Sphere::setupPlot()
 {
     QPalette palette;
 
-    spherebgcolor_ = bgColours::CBACKGROUND;
-    palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_));
+    spherebgcolor_ = P4ColourSettings::colour_background;
+    palette.setColor(backgroundRole(), P4Colours::p4XfigColour(spherebgcolor_));
     setPalette(palette);
 
     circleAtInfinity_.clear();
@@ -288,17 +288,17 @@ void P4Sphere::setupPlot()
 
     if (!iszoom_) {
         switch (gVFResults.typeofview_) {
-        case TYPEOFVIEW_PLANE:
-        case TYPEOFVIEW_U1:
-        case TYPEOFVIEW_U2:
-        case TYPEOFVIEW_V1:
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_plane:
+        case P4TypeOfView::typeofview_U1:
+        case P4TypeOfView::typeofview_U2:
+        case P4TypeOfView::typeofview_V1:
+        case P4TypeOfView::typeofview_V2:
             x0_ = gVFResults.xmin_;
             y0_ = gVFResults.ymin_;
             x1_ = gVFResults.xmax_;
             y1_ = gVFResults.ymax_;
             break;
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             x0_ = -1.1;
             y0_ = -1.1;
             x1_ = 1.1;
@@ -313,31 +313,31 @@ void P4Sphere::setupPlot()
     // double idealhd{std::round(w_ / dx_ * dy_)};
 
     switch (gVFResults.typeofview_) {
-    case TYPEOFVIEW_PLANE:
+    case P4TypeOfView::typeofview_plane:
         chartstring_ = "";
         break;
-    case TYPEOFVIEW_SPHERE:
+    case P4TypeOfView::typeofview_sphere:
         chartstring_ = "";
         break;
-    case TYPEOFVIEW_U1:
+    case P4TypeOfView::typeofview_U1:
         chartstring_ =
             makechartstring(gVFResults.p_, gVFResults.q_, true, false);
         break;
-    case TYPEOFVIEW_U2:
+    case P4TypeOfView::typeofview_U2:
         chartstring_ =
             makechartstring(gVFResults.p_, gVFResults.q_, false, false);
         break;
-    case TYPEOFVIEW_V1:
+    case P4TypeOfView::typeofview_V1:
         chartstring_ =
             makechartstring(gVFResults.p_, gVFResults.q_, true, true);
         break;
-    case TYPEOFVIEW_V2:
+    case P4TypeOfView::typeofview_V2:
         chartstring_ =
             makechartstring(gVFResults.p_, gVFResults.q_, false, true);
         break;
     }
 
-    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
         circleAtInfinity_ =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
         if (gVFResults.plweights_)
@@ -487,7 +487,7 @@ void P4Sphere::adjustToNewSize()
     circleAtInfinity_.clear();
     plCircle_.clear();
 
-    if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
         circleAtInfinity_ =
             produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
         if (gVFResults.plweights_)
@@ -502,17 +502,19 @@ void P4Sphere::adjustToNewSize()
 
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+                       QColor(P4Colours::p4XfigColour(
+                           P4ColourSettings::colour_background)));
 
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+        paint.setPen(
+            P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
         staticPainter_ = &paint;
 
         // Mental note: do not use prepareDrawing/FinishDrawing here,
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_plane) {
+            if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
                 if (gVFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
@@ -527,7 +529,7 @@ void P4Sphere::adjustToNewSize()
         //      DrawLimitCycles(this);
         plotPoints();
 
-        QColor c{QXFIGCOLOR(WHITE)};
+        QColor c{P4Colours::p4XfigColour(P4Colours::white)};
         c.setAlpha(128);
         paint.setPen(c);
         paint.drawText(0, 0, width(), height(),
@@ -565,23 +567,25 @@ void P4Sphere::resizeEvent(QResizeEvent *e)
 
 void P4Sphere::paintEvent(QPaintEvent *p)
 {
-    qDebug() << "paint event";
+    // qDebug() << "paint event";
     if (gThisVF->evaluating_)
         return;
 
     if (painterCache_ == nullptr || isPainterCacheDirty_) {
         if (painterCache_ == nullptr) {
-            qDebug() << "  creating new QPixmap painterCache_...";
+            // qDebug() << "  creating new QPixmap painterCache_...";
             painterCache_ = new QPixmap{size()};
         }
         isPainterCacheDirty_ = false;
 
-        qDebug() << "creating new QPainter from QPixmap painterCache_...";
+        // qDebug() << "creating new QPainter from QPixmap painterCache_...";
         QPainter paint{painterCache_};
         paint.fillRect(0, 0, width(), height(),
-                       QColor(QXFIGCOLOR(bgColours::CBACKGROUND)));
+                       QColor(P4Colours::p4XfigColour(
+                           P4ColourSettings::colour_background)));
 
-        paint.setPen(QXFIGCOLOR(CLINEATINFINITY));
+        paint.setPen(
+            P4Colours::p4XfigColour(P4ColourSettings::colour_line_at_infinity));
 
         staticPainter_ = &paint;
 
@@ -589,8 +593,8 @@ void P4Sphere::paintEvent(QPaintEvent *p)
         // since it is not good to do drawing for all spheres every time we
         // get a paint event from windows
 
-        if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-            if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+        if (gVFResults.typeofview_ != P4TypeOfView::typeofview_plane) {
+            if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
                 if (gVFResults.plweights_)
                     plotPoincareLyapunovSphere();
                 else
@@ -614,7 +618,7 @@ void P4Sphere::paintEvent(QPaintEvent *p)
     widgetpaint.drawPixmap(0, 0, *painterCache_);
 
     if (selectingPointStep_ != 0) {
-        widgetpaint.setPen(QXFIGCOLOR(WHITE));
+        widgetpaint.setPen(P4Colours::p4XfigColour(P4Colours::white));
         widgetpaint.setBrush(Qt::NoBrush);
         widgetpaint.drawEllipse(selectingX_ - selectingPointRadius_,
                                 selectingY_ - selectingPointRadius_,
@@ -623,8 +627,7 @@ void P4Sphere::paintEvent(QPaintEvent *p)
     }
 }
 
-void P4Sphere::markSelection(int x1, int y1, int x2, int y2,
-                                int selectiontype)
+void P4Sphere::markSelection(int x1, int y1, int x2, int y2, int selectiontype)
 {
     if (painterCache_ == nullptr)
         return;
@@ -648,9 +651,9 @@ void P4Sphere::markSelection(int x1, int y1, int x2, int y2,
 
     switch (selectiontype) {
     case 0:
-        c = QXFIGCOLOR(WHITE);
+        c = P4Colours::p4XfigColour(P4Colours::white);
         c.setAlpha(32);
-        p.setPen(QXFIGCOLOR(WHITE));
+        p.setPen(P4Colours::p4XfigColour(P4Colours::white));
         p.setBrush(c);
         if (bx1 == bx2 || by1 == by2)
             p.drawLine(bx1, by1, bx2, by2);
@@ -659,7 +662,7 @@ void P4Sphere::markSelection(int x1, int y1, int x2, int y2,
         break;
 
     case 1:
-        p.setPen(QXFIGCOLOR(WHITE));
+        p.setPen(P4Colours::p4XfigColour(P4Colours::white));
         p.drawLine(x1, y1, x2, y2);
         break;
     }
@@ -681,13 +684,13 @@ void P4Sphere::mouseMoveEvent(QMouseEvent *e)
 
     if (MATHFUNC(is_valid_viewcoord)(wx, wy, pcoord)) {
         switch (gVFResults.typeofview_) {
-        case TYPEOFVIEW_PLANE:
-            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+        case P4TypeOfView::typeofview_plane:
+            if (gVFResults.typeofstudy_ == P4TypeOfStudy::typeofstudy_one)
                 buf.sprintf("Local study   (x,y) = (%8.5g,%8.5g)", wx, wy);
             else
                 buf.sprintf("Planar view   (x,y) = (%8.5g,%8.5g)", wx, wy);
             break;
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             MATHFUNC(sphere_to_R2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
 
             if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
@@ -698,7 +701,7 @@ void P4Sphere::mouseMoveEvent(QMouseEvent *e)
                     "The P-L sphere of type (%d,%d)  (x,y) = (%8.5g,%8.5g)",
                     gVFResults.p_, gVFResults.q_, ucoord[0], ucoord[1]);
             break;
-        case TYPEOFVIEW_U1:
+        case P4TypeOfView::typeofview_U1:
             MATHFUNC(sphere_to_U1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (ucoord[1] >= 0)
                 buf.sprintf("The U1 chart  (z2,z1) = (%8.5g,%8.5g) ", ucoord[1],
@@ -708,7 +711,7 @@ void P4Sphere::mouseMoveEvent(QMouseEvent *e)
                             ucoord[0]);
             buf.append(chartstring_);
             break;
-        case TYPEOFVIEW_V1:
+        case P4TypeOfView::typeofview_V1:
             MATHFUNC(sphere_to_V1)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
@@ -722,7 +725,7 @@ void P4Sphere::mouseMoveEvent(QMouseEvent *e)
                             ucoord[0]);
             buf.append(chartstring_);
             break;
-        case TYPEOFVIEW_U2:
+        case P4TypeOfView::typeofview_U2:
             MATHFUNC(sphere_to_U2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (ucoord[1] >= 0)
                 buf.sprintf("The U2 chart  (z1,z2) = (%8.5g,%8.5g) ", ucoord[0],
@@ -732,7 +735,7 @@ void P4Sphere::mouseMoveEvent(QMouseEvent *e)
                             ucoord[1]);
             buf.append(chartstring_);
             break;
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_V2:
             MATHFUNC(sphere_to_V2)(pcoord[0], pcoord[1], pcoord[2], ucoord);
             if (!gVFResults.plweights_) {
                 ucoord[0] = -ucoord[0];
@@ -761,29 +764,29 @@ void P4Sphere::mouseMoveEvent(QMouseEvent *e)
         }
     } else {
         switch (gVFResults.typeofview_) {
-        case TYPEOFVIEW_PLANE:
-            if (gVFResults.typeofstudy_ == TYPEOFSTUDY_ONE)
+        case P4TypeOfView::typeofview_plane:
+            if (gVFResults.typeofstudy_ == P4TypeOfStudy::typeofstudy_one)
                 buf.sprintf("Local study");
             else
                 buf.sprintf("Planar view");
             break;
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             if (gVFResults.p_ == 1 && gVFResults.q_ == 1)
                 buf.sprintf("The Poincare sphere");
             else
                 buf.sprintf("The P-L sphere of type (%d,%d)", gVFResults.p_,
                             gVFResults.q_);
             break;
-        case TYPEOFVIEW_U1:
+        case P4TypeOfView::typeofview_U1:
             buf.sprintf("The U1 chart");
             break;
-        case TYPEOFVIEW_V1:
+        case P4TypeOfView::typeofview_V1:
             buf.sprintf("The V1 chart");
             break;
-        case TYPEOFVIEW_U2:
+        case P4TypeOfView::typeofview_U2:
             buf.sprintf("The U2 chart");
             break;
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_V2:
             buf.sprintf("The V2 chart");
             break;
         }
@@ -949,22 +952,22 @@ bool P4Sphere::getChartPos(int chart, double x0_, double y0_, double *pos)
     double pcoord[3];
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(finite_to_viewcoord)(x0_, y0_, pos);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         MATHFUNC(U1_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         MATHFUNC(U2_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(x0_, 0, pcoord);
         MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], pos);
         break;
@@ -1035,12 +1038,12 @@ void P4Sphere::selectNearestSingularity(const QPoint &winpos)
 //                          PLOT SINGULAR POINTS
 // -----------------------------------------------------------------------
 
-void P4Sphere::plotPoint(const p4singularities::saddle &p)
+void P4Sphere::plotPoint(const P4Singularities::saddle *p)
 {
     qDebug() << "plot point saddle";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
@@ -1056,15 +1059,15 @@ void P4Sphere::plotPoint(const p4singularities::saddle &p)
     if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
         paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-    switch (p.position) {
-    case POSITION_VIRTUAL:
+    switch (p->position) {
+    case P4Singularities::position_virtual:
         win_plot_virtualsaddle(staticPainter_, x, y);
         break;
-    case POSITION_COINCIDING:
+    case P4Singularities::position_coinciding:
         break;
-    case POSITION_COINCIDING_VIRTUAL:
+    case P4Singularities::position_coinciding_virtual:
         break;
-    case POSITION_COINCIDING_MAIN:
+    case P4Singularities::position_coinciding_main:
         win_plot_coinciding(staticPainter_, x, y);
         break;
     default:
@@ -1073,12 +1076,12 @@ void P4Sphere::plotPoint(const p4singularities::saddle &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::node &p)
+void P4Sphere::plotPoint(const P4Singularities::node *p)
 {
     qDebug() << "plot point node";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
@@ -1095,16 +1098,16 @@ void P4Sphere::plotPoint(const p4singularities::node &p)
     if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
         paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-    if (p.stable == -1) {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    if (p->stable == -1) {
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualstablenode(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1112,15 +1115,15 @@ void P4Sphere::plotPoint(const p4singularities::node &p)
             break;
         }
     } else {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualunstablenode(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1130,12 +1133,12 @@ void P4Sphere::plotPoint(const p4singularities::node &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
+void P4Sphere::plotPoint(const P4Singularities::weak_focus *p)
 {
     qDebug() << "plot point weak focus";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
@@ -1152,17 +1155,17 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
     if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
         paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-    switch (p.type) {
-    case SINGTYPE_STABLE:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    switch (p->type) {
+    case P4SingularityStability::stable:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualstableweakfocus(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1170,16 +1173,16 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
             break;
         }
         break;
-    case SINGTYPE_UNSTABLE:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    case P4SingularityStability::unstable:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualunstableweakfocus(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1187,16 +1190,16 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
             break;
         }
         break;
-    case SINGTYPE_CENTER:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    case P4SingularityStability::center:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualcenter(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1205,15 +1208,15 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
         }
         break;
     default:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualweakfocus(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1224,12 +1227,12 @@ void P4Sphere::plotPoint(const p4singularities::weak_focus &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
+void P4Sphere::plotPoint(const P4Singularities::strong_focus *p)
 {
     qDebug() << "plot point strong focus";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
@@ -1246,16 +1249,16 @@ void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
     if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
         paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-    if (p.stable == -1) {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    if (p->stable == -1) {
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualstablestrongfocus(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1263,15 +1266,15 @@ void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
             break;
         }
     } else {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             win_plot_virtualunstablestrongfocus(staticPainter_, x, y);
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             win_plot_coinciding(staticPainter_, x, y);
             break;
         default:
@@ -1281,12 +1284,12 @@ void P4Sphere::plotPoint(const p4singularities::strong_focus &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::degenerate &p)
+void P4Sphere::plotPoint(const P4Singularities::degenerate *p)
 {
     qDebug() << "plot point degenerate";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
@@ -1303,15 +1306,15 @@ void P4Sphere::plotPoint(const p4singularities::degenerate &p)
     if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
         paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-    switch (p.position) {
-    case POSITION_VIRTUAL:
+    switch (p->position) {
+    case P4Singularities::position_virtual:
         win_plot_virtualdegen(staticPainter_, x, y);
         break;
-    case POSITION_COINCIDING:
+    case P4Singularities::position_coinciding:
         break;
-    case POSITION_COINCIDING_VIRTUAL:
+    case P4Singularities::position_coinciding_virtual:
         break;
-    case POSITION_COINCIDING_MAIN:
+    case P4Singularities::position_coinciding_main:
         win_plot_coinciding(staticPainter_, x, y);
         break;
     default:
@@ -1320,12 +1323,12 @@ void P4Sphere::plotPoint(const p4singularities::degenerate &p)
     }
 }
 
-void P4Sphere::plotPoint(const p4singularities::semi_elementary &p)
+void P4Sphere::plotPoint(const P4Singularities::semi_elementary *p)
 {
     qDebug() << "plot point semi elementary";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
@@ -1342,9 +1345,9 @@ void P4Sphere::plotPoint(const p4singularities::semi_elementary &p)
     if (paintedYMax_ < y + SYMBOLHEIGHT / 2)
         paintedYMax_ = y - SYMBOLHEIGHT / 2;
 
-    switch (p.position) {
-    case POSITION_VIRTUAL:
-        switch (p.type) {
+    switch (p->position) {
+    case P4Singularities::position_virtual:
+        switch (p->type) {
         case 1:
             win_plot_virtualsesaddlenode(staticPainter_, x, y);
             break;
@@ -1371,15 +1374,15 @@ void P4Sphere::plotPoint(const p4singularities::semi_elementary &p)
             break;
         }
         break;
-    case POSITION_COINCIDING:
+    case P4Singularities::position_coinciding:
         break;
-    case POSITION_COINCIDING_VIRTUAL:
+    case P4Singularities::position_coinciding_virtual:
         break;
-    case POSITION_COINCIDING_MAIN:
+    case P4Singularities::position_coinciding_main:
         win_plot_coinciding(staticPainter_, x, y);
         break;
     default:
-        switch (p.type) {
+        switch (p->type) {
         case 1:
             win_plot_sesaddlenode(staticPainter_, x, y);
             break;
@@ -1413,86 +1416,89 @@ void P4Sphere::plotPoints()
 {
     qDebug() << "plot points";
     for (auto const &vf : gVFResults.vf_) {
-        for (auto const &sp : vf->saddlePoints_)
+        for (auto sp = vf->firstSaddlePoint_; sp != nullptr;
+             sp = sp->next_saddle)
             plotPoint(sp);
-        for (auto const &np : vf->nodePoints_)
+        for (auto np = vf->firstNodePoint_; np != nullptr; np = np->next_node)
             plotPoint(np);
-        for (auto const &wfp : vf->wfPoints_)
+        for (auto wfp = vf->firstWfPoint_; wfp != nullptr; wfp = wfp->next_wf)
             plotPoint(wfp);
-        for (auto const &sfp : vf->sfPoints_)
+        for (auto sfp = vf->firstSfPoint_; sfp != nullptr; sfp = sfp->next_sf)
             plotPoint(sfp);
-        for (auto const &sep : vf->sePoints_)
+        for (auto sep = vf->firstSePoint_; sep != nullptr; sep = sep->next_se)
             plotPoint(sep);
-        for (auto const &dp : vf->dePoints_)
+        for (auto dp = vf->firstDePoint_; dp != nullptr; dp = dp->next_de)
             plotPoint(dp);
     }
 }
 
-void P4Sphere::plotPointSeparatrices(
-    const p4singularities::semi_elementary &p)
+void P4Sphere::plotPointSeparatrices(const P4Singularities::semi_elementary *p)
 {
-    qDebug() << "plot point separatrices (semi elementary)";
-    for (auto const &it : p.separatrices)
-        draw_sep(this, it.sep_points);
+    // qDebug() << "plot point separatrices (semi elementary)";
+    for (auto sep = p->separatrices; sep != nullptr; sep = sep->next_sep)
+        draw_sep(this, sep->first_sep_point);
 }
 
-void P4Sphere::plotPointSeparatrices(const p4singularities::saddle &p)
+void P4Sphere::plotPointSeparatrices(const P4Singularities::saddle *p)
 {
-    qDebug() << "plot point separatrices (saddle)";
-    for (auto const &it : p.separatrices)
-        draw_sep(this, it.sep_points);
+    // qDebug() << "plot point separatrices (saddle)";
+    for (auto sep = p->separatrices; sep != nullptr; sep = sep->next_sep)
+        draw_sep(this, sep->first_sep_point);
 }
 
-void P4Sphere::plotPointSeparatrices(const p4singularities::degenerate &p)
+void P4Sphere::plotPointSeparatrices(const P4Singularities::degenerate *p)
 {
-    qDebug() << "plot point separatrices (degenerate)";
-    for (auto const &it : p.blow_up)
-        draw_sep(this, it.sep_points);
+    // qDebug() << "plot point separatrices (degenerate)";
+    for (auto b = p->blow_up; b != nullptr; b = b->next_blow_up_point)
+        draw_sep(this, b->first_sep_point);
 }
 
 void P4Sphere::plotSeparatrices()
 {
-    qDebug() << "plot separatrices";
+    // qDebug() << "plot separatrices";
     for (auto const &vf : gVFResults.vf_) {
-        for (auto const &sp : vf->saddlePoints_)
+        for (auto sp = vf->firstSaddlePoint_; sp != nullptr;
+             sp = sp->next_saddle)
             plotPointSeparatrices(sp);
-        for (auto const &sep : vf->sePoints_)
+        for (auto sep = vf->firstSePoint_; sep != nullptr; sep = sep->next_se)
             plotPointSeparatrices(sep);
-        for (auto const &dp : vf->dePoints_)
+        for (auto dp = vf->firstDePoint_; dp != nullptr; dp = dp->next_de)
             plotPointSeparatrices(dp);
     }
 }
 
 void P4Sphere::plotGcf()
 {
-    qDebug() << "plot gcf";
+    // qDebug() << "plot gcf";
     for (auto const &vf : gVFResults.vf_) {
-        draw_gcf(this, vf->gcf_points_, CSING, 1);
+        draw_gcf(this, vf->gcf_points_,
+                 P4ColourSettings::colour_curve_singularities, 1);
     }
 }
 
 void P4Sphere::plotSeparatingCurves()
 {
-    qDebug() << "plot separating curves";
+    // qDebug() << "plot separating curves";
     bool dashes;
     double pcoord[3];
 
     if (gVFResults.separatingCurves_.empty())
         return;
 
-    for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
+    for (auto const &curve : gVFResults.separatingCurves_) {
         dashes = true;
-
-        auto &sep = gVFResults.separatingCurves_[k].points;
+        auto &sep = curve.points;
         for (auto it = std::begin(sep); it != std::end(sep); ++it) {
-            if (it->color == CSEPCURVE) {
+            if (it->color == P4ColourSettings::colour_separating_curve) {
                 if (it->dashes && dashes)
                     (*plot_l)(this, pcoord, it->pcoord, it->color);
                 else {
                     auto nextpt = it + 1;
                     if (nextpt == std::end(sep))
                         (*plot_p)(this, it->pcoord, it->color);
-                    else if (!(nextpt->dashes && nextpt->color == CSEPCURVE &&
+                    else if (!(nextpt->dashes &&
+                               nextpt->color ==
+                                   P4ColourSettings::colour_separating_curve &&
                                dashes))
                         (*plot_p)(this, it->pcoord, it->color);
                     // draw nothing when the next point is a dash
@@ -1508,15 +1514,16 @@ void P4Sphere::plotSeparatingCurves()
 
 void P4Sphere::plotArbitraryCurves()
 {
-    qDebug() << "plot arbitrary curves";
+    // qDebug() << "plot arbitrary curves";
     for (auto const &it : gVFResults.arbitraryCurves_) {
-        drawArbitraryCurve(this, it.points, CCURV, 1);
+        drawArbitraryCurve(this, it.points,
+                           P4ColourSettings::colour_arbitrary_curve, 1);
     }
 }
 
 void P4Sphere::plotIsoclines()
 {
-    qDebug() << "plot isoclines";
+    // qDebug() << "plot isoclines";
     for (auto const &vf : gVFResults.vf_) {
         for (auto const &it : vf->isocline_vector_) {
             draw_isoclines(this, it.points, it.color, 1);
@@ -1529,9 +1536,9 @@ void P4Sphere::plotIsoclines()
 // -----------------------------------------------------------------------
 
 std::vector<P4POLYLINES> P4Sphere::produceEllipse(double cx, double cy,
-                                                     double a, double b,
-                                                     bool dotted, double resa,
-                                                     double resb)
+                                                  double a, double b,
+                                                  bool dotted, double resa,
+                                                  double resb)
 {
     // this is an exact copy of the plotEllipse routine, except that output
     // is stored in a list of points that is dynamically allocated.
@@ -1664,10 +1671,10 @@ std::vector<P4POLYLINES> P4Sphere::produceEllipse(double cx, double cy,
 
 void P4Sphere::plotPoincareSphere()
 {
-    qDebug() << "plot poincare sphere";
-    int color{CLINEATINFINITY};
+    // qDebug() << "plot poincare sphere";
+    int color{P4ColourSettings::colour_line_at_infinity};
 
-    staticPainter_->setPen(QXFIGCOLOR(color));
+    staticPainter_->setPen(P4Colours::p4XfigColour(color));
     for (auto const &it : circleAtInfinity_) {
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
@@ -1676,10 +1683,10 @@ void P4Sphere::plotPoincareSphere()
 
 void P4Sphere::plotPoincareLyapunovSphere()
 {
-    qDebug() << "plot poincare-lyapunov sphere";
-    int color{CLINEATINFINITY};
+    // qDebug() << "plot poincare-lyapunov sphere";
+    int color{P4ColourSettings::colour_line_at_infinity};
 
-    staticPainter_->setPen(QXFIGCOLOR(color));
+    staticPainter_->setPen(P4Colours::p4XfigColour(color));
     for (auto const &it : circleAtInfinity_) {
         staticPainter_->drawLine(coWinX(it.x1), coWinY(it.y1), coWinX(it.x2),
                                  coWinY(it.y2));
@@ -1694,34 +1701,35 @@ void P4Sphere::plotPoincareLyapunovSphere()
 
 void P4Sphere::plotLineAtInfinity()
 {
-    qDebug() << "plot line at infinity";
+    // qDebug() << "plot line at infinity";
     switch (gVFResults.typeofview_) {
-    case TYPEOFVIEW_U1:
-    case TYPEOFVIEW_V1:
+    case P4TypeOfView::typeofview_U1:
+    case P4TypeOfView::typeofview_V1:
         if (x0_ < 0.0 && x1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+            staticPainter_->setPen(P4Colours::p4XfigColour(
+                P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(coWinX(0.0), 0, coWinX(0.0), h_ - 1);
         }
         break;
-    case TYPEOFVIEW_U2:
-    case TYPEOFVIEW_V2:
+    case P4TypeOfView::typeofview_U2:
+    case P4TypeOfView::typeofview_V2:
         if (y0_ < 0.0 && y1_ > 0.0) {
-            staticPainter_->setPen(QXFIGCOLOR(CLINEATINFINITY));
+            staticPainter_->setPen(P4Colours::p4XfigColour(
+                P4ColourSettings::colour_line_at_infinity));
             staticPainter_->drawLine(0, coWinY(0.0), w_ - 1, coWinY(0.0));
         }
 
         break;
-    case TYPEOFVIEW_PLANE:
-    case TYPEOFVIEW_SPHERE:
+    case P4TypeOfView::typeofview_plane:
+    case P4TypeOfView::typeofview_sphere:
         // should not appear
         break;
     }
 }
 
-void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
-                           int color)
+void P4Sphere::drawLine(double x1, double y1, double x2, double y2, int color)
 {
-    qDebug() << "draw line";
+    // qDebug() << "draw line";
     int wx1, wy1, wx2, wy2;
 
     if (staticPainter_ != nullptr) {
@@ -1752,7 +1760,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
                 if (paintedYMax_ < wy2)
                     paintedYMax_ = wy2;
 
-                staticPainter_->setPen(QXFIGCOLOR(color));
+                staticPainter_->setPen(P4Colours::p4XfigColour(color));
                 staticPainter_->drawLine(wx1, wy1, wx2, wy2);
             } else {
                 // only (x2,y2) is not visible
@@ -1763,7 +1771,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
                     wy1 = coWinY(y1);
                     wx2 = coWinX(x2);
                     wy2 = coWinY(y2);
-                    staticPainter_->setPen(QXFIGCOLOR(color));
+                    staticPainter_->setPen(P4Colours::p4XfigColour(color));
 
                     if (paintedXMin_ > wx1)
                         paintedXMin_ = wx1;
@@ -1795,7 +1803,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
                     wy1 = coWinY(y1);
                     wx2 = coWinX(x2);
                     wy2 = coWinY(y2);
-                    staticPainter_->setPen(QXFIGCOLOR(color));
+                    staticPainter_->setPen(P4Colours::p4XfigColour(color));
 
                     if (paintedXMin_ > wx1)
                         paintedXMin_ = wx1;
@@ -1825,7 +1833,7 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
                     wy1 = coWinY(y1);
                     wx2 = coWinX(x2);
                     wy2 = coWinY(y2);
-                    staticPainter_->setPen(QXFIGCOLOR(color));
+                    staticPainter_->setPen(P4Colours::p4XfigColour(color));
 
                     if (paintedXMin_ > wx1)
                         paintedXMin_ = wx1;
@@ -1853,11 +1861,11 @@ void P4Sphere::drawLine(double x1, double y1, double x2, double y2,
 
 void P4Sphere::drawPoint(double x, double y, int color)
 {
-    qDebug() << "draw point";
+    // qDebug() << "draw point";
     if (staticPainter_ != nullptr) {
         if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
             return;
-        staticPainter_->setPen(QXFIGCOLOR(color));
+        staticPainter_->setPen(P4Colours::p4XfigColour(color));
         auto _x = coWinX(x);
         auto _y = coWinY(y);
 
@@ -1877,24 +1885,24 @@ void P4Sphere::drawPoint(double x, double y, int color)
 //---------------------------------------------------------------------
 //                  PRINTING METHODS
 //---------------------------------------------------------------------
-void P4Sphere::printPoint(const p4singularities::saddle &p)
+void P4Sphere::printPoint(const P4Singularities::saddle *p)
 {
-    qDebug() << "print point saddle";
+    // qDebug() << "print point saddle";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.position) {
-    case POSITION_VIRTUAL:
+    switch (p->position) {
+    case P4Singularities::position_virtual:
         print_virtualsaddle(coWinX(pos[0]), coWinY(pos[1]));
         break;
-    case POSITION_COINCIDING:
+    case P4Singularities::position_coinciding:
         break;
-    case POSITION_COINCIDING_VIRTUAL:
+    case P4Singularities::position_coinciding_virtual:
         break;
-    case POSITION_COINCIDING_MAIN:
+    case P4Singularities::position_coinciding_main:
         print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
         break;
     default:
@@ -1903,26 +1911,26 @@ void P4Sphere::printPoint(const p4singularities::saddle &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::node &p)
+void P4Sphere::printPoint(const P4Singularities::node *p)
 {
-    qDebug() << "print point node";
+    // qDebug() << "print point node";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    if (p.stable == -1) {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    if (p->stable == -1) {
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualstablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -1930,15 +1938,15 @@ void P4Sphere::printPoint(const p4singularities::node &p)
             break;
         }
     } else {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualunstablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -1948,27 +1956,27 @@ void P4Sphere::printPoint(const p4singularities::node &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::weak_focus &p)
+void P4Sphere::printPoint(const P4Singularities::weak_focus *p)
 {
-    qDebug() << "print point weak focus";
+    // qDebug() << "print point weak focus";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.type) {
-    case SINGTYPE_STABLE:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    switch (p->type) {
+    case P4SingularityStability::stable:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -1976,16 +1984,16 @@ void P4Sphere::printPoint(const p4singularities::weak_focus &p)
             break;
         }
         break;
-    case SINGTYPE_UNSTABLE:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    case P4SingularityStability::unstable:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualunstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -1993,16 +2001,16 @@ void P4Sphere::printPoint(const p4singularities::weak_focus &p)
             break;
         }
         break;
-    case SINGTYPE_CENTER:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    case P4SingularityStability::center:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualcenter(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -2011,15 +2019,15 @@ void P4Sphere::printPoint(const p4singularities::weak_focus &p)
         }
         break;
     default:
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualweakfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -2030,26 +2038,26 @@ void P4Sphere::printPoint(const p4singularities::weak_focus &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::strong_focus &p)
+void P4Sphere::printPoint(const P4Singularities::strong_focus *p)
 {
-    qDebug() << "print point strong focus";
+    // qDebug() << "print point strong focus";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    if (p.stable == -1) {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+    if (p->stable == -1) {
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -2057,15 +2065,15 @@ void P4Sphere::printPoint(const p4singularities::strong_focus &p)
             break;
         }
     } else {
-        switch (p.position) {
-        case POSITION_VIRTUAL:
+        switch (p->position) {
+        case P4Singularities::position_virtual:
             print_virtualunstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
-        case POSITION_COINCIDING:
+        case P4Singularities::position_coinciding:
             break;
-        case POSITION_COINCIDING_VIRTUAL:
+        case P4Singularities::position_coinciding_virtual:
             break;
-        case POSITION_COINCIDING_MAIN:
+        case P4Singularities::position_coinciding_main:
             print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
             break;
         default:
@@ -2075,25 +2083,25 @@ void P4Sphere::printPoint(const p4singularities::strong_focus &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::degenerate &p)
+void P4Sphere::printPoint(const P4Singularities::degenerate *p)
 {
-    qDebug() << "print point degenerate";
+    // qDebug() << "print point degenerate";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.position) {
-    case POSITION_VIRTUAL:
+    switch (p->position) {
+    case P4Singularities::position_virtual:
         print_virtualdegen(coWinX(pos[0]), coWinY(pos[1]));
         break;
-    case POSITION_COINCIDING:
+    case P4Singularities::position_coinciding:
         break;
-    case POSITION_COINCIDING_VIRTUAL:
+    case P4Singularities::position_coinciding_virtual:
         break;
-    case POSITION_COINCIDING_MAIN:
+    case P4Singularities::position_coinciding_main:
         print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
         break;
     default:
@@ -2102,17 +2110,17 @@ void P4Sphere::printPoint(const p4singularities::degenerate &p)
     }
 }
 
-void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
+void P4Sphere::printPoint(const P4Singularities::semi_elementary *p)
 {
-    qDebug() << "print point semi elementary";
+    // qDebug() << "print point semi elementary";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.type) {
+    switch (p->type) {
     case 1:
         print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
         break;
@@ -2139,9 +2147,9 @@ void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
         break;
     }
 
-    switch (p.position) {
-    case POSITION_VIRTUAL:
-        switch (p.type) {
+    switch (p->position) {
+    case P4Singularities::position_virtual:
+        switch (p->type) {
         case 1:
             print_virtualsesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2168,15 +2176,15 @@ void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
             break;
         }
         break;
-    case POSITION_COINCIDING:
+    case P4Singularities::position_coinciding:
         break;
-    case POSITION_COINCIDING_VIRTUAL:
+    case P4Singularities::position_coinciding_virtual:
         break;
-    case POSITION_COINCIDING_MAIN:
+    case P4Singularities::position_coinciding_main:
         print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
         break;
     default:
-        switch (p.type) {
+        switch (p->type) {
         case 1:
             print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2208,67 +2216,66 @@ void P4Sphere::printPoint(const p4singularities::semi_elementary &p)
 
 void P4Sphere::printPoints()
 {
-    qDebug() << "print points";
+    // qDebug() << "print points";
     print_comment("Printing symbols at all singular points:");
 
     for (auto const &vf : gVFResults.vf_) {
-        for (auto const &sp : vf->saddlePoints_)
-            printPoint(sp);
-        for (auto const &np : vf->nodePoints_)
+        for (auto s = vf->firstSaddlePoint_; s != nullptr; s = s->next_saddle)
+            printPoint(s);
+        for (auto np = vf->firstNodePoint_; np != nullptr; np = np->next_node)
             printPoint(np);
-        for (auto const &wfp : vf->wfPoints_)
+        for (auto wfp = vf->firstWfPoint_; wfp != nullptr; wfp = wfp->next_wf)
             printPoint(wfp);
-        for (auto const &sfp : vf->sfPoints_)
+        for (auto sfp = vf->firstSfPoint_; sfp != nullptr; sfp = sfp->next_sf)
             printPoint(sfp);
-        for (auto const &sep : vf->sePoints_)
+        for (auto sep = vf->firstSePoint_; sep != nullptr; sep = sep->next_se)
             printPoint(sep);
-        for (auto const &dp : vf->dePoints_)
+        for (auto dp = vf->firstDePoint_; dp != nullptr; dp = dp->next_de)
             printPoint(dp);
     }
 }
 
-void P4Sphere::printPointSeparatrices(
-    const p4singularities::semi_elementary &p)
+void P4Sphere::printPointSeparatrices(const P4Singularities::semi_elementary *p)
 {
-    qDebug() << "print point separatrices (semi elementary)";
-    for (auto const &it : p.separatrices) {
+    // qDebug() << "print point separatrices (semi elementary)";
+    for (auto s = p->separatrices; s != nullptr; s = s->next_sep) {
         print_comment("Next separatrix of degenerate point:");
-        draw_sep(this, it.sep_points);
+        draw_sep(this, s->first_sep_point);
     }
 }
 
-void P4Sphere::printPointSeparatrices(const p4singularities::saddle &p)
+void P4Sphere::printPointSeparatrices(const P4Singularities::saddle *p)
 {
-    qDebug() << "print point separatrices (saddle)";
-    for (auto const &it : p.separatrices) {
+    // qDebug() << "print point separatrices (saddle)";
+    for (auto s = p->separatrices; s != nullptr; s = s->next_sep) {
         print_comment("Next separatrix of saddle point:");
-        draw_sep(this, it.sep_points);
+        draw_sep(this, s->first_sep_point);
     }
 }
 
-void P4Sphere::printPointSeparatrices(const p4singularities::degenerate &p)
+void P4Sphere::printPointSeparatrices(const P4Singularities::degenerate *p)
 {
-    qDebug() << "print point separatrices (degenerate)";
-    for (auto const &it : p.blow_up) {
+    // qDebug() << "print point separatrices (degenerate)";
+    for (auto b = p->blow_up; b != nullptr; b = b->next_blow_up_point) {
         print_comment("Next separatrix of degenerate point:");
-        draw_sep(this, it.sep_points);
+        draw_sep(this, b->first_sep_point);
     }
 }
 
 void P4Sphere::printSeparatrices()
 {
-    qDebug() << "print separatrices";
+    // qDebug() << "print separatrices";
     for (auto const &vf : gVFResults.vf_) {
-        for (auto const &sp : vf->saddlePoints_) {
+        for (auto s = vf->firstSaddlePoint_; s != nullptr; s = s->next_saddle) {
             print_comment("Printing separatrice for saddle singularity:");
-            printPointSeparatrices(sp);
+            printPointSeparatrices(s);
         }
-        for (auto const &sep : vf->sePoints_) {
+        for (auto sep = vf->firstSePoint_; sep != nullptr; sep = sep->next_se) {
             print_comment(
                 "Printing separatrices for semi-hyperbolic singularity:");
             printPointSeparatrices(sep);
         }
-        for (auto const &dp : vf->dePoints_) {
+        for (auto dp = vf->firstDePoint_; dp != nullptr; dp = dp->next_de) {
             print_comment("Printing separatrices for degenerate singularity:");
             printPointSeparatrices(dp);
         }
@@ -2277,10 +2284,10 @@ void P4Sphere::printSeparatrices()
 
 void P4Sphere::printGcf()
 {
-    qDebug() << "print gcf";
+    // qDebug() << "print gcf";
     bool isagcf{false};
     for (auto const &vf : gVFResults.vf_) {
-        if (!vf->gcf_points_.empty()) {
+        if (vf->gcf_points_ != nullptr) {
             isagcf = true;
             break;
         }
@@ -2288,14 +2295,15 @@ void P4Sphere::printGcf()
     if (isagcf) {
         for (auto const &vf : gVFResults.vf_) {
             print_comment("Printing greatest common factor:");
-            draw_gcf(this, vf->gcf_points_, CSING, 1);
+            draw_gcf(this, vf->gcf_points_,
+                     P4ColourSettings::colour_curve_singularities, 1);
         }
     }
 }
 
 void P4Sphere::printSeparatingCurves()
 {
-    qDebug() << "print separating curve";
+    // qDebug() << "print separating curve";
     QString comment;
     bool dashes;
     double pcoord[3];
@@ -2309,7 +2317,7 @@ void P4Sphere::printSeparatingCurves()
             dashes = true;
             auto &sep = gVFResults.separatingCurves_[i].points;
             for (auto it = std::begin(sep); it != std::end(sep); ++it) {
-                if (it->color == CSEPCURVE) {
+                if (it->color == P4ColourSettings::colour_separating_curve) {
                     if (it->dashes && dashes)
                         (*plot_l)(this, pcoord, it->pcoord, it->color);
                     else {
@@ -2317,7 +2325,9 @@ void P4Sphere::printSeparatingCurves()
                         if (nextpt == std::end(sep))
                             (*plot_p)(this, it->pcoord, it->color);
                         else if (!nextpt->dashes ||
-                                 nextpt->color != CSEPCURVE || !dashes)
+                                 nextpt->color != P4ColourSettings::
+                                                      colour_separating_curve ||
+                                 !dashes)
                             (*plot_p)(this, it->pcoord, it->color);
                         // draw nothing when the next point is a dash
                     }
@@ -2333,19 +2343,20 @@ void P4Sphere::printSeparatingCurves()
 
 void P4Sphere::printArbitraryCurves()
 {
-    qDebug() << "print arbitrary curves";
+    // qDebug() << "print arbitrary curves";
     QString comment;
     int i{1};
     for (auto const &it : gVFResults.arbitraryCurves_) {
         comment.sprintf("Printing curve %d:", i++);
         print_comment(comment);
-        drawArbitraryCurve(this, it.points, CCURV, 1);
+        drawArbitraryCurve(this, it.points,
+                           P4ColourSettings::colour_arbitrary_curve, 1);
     }
 }
 
 void P4Sphere::printIsoclines()
 {
-    qDebug() << "print isoclines";
+    // qDebug() << "print isoclines";
     QString comment;
     int i{1};
     for (auto const &vf : gVFResults.vf_) {
@@ -2359,7 +2370,7 @@ void P4Sphere::printIsoclines()
 
 void P4Sphere::printPoincareSphere()
 {
-    qDebug() << "print poincare sphere";
+    // qDebug() << "print poincare sphere";
     print_comment("Printing Poincare Sphere:");
     auto p =
         produceEllipse(0.0, 0.0, 1.0, 1.0, false, coWinH(1.0), coWinV(1.0));
@@ -2369,13 +2380,13 @@ void P4Sphere::printPoincareSphere()
         q.x2 = coWinX(q.x2);
         q.y2 = coWinY(q.y2);
     }
-    print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1), CLINEATINFINITY,
-                false, p);
+    print_elips(coWinX(0), coWinY(0), coWinH(1), coWinV(1),
+                P4ColourSettings::colour_line_at_infinity, false, p);
 }
 
 void P4Sphere::printPoincareLyapunovSphere()
 {
-    qDebug() << "print poincare-lyapunov sphere";
+    // qDebug() << "print poincare-lyapunov sphere";
     print_comment("Printing Poincare Lyapunov-Sphere (circle at infinity):");
 
     auto p =
@@ -2387,7 +2398,7 @@ void P4Sphere::printPoincareLyapunovSphere()
         q.y2 = coWinY(q.y2);
     }
     print_elips(coWinX(0.0), coWinY(0.0), coWinH(1.0), coWinV(1.0),
-                CLINEATINFINITY, false, p);
+                P4ColourSettings::colour_line_at_infinity, false, p);
 
     p.clear();
 
@@ -2403,58 +2414,57 @@ void P4Sphere::printPoincareLyapunovSphere()
         q.y2 = coWinY(q.y2);
     }
     print_elips(coWinX(0.0), coWinY(0.0), coWinH(RADIUS), coWinV(RADIUS),
-                CLINEATINFINITY, true, p);
+                P4ColourSettings::colour_line_at_infinity, true, p);
 }
 
 void P4Sphere::printLineAtInfinity()
 {
-    qDebug() << "print line at infinity";
+    // qDebug() << "print line at infinity";
     switch (gVFResults.typeofview_) {
-    case TYPEOFVIEW_U1:
-    case TYPEOFVIEW_V1:
+    case P4TypeOfView::typeofview_U1:
+    case P4TypeOfView::typeofview_V1:
         if (x0_ < 0.0 && x1_ > 0.0)
             print_line(coWinX(0.0), coWinY(y0_), coWinX(0.0), coWinY(y1_),
-                       CLINEATINFINITY);
+                       P4ColourSettings::colour_line_at_infinity);
         break;
-    case TYPEOFVIEW_U2:
-    case TYPEOFVIEW_V2:
+    case P4TypeOfView::typeofview_U2:
+    case P4TypeOfView::typeofview_V2:
         if (y0_ < 0.0 && y1_ > 0.0)
             print_line(coWinX(x0_), coWinY(0.0), coWinX(x1_), coWinY(0.0),
-                       CLINEATINFINITY);
+                       P4ColourSettings::colour_line_at_infinity);
         break;
     }
 }
 
 void P4Sphere::printOrbits()
 {
-    qDebug() << "print orbits";
+    // qDebug() << "print orbits";
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
-    for (auto const &orbit : gVFResults.orbits_) {
+    for (auto o = gVFResults.firstOrbit_; o != nullptr; o = o->next) {
         s.sprintf("Starting orbit %d", i++);
         print_comment(s);
-        drawOrbit(this, orbit.pcoord, orbit.points, orbit.color);
+        drawOrbit(this, o->pcoord, o->firstpt, o->color);
     }
 }
 
 void P4Sphere::printLimitCycles()
 {
-    qDebug() << "print limit cycles";
+    // qDebug() << "print limit cycles";
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
-    for (auto const &orbit : gVFResults.limCycles_) {
+    for (auto o = gVFResults.firstLimCycle_; o != nullptr; o = o->next) {
         s.sprintf("Starting limit cycle %d", i++);
         print_comment(s);
-        drawOrbit(this, orbit.pcoord, orbit.points, orbit.color);
+        drawOrbit(this, o->pcoord, o->firstpt, o->color);
     }
 }
 
-void P4Sphere::printLine(double x1, double y1, double x2, double y2,
-                            int color)
+void P4Sphere::printLine(double x1, double y1, double x2, double y2, int color)
 {
-    qDebug() << "print line";
+    // qDebug() << "print line";
     int wx1, wy1, wx2, wy2;
 
     if (x1 >= x0_ && x1 <= x1_ && y1 >= y0_ && y1 <= y1_) {
@@ -2502,7 +2512,7 @@ void P4Sphere::printLine(double x1, double y1, double x2, double y2,
 
 void P4Sphere::printPoint(double x, double y, int color)
 {
-    qDebug() << "print point";
+    // qDebug() << "print point";
     if (x < x0_ || x > x1_ || y < y0_ || y > y1_)
         return;
 
@@ -2516,8 +2526,8 @@ void P4Sphere::refresh()
 }
 
 void P4Sphere::calculateHeightFromWidth(int &width, int &height,
-                                           int maxheight = -1,
-                                           double aspectratio = 1)
+                                        int maxheight = -1,
+                                        double aspectratio = 1)
 {
     // given an optimal width in width, this procedure calculates the
     // corresponding height in order to maintain the given aspectratio. If
@@ -2539,10 +2549,10 @@ void P4Sphere::calculateHeightFromWidth(int &width, int &height,
 }
 
 void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
-                                  int myresolution, double mylinewidth,
-                                  double mysymbolsize)
+                               int myresolution, double mylinewidth,
+                               double mysymbolsize)
 {
-    qDebug() << "prepare printing";
+    // qDebug() << "prepare printing";
     double pagewidth, pageheight;
     double aspectratio{1}; // assume aspect ratio 1
 
@@ -2628,8 +2638,10 @@ void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
         }
 
         staticPainter_->translate(tx, ty);
-        if (iszoom_ || gVFResults.typeofview_ == TYPEOFVIEW_PLANE) {
-            QPen p{QXFIGCOLOR(printColorTable(bgColours::CFOREGROUND)),
+        if (iszoom_ ||
+            gVFResults.typeofview_ == P4TypeOfView::typeofview_plane) {
+            QPen p{P4Colours::p4XfigColour(
+                       printColorTable(P4ColourSettings::colour_foreground)),
                    std::round(lw)};
             staticPainter_->setPen(p);
             staticPainter_->drawRect(0, 0, w_, h_);
@@ -2669,7 +2681,7 @@ void P4Sphere::preparePrinting(int printmethod, bool isblackwhite,
 
 void P4Sphere::finishPrinting()
 {
-    qDebug() << "finish printing";
+    // qDebug() << "finish printing";
     if (printMethod_ == P4PRINT_EPSIMAGE) {
         finishPostscriptPrinting();
         reverseYAxis_ = false;
@@ -2721,12 +2733,12 @@ void P4Sphere::finishPrinting()
 // TODO call from paintEvent with a printFlag or something
 void P4Sphere::print()
 {
-    qDebug() << "print";
+    // qDebug() << "print";
     if (printMethod_ == P4PRINT_JPEGIMAGE && sP4pixmap == nullptr)
         return;
 
-    if (gVFResults.typeofview_ != TYPEOFVIEW_PLANE) {
-        if (gVFResults.typeofview_ == TYPEOFVIEW_SPHERE) {
+    if (gVFResults.typeofview_ != P4TypeOfView::typeofview_plane) {
+        if (gVFResults.typeofview_ == P4TypeOfView::typeofview_sphere) {
             if (gVFResults.plweights_)
                 printPoincareLyapunovSphere();
             else
@@ -2746,7 +2758,7 @@ void P4Sphere::print()
 
 void P4Sphere::prepareDrawing()
 {
-    qDebug() << "prepare drawing";
+    // qDebug() << "prepare drawing";
     if (painterCache_ == nullptr) {
         isPainterCacheDirty_ = true;
         painterCache_ = new QPixmap{size()};
@@ -2764,7 +2776,7 @@ void P4Sphere::prepareDrawing()
 
 void P4Sphere::finishDrawing()
 {
-    qDebug() << "finish drawing";
+    // qDebug() << "finish drawing";
     if (next_ != nullptr)
         next_->finishDrawing();
 
@@ -2790,20 +2802,20 @@ void P4Sphere::finishDrawing()
 
 /*void P4Sphere::signalEvaluating()
 {
-    qDebug() << "signal evaluating";
+    //qDebug() << "signal evaluating";
         QPalette palette;
-        palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
-       bgColours::CBACKGROUND) );
+        palette.setColor(backgroundRole(),
+P4Colours::p4XfigColour(spherebgcolor_ = P4ColourSettings::colour_background) );
         setPalette(palette);
 }*/
 
 void P4Sphere::signalChanged()
 {
-    qDebug() << "signal changed";
+    // qDebug() << "signal changed";
     /*
         QPalette palette;
-        palette.setColor(backgroundRole(), QXFIGCOLOR(spherebgcolor_ =
-       DARKGRAY)
+        palette.setColor(backgroundRole(),
+       P4Colours::p4XfigColour(spherebgcolor_ = DARKGRAY)
        );
         setPalette(palette);
     */

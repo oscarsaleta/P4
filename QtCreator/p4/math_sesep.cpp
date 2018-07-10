@@ -30,29 +30,27 @@
 void start_plot_se_sep(P4Sphere *spherewnd, int vfindex)
 {
     double p[3];
-    int &sepid{gVFResults.selectedSepIndex_};
-    int &seid{gVFResults.selectedSePointIndex_};
-    auto &points = gVFResults.seps_[sepid].sep_points.back();
+    auto points = gVFResults.selectedSep_->last_sep_point;
 
-    draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
+    draw_sep(spherewnd, gVFResults.selectedSep_->first_sep_point);
 
-    if (!gVFResults.seps_[sepid].sep_points.empty()) {
-        copy_x_into_y(points.pcoord, p);
-        auto v = integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
-                               points.dir, points.type,
-                               gVFResults.config_intpoints_);
-        if (!v.empty())
-            gVFResults.seps_[sepid].sep_points.insert(
-                std::end(gVFResults.seps_[sepid].sep_points), std::begin(v),
-                std::end(v));
+    if (points != nullptr) {
+        copy_x_into_y(points->pcoord, p);
+        gVFResults.selectedSep_->last_sep_point->nextpt =
+            integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
+                          gVFResults.selectedSep_->last_sep_point->dir,
+                          gVFResults.selectedSep_->last_sep_point->type,
+                          gVFResults.config_intpoints_, &points);
     } else {
-        gVFResults.seps_[sepid].sep_points = plot_separatrice(
-            spherewnd, gVFResults.sePoints_[seid].x0,
-            gVFResults.sePoints_[seid].y0, gVFResults.sePoints_[seid].a11,
-            gVFResults.sePoints_[seid].a12, gVFResults.sePoints_[seid].a21,
-            gVFResults.sePoints_[seid].a22, gVFResults.sePoints_[seid].epsilon,
-            gVFResults.seps_[sepid], gVFResults.sePoints_[seid].chart, vfindex);
+        gVFResults.selectedSep_->first_sep_point = plot_separatrice(
+            spherewnd, gVFResults.selectedSePoint_->x0,
+            gVFResults.selectedSePoint_->y0, gVFResults.selectedSePoint_->a11,
+            gVFResults.selectedSePoint_->a12, gVFResults.selectedSePoint_->a21,
+            gVFResults.selectedSePoint_->a22,
+            gVFResults.selectedSePoint_->epsilon, gVFResults.selectedSep_,
+            &points, gVFResults.selectedSePoint_->chart, vfindex);
     }
+    gVFResults.selectedSep_->last_sep_point = points;
 }
 
 // ---------------------------------------------------------------------------
@@ -63,24 +61,18 @@ void start_plot_se_sep(P4Sphere *spherewnd, int vfindex)
 void cont_plot_se_sep(P4Sphere *spherewnd)
 {
     double p[3];
-    int sepid{gVFResults.selectedSepIndex_};
+    auto points = gVFResults.selectedSep_->last_sep_point;
 
-    if (!gVFResults.seps_[sepid].sep_points.empty())
-        return;
+    copy_x_into_y(points->pcoord, p);
 
-    copy_x_into_y(gVFResults.seps_[sepid].sep_points.back().pcoord, p);
+    // compute next list of points
+    gVFResults.selectedSep_->last_sep_point->nextpt =
+        integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
+                      gVFResults.selectedSep_->last_sep_point->dir,
+                      gVFResults.selectedSep_->last_sep_point->type,
+                      gVFResults.config_intpoints_, &points);
 
-    // compute next vector of points
-    auto v = integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
-                           gVFResults.seps_[sepid].sep_points.back().dir,
-                           gVFResults.seps_[sepid].sep_points.back().type,
-                           gVFResults.config_intpoints_);
-
-    // append computed points to existing vector
-    if (!v.empty()) {
-        auto &seppts = gVFResults.seps_[sepid].sep_points;
-        seppts.insert(std::end(seppts), std::begin(v), std::end(v));
-    }
+    gVFResults.selectedSep_->last_sep_point = points;
 }
 
 // ---------------------------------------------------------------------------
@@ -88,14 +80,12 @@ void cont_plot_se_sep(P4Sphere *spherewnd)
 // ---------------------------------------------------------------------------
 void plot_next_se_sep(P4Sphere *spherewnd, int vfindex)
 {
-    int &sepid{gVFResults.selectedSepIndex_};
-    int seid{gVFResults.selectedSePointIndex_};
-    draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
-    sepid++;
-    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
-        gVFResults.seps_ = gVFResults.sePoints_[seid].separatrices;
-        sepid = 0;
-    }
+    draw_sep(spherewnd, gVFResults.selectedSep_->first_sep_point);
+
+    gVFResults.selectedSep_ = gVFResults.selectedSep_->next_sep;
+    if (gVFResults.selectedSep_ == nullptr)
+        gVFResults.selectedSep_ = gVFResults.selectedSePoint_->separatrices;
+
     start_plot_se_sep(spherewnd, vfindex);
 }
 
@@ -104,46 +94,51 @@ void plot_next_se_sep(P4Sphere *spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 void select_next_se_sep(P4Sphere *spherewnd)
 {
-    int &sepid{gVFResults.selectedSepIndex_};
-    int seid{gVFResults.selectedSePointIndex_};
-    draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
-    sepid++;
-    if (static_cast<std::size_t>(sepid) >= gVFResults.seps_.size()) {
-        gVFResults.seps_ = gVFResults.sePoints_[seid].separatrices;
-        sepid = 0;
-    }
-    draw_selected_sep(spherewnd, gVFResults.seps_[sepid].sep_points, CW_SEP);
+    draw_sep(spherewnd, gVFResults.selectedSep_->first_sep_point);
+
+    gVFResults.selectedSep_ = gVFResults.selectedSep_->next_sep;
+    if (gVFResults.selectedSep_ == nullptr)
+        gVFResults.selectedSep_ = gVFResults.selectedSePoint_->separatrices;
+
+    draw_selected_sep(spherewnd, gVFResults.selectedSep_->first_sep_point,
+                      P4ColourSettings::colour_selected_separatrice);
 }
 
 // ---------------------------------------------------------------------------
 //          plot_all_se_sep
 // ---------------------------------------------------------------------------
 void plot_all_se_sep(P4Sphere *spherewnd, int vfindex,
-                     std::vector<p4singularities::semi_elementary> &point)
+                     P4Singularities::semi_elementary *point)
 {
     double p[3];
 
-    for (auto &it1 : point) {
-        if (!isARealSingularity(it1.x0, it1.y0, it1.chart, vfindex))
+    while (point != nullptr) {
+        if (!isARealSingularity(point->x0, point->y0, point->chart, vfindex)) {
+            point = point->next_se;
             continue;
-        if (it1.notadummy) {
-            auto &sep1 = it1.separatrices;
-            for (auto &it2 : sep1)
-                if (!it2.sep_points.empty()) {
-                    copy_x_into_y(it2.sep_points.back().pcoord, p);
-                    auto v = integrate_sep(
-                        spherewnd, p, gVFResults.config_currentstep_,
-                        it2.sep_points.back().dir, it2.sep_points.back().type,
-                        gVFResults.config_intpoints_);
-                    if (!v.empty())
-                        it2.sep_points.insert(std::end(it2.sep_points),
-                                              std::begin(v), std::end(v));
-                } else {
-                    it2.sep_points = plot_separatrice(
-                        spherewnd, it1.x0, it1.y0, it1.a11, it1.a12, it1.a21,
-                        it1.a22, it1.epsilon, it2, it1.chart, vfindex);
-                }
         }
+
+        if (point->notadummy) {
+            auto sep1 = point->separatrices;
+            while (sep1 != nullptr) {
+                auto points = sep1->last_sep_point;
+                if (points != nullptr) {
+                    copy_x_into_y(points->pcoord, p);
+                    sep1->last_sep_point->nextpt = integrate_sep(
+                        spherewnd, p, gVFResults.config_currentstep_,
+                        sep1->last_sep_point->dir, sep1->last_sep_point->type,
+                        gVFResults.config_intpoints_, &points);
+                } else {
+                    sep1->first_sep_point = plot_separatrice(
+                        spherewnd, point->x0, point->y0, point->a11, point->a12,
+                        point->a21, point->a22, point->epsilon, sep1, &points,
+                        point->chart, vfindex);
+                }
+                sep1->last_sep_point = points;
+                sep1 = sep1->next_sep;
+            }
+        }
+        point = point->next_se;
     }
 }
 
@@ -152,13 +147,16 @@ void plot_all_se_sep(P4Sphere *spherewnd, int vfindex,
 // ---------------------------------------------------------------------------
 void change_epsilon_se(P4Sphere *spherewnd, double epsilon)
 {
-    int &seid{gVFResults.selectedSePointIndex_};
-    auto &separatrice = gVFResults.sePoints_[seid].separatrices;
+    auto separatrice = gVFResults.selectedSePoint_->separatrices;
 
-    gVFResults.sePoints_[seid].epsilon = epsilon;
+    gVFResults.selectedSePoint_->epsilon = epsilon;
 
-    for (auto &it : separatrice) {
-        draw_selected_sep(spherewnd, it.sep_points, bgColours::CBACKGROUND);
-        it.sep_points.clear();
+    while (separatrice != nullptr) {
+        draw_selected_sep(spherewnd, separatrice->first_sep_point,
+                          P4ColourSettings::colour_background);
+        delete separatrice->first_sep_point;
+        separatrice->first_sep_point = nullptr;
+        separatrice->last_sep_point = nullptr;
+        separatrice = separatrice->next_sep;
     }
 }

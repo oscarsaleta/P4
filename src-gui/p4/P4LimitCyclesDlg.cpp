@@ -149,7 +149,7 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4Sphere *sp)
     buf.sprintf("%g", selected_grid_);
     edt_grid_->setText(buf);
 
-    if (gVFResults.limCycles_.empty()) {
+    if (gVFResults.firstLimCycle_ == nullptr) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     }
@@ -246,7 +246,7 @@ void P4LimitCyclesDlg::onbtn_start()
                      selected_y1_, selected_grid_);
 
     // update buttons
-    if (gVFResults.limCycles_.empty()) {
+    if (gVFResults.firstLimCycle_ == nullptr) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     } else {
@@ -288,7 +288,7 @@ void P4LimitCyclesDlg::reset()
     edt_grid_->setText(buf);
     spin_numpoints_->setValue(selected_numpoints_);
 
-    if (gVFResults.limCycles_.empty()) {
+    if (gVFResults.firstLimCycle_ == nullptr) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     } else {
@@ -316,8 +316,9 @@ void P4LimitCyclesDlg::onbtn_delall()
     btn_delall_->setEnabled(false);
     btn_dellast_->setEnabled(false);
 
-    gVFResults.limCycles_.clear();
-    // gVFResults.currentLimCycleIndex_ = -1;
+    delete gVFResults.firstLimCycle_;
+    gVFResults.firstLimCycle_ = nullptr;
+    gVFResults.currentLimCycle_ = nullptr;
 
     mainSphere_->refresh();
 }
@@ -330,7 +331,7 @@ void P4LimitCyclesDlg::onbtn_dellast()
     deleteLastLimitCycle(mainSphere_);
     mainSphere_->finishDrawing();
 
-    if (gVFResults.limCycles_.empty()) {
+    if (gVFResults.firstLimCycle_ == nullptr) {
         btn_delall_->setEnabled(false);
         btn_dellast_->setEnabled(false);
     }
