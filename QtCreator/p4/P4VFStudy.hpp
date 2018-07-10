@@ -44,29 +44,29 @@ class P4VFStudy : public QObject
 
     // vector field in various charts
     // FIXME arreglar tots els llocs on s'usen
-    P4Polynom::term2 *f_vec_field_[2];
-    P4Polynom::term2 *vec_field_U1_[2];
-    P4Polynom::term2 *vec_field_U2_[2];
-    P4Polynom::term2 *vec_field_V1_[2];
-    P4Polynom::term2 *vec_field_V2_[2];
-    P4Polynom::term3 *vec_field_C_[2];
+    P4Polynom::term2 *f_vec_field_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_U1_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_U2_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_V1_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_V2_[2]{nullptr, nullptr};
+    P4Polynom::term3 *vec_field_C_[2]{nullptr, nullptr};
 
     // singular points and their properties:
-    P4Singularities::saddle *firstSaddlePoint_;
-    P4Singularities::semi_elementary *firstSePoint_;
-    P4Singularities::node *firstNodePoint_;
-    P4Singularities::strong_focus *firstSfPoint_;
-    P4Singularities::weak_focus *firstWfPoint_;
-    P4Singularities::degenerate *firstDePoint_;
+    P4Singularities::saddle *firstSaddlePoint_{nullptr};
+    P4Singularities::semi_elementary *firstSePoint_{nullptr};
+    P4Singularities::node *firstNodePoint_{nullptr};
+    P4Singularities::strong_focus *firstSfPoint_{nullptr};
+    P4Singularities::weak_focus *firstWfPoint_{nullptr};
+    P4Singularities::degenerate *firstDePoint_{nullptr};
 
     // Greatest common factor if present:
-    P4Polynom::term2 *gcf_;
-    P4Polynom::term2 *gcf_U1_;
-    P4Polynom::term2 *gcf_U2_;
-    P4Polynom::term2 *gcf_V1_;
-    P4Polynom::term2 *gcf_V2_;
-    P4Polynom::term3 *gcf_C_;
-    P4Orbits::orbits_points *gcf_points_;
+    P4Polynom::term2 *gcf_{nullptr};
+    P4Polynom::term2 *gcf_U1_{nullptr};
+    P4Polynom::term2 *gcf_U2_{nullptr};
+    P4Polynom::term2 *gcf_V1_{nullptr};
+    P4Polynom::term2 *gcf_V2_{nullptr};
+    P4Polynom::term3 *gcf_C_{nullptr};
+    P4Orbits::orbits_points *gcf_points_{nullptr};
 
     // isoclines
     std::vector<P4Curves::isoclines> isocline_vector_;

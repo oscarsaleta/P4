@@ -635,35 +635,24 @@ void P4ParentStudy::examinePositionsOfSingularities()
     int numpositions{0};
 
     for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
-        while (vf_[i]->firstSaddlePoint_ != nullptr) {
-            markSingularity(vf_[i]->firstSaddlePoint_, positions, numpositions,
-                            i, plweights_);
-            vf_[i]->firstSaddlePoint_ = vf_[i]->firstSaddlePoint_->next_saddle;
+        for (auto s = vf_[i]->firstSaddlePoint_; s != nullptr;
+             s = s->next_saddle) {
+            markSingularity(s, positions, numpositions, i, plweights_);
         }
-        while (vf_[i]->firstSePoint_ != nullptr) {
-            markSingularity(vf_[i]->firstSePoint_, positions, numpositions, i,
-                            plweights_);
-            vf_[i]->firstSePoint_ = vf_[i]->firstSePoint_->next_se;
+        for (auto s = vf_[i]->firstSePoint_; s != nullptr; s = s->next_se) {
+            markSingularity(s, positions, numpositions, i, plweights_);
         }
-        while (vf_[i]->firstNodePoint_ != nullptr) {
-            markSingularity(vf_[i]->firstNodePoint_, positions, numpositions, i,
-                            plweights_);
-            vf_[i]->firstNodePoint_ = vf_[i]->firstNodePoint_->next_node;
+        for (auto s = vf_[i]->firstNodePoint_; s != nullptr; s = s->next_node) {
+            markSingularity(s, positions, numpositions, i, plweights_);
         }
-        while (vf_[i]->firstSfPoint_ != nullptr) {
-            markSingularity(vf_[i]->firstSfPoint_, positions, numpositions, i,
-                            plweights_);
-            vf_[i]->firstSfPoint_ = vf_[i]->firstSfPoint_->next_sf;
+        for (auto s = vf_[i]->firstSfPoint_; s != nullptr; s = s->next_sf) {
+            markSingularity(s, positions, numpositions, i, plweights_);
         }
-        while (vf_[i]->firstWfPoint_ != nullptr) {
-            markSingularity(vf_[i]->firstWfPoint_, positions, numpositions, i,
-                            plweights_);
-            vf_[i]->firstWfPoint_ = vf_[i]->firstWfPoint_->next_wf;
+        for (auto s = vf_[i]->firstWfPoint_; s != nullptr; s = s->next_wf) {
+            markSingularity(s, positions, numpositions, i, plweights_);
         }
-        while (vf_[i]->firstDePoint_ != nullptr) {
-            markSingularity(vf_[i]->firstDePoint_, positions, numpositions, i,
-                            plweights_);
-            vf_[i]->firstDePoint_ = vf_[i]->firstDePoint_->next_de;
+        for (auto s = vf_[i]->firstDePoint_; s != nullptr; s = s->next_de) {
+            markSingularity(s, positions, numpositions, i, plweights_);
         }
     }
 }

@@ -212,49 +212,6 @@
 //
 // Choose one of the constants defined in COLOR.H
 
-// Color of singular points:
-namespace P4ColourSettings
-{
-extern int colour_foreground; // foreground color
-extern int colour_background; // background color
-extern int colour_orbit;      // orbits (use GREEN1 when background is white)
-
-// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
-// printing.
-// For example, when printing, BLACK can be reversed with WHITE, so that the
-// BLACK background on screen is not printed black.
-extern bool print_white_bg;
-
-// FIXED COLOURS
-const int colour_saddle_node = P4Colours::magenta;      // saddle-node
-const int colour_saddle = P4Colours::green2;            // saddle
-const int colour_node_stable = P4Colours::blue;         // stable node
-const int colour_node_unstable = P4Colours::red;        // unstable node
-const int &colour_weak_focus = colour_foreground;       // weak focus generic
-const int colour_weak_focus_stable = P4Colours::blue2;  // stable weak focus
-const int colour_weak_focus_unstable = P4Colours::red2; // unstable weak focus
-const int colour_strong_focus_stable = P4Colours::blue; // stable strong focus
-const int colour_strong_focus_unstable =
-    P4Colours::red;                                     // unstable strong focus
-const int colour_center = P4Colours::green2;            // center
-const int &colour_degen = colour_foreground;            // degenerate point
-const int &colour_line_at_infinity = colour_foreground; // poincare sphere
-const int colour_separatrice_stable = P4Colours::blue;  // stable separatrice
-const int colour_separatrice_unstable = P4Colours::red; // unstable separatrice
-const int colour_separatrice_center_stable =
-    P4Colours::blue2; // center-stable sep
-const int colour_separatrice_center_unstable =
-    P4Colours::red2;                                     // center-unstable sep
-const int colour_selected_separatrice = P4Colours::gold; // selected separatrice
-const int colour_limit_cycle = P4Colours::magenta2;      // limit cycle
-const int colour_curve_singularities =
-    P4Colours::green;                               // curve of singularities
-const int colour_arbitrary_curve = P4Colours::cyan; // arbitrary curve
-const int colour_isoclines = P4Colours::pink1;      // colour of first isocline
-const int colour_separating_curve = P4Colours::brown3; // separating curve
-const int colour_shaded_curve = P4Colours::brown1;     // shaded curve
-} // namespace P4ColourSettings
-
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 
 // defining symbol sizes:

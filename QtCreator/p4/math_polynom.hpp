@@ -40,8 +40,8 @@ const char *dumpPoly3(P4Polynom::term3 *f, const char *x, const char *y,
 
 char *printterm2(char *buf, const P4Polynom::term2 *f, bool isfirst,
                  const char *x, const char *y);
-char *printterm3(char *buf, P4Polynom::term3 *f, bool isfirst, const char *r,
-                 const char *Co, const char *Si);
+char *printterm3(char *buf, const P4Polynom::term3 *f, bool isfirst,
+                 const char *r, const char *Co, const char *Si);
 
 bool readTerm1(FILE *fp, P4Polynom::term1 *p, int N);
 bool readTerm2(FILE *fp, P4Polynom::term2 *p, int N);

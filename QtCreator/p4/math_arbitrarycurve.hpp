@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <vector>
-
 #define EVAL_CURVE_NONE 0
 #define EVAL_CURVE_R2 1
 #define EVAL_CURVE_U1 2

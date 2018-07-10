@@ -47,12 +47,6 @@
 #include "main.hpp"
 #include "p4settings.hpp"
 
-// initialise background colors
-int P4ColourSettings::colour_background = P4Colours::black;
-int P4ColourSettings::colour_foreground = P4Colours::white;
-int P4ColourSettings::colour_orbit = P4Colours::yellow;
-bool P4ColourSettings::print_white_bg = true;
-
 P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 {
     // setAttribute(Qt::WA_DeleteOnClose);

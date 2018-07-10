@@ -1043,7 +1043,7 @@ bool P4VFStudy::readDegeneratePoint(FILE *fp)
 
     while (point != nullptr) {
         last = point;
-        point->next_de;
+        point = point->next_de;
     }
 
     point = new P4Singularities::degenerate;

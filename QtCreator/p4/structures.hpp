@@ -113,7 +113,7 @@ struct orbits_points {
     orbits_points() {}
     orbits_points(double pc[3], int co, int da, int di = 0, int ty = 0,
                   orbits_points *next = nullptr)
-        : dashes{da}, color{co}, dir{di}, type{ty}, nextpt{next}
+        : color{co}, dashes{da}, dir{di}, type{ty}, nextpt{next}
     {
         pcoord[0] = pc[0];
         pcoord[1] = pc[1];
@@ -536,7 +536,7 @@ struct degenerate : genericsingularity {
 
 struct node : genericsingularity {
     int stable;
-    node *next_node;
+    node *next_node{nullptr};
 
     node() {}
     node(double _x0, double _y0, int ch, int po, int st, node *next = nullptr)
@@ -554,7 +554,7 @@ struct node : genericsingularity {
 
 struct strong_focus : genericsingularity {
     int stable;
-    strong_focus *next_sf;
+    strong_focus *next_sf{nullptr};
 
     strong_focus() {}
     strong_focus(double _x0, double _y0, int ch, int po, int st,
@@ -573,7 +573,7 @@ struct strong_focus : genericsingularity {
 
 struct weak_focus : genericsingularity {
     int type;
-    weak_focus *next_wf;
+    weak_focus *next_wf{nullptr};
 
     weak_focus() {}
     weak_focus(double _x0, double _y0, int ch, int po, int ty,

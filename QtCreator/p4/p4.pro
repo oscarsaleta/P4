@@ -84,7 +84,8 @@ SOURCES += file_paths.cpp \
     print_points.cpp \
     print_postscript.cpp \
     print_xfig.cpp \
-    P4ProcessWnd.cpp
+    P4ProcessWnd.cpp \
+    color.cpp
 
 HEADERS += ../version.h \
     color.hpp \

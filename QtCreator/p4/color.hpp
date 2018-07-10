@@ -63,7 +63,7 @@ enum {
     darkgray = 32
 };
 
-const int numXfigColors = 32;
+extern const int numXfigColors;
 
 struct P4RGBITEM {
     int r;
@@ -71,46 +71,46 @@ struct P4RGBITEM {
     int b;
 };
 
-P4RGBITEM gXFigToRGB[numXfigColors] = {
-    // 8 pure colours:
-    {0, 0, 0},       // BLACK
-    {0, 0, 255},     // BLUE
-    {0, 255, 0},     // GREEN
-    {0, 255, 255},   // CYAN
-    {255, 0, 0},     // RED
-    {255, 0, 255},   // MAGENTA
-    {255, 255, 0},   // YELLOW
-    {255, 255, 255}, // WHITE
+extern P4RGBITEM gXFigToRGB[];
 
-    // shaded colours (ordered from dark to light):
-    {0, 0, 143},     // BLUE1
-    {0, 0, 176},     // BLUE2
-    {0, 0, 209},     // BLUE3
-    {135, 207, 255}, // BLUE4
-    {0, 143, 0},     // GREEN1
-    {0, 176, 0},     // GREEN2
-    {0, 209, 0},     // GREEN3
-    {0, 143, 143},   // CYAN1
-    {0, 176, 176},   // CYAN2
-    {0, 209, 209},   // CYAN3
-    {143, 0, 0},     // RED1
-    {176, 0, 0},     // RED2
-    {209, 0, 0},     // RED3
-    {143, 0, 143},   // MAGENTA1
-    {176, 0, 176},   // MAGENTA2
-    {209, 32, 209},  // MAGENTA3
-    {128, 48, 0},    // BROWN1
-    {161, 64, 0},    // BROWN2
-    {191, 97, 0},    // BROWN3
-    {255, 128, 128}, // PINK1
-    {255, 161, 161}, // PINK2
-    {255, 191, 191}, // PINK3
-    {255, 224, 224}, // PINK4
-    {255, 214, 0}    // GOLD
-};
-
-QColor p4XfigColour(int x)
-{
-    return QColor{gXFigToRGB[x].r, gXFigToRGB[x].g, gXFigToRGB[x].b};
-}
+QColor p4XfigColour(int x);
 } // namespace P4Colours
+
+// Color of singular points:
+namespace P4ColourSettings
+{
+extern int colour_foreground; // foreground color
+extern int colour_background; // background color
+extern int colour_orbit;      // orbits (use GREEN1 when bg is white)
+
+// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
+// printing.
+// For example, when printing, BLACK can be reversed with WHITE, so that the
+// BLACK background on screen is not printed black.
+extern bool print_white_bg;
+
+// FIXED COLOURS
+extern const int colour_saddle_node;                 // saddle-node
+extern const int colour_saddle;                      // saddle
+extern const int colour_node_stable;                 // stable node
+extern const int colour_node_unstable;               // unstable node
+extern const int &colour_weak_focus;                 // weak focus generic
+extern const int colour_weak_focus_stable;           // stable weak focus
+extern const int colour_weak_focus_unstable;         // unstable weak focus
+extern const int colour_strong_focus_stable;         // stable strong focus
+extern const int colour_strong_focus_unstable;       // unstable strong focus
+extern const int colour_center;                      // center
+extern const int &colour_degen;                      // degenerate point
+extern const int &colour_line_at_infinity;           // poincare sphere
+extern const int colour_separatrice_stable;          // stable separatrice
+extern const int colour_separatrice_unstable;        // unstable separatrice
+extern const int colour_separatrice_center_stable;   // center-stable sep
+extern const int colour_separatrice_center_unstable; // center-unstable sep
+extern const int colour_selected_separatrice;        // selected separatrice
+extern const int colour_limit_cycle;                 // limit cycle
+extern const int colour_curve_singularities;         // curve of singularities
+extern const int colour_arbitrary_curve;             // arbitrary curve
+extern const int colour_isoclines;                   // colour of first isocline
+extern const int colour_separating_curve;            // separating curve
+extern const int colour_shaded_curve;                // shaded curve
+} // namespace P4ColourSettings

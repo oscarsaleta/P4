@@ -1040,7 +1040,7 @@ void P4Sphere::selectNearestSingularity(const QPoint &winpos)
 
 void P4Sphere::plotPoint(const P4Singularities::saddle *p)
 {
-    // qDebug() << "plot point saddle";
+    qDebug() << "plot point saddle";
     double pos[2];
 
     getChartPos(p->chart, p->x0, p->y0, pos);
@@ -1078,7 +1078,7 @@ void P4Sphere::plotPoint(const P4Singularities::saddle *p)
 
 void P4Sphere::plotPoint(const P4Singularities::node *p)
 {
-    // qDebug() << "plot point node";
+    qDebug() << "plot point node";
     double pos[2];
 
     getChartPos(p->chart, p->x0, p->y0, pos);
@@ -1135,7 +1135,7 @@ void P4Sphere::plotPoint(const P4Singularities::node *p)
 
 void P4Sphere::plotPoint(const P4Singularities::weak_focus *p)
 {
-    // qDebug() << "plot point weak focus";
+    qDebug() << "plot point weak focus";
     double pos[2];
 
     getChartPos(p->chart, p->x0, p->y0, pos);
@@ -1229,7 +1229,7 @@ void P4Sphere::plotPoint(const P4Singularities::weak_focus *p)
 
 void P4Sphere::plotPoint(const P4Singularities::strong_focus *p)
 {
-    // qDebug() << "plot point strong focus";
+    qDebug() << "plot point strong focus";
     double pos[2];
 
     getChartPos(p->chart, p->x0, p->y0, pos);
@@ -1286,7 +1286,7 @@ void P4Sphere::plotPoint(const P4Singularities::strong_focus *p)
 
 void P4Sphere::plotPoint(const P4Singularities::degenerate *p)
 {
-    // qDebug() << "plot point degenerate";
+    qDebug() << "plot point degenerate";
     double pos[2];
 
     getChartPos(p->chart, p->x0, p->y0, pos);
@@ -1325,7 +1325,7 @@ void P4Sphere::plotPoint(const P4Singularities::degenerate *p)
 
 void P4Sphere::plotPoint(const P4Singularities::semi_elementary *p)
 {
-    // qDebug() << "plot point semi elementary";
+    qDebug() << "plot point semi elementary";
     double pos[2];
 
     getChartPos(p->chart, p->x0, p->y0, pos);
@@ -1414,7 +1414,7 @@ void P4Sphere::plotPoint(const P4Singularities::semi_elementary *p)
 
 void P4Sphere::plotPoints()
 {
-    // qDebug() << "plot points";
+    qDebug() << "plot points";
     for (auto const &vf : gVFResults.vf_) {
         for (auto sp = vf->firstSaddlePoint_; sp != nullptr;
              sp = sp->next_saddle)
