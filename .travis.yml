@@ -22,7 +22,7 @@ matrix:
     - os: osx
       osx_image: xcode8
       env:
-        - SET_COMPILER="brew update && brew upgrade && brew install gcc && export CC=gcc-7 && export CXX=g++-7"
+        - SET_COMPILER="brew update && brew install gcc && export CC=gcc-8 && export CXX=g++-8"
         - SET_QMAKE="brew install qt && export QMAKE=/usr/local/opt/qt/bin/qmake"
       before_script:
         - eval "${SET_COMPILER}"
