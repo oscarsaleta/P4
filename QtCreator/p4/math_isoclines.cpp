@@ -259,7 +259,7 @@ static void insert_isocline_vector_point(double x0, double y0, double z0,
     double pcoord[3]{x0, y0, z0};
 
     gVFResults.vf_[index]->isocline_vector_.back().points.emplace_back(
-        P4ColourSettings::colour_isoclines, pcoord, dashes, 0, 0);
+        pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0);
 }
 
 static bool read_isoclines(void (*chart)(double, double, double *), int index)

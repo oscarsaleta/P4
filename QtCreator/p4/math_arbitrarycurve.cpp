@@ -220,7 +220,7 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
     double pcoord[3]{x0, y0, z0};
     gVFResults.arbitraryCurves_.back().points.emplace_back(
-        P4ColourSettings::colour_arbitrary_curve, pcoord, dashes, 0, 0);
+        pcoord, P4ColourSettings::colour_arbitrary_curve, dashes, 0, 0);
 }
 
 static bool read_curve(void (*chart)(double, double, double *))

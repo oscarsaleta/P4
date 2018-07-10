@@ -29,7 +29,7 @@ static void insert_curve_point(double x0, double y0, double z0, int dashes,
                                std::vector<P4Orbits::orbits_points> &lastpt)
 {
     double pcoord[] = {x0, y0, z0};
-    lastpt.emplace_back(P4ColourSettings::colour_separating_curve, pcoord,
+    lastpt.emplace_back(pcoord, P4ColourSettings::colour_separating_curve,
                         dashes);
 }
 
