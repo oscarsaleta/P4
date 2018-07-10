@@ -43,7 +43,7 @@ static int sLastP4PrintColor{0};
 // ----------------------------------------------------------------------------
 int printColorTable(int color)
 {
-    int colorTable[P4Colours::numXfigColors]{
+    int colorTable[P4Colours::numXfigColours]{
         P4Colours::white, // black --> white when printing
         P4Colours::blue,     P4Colours::green,    P4Colours::cyan,
         P4Colours::red,      P4Colours::magenta,
@@ -57,7 +57,7 @@ int printColorTable(int color)
         P4Colours::magenta3, P4Colours::brown1,   P4Colours::brown2,
         P4Colours::brown3,   P4Colours::pink1,    P4Colours::pink2,
         P4Colours::pink3,    P4Colours::pink4,    P4Colours::gold};
-    int colorTableReverse[P4Colours::numXfigColors]{
+    int colorTableReverse[P4Colours::numXfigColours]{
         P4Colours::black,    P4Colours::blue,     P4Colours::green,
         P4Colours::cyan,     P4Colours::red,      P4Colours::magenta,
         P4Colours::yellow,   P4Colours::white,    P4Colours::blue1,
