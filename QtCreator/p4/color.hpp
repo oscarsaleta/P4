@@ -60,11 +60,10 @@ enum {
     pink3 = 29,
     pink4 = 30,
     gold = 31, // gold
-    darkgray = 32,
-    numXfigColours = 32
+    darkgray = 32
 };
 
-// extern const int numXfigColors;
+extern const int numXfigColors;
 
 struct P4RGBITEM {
     int r;

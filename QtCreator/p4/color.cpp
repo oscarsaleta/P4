@@ -22,9 +22,9 @@
 namespace c = P4Colours;
 namespace cs = P4ColourSettings;
 
-// const int c::numXfigColors = 32;
+const int c::numXfigColors = 32;
 
-c::P4RGBITEM c::gXFigToRGB[c::numXfigColours] = {
+c::P4RGBITEM c::gXFigToRGB[c::numXfigColors] = {
     // 8 pure colours:
     {0, 0, 0},       // BLACK
     {0, 0, 255},     // BLUE

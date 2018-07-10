@@ -696,7 +696,6 @@ void plot_all_de_sep(P4Sphere *spherewnd, int vfindex,
             }
             de_sep = de_sep->next_blow_up_point;
         }
-        point = point->next_de;
     }
 }
 
