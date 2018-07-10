@@ -22,28 +22,27 @@
 #include <stdio.h>
 #include <vector>
 
-namespace p4polynom
+namespace P4Polynom
 {
 struct term1;
 struct term2;
 struct term3;
-} // namespace p4polynom
+} // namespace P4Polynom
 
-double eval_term1(const std::vector<p4polynom::term1> &, const double);
-double eval_term2(const std::vector<p4polynom::term2> &, const double *);
-double eval_term3(const std::vector<p4polynom::term3> &, const double *);
+double eval_term1(P4Polynom::term1 *, const double);
+double eval_term2(P4Polynom::term2 *, const double *);
+double eval_term3(P4Polynom::term3 *, const double *);
 
-const char *dumpPoly1(const std::vector<p4polynom::term1> &f, const char *x);
-const char *dumpPoly2(const std::vector<p4polynom::term2> &f, const char *x,
-                      const char *y);
-const char *dumpPoly3(const std::vector<p4polynom::term3> &f, const char *x,
-                      const char *y, const char *z);
+const char *dumpPoly1(P4Polynom::term1 *f, const char *x);
+const char *dumpPoly2(P4Polynom::term2 *f, const char *x, const char *y);
+const char *dumpPoly3(P4Polynom::term3 *f, const char *x, const char *y,
+                      const char *z);
 
-char *printterm2(char *buf, const p4polynom::term2 &f, bool isfirst,
+char *printterm2(char *buf, const P4Polynom::term2 *f, bool isfirst,
                  const char *x, const char *y);
-char *printterm3(char *buf, const p4polynom::term3 &f, bool isfirst,
+char *printterm3(char *buf, const P4Polynom::term3 *f, bool isfirst,
                  const char *r, const char *Co, const char *Si);
 
-bool readTerm1(FILE *fp, std::vector<p4polynom::term1> &p, int N);
-bool readTerm2(FILE *fp, std::vector<p4polynom::term2> &p, int N);
-bool readTerm3(FILE *fp, std::vector<p4polynom::term3> &p, int N);
+bool readTerm1(FILE *fp, P4Polynom::term1 *p, int N);
+bool readTerm2(FILE *fp, P4Polynom::term2 *p, int N);
+bool readTerm3(FILE *fp, P4Polynom::term3 *p, int N);

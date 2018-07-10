@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-#include "tables.hpp"
+#include "structures.hpp"
 
 class QTextEdit;
 
@@ -44,39 +44,32 @@ class P4VFStudy : public QObject
 
     // vector field in various charts
     // FIXME arreglar tots els llocs on s'usen
-    std::vector<p4polynom::term2> f_vec_field_0_;
-    std::vector<p4polynom::term2> f_vec_field_1_;
-    std::vector<p4polynom::term2> vec_field_U1_0_;
-    std::vector<p4polynom::term2> vec_field_U1_1_;
-    std::vector<p4polynom::term2> vec_field_U2_0_;
-    std::vector<p4polynom::term2> vec_field_U2_1_;
-    std::vector<p4polynom::term2> vec_field_V1_0_;
-    std::vector<p4polynom::term2> vec_field_V1_1_;
-    std::vector<p4polynom::term2> vec_field_V2_0_;
-    std::vector<p4polynom::term2> vec_field_V2_1_;
-    std::vector<p4polynom::term3> vec_field_C_0_;
-    std::vector<p4polynom::term3> vec_field_C_1_;
+    P4Polynom::term2 *f_vec_field_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_U1_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_U2_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_V1_[2]{nullptr, nullptr};
+    P4Polynom::term2 *vec_field_V2_[2]{nullptr, nullptr};
+    P4Polynom::term3 *vec_field_C_[2]{nullptr, nullptr};
 
     // singular points and their properties:
-    // FIXME arreglar llocs on s'usen
-    std::vector<p4singularities::saddle> saddlePoints_;
-    std::vector<p4singularities::semi_elementary> sePoints_;
-    std::vector<p4singularities::node> nodePoints_;
-    std::vector<p4singularities::strong_focus> sfPoints_;
-    std::vector<p4singularities::weak_focus> wfPoints_;
-    std::vector<p4singularities::degenerate> dePoints_;
+    P4Singularities::saddle *firstSaddlePoint_{nullptr};
+    P4Singularities::semi_elementary *firstSePoint_{nullptr};
+    P4Singularities::node *firstNodePoint_{nullptr};
+    P4Singularities::strong_focus *firstSfPoint_{nullptr};
+    P4Singularities::weak_focus *firstWfPoint_{nullptr};
+    P4Singularities::degenerate *firstDePoint_{nullptr};
 
     // Greatest common factor if present:
-    std::vector<p4polynom::term2> gcf_;
-    std::vector<p4polynom::term2> gcf_U1_;
-    std::vector<p4polynom::term2> gcf_U2_;
-    std::vector<p4polynom::term2> gcf_V1_;
-    std::vector<p4polynom::term2> gcf_V2_;
-    std::vector<p4polynom::term3> gcf_C_;
-    std::vector<p4orbits::orbits_points> gcf_points_;
+    P4Polynom::term2 *gcf_{nullptr};
+    P4Polynom::term2 *gcf_U1_{nullptr};
+    P4Polynom::term2 *gcf_U2_{nullptr};
+    P4Polynom::term2 *gcf_V1_{nullptr};
+    P4Polynom::term2 *gcf_V2_{nullptr};
+    P4Polynom::term3 *gcf_C_{nullptr};
+    P4Orbits::orbits_points *gcf_points_{nullptr};
 
     // isoclines
-    std::vector<p4curves::isoclines> isocline_vector_;
+    std::vector<P4Curves::isoclines> isocline_vector_;
 
     /* CLASS METHODS */
     void reset();
@@ -87,10 +80,8 @@ class P4VFStudy : public QObject
     bool readGCF(FILE *fp);               // TODO
     bool readIsoclines(QString basename); // TODO
 
-    bool readVectorField(FILE *fp, std::vector<p4polynom::term2> &vf0,
-                         std::vector<p4polynom::term2> &vf1);
-    bool readVectorFieldCylinder(FILE *fp, std::vector<p4polynom::term3> &vf0,
-                                 std::vector<p4polynom::term3> &vf1);
+    bool readVectorField(FILE *fp, P4Polynom::term2 *vf[]);
+    bool readVectorFieldCylinder(FILE *fp, P4Polynom::term3 *vf[]);
 
     bool readPoints(FILE *fp);
     bool readSaddlePoint(FILE *fp);
@@ -99,36 +90,25 @@ class P4VFStudy : public QObject
     bool readWeakFocusPoint(FILE *fp);
     bool readDegeneratePoint(FILE *fp);
     bool readNodePoint(FILE *fp);
-    bool readBlowupPoints(FILE *fp, std::vector<p4blowup::blow_up_points> &b,
-                          int n);
-    bool readTransformations(FILE *fp,
-                             std::vector<p4blowup::transformations> &trans,
-                             int n);
+    bool readBlowupPoints(FILE *fp, P4Blowup::blow_up_points *b, int n);
+    bool readTransformations(FILE *fp, P4Blowup::transformations *trans, int n);
 
     void setupCoordinateTransformations(); // see math_p4.cpp
 
     void dump(QTextEdit &m);
 
   private:
-    void dumpSeparatrices(QTextEdit &m, const std::vector<p4blowup::sep> &separ,
-                          int margin);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<p4singularities::saddle> &p,
+    void dumpSeparatrices(QTextEdit &m, P4Blowup::sep *separ, int margin);
+    void dumpSingularities(QTextEdit &m, P4Singularities::saddle *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<p4singularities::degenerate> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::degenerate *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<p4singularities::strong_focus> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::strong_focus *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<p4singularities::weak_focus> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::weak_focus *p,
                            bool longversion);
-    void dumpSingularities(QTextEdit &m,
-                           const std::vector<p4singularities::node> &p,
+    void dumpSingularities(QTextEdit &m, P4Singularities::node *p,
                            bool longversion);
-    void
-    dumpSingularities(QTextEdit &m,
-                      const std::vector<p4singularities::semi_elementary> &p,
-                      bool longversion);
+    void dumpSingularities(QTextEdit &m, P4Singularities::semi_elementary *p,
+                           bool longversion);
 };

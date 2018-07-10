@@ -25,13 +25,16 @@
 
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
-#include "P4VFStudy.hpp"
 #include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
+
+// global variables
+P4Orbits::orbits_points *gLastIsoclinePoint{nullptr};
 
 // static global variables
 static int sIsoclinesTask{EVAL_ISOCLINES_NONE};
@@ -103,7 +106,8 @@ bool evalIsoclinesFinish() // return false in case an error occured
     // set color for the last isocline of each VF
     for (auto &vf : gVFResults.vf_) {
         int nisocs{static_cast<int>((vf->isocline_vector_.size() - 1) % 4)};
-        vf->isocline_vector_.back().color = CISOC + nisocs;
+        vf->isocline_vector_.back().color =
+            P4ColourSettings::colour_isoclines + nisocs;
     }
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
@@ -234,18 +238,18 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_isoclines(P4Sphere *spherewnd,
-                    const std::vector<p4orbits::orbits_points> &isoc, int color,
-                    int dashes)
+void draw_isoclines(P4Sphere *spherewnd, P4Orbits::orbits_points *isoc,
+                    int color, int dashes)
 {
     double pcoord[3];
 
-    for (auto const &it : isoc) {
-        if (it.dashes && dashes)
-            (*plot_l)(spherewnd, pcoord, it.pcoord, color);
+    while (isoc != nullptr) {
+        if (isoc->dashes && dashes)
+            (*plot_l)(spherewnd, pcoord, isoc->pcoord, color);
         else
-            (*plot_p)(spherewnd, it.pcoord, color);
-        copy_x_into_y(it.pcoord, pcoord);
+            (*plot_p)(spherewnd, isoc->pcoord, color);
+        copy_x_into_y(isoc->pcoord, pcoord);
+        isoc = isoc->nextpt;
     }
 }
 
@@ -254,8 +258,16 @@ static void insert_isocline_vector_point(double x0, double y0, double z0,
 {
     double pcoord[3]{x0, y0, z0};
 
-    gVFResults.vf_[index]->isocline_vector_.back().points.emplace_back(
-        CISOC, pcoord, dashes, 0, 0);
+    if (gVFResults.vf_[index]->isocline_vector_.back().points != nullptr) {
+        gLastIsoclinePoint->nextpt = new P4Orbits::orbits_points{
+            pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0};
+        gLastIsoclinePoint = gLastIsoclinePoint->nextpt;
+    } else {
+        gLastIsoclinePoint = new P4Orbits::orbits_points{
+            pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0};
+        gVFResults.vf_[index]->isocline_vector_.back().points =
+            gLastIsoclinePoint;
+    }
 }
 
 static bool read_isoclines(void (*chart)(double, double, double *), int index)

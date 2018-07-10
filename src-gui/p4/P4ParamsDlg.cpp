@@ -458,7 +458,7 @@ void P4ParamsDlg::updateDlgData()
 
     spin_precis0_->setValue(gThisVF->precision0_);
 
-    if (gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+    if (gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
         edt_x0_->setText(gThisVF->x0_);
         edt_y0_->setText(gThisVF->y0_);
         spin_p_->setValue(gThisVF->p_);

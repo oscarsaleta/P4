@@ -29,14 +29,6 @@
 
 #include "custom.hpp"
 
-#define TYPEOFSTUDY_ALL 0
-#define TYPEOFSTUDY_FIN 1
-#define TYPEOFSTUDY_INF 2
-#define TYPEOFSTUDY_ONE 3
-
-#define PACKAGE_MAPLE 1
-#define PACKAGE_REDUCE 0
-
 /* Check Qt version for compatibility with QProcess::errorOccurred */
 #if QT_VERSION_MINOR < 6
 #define QT_QPROCESS_OLD
@@ -55,7 +47,7 @@ class P4GcfDlg;
 class P4IsoclinesDlg;
 class P4ProcessWnd;
 
-namespace p4polynom
+namespace P4Polynom
 {
 struct term2;
 }
@@ -95,8 +87,8 @@ class P4InputVF : public QObject
 
     QString filename_{DEFAULTFILENAME};
 
-    int symbolicpackage_{PACKAGE_MAPLE}; // 0 for reduce, 1 for maple
-    int typeofstudy_;                    // 0, 1, 2, 3 = all, inf, fin, one
+    //    int symbolicpackage_{PACKAGE_MAPLE}; // 0 for reduce, 1 for maple
+    int typeofstudy_; // 0, 1, 2, 3 = all, inf, fin, one
 
     // MAPLE EXECUTION PARAMETERS
     std::vector<bool> numeric_;
@@ -316,7 +308,7 @@ class P4InputVF : public QObject
     void createProcessWindow();
 
     // EVALUATION: gcf
-    bool prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
+    bool prepareGcf(P4Polynom::term2 *f, double y1,
                     double y2, int precision, int numpoints);
     bool prepareGcf_LyapunovCyl(double theta1, double theta2, int precision,
                                 int numpoints, int index);
@@ -337,7 +329,7 @@ class P4InputVF : public QObject
     // called from prepareCurveFile
     void prepareMapleArbitraryCurve(QTextStream &);
     // the following are called from math_curve.cpp
-    bool prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
+    bool prepareArbitraryCurve(P4Polynom::term2 *f,
                                double y1, double y2, int precision,
                                int numpoints);
     bool prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
@@ -350,7 +342,7 @@ class P4InputVF : public QObject
     void prepareIsoclines();
     void prepareIsoclinesFile(QTextStream &);
     void prepareMapleIsoclines(QTextStream &);
-    bool prepareIsoclines(const std::vector<p4polynom::term2> &f, double y1,
+    bool prepareIsoclines(P4Polynom::term2 *f, double y1,
                           double y2, int precision, int numpoints); // FIXME
     bool prepareIsoclines_LyapunovCyl(double theta1, double theta2,
                                       int precision, int numpoints, int index);

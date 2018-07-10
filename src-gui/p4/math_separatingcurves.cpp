@@ -19,26 +19,25 @@
 
 #include "math_separatingcurves.hpp"
 
+#include <QDebug>
+
 #include "P4ParentStudy.hpp"
 #include "custom.hpp"
 #include "math_charts.hpp"
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes,
-                               std::vector<p4orbits::orbits_points> &lastpt)
+                               P4Orbits::orbits_points **lastpt)
 {
-    p4orbits::orbits_points newpt;
-
-    newpt.pcoord[0] = x0;
-    newpt.pcoord[1] = y0;
-    newpt.pcoord[2] = z0;
-    newpt.dashes = dashes;
-    newpt.color = CSEPCURVE;
-
-    lastpt.push_back(newpt);
+    double pcoord[] = {x0, y0, z0};
+    while (*lastpt != nullptr) {
+        (*lastpt) = (*lastpt)->nextpt;
+    }
+    *lastpt = new P4Orbits::orbits_points{
+        pcoord, P4ColourSettings::colour_separating_curve, dashes, 0, 0,
+        nullptr};
 }
 
-bool readSeparatingCurvePoints(FILE *fp,
-                               std::vector<p4orbits::orbits_points> &psep,
+bool readSeparatingCurvePoints(FILE *fp, P4Orbits::orbits_points **psep,
                                int index)
 {
     int k;
@@ -55,6 +54,7 @@ bool readSeparatingCurvePoints(FILE *fp,
         cylinder_to_plsphere,   cylinder_to_plsphere, nullptr};
 
     chartindex = (gVFResults.plweights_) ? 6 : 0;
+
     while (1) {
         chart = charts[chartindex];
         if (chart == nullptr)

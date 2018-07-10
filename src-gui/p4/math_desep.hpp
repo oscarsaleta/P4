@@ -21,18 +21,18 @@
 
 #include <vector>
 
-namespace p4blowup
+namespace P4Blowup
 {
 struct blow_up_points;
 struct transformations;
-}
+} // namespace P4Blowup
 
-namespace p4singularities
+namespace P4Singularities
 {
 struct degenerate;
 }
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
@@ -40,13 +40,14 @@ struct orbits_points;
 class P4Sphere;
 
 void eval_blow_vec_field(const double *y, double *f);
-void make_transformations(const std::vector<p4blowup::transformations> &trans,
-                          double x0, double y0, double *point);
+void make_transformations(P4Blowup::transformations *trans, double x0,
+                          double y0, double *point);
 
-std::vector<p4orbits::orbits_points>
-integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
-                  std::vector<p4blowup::blow_up_points> &de_sep, double step,
-                  int dir, int type, int chart);
+P4Orbits::orbits_points *integrate_blow_up(P4Sphere *spherewnd, double *pcoord2,
+                                           P4Blowup::blow_up_points *de_sep,
+                                           double step, int dir, int type,
+                                           P4Orbits::orbits_points **orbit,
+                                           int chart);
 
 void change_epsilon_de(P4Sphere *spherewnd, double epsilon);
 void start_plot_de_sep(P4Sphere *spherewnd, int vfindex);
@@ -54,4 +55,4 @@ void cont_plot_de_sep(P4Sphere *spherewnd);
 void plot_next_de_sep(P4Sphere *spherewnd, int vfindex);
 void select_next_de_sep(P4Sphere *spherewnd);
 void plot_all_de_sep(P4Sphere *spherewnd, int vfindex,
-                     const std::vector<p4singularities::degenerate> &point);
+                     P4Singularities::degenerate *point);

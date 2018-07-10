@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <vector>
-
 #define EVAL_CURVE_NONE 0
 #define EVAL_CURVE_R2 1
 #define EVAL_CURVE_U1 2
@@ -36,7 +34,7 @@
 
 class P4Sphere;
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
@@ -46,7 +44,8 @@ bool evalArbitraryCurveStart(P4Sphere *sp, int dashes, int precision,
 bool evalArbitraryCurveContinue(int precision, int points);
 bool evalArbitraryCurveFinish();
 bool runTaskArbitraryCurve(int task, int precision, int points);
-void drawArbitraryCurve(P4Sphere *spherewnd,
-                        const std::vector<p4orbits::orbits_points> &sep,
+void drawArbitraryCurve(P4Sphere *spherewnd, P4Orbits::orbits_points *sep,
                         int color, int dashes);
-void deleteLastArbitraryCurve(P4Sphere *);
+void deleteLastArbitraryCurve(P4Sphere *sp);
+
+extern P4Orbits::orbits_points *gLastArbitraryCurvePoint;

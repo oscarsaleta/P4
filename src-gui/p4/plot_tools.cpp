@@ -24,7 +24,7 @@
 #include "P4ParentStudy.hpp"
 #include "P4Sphere.hpp"
 #include "math_p4.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 void (*plot_l)(P4Sphere *, const double *, const double *, int) = nullptr;
 void (*plot_p)(P4Sphere *, const double *, int) = nullptr;
@@ -38,7 +38,7 @@ dotted,
 WHEN ZOOMING
 //  (SOMETIMES, WHEN A PART OF THE SPHERE IS VISIBLE, NOTHING IS DRAWN)
 
-    QPen pen( (QColor)(QXFIGCOLOR(color)) );
+    QPen pen( (QColor)(P4Colours::p4XfigColour(color)) );
     if( dotted )
         pen.setStyle( Qt::DashLine );
     else
@@ -124,7 +124,7 @@ bool lineRectangleIntersect(double &x1, double &y1, double &x2, double &y2,
     double dx, dy;
 
     if (std::isnan(x1) || std::isnan(x2) || std::isnan(y1) || std::isnan(y2) ||
-        !p4_finite(x1) || !p4_finite(x2) || !p4_finite(y1) || !p4_finite(y2)) {
+        !std::isfinite(x1) || !std::isfinite(x2) || !std::isfinite(y1) || !std::isfinite(y2)) {
         return false;
     }
 

@@ -22,11 +22,11 @@
 #include <stdio.h>
 #include <vector>
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
 
 bool readSeparatingCurvePoints(FILE *fp,
-                               std::vector<p4orbits::orbits_points> &psep,
+                               P4Orbits::orbits_points **psep,
                                int index);
