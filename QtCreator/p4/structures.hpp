@@ -196,7 +196,16 @@ struct curves { // NOTE: curveResult es identica, usarem aquesta
     P4Polynom::term3 *c{nullptr};
     P4Orbits::orbits_points *points{nullptr};
 
-    curves() {}
+    curves()
+    {
+        r2 = new P4Polynom::term2;
+        u1 = new P4Polynom::term2;
+        u2 = new P4Polynom::term2;
+        v1 = new P4Polynom::term2;
+        v2 = new P4Polynom::term2;
+        c = new P4Polynom::term3;
+        points = new P4Orbits::orbits_points;
+    }
     curves(P4Polynom::term2 *_r2, P4Polynom::term2 *_u1, P4Polynom::term2 *_u2,
            P4Polynom::term2 *_v1, P4Polynom::term2 *_v2, P4Polynom::term3 *_c,
            P4Orbits::orbits_points *_points)
