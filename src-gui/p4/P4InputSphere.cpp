@@ -970,17 +970,13 @@ void P4InputSphere::plotSeparatingCurves()
 void P4InputSphere::plotSeparatingCurve(const P4Curves::curves &crv, int index)
 {
     double pcoord[3];
-    auto sep = crv.points;
-
-    while (sep != nullptr) {
-        if (sep->dashes)
-            plotLine(pcoord, sep->pcoord, sep->color);
+    auto const &sep = crv.points;
+    for (auto const &it : sep) {
+        if (it.dashes)
+            plotLine(pcoord, it.pcoord, it.color);
         else
-            plotPoint(sep->pcoord, sep->color);
-
-        copy_x_into_y(sep->pcoord, pcoord);
-
-        sep = sep->nextpt;
+            plotPoint(it.pcoord, it.color);
+        copy_x_into_y(it.pcoord, pcoord);
     }
 }
 

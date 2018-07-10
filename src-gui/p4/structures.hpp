@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <vector>
+
 // FIXME: add deleters? smart pointers? try again using vectors/lists?
 
 // -----------------------------------------------------------------------
@@ -188,62 +190,30 @@ struct orbits {
 namespace P4Curves
 {
 struct curves { // NOTE: curveResult es identica, usarem aquesta
-    P4Polynom::term2 *r2{nullptr};
-    P4Polynom::term2 *u1{nullptr};
-    P4Polynom::term2 *u2{nullptr};
-    P4Polynom::term2 *v1{nullptr};
-    P4Polynom::term2 *v2{nullptr};
-    P4Polynom::term3 *c{nullptr};
-    P4Orbits::orbits_points *points{nullptr};
+    std::vector<P4Polynom::term2> r2;
+    std::vector<P4Polynom::term2> u1;
+    std::vector<P4Polynom::term2> u2;
+    std::vector<P4Polynom::term2> v1;
+    std::vector<P4Polynom::term2> v2;
+    std::vector<P4Polynom::term3> c;
+    std::vector<P4Orbits::orbits_points> points;
 
     curves() {}
-    curves(P4Polynom::term2 *_r2, P4Polynom::term2 *_u1, P4Polynom::term2 *_u2,
-           P4Polynom::term2 *_v1, P4Polynom::term2 *_v2, P4Polynom::term3 *_c,
-           P4Orbits::orbits_points *_points)
+    curves(std::vector<P4Polynom::term2> _r2, std::vector<P4Polynom::term2> _u1,
+           std::vector<P4Polynom::term2> _u2, std::vector<P4Polynom::term2> _v1,
+           std::vector<P4Polynom::term2> _v2, std::vector<P4Polynom::term3> _c,
+           std::vector<P4Orbits::orbits_points> _points)
         : r2{_r2}, u1{_u1}, u2{_u2}, v1{_v1}, v2{_v2}, c{_c}, points{_points}
     {
     }
-    ~curves()
-    {
-        if (r2 != nullptr) {
-            delete r2;
-            r2 = nullptr;
-        }
-        if (u1 != nullptr) {
-            delete u1;
-            u1 = nullptr;
-        }
-        if (u2 != nullptr) {
-            delete u2;
-            u2 = nullptr;
-        }
-        if (v1 != nullptr) {
-            delete v1;
-            v1 = nullptr;
-        }
-        if (v2 != nullptr) {
-            delete v2;
-            v2 = nullptr;
-        }
-        if (c != nullptr) {
-            delete c;
-            c = nullptr;
-        }
-    }
+    ~curves() {}
 };
 
 struct isoclines : curves {
     int color;
 
     isoclines() {}
-    isoclines(int co, P4Polynom::term2 *_r2 = nullptr,
-              P4Polynom::term2 *_u1 = nullptr, P4Polynom::term2 *_u2 = nullptr,
-              P4Polynom::term2 *_v1 = nullptr, P4Polynom::term2 *_v2 = nullptr,
-              P4Polynom::term3 *_c = nullptr,
-              P4Orbits::orbits_points *_points = nullptr)
-        : curves(_r2, _u1, _u2, _v1, _v2, _c, _points), color{co}
-    {
-    }
+    isoclines(int co) : curves{}, color{co} {}
 };
 } // namespace P4Curves
 

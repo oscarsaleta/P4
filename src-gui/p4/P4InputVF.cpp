@@ -2580,8 +2580,9 @@ bool P4InputVF::evaluateArbitraryCurve()
 // -----------------------------------------------------------------------
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareArbitraryCurve(P4Polynom::term2 *f, double y1, double y2,
-                                      int precision, int numpoints)
+bool P4InputVF::prepareArbitraryCurve(const std::vector<P4Polynom::term2> &f,
+                                      double y1, double y2, int precision,
+                                      int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
@@ -2608,11 +2609,11 @@ bool P4InputVF::prepareArbitraryCurve(P4Polynom::term2 *f, double y1, double y2,
         out << "v := y:\n";
         out << "user_f := ";
 
-        int i;
+        int i{0};
         char buf[100];
-        for (i = 0; f != nullptr; i++) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
-            f = f->next_term2;
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "x", "y");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2644,7 +2645,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.arbitraryCurves_.back().c;
+        auto const &f = gVFResults.arbitraryCurves_.back().c;
 
         auto mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
@@ -2669,11 +2670,11 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
         out << "v := sin(y):\n";
         out << "user_f := ";
 
-        int i;
+        int i{0};
         char buf[100];
-        for (i = 0; f != nullptr; i++) {
-            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
-            f = f->next_term3;
+        for (auto const &it : f) {
+            out << printterm3(buf, &it, (i == 0) ? true : false, "x", "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2708,7 +2709,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints)
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.arbitraryCurves_.back().r2;
+        auto const &f = gVFResults.arbitraryCurves_.back().r2;
 
         auto mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
@@ -2733,11 +2734,11 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints)
         out << "v := x*sin(y):\n";
         out << "user_f := ";
 
-        int i;
+        int i{0};
         char buf[100];
-        for (i = 0; f != nullptr; i++) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
-            f = f->next_term2;
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2847,8 +2848,9 @@ bool P4InputVF::evaluateIsoclines()
 //
 // Prepare files in case of calculating isoclines in plane/U1/U2 charts.
 // This is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareIsoclines(P4Polynom::term2 *f, double y1, double y2,
-                                 int precision, int numpoints)
+bool P4InputVF::prepareIsoclines(const std::vector<P4Polynom::term2> &f,
+                                 double y1, double y2, int precision,
+                                 int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
@@ -2875,11 +2877,11 @@ bool P4InputVF::prepareIsoclines(P4Polynom::term2 *f, double y1, double y2,
         out << "v := y:\n";
         out << "user_f := ";
 
-        int i;
+        int i{0};
         char buf[100];
-        for (i = 0; f != nullptr; i++) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
-            f = f->next_term2;
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "x", "y");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2911,7 +2913,7 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto f = gVFResults.vf_[index]->isocline_vector_.back().c;
+        auto const &f = gVFResults.vf_[index]->isocline_vector_.back().c;
 
         auto ba_mainmaple = maplepathformat(getP4MaplePath()
                                                 .append(QDir::separator())
@@ -2934,11 +2936,11 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
         out << "v := sin(y):\n";
         out << "user_f := ";
 
-        int i;
+        int i{0};
         char buf[100];
-        for (i = 0; f != nullptr; i++) {
-            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
-            f = f->next_term3;
+        for (auto const &it : f) {
+            out << printterm3(buf, &it, (i == 0) ? true : false, "x", "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -2973,7 +2975,7 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto f = gVFResults.vf_[index]->isocline_vector_.back().r2;
+        auto const &f = gVFResults.vf_[index]->isocline_vector_.back().r2;
 
         auto ba_mainmaple = maplepathformat(getP4MaplePath()
                                                 .append(QDir::separator())
@@ -2996,11 +2998,11 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
         out << "v := x*sin(y):\n";
         out << "user_f := ";
 
-        int i;
+        int i{0};
         char buf[100];
-        for (i = 0; f != nullptr; i++) {
-            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
-            f = f->next_term2;
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "U", "V");
+            i++;
         }
         if (i == 0)
             out << "0:\n";
@@ -3626,13 +3628,11 @@ void P4InputVF::resampleSeparatingCurve(int i)
     if (gVFResults.separatingCurves_.empty())
         return;
 
-    auto sep = gVFResults.separatingCurves_[i].points;
-    while (sep != nullptr) {
-        if (isCurvePointDrawn(i, sep->pcoord))
-            sep->color = P4ColourSettings::colour_separating_curve;
+    for (auto &sep : gVFResults.separatingCurves_[i].points) {
+        if (isCurvePointDrawn(i, sep.pcoord))
+            sep.color = P4ColourSettings::colour_separating_curve;
         else
-            sep->color = P4ColourSettings::colour_shaded_curve;
-        sep = sep->nextpt;
+            sep.color = P4ColourSettings::colour_shaded_curve;
     }
 }
 
@@ -3669,18 +3669,12 @@ void P4InputVF::resampleIsoclines(int i)
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
-    for (auto isoc : gVFResults.vf_[i]->isocline_vector_) {
-        auto &pts = isoc.points;
-        while (pts != nullptr) {
-            if (getVFIndex_sphere(pts->pcoord) != i) {
-                auto sepx = pts;
-                pts = pts->nextpt;
-                delete sepx;
-                if (pts != nullptr)
-                    pts->dashes = 0;
-            } else {
-                pts = pts->nextpt;
-            }
+    for (auto &isoc : gVFResults.vf_[i]->isocline_vector_) {
+        for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
+             ++it) {
+            it->dashes = 0;
+            if (getVFIndex_sphere(it->pcoord) != i)
+                isoc.points.erase(it);
         }
     }
 }

@@ -238,18 +238,18 @@ static bool readTaskResults(int task, int index)
     return value;
 }
 
-void draw_isoclines(P4Sphere *spherewnd, P4Orbits::orbits_points *isoc,
-                    int color, int dashes)
+void draw_isoclines(P4Sphere *spherewnd,
+                    const std::vector<P4Orbits::orbits_points> &isoc, int color,
+                    int dashes)
 {
     double pcoord[3];
 
-    while (isoc != nullptr) {
-        if (isoc->dashes && dashes)
-            (*plot_l)(spherewnd, pcoord, isoc->pcoord, color);
+    for (auto const &it : isoc) {
+        if (it.dashes && dashes)
+            (*plot_l)(spherewnd, pcoord, it.pcoord, color);
         else
-            (*plot_p)(spherewnd, isoc->pcoord, color);
-        copy_x_into_y(isoc->pcoord, pcoord);
-        isoc = isoc->nextpt;
+            (*plot_p)(spherewnd, it.pcoord, color);
+        copy_x_into_y(it.pcoord, pcoord);
     }
 }
 
@@ -258,16 +258,8 @@ static void insert_isocline_vector_point(double x0, double y0, double z0,
 {
     double pcoord[3]{x0, y0, z0};
 
-    if (gVFResults.vf_[index]->isocline_vector_.back().points != nullptr) {
-        gLastIsoclinePoint->nextpt = new P4Orbits::orbits_points{
-            pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0};
-        gLastIsoclinePoint = gLastIsoclinePoint->nextpt;
-    } else {
-        gLastIsoclinePoint = new P4Orbits::orbits_points{
-            pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0};
-        gVFResults.vf_[index]->isocline_vector_.back().points =
-            gLastIsoclinePoint;
-    }
+    gVFResults.vf_[index]->isocline_vector_.back().points.emplace_back(
+        pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0);
 }
 
 static bool read_isoclines(void (*chart)(double, double, double *), int index)

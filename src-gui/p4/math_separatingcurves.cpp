@@ -26,18 +26,15 @@
 #include "math_charts.hpp"
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes,
-                               P4Orbits::orbits_points **lastpt)
+                               std::vector<P4Orbits::orbits_points> &lastpt)
 {
     double pcoord[] = {x0, y0, z0};
-    while (*lastpt != nullptr) {
-        (*lastpt) = (*lastpt)->nextpt;
-    }
-    *lastpt = new P4Orbits::orbits_points{
-        pcoord, P4ColourSettings::colour_separating_curve, dashes, 0, 0,
-        nullptr};
+    lastpt.emplace_back(pcoord, P4ColourSettings::colour_separating_curve,
+                        dashes);
 }
 
-bool readSeparatingCurvePoints(FILE *fp, P4Orbits::orbits_points **psep,
+bool readSeparatingCurvePoints(FILE *fp,
+                               std::vector<P4Orbits::orbits_points> &psep,
                                int index)
 {
     int k;

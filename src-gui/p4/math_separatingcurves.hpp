@@ -28,5 +28,5 @@ struct orbits_points;
 }
 
 bool readSeparatingCurvePoints(FILE *fp,
-                               P4Orbits::orbits_points **psep,
+                               std::vector<P4Orbits::orbits_points> &psep,
                                int index);

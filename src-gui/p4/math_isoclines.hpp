@@ -46,7 +46,7 @@ bool evalIsoclinesStart(P4Sphere *sp, int dashes, int precision, int points);
 bool evalIsoclinesContinue(int precision, int points);
 bool evalIsoclinesFinish();
 bool runTaskIsoclines(int task, int precision, int points, unsigned int index);
-void draw_isoclines(P4Sphere *spherewnd, P4Orbits::orbits_points *isoc,
+void draw_isoclines(P4Sphere *spherewnd, const std::vector<P4Orbits::orbits_points> &isoc,
                     int color, int dashes);
 void deleteLastIsocline(P4Sphere *sp);
 
