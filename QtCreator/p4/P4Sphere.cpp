@@ -1485,29 +1485,29 @@ void P4Sphere::plotSeparatingCurves()
     if (gVFResults.separatingCurves_.empty())
         return;
 
-    for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
+    for (auto const &curve : gVFResults.separatingCurves_) {
         dashes = true;
-        auto sep = gVFResults.separatingCurves_[k].points;
-        while (sep != nullptr) {
-            if (sep->color == P4ColourSettings::colour_separating_curve) {
-                if (sep->dashes && dashes)
-                    (*plot_l)(this, pcoord, sep->pcoord, sep->color);
+        auto &sep = curve.points;
+        for (auto it = std::begin(sep); it != std::end(sep); ++it) {
+            if (it->color == P4ColourSettings::colour_separating_curve) {
+                if (it->dashes && dashes)
+                    (*plot_l)(this, pcoord, it->pcoord, it->color);
                 else {
-                    if (sep->nextpt == nullptr)
-                        (*plot_p)(this, sep->pcoord, sep->color);
-                    else if (!(sep->nextpt->dashes &&
-                               sep->nextpt->color ==
+                    auto nextpt = it + 1;
+                    if (nextpt == std::end(sep))
+                        (*plot_p)(this, it->pcoord, it->color);
+                    else if (!(nextpt->dashes &&
+                               nextpt->color ==
                                    P4ColourSettings::colour_separating_curve &&
                                dashes))
-                        (*plot_p)(this, sep->pcoord, sep->color);
+                        (*plot_p)(this, it->pcoord, it->color);
                     // draw nothing when the next point is a dash
                 }
                 dashes = true;
             } else {
                 dashes = false;
             }
-            copy_x_into_y(sep->pcoord, pcoord);
-            sep = sep->nextpt;
+            copy_x_into_y(it->pcoord, pcoord);
         }
     }
 }
@@ -2315,28 +2315,27 @@ void P4Sphere::printSeparatingCurves()
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;
-            auto sep = gVFResults.separatingCurves_[i].points;
-            while (sep != nullptr) {
-                if (sep->color == P4ColourSettings::colour_separating_curve) {
-                    if (sep->dashes && dashes)
-                        (*plot_l)(this, pcoord, sep->pcoord, sep->color);
+            auto &sep = gVFResults.separatingCurves_[i].points;
+            for (auto it = std::begin(sep); it != std::end(sep); ++it) {
+                if (it->color == P4ColourSettings::colour_separating_curve) {
+                    if (it->dashes && dashes)
+                        (*plot_l)(this, pcoord, it->pcoord, it->color);
                     else {
-                        if (sep->nextpt == nullptr)
-                            (*plot_p)(this, sep->pcoord, sep->color);
-                        else if (!sep->nextpt->dashes ||
-                                 sep->nextpt->color !=
-                                     P4ColourSettings::
-                                         colour_separating_curve ||
+                        auto nextpt = it + 1;
+                        if (nextpt == std::end(sep))
+                            (*plot_p)(this, it->pcoord, it->color);
+                        else if (!nextpt->dashes ||
+                                 nextpt->color != P4ColourSettings::
+                                                      colour_separating_curve ||
                                  !dashes)
-                            (*plot_p)(this, sep->pcoord, sep->color);
+                            (*plot_p)(this, it->pcoord, it->color);
                         // draw nothing when the next point is a dash
                     }
                     dashes = true;
                 } else {
                     dashes = false;
                 }
-                copy_x_into_y(sep->pcoord, pcoord);
-                sep = sep->nextpt;
+                copy_x_into_y(it->pcoord, pcoord);
             }
         }
     }

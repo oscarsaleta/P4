@@ -486,8 +486,8 @@ QString describeRegion(double *pcoord)
     double v;
 
     s = "";
-    for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
-        v = eval_curve(gVFResults.separatingCurves_[k], pcoord);
+    for (auto c : gVFResults.separatingCurves_) {
+        v = eval_curve(c, pcoord);
         if (fabs(v) <= 1.e-8)
             s += "0";
         else if (v < 0)

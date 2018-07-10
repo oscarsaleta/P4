@@ -36,7 +36,7 @@
 //          eval_term1
 // -----------------------------------------------------------------------
 // Calculates p(t) for a polynomial p and a value t.
-double eval_term1(P4Polynom::term1 *p, const double t)
+double eval_term1(const P4Polynom::term1 *p, const double t)
 {
     double s{0};
     while (p != nullptr) {
@@ -50,11 +50,27 @@ double eval_term1(P4Polynom::term1 *p, const double t)
 }
 
 // -----------------------------------------------------------------------
+//          eval_term1 (vector version)
+// -----------------------------------------------------------------------
+// Calculates p(t) for a polynomial p and a value t.
+double eval_term1(const std::vector<P4Polynom::term1> &p, const double t)
+{
+    double s{0};
+    for (auto const &it : p) {
+        if (it.exp != 0)
+            s += (it.coeff) * pow(t, static_cast<double>(it.exp));
+        else
+            s += it.coeff;
+    }
+    return s;
+}
+
+// -----------------------------------------------------------------------
 //          eval_term2
 // -----------------------------------------------------------------------
 // Calculates f(x,y) for a polynomial f and values x and y.
 // value refers to an array containing x and y: value[0]=x, value[1]=y
-double eval_term2(P4Polynom::term2 *f, const double *value)
+double eval_term2(const P4Polynom::term2 *f, const double *value)
 {
     double s{0};
     while (f != nullptr) {
@@ -75,12 +91,35 @@ double eval_term2(P4Polynom::term2 *f, const double *value)
 }
 
 // -----------------------------------------------------------------------
+//          eval_term2 (vector version)
+// -----------------------------------------------------------------------
+// Calculates f(x,y) for a polynomial f and values x and y.
+// value refers to an array containing x and y: value[0]=x, value[1]=y
+double eval_term2(const std::vector<P4Polynom::term2> &f, const double *value)
+{
+    double s{0};
+    for (auto const &it : f) {
+        if (it.exp_x != 0 && it.exp_y != 0)
+            s += it.coeff * pow(value[0], static_cast<double>(it.exp_x)) *
+                 pow(value[1], static_cast<double>(it.exp_y));
+        else if (it.exp_x != 0)
+            s += it.coeff * pow(value[0], static_cast<double>(it.exp_x));
+        else if (it.exp_y != 0)
+            s += it.coeff * pow(value[1], static_cast<double>(it.exp_y));
+        else
+            s += it.coeff;
+    }
+
+    return s;
+}
+
+// -----------------------------------------------------------------------
 //          eval_term3
 // -----------------------------------------------------------------------
 // Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
 // of r and theta.
 // value refers to an array containing r and theta: value[0]=r, value[1]=theta
-double eval_term3(P4Polynom::term3 *F, const double *value)
+double eval_term3(const P4Polynom::term3 *F, const double *value)
 {
     double s{0};
     double t;
@@ -99,6 +138,33 @@ double eval_term3(P4Polynom::term3 *F, const double *value)
         s += t * F->coeff;
 
         F = F->next_term3;
+    }
+    return s;
+}
+
+// -----------------------------------------------------------------------
+//          eval_term3 (vector version)
+// -----------------------------------------------------------------------
+// Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
+// of r and theta.
+// value refers to an array containing r and theta: value[0]=r, value[1]=theta
+double eval_term3(const std::vector<P4Polynom::term3> &F, const double *value)
+{
+    double s{0};
+    double t;
+    double Co{cos(value[1])};
+    double Si{sin(value[1])};
+
+    for (auto const &it : F) {
+        if (it.exp_r != 0)
+            t = pow(value[0], static_cast<double>(it.exp_r));
+        else
+            t = 1.0;
+        if (it.exp_Co != 0)
+            t *= pow(Co, static_cast<double>(it.exp_Co));
+        if (it.exp_Si != 0)
+            t *= pow(Si, static_cast<double>(it.exp_Si));
+        s += t * it.coeff;
     }
     return s;
 }
@@ -477,6 +543,23 @@ bool readTerm1(FILE *fp, P4Polynom::term1 *p, int N)
 }
 
 // -----------------------------------------------------------------------
+//          readTerm1 (vector version)
+// -----------------------------------------------------------------------
+bool readTerm1(FILE *fp, std::vector<P4Polynom::term1> &p, int N)
+{
+    int exp;
+    double coeff;
+    p.clear();
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %lf", &exp, &coeff) != 2 || exp < 0)
+            return false;
+        p.emplace_back(exp, coeff);
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
 //          readTerm2
 // -----------------------------------------------------------------------
 bool readTerm2(FILE *fp, P4Polynom::term2 *p, int N)
@@ -500,6 +583,22 @@ bool readTerm2(FILE *fp, P4Polynom::term2 *p, int N)
             q->next_term2 = nullptr;
             return false;
         }
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm2 (vector version)
+// -----------------------------------------------------------------------
+bool readTerm2(FILE *fp, std::vector<P4Polynom::term2> &p, int N)
+{
+    int xx, xy;
+    double coeff;
+
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %d %lf", &xx, &xy, &coeff) != 3 || xx < 0 || xy < 0)
+            return false;
+        p.emplace_back(xx, xy, coeff);
     }
     return true;
 }
@@ -529,6 +628,24 @@ bool readTerm3(FILE *fp, P4Polynom::term3 *p, int N)
             q->next_term3 = nullptr;
             return false;
         }
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm3 (vector version)
+// -----------------------------------------------------------------------
+bool readTerm3(FILE *fp, std::vector<P4Polynom::term3> &p, int N)
+{
+    int xr, xc, xs;
+    double coeff;
+
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %d %d %lf", &xr, &xc, &xs, &coeff) != 4 || xr < 0 ||
+            xc < 0 || xs < 0)
+            return false;
+        p.emplace_back(xr, xc, xs, coeff);
     }
 
     return true;

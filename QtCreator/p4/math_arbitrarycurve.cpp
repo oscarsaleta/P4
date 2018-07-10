@@ -201,34 +201,26 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void drawArbitraryCurve(P4Sphere *spherewnd, P4Orbits::orbits_points *sep,
+void drawArbitraryCurve(P4Sphere *spherewnd,
+                        const std::vector<P4Orbits::orbits_points> &sep,
                         int color, int dashes)
 {
     double pcoord[3];
 
-    while (sep != nullptr) {
-        if (sep->dashes && dashes)
-            (*plot_l)(spherewnd, pcoord, sep->pcoord, color);
+    for (auto const &it : sep) {
+        if (it.dashes && dashes)
+            (*plot_l)(spherewnd, pcoord, it.pcoord, color);
         else
-            (*plot_p)(spherewnd, sep->pcoord, color);
-        copy_x_into_y(sep->pcoord, pcoord);
-        sep = sep->nextpt;
+            (*plot_p)(spherewnd, it.pcoord, color);
+        copy_x_into_y(it.pcoord, pcoord);
     }
 }
 
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
     double pcoord[3]{x0, y0, z0};
-
-    if (gVFResults.arbitraryCurves_.back().points != nullptr) {
-        gLastArbitraryCurvePoint->nextpt = new P4Orbits::orbits_points{
-            pcoord, P4ColourSettings::colour_arbitrary_curve, dashes, 0, 0};
-        gLastArbitraryCurvePoint = gLastArbitraryCurvePoint->nextpt;
-    } else {
-        gLastArbitraryCurvePoint = new P4Orbits::orbits_points{
-            pcoord, P4ColourSettings::colour_arbitrary_curve, dashes, 0, 0};
-        gVFResults.arbitraryCurves_.back().points = gLastArbitraryCurvePoint;
-    }
+    gVFResults.arbitraryCurves_.back().points.emplace_back(
+        P4ColourSettings::colour_arbitrary_curve, pcoord, dashes, 0, 0);
 }
 
 static bool read_curve(void (*chart)(double, double, double *))

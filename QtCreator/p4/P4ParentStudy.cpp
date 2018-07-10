@@ -236,8 +236,8 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
                 fclose(fpcurv);
                 return false;
             }
-            if (!readSeparatingCurvePoints(fpcurv,
-                                           &(separatingCurves_[j].points), j)) {
+            if (!readSeparatingCurvePoints(fpcurv, separatingCurves_[j].points,
+                                           j)) {
                 separatingCurves_.clear();
                 fclose(fpcurv);
                 return false;
