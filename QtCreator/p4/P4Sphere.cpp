@@ -1487,28 +1487,27 @@ void P4Sphere::plotSeparatingCurves()
 
     for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
         dashes = true;
-
-        auto &sep = gVFResults.separatingCurves_[k].points;
-        for (auto it = std::begin(sep); it != std::end(sep); ++it) {
-            if (it->color == P4ColourSettings::colour_separating_curve) {
-                if (it->dashes && dashes)
-                    (*plot_l)(this, pcoord, it->pcoord, it->color);
+        auto sep = gVFResults.separatingCurves_[k].points;
+        while (sep != nullptr) {
+            if (sep->color == P4ColourSettings::colour_separating_curve) {
+                if (sep->dashes && dashes)
+                    (*plot_l)(this, pcoord, sep->pcoord, sep->color);
                 else {
-                    auto nextpt = it + 1;
-                    if (nextpt == std::end(sep))
-                        (*plot_p)(this, it->pcoord, it->color);
-                    else if (!(nextpt->dashes &&
-                               nextpt->color ==
+                    if (sep->nextpt == nullptr)
+                        (*plot_p)(this, sep->pcoord, sep->color);
+                    else if (!(sep->nextpt->dashes &&
+                               sep->nextpt->color ==
                                    P4ColourSettings::colour_separating_curve &&
                                dashes))
-                        (*plot_p)(this, it->pcoord, it->color);
+                        (*plot_p)(this, sep->pcoord, sep->color);
                     // draw nothing when the next point is a dash
                 }
                 dashes = true;
             } else {
                 dashes = false;
             }
-            copy_x_into_y(it->pcoord, pcoord);
+            copy_x_into_y(sep->pcoord, pcoord);
+            sep = sep->nextpt;
         }
     }
 }
@@ -1891,11 +1890,11 @@ void P4Sphere::printPoint(const P4Singularities::saddle *p)
     // qDebug() << "print point saddle";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.position) {
+    switch (p->position) {
     case P4Singularities::position_virtual:
         print_virtualsaddle(coWinX(pos[0]), coWinY(pos[1]));
         break;
@@ -1917,13 +1916,13 @@ void P4Sphere::printPoint(const P4Singularities::node *p)
     // qDebug() << "print point node";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    if (p.stable == -1) {
-        switch (p.position) {
+    if (p->stable == -1) {
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualstablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -1939,7 +1938,7 @@ void P4Sphere::printPoint(const P4Singularities::node *p)
             break;
         }
     } else {
-        switch (p.position) {
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualunstablenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -1962,14 +1961,14 @@ void P4Sphere::printPoint(const P4Singularities::weak_focus *p)
     // qDebug() << "print point weak focus";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.type) {
-    case SINGTYPE_STABLE:
-        switch (p.position) {
+    switch (p->type) {
+    case P4SingularityStability::stable:
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -1985,8 +1984,8 @@ void P4Sphere::printPoint(const P4Singularities::weak_focus *p)
             break;
         }
         break;
-    case SINGTYPE_UNSTABLE:
-        switch (p.position) {
+    case P4SingularityStability::unstable:
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualunstableweakfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2002,8 +2001,8 @@ void P4Sphere::printPoint(const P4Singularities::weak_focus *p)
             break;
         }
         break;
-    case SINGTYPE_CENTER:
-        switch (p.position) {
+    case P4SingularityStability::center:
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualcenter(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2020,7 +2019,7 @@ void P4Sphere::printPoint(const P4Singularities::weak_focus *p)
         }
         break;
     default:
-        switch (p.position) {
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualweakfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2044,13 +2043,13 @@ void P4Sphere::printPoint(const P4Singularities::strong_focus *p)
     // qDebug() << "print point strong focus";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    if (p.stable == -1) {
-        switch (p.position) {
+    if (p->stable == -1) {
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2066,7 +2065,7 @@ void P4Sphere::printPoint(const P4Singularities::strong_focus *p)
             break;
         }
     } else {
-        switch (p.position) {
+        switch (p->position) {
         case P4Singularities::position_virtual:
             print_virtualunstablestrongfocus(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2089,12 +2088,12 @@ void P4Sphere::printPoint(const P4Singularities::degenerate *p)
     // qDebug() << "print point degenerate";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.position) {
+    switch (p->position) {
     case P4Singularities::position_virtual:
         print_virtualdegen(coWinX(pos[0]), coWinY(pos[1]));
         break;
@@ -2116,12 +2115,12 @@ void P4Sphere::printPoint(const P4Singularities::semi_elementary *p)
     // qDebug() << "print point semi elementary";
     double pos[2];
 
-    getChartPos(p.chart, p.x0, p.y0, pos);
+    getChartPos(p->chart, p->x0, p->y0, pos);
 
     if (pos[0] < x0_ || pos[0] > x1_ || pos[1] < y0_ || pos[1] > y1_)
         return;
 
-    switch (p.type) {
+    switch (p->type) {
     case 1:
         print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
         break;
@@ -2148,9 +2147,9 @@ void P4Sphere::printPoint(const P4Singularities::semi_elementary *p)
         break;
     }
 
-    switch (p.position) {
+    switch (p->position) {
     case P4Singularities::position_virtual:
-        switch (p.type) {
+        switch (p->type) {
         case 1:
             print_virtualsesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2185,7 +2184,7 @@ void P4Sphere::printPoint(const P4Singularities::semi_elementary *p)
         print_coinciding(coWinX(pos[0]), coWinY(pos[1]));
         break;
     default:
-        switch (p.type) {
+        switch (p->type) {
         case 1:
             print_sesaddlenode(coWinX(pos[0]), coWinY(pos[1]));
             break;
@@ -2221,17 +2220,17 @@ void P4Sphere::printPoints()
     print_comment("Printing symbols at all singular points:");
 
     for (auto const &vf : gVFResults.vf_) {
-        for (auto const &sp : vf->saddlePoints_)
-            printPoint(sp);
-        for (auto const &np : vf->nodePoints_)
+        for (auto s = vf->firstSaddlePoint_; s != nullptr; s = s->next_saddle)
+            printPoint(s);
+        for (auto np = vf->firstNodePoint_; np != nullptr; np = np->next_node)
             printPoint(np);
-        for (auto const &wfp : vf->wfPoints_)
+        for (auto wfp = vf->firstWfPoint_; wfp != nullptr; wfp = wfp->next_wf)
             printPoint(wfp);
-        for (auto const &sfp : vf->sfPoints_)
+        for (auto sfp = vf->firstSfPoint_; sfp != nullptr; sfp = sfp->next_sf)
             printPoint(sfp);
-        for (auto const &sep : vf->sePoints_)
+        for (auto sep = vf->firstSePoint_; sep != nullptr; sep = sep->next_se)
             printPoint(sep);
-        for (auto const &dp : vf->dePoints_)
+        for (auto dp = vf->firstDePoint_; dp != nullptr; dp = dp->next_de)
             printPoint(dp);
     }
 }
@@ -2239,27 +2238,27 @@ void P4Sphere::printPoints()
 void P4Sphere::printPointSeparatrices(const P4Singularities::semi_elementary *p)
 {
     // qDebug() << "print point separatrices (semi elementary)";
-    for (auto const &it : p.separatrices) {
+    for (auto s = p->separatrices; s != nullptr; s = s->next_sep) {
         print_comment("Next separatrix of degenerate point:");
-        draw_sep(this, it.sep_points);
+        draw_sep(this, s->first_sep_point);
     }
 }
 
 void P4Sphere::printPointSeparatrices(const P4Singularities::saddle *p)
 {
     // qDebug() << "print point separatrices (saddle)";
-    for (auto const &it : p.separatrices) {
+    for (auto s = p->separatrices; s != nullptr; s = s->next_sep) {
         print_comment("Next separatrix of saddle point:");
-        draw_sep(this, it.sep_points);
+        draw_sep(this, s->first_sep_point);
     }
 }
 
 void P4Sphere::printPointSeparatrices(const P4Singularities::degenerate *p)
 {
     // qDebug() << "print point separatrices (degenerate)";
-    for (auto const &it : p.blow_up) {
+    for (auto b = p->blow_up; b != nullptr; b = b->next_blow_up_point) {
         print_comment("Next separatrix of degenerate point:");
-        draw_sep(this, it.sep_points);
+        draw_sep(this, b->first_sep_point);
     }
 }
 
@@ -2267,16 +2266,16 @@ void P4Sphere::printSeparatrices()
 {
     // qDebug() << "print separatrices";
     for (auto const &vf : gVFResults.vf_) {
-        for (auto const &sp : vf->saddlePoints_) {
+        for (auto s = vf->firstSaddlePoint_; s != nullptr; s = s->next_saddle) {
             print_comment("Printing separatrice for saddle singularity:");
-            printPointSeparatrices(sp);
+            printPointSeparatrices(s);
         }
-        for (auto const &sep : vf->sePoints_) {
+        for (auto sep = vf->firstSePoint_; sep != nullptr; sep = sep->next_se) {
             print_comment(
                 "Printing separatrices for semi-hyperbolic singularity:");
             printPointSeparatrices(sep);
         }
-        for (auto const &dp : vf->dePoints_) {
+        for (auto dp = vf->firstDePoint_; dp != nullptr; dp = dp->next_de) {
             print_comment("Printing separatrices for degenerate singularity:");
             printPointSeparatrices(dp);
         }
@@ -2288,7 +2287,7 @@ void P4Sphere::printGcf()
     // qDebug() << "print gcf";
     bool isagcf{false};
     for (auto const &vf : gVFResults.vf_) {
-        if (!vf->gcf_points_.empty()) {
+        if (vf->gcf_points_ != nullptr) {
             isagcf = true;
             break;
         }
@@ -2316,27 +2315,28 @@ void P4Sphere::printSeparatingCurves()
             comment.sprintf("Curve #%d:", i + 1);
             print_comment(comment);
             dashes = true;
-            auto &sep = gVFResults.separatingCurves_[i].points;
-            for (auto it = std::begin(sep); it != std::end(sep); ++it) {
-                if (it->color == P4ColourSettings::colour_separating_curve) {
-                    if (it->dashes && dashes)
-                        (*plot_l)(this, pcoord, it->pcoord, it->color);
+            auto sep = gVFResults.separatingCurves_[i].points;
+            while (sep != nullptr) {
+                if (sep->color == P4ColourSettings::colour_separating_curve) {
+                    if (sep->dashes && dashes)
+                        (*plot_l)(this, pcoord, sep->pcoord, sep->color);
                     else {
-                        auto nextpt = it + 1;
-                        if (nextpt == std::end(sep))
-                            (*plot_p)(this, it->pcoord, it->color);
-                        else if (!nextpt->dashes ||
-                                 nextpt->color != P4ColourSettings::
-                                                      colour_separating_curve ||
+                        if (sep->nextpt == nullptr)
+                            (*plot_p)(this, sep->pcoord, sep->color);
+                        else if (!sep->nextpt->dashes ||
+                                 sep->nextpt->color !=
+                                     P4ColourSettings::
+                                         colour_separating_curve ||
                                  !dashes)
-                            (*plot_p)(this, it->pcoord, it->color);
+                            (*plot_p)(this, sep->pcoord, sep->color);
                         // draw nothing when the next point is a dash
                     }
                     dashes = true;
                 } else {
                     dashes = false;
                 }
-                copy_x_into_y(it->pcoord, pcoord);
+                copy_x_into_y(sep->pcoord, pcoord);
+                sep = sep->nextpt;
             }
         }
     }
@@ -2443,10 +2443,10 @@ void P4Sphere::printOrbits()
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
-    for (auto const &orbit : gVFResults.orbits_) {
+    for (auto o = gVFResults.firstOrbit_; o != nullptr; o = o->next) {
         s.sprintf("Starting orbit %d", i++);
         print_comment(s);
-        drawOrbit(this, orbit.pcoord, orbit.points, orbit.color);
+        drawOrbit(this, o->pcoord, o->firstpt, o->color);
     }
 }
 
@@ -2456,10 +2456,10 @@ void P4Sphere::printLimitCycles()
     // inspired by DrawOrbits, except that we put comments between
     QString s;
     int i{1};
-    for (auto const &orbit : gVFResults.limCycles_) {
+    for (auto o = gVFResults.firstLimCycle_; o != nullptr; o = o->next) {
         s.sprintf("Starting limit cycle %d", i++);
         print_comment(s);
-        drawOrbit(this, orbit.pcoord, orbit.points, orbit.color);
+        drawOrbit(this, o->pcoord, o->firstpt, o->color);
     }
 }
 
