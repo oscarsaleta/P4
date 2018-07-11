@@ -1106,7 +1106,7 @@ bool P4VFStudy::readTransformations(FILE *fp, P4Blowup::transformations *trans,
     }
 
     for (int i = 2; i <= n; i++) {
-        trans = new P4Blowup::transformations;
+        trans->next_trans = new P4Blowup::transformations;
         trans = trans->next_trans;
         if (fscanf(fp, "%lf %lf %d %d %d %d %d %d %d", &(trans->x0),
                    &(trans->y0), &(trans->c1), &(trans->c2), &(trans->d1),
