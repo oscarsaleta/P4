@@ -581,6 +581,7 @@ void P4PlotWnd::customEvent(QEvent *_e)
     } break;
     case TYPE_SEP_EVENT: {
         int *oet{static_cast<int *>(e->data())};
+        qDebug() << "received event TYPE_SEP_EVENT with data" << *oet;
         sepWindow_->sepEvent(*oet);
         //        delete oet;
     } break;
