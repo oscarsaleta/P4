@@ -611,21 +611,24 @@ void start_plot_de_sep(P4Sphere *spherewnd, int vfindex)
 void cont_plot_de_sep(P4Sphere *spherewnd)
 {
     double p[3];
-    auto &de_sep = gVFResults.selectedDeSep_;
-    auto points = de_sep->last_sep_point;
+    auto points = gVFResults.selectedDeSep_->last_sep_point;
 
     copy_x_into_y(points->pcoord, p);
-    if (de_sep->integrating_in_local_chart) {
-        de_sep->last_sep_point->nextpt = integrate_blow_up(
-            spherewnd, p, de_sep, gVFResults.config_currentstep_,
-            de_sep->last_sep_point->dir, de_sep->last_sep_point->type, &points,
-            gVFResults.selectedDePoint_->chart);
+    if (gVFResults.selectedDeSep_->integrating_in_local_chart) {
+        gVFResults.selectedDeSep_->last_sep_point->nextpt =
+            integrate_blow_up(spherewnd, p, gVFResults.selectedDeSep_,
+                              gVFResults.config_currentstep_,
+                              gVFResults.selectedDeSep_->last_sep_point->dir,
+                              gVFResults.selectedDeSep_->last_sep_point->type,
+                              &points, gVFResults.selectedDePoint_->chart);
     } else {
-        de_sep->last_sep_point->nextpt = integrate_sep(
-            spherewnd, p, gVFResults.config_currentstep_,
-            de_sep->last_sep_point->dir, de_sep->last_sep_point->type,
-            gVFResults.config_intpoints_, &points);
+        gVFResults.selectedDeSep_->last_sep_point->nextpt =
+            integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
+                          gVFResults.selectedDeSep_->last_sep_point->dir,
+                          gVFResults.selectedDeSep_->last_sep_point->type,
+                          gVFResults.config_intpoints_, &points);
     }
+    gVFResults.selectedDeSep_->last_sep_point = points;
 }
 
 // ---------------------------------------------------------------------------
