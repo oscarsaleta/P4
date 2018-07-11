@@ -20,6 +20,7 @@
 #include "P4SepDlg.hpp"
 
 #include <QBoxLayout>
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -222,6 +223,7 @@ void P4SepDlg::reset()
 
 void P4SepDlg::sepEvent(int i)
 {
+    qDebug() << "Acting on separatrice event " << i;
     switch (i) {
     case -1:
         setInitialPoint();
