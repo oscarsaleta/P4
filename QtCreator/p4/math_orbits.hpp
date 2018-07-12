@@ -23,7 +23,7 @@
 
 class P4Sphere;
 
-namespace p4orbits
+namespace P4Orbits
 {
 struct orbits_points;
 }
@@ -40,11 +40,13 @@ void integrate_lyapunov_orbit(double p0, double p1, double p2, double *pcoord,
 
 void integrateOrbit(P4Sphere *, int);
 
-std::vector<p4orbits::orbits_points> integrate_orbit(P4Sphere *, double *,
-                                                     double, int, int, int);
+P4Orbits::orbits_points *integrate_orbit(P4Sphere *spherewnd, double pcoord[3],
+                                         double step, int dir, int color,
+                                         int points_to_int,
+                                         P4Orbits::orbits_points **orbit);
 
 void drawOrbit(P4Sphere *spherewnd, const double *pcoord,
-               const std::vector<p4orbits::orbits_points> &points, int color);
+               P4Orbits::orbits_points *points, int color);
 
 bool startOrbit(P4Sphere *sphere, double x, double y, bool R);
 

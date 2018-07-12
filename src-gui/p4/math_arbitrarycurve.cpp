@@ -31,11 +31,14 @@
 #include "math_p4.hpp"
 #include "plot_tools.hpp"
 
+// global variables
+P4Orbits::orbits_points *gLastArbitraryCurvePoint{nullptr};
+
 // static global variables
-static int sCurveTask = EVAL_CURVE_NONE;
-static P4Sphere *sCurveSphere = nullptr;
-static int sCurveDashes = 0;
-static bool sCurveError = false;
+static int sCurveTask{EVAL_CURVE_NONE};
+static P4Sphere *sCurveSphere{nullptr};
+static int sCurveDashes{0};
+static bool sCurveError{false};
 
 // static functions
 static void insert_curve_point(double x0, double y0, double z0, int dashes);
@@ -87,7 +90,8 @@ bool evalArbitraryCurveFinish() // return false in case an error occured
     if (sCurveTask != EVAL_CURVE_NONE) {
         sCurveSphere->prepareDrawing();
         drawArbitraryCurve(sCurveSphere,
-                           gVFResults.arbitraryCurves_.back().points, CCURV, 1);
+                           gVFResults.arbitraryCurves_.back().points,
+                           P4ColourSettings::colour_arbitrary_curve, 1);
         sCurveSphere->finishDrawing();
 
         sCurveTask = EVAL_CURVE_NONE;
@@ -198,7 +202,7 @@ static bool readTaskResults(int task)
 }
 
 void drawArbitraryCurve(P4Sphere *spherewnd,
-                        const std::vector<p4orbits::orbits_points> &sep,
+                        const std::vector<P4Orbits::orbits_points> &sep,
                         int color, int dashes)
 {
     double pcoord[3];
@@ -215,8 +219,8 @@ void drawArbitraryCurve(P4Sphere *spherewnd,
 static void insert_curve_point(double x0, double y0, double z0, int dashes)
 {
     double pcoord[3]{x0, y0, z0};
-    gVFResults.arbitraryCurves_.back().points.emplace_back(CCURV, pcoord,
-                                                           dashes, 0, 0);
+    gVFResults.arbitraryCurves_.back().points.emplace_back(
+        pcoord, P4ColourSettings::colour_arbitrary_curve, dashes, 0, 0);
 }
 
 static bool read_curve(void (*chart)(double, double, double *))

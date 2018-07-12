@@ -39,7 +39,7 @@ class QResizeEvent;
 class QStatusBar;
 class QTimer;
 
-namespace p4singularities
+namespace P4Singularities
 {
 struct saddle;
 struct node;
@@ -47,7 +47,7 @@ struct semi_elementary;
 struct weak_focus;
 struct strong_focus;
 struct degenerate;
-} // namespace p4singularities
+} // namespace P4Singularities
 
 struct P4POLYLINES;
 
@@ -60,7 +60,7 @@ class P4Sphere : public QWidget
   public:
     /* Constructor and destructor */
     P4Sphere(QStatusBar *bar, bool isZoom, double x1, double y1, double x2,
-                double y2, QWidget *parent);
+             double y2, QWidget *parent);
     ~P4Sphere();
 
     static QVector<P4Sphere *> sM_sphereList;
@@ -106,15 +106,15 @@ class P4Sphere : public QWidget
 
     //    void signalEvaluating();
     void signalChanged();
-    void plotPoint(const p4singularities::saddle &);
-    void plotPoint(const p4singularities::node &);
-    void plotPoint(const p4singularities::semi_elementary &);
-    void plotPoint(const p4singularities::weak_focus &);
-    void plotPoint(const p4singularities::strong_focus &);
-    void plotPoint(const p4singularities::degenerate &);
-    void plotPointSeparatrices(const p4singularities::semi_elementary &);
-    void plotPointSeparatrices(const p4singularities::saddle &);
-    void plotPointSeparatrices(const p4singularities::degenerate &);
+    void plotPoint(const P4Singularities::saddle *);
+    void plotPoint(const P4Singularities::node *);
+    void plotPoint(const P4Singularities::semi_elementary *);
+    void plotPoint(const P4Singularities::weak_focus *);
+    void plotPoint(const P4Singularities::strong_focus *);
+    void plotPoint(const P4Singularities::degenerate *);
+    void plotPointSeparatrices(const P4Singularities::semi_elementary *);
+    void plotPointSeparatrices(const P4Singularities::saddle *);
+    void plotPointSeparatrices(const P4Singularities::degenerate *);
     void plotPoints();
 
     void plotSeparatingCurves(); // FIXME:
@@ -128,15 +128,15 @@ class P4Sphere : public QWidget
 
     void markSelection(int x1, int y1, int x2, int y2, int selectiontype);
 
-    void printPoint(const p4singularities::saddle &);
-    void printPoint(const p4singularities::node &);
-    void printPoint(const p4singularities::semi_elementary &);
-    void printPoint(const p4singularities::weak_focus &);
-    void printPoint(const p4singularities::strong_focus &);
-    void printPoint(const p4singularities::degenerate &);
-    void printPointSeparatrices(const p4singularities::semi_elementary &p);
-    void printPointSeparatrices(const p4singularities::saddle &p);
-    void printPointSeparatrices(const p4singularities::degenerate &p);
+    void printPoint(const P4Singularities::saddle *);
+    void printPoint(const P4Singularities::node *);
+    void printPoint(const P4Singularities::semi_elementary *);
+    void printPoint(const P4Singularities::weak_focus *);
+    void printPoint(const P4Singularities::strong_focus *);
+    void printPoint(const P4Singularities::degenerate *);
+    void printPointSeparatrices(const P4Singularities::semi_elementary *p);
+    void printPointSeparatrices(const P4Singularities::saddle *p);
+    void printPointSeparatrices(const P4Singularities::degenerate *p);
     void printPoints();
     void printSeparatrices();
     void printGcf();

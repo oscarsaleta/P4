@@ -21,15 +21,15 @@
 
 #include <vector>
 
-#include "tables.hpp"
+#include "structures.hpp"
 
 class QString;
 
 struct positionitem {
     double pcoord[3];
-    p4singularities::genericsingularity s;
+    P4Singularities::genericsingularity s;
     positionitem() {}
-    positionitem(double *p, p4singularities::genericsingularity _s) : s{_s}
+    positionitem(double *p, P4Singularities::genericsingularity _s) : s{_s}
     {
         pcoord[0] = p[0];
         pcoord[1] = p[1];
@@ -59,27 +59,13 @@ bool isInsideRegion_sphere(const std::vector<int> &signs, const double *pcoord);
 bool isInsideRegion_sphere_epsilon(const std::vector<int> &signs,
                                    const double *pcoord, double epsilon);
 
-double eval_curve(const p4curves::curves &c, const double *pcoord);
+double eval_curve(const P4Curves::curves &c, const double *pcoord);
 
 QString describeRegion(double *pcoord);
 bool isInTheSameRegion(double *testpt, double *refpos);
 bool isARealSingularity(double *pcoord, unsigned int vfIndex);
 bool isARealSingularity(double x0, double y0, int chart, int vfIndex);
 
-void markSingularity(p4singularities::saddle &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(p4singularities::semi_elementary &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(p4singularities::node &s, std::vector<positionitem> &plist,
-                     int &numpos, int vfindex, bool plweights);
-void markSingularity(p4singularities::strong_focus &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(p4singularities::weak_focus &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights);
-void markSingularity(p4singularities::degenerate &s,
+void markSingularity(P4Singularities::genericsingularity *s,
                      std::vector<positionitem> &plist, int &numpos, int vfindex,
                      bool plweights);

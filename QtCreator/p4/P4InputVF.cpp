@@ -22,6 +22,7 @@
 #include <memory>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -226,6 +227,9 @@ void P4InputVF::reset(int n)
     }
 
     numVF_ = n;
+
+    qDebug() << "parvalue size" << parvalue_.size();
+    qDebug() << "numvf" << numVF_;
 }
 
 // -----------------------------------------------------------------------
@@ -293,7 +297,7 @@ bool P4InputVF::load()
             return false;
         }
 
-        if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+        if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -350,7 +354,8 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%d\n", &numParams_) != 1) {
+        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ < 0 ||
+            numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
@@ -397,7 +402,7 @@ bool P4InputVF::load()
             fclose(fp);
             return false;
         }
-        if (_typeofstudy == TYPEOFSTUDY_ONE) {
+        if (_typeofstudy == P4TypeOfStudy::typeofstudy_one) {
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
@@ -547,40 +552,38 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             } else {
-                bool value{(flag_numeric == 0) ? false : true};
-                numeric_.push_back(std::move(value));
-                precision_.push_back(std::move(aux));
-                epsilon_.emplace_back(scanbuf);
-                value = ((flag_testsep == 0) ? false : true);
-                testsep_.push_back(std::move(value));
+                numeric_[k] = ((flag_numeric == 0) ? false : true);
+                precision_[k] = aux;
+                epsilon_[k] = QString{scanbuf};
+                testsep_[k] = ((flag_testsep == 0) ? false : true);
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                taylorlevel_.push_back(std::move(aux));
+                taylorlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                numericlevel_.push_back(std::move(aux));
+                numericlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                maxlevel_.push_back(std::move(aux));
+                maxlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                weakness_.push_back(std::move(aux));
+                weakness_[k] = aux;
             }
 
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
@@ -588,19 +591,19 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            xdot_.emplace_back(scanbuf);
+            xdot_[k] = QString{scanbuf};
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            ydot_.emplace_back(scanbuf);
+            ydot_[k] = QString{scanbuf};
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            gcf_.emplace_back(scanbuf);
+            gcf_[k] = QString{scanbuf};
 
             if (xdot_[k] == "(null)")
                 xdot_[k] = "";
@@ -620,11 +623,14 @@ bool P4InputVF::load()
                 }
                 auxvec.emplace_back(scanbuf);
             }
-            parvalue_.push_back(auxvec);
-            /*for (i = numParams_; i < MAXNUMPARAMS; i++)
-                parvalue_[k].push_back(QString{});*/
+            parvalue_[k] = auxvec;
+            for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
+                parvalue_[k].push_back(QString{});
         }
     }
+    selected_.clear();
+    selected_.push_back(0);
+    numSelected_ = 1;
 
     fclose(fp);
 
@@ -654,7 +660,7 @@ bool P4InputVF::checkevaluated()
     if (dtvec.secsTo(dt) > 0 || dtvec.daysTo(dt) > 0)
         return false;
 
-    if (typeofstudy_ != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != P4TypeOfStudy::typeofstudy_inf) {
         auto fifin =
             std::make_unique<QFileInfo>(getbarefilename() + "_fin.tab");
         if (!fifin->exists())
@@ -664,7 +670,8 @@ bool P4InputVF::checkevaluated()
             return false;
     }
 
-    if (typeofstudy_ == TYPEOFSTUDY_INF || typeofstudy_ == TYPEOFSTUDY_ALL) {
+    if (typeofstudy_ == P4TypeOfStudy::typeofstudy_inf ||
+        typeofstudy_ == P4TypeOfStudy::typeofstudy_all) {
         auto fiinf =
             std::make_unique<QFileInfo>(getbarefilename() + "_inf.tab");
         if (!fiinf->exists())
@@ -697,7 +704,7 @@ bool P4InputVF::save()
 
         out << "P5\n";
         out << typeofstudy_ << "\n";
-        if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+        if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
             if (x0_.isEmpty())
                 out << "(null)\n";
             else
@@ -1029,7 +1036,7 @@ void P4InputVF::prepareMapleParameters(QTextStream &fp, bool forArbitraryCurves)
         fp << s;
     }
 
-    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
         fp << "user_p := 1:\n";
         fp << "user_q := 1:\n";
 
@@ -2320,22 +2327,20 @@ bool P4InputVF::evaluateGcf()
 //
 // Prepare files in case of calculating GCF in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
-                           double y2, int precision, int numpoints)
+bool P4InputVF::prepareGcf(P4Polynom::term2 *f, double y1, double y2,
+                           int precision, int numpoints)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto mainmaple =
-            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
-        auto ba_mainmaple = maplepathformat(mainmaple);
+        auto ba_mainmaple = maplepathformat(getP4MaplePath()
+                                                .append(QDir::separator())
+                                                .append(MAINMAPLEGCFFILE));
 
         auto user_file = getfilename_gcf();
         auto ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
-
-        QString user_platform{USERPLATFORM};
 
         out << "restart;\n";
         out << "read( \"" << ba_mainmaple << "\" );\n";
@@ -2350,11 +2355,11 @@ bool P4InputVF::prepareGcf(const std::vector<p4polynom::term2> &f, double y1,
         out << "v := y:\n";
         out << "user_f := ";
 
-        int i{0};
+        int i;
         char buf[100];
-        for (auto it : f) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
-            i++;
+        for (i = 0; f != nullptr; i++) {
+            out << printterm2(buf, f, (i == 0) ? true : false, "x", "y");
+            f = f->next_term2;
         }
         if (i == 0)
             out << "0:\n";
@@ -2385,17 +2390,15 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.vf_[index]->gcf_C_;
+        auto f = gVFResults.vf_[index]->gcf_C_;
 
-        auto mainmaple =
-            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
-        auto ba_mainmaple = maplepathformat(mainmaple);
+        auto ba_mainmaple = maplepathformat(getP4MaplePath()
+                                                .append(QDir::separator())
+                                                .append(MAINMAPLEGCFFILE));
 
         auto user_file = getfilename_gcf();
         removeFile(user_file);
         auto ba_user_file = maplepathformat(user_file);
-
-        QString user_platform{USERPLATFORM};
 
         out << "restart;\n";
         out << "read( \"" << ba_mainmaple << "\" );\n";
@@ -2410,12 +2413,11 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
         out << "v := sin(y):\n";
         out << "user_f := ";
 
-        int i{0};
+        int i;
         char buf[100];
-
-        for (auto it : f) {
-            out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
-            i++;
+        for (i = 0; f != nullptr; i++) {
+            out << printterm3(buf, f, (i == 0) ? true : false, "x", "U", "V");
+            f = f->next_term3;
         }
         if (i == 0)
             out << "0:\n";
@@ -2444,24 +2446,21 @@ bool P4InputVF::prepareGcf_LyapunovCyl(double theta1, double theta2,
 // same as preparegcf, except for the "u := " and "v := " assignments,
 // and the fact that one always refers to the same function gVFResults.gcf_,
 // and the fact that the x and y intervals are [0,1] and [0,2Pi] resp.
-
 bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
 {
     QFile file{QFile::encodeName(getmaplefilename())};
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.vf_[index]->gcf_;
+        auto f = gVFResults.vf_[index]->gcf_;
 
-        auto mainmaple =
-            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
-        auto ba_mainmaple = maplepathformat(mainmaple);
+        auto ba_mainmaple = maplepathformat(getP4MaplePath()
+                                                .append(QDir::separator())
+                                                .append(MAINMAPLEGCFFILE));
 
         auto user_file = getfilename_gcf();
         auto ba_user_file = maplepathformat(user_file);
         removeFile(user_file);
-
-        QString user_platform{USERPLATFORM};
 
         out << "restart;\n";
         out << "read( \"" << ba_mainmaple << "\" );\n";
@@ -2477,12 +2476,12 @@ bool P4InputVF::prepareGcf_LyapunovR2(int precision, int numpoints, int index)
         out << "v := x*sin(y):\n";
         out << "user_f := ";
 
-        int i{0};
+        int i;
         char buf[100];
 
-        for (auto it : f) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
-            i++;
+        for (i = 0; f != nullptr; i++) {
+            out << printterm2(buf, f, (i == 0) ? true : false, "U", "V");
+            f = f->next_term2;
         }
         if (i == 0)
             out << "0:\n";
@@ -2587,7 +2586,7 @@ bool P4InputVF::evaluateArbitraryCurve()
 // -----------------------------------------------------------------------
 // Prepare files in case of calculating curve in plane/U1/U2 charts.  This
 // is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
+bool P4InputVF::prepareArbitraryCurve(const std::vector<P4Polynom::term2> &f,
                                       double y1, double y2, int precision,
                                       int numpoints)
 {
@@ -2618,8 +2617,8 @@ bool P4InputVF::prepareArbitraryCurve(const std::vector<p4polynom::term2> &f,
 
         int i{0};
         char buf[100];
-        for (auto it : f) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "x", "y");
             i++;
         }
         if (i == 0)
@@ -2652,7 +2651,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.arbitraryCurves_.back().c;
+        auto const &f = gVFResults.arbitraryCurves_.back().c;
 
         auto mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
@@ -2679,8 +2678,8 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovCyl(double theta1, double theta2,
 
         int i{0};
         char buf[100];
-        for (auto it : f) {
-            out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
+        for (auto const &it : f) {
+            out << printterm3(buf, &it, (i == 0) ? true : false, "x", "U", "V");
             i++;
         }
         if (i == 0)
@@ -2716,7 +2715,7 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints)
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.arbitraryCurves_.back().r2;
+        auto const &f = gVFResults.arbitraryCurves_.back().r2;
 
         auto mainmaple =
             getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
@@ -2743,8 +2742,8 @@ bool P4InputVF::prepareArbitraryCurve_LyapunovR2(int precision, int numpoints)
 
         int i{0};
         char buf[100];
-        for (auto it : f) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "U", "V");
             i++;
         }
         if (i == 0)
@@ -2855,7 +2854,7 @@ bool P4InputVF::evaluateIsoclines()
 //
 // Prepare files in case of calculating isoclines in plane/U1/U2 charts.
 // This is only called in case of Poincare-compactification (weights p=q=1)
-bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
+bool P4InputVF::prepareIsoclines(const std::vector<P4Polynom::term2> &f,
                                  double y1, double y2, int precision,
                                  int numpoints)
 {
@@ -2863,11 +2862,9 @@ bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto mainmaple =
-            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
-        auto ba_mainmaple = maplepathformat(mainmaple);
-
-        QString user_platform{USERPLATFORM};
+        auto ba_mainmaple = maplepathformat(getP4MaplePath()
+                                                .append(QDir::separator())
+                                                .append(MAINMAPLEGCFFILE));
 
         auto user_file = getfilename_isoclines();
         auto ba_user_file = maplepathformat(user_file);
@@ -2875,7 +2872,7 @@ bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
 
         out << "restart;\n";
         out << "read( \"" << ba_mainmaple << "\" );\n";
-        out << "user_file := \"" << user_file << "\":\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
         out << "user_numpoints := " << numpoints << ":\n";
         out << "Digits := " << precision << ":\n";
         out << "user_x1 := 1.0:\n";
@@ -2888,8 +2885,8 @@ bool P4InputVF::prepareIsoclines(const std::vector<p4polynom::term2> &f,
 
         int i{0};
         char buf[100];
-        for (auto it : f) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "x", "y");
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "x", "y");
             i++;
         }
         if (i == 0)
@@ -2922,13 +2919,11 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.vf_[index]->isocline_vector_.back().c;
+        auto const &f = gVFResults.vf_[index]->isocline_vector_.back().c;
 
-        auto mainmaple =
-            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
-        auto ba_mainmaple = maplepathformat(mainmaple);
-
-        QString user_platform{USERPLATFORM};
+        auto ba_mainmaple = maplepathformat(getP4MaplePath()
+                                                .append(QDir::separator())
+                                                .append(MAINMAPLEGCFFILE));
 
         auto user_file = getfilename_isoclines();
         auto ba_user_file = maplepathformat(user_file);
@@ -2936,7 +2931,7 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
 
         out << "restart;\n";
         out << "read( \"" << ba_mainmaple << "\" );\n";
-        out << "user_file := \"" << user_file << "\":\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
         out << "user_numpoints := " << numpoints << ":\n";
         out << "Digits := " << precision << ":\n";
         out << "user_x1 := 0.0:\n";
@@ -2949,8 +2944,8 @@ bool P4InputVF::prepareIsoclines_LyapunovCyl(double theta1, double theta2,
 
         int i{0};
         char buf[100];
-        for (auto it : f) {
-            out << printterm3(buf, it, (i == 0) ? true : false, "x", "U", "V");
+        for (auto const &it : f) {
+            out << printterm3(buf, &it, (i == 0) ? true : false, "x", "U", "V");
             i++;
         }
         if (i == 0)
@@ -2986,13 +2981,11 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
     if (file.open(QFile::WriteOnly | QFile::Truncate)) {
         QTextStream out{&file};
 
-        auto &f = gVFResults.vf_[index]->isocline_vector_.back().r2;
+        auto const &f = gVFResults.vf_[index]->isocline_vector_.back().r2;
 
-        auto mainmaple =
-            getP4MaplePath().append(QDir::separator()).append(MAINMAPLEGCFFILE);
-        auto ba_mainmaple = maplepathformat(mainmaple);
-
-        QString user_platform{USERPLATFORM};
+        auto ba_mainmaple = maplepathformat(getP4MaplePath()
+                                                .append(QDir::separator())
+                                                .append(MAINMAPLEGCFFILE));
 
         auto user_file = getfilename_isoclines();
         auto ba_user_file = maplepathformat(user_file);
@@ -3000,7 +2993,7 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 
         out << "restart;\n";
         out << "read( \"" << ba_mainmaple << "\" );\n";
-        out << "user_file := \"" << user_file << "\":\n";
+        out << "user_file := \"" << ba_user_file << "\":\n";
         out << "user_numpoints := " << numpoints << ":\n";
         out << "Digits := " << precision << ":\n";
         out << "user_x1 := 0.0:\n";
@@ -3013,8 +3006,8 @@ bool P4InputVF::prepareIsoclines_LyapunovR2(int precision, int numpoints,
 
         int i{0};
         char buf[100];
-        for (auto it : f) {
-            out << printterm2(buf, it, (i == 0) ? true : false, "U", "V");
+        for (auto const &it : f) {
+            out << printterm2(buf, &it, (i == 0) ? true : false, "U", "V");
             i++;
         }
         if (i == 0)
@@ -3207,6 +3200,8 @@ void P4InputVF::addVectorField()
     if (hasCommonInt(weakness_))
         weakness_[numVF_] = commonInt(weakness_);
 
+    qDebug() << "parvalues size:" << parvalue_.size();
+    qDebug() << "numvf" << numVF_;
     for (i = 0; i < MAXNUMPARAMS; i++)
         if (hasCommonParValue(i))
             parvalue_[numVF_][i] = commonParValue(i);
@@ -3643,9 +3638,9 @@ void P4InputVF::resampleSeparatingCurve(int i)
 
     for (auto &sep : gVFResults.separatingCurves_[i].points) {
         if (isCurvePointDrawn(i, sep.pcoord))
-            sep.color = CSEPCURVE;
+            sep.color = P4ColourSettings::colour_separating_curve;
         else
-            sep.color = CSHADEDCURVE;
+            sep.color = P4ColourSettings::colour_shaded_curve;
     }
 }
 
@@ -3659,12 +3654,16 @@ void P4InputVF::resampleGcf(int i)
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
-    for (auto it = std::begin(gVFResults.vf_[i]->gcf_points_);
-         it != std::end(gVFResults.vf_[i]->gcf_points_); ++it) {
-        it->dashes = 0;
-        if (getVFIndex_sphere(it->pcoord) != i) {
-            gVFResults.vf_[i]->gcf_points_.erase(it);
-        }
+    auto &sep = gVFResults.vf_[i]->gcf_points_;
+    while (sep != nullptr) {
+        if (getVFIndex_sphere(sep->pcoord) != i) {
+            auto sepx = sep;
+            sep = sep->nextpt;
+            delete sepx;
+            if (sep != nullptr)
+                sep->dashes = 0;
+        } else
+            sep = sep->nextpt;
     }
 }
 
@@ -3677,14 +3676,13 @@ void P4InputVF::resampleIsoclines(int i)
 {
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
-    for (auto isoc = std::begin(gVFResults.vf_[i]->isocline_vector_);
-         isoc != std::end(gVFResults.vf_[i]->isocline_vector_); ++isoc) {
-        for (auto it = std::begin(isoc->points); it != std::end(isoc->points);
+
+    for (auto &isoc : gVFResults.vf_[i]->isocline_vector_) {
+        for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
              ++it) {
             it->dashes = 0;
-            if (getVFIndex_sphere(it->pcoord) != i) {
-                isoc->points.erase(it);
-            }
+            if (getVFIndex_sphere(it->pcoord) != i)
+                isoc.points.erase(it);
         }
     }
 }

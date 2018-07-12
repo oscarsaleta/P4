@@ -47,12 +47,6 @@
 #include "main.hpp"
 #include "p4settings.hpp"
 
-// initialise background colors
-int bgColours::CBACKGROUND = BLACK;
-int bgColours::CFOREGROUND = WHITE;
-int bgColours::CORBIT = YELLOW;
-bool bgColours::PRINT_WHITE_BG = true;
-
 P4StartDlg::P4StartDlg(const QString &autofilename) : QWidget{}
 {
     // setAttribute(Qt::WA_DeleteOnClose);
@@ -178,6 +172,10 @@ P4StartDlg::~P4StartDlg()
         delete viewInfiniteWindow_;
         viewInfiniteWindow_ = nullptr;
     }
+    if (helpWindow_ != nullptr) {
+        delete helpWindow_;
+        helpWindow_ = nullptr;
+    }
 }
 
 void P4StartDlg::onSaveSignal()
@@ -295,7 +293,7 @@ void P4StartDlg::onHelp()
     }
 
     if (helpWindow_ == nullptr)
-        helpWindow_ = new QTextBrowser{this};
+        helpWindow_ = new QTextBrowser{};
 
     helpWindow_->setSource(QUrl::fromLocalFile(helpname));
     helpWindow_->resize(640, 480);
@@ -407,8 +405,8 @@ void P4StartDlg::signalEvaluated()
             delete viewInfiniteWindow_;
             viewInfiniteWindow_ = new QTextEdit{this};
             showText(*viewInfiniteWindow_, "View results at infinity", fname);
-            if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
-                gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+            if (gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_fin ||
+                gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
                 // mark: data invalid according to vf information
                 viewInfiniteWindow_->setFont(gP4app->getCourierFont());
             }
@@ -514,7 +512,7 @@ void P4StartDlg::onViewFinite()
     fname = gThisVF->getfilename_finresults();
 
     if (!P4InputVF::fileExists(fname)) {
-        if (gThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
+        if (gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_inf) {
             QMessageBox::critical(
                 this, "P4",
                 "A study at the finite region was not requested!\n");
@@ -533,7 +531,7 @@ void P4StartDlg::onViewFinite()
     viewFiniteWindow_->show();
     viewFiniteWindow_->raise();
 
-    if (gThisVF->typeofstudy_ == TYPEOFSTUDY_INF) {
+    if (gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_inf) {
         // mark: data invalid according to vf information
         viewFiniteWindow_->setFont(gP4app->getCourierFont());
         return;
@@ -550,8 +548,8 @@ void P4StartDlg::onViewInfinite()
     fname = gThisVF->getfilename_infresults();
 
     if (P4InputVF::fileExists(fname) == false) {
-        if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
-            gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+        if (gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_fin ||
+            gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
             QMessageBox::critical(this, "P4",
                                   "A study at infinity was not requested!\n");
             return;
@@ -569,8 +567,8 @@ void P4StartDlg::onViewInfinite()
     showText(*viewInfiniteWindow_, "View results at infinity", fname);
     viewInfiniteWindow_->show();
     viewInfiniteWindow_->raise();
-    if (gThisVF->typeofstudy_ == TYPEOFSTUDY_FIN ||
-        gThisVF->typeofstudy_ == TYPEOFSTUDY_ONE) {
+    if (gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_fin ||
+        gThisVF->typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
         // mark: data invalid according to vf information
         viewInfiniteWindow_->setFont(gP4app->getCourierFont());
         return;

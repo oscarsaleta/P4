@@ -32,7 +32,7 @@
 #include "custom.hpp"
 #include "main.hpp"
 #include "math_gcf.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 P4GcfDlg::P4GcfDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget(nullptr, Qt::Tool | Qt::WindowStaysOnTopHint), plotwnd_{plt},

@@ -20,6 +20,7 @@
 #include "P4SepDlg.hpp"
 
 #include <QBoxLayout>
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -222,6 +223,7 @@ void P4SepDlg::reset()
 
 void P4SepDlg::sepEvent(int i)
 {
+    qDebug() << "Acting on separatrice event " << i;
     switch (i) {
     case -1:
         setInitialPoint();
@@ -271,7 +273,7 @@ void P4SepDlg::onepsilon_enter()
     }
 
     gCurrentSeparatriceEpsilon = eps;
-    s.sprintf("%g", (float)eps);
+    s.sprintf("%g", static_cast<double>(eps));
     edt_epsilon_->setText(s);
 
     // pass on to math routines

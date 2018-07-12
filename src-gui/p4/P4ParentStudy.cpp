@@ -33,6 +33,9 @@
 #include "math_separatingcurves.hpp"
 #include "math_separatrice.hpp"
 
+using namespace P4TypeOfView;
+using namespace P4TypeOfStudy;
+
 // -----------------------------------------------------------------------
 //                              P4ParentStudy CONSTRUCTOR
 // -----------------------------------------------------------------------
@@ -61,7 +64,6 @@ P4ParentStudy::P4ParentStudy()
 void P4ParentStudy::reset()
 {
     vf_.clear();
-    // vfK_ = nullptr;
     K_ = 0;
 
     xmin_ = -1.0;
@@ -71,8 +73,8 @@ void P4ParentStudy::reset()
     p_ = 1;
     q_ = 1;
     plweights_ = false;
-    typeofstudy_ = TYPEOFSTUDY_ALL;
-    typeofview_ = TYPEOFVIEW_SPHERE;
+    typeofstudy_ = typeofstudy_all;
+    typeofview_ = typeofview_sphere;
     config_projection_ = DEFAULT_PROJECTION;
     double_p_ = p_;
     double_q_ = q_;
@@ -88,24 +90,21 @@ void P4ParentStudy::reset()
     plotVirtualSingularities_ = DEFAULTPLOTVIRTUALSINGULARITIES;
 
     // delete orbits
-    orbits_.clear();
-    // current_orbit_ = nullptr;
+    delete firstOrbit_;
+    firstOrbit_ = nullptr;
+    currentOrbit_ = nullptr;
 
     // delete limit cycles
-    limCycles_.clear();
-    // current_lim_cycle_ = nullptr;
+    delete firstLimCycle_;
+    firstLimCycle_ = nullptr;
+    currentLimCycle_ = nullptr;
 
     selected_ucoord_[0] = selected_ucoord_[1] = 0;
-    saddlePoints_.clear();
-    selectedSaddlePointIndex_ = -1;
-    sePoints_.clear();
-    selectedSePointIndex_ = -1;
-    dePoints_.clear();
-    selectedDePointIndex_ = -1;
-    seps_.clear();
-    selectedSepIndex_ = -1;
-    deSeps_.clear();
-    selectedDeSepIndex_ = -1;
+    selectedSaddlePoint_ = nullptr;
+    selectedSePoint_ = nullptr;
+    selectedDePoint_ = nullptr;
+    selectedSep_ = nullptr;
+    selectedDeSep_ = nullptr;
 
     separatingCurves_.clear();
     arbitraryCurves_.clear();
@@ -199,7 +198,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
 
         separatingCurves_.clear();
 
-        fpcurv = fopen(QFile::encodeName(basename + "_curves.tab"), "rt");
+        fpcurv = fopen(QFile::encodeName(basename + "_sepcurves.tab"), "rt");
         if (fpcurv == nullptr)
             return false;
 
@@ -270,8 +269,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
 
     // allocate room for all vector fields
     // FIXME
-    // vf_ = (QVFStudy **)realloc(vf_, sizeof(QVFStudy *) * gThisVF->numVF_);
-    // vf_.reserve(sizeof(std::shared_ptr<P4VFStudy>) * gThisVF->numVF_);
+    vf_.reserve(sizeof(std::unique_ptr<P4VFStudy>) * gThisVF->numVF_);
     for (unsigned int j = 0; j < gThisVF->numVF_; j++) {
         vf_.emplace_back(std::make_unique<P4VFStudy>(this));
     }
@@ -298,7 +296,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
     double_q_minus_1_ = static_cast<double>(q_ - 1);
     double_q_minus_p_ = static_cast<double>(q_ - p_);
 
-    if (typeofstudy_ == TYPEOFSTUDY_ONE) {
+    if (typeofstudy_ == P4TypeOfStudy::typeofstudy_one) {
         if (fscanf(fpvec, "%lf %lf %lf %lf", &xmin_, &xmax_, &ymin_, &ymax_) !=
             4) {
             reset();
@@ -306,9 +304,9 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
             return false;
         }
         p_ = q_ = 1;
-        typeofview_ = TYPEOFVIEW_PLANE;
+        typeofview_ = P4TypeOfView::typeofview_plane;
     } else
-        typeofview_ = TYPEOFVIEW_SPHERE;
+        typeofview_ = P4TypeOfView::typeofview_sphere;
 
     // read the separating curves
     for (unsigned int j = 0; j < gThisVF->numSeparatingCurves_; j++) {
@@ -326,7 +324,7 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
         return false;
     }
 
-    if (typeofstudy_ != TYPEOFSTUDY_INF) {
+    if (typeofstudy_ != P4TypeOfStudy::typeofstudy_inf) {
         fpfin = fopen(QFile::encodeName(basename + "_fin.tab"), "rt");
         if (fpfin == nullptr) {
             fclose(fpvec);
@@ -336,7 +334,8 @@ bool P4ParentStudy::readTables(const QString &basename, bool evalpiecewisedata,
     } else
         fpfin = nullptr;
 
-    if (typeofstudy_ != TYPEOFSTUDY_ONE && typeofstudy_ != TYPEOFSTUDY_FIN) {
+    if (typeofstudy_ != P4TypeOfStudy::typeofstudy_one &&
+        typeofstudy_ != P4TypeOfStudy::typeofstudy_fin) {
         fpinf = fopen(QFile::encodeName(basename + "_inf.tab"), "rt");
         if (fpinf == nullptr) {
             fclose(fpvec);
@@ -389,7 +388,7 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
         return false;
     }
 
-    p4curves::curves new_curve;
+    P4Curves::curves new_curve;
     if (fscanf(fp, "%d", &degree_curve) != 1 || degree_curve < 0)
         return false;
     if (degree_curve == 0)
@@ -439,14 +438,12 @@ bool P4ParentStudy::readArbitraryCurve(QString basename)
 bool P4ParentStudy::readSeparatingCurve(FILE *fp)
 {
     int N, degree_sep;
-    p4curves::curves dummy;
+    P4Curves::curves dummy;
 
     setlocale(LC_ALL, "C");
 
     if (fscanf(fp, "%d", &degree_sep) != 1 || degree_sep < 0)
         return false;
-    if (degree_sep == 0)
-        return true;
 
     if (fscanf(fp, "%d", &N) != 1 || N < 0)
         return false;
@@ -508,7 +505,7 @@ void P4ParentStudy::setupCoordinateTransformations()
         change_dir = change_dir_poincare;
 
         switch (typeofview_) {
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             viewcoord_to_sphere = ucircle_psphere;
             sphere_to_viewcoord = psphere_ucircle;
             finite_to_viewcoord = finite_ucircle;
@@ -516,7 +513,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
             break;
 
-        case TYPEOFVIEW_PLANE:
+        case P4TypeOfView::typeofview_plane:
             viewcoord_to_sphere = R2_to_psphere;
             sphere_to_viewcoord = psphere_to_R2;
             finite_to_viewcoord = identitytrf_R2;
@@ -524,7 +521,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
             break;
 
-        case TYPEOFVIEW_U1:
+        case P4TypeOfView::typeofview_U1:
             viewcoord_to_sphere = xyrevU1_to_psphere;
             sphere_to_viewcoord = psphere_to_xyrevU1;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -532,7 +529,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousx;
             break;
 
-        case TYPEOFVIEW_U2:
+        case P4TypeOfView::typeofview_U2:
             viewcoord_to_sphere = U2_to_psphere;
             sphere_to_viewcoord = psphere_to_U2;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -540,7 +537,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousy;
             break;
 
-        case TYPEOFVIEW_V1:
+        case P4TypeOfView::typeofview_V1:
             viewcoord_to_sphere = xyrevV1_to_psphere;
             sphere_to_viewcoord = psphere_to_xyrevV1;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -548,7 +545,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = psphere_to_viewcoordpair_discontinuousx;
             break;
 
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_V2:
             viewcoord_to_sphere = V2_to_psphere;
             sphere_to_viewcoord = psphere_to_V2;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -575,21 +572,21 @@ void P4ParentStudy::setupCoordinateTransformations()
         change_dir = change_dir_lyapunov;
 
         switch (typeofview_) {
-        case TYPEOFVIEW_SPHERE:
+        case P4TypeOfView::typeofview_sphere:
             viewcoord_to_sphere = annulus_plsphere;
             sphere_to_viewcoord = plsphere_annulus;
             finite_to_viewcoord = finite_annulus;
             is_valid_viewcoord = isvalid_plsphereviewcoord;
             sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
             break;
-        case TYPEOFVIEW_PLANE:
+        case P4TypeOfView::typeofview_plane:
             viewcoord_to_sphere = R2_to_plsphere;
             sphere_to_viewcoord = plsphere_to_R2;
             finite_to_viewcoord = identitytrf_R2;
             is_valid_viewcoord = isvalid_R2viewcoord;
             sphere_to_viewcoordpair = default_sphere_to_viewcoordpair;
             break;
-        case TYPEOFVIEW_U1:
+        case P4TypeOfView::typeofview_U1:
             viewcoord_to_sphere = xyrevU1_to_plsphere;
             sphere_to_viewcoord = plsphere_to_xyrevU1;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -597,7 +594,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousx;
             break;
 
-        case TYPEOFVIEW_U2:
+        case P4TypeOfView::typeofview_U2:
             viewcoord_to_sphere = U2_to_plsphere;
             sphere_to_viewcoord = plsphere_to_U2;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -605,7 +602,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousy;
             break;
 
-        case TYPEOFVIEW_V1:
+        case P4TypeOfView::typeofview_V1:
             viewcoord_to_sphere = xyrevV1_to_plsphere;
             sphere_to_viewcoord = plsphere_to_xyrevV1;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -613,7 +610,7 @@ void P4ParentStudy::setupCoordinateTransformations()
             sphere_to_viewcoordpair = plsphere_to_viewcoordpair_discontinuousx;
             break;
 
-        case TYPEOFVIEW_V2:
+        case P4TypeOfView::typeofview_V2:
             viewcoord_to_sphere = V2_to_plsphere;
             sphere_to_viewcoord = plsphere_to_V2;
             finite_to_viewcoord = default_finite_to_viewcoord;
@@ -638,18 +635,25 @@ void P4ParentStudy::examinePositionsOfSingularities()
     int numpositions{0};
 
     for (unsigned int i = 0; i < gThisVF->numVF_; i++) {
-        for (auto &sing : vf_[i]->saddlePoints_)
-            markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i]->sePoints_)
-            markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i]->nodePoints_)
-            markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i]->sfPoints_)
-            markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i]->wfPoints_)
-            markSingularity(sing, positions, numpositions, i, plweights_);
-        for (auto &sing : vf_[i]->dePoints_)
-            markSingularity(sing, positions, numpositions, i, plweights_);
+        for (auto s = vf_[i]->firstSaddlePoint_; s != nullptr;
+             s = s->next_saddle) {
+            markSingularity(s, positions, numpositions, i, plweights_);
+        }
+        for (auto s = vf_[i]->firstSePoint_; s != nullptr; s = s->next_se) {
+            markSingularity(s, positions, numpositions, i, plweights_);
+        }
+        for (auto s = vf_[i]->firstNodePoint_; s != nullptr; s = s->next_node) {
+            markSingularity(s, positions, numpositions, i, plweights_);
+        }
+        for (auto s = vf_[i]->firstSfPoint_; s != nullptr; s = s->next_sf) {
+            markSingularity(s, positions, numpositions, i, plweights_);
+        }
+        for (auto s = vf_[i]->firstWfPoint_; s != nullptr; s = s->next_wf) {
+            markSingularity(s, positions, numpositions, i, plweights_);
+        }
+        for (auto s = vf_[i]->firstDePoint_; s != nullptr; s = s->next_de) {
+            markSingularity(s, positions, numpositions, i, plweights_);
+        }
     }
 }
 

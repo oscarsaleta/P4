@@ -34,7 +34,8 @@
 
 // Defaults, Minima and Maxima regarding Find Parameters
 
-#define DEFAULTTYPE TYPEOFSTUDY_ALL // choose _ALL, _ONE, _FIN or _INF
+#define DEFAULTTYPE                                                            \
+    P4TypeOfStudy::typeofstudy_all // choose _ALL, _ONE, _FIN or _INF
 #define DEFAULTNUMERIC true
 #define DEFAULTTESTSEP false
 #define DEFAULTSAVEALL false
@@ -204,49 +205,12 @@
 #define MAINMAPLEFILE "p4.m"
 #define MAINMAPLEGCFFILE "p4gcf.m"
 
+#define LINESTYLE_DASHES 1
+#define LINESTYLE_POINTS 0
+
 // Defining colors.
 //
 // Choose one of the constants defined in COLOR.H
-
-// Color of singular points:
-namespace bgColours
-{
-extern int CFOREGROUND; // foreground color
-extern int CBACKGROUND; // background color
-extern int CORBIT;      // orbits (use GREEN1 when background is white)
-// IN PRINT_BITMAP.CPP: PrintColorTable shows how these colors are treated when
-// printing.
-// For example, when printing, BLACK can be reversed with WHITE, so that the
-// BLACK background on screen is not printed black.
-extern bool PRINT_WHITE_BG;
-}
-
-#define CSADDLE_NODE MAGENTA                   // saddle-node
-#define CSADDLE GREEN2                         // saddle
-#define CNODE_S BLUE                           // stable node
-#define CNODE_U RED                            // unstable node
-#define CWEAK_FOCUS bgColours::CFOREGROUND     // weak focus
-#define CWEAK_FOCUS_S BLUE2                    // stable weak focus
-#define CWEAK_FOCUS_U RED2                     // unstable weak focus
-#define CSTRONG_FOCUS_S BLUE                   // stable strong focus
-#define CSTRONG_FOCUS_U RED                    // unstable strong focus
-#define CCENTER GREEN2                         // center
-#define CDEGEN bgColours::CFOREGROUND          // degenerated
-#define CLINEATINFINITY bgColours::CFOREGROUND // color of poincare sphere
-
-#define CSTABLE BLUE        // stable separatrice
-#define CUNSTABLE RED       // unstable separatrice
-#define CCENT_STABLE BLUE2  // center-stable separatrice
-#define CCENT_UNSTABLE RED1 // center-unstable separatrice
-
-#define CW_SEP GOLD     // selected separatrice
-#define CLIMIT MAGENTA2 // limit cycles
-#define CSING GREEN     // curve of singularities
-#define CCURV CYAN
-#define CISOC PINK1
-
-#define CSEPCURVE BROWN3
-#define CSHADEDCURVE BROWN1
 
 //#define   USE_SYSTEM_PRINTER          // comment when system printer fails
 
@@ -307,3 +271,85 @@ extern bool PRINT_WHITE_BG;
 // will appear
 
 #define TOOLTIPS
+
+namespace P4Charts
+{
+enum { chart_R2 = 0, chart_U1 = 1, chart_U2 = 2, chart_V1 = 3, chart_V2 = 4 };
+}
+
+namespace P4SingularityType
+{
+enum {
+    saddle = 1,
+    node = 2,
+    weak_focus = 3,
+    strong_focus = 4,
+    semi_hyperbolic = 5,
+    non_elementary = 6
+};
+}
+
+namespace P4SeparatriceType
+{
+enum {
+    unstable = 1,
+    stable = -1,
+    cent_unstable = 2,
+    cent_stable = -2,
+    orbit = 3
+};
+}
+
+namespace P4SingularityStability
+{
+enum {
+    unstable = P4SeparatriceType::unstable,
+    stable = P4SeparatriceType::stable,
+    center = 4
+};
+}
+
+namespace P4SaddleNodeSepType
+{
+enum { setype_saddlenode_unstabsep = 1, setype_saddlenode_unstabsep2 = 2 };
+}
+
+namespace P4OrbitType
+{
+enum {
+    stable = P4SeparatriceType::stable,
+    unstable = P4SeparatriceType::unstable,
+    cent_stable = P4SeparatriceType::cent_stable,
+    cent_unstable = P4SeparatriceType::cent_unstable,
+    orbit = P4SeparatriceType::orbit
+};
+}
+
+namespace P4TypeOfView
+{
+enum {
+    typeofview_plane = 0,
+    typeofview_sphere = 1,
+    typeofview_U1 = 2,
+    typeofview_U2 = 3,
+    typeofview_V1 = 4,
+    typeofview_V2 = 5,
+    typeofview_U1U2 = 6,
+    typeofview_V1V2 = 7
+};
+}
+
+namespace P4TypeOfStudy
+{
+enum {
+    typeofstudy_all = 0,
+    typeofstudy_fin = 1,
+    typeofstudy_inf = 2,
+    typeofstudy_one = 3
+};
+}
+
+// namespace P4SymbolicPackage
+//{
+// enum { package_maple = 1, package_reduce = 0 };
+//}

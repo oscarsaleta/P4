@@ -31,7 +31,7 @@
 #include "plot_tools.hpp"
 #include "print_bitmap.hpp"
 #include "print_points.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 static QFile *sXFigFile{nullptr};
 static QTextStream sXFigStream;
@@ -86,7 +86,7 @@ static void xfig_print_box(int x, int y, int color)
     y /= sXFigResolution;
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     /*
         object type     2   (=polyline)
@@ -133,7 +133,7 @@ static void xfig_print_box2(int x, int y, int color)
     y /= sXFigResolution;
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     QString s;
     s.sprintf("2 2 0 1 %d %d 0 0 -1 0.0 0 0 0 0 0 5\n", color, -1);
@@ -156,7 +156,7 @@ static void xfig_print_diamond(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -185,7 +185,7 @@ static void xfig_print_diamond2(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -214,7 +214,7 @@ static void xfig_print_triangle(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -245,7 +245,7 @@ static void xfig_print_triangle2(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -275,7 +275,7 @@ static void xfig_print_cross(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -309,7 +309,7 @@ static void xfig_print_cross2(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -343,7 +343,7 @@ void xfig_print_doublecross(int x, int y, int color)
         xfig_line_finish();
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     x *= 1200;
     x /= sXFigResolution;
@@ -394,7 +394,7 @@ static void xfig_print_line(double _x0, double _y0, double _x1, double _y1,
 
     color = printColorTable(color);
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     int x0{static_cast<int>(std::floor(_x0))};
     int y0{static_cast<int>(std::floor(_y0))};
@@ -584,7 +584,7 @@ static void xfig_print_point(double _x0, double _y0, int color)
     color = printColorTable(color);
 
     if (sXFigBlackWhitePrint)
-        color = printColorTable(bgColours::CFOREGROUND);
+        color = printColorTable(P4ColourSettings::colour_foreground);
 
     int x0{(int)_x0};
     int y0{(int)_y0};
@@ -630,94 +630,98 @@ static void xfig_print_point(double _x0, double _y0, int color)
 static void xfig_print_saddle(double x, double y)
 {
     xfig_print_box(static_cast<int>(std::floor(x)),
-                   static_cast<int>(std::floor(y)), printColorTable(CSADDLE));
+                   static_cast<int>(std::floor(y)),
+                   printColorTable(P4ColourSettings::colour_saddle));
 }
 
 static void xfig_print_stablenode(double x, double y)
 {
     xfig_print_box(static_cast<int>(std::floor(x)),
-                   static_cast<int>(std::floor(y)), printColorTable(CNODE_S));
+                   static_cast<int>(std::floor(y)),
+                   printColorTable(P4ColourSettings::colour_node_stable));
 }
 static void xfig_print_unstablenode(double x, double y)
 {
     xfig_print_box(static_cast<int>(std::floor(x)),
-                   static_cast<int>(std::floor(y)), printColorTable(CNODE_U));
+                   static_cast<int>(std::floor(y)),
+                   printColorTable(P4ColourSettings::colour_node_unstable));
 }
 
 static void xfig_print_stableweakfocus(double x, double y)
 {
-    xfig_print_diamond(static_cast<int>(std::floor(x)),
-                       static_cast<int>(std::floor(y)),
-                       printColorTable(CWEAK_FOCUS_S));
+    xfig_print_diamond(
+        static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+        printColorTable(P4ColourSettings::colour_weak_focus_stable));
 }
 
 static void xfig_print_unstableweakfocus(double x, double y)
 {
-    xfig_print_diamond(static_cast<int>(std::floor(x)),
-                       static_cast<int>(std::floor(y)),
-                       printColorTable(CWEAK_FOCUS_U));
+    xfig_print_diamond(
+        static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+        printColorTable(P4ColourSettings::colour_weak_focus_unstable));
 }
 
 static void xfig_print_weakfocus(double x, double y)
 {
     xfig_print_diamond(static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y)),
-                       printColorTable(CWEAK_FOCUS));
+                       printColorTable(P4ColourSettings::colour_weak_focus));
 }
 
 static void xfig_print_center(double x, double y)
 {
     xfig_print_diamond(static_cast<int>(std::floor(x)),
                        static_cast<int>(std::floor(y)),
-                       printColorTable(CCENTER));
+                       printColorTable(P4ColourSettings::colour_center));
 }
 
 static void xfig_print_stablestrongfocus(double x, double y)
 {
-    xfig_print_diamond(static_cast<int>(std::floor(x)),
-                       static_cast<int>(std::floor(y)),
-                       printColorTable(CSTRONG_FOCUS_S));
+    xfig_print_diamond(
+        static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+        printColorTable(P4ColourSettings::colour_strong_focus_stable));
 }
 
 static void xfig_print_unstablestrongfocus(double x, double y)
 {
-    xfig_print_diamond(static_cast<int>(std::floor(x)),
-                       static_cast<int>(std::floor(y)),
-                       printColorTable(CSTRONG_FOCUS_U));
+    xfig_print_diamond(
+        static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+        printColorTable(P4ColourSettings::colour_strong_focus_unstable));
 }
 
 static void xfig_print_sesaddle(double x, double y)
 {
     xfig_print_triangle(static_cast<int>(std::floor(x)),
                         static_cast<int>(std::floor(y)),
-                        printColorTable(CSADDLE));
+                        printColorTable(P4ColourSettings::colour_saddle));
 }
 
 static void xfig_print_sesaddlenode(double x, double y)
 {
     xfig_print_triangle(static_cast<int>(std::floor(x)),
                         static_cast<int>(std::floor(y)),
-                        printColorTable(CSADDLE_NODE));
+                        printColorTable(P4ColourSettings::colour_saddle_node));
 }
 
 static void xfig_print_sestablenode(double x, double y)
 {
     xfig_print_triangle(static_cast<int>(std::floor(x)),
                         static_cast<int>(std::floor(y)),
-                        printColorTable(CNODE_S));
+                        printColorTable(P4ColourSettings::colour_node_stable));
 }
 
 static void xfig_print_seunstablenode(double x, double y)
 {
-    xfig_print_triangle(static_cast<int>(std::floor(x)),
-                        static_cast<int>(std::floor(y)),
-                        printColorTable(CNODE_U));
+    xfig_print_triangle(
+        static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+        printColorTable(P4ColourSettings::colour_node_unstable));
 }
 
 static void xfig_print_degen(double x, double y)
 {
     xfig_print_cross(static_cast<int>(std::floor(x)),
-                     static_cast<int>(std::floor(y)), printColorTable(CDEGEN));
+                     static_cast<int>(std::floor(y)),
+                     printColorTable(P4ColourSettings::colour_degen));
 }
 
 static void xfig_print_virtualsaddle(double x, double y)
@@ -725,7 +729,7 @@ static void xfig_print_virtualsaddle(double x, double y)
     if (gVFResults.plotVirtualSingularities_)
         xfig_print_box2(static_cast<int>(std::floor(x)),
                         static_cast<int>(std::floor(y)),
-                        printColorTable(CSADDLE));
+                        printColorTable(P4ColourSettings::colour_saddle));
 }
 
 static void xfig_print_virtualstablenode(double x, double y)
@@ -733,38 +737,38 @@ static void xfig_print_virtualstablenode(double x, double y)
     if (gVFResults.plotVirtualSingularities_)
         xfig_print_box2(static_cast<int>(std::floor(x)),
                         static_cast<int>(std::floor(y)),
-                        printColorTable(CNODE_S));
+                        printColorTable(P4ColourSettings::colour_node_stable));
 }
 static void xfig_print_virtualunstablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_box2(static_cast<int>(std::floor(x)),
-                        static_cast<int>(std::floor(y)),
-                        printColorTable(CNODE_U));
+        xfig_print_box2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_node_unstable));
 }
 
 static void xfig_print_virtualstableweakfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2(static_cast<int>(std::floor(x)),
-                            static_cast<int>(std::floor(y)),
-                            printColorTable(CWEAK_FOCUS_S));
+        xfig_print_diamond2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_weak_focus_stable));
 }
 
 static void xfig_print_virtualunstableweakfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2(static_cast<int>(std::floor(x)),
-                            static_cast<int>(std::floor(y)),
-                            printColorTable(CWEAK_FOCUS_U));
+        xfig_print_diamond2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_weak_focus_unstable));
 }
 
 static void xfig_print_virtualweakfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2(static_cast<int>(std::floor(x)),
-                            static_cast<int>(std::floor(y)),
-                            printColorTable(CWEAK_FOCUS));
+        xfig_print_diamond2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_weak_focus));
 }
 
 static void xfig_print_virtualcenter(double x, double y)
@@ -772,23 +776,23 @@ static void xfig_print_virtualcenter(double x, double y)
     if (gVFResults.plotVirtualSingularities_)
         xfig_print_diamond2(static_cast<int>(std::floor(x)),
                             static_cast<int>(std::floor(y)),
-                            printColorTable(CCENTER));
+                            printColorTable(P4ColourSettings::colour_center));
 }
 
 static void xfig_print_virtualstablestrongfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2(static_cast<int>(std::floor(x)),
-                            static_cast<int>(std::floor(y)),
-                            printColorTable(CSTRONG_FOCUS_S));
+        xfig_print_diamond2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_strong_focus_stable));
 }
 
 static void xfig_print_virtualunstablestrongfocus(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_diamond2(static_cast<int>(std::floor(x)),
-                            static_cast<int>(std::floor(y)),
-                            printColorTable(CSTRONG_FOCUS_U));
+        xfig_print_diamond2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_strong_focus_unstable));
 }
 
 static void xfig_print_virtualsesaddle(double x, double y)
@@ -796,31 +800,31 @@ static void xfig_print_virtualsesaddle(double x, double y)
     if (gVFResults.plotVirtualSingularities_)
         xfig_print_triangle2(static_cast<int>(std::floor(x)),
                              static_cast<int>(std::floor(y)),
-                             printColorTable(CSADDLE));
+                             printColorTable(P4ColourSettings::colour_saddle));
 }
 
 static void xfig_print_virtualsesaddlenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2(static_cast<int>(std::floor(x)),
-                             static_cast<int>(std::floor(y)),
-                             printColorTable(CSADDLE_NODE));
+        xfig_print_triangle2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_saddle_node));
 }
 
 static void xfig_print_virtualsestablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2(static_cast<int>(std::floor(x)),
-                             static_cast<int>(std::floor(y)),
-                             printColorTable(CNODE_S));
+        xfig_print_triangle2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_node_stable));
 }
 
 static void xfig_print_virtualseunstablenode(double x, double y)
 {
     if (gVFResults.plotVirtualSingularities_)
-        xfig_print_triangle2(static_cast<int>(std::floor(x)),
-                             static_cast<int>(std::floor(y)),
-                             printColorTable(CNODE_U));
+        xfig_print_triangle2(
+            static_cast<int>(std::floor(x)), static_cast<int>(std::floor(y)),
+            printColorTable(P4ColourSettings::colour_node_unstable));
 }
 
 static void xfig_print_virtualdegen(double x, double y)
@@ -828,14 +832,14 @@ static void xfig_print_virtualdegen(double x, double y)
     if (gVFResults.plotVirtualSingularities_)
         xfig_print_cross2(static_cast<int>(std::floor(x)),
                           static_cast<int>(std::floor(y)),
-                          printColorTable(CDEGEN));
+                          printColorTable(P4ColourSettings::colour_degen));
 }
 
 void xfig_print_coinciding(double x, double y)
 {
     xfig_print_doublecross(static_cast<int>(std::floor(x)),
                            static_cast<int>(std::floor(y)),
-                           printColorTable(CDEGEN));
+                           printColorTable(P4ColourSettings::colour_degen));
 }
 
 // -----------------------------------------------------------------------------
@@ -943,7 +947,7 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                        "Inches\n" // use inches (XFIG makes rounding errors with
                                   // centimeters)
                        "1200 2\n"; // unused in XFIG???
-        if (!bgColours::PRINT_WHITE_BG) {
+        if (!P4ColourSettings::print_white_bg) {
             /*
                 object type     2   (=polyline)
                 subtype         2   (=box)
@@ -968,7 +972,8 @@ void prepareXFigPrinting(int w, int h, bool iszoom, bool isblackwhite,
                       0, 0, sXFigW, 0, sXFigW, sXFigH, 0, sXFigH, 0, 0);
             sXFigStream << s;
         }
-        if (gVFResults.typeofview_ == TYPEOFVIEW_PLANE || iszoom) {
+        if (gVFResults.typeofview_ == P4TypeOfView::typeofview_plane ||
+            iszoom) {
             /*
                 object type     2   (=polyline)
                 subtype         2   (=box)

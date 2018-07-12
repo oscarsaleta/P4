@@ -26,6 +26,8 @@
 #include "math_p4.hpp"
 #include "math_polynom.hpp"
 
+using namespace P4Singularities;
+
 static double pSphereDistance(double *p, double *q);
 static double plSphereDistance(double *p, double *q);
 
@@ -437,7 +439,7 @@ bool isInsideRegion_sphere_epsilon(const std::vector<int> &signs,
 // the polynomial by a rescaled one if the point lies close to infinity.
 //
 // So we first determine where the point lies.
-double eval_curve(const p4curves::curves &c, const double *pcoord)
+double eval_curve(const P4Curves::curves &c, const double *pcoord)
 {
     double ucoord[2], theta;
     if (!gVFResults.plweights_) {
@@ -484,8 +486,8 @@ QString describeRegion(double *pcoord)
     double v;
 
     s = "";
-    for (unsigned int k = 0; k < gThisVF->numSeparatingCurves_; k++) {
-        v = eval_curve(gVFResults.separatingCurves_[k], pcoord);
+    for (auto c : gVFResults.separatingCurves_) {
+        v = eval_curve(c, pcoord);
         if (fabs(v) <= 1.e-8)
             s += "0";
         else if (v < 0)
@@ -501,19 +503,29 @@ QString describeRegion(double *pcoord)
 // ---------------------------------------------------------------------
 bool isInTheSameRegion(double *testpt, double *refpos)
 {
-    int i;
     if (refpos == nullptr || gVFResults.separatingCurves_.empty())
         return true;
 
-    for (i = gThisVF->numSeparatingCurves_ - 1; i >= 0; i--) {
-        if (eval_curve(gVFResults.separatingCurves_[i], refpos) < 0) {
-            if (eval_curve(gVFResults.separatingCurves_[i], testpt) > 1e-8)
+    // reverse iteration through separating curves
+    for (auto i = std::rbegin(gVFResults.separatingCurves_);
+         i != std::rend(gVFResults.separatingCurves_); ++i) {
+        if (eval_curve(*i, refpos) < 0) {
+            if (eval_curve(*i, testpt) < 1e-8)
                 return false;
         } else {
-            if (eval_curve(gVFResults.separatingCurves_[i], testpt) < -1e-8)
+            if (eval_curve(*i, testpt) < -1e-8)
                 return false;
         }
     }
+    //  for (i = gThisVF->numSeparatingCurves_ - 1; i >= 0; i--) {
+    //    if (eval_curve(gVFResults.separatingCurves_[i], refpos) < 0) {
+    //      if (eval_curve(gVFResults.separatingCurves_[i], testpt) > 1e-8)
+    //        return false;
+    //    } else {
+    //      if (eval_curve(gVFResults.separatingCurves_[i], testpt) < -1e-8)
+    //        return false;
+    //    }
+    //  }
     return true;
 }
 
@@ -539,19 +551,19 @@ bool isARealSingularity(double x0, double y0, int chart, int vfindex)
     double pcoord[3];
 
     switch (chart) {
-    case CHART_R2:
+    case P4Charts::chart_R2:
         MATHFUNC(R2_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_U1:
+    case P4Charts::chart_U1:
         MATHFUNC(U1_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_V1:
+    case P4Charts::chart_V1:
         MATHFUNC(V1_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_U2:
+    case P4Charts::chart_U2:
         MATHFUNC(U2_to_sphere)(x0, y0, pcoord);
         break;
-    case CHART_V2:
+    case P4Charts::chart_V2:
         MATHFUNC(V2_to_sphere)(x0, y0, pcoord);
         break;
     default:
@@ -642,414 +654,60 @@ static double plSphereDistance(double *p, double *q)
 // ---------------------------------------------------------------------
 //          markSingularity
 // ---------------------------------------------------------------------
-// saddle version
-void markSingularity(p4singularities::saddle &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights)
-{
-    double pcoord[3];
-    int N{numpos};
-
-    switch (s.chart) {
-    case CHART_R2:
-        MATHFUNC(R2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U1:
-        MATHFUNC(U1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V1:
-        MATHFUNC(V1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U2:
-        MATHFUNC(U2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V2:
-        MATHFUNC(V2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    default:
-        return;
-    }
-
-    //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
-    //    s.x0,s.y0,s.chart,pcoord[0],pcoord[1],pcoord[2]);
-
-    if (!isARealSingularity(pcoord, vfindex)) {
-        s.position = POSITION_VIRTUAL;
-        return;
-    }
-
-    for (int k = 0; k < N; k++) {
-        if (plweights) {
-            if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        } else {
-            if (pSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        }
-    }
-    //    Debug( "standalone" );
-    s.position = POSITION_STANDALONE;
-
-    // this automatically casts the saddle as a genericsingularity
-    positionitem newPosition{pcoord, s};
-    plist.push_back(newPosition);
-
-    numpos = N + 1;
-}
-
-// ---------------------------------------------------------------------
-//          markSingularity
-// ---------------------------------------------------------------------
-// semi elementary version
-void markSingularity(p4singularities::semi_elementary &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights)
-{
-    double pcoord[3];
-    int N{numpos};
-
-    switch (s.chart) {
-    case CHART_R2:
-        MATHFUNC(R2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U1:
-        MATHFUNC(U1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V1:
-        MATHFUNC(V1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U2:
-        MATHFUNC(U2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V2:
-        MATHFUNC(V2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    default:
-        return;
-    }
-
-    //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
-    //    s.x0,s.y0,s.chart,pcoord[0],pcoord[1],pcoord[2]);
-
-    if (!isARealSingularity(pcoord, vfindex)) {
-        s.position = POSITION_VIRTUAL;
-        return;
-    }
-
-    for (int k = 0; k < N; k++) {
-        if (plweights) {
-            if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        } else {
-            if (pSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        }
-    }
-    //    Debug( "standalone" );
-    s.position = POSITION_STANDALONE;
-
-    positionitem newPosition;
-    newPosition.pcoord[0] = pcoord[0];
-    newPosition.pcoord[1] = pcoord[1];
-    newPosition.pcoord[2] = pcoord[2];
-    newPosition.s = s;
-
-    plist.push_back(newPosition);
-
-    numpos = N + 1;
-}
-
-// ---------------------------------------------------------------------
-//          markSingularity
-// ---------------------------------------------------------------------
-// node version
-void markSingularity(p4singularities::node &s, std::vector<positionitem> &plist,
+// generic version
+void markSingularity(genericsingularity *s, std::vector<positionitem> &plist,
                      int &numpos, int vfindex, bool plweights)
 {
     double pcoord[3];
     int N{numpos};
 
-    switch (s.chart) {
-    case CHART_R2:
-        MATHFUNC(R2_to_sphere)(s.x0, s.y0, pcoord);
+    switch (s->chart) {
+    case P4Charts::chart_R2:
+        MATHFUNC(R2_to_sphere)(s->x0, s->y0, pcoord);
         break;
-    case CHART_U1:
-        MATHFUNC(U1_to_sphere)(s.x0, s.y0, pcoord);
+    case P4Charts::chart_U1:
+        MATHFUNC(U1_to_sphere)(s->x0, s->y0, pcoord);
         break;
-    case CHART_V1:
-        MATHFUNC(V1_to_sphere)(s.x0, s.y0, pcoord);
+    case P4Charts::chart_U2:
+        MATHFUNC(U2_to_sphere)(s->x0, s->y0, pcoord);
         break;
-    case CHART_U2:
-        MATHFUNC(U2_to_sphere)(s.x0, s.y0, pcoord);
+    case P4Charts::chart_V1:
+        MATHFUNC(V1_to_sphere)(s->x0, s->y0, pcoord);
         break;
-    case CHART_V2:
-        MATHFUNC(V2_to_sphere)(s.x0, s.y0, pcoord);
+    case P4Charts::chart_V2:
+        MATHFUNC(V2_to_sphere)(s->x0, s->y0, pcoord);
         break;
     default:
-        return;
+        break;
     }
 
     //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
-    //    s.x0,s.y0,s.chart,pcoord[0],pcoord[1],pcoord[2]);
+    //    s->x0,s->y0,s->chart,pcoord[0],pcoord[1],pcoord[2]);
 
     if (!isARealSingularity(pcoord, vfindex)) {
-        s.position = POSITION_VIRTUAL;
+        s->position = position_virtual;
         return;
     }
 
     for (int k = 0; k < N; k++) {
         if (plweights) {
             if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
+                //                Debug("coinciding");
+                s->position = position_coinciding;
+                plist[k].s.position = position_coinciding_main;
                 return;
             }
         } else {
             if (pSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
+                //                Debug("coinciding");
+                s->position = position_coinciding;
+                plist[k].s.position = position_coinciding_main;
                 return;
             }
         }
     }
-    //    Debug( "standalone" );
-    s.position = POSITION_STANDALONE;
-
-    positionitem newPosition;
-    newPosition.pcoord[0] = pcoord[0];
-    newPosition.pcoord[1] = pcoord[1];
-    newPosition.pcoord[2] = pcoord[2];
-    newPosition.s = s;
-
-    plist.push_back(newPosition);
-
-    numpos = N + 1;
-}
-
-// ---------------------------------------------------------------------
-//          markSingularity
-// ---------------------------------------------------------------------
-// strong focus version
-void markSingularity(p4singularities::strong_focus &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights)
-{
-    double pcoord[3];
-    int N{numpos};
-
-    switch (s.chart) {
-    case CHART_R2:
-        MATHFUNC(R2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U1:
-        MATHFUNC(U1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V1:
-        MATHFUNC(V1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U2:
-        MATHFUNC(U2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V2:
-        MATHFUNC(V2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    default:
-        return;
-    }
-
-    //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
-    //    s.x0,s.y0,s.chart,pcoord[0],pcoord[1],pcoord[2]);
-
-    if (!isARealSingularity(pcoord, vfindex)) {
-        s.position = POSITION_VIRTUAL;
-        return;
-    }
-
-    for (int k = 0; k < N; k++) {
-        if (plweights) {
-            if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        } else {
-            if (pSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        }
-    }
-    //    Debug( "standalone" );
-    s.position = POSITION_STANDALONE;
-
-    positionitem newPosition;
-    newPosition.pcoord[0] = pcoord[0];
-    newPosition.pcoord[1] = pcoord[1];
-    newPosition.pcoord[2] = pcoord[2];
-    newPosition.s = s;
-
-    plist.push_back(newPosition);
-
-    numpos = N + 1;
-}
-
-// ---------------------------------------------------------------------
-//          markSingularity
-// ---------------------------------------------------------------------
-// weak focus version
-void markSingularity(p4singularities::weak_focus &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights)
-{
-    double pcoord[3];
-    int N{numpos};
-
-    switch (s.chart) {
-    case CHART_R2:
-        MATHFUNC(R2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U1:
-        MATHFUNC(U1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V1:
-        MATHFUNC(V1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U2:
-        MATHFUNC(U2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V2:
-        MATHFUNC(V2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    default:
-        return;
-    }
-
-    //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
-    //    s.x0,s.y0,s.chart,pcoord[0],pcoord[1],pcoord[2]);
-
-    if (!isARealSingularity(pcoord, vfindex)) {
-        s.position = POSITION_VIRTUAL;
-        return;
-    }
-
-    for (int k = 0; k < N; k++) {
-        if (plweights) {
-            if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        } else {
-            if (pSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        }
-    }
-    //    Debug( "standalone" );
-    s.position = POSITION_STANDALONE;
-
-    positionitem newPosition;
-    newPosition.pcoord[0] = pcoord[0];
-    newPosition.pcoord[1] = pcoord[1];
-    newPosition.pcoord[2] = pcoord[2];
-    newPosition.s = s;
-
-    plist.push_back(newPosition);
-
-    numpos = N + 1;
-}
-
-// ---------------------------------------------------------------------
-//          markSingularity
-// ---------------------------------------------------------------------
-// degenerate version
-void markSingularity(p4singularities::degenerate &s,
-                     std::vector<positionitem> &plist, int &numpos, int vfindex,
-                     bool plweights)
-{
-    double pcoord[3];
-    int N{numpos};
-
-    switch (s.chart) {
-    case CHART_R2:
-        MATHFUNC(R2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U1:
-        MATHFUNC(U1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V1:
-        MATHFUNC(V1_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_U2:
-        MATHFUNC(U2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    case CHART_V2:
-        MATHFUNC(V2_to_sphere)(s.x0, s.y0, pcoord);
-        break;
-    default:
-        return;
-    }
-
-    //    Debug( "Sing (x0,y0)=(%f,%f) Chart=%d P=(%f,%f,%f)",
-    //    s.x0,s.y0,s.chart,pcoord[0],pcoord[1],pcoord[2]);
-
-    if (!isARealSingularity(pcoord, vfindex)) {
-        s.position = POSITION_VIRTUAL;
-        return;
-    }
-
-    for (int k = 0; k < N; k++) {
-        if (plweights) {
-            if (plSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        } else {
-            if (pSphereDistance(pcoord, plist[k].pcoord) < 1e-8) {
-                //                Debug( "coinciding" );
-                s.position = POSITION_COINCIDING;
-                plist[k].s.position = POSITION_COINCIDING_MAIN;
-                return;
-            }
-        }
-    }
-    //    Debug( "standalone" );
-    s.position = POSITION_STANDALONE;
-
-    positionitem newPosition;
-    newPosition.pcoord[0] = pcoord[0];
-    newPosition.pcoord[1] = pcoord[1];
-    newPosition.pcoord[2] = pcoord[2];
-    newPosition.s = s;
-
-    plist.push_back(newPosition);
-
+    //    Debug("standalone");
+    s->position = position_standalone;
+    plist.emplace_back(pcoord, *s);
     numpos = N + 1;
 }

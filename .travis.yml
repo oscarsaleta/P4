@@ -22,11 +22,14 @@ matrix:
     - os: osx
       osx_image: xcode8
       env:
-        - SET_COMPILER="brew update && brew install gcc && export CC=gcc-7 && export CXX=g++-7"
-        - SET_QMAKE="brew update && brew install qt && export QMAKE=/usr/local/opt/qt/bin/qmake"
+        - SET_COMPILER="brew update && brew install gcc && export CC=gcc-8 && export CXX=g++-8"
+        - SET_QMAKE="brew install qt && export QMAKE=/usr/local/opt/qt/bin/qmake"
+        - SET_QMAKE_COMPILERS="export QMAKE_CC=${CC} && export QMAKE_CXX=${CXX}"
       before_script:
         - eval "${SET_COMPILER}"
         - eval "${SET_QMAKE}"
+        - eval "${SET_QMAKE_COMPILERS}"
+        - eval "${CXX} --version"
 
 script:
   - $QMAKE -r P4.pro

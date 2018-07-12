@@ -19,46 +19,50 @@
 
 #include "math_saddlesep.hpp"
 
+#include <QDebug>
+
 #include "P4ParentStudy.hpp"
 #include "math_charts.hpp"
 #include "math_orbits.hpp"
 #include "math_regions.hpp"
 #include "math_separatrice.hpp"
-#include "tables.hpp"
+#include "structures.hpp"
 
 // ---------------------------------------------------------------------------
 //      start_plot_saddle_sep
 // ---------------------------------------------------------------------------
+// Start plotting a separatrice for a saddle singular point
 void start_plot_saddle_sep(P4Sphere *spherewnd, int vfindex)
 {
     double p[3];
-    const int &sepid{gVFResults.selectedSepIndex_};
-    const int &sadid{gVFResults.selectedSaddlePointIndex_};
 
-    draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
+    draw_sep(spherewnd, gVFResults.selectedSep_->first_sep_point);
 
-    if (!gVFResults.seps_[sepid].sep_points.empty()) {
-        auto &last_sep_point = gVFResults.seps_[sepid].sep_points.back();
+    auto points = gVFResults.selectedSep_->last_sep_point;
 
-        copy_x_into_y(last_sep_point.pcoord, p);
-        auto v = integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
-                               last_sep_point.dir, last_sep_point.type,
-                               gVFResults.config_intpoints_);
-        if (!v.empty())
-            gVFResults.seps_[sepid].sep_points.insert(
-                std::end(gVFResults.seps_[sepid].sep_points), std::begin(v),
-                std::end(v));
+    // If there are already computed points for this separatrice, use the last
+    // point's direction and type to integrate the next points.
+    if (gVFResults.selectedSep_->last_sep_point != nullptr) {
+        copy_x_into_y(gVFResults.selectedSep_->last_sep_point->pcoord, p);
+        gVFResults.selectedSep_->last_sep_point->nextpt =
+            integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
+                          gVFResults.selectedSep_->last_sep_point->dir,
+                          gVFResults.selectedSep_->last_sep_point->type,
+                          gVFResults.config_intpoints_, &points);
     } else {
-        gVFResults.seps_[sepid].sep_points = plot_separatrice(
-            spherewnd, gVFResults.saddlePoints_[sadid].x0,
-            gVFResults.saddlePoints_[sadid].y0,
-            gVFResults.saddlePoints_[sadid].a11,
-            gVFResults.saddlePoints_[sadid].a12,
-            gVFResults.saddlePoints_[sadid].a21,
-            gVFResults.saddlePoints_[sadid].a22,
-            gVFResults.saddlePoints_[sadid].epsilon, gVFResults.seps_[sepid],
-            gVFResults.saddlePoints_[sadid].chart, vfindex);
+        // if there are no computed points, start the integration from the
+        // selected saddle singularity
+        gVFResults.selectedSep_->first_sep_point = plot_separatrice(
+            spherewnd, gVFResults.selectedSaddlePoint_->x0,
+            gVFResults.selectedSaddlePoint_->y0,
+            gVFResults.selectedSaddlePoint_->a11,
+            gVFResults.selectedSaddlePoint_->a12,
+            gVFResults.selectedSaddlePoint_->a21,
+            gVFResults.selectedSaddlePoint_->a22,
+            gVFResults.selectedSaddlePoint_->epsilon, gVFResults.selectedSep_,
+            &points, gVFResults.selectedSaddlePoint_->chart, vfindex);
     }
+    gVFResults.selectedSep_->last_sep_point = points;
 }
 
 // ---------------------------------------------------------------------------
@@ -69,24 +73,21 @@ void start_plot_saddle_sep(P4Sphere *spherewnd, int vfindex)
 void cont_plot_saddle_sep(P4Sphere *spherewnd)
 {
     double p[3];
-    int sepid{gVFResults.selectedSepIndex_};
 
-    if (!gVFResults.seps_[sepid].sep_points.empty())
+    if (gVFResults.selectedSep_->first_sep_point == nullptr)
         return;
 
-    copy_x_into_y(gVFResults.seps_[sepid].sep_points.back().pcoord, p);
+    copy_x_into_y(gVFResults.selectedSep_->last_sep_point->pcoord, p);
+    auto points = gVFResults.selectedSep_->last_sep_point;
 
-    // compute next vector of points
-    auto v = integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
-                           gVFResults.seps_[sepid].sep_points.back().dir,
-                           gVFResults.seps_[sepid].sep_points.back().type,
-                           gVFResults.config_intpoints_);
+    // compute next list of points
+    gVFResults.selectedSep_->last_sep_point->nextpt =
+        integrate_sep(spherewnd, p, gVFResults.config_currentstep_,
+                      gVFResults.selectedSep_->last_sep_point->dir,
+                      gVFResults.selectedSep_->last_sep_point->type,
+                      gVFResults.config_intpoints_, &points);
 
-    // append computed points to existing vector
-    if (!v.empty()) {
-        auto &seppts = gVFResults.seps_[sepid].sep_points;
-        seppts.insert(std::end(seppts), std::begin(v), std::end(v));
-    }
+    gVFResults.selectedSep_->last_sep_point = points;
 }
 
 // ---------------------------------------------------------------------------
@@ -94,16 +95,11 @@ void cont_plot_saddle_sep(P4Sphere *spherewnd)
 // ---------------------------------------------------------------------------
 void plot_next_saddle_sep(P4Sphere *spherewnd, int vfindex)
 {
-    int &sepid{gVFResults.selectedSepIndex_};
-    int sadid{gVFResults.selectedSaddlePointIndex_};
-    draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
+    draw_sep(spherewnd, gVFResults.selectedSep_->first_sep_point);
 
-    sepid++;
-
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
-        gVFResults.seps_ = gVFResults.saddlePoints_[sadid].separatrices;
-        sepid = 0;
-    }
+    gVFResults.selectedSep_ = gVFResults.selectedSep_->next_sep;
+    if (gVFResults.selectedSep_ == nullptr)
+        gVFResults.selectedSep_ = gVFResults.selectedSaddlePoint_->separatrices;
 
     start_plot_saddle_sep(spherewnd, vfindex);
 }
@@ -113,51 +109,50 @@ void plot_next_saddle_sep(P4Sphere *spherewnd, int vfindex)
 // ---------------------------------------------------------------------------
 void select_next_saddle_sep(P4Sphere *spherewnd)
 {
-    int &sepid{gVFResults.selectedSepIndex_};
-    int sadid{gVFResults.selectedSaddlePointIndex_};
-    draw_sep(spherewnd, gVFResults.seps_[sepid].sep_points);
+    draw_sep(spherewnd, gVFResults.selectedSep_->first_sep_point);
 
-    sepid++;
+    gVFResults.selectedSep_ = gVFResults.selectedSep_->next_sep;
+    if (gVFResults.selectedSep_ == nullptr)
+        gVFResults.selectedSep_ = gVFResults.selectedSaddlePoint_->separatrices;
 
-    if (static_cast<std::string::size_type>(sepid) > gVFResults.seps_.size()) {
-        gVFResults.seps_ = gVFResults.saddlePoints_[sadid].separatrices;
-        sepid = 0;
-    }
-
-    draw_selected_sep(spherewnd, gVFResults.seps_[sepid].sep_points, CW_SEP);
+    draw_selected_sep(spherewnd, gVFResults.selectedSep_->first_sep_point,
+                      P4ColourSettings::colour_selected_separatrice);
 }
 
 // ---------------------------------------------------------------------------
 //          plot_all_saddle_sep
 // ---------------------------------------------------------------------------
 void plot_all_saddle_sep(P4Sphere *spherewnd, int vfindex,
-                         std::vector<p4singularities::saddle> &point)
+                         P4Singularities::saddle *point)
 {
     double p[3];
 
-    for (auto &it1 : point) {
-        if (!isARealSingularity(it1.x0, it1.y0, it1.chart, vfindex))
+    while (point != nullptr) {
+        if (!isARealSingularity(point->x0, point->y0, point->chart, vfindex)) {
+            point = point->next_saddle;
             continue;
-        if (it1.notadummy) {
-            auto &sep1 = it1.separatrices;
-            for (auto &it2 : sep1) {
-                if (!it2.sep_points.empty()) {
-                    copy_x_into_y(it2.sep_points.back().pcoord, p);
-                    auto newpts = integrate_sep(
+        }
+        if (point->notadummy) {
+            auto sep1 = point->separatrices;
+            while (sep1 != nullptr) {
+                auto points = sep1->last_sep_point;
+                if (points != nullptr) {
+                    copy_x_into_y(points->pcoord, p);
+                    sep1->last_sep_point->nextpt = integrate_sep(
                         spherewnd, p, gVFResults.config_currentstep_,
-                        it2.sep_points.back().dir, it2.sep_points.back().type,
-                        gVFResults.config_intpoints_);
-                    if (!newpts.empty())
-                        it2.sep_points.insert(std::end(it2.sep_points),
-                                              std::begin(newpts),
-                                              std::end(newpts));
+                        sep1->last_sep_point->dir, sep1->last_sep_point->type,
+                        gVFResults.config_intpoints_, &points);
                 } else {
-                    it2.sep_points = plot_separatrice(
-                        spherewnd, it1.x0, it1.y0, it1.a11, it1.a12, it1.a21,
-                        it1.a22, it1.epsilon, it2, it1.chart, vfindex);
+                    sep1->first_sep_point = plot_separatrice(
+                        spherewnd, point->x0, point->y0, point->a11, point->a12,
+                        point->a21, point->a22, point->epsilon, sep1, &points,
+                        point->chart, vfindex);
                 }
+                sep1->last_sep_point = points;
+                sep1 = sep1->next_sep;
             }
         }
+        point = point->next_saddle;
     }
 }
 
@@ -166,11 +161,15 @@ void plot_all_saddle_sep(P4Sphere *spherewnd, int vfindex,
 // ---------------------------------------------------------------------------
 void change_epsilon_saddle(P4Sphere *spherewnd, double epsilon)
 {
-    int sadid{gVFResults.selectedSaddlePointIndex_};
-    gVFResults.saddlePoints_[sadid].epsilon = epsilon;
+    gVFResults.selectedSaddlePoint_->epsilon = epsilon;
+    auto separatrice = gVFResults.selectedSaddlePoint_->separatrices;
 
-    for (auto &it : gVFResults.saddlePoints_[sadid].separatrices) {
-        draw_selected_sep(spherewnd, it.sep_points, bgColours::CBACKGROUND);
-        it.sep_points.clear();
+    while (separatrice != nullptr) {
+        draw_selected_sep(spherewnd, separatrice->first_sep_point,
+                          P4ColourSettings::colour_background);
+        delete separatrice->first_sep_point;
+        separatrice->first_sep_point = nullptr;
+        separatrice->last_sep_point = nullptr;
+        separatrice = separatrice->next_sep;
     }
 }
