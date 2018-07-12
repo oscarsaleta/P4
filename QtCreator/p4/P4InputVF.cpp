@@ -354,7 +354,7 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%d\n", &numParams_) != 1 || numParams_ < 0 ||
+        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ < 0 ||
             numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);

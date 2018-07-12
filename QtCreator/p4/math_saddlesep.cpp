@@ -62,6 +62,7 @@ void start_plot_saddle_sep(P4Sphere *spherewnd, int vfindex)
             gVFResults.selectedSaddlePoint_->epsilon, gVFResults.selectedSep_,
             &points, gVFResults.selectedSaddlePoint_->chart, vfindex);
     }
+    gVFResults.selectedSep_->last_sep_point = points;
 }
 
 // ---------------------------------------------------------------------------

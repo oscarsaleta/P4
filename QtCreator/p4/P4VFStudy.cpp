@@ -413,6 +413,7 @@ bool P4VFStudy::readSaddlePoint(FILE *fp)
         point = nullptr;
         return false;
     }
+    point->notadummy = true;
 
     // line at infinity a line of singularities in poincare disc
 
