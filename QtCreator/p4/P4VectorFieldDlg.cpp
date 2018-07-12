@@ -202,9 +202,12 @@ void P4VectorFieldDlg::getDataFromDlg()
 
 void P4VectorFieldDlg::updateDlgData()
 {
-    edt_xprime_->setText(gThisVF->xdot_.back());
-    edt_yprime_->setText(gThisVF->ydot_.back());
-    edt_gcf_->setText(gThisVF->gcf_.back());
+    if (!gThisVF->xdot_.empty())
+        edt_xprime_->setText(gThisVF->xdot_[0]);
+    if (!gThisVF->ydot_.empty())
+        edt_yprime_->setText(gThisVF->ydot_[0]);
+    if (!gThisVF->gcf_.empty())
+        edt_gcf_->setText(gThisVF->gcf_[0]);
     //    setLineEditCommonValue(edt_xprime_, gThisVF->xdot_);
     //    setLineEditCommonValue(edt_yprime_, gThisVF->ydot_);
     //    setLineEditCommonValue(edt_gcf_, gThisVF->gcf_);

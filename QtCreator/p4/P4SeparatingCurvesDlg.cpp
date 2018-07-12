@@ -30,10 +30,10 @@
 
 #include "P4Application.hpp"
 #include "P4FindDlg.hpp"
+#include "P4InputSphere.hpp"
 #include "P4InputVF.hpp"
 #include "P4ParentStudy.hpp"
 #include "P4ViewDlg.hpp"
-#include "P4InputSphere.hpp"
 #include "main.hpp"
 
 P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
@@ -184,10 +184,13 @@ P4SeparatingCurvesDlg::P4SeparatingCurvesDlg(P4FindDlg *parent)
     QObject::connect(edt_numpoints_, &QLineEdit::editingFinished, this,
                      &P4SeparatingCurvesDlg::onNumpointsEditingFinished);
 
+    QObject::connect(gThisVF, &P4InputVF::loadSignal, this,
+                     &P4SeparatingCurvesDlg::updateDlgData);
+
 #ifdef TOOLTIPS
-    btn_add_->setToolTip(
-        "Adds a new separating curve to the list.\nEnter a Maple expression "
-        "after pressing the button.");
+    btn_add_->setToolTip("Adds a new separating curve to the list.\nEnter "
+                         "a Maple expression "
+                         "after pressing the button.");
     btn_del_->setToolTip(
         "Deletes the selected separating curve from the list.");
     btn_edit_->setToolTip("Edits the separating curve Maple expression.");

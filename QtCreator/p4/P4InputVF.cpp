@@ -543,18 +543,6 @@ bool P4InputVF::load()
             curveRegions_.emplace_back(indx, std::move(sgns));
         }
 
-        numeric_.clear();
-        precision_.clear();
-        epsilon_.clear();
-        testsep_.clear();
-        taylorlevel_.clear();
-        numericlevel_.clear();
-        maxlevel_.clear();
-        weakness_.clear();
-        xdot_.clear();
-        ydot_.clear();
-        gcf_.clear();
-        //        parvalue_.clear();
         for (unsigned int k = 0; k < numVF_; k++) {
             if (fscanf(fp, "%d\n", &flag_numeric) != 1 ||
                 fscanf(fp, "%d\n", &aux) != 1 ||
@@ -564,38 +552,38 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             } else {
-                numeric_.push_back(((flag_numeric == 0) ? false : true));
-                precision_.push_back(aux);
-                epsilon_.emplace_back(scanbuf);
-                testsep_.push_back(((flag_testsep == 0) ? false : true));
+                numeric_[k] = ((flag_numeric == 0) ? false : true);
+                precision_[k] = aux;
+                epsilon_[k] = QString{scanbuf};
+                testsep_[k] = ((flag_testsep == 0) ? false : true);
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                taylorlevel_.push_back(aux);
+                taylorlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                numericlevel_.push_back(aux);
+                numericlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                maxlevel_.push_back(aux);
+                maxlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                weakness_.push_back(aux);
+                weakness_[k] = aux;
             }
 
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
@@ -603,19 +591,19 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            xdot_.emplace_back(scanbuf);
+            xdot_[k] = QString{scanbuf};
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            ydot_.emplace_back(scanbuf);
+            ydot_[k] = QString{scanbuf};
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            gcf_.emplace_back(scanbuf);
+            gcf_[k] = QString{scanbuf};
 
             if (xdot_[k] == "(null)")
                 xdot_[k] = "";
@@ -636,10 +624,13 @@ bool P4InputVF::load()
                 auxvec.emplace_back(scanbuf);
             }
             parvalue_[k] = auxvec;
-            /*for (i = numParams_; i < MAXNUMPARAMS; i++)
-                parvalue_[k].push_back(QString{});*/
+            for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
+                parvalue_[k].push_back(QString{});
         }
     }
+    selected_.clear();
+    selected_.push_back(0);
+    numSelected_ = 1;
 
     fclose(fp);
 
