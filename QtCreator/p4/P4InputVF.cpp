@@ -22,6 +22,7 @@
 #include <memory>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -226,6 +227,9 @@ void P4InputVF::reset(int n)
     }
 
     numVF_ = n;
+
+    qDebug() << "parvalue size" << parvalue_.size();
+    qDebug() << "numvf" << numVF_;
 }
 
 // -----------------------------------------------------------------------
@@ -350,7 +354,8 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%d\n", &numParams_) != 1) {
+        if (fscanf(fp, "%d\n", &numParams_) != 1 || numParams_ < 0 ||
+            numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
@@ -538,6 +543,18 @@ bool P4InputVF::load()
             curveRegions_.emplace_back(indx, std::move(sgns));
         }
 
+        numeric_.clear();
+        precision_.clear();
+        epsilon_.clear();
+        testsep_.clear();
+        taylorlevel_.clear();
+        numericlevel_.clear();
+        maxlevel_.clear();
+        weakness_.clear();
+        xdot_.clear();
+        ydot_.clear();
+        gcf_.clear();
+        //        parvalue_.clear();
         for (unsigned int k = 0; k < numVF_; k++) {
             if (fscanf(fp, "%d\n", &flag_numeric) != 1 ||
                 fscanf(fp, "%d\n", &aux) != 1 ||
@@ -547,40 +564,38 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             } else {
-                bool value{(flag_numeric == 0) ? false : true};
-                numeric_.push_back(std::move(value));
-                precision_.push_back(std::move(aux));
+                numeric_.push_back(((flag_numeric == 0) ? false : true));
+                precision_.push_back(aux);
                 epsilon_.emplace_back(scanbuf);
-                value = ((flag_testsep == 0) ? false : true);
-                testsep_.push_back(std::move(value));
+                testsep_.push_back(((flag_testsep == 0) ? false : true));
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                taylorlevel_.push_back(std::move(aux));
+                taylorlevel_.push_back(aux);
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                numericlevel_.push_back(std::move(aux));
+                numericlevel_.push_back(aux);
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                maxlevel_.push_back(std::move(aux));
+                maxlevel_.push_back(aux);
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                weakness_.push_back(std::move(aux));
+                weakness_.push_back(aux);
             }
 
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
@@ -620,7 +635,7 @@ bool P4InputVF::load()
                 }
                 auxvec.emplace_back(scanbuf);
             }
-            parvalue_.push_back(auxvec);
+            parvalue_[k] = auxvec;
             /*for (i = numParams_; i < MAXNUMPARAMS; i++)
                 parvalue_[k].push_back(QString{});*/
         }
@@ -3194,6 +3209,8 @@ void P4InputVF::addVectorField()
     if (hasCommonInt(weakness_))
         weakness_[numVF_] = commonInt(weakness_);
 
+    qDebug() << "parvalues size:" << parvalue_.size();
+    qDebug() << "numvf" << numVF_;
     for (i = 0; i < MAXNUMPARAMS; i++)
         if (hasCommonParValue(i))
             parvalue_[numVF_][i] = commonParValue(i);
