@@ -463,8 +463,7 @@ The curve, after it is introduced and the evaluate button is pressed, is reporte
 
 write_curve := proc(curvef)
     local j, p, q, z1, z2, s, _co, _si, d, L, g;
-    global user_p, user_q, rounded;#, curve_table;
-    #openfile(curve_table);        
+    global user_p, user_q, rounded;
     d := ddeg(curvef, x, y);
     if d = 0 then
         writef("%d\n", 0)
@@ -528,8 +527,6 @@ write_curve := proc(curvef)
             writef("\n");
         end if;
     end if;
-    #closefile(curve_table);
-    #openfile(terminal);
 end proc:
 \end{lstlisting}
 
@@ -537,7 +534,7 @@ end proc:
 
 write_isoclines := proc(isoclinesf)
     local j, p, q, z1, z2, s, _co, _si, d, L, g;
-    global user_p, user_q, isoclines_table;
+    global user_p, user_q, rounded;
     d := ddeg(isoclinesf, x, y);
     if d = 0 then
         writef("0\n"); # write degree = 0

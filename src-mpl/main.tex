@@ -453,9 +453,7 @@ end:
 
 prepareIsoclines := proc()
     global user_isoclines, normalexit, rounded;
-    openfile(terminal);
-    writef("\n\n\n\nwill use file %a\n\n\n\n", isoclines_table);
-    closefile(terminal);
+    rounded := user_numeric;
     openfile(isoclines_table);
     write_isoclines(user_isoclines);
     closefile(isoclines_table);
