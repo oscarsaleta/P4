@@ -4,25 +4,25 @@
 # Time stamp on source file: Tue Oct 24 14:36:22 2017
 #
 restart;
-read( "tools.m" );
-read( "writelog.m" );
+read("tools.m");
+read("writelog.m");
 
 weak_focus := proc(f, x0, y0, chart)
     global hamiltonian;
     local stype, ff, aa10, aa01, bb10, s, g, _x, gg, lyp, h;
 
-    writef( "(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0) );
-    openfile( result_file );
-    writef( "(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0) );
-    openfile( terminal );
+    writef("(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0));
+    openfile(result_file);
+    writef("(%a,%a) is a weak focus.\n", evalf(x0), evalf(y0));
+    openfile(terminal);
     if hamiltonian then
         h:=integrate(f[1],y)+integrate(-diff(integrate(f[1],y),x) - f[2],x);
-        writef( "Since the system is hamiltonian, we have a center.\n" );
+        writef("Since the system is hamiltonian, we have a center.\n");
         writef("The Hamiltonian function is:\n H(x,y) = %a\n",h);
-        openfile( result_file );
-        writef( "Since the system is hamiltonian, we have a center.\n" );
+        openfile(result_file);
+        writef("Since the system is hamiltonian, we have a center.\n");
         writef("The Hamiltonian function is:\n H(x,y) = %a\n",h);
-        openfile( terminal );
+        openfile(terminal);
         stype := 4;
     else
         # move to the origin
@@ -31,126 +31,126 @@ weak_focus := proc(f, x0, y0, chart)
         #   yy = y
         #   tt = -t * sqrt(-a01*b10-a10^2);
 
-        ff := translation( f, x, y, x0, y0 );
-        aa10 := coeff( coeff( ff[1], x, 1 ), y, 0 );
-        aa01 := coeff( coeff( ff[1], x, 0 ), y, 1 );
-        bb10 := coeff( coeff( ff[2], x, 1 ), y, 0 );
-        s := sqrt( -aa01*bb10-aa10^2 );
+        ff := translation(f, x, y, x0, y0);
+        aa10 := coeff(coeff(ff[1], x, 1), y, 0);
+        aa01 := coeff(coeff(ff[1], x, 0), y, 1);
+        bb10 := coeff(coeff(ff[2], x, 1), y, 0);
+        s := sqrt(-aa01*bb10-aa10^2);
         g := [ bb10*subs({x=-s*_x/bb10+aa10*y/bb10}, ff[1])/s^2
                - aa10*subs({x=-s*_x/bb10+aa10*y/bb10},ff[2])/s^2,
-               - subs( {x=-s*x/bb10+aa10*y/bb10}, ff[2])/s ];
+               - subs({x=-s*x/bb10+aa10*y/bb10}, ff[2])/s ];
         if user_numeric then
-            g := evalf( subs( _x=x, g ) );
+            g := evalf(subs(_x=x, g));
         else
             g := subs(_x=x,g);
         fi;
-        writef( "The local system: %a\n", g );
-        gg := subs( {x=(z+w)/2,y=-I*(z-w)/2}, g[1] ) + I * subs( {x=(z+w)/2,y=-I*(z-w)/2}, g[2] );
+        writef("The local system: %a\n", g);
+        gg := subs({x=(z+w)/2,y=-I*(z-w)/2}, g[1]) + I * subs({x=(z+w)/2,y=-I*(z-w)/2}, g[2]);
         gg := expand(gg);
         if save_all then
-            openfile( result_file );
-            writef( "z' = %a\n", gg );
-            openfile( terminal );
+            openfile(result_file);
+            writef("z' = %a\n", gg);
+            openfile(terminal);
         fi;
         if weakness_level = 0 then
-            openfile( result_file, terminal );
-            writef( "Lyapunov constants are not calculated. (weakness level=0)\n" );
+            openfile(result_file, terminal);
+            writef("Lyapunov constants are not calculated. (weakness level=0)\n");
             stype := 0;
         else
             if user_numeric then
-                lyp := lyapunov( gg - I*z, z, w );
+                lyp := lyapunov(gg - I*z, z, w);
             else
-                lyp := lyapunovsym( gg - I*z, z, w );
+                lyp := lyapunovsym(gg - I*z, z, w);
             end if;
-            writef( "Lyapunov information: %a\n", lyp );
+            writef("Lyapunov information: %a\n", lyp);
             if lyp[1] <> 0 then
-                openfile( result_file, terminal );
-                writef( "The order of weakness is %d\n", lyp[2] );
-                writef( "Lyapunov constant is %g\n", -lyp[1] );
-                openfile( terminal );
+                openfile(result_file, terminal);
+                writef("The order of weakness is %d\n", lyp[2]);
+                writef("Lyapunov constant is %g\n", -lyp[1]);
+                openfile(terminal);
                 if lyp[1] < 0 then
-                    writef( "We have an unstable singularity.\n" );
-                    openfile( result_file );
-                    writef( "We have an unstable singularity.\n" );
-                    openfile( terminal ); stype := 1;
+                    writef("We have an unstable singularity.\n");
+                    openfile(result_file);
+                    writef("We have an unstable singularity.\n");
+                    openfile(terminal); stype := 1;
                 else
-                    writef( "We have a stable singularity.\n" );
-                    openfile( result_file );
-                    writef( "We have a stable singularity.\n" );
-                    openfile( terminal ); stype := -1;
+                    writef("We have a stable singularity.\n");
+                    openfile(result_file);
+                    writef("We have a stable singularity.\n");
+                    openfile(terminal); stype := -1;
                 fi;
             else
                 if lyp[3] = 2 then
-                    writef( "We have a center (the system is quadratic).\n" );
-                    openfile( result_file );
-                    writef( "We have a center (the system is quadratic).\n" );
-                    openfile( terminal );
+                    writef("We have a center (the system is quadratic).\n");
+                    openfile(result_file);
+                    writef("We have a center (the system is quadratic).\n");
+                    openfile(terminal);
                     stype := 4;
                 else
                     if lyp[4] then
-                        writef( "We have a center (the system is linear+cubic).\n" );
-                        openfile( result_file );
-                        writef( "We have a center (the system is linear+cubic).\n" );
-                        openfile( terminal );
+                        writef("We have a center (the system is linear+cubic).\n");
+                        openfile(result_file);
+                        writef("We have a center (the system is linear+cubic).\n");
+                        openfile(terminal);
                         stype := 4;
                     else
-                        writef( "The order of weakness is at least %d.\n", weakness_level+1 );
-                        openfile( result_file );
-                        writef( "The order of weakness is at least %d.\n", weakness_level+1 );
-                        openfile( terminal );
+                        writef("The order of weakness is at least %d.\n", weakness_level+1);
+                        openfile(result_file);
+                        writef("The order of weakness is at least %d.\n", weakness_level+1);
+                        openfile(terminal);
                         stype := 0;
                     fi;
                 fi;
             fi;
         fi;
     fi;
-    openfile( result_file );
-    writef( "########################################################\n" );
-    openfile( terminal );
-    writef( "########################################################\n" );
-    write_weak_focus( x0, y0, chart, stype );
+    openfile(result_file);
+    writef("########################################################\n");
+    openfile(terminal);
+    writef("########################################################\n");
+    write_weak_focus(x0, y0, chart, stype);
 end:
 
 
-lyapunov := proc( f, z, w )
+lyapunov := proc(f, z, w)
     local a, bindir, infile, outfile, exefile, result, rndnum, wl, linfo, aux;
     global user_exeprefix, user_tmpdir, user_lypexe, user_lypexe_mpf, user_precision0, user_bindir, user_removecmd;
 
     rndnum := irem(rand(),1000);
-    infile := cat( user_tmpdir, "P4LYP_", rndnum, ".INP" );
-    outfile := cat( user_tmpdir, "P4LYP_", rndnum, ".OUT" );
+    infile := cat(user_tmpdir, "P4LYP_", rndnum, ".INP");
+    outfile := cat(user_tmpdir, "P4LYP_", rndnum, ".OUT");
     if user_precision0 = 0 then
-        exefile := cat( user_bindir, user_lypexe );
+        exefile := cat(user_bindir, user_lypexe);
     else
-        exefile := cat( user_bindir, user_lypexe_mpf );
+        exefile := cat(user_bindir, user_lypexe_mpf);
     end if;
-    linfo := preparelyapunovfile( infile, f, z, w );
+    linfo := preparelyapunovfile(infile, f, z, w);
     wl := linfo[1];
-    writef( "Determining lyapunov constants ...\n" );
-    #writef( cat( user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
-    #    user_platform, " \"", user_sumtablepath, "\"" ) );
-    aux:=ssystem( cat( user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
-        user_platform, " \"", user_sumtablepath, "\"" ) );
+    writef("Determining lyapunov constants ...\n");
+    #writef(cat(user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
+    #    user_platform, " \"", user_sumtablepath, "\""));
+    aux:=ssystem(cat(user_exeprefix, "", exefile, " \"", infile, "\" \"", outfile, "\" MAPLE ",
+        user_platform, " \"", user_sumtablepath, "\""));
     #writef(aux[2]);
-    result := readlyapunovresult( outfile, wl );
-    #aux:=ssystem( cat( user_removecmd, " \"", infile, "\"" ) );
+    result := readlyapunovresult(outfile, wl);
+    #aux:=ssystem(cat(user_removecmd, " \"", infile, "\""));
     #writef(aux[2]);
-    #aux:=ssystem( cat( user_removecmd, " \"", outfile, "\"" )  );
+    #aux:=ssystem(cat(user_removecmd, " \"", outfile, "\""));
     #writef(aux[2]);
     [ op(result), linfo[2], linfo[3] ];
 end:
 
-readlyapunovresult := proc( filename, weaklevel )
+readlyapunovresult := proc(filename, weaklevel)
     local lypdata, Vdata, j, n, wval, lypval, okval;
 
     #writef(cat("reading ",filename));
-    lypdata := readdata( filename, 1 );
-    writef( "lyapunov data = %a\n", lypdata );
+    lypdata := readdata(filename, 1);
+    writef("lyapunov data = %a\n", lypdata);
     Vdata := []; n := 1;
-    openfile( terminal, result_file );
+    openfile(terminal, result_file);
     for j from 1 to weaklevel do
         if lypdata[n] <> -1 then
-            writef( "V(%d)=%g\n", round(lypdata[n]), lypdata[n+1] );
+            writef("V(%d)=%g\n", round(lypdata[n]), lypdata[n+1]);
         end if;
         Vdata := [ op(Vdata), [round(lypdata[n]), lypdata[n+1]] ];
         if round(lypdata[n]) = -1 then
@@ -162,61 +162,61 @@ readlyapunovresult := proc( filename, weaklevel )
         n := n+1;
     end if;
     okval := round(lypdata[n]); wval := round(lypdata[n+1]); lypval := lypdata[n+2];
-    openfile( terminal );
+    openfile(terminal);
     [lypval,wval];
 end:
 
-preparelyapunovfile := proc( filename, _f, z, w )
+preparelyapunovfile := proc(filename, _f, z, w)
     local f, cubic, L, d, a, j, wl;
 
-    f := optimizepolynomial2( _f, z, w );
+    f := optimizepolynomial2(_f, z, w);
     cubic := false;
-    openfile( filename );
-    writef( "%d\n", user_precision0*2+2 );  # FROM DECIMAL TO BINARY
-    d := ddeg( f, z, w );
+    openfile(filename);
+    writef("%d\n", user_precision0*2+2);  # FROM DECIMAL TO BINARY
+    d := ddeg(f, z, w);
     if d = 2 then wl := 3;
-        writef( "3\n" )   # we have a quadratic system
+        writef("3\n")   # we have a quadratic system
     else
         if d = 3 then wl := 5;
             if coeff(coeff(f,z,2),w,0) = 0 and
                 coeff(coeff(f,z,0),w,2) = 0 and
                 coeff(coeff(f,z,1),w,1) = 0 then
-                writef( "5\n" );
+                writef("5\n");
                 cubic := true;
             else
                 wl := weakness_level;
-                writef( "%d\n", weakness_level );
+                writef("%d\n", weakness_level);
             fi;
         else
             wl := weakness_level;
-            writef( "%d\n", weakness_level );
+            writef("%d\n", weakness_level);
     fi; fi;
-    writef( "%g\n", 10^(-user_precision) );
-    L := coeff_degree2( f, z, w );
-    writef( "%d\n", nops(L) );
+    writef("%g\n", 10^(-user_precision));
+    L := coeff_degree2(f, z, w);
+    writef("%d\n", nops(L));
     for j from 1 to nops(L) do
         a := L[j];
-        writef( "  %d %d %g %g\n", a[1], a[2], evalf(Re(a[3])), evalf(Im(a[3])) );
+        writef("  %d %d %g %g\n", a[1], a[2], evalf(Re(a[3])), evalf(Im(a[3])));
     od;
-    closefile( filename );
+    closefile(filename);
     [ wl, d, cubic ];
 end:
 sumtable := proc(n)
     local L,r,s,st_compare;
-    #writef( "producing sum-table of order %d...\n", n );
+    #writef("producing sum-table of order %d...\n", n);
     L:=piecewise(n=0,[[1]],map(op,map(combinat[permute],combinat[partition](n,n))));
-    st_compare := ( r,s ) ->
+    st_compare := (r,s) ->
         if r[1] < s[1] then true
-        else if r[1]=s[1] then st_compare( r[2..-1], s[2..-1] ) else false fi fi;
-        L:=sort(L, st_compare );
-    #writef( "finished.  sum-table has %d components.\n", nops(L) );
+        else if r[1]=s[1] then st_compare(r[2..-1], s[2..-1]) else false fi fi;
+        L:=sort(L, st_compare);
+    #writef("finished.  sum-table has %d components.\n", nops(L));
     return L;
 end:
-preparelyapunovsym := proc( f, z, w )
+preparelyapunovsym := proc(f, z, w)
     local cubic, L, d, a, j, wl;
 
     cubic:=false;
-    d := ddeg( f, z, w );
+    d := ddeg(f, z, w);
     if d = 2 then wl := 3;
     else
         if d = 3 then wl := 5;
@@ -230,36 +230,36 @@ preparelyapunovsym := proc( f, z, w )
         else
             wl := weakness_level;
     fi; fi;
-    L := coeff_degree2( f, z, w );
+    L := coeff_degree2(f, z, w);
     [ wl, d, cubic ];
 end:
 lyapunovsym := proc(_f,z,w)
     # should return [0,0,...] in case nothing is found or [d,V,...] in other case
     local f, linfo, wl, k, T, V, result, ok;
-    f := optimizepolynomial2( _f, z, w );
+    f := optimizepolynomial2(_f, z, w);
 
-    linfo := preparelyapunovsym( f, z, w );
+    linfo := preparelyapunovsym(f, z, w);
     wl := linfo[1];
     result := []; # list of lists each element is  a list of 2: [d,V(d)], goes from 1 to weakness level
 
     ok := false;
-    openfile( terminal, result_file );
+    openfile(terminal, result_file);
     # writef("_F=%a\nF=%a\n",_f,f);
     for k from 1 to wl do
         T := sumtable(2*k);
         V := 0;
         for j from 1 to nops(T) do
-            V := V - part_lyapunov_coeff( f,z,w, T[j], 2*k+1 );
+            V := V - part_lyapunov_coeff(f,z,w, T[j], 2*k+1);
         end do;
         result := [op(result), [V,k]];
-        writef( "k=%d V = %a = %f\n", k, V, evalf(V) );
+        writef("k=%d V = %a = %f\n", k, V, evalf(V));
         if reduce_nneq(V,0) then
-            #writef( "order of weakness = %d\n", k );
+            #writef("order of weakness = %d\n", k);
             ok := true;
             break;
         end if;
     end do;
-    openfile( terminal );
+    openfile(terminal);
     if ok then
         result := result[-1];
     else
@@ -271,37 +271,37 @@ part_lyapunov_coeff := proc (vecfield,z,w,L,k)
     local R,expr,f,v,ww,i;
     # we first make a list of all polynomials of degrees L[j] listed in L
 
-    R := map(expr->lyp_findpoly( vecfield, z,w,expr+1 ), L );
+    R := map(expr->lyp_findpoly(vecfield, z,w,expr+1), L);
     if not member(0,R) then
-        # writef( "k = %d\n", k );
+        # writef("k = %d\n", k);
         # for i from 1 to nops(R) do
-        #     writef( "R[%d] = %a\n", i-1, R[i] );
+        #     writef("R[%d] = %a\n", i-1, R[i]);
         # end do;
         f:=-1;
-        # writef( "f = %a\n", f);
+        # writef("f = %a\n", f);
         for i from 1 to nops(R)-1 do
             if type(i-1,odd) then
                 f:=lyp_Regz(f,R[i],z,w);
             else
                 f:=lyp_Imgz(f,R[i],z,w);
             end if;
-            # writef( "f = %a\n", f);
+            # writef("f = %a\n", f);
         end do;
         i := nops(R);
-        if type(i-1,odd ) then
+        if type(i-1,odd) then
             f := lyp_multc_poly(f,0,-1,z,w);
             f,v := op(lyp_LL(f,R[i],z,w,(k-1)/2));
-            # writef( "f = %a\n", f);
+            # writef("f = %a\n", f);
             ww := simplify(Im(v));
         else
             f,v := op(lyp_LL(f,R[i], z,w,(k-1)/2));
-            # writef( "f = %a\n", f);
+            # writef("f = %a\n", f);
             ww := simplify(Re(v));
         end if;
     else
         ww := 0;
     end if;
-    # writef( "w = %g\n", ww );
+    # writef("w = %g\n", ww);
     return ww;
 end proc;
 lyp_LL := proc(f,g,z,w,n)
@@ -354,18 +354,18 @@ lyp_findpoly := proc(vf,z,w,n)
     r;
 end proc;
 
-lyp_multc_poly := proc( f,a,b,z,w )
-    return expand( (a+I*b)*f );
+lyp_multc_poly := proc(f,a,b,z,w)
+    return expand((a+I*b)*f);
 end proc;
 
-lyp_conj_poly := proc( f,z,w ) # take conjugate of coefficients and exchange z with w (= zbar)
+lyp_conj_poly := proc(f,z,w) # take conjugate of coefficients and exchange z with w (= zbar)
     local zb;
     expand(conjugate(f)) assuming z::real, w::real;
     eval(eval(eval(%,{z=zb}),w=z),zb=w);
 end proc;
 
-save( weak_focus, lyapunov, readlyapunovresult, preparelyapunovfile,
+save(weak_focus, lyapunov, readlyapunovresult, preparelyapunovfile,
       lyapunovsym,preparelyapunovsym, sumtable, part_lyapunov_coeff,
       lyp_multc_poly,lyp_findpoly,lyp_Regz,lyp_Imgz,lyp_LL,lyp_G,lyp_conj_poly,
-      "weakfocus.m" );
+      "weakfocus.m");
 
