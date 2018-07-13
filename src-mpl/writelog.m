@@ -64,4 +64,4 @@ ilFhil?(F/FCFCFdtFDF\jlF^]l>F6Fijl>FBF[[m>F][mF^[m>F][mFh[m>F][mF\\m>F_rF`\mFa
 \m?(F/FCFCFdtFDF\jlF^]l>F][mFe\m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jl
 F^]l>F][mF`]m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mFi]m>F][mF
 h[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l@$Fb^mC)>F][mFg^m>F][mF`_m>F][mF\\
-m>F_rFd_mFa\m?(F/FCFCFdtFDFf_mF^]lF,6%FijlF[[m%0isoclines_tableGF,F,
+m>F_rFd_mFa\m?(F/FCFCFdtFDFf_mF^]lF,FebmF,F,

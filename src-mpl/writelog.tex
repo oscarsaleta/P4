@@ -466,7 +466,7 @@ write_curve := proc(curvef)
     global user_p, user_q, rounded;
     d := ddeg(curvef, x, y);
     if d = 0 then
-        writef("%d\n", 0)
+        writef("0\n"); # write degree = 0
     else
         L := coeff_degree2(curvef, x, y);
         writef("%d %d", d, nops(L));
@@ -496,7 +496,7 @@ write_curve := proc(curvef)
         writef("\n");
 
         g := subs(x = -1/z2^p, y = z1/z2^q, curvef);
-        g := norpoly2(g, z1,z2);
+        g := norpoly2(g, z1, z2);
         g := numer(g);
         L := coeff_degree2(g, z1, z2);
         writef("%d", nops(L));
@@ -567,7 +567,7 @@ write_isoclines := proc(isoclinesf)
         writef("\n");
 
         g := subs(x = -1/z2^p, y = z1/z2^q, isoclinesf);
-        g := norpoly2(g, z1,z2);
+        g := norpoly2(g, z1, z2);
         g := numer(g);
         L := coeff_degree2(g, z1, z2);
         writef("%d", nops(L));

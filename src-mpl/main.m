@@ -66,7 +66,6 @@ I+normalexitFaoF(,
 I6prepareArbitraryCurvef*F(F(F(F(C)>F[oF][l-F\r6#%,curve_tableG-%,write_curveG6
 #%+user_curveG-F`rF[amF[r-Fas6#Qgn|+We~have~finished~writing~the~curve~as~a~C++
 ~readable~list.|+F(>FjqF,F(6%F`amFjqF[oF(F(,
-I1prepareIsoclinesf*F(F(F(F(C+F[r-Fas6$Q9|+|+|+|+will~use~file~%a|+|+|+|+F(%0is
-oclines_tableGF_r-F\r6#F]bm-%0write_isoclinesG6#%/user_isoclinesG-F`rF_bmF[r-Fa
-s6#Qjn|+We~have~finished~writing~the~isoclines~as~C++~readable~lists.|+F(>FjqF,
-F(6%FcbmFjqF[oF(F(
+I1prepareIsoclinesf*F(F(F(F(C)>F[oF][l-F\r6#%0isoclines_tableG-%0write_isocline
+sG6#%/user_isoclinesG-F`rF\bmF[r-Fas6#Qjn|+We~have~finished~writing~the~isoclin
+es~as~C++~readable~lists.|+F(>FjqF,F(6%FabmFjqF[oF(F(
