@@ -59,10 +59,9 @@ lF^]l>F][mFe\m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mF`]m>F][m
 Fh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mFi]m>F][mFh[m>F][mF\\m>F_rF`
 \mFa\m?(F/FCFCFdtFDF\jlF^]l@$Fb^mC)>F][mFg^m>F][mF`_m>F][mF\\m>F_rFd_mFa\m?(F/F
 CFCFdtFDFf_mF^]lF,6%FijlF[[mFipF,F,,
-I0write_isoclinesf*6#%+isoclinesfGFchlF,F,C'-Fdy6#%0isoclines_tableG>FhsF^il@%F
-bil-Fdu6#Q#0|+F,CE>F_rFgilFhil?(F/FCFCFdtFDF\jlF^]l>F6Fijl>FBF[[m>F][mF^[m>F][m
-Fh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mFe\m>F][mFh[m>F][mF\\m>F_rF`
-\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mF`]m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFD
-F\jlF^]l>F][mFi]m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l@$Fb^mC)>F]
-[mFg^m>F][mF`_m>F][mF\\m>F_rFd_mFa\m?(F/FCFCFdtFDFf_mF^]l-%*closefileGF\cmFe]lF
-,6%FijlF[[mF]cmF,F,
+I0write_isoclinesf*6#%+isoclinesfGFchlF,F,C$>FhsF^il@%Fbil-Fdu6#Q#0|+F,CE>F_rFg
+ilFhil?(F/FCFCFdtFDF\jlF^]l>F6Fijl>FBF[[m>F][mF^[m>F][mFh[m>F][mF\\m>F_rF`\mFa
+\m?(F/FCFCFdtFDF\jlF^]l>F][mFe\m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jl
+F^]l>F][mF`]m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mFi]m>F][mF
+h[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l@$Fb^mC)>F][mFg^m>F][mF`_m>F][mF\\
+m>F_rFd_mFa\m?(F/FCFCFdtFDFf_mF^]lF,6%FijlF[[m%0isoclines_tableGF,F,
