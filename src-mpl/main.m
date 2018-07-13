@@ -68,4 +68,4 @@ I6prepareArbitraryCurvef*F(F(F(F(C)>F[oF][l-F\r6#%,curve_tableG-%,write_curveG6
 ~readable~list.|+F(>FjqF,F(6%F`amFjqF[oF(F(,
 I1prepareIsoclinesf*F(F(F(F(C&-F\r6#%0isoclines_tableG-%0write_isoclinesG6#%/us
 er_isoclinesG-Fas6#Qjn|+We~have~finished~writing~the~isoclines~as~C++~readable~
-lists.|+F(>FjqF,F(6$F`bmFjqF(F(
+lists.|+F(>FjqF,F(6%F`bmFjqF[oF(F(
