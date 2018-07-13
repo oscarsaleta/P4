@@ -538,7 +538,6 @@ end proc:
 write_isoclines := proc(isoclinesf)
     local j, p, q, z1, z2, s, _co, _si, d, L, g;
     global user_p, user_q, isoclines_table;
-    openfile(isoclines_table);
     d := ddeg(isoclinesf, x, y);
     if d = 0 then
         writef("0\n"); # write degree = 0
@@ -602,8 +601,6 @@ write_isoclines := proc(isoclinesf)
             writef("\n");
         end if;
     end if;
-    closefile(isoclines_table);
-    openfile(terminal);
 end proc:
 \end{lstlisting}
 

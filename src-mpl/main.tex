@@ -453,8 +453,13 @@ end:
 
 prepareIsoclines := proc()
     global user_isoclines, normalexit, rounded;
+    openfile(terminal);
+    writef("\n\n\n\nwill use file %a\n\n\n\n", isoclines_table);
+    closefile(terminal);
     openfile(isoclines_table);
     write_isoclines(user_isoclines);
+    closefile(isoclines_table);
+    openfile(terminal);
     writef("\nWe have finished writing the isoclines as C++ readable lists.\n");
     normalexit := 1;
 end:
