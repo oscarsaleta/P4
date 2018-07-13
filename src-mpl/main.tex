@@ -453,7 +453,17 @@ end:
 
 prepareIsoclines := proc()
     global user_isoclines, normalexit, rounded;
-    rounded := user_numeric_pieces[1];
+    if type(user_numeric_pieces,list) then
+        user_numeric := user_numeric_pieces[1];
+    else
+        user_numeric := true;
+    fi;
+    if type(user_precision_pieces,list) then
+        user_precision := user_precision_pieces[1];
+    else
+        user_precision := 8;
+    fi;
+    rounded := user_numeric_;
     openfile(isoclines_table);
     write_isoclines(user_isoclines);
     closefile(isoclines_table);
@@ -462,8 +472,13 @@ prepareIsoclines := proc()
     normalexit := 1;
 end:
 
-save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
-        normalexit, prepareArbitraryCurve, prepareIsoclines, "main.m");
+save(user_numeric, user_precision, user_precision0, epsilon, test_sep,
+        taylor_level, numeric_level, max_level, weakness_level, x0, y0, x_min,
+        y_min, x_max, y_max, user_p, user_q, user_f, user_gcf, user_curve,
+        all_crit_points, save_all, vec_table, finite_table, finite_res,
+        infinite_table, infinite_res, hamiltonian, ishamiltonian, p4main,
+        prepareIsoclines, CheckIfGoodPolynomial, normalexit, user_exeprefix,
+        chooseParameterSet, prepareArbitraryCurve, prepareIsoclines, "main.m");
 
 save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
         prepareArbitraryCurve, prepareIsoclines,
