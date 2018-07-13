@@ -110,11 +110,12 @@ class P4InputVF : public QObject
     std::vector<QString> ydot_;
     std::vector<QString> gcf_;
 
-    // ARBITRARY CURVE (one for all)
+    // ARBITRARY CURVE (one or more for all pieces)
     QString arbitraryCurve_;
 
-    // ISOCLINES (one per VF)
-    std::vector<QString> isoclines_;
+    // ISOCLINES (one or more per VF, but only one at a time)
+    QString isoclines_;
+    int isoclinesVF_{0};
 
     // EVALUATION VARIABLES
     QString evalFile_;
@@ -124,9 +125,6 @@ class P4InputVF : public QObject
 
     // QT GUI ELEMENTS FIXME need to be public?
     P4ProcessWnd *outputWindow_{nullptr};
-    //    QTextEdit *processText_{nullptr};
-    //    QPushButton *terminateProcessButton_{nullptr};
-    //    QPushButton *clearProcessButton_{nullptr};
 
     // PARAMETER LIST
     unsigned int numParams_{0};

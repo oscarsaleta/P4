@@ -196,7 +196,7 @@ bool P4VFStudy::readGCF(FILE *fp)
 // FIXME: how to have an isoclines file for every different VF?
 bool P4VFStudy::readIsoclines(QString basename)
 {
-    int N, degree_curve;
+    int N, vfindex, degree_curve;
     FILE *fp = nullptr;
 #ifndef Q_OS_DARWIN
     setlocale(LC_ALL, "C");

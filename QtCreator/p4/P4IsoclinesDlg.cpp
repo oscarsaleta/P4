@@ -20,6 +20,7 @@
 #include "P4IsoclinesDlg.hpp"
 
 #include <algorithm>
+#include <iterator>
 #include <memory>
 
 #include <QBoxLayout>
@@ -40,6 +41,10 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
     : QWidget{nullptr, Qt::Tool | Qt::WindowStaysOnTopHint},
       mainSphere_{sp}, plotwnd_{plt}
 {
+    edt_vfselect_ = new QLineEdit{"", this};
+    auto lblvf = new QLabel{"Vector field:"};
+    lblvf->setBuddy(edt_vfselect_);
+
     edt_value_ = new QLineEdit{"", this};
     auto lbl0 = new QLabel{"&Value = ", this};
     lbl0->setBuddy(edt_value_);
@@ -53,12 +58,15 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
 
     edt_points_ = new QLineEdit{"", this};
     auto lbl2 = new QLabel{"Num. Points: ", this};
+    lbl2->setBuddy(edt_points_);
 
     edt_precis_ = new QLineEdit{"", this};
     auto lbl3 = new QLabel{"Precision: ", this};
+    lbl3->setBuddy(edt_precis_);
 
     edt_memory_ = new QLineEdit{"", this};
     auto lbl4 = new QLabel{"Max. Memory: ", this};
+    lbl4->setBuddy(edt_memory_);
 
     btnEvaluate_ = new QPushButton{"&Evaluate", this};
     btnPlot_ = new QPushButton{"&Plot", this};
@@ -66,6 +74,8 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
     btnDelAll_ = new QPushButton{"Delete &All Isoclines", this};
 
 #ifdef TOOLTIPS
+    edt_vfselect_->setToolTip("Vector field selector. If there is only one "
+                              "vector field this value is ignored.");
     edt_value_->setToolTip("Value of isoclines to plot.\nCan be 0 for 0-slope "
                            "isoclines, and \"inf\"\n(without quotes, case "
                            "insensitive) for\ninfinite-slope isoclines.");
@@ -96,14 +106,16 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
     layout0->addWidget(btn_dashes_);
 
     auto layout1 = new QGridLayout{};
-    layout1->addWidget(lbl0, 0, 0);
-    layout1->addWidget(edt_value_, 0, 1);
-    layout1->addWidget(lbl2, 1, 0);
-    layout1->addWidget(edt_points_, 1, 1);
-    layout1->addWidget(lbl3, 2, 0);
-    layout1->addWidget(edt_precis_, 2, 1);
-    layout1->addWidget(lbl4, 3, 0);
-    layout1->addWidget(edt_memory_, 3, 1);
+    layout1->addWidget(lblvf, 0, 0);
+    layout1->addWidget(edt_vfselect_, 0, 1);
+    layout1->addWidget(lbl0, 1, 0);
+    layout1->addWidget(edt_value_, 1, 1);
+    layout1->addWidget(lbl2, 2, 0);
+    layout1->addWidget(edt_points_, 2, 1);
+    layout1->addWidget(lbl3, 3, 0);
+    layout1->addWidget(edt_precis_, 3, 1);
+    layout1->addWidget(lbl4, 4, 0);
+    layout1->addWidget(edt_memory_, 4, 1);
 
     auto layout2 = new QHBoxLayout{};
     layout2->addWidget(btnEvaluate_);
@@ -138,8 +150,12 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
 
-    // FIXME: quin mirar? algun? primer? fer un flag q digui si n'hi ha?
-    if (!gVFResults.vf_[0]->isocline_vector_.empty()) {
+    if (gThisVF->numVF_ == 1 && !gVFResults.vf_[0]->isocline_vector_.empty()) {
+        // Enable delete buttons if there's only one VF and it has isoclines
+        btnDelAll_->setEnabled(true);
+        btnDelAll_->setEnabled(true);
+    } else {
+        // Buttons for deleting will be disabled until a VF is selected
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);
     }
@@ -150,6 +166,22 @@ P4IsoclinesDlg::P4IsoclinesDlg(P4PlotWnd *plt, P4Sphere *sp)
 void P4IsoclinesDlg::onBtnEvaluate()
 {
     bool ok;
+    // check if VF is valid
+    if (gThisVF->numVF_ != 1) {
+        auto vf = edt_vfselect_->text().toInt(&ok);
+        if (!ok || vf < 0 || static_cast<unsigned int>(vf) >= gThisVF->numVF_) {
+            QMessageBox::information(
+                this, "P4",
+                "The VF selection is invalid. Select a value between\n0 and "
+                "the number of vector fields in your\nconfiguration. (minus "
+                "one, since we start counting at\nzero!)");
+            return;
+        }
+        gThisVF->isoclinesVF_ = vf;
+    } else {
+        gThisVF->isoclinesVF_ = 0;
+    }
+    // check if there's a value
     if (edt_value_->text().isNull() && edt_value_->text().isEmpty()) {
         QMessageBox::information(
             this, "P4",
@@ -170,33 +202,27 @@ void P4IsoclinesDlg::onBtnEvaluate()
         }
     }
 
-    // FIXME: això també mira només un dels camps... Passo d'aquest check? O el
-    // reescric? O miro només el primer? Si n'hi ha més d'un vol dir que estan
-    // bé?
-    if ((gThisVF->xdot_[0] == "0" || gThisVF->xdot_[0].isEmpty()) &&
-        (gThisVF->ydot_[0] == "0" || gThisVF->ydot_[0].isEmpty())) {
-        QMessageBox::information(this, "P4",
-                                 "Check that the vector field is "
-                                 "correctly introduced.\nIf you "
-                                 "used an input file, make sure "
-                                 "you pressed\nthe Load button.");
+    // check if any of the VFs is not correctly written
+    if (std::any_of(std::cbegin(gThisVF->xdot_), std::cend(gThisVF->xdot_),
+                    [](QString s) { return (s == "0" || s.isEmpty()); }) ||
+        std::any_of(std::cbegin(gThisVF->ydot_), std::cend(gThisVF->ydot_),
+                    [](QString s) { return (s == "0" || s.isEmpty()); })) {
+        QMessageBox::information(
+            this, "P4",
+            "Check that the vector field is correctly introduced.\nIf you used "
+            "an input file, make sure you pressed\nthe Load button.");
         return;
     }
+
+    // setup the isocline computations
     if (edt_value_->text().trimmed() == "0") {
-        gThisVF->isoclines_ = gThisVF->ydot_;
+        gThisVF->isoclines_ = gThisVF->ydot_[gThisVF->isoclinesVF_];
     } else if (edt_value_->text().trimmed().toLower() == "inf") {
-        gThisVF->isoclines_ = gThisVF->xdot_;
+        gThisVF->isoclines_ = gThisVF->xdot_[gThisVF->isoclinesVF_];
     } else {
-        std::vector<QString> tmp;
-        auto vfx = std::begin(gThisVF->xdot_);
-        auto vfy = std::begin(gThisVF->ydot_);
-        for (; vfx != std::end(gThisVF->xdot_), vfy != std::end(gThisVF->ydot_);
-             ++vfx, ++vfy) {
-            tmp.emplace_back("(" + (*vfy) + +")-(" +
-                             edt_value_->text().trimmed() + ")*(" + (*vfx) +
-                             ")");
-        }
-        gThisVF->isoclines_ = std::move(tmp);
+        gThisVF->isoclines_ = "(" + gThisVF->ydot_[gThisVF->isoclinesVF_] +
+                              +")-(" + edt_value_->text().trimmed() + ")*(" +
+                              gThisVF->xdot_[gThisVF->isoclinesVF_] + ")";
     }
 
     // FIRST: create filename_vecisoclines.tab for transforming the isoclines
@@ -209,35 +235,28 @@ void P4IsoclinesDlg::onBtnEvaluate()
 
 void P4IsoclinesDlg::onBtnPlot()
 {
-    bool dashes, result;
+    bool dashes{btn_dashes_->isChecked()}, result, ok{true}, convertok;
     int points, precis, memory;
-
-    bool ok;
     QString buf;
 
-    dashes = btn_dashes_->isChecked();
-
-    ok = true;
-
-    buf = edt_points_->text();
-    points = buf.toInt();
-    if (points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
+    points = buf.toInt(&convertok);
+    if (!convertok || points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
         buf += " ???";
         edt_points_->setText(buf);
         ok = false;
     }
 
     buf = edt_precis_->text();
-    precis = buf.toInt();
-    if (precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
+    precis = buf.toInt(&convertok);
+    if (!convertok || precis < MIN_CURVEPRECIS || precis > MAX_CURVEPRECIS) {
         buf += " ???";
         edt_precis_->setText(buf);
         ok = false;
     }
 
     buf = edt_memory_->text();
-    memory = buf.toInt();
-    if (memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
+    memory = buf.toInt(&convertok);
+    if (!convertok || memory < MIN_CURVEMEMORY || memory > MAX_CURVEMEMORY) {
         buf += " ???";
         edt_memory_->setText(buf);
         ok = false;
@@ -252,15 +271,11 @@ void P4IsoclinesDlg::onBtnPlot()
     }
 
     // SECOND: read the resulting file and store the list
-    // FIXME: aqui hem de trobar una forma de guardar les isoclines per cada VF
-    // diferent. Posar-les a diferents fitxers de nom
-    // gThisVF->getbarefilename()+#vf ?
-    for (auto &vf : gVFResults.vf_) {
-        if (!vf->readIsoclines(gThisVF->getbarefilename()))
-            QMessageBox::critical(this, "P4",
-                                  "Cannot read isoclines.\n"
-                                  "Plese check the input field.\n");
-    }
+    if (!gVFResults.vf_[gThisVF->isoclinesVF_]->readIsoclines(
+            gThisVF->getbarefilename()))
+        QMessageBox::critical(this, "P4",
+                              "Cannot read isoclines.\n"
+                              "Plese check the input field.\n");
 
     /*if (!gVFResults.readIsoclines(gThisVF->getbarefilename())) {
         QMessageBox::critical(this, "P4",

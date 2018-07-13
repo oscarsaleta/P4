@@ -203,6 +203,10 @@ void P4InputVF::reset(int n)
     vfRegions_.clear();
     numVFRegions_ = 0;
 
+    arbitraryCurve_ = QString{};
+    isoclines_ = QString{};
+    isoclinesVF_ = 0;
+
     changed_ = false;
     evaluated_ = false;
     evaluating_ = false;
@@ -227,9 +231,6 @@ void P4InputVF::reset(int n)
     }
 
     numVF_ = n;
-
-    qDebug() << "parvalue size" << parvalue_.size();
-    qDebug() << "numvf" << numVF_;
 }
 
 // -----------------------------------------------------------------------
@@ -1182,26 +1183,20 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
 // parametres a la gui
 void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
-    QString myisoclines;
     QString lbl;
     QString val;
 
-    fp << "user_isoclines := [";
-    for (auto s : isoclines_) {
-        myisoclines = convertMapleUserParameterLabels(s);
-        fp << s; // FIXME
-    }
+    auto myisoclines = convertMapleUserParameterLabels(isoclines_);
+    fp << "user_isoclines := " << myisoclines << ":\n";
 
     for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-        // FIXME: en aquest cas segur q està malament perquè hem de fer-ho amb
-        // cada VF per separat (cada VF té les seves isoclines)
-        val = convertMapleUserParameterLabels(parvalue_[0][k]);
+        val = convertMapleUserParameterLabels(parvalue_[isoclinesVF_][k]);
 
         if (lbl.length() == 0)
             continue;
 
-        if (!numeric_[0]) {
+        if (!numeric_[isoclinesVF_]) {
             fp << lbl << " := " << val << ":\n";
         } else {
             fp << lbl << " := evalf( " << val << " ):\n";
@@ -1645,7 +1640,6 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
 void P4InputVF::prepareIsoclinesFile(QTextStream &fp)
 {
     QString name_isoclinestab;
-    QString s;
 
     QString mainmaple;
     QString user_bindir;
@@ -3200,8 +3194,6 @@ void P4InputVF::addVectorField()
     if (hasCommonInt(weakness_))
         weakness_[numVF_] = commonInt(weakness_);
 
-    qDebug() << "parvalues size:" << parvalue_.size();
-    qDebug() << "numvf" << numVF_;
     for (i = 0; i < MAXNUMPARAMS; i++)
         if (hasCommonParValue(i))
             parvalue_[numVF_][i] = commonParValue(i);
