@@ -239,6 +239,7 @@ void P4IsoclinesDlg::onBtnPlot()
     int points, precis, memory;
     QString buf;
 
+    buf = edt_points_->text();
     points = buf.toInt(&convertok);
     if (!convertok || points < MIN_CURVEPOINTS || points > MAX_CURVEPOINTS) {
         buf += " ???";

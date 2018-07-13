@@ -452,7 +452,7 @@ prepareArbitraryCurve := proc()
 end:
 
 prepareIsoclines := proc()
-    global user_isoclines, normalexit;
+    global user_isoclines, normalexit, rounded;
     openfile(isoclines_table);
     write_isoclines(user_isoclines);
     writef("\nWe have finished writing the isoclines as C++ readable lists.\n");
