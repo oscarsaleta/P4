@@ -441,8 +441,17 @@ chooseParameterSet := proc(r)
 end proc:
 
 prepareArbitraryCurve := proc()
-    global user_curve, normalexit, rounded;
-    rounded := user_numeric_pieces[1];
+    global user_curve, normalexit, rounded, user_numeric, user_precision;
+    if type(user_numeric_pieces,list) then
+        user_numeric := user_numeric_pieces[1];
+    else
+        user_numeric := true;
+    fi;
+    if type(user_precision_pieces,list) then
+        user_precision := user_precision_pieces[1];
+    else
+        user_precision := 8;
+    fi;
     openfile(curve_table);
     write_curve(user_curve);
     closefile(curve_table);
@@ -452,7 +461,7 @@ prepareArbitraryCurve := proc()
 end:
 
 prepareIsoclines := proc()
-    global user_isoclines, normalexit, rounded;
+    global user_isoclines, normalexit, rounded, user_numeric, user_precision;
     if type(user_numeric_pieces,list) then
         user_numeric := user_numeric_pieces[1];
     else
@@ -472,13 +481,8 @@ prepareIsoclines := proc()
     normalexit := 1;
 end:
 
-save(user_numeric, user_precision, user_precision0, epsilon, test_sep,
-        taylor_level, numeric_level, max_level, weakness_level, x0, y0, x_min,
-        y_min, x_max, y_max, user_p, user_q, user_f, user_gcf, user_curve,
-        all_crit_points, save_all, vec_table, finite_table, finite_res,
-        infinite_table, infinite_res, hamiltonian, ishamiltonian, p4main,
-        prepareIsoclines, CheckIfGoodPolynomial, normalexit, user_exeprefix,
-        chooseParameterSet, prepareArbitraryCurve, prepareIsoclines, "main.m");
+save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
+        normalexit, prepareArbitraryCurve, prepareIsoclines, "main.m");
 
 save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
         prepareArbitraryCurve, prepareIsoclines,
