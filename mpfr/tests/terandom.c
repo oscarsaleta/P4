@@ -1,6 +1,6 @@
 /* Test file for mpfr_erandom
 
-Copyright 2011-2017 Free Software Foundation, Inc.
+Copyright 2011-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -46,7 +46,6 @@ test_erandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
               int verbose)
 {
   mpfr_t *t;
-  mpfr_t av, va, tmp;
   int i, inexact;
 
   t = (mpfr_t *) tests_allocate (nbtests * sizeof (mpfr_t));
@@ -68,6 +67,8 @@ test_erandom (long nbtests, mpfr_prec_t prec, mpfr_rnd_t rnd,
 #if defined(HAVE_STDARG) && !defined(MPFR_USE_MINI_GMP)
   if (verbose)
     {
+      mpfr_t av, va, tmp;
+
       mpfr_init2 (av, prec);
       mpfr_init2 (va, prec);
       mpfr_init2 (tmp, prec);
@@ -104,6 +105,7 @@ main (int argc, char *argv[])
 {
   long nbtests;
   int verbose;
+
   tests_start_mpfr ();
 
   verbose = 0;

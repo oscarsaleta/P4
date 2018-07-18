@@ -1,6 +1,6 @@
 /* Chi-squared test for mpfr_erandom
 
-Copyright 2011-2017 Free Software Foundation, Inc.
+Copyright 2011-2018 Free Software Foundation, Inc.
 Contributed by Charles Karney <charles@karney.com>, SRI International.
 
 This file is part of the GNU MPFR Library.
@@ -95,12 +95,9 @@ test_erandom_chisq_cont (long num, mpfr_prec_t prec, int nu,
   rndd = MPFR_RNDD;             /* For sampling and figuring the bins */
   mpfr_inits2 (prec, x, a, b, dx, z, pa, pb, ps, t, (mpfr_ptr) 0);
 
-  counts = (long *) calloc (nu + 1, sizeof (long));
-  if (counts == NULL)
-    {
-      fprintf (stderr, "terandom_chisq: can't allocate memory\n");
-      exit (1);
-    }
+  counts = (long *) tests_allocate ((nu + 1) * sizeof (long));
+  for (i = 0; i <= nu; i++)
+    counts[i] = 0;
 
   /* a and b are bounds of nu equally spaced bins.  Set dx = (b-a)/nu */
   mpfr_set_d (a, xmin, rnd);
@@ -115,8 +112,7 @@ test_erandom_chisq_cont (long num, mpfr_prec_t prec, int nu,
       if (inexact == 0)
         {
           /* one call in the loop pretended to return an exact number! */
-          fprintf (stderr,
-                   "Error: mpfr_erandom() returns a zero ternary value.\n");
+          printf ("Error: mpfr_erandom() returns a zero ternary value.\n");
           exit (1);
         }
       if (mpfr_signbit (x))
@@ -165,13 +161,13 @@ test_erandom_chisq_cont (long num, mpfr_prec_t prec, int nu,
         printf ("    WARNING: probability (less than 5%%) = %.2e\n", Q);
     }
 
-  free (counts);
+  tests_free (counts, (nu + 1) * sizeof (long));
   mpfr_clears (x, a, b, dx, z, pa, pb, ps, t, (mpfr_ptr) 0);
   return Q;
 }
 
 /* Return a sequential number for a positive low-precision x.  x is altered by
- * this fuction.  low precision means prec = 2, 3, or 4.  High values of
+ * this function.  low precision means prec = 2, 3, or 4.  High values of
  * precision will result in integer overflow. */
 static long
 sequential (mpfr_t x)
@@ -232,12 +228,9 @@ test_erandom_chisq_disc (long num, mpfr_prec_t wprec, int prec,
   /* Two bins for each sequential number (for inexact = +/- 1), plus 1 for u <
    * umin and 1 for u > umax, minus 1 for degrees of freedom */
   nu = 2 * (seqmax - seqmin + 1) + 2 - 1;
-  counts = (long *) calloc (nu + 1, sizeof (long));
-  if (counts == NULL)
-    {
-      fprintf (stderr, "terandom_chisq: can't allocate memory\n");
-      exit (1);
-    }
+  counts = (long *) tests_allocate ((nu + 1) * sizeof (long));
+  for (i = 0; i <= nu; i++)
+    counts[i] = 0;
 
   for (k = 0; k < num; ++k)
     {
@@ -266,7 +259,7 @@ test_erandom_chisq_disc (long num, mpfr_prec_t wprec, int prec,
   mpfr_set_zero (t, 1);
   for (i = 0; i <= nu; ++i)
     {
-       if (i < nu)
+      if (i < nu)
         mpfr_nextabove (v);
       else
         mpfr_set_inf (v, 1);
@@ -293,18 +286,19 @@ test_erandom_chisq_disc (long num, mpfr_prec_t wprec, int prec,
         printf ("    WARNING: probability (less than 5%%) = %.2e\n", Q);
     }
 
-  free (counts);
+  tests_free (counts, (nu + 1) * sizeof (long));
   mpfr_clears (x, v, pa, pb, z, t, (mpfr_ptr) 0);
   return Q;
 }
 
 static void
-run_chisq ( double (*f)(long, mpfr_prec_t, int, double, double, int),
-            long num, mpfr_prec_t prec, int bin,
-            double xmin, double xmax, int verbose)
+run_chisq (double (*f)(long, mpfr_prec_t, int, double, double, int),
+           long num, mpfr_prec_t prec, int bin,
+           double xmin, double xmax, int verbose)
 {
   double Q, Qcum, Qbad, Qthresh;
   int i;
+
   Qcum = 1;
   Qbad = 1.e-9;
   Qthresh = 0.01;
@@ -316,8 +310,8 @@ run_chisq ( double (*f)(long, mpfr_prec_t, int, double, double, int),
         return;
       else if (Q < Qbad)
         {
-          fprintf (stderr, "Error: mpfr_erandom chi-squared failure "
-                   "(prob = %.2e)\n", Q);
+          printf ("Error: mpfr_erandom chi-squared failure "
+                  "(prob = %.2e)\n", Q);
           exit (1);
         }
       num *= 10;
@@ -325,8 +319,8 @@ run_chisq ( double (*f)(long, mpfr_prec_t, int, double, double, int),
     }
   if (Qcum < Qbad)              /* Presumably this is true */
     {
-      fprintf (stderr, "Error: mpfr_erandom combined chi-squared failure "
-               "(prob = %.2e)\n", Qcum);
+      printf ("Error: mpfr_erandom combined chi-squared failure "
+              "(prob = %.2e)\n", Qcum);
       exit (1);
     }
 }
@@ -336,6 +330,7 @@ main (int argc, char *argv[])
 {
   long nbtests;
   int verbose;
+
   tests_start_mpfr ();
 
   verbose = 0;

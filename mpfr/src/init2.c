@@ -1,6 +1,6 @@
 /* mpfr_init2 -- initialize a floating-point number with given precision
 
-Copyright 2001-2017 Free Software Foundation, Inc.
+Copyright 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -52,7 +52,7 @@ mpfr_init2 (mpfr_ptr x, mpfr_prec_t p)
   MPFR_ASSERTN (MPFR_PREC_COND (p));
 
   xsize = MPFR_PREC2LIMBS (p);
-  tmp   = (mpfr_size_limb_t *) (*__gmp_allocate_func)(MPFR_MALLOC_SIZE(xsize));
+  tmp   = (mpfr_size_limb_t *) mpfr_allocate_func(MPFR_MALLOC_SIZE(xsize));
 
   MPFR_PREC(x) = p;                /* Set prec */
   MPFR_EXP (x) = MPFR_EXP_INVALID; /* make sure that the exp field has a

@@ -1,7 +1,7 @@
 /* Test file for mpfr_rint, mpfr_trunc, mpfr_floor, mpfr_ceil, mpfr_round,
    mpfr_rint_trunc, mpfr_rint_floor, mpfr_rint_ceil, mpfr_rint_round.
 
-Copyright 2002-2017 Free Software Foundation, Inc.
+Copyright 2002-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -60,7 +60,7 @@ special (void)
   /* coverage test */
   mpfr_set_prec (x, 2);
   mpfr_set_ui (x, 1, MPFR_RNDN);
-  mpfr_mul_2exp (x, x, mp_bits_per_limb, MPFR_RNDN);
+  mpfr_mul_2ui (x, x, mp_bits_per_limb, MPFR_RNDN);
   mpfr_rint (y, x, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_cmp (y, x) == 0);
 
@@ -285,7 +285,7 @@ basic_tests (void)
 
             mpfr_set_si_2exp (x, s * i, -2, MPFR_RNDN);
             e = mpfr_get_exp (x);
-            RND_LOOP(r)
+            RND_LOOP_NO_RNDF (r)
               {
                 BASIC_TEST (trunc, s * (i/4));
                 BASIC_TEST (floor, s > 0 ? i/4 : - ((i+3)/4));
@@ -373,10 +373,9 @@ err (const char *str, mp_size_t s, mpfr_t x, mpfr_t y, mpfr_prec_t p,
   printf ("Error: %s\ns = %u, p = %u, r = %s, trint = %d, inexact = %d\nx = ",
           str, (unsigned int) s, (unsigned int) p, mpfr_print_rnd_mode (r),
           trint, inexact);
-  mpfr_print_binary (x);
-  printf ("\ny = ");
-  mpfr_print_binary (y);
-  printf ("\n");
+  mpfr_dump (x);
+  printf ("y = ");
+  mpfr_dump (y);
   exit (1);
 }
 
@@ -510,8 +509,12 @@ main (int argc, char *argv[])
       mpfr_set_prec (u, s);
       if (mpfr_set_z (x, z, MPFR_RNDN))
         {
+#ifndef MPFR_USE_MINI_GMP
           gmp_printf ("Error: mpfr_set_z should be exact (z = %Zd, s = %u)\n",
                       z, (unsigned int) s);
+#else /* mini-gmp has no gmp_printf (at least in gmp-6.1.2) */
+          printf ("mpfr_set_z should be exact\n");
+#endif
           exit (1);
         }
       if (randlimb () % 2)
@@ -548,7 +551,7 @@ main (int argc, char *argv[])
                              mpfr_rint_floor (y, x, MPFR_RNDD));
                 else
                   {
-                    MPFR_ASSERTN (r == MPFR_RNDA);
+                    MPFR_ASSERTN (r == MPFR_RNDA || r == MPFR_RNDF);
                     continue;
                   }
                 if (mpfr_sub (t, y, x, MPFR_RNDN))

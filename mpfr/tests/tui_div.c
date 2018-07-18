@@ -1,6 +1,6 @@
 /* Test file for mpfr_ui_div.
 
-Copyright 2000-2017 Free Software Foundation, Inc.
+Copyright 2000-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -77,7 +77,7 @@ check_inexact (void)
                   exit (1);
                 }
               cmp = mpfr_cmp_ui (z, u);
-              if (! SAME_SIGN (inexact, cmp))
+              if (rnd != MPFR_RNDF && ! SAME_SIGN (inexact, cmp))
                 {
                   printf ("Wrong inexact flag for u=%lu, rnd=%s\n",
                           u, mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
@@ -104,13 +104,12 @@ check_special (void)
   mpfr_init2 (d, 100L);
   mpfr_init2 (q, 100L);
 
-  /* 1/+inf == 0 */
+  /* 1/+inf == +0 */
   MPFR_SET_INF (d);
   MPFR_SET_POS (d);
   mpfr_clear_flags ();
   MPFR_ASSERTN (mpfr_ui_div (q, 1L, d, MPFR_RNDZ) == 0); /* exact */
-  MPFR_ASSERTN (mpfr_number_p (q));
-  MPFR_ASSERTN (mpfr_sgn (q) == 0);
+  MPFR_ASSERTN (MPFR_IS_ZERO (q) && MPFR_IS_POS (q));
   MPFR_ASSERTN (__gmpfr_flags == 0);
 
   /* 1/-inf == -0 */
@@ -118,8 +117,7 @@ check_special (void)
   MPFR_SET_NEG (d);
   mpfr_clear_flags ();
   MPFR_ASSERTN (mpfr_ui_div (q, 1L, d, MPFR_RNDZ) == 0); /* exact */
-  MPFR_ASSERTN (mpfr_number_p (q));
-  MPFR_ASSERTN (mpfr_sgn (q) == 0);
+  MPFR_ASSERTN (MPFR_IS_ZERO (q) && MPFR_IS_NEG (q));
   MPFR_ASSERTN (__gmpfr_flags == 0);
 
   /* 1/nan == nan */
@@ -155,14 +153,14 @@ check_special (void)
   mpfr_set_ui (d, 1L, MPFR_RNDN);
   mpfr_clear_flags ();
   MPFR_ASSERTN (mpfr_ui_div (q, 0L, d, MPFR_RNDZ) == 0); /* exact */
-  MPFR_ASSERTN (mpfr_cmp_ui (q, 0) == 0 && MPFR_IS_POS (q));
+  MPFR_ASSERTN (MPFR_IS_ZERO (q) && MPFR_IS_POS (q));
   MPFR_ASSERTN (__gmpfr_flags == 0);
 
   /* 0/-1 = -0 */
   mpfr_set_si (d, -1, MPFR_RNDN);
   mpfr_clear_flags ();
   MPFR_ASSERTN (mpfr_ui_div (q, 0L, d, MPFR_RNDZ) == 0); /* exact */
-  MPFR_ASSERTN (mpfr_cmp_ui (q, 0) == 0 && MPFR_IS_NEG (q));
+  MPFR_ASSERTN (MPFR_IS_ZERO (q) && MPFR_IS_NEG (q));
   MPFR_ASSERTN (__gmpfr_flags == 0);
 
   mpfr_clear (d);

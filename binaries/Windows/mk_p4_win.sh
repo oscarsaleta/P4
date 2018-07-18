@@ -18,10 +18,12 @@
 
 #!/bin/bash
 
-GITP4ROOT="C:\Users\oscar\Documents\git\P4"
+GITP4ROOT="D:\Oscar\git\P4"
 
-QTVER="5.9.1"
+QTVER="5.9.2"
 MSVCVER="2017_64"
+QTWINDEPLOYEXE="D:\Qt\\"$QTVER"\msvc"$MSVCVER"\bin\windeployqt.exe"
+INNOSETUPEXE="D:\Program Files (x86)\Inno Setup 5\ISCC.exe"
 VCINSTALLDIR="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC"
 export VCINSTALLDIR
 
@@ -34,7 +36,7 @@ rm -r $DIR
 mkdir -p $DIR/bin $DIR/help $DIR/sum_tables $DIR/sumtables
 chmod 777 $DIR/sumtables
 
-BUILDDIRNAME="Desktop_Qt_5_9_1_MSVC2017_64bit"
+BUILDDIRNAME="Desktop_Qt_5_9_2_MSVC2017_64bit"
 
 cp ../../src-mpl/p4*m $DIR/bin/
 cp ../../QtCreator/build-p4-$BUILDDIRNAME-Release/release/p4.exe $DIR/bin/
@@ -49,7 +51,7 @@ cp ../../help/p4_flag.png $DIR/bin/portrait.png
 cp ../../help/newp4icon.ico $DIR/bin/p4smallicon.ico
 
 # solve dlls
-"C:\Qt\\"$QTVER"\msvc"$MSVCVER"\bin\windeployqt.exe" $DIR/bin/p4.exe
+$QTWINDEPLOYEXE $DIR/bin/p4.exe
 
 # create setup script
 SCRIPTNAME=inno_script.iss
@@ -128,4 +130,4 @@ echo '[Run]' >> $SCRIPTNAME
 echo 'Filename: "{tmp}\vcredist_x64.exe"; Parameters: "/quiet /install /norestart"; WorkingDir: "{tmp}"; StatusMsg: "Installing Microsoft Visual C++ 2015 Redistributable (x64)..."' >> $SCRIPTNAME
 echo 'Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{userdocs}\P4"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '\''&'\'', '\''&&'\'')}}"; Flags: nowait postinstall skipifsilent' >> $SCRIPTNAME
 
-"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" $SCRIPTNAME
+"${INNOSETUPEXE}" $SCRIPTNAME

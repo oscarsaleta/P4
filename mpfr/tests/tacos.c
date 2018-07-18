@@ -1,6 +1,6 @@
 /* Test file for mpfr_acos.
 
-Copyright 2001-2017 Free Software Foundation, Inc.
+Copyright 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -136,7 +136,7 @@ main (void)
   /* acos (1) = 0 */
   mpfr_set_ui (x, 1, MPFR_RNDN);
   mpfr_acos (y, x, MPFR_RNDN);
-  if (mpfr_cmp_ui (y, 0) || mpfr_sgn (y) < 0)
+  if (MPFR_NOTZERO (y) || MPFR_IS_NEG (y))
     {
       printf ("Error: acos(1) != +0.0\n");
       exit (1);
@@ -148,7 +148,7 @@ main (void)
       mpfr_set_ui (x, 0, MPFR_RNDN); /* exact */
       mpfr_acos (y, x, (mpfr_rnd_t) r);
       mpfr_const_pi (x, (mpfr_rnd_t) r);
-      mpfr_div_2exp (x, x, 1, MPFR_RNDN); /* exact */
+      mpfr_div_2ui (x, x, 1, MPFR_RNDN); /* exact */
       if (mpfr_cmp (x, y))
         {
           printf ("Error: acos(0) != Pi/2 for rnd=%s\n",

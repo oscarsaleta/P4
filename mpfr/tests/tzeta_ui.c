@@ -1,6 +1,6 @@
 /* Test file for mpfr_zeta_ui.
 
-Copyright 2005-2017 Free Software Foundation, Inc.
+Copyright 2005-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -74,7 +74,7 @@ main (int argc, char *argv[])
   MPFR_ASSERTN (inex == 0 && mpfr_cmp_si_2exp (x, -1, -1) == 0 && flags == 0);
 
   for (i = -2; i <= 2; i += 2)
-    RND_LOOP (rnd)
+    RND_LOOP_NO_RNDF (rnd)
       {
         int ex_inex;
 
@@ -150,7 +150,7 @@ main (int argc, char *argv[])
       mpfr_set_prec (y, yprec);
 
       for (n = 0; n < 50; n++)
-        RND_LOOP (rnd)
+        RND_LOOP_NO_RNDF (rnd)
           {
             mpfr_zeta_ui (y, n, MPFR_RNDN);
             if (mpfr_can_round (y, yprec, MPFR_RNDN, MPFR_RNDZ, prec

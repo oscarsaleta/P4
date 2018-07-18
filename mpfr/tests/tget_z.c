@@ -1,6 +1,6 @@
 /* Test file for mpz_set_fr / mpfr_get_z.
 
-Copyright 2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -72,66 +72,134 @@ check_diff (void)
 static void
 check_one (mpz_ptr z)
 {
-  int    inex, ex_inex, same;
+  mpfr_exp_t emin, emax;
+  int    inex;
   int    sh, neg;
   mpfr_t f;
-  mpz_t  got, ex;
+  mpz_t  got, ex, t;
+
+  emin = mpfr_get_emin ();
+  emax = mpfr_get_emax ();
 
   mpfr_init2 (f, MAX (mpz_sizeinbase (z, 2), MPFR_PREC_MIN));
   mpz_init (got);
   mpz_init (ex);
+  mpz_init (t);
 
   for (sh = -2*GMP_NUMB_BITS ; sh < 2*GMP_NUMB_BITS ; sh++)
     {
       inex = mpfr_set_z (f, z, MPFR_RNDN);  /* exact */
       MPFR_ASSERTN (inex == 0);
 
-      if (sh < 0)
-        {
-          mpz_tdiv_q_2exp (ex, z, -sh);
-          inex = mpfr_div_2exp (f, f, -sh, MPFR_RNDN);
-        }
-      else
-        {
-          mpz_mul_2exp (ex, z, sh);
-          inex = mpfr_mul_2exp (f, f, sh, MPFR_RNDN);
-        }
+      inex = sh < 0 ?
+        mpfr_div_2ui (f, f, -sh, MPFR_RNDN) :
+        mpfr_mul_2ui (f, f, sh, MPFR_RNDN);
       MPFR_ASSERTN (inex == 0);
 
       for (neg = 0; neg <= 1; neg++)
         {
+          int rnd;
+
           /* Test (-1)^neg * z * 2^sh */
-          int fi;
-          mpfr_flags_t flags[3] = { 0, MPFR_FLAGS_ALL ^ MPFR_FLAGS_ERANGE,
-                                    MPFR_FLAGS_ALL }, ex_flags, gt_flags;
 
-          for (fi = 0; fi < numberof (flags); fi++)
+          RND_LOOP_NO_RNDF (rnd)
             {
-              ex_inex = - mpfr_cmp_z (f, ex);
-              ex_flags = __gmpfr_flags = flags[fi];
-              if (ex_inex != 0)
-                ex_flags |= MPFR_FLAGS_INEXACT;
-              inex = mpfr_get_z (got, f, MPFR_RNDZ);
-              gt_flags = __gmpfr_flags;
-              same = SAME_SIGN (inex, ex_inex);
+              int ex_inex, same;
+              int d, fi, e;
+              mpfr_flags_t flags[3] = { 0, MPFR_FLAGS_ALL ^ MPFR_FLAGS_ERANGE,
+                                        MPFR_FLAGS_ALL }, ex_flags, gt_flags;
 
-              if (mpz_cmp (got, ex) != 0 || !same || gt_flags != ex_flags)
-                {
-                  printf ("Error in check_one for sh=%d, fi=%d\n", sh, fi);
-                  printf ("     f = "); mpfr_dump (f);
-                  printf ("expected "); mpz_dump (ex);
-                  printf ("     got "); mpz_dump (got);
-                  printf ("Expected inex ~ %d, got %d (%s)\n",
-                          inex, ex_inex, same ? "OK" : "wrong");
-                  printf ("Flags:\n");
-                  printf ("      in"); flags_out (gt_flags);
-                  printf ("expected"); flags_out (ex_flags);
-                  printf ("     got"); flags_out (gt_flags);
-                  exit (1);
-                }
+              if (neg)
+                mpz_neg (ex, z);
+              else
+                mpz_set (ex, z);
+
+              if (sh < 0)
+                switch (rnd)
+                  {
+                  case MPFR_RNDN:
+                    mpz_set_si (t, neg ? -1 : 1);
+                    mpz_mul_2exp (t, t, -sh - 1);
+                    mpz_add (ex, ex, t);
+                    /* d = mpz_divisible_2exp_p (ex, -sh); */
+                    d = mpz_scan1 (ex, 0) >= -sh;
+                    mpz_tdiv_q_2exp (ex, ex, -sh);
+                    if (d && mpz_tstbit (ex, 0) != 0)  /* even rounding */
+                      {
+                        if (neg)
+                          mpz_add_ui (ex, ex, 1);
+                        else
+                          mpz_sub_ui (ex, ex, 1);
+                      }
+                    break;
+                  case MPFR_RNDZ:
+                    mpz_tdiv_q_2exp (ex, ex, -sh);
+                    break;
+                  case MPFR_RNDU:
+                    mpz_cdiv_q_2exp (ex, ex, -sh);
+                    break;
+                  case MPFR_RNDD:
+                    mpz_fdiv_q_2exp (ex, ex, -sh);
+                    break;
+                  case MPFR_RNDA:
+                    if (neg)
+                      mpz_fdiv_q_2exp (ex, ex, -sh);
+                    else
+                      mpz_cdiv_q_2exp (ex, ex, -sh);
+                    break;
+                  default:
+                    MPFR_ASSERTN (0);
+                  }
+              else
+                mpz_mul_2exp (ex, ex, sh);
+
+              ex_inex = - mpfr_cmp_z (f, ex);
+              ex_inex = VSIGN (ex_inex);
+
+              for (fi = 0; fi < numberof (flags); fi++)
+                for (e = 0; e < 2; e++)
+                  {
+                    if (e)
+                      {
+                        mpfr_exp_t ef;
+
+                        if (MPFR_IS_ZERO (f))
+                          break;
+                        ef = MPFR_GET_EXP (f);
+                        set_emin (ef);
+                        set_emax (ef);
+                      }
+                    ex_flags = __gmpfr_flags = flags[fi];
+                    if (ex_inex != 0)
+                      ex_flags |= MPFR_FLAGS_INEXACT;
+                    inex = mpfr_get_z (got, f, (mpfr_rnd_t) rnd);
+                    inex = VSIGN (inex);
+                    gt_flags = __gmpfr_flags;
+                    set_emin (emin);
+                    set_emax (emax);
+                    same = SAME_SIGN (inex, ex_inex);
+
+                    if (mpz_cmp (got, ex) != 0 ||
+                        !same || gt_flags != ex_flags)
+                      {
+                        printf ("Error in check_one for sh=%d, fi=%d, %s%s\n",
+                                sh, fi,
+                                mpfr_print_rnd_mode ((mpfr_rnd_t) rnd),
+                                e ? ", reduced exponent range" : "");
+                        printf ("     f = "); mpfr_dump (f);
+                        printf ("expected "); mpz_out_str (stdout, 10, ex);
+                        printf ("\n     got "); mpz_out_str (stdout, 10, got);
+                        printf ("\nExpected inex ~ %d, got %d (%s)\n",
+                                ex_inex, inex, same ? "OK" : "wrong");
+                        printf ("Flags:\n");
+                        printf ("      in"); flags_out (flags[fi]);
+                        printf ("expected"); flags_out (ex_flags);
+                        printf ("     got"); flags_out (gt_flags);
+                        exit (1);
+                      }
+                  }
             }
 
-          mpz_neg (ex, ex);
           mpfr_neg (f, f, MPFR_RNDN);
         }
     }
@@ -139,6 +207,7 @@ check_one (mpz_ptr z)
   mpfr_clear (f);
   mpz_clear (got);
   mpz_clear (ex);
+  mpz_clear (t);
 }
 
 static void
@@ -149,6 +218,9 @@ check (void)
   mpz_init (z);
 
   mpz_set_ui (z, 0L);
+  check_one (z);
+
+  mpz_set_si (z, 17L);
   check_one (z);
 
   mpz_set_si (z, 123L);

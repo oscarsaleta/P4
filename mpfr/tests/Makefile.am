@@ -1,4 +1,4 @@
-# Copyright 2000-2017 Free Software Foundation, Inc.
+# Copyright 2000-2018 Free Software Foundation, Inc.
 # This Makefile.am is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -14,26 +14,27 @@ AUTOMAKE_OPTIONS = 1.6 gnu
 check_PROGRAMS = tversion tabort_prec_max tassert tabort_defalloc1	\
      tabort_defalloc2 talloc tinternals tinits tisqrt tsgn tcheck	\
      tisnan texceptions tset_exp tset mpf_compat mpfr_compat reuse	\
-     tabs tacos tacosh tadd tadd1sp tadd_d tadd_ui tagm tai tasin	\
-     tasinh tatan tatanh taway tbuildopt tcan_round tcbrt tcmp tcmp2	\
-     tcmp_d tcmp_ld tcmp_ui tcmpabs tcomparisons tconst_catalan		\
-     tconst_euler tconst_log2 tconst_pi tcopysign tcos tcosh tcot	\
-     tcoth tcsc tcsch td_div td_sub tdigamma tdim tdiv tdiv_d tdiv_ui	\
-     teint teq terandom terandom_chisq terf texp texp10 texp2 texpm1	\
-     tfactorial tfits tfma tfmma tfmod tfms tfpif tfprintf tfrac tfrexp	\
-     tgamma tgamma_inc tget_flt tget_d tget_d_2exp tget_f tget_ld_2exp	\
-     tget_set_d64 tget_sj tget_str tget_z tgmpop tgrandom thyperbolic	\
-     thypot tinp_str tj0 tj1 tjn tl2b tlgamma tli2 tlngamma tlog	\
-     tlog10 tlog1p tlog2 tlog_ui tmin_prec tminmax tmodf tmul tmul_2exp	\
-     tmul_d tmul_ui tnext tnrandom tnrandom_chisq tout_str toutimpl	\
-     tpow tpow3 tpow_all tpow_z tprintf trandom trandom_deviate		\
-     trec_sqrt tremquo trint trndna troot tround_prec tsec tsech	\
+     tabs tacos tacosh tadd tadd1sp tadd_d tadd_ui tagm tai		\
+     talloc-cache tasin tasinh tatan tatanh taway tbeta tbuildopt	\
+     tcan_round tcbrt tcmp tcmp2 tcmp_d tcmp_ld tcmp_ui tcmpabs		\
+     tcomparisons tconst_catalan tconst_euler tconst_log2 tconst_pi	\
+     tcopysign tcos tcosh tcot tcoth tcsc tcsch td_div td_sub tdigamma	\
+     tdim tdiv tdiv_d tdiv_ui tdot teint teq terandom terandom_chisq    \
+     terf texp texp10 texp2 texpm1 tfactorial tfits tfma tfmma tfmod    \
+     tfms tfpif tfprintf tfrac tfrexp tgamma tgamma_inc tget_d          \
+     tget_d_2exp tget_f tget_flt tget_ld_2exp tget_q tget_set_d64       \
+     tget_sj tget_str tget_z tgmpop tgrandom thyperbolic thypot tinp_str \
+     tj0 tj1 tjn tl2b tlgamma tli2 tlngamma tlog tlog10 tlog1p tlog2	\
+     tlog_ui tmin_prec tminmax tmodf tmul tmul_2exp tmul_d tmul_ui	\
+     tnext tnrandom tnrandom_chisq tout_str toutimpl tpow tpow3		\
+     tpow_all tpow_z tprec_round tprintf trandom trandom_deviate	\
+     trec_sqrt tremquo trint trndna troot trootn_ui tsec tsech		\
      tset_d tset_f tset_float128 tset_ld tset_q tset_si tset_sj		\
      tset_str tset_z tset_z_exp tsi_op tsin tsin_cos tsinh tsinh_cosh	\
-     tsprintf tsqr tsqrt tsqrt_ui tstckintc tstdint tstrtofr tsub	\
-     tsub1sp tsub_d tsub_ui tsubnormal tsum tswap ttan ttanh ttrunc	\
-     tui_div tui_pow tui_sub turandom tvalist ty0 ty1 tyn tzeta		\
-     tzeta_ui tbeta
+     tsprintf tsqr tsqrt tsqrt_ui tstckintc tstdint tstrtofr		\
+     tsub tsub1sp tsub_d tsub_ui tsubnormal tsum tswap ttan ttanh	\
+     ttotal_order ttrunc tui_div tui_pow tui_sub turandom tvalist	\
+     ty0 ty1 tyn tzeta tzeta_ui
 
 # Before Automake 1.13, we ran tversion at the beginning and at the end
 # of the tests, and output from tversion appeared at the same place as
@@ -45,12 +46,20 @@ check_PROGRAMS = tversion tabort_prec_max tassert tabort_defalloc1	\
 # has been generated with Automake 1.13+); but this is done only when
 # no tests fail.
 check:
-	cat tversion.log 2> /dev/null || true
+	@if [ -d $(top_srcdir)/.svn ]; then \
+	  output=`svnversion $(top_srcdir) 2> /dev/null`; \
+	  if [ -n "$$output" ]; then \
+	    echo "[svnversion] $$output"; \
+	  fi; \
+	fi
+	@grep -v '^PASS ' tversion.log 2> /dev/null || true
 
 AM_CPPFLAGS = -DSRCDIR='"$(srcdir)"'
 
 EXTRA_DIST = tgeneric.c tgeneric_ui.c mpf_compat.h inp_str.dat tmul.dat \
-	mpfrtest.dat mpfrtest2.dat
+	tfpif_r1.dat tfpif_r2.dat
+
+CLEANFILES = tfpif_rw.dat tfprintf_out.txt tout_str_out.txt toutimpl_out.txt tprintf_out.txt
 
 LDADD = libfrtests.la $(MPFR_LIBM) $(MPFR_LIBQUADMATH) $(top_builddir)/src/libmpfr.la
 AM_CPPFLAGS += -I$(top_srcdir)/src -I$(top_builddir)/src

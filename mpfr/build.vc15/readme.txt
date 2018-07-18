@@ -7,28 +7,33 @@ under Gnu GPL or LGPL license terms, their headers have been preserved
 in order to ensure that these terms will continue to be honoured.  
 
 Other files in this distribution that have been created by me for use
-in building MPIR and MPFR using Microsoft Visual Studio 2015 are 
+in building MPIR and MPFR using Microsoft Visual Studio 2017 are 
 provided under the terms of the LGPL version 2.1
 
-Running the MPFR tests automatically uses Python, which must hence be 
-installed if you want to run them.  
-
-Compiling MPFR with the Visual Studio 2015
+Compiling MPFR with the Visual Studio 2017
 ------------------------------------------
 
-The project files are intended for use with any version of Visual
-Studio 2015.  The build projects are based on MPIR 2.7 and MPFR-3.1.2. 
+The project files provided in this repository are intended for use with
+any version of Visual Studio 2017;  they are designed for use with the
+the development version of MPFR located at:
+
+    https://gforge.inria.fr/scm/viewvc.php/mpfr/trunk/
+
+and my deveopment version of MPIR at:
+
+    https://github.com/BrianGladman/mpir
+
 It is assumed that MPIR has already been built and that the directories
 containing MPIR and MPFR are at the same level in the directory 
 structure:
 
     mpir
-        build.vc14
+        build.vc15
             dll     MPIR Dynamic Link Libraries 
             lib     MPIR Static Libraries
             ....
     mpfr
-        build.vc14
+        build.vc15
             dll     MPFR Dynamic Link Libraries
             lib     MPFR Static Libraries
             ....
@@ -38,19 +43,21 @@ building MPFR should be 'mpir' with any version number such as in
 'mpir-3.0' removed.
  
 The full MPFR source distribution together with the Visual Studio
-2015 build files can be obtained by cloning the GIT repository at:
+2017 build files can be obtained by cloning the GIT repository at:
 
     https://github.com/BrianGladman/mpfr
  
 Alternatively the MPFR source distribution can be obtained from the
-MPFR site at:
+main MPFR development repository at:
 
-    http://www.mpfr.org/
+    https://gforge.inria.fr/scm/viewvc.php/mpfr/trunk/
 
-and expanded into the MPFR root directory. The build project files
-should then be added so that the build.vc14 sub-directory is in the
-MPFR root directory as shown earlier. After this the root directory 
-should be renamed to 'mpfr' (if different).
+
+(see http://www.mpfr.org/ for more information).
+
+After the MPFR source code has been placed into the MPFR root directory,
+the build files should then be added by copying the sub-directory 
+build.vc15 into the root directory as shown earlier. 
 
 The root directory names 'mpir' and 'mpfr' are used because this makes 
 it easier to use the latest version of MPIR and MPFR without having to 
@@ -108,15 +115,15 @@ Because tuning is not reliable on Windows, tuning parameters are picked
 up from the *nix builds. 
 
 Before building MPFR, the choice of architecture for tuning should be
-selected by editing the mparam.h file in the build.vc14 directory to
+selected by editing the mparam.h file in the build.vc15 directory to
 select the most appropriate tuning parameters.
 
 Test Automation
 ----------------
 
-Once the tests have been built the Python scripts run_dll_tests.py or
-run_lib_tests.py found in the build.vc14 folder can be used to run the
-tests (if Python is not installed the tests have to be run manually).
+Once the tests have been built the scripts run_lib_tests.py or
+run_dll_tests.py (in the build.vc15 folder) can be used to run them. 
+If Python is not installed the tests have to be run manually.
 
 Acknowledgements
 ----------------
@@ -132,5 +139,5 @@ My thanks to:
    readme.txt file giving the build instructions
 5. Alexander Shevchenko for helping in tidying up the build projects.
  
-     Brian Gladman, December 2015 
+     Brian Gladman, August 2017 
 

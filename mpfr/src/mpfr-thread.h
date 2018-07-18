@@ -1,6 +1,6 @@
 /* MPFR internal header related to thread-local variables.
 
-Copyright 2005-2017 Free Software Foundation, Inc.
+Copyright 2005-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -54,7 +54,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /**************************************************************************/
 /**************************************************************************/
 #if defined (MPFR_HAVE_C11_LOCK)
-/* NOTE: This version has not been completly tested */
+/* NOTE: This version has not been completely tested */
 #include <thread.h>
 
 #define MPFR_LOCK_DECL(_lock)                   \

@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -17,63 +17,87 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_isoclines.h"
+#include "math_isoclines.hpp"
 
-#include "custom.h"
-#include "file_vf.h"
-#include "math_charts.h"
-#include "math_p4.h"
-#include "plot_tools.h"
+#include <QFile>
 
 #include <cmath>
 
-// static global variables
-static int s_IsoclinesTask = EVAL_ISOCLINES_NONE;
-static QWinSphere *s_IsoclinesSphere = nullptr;
-static int s_IsoclinesDashes = 0;
-static bool s_IsoclinesError = false;
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
+#include "custom.hpp"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "plot_tools.hpp"
+#include "structures.hpp"
 
-// non-static global variables
-P4ORBIT g_last_isoclines_point = nullptr;
+// global variables
+P4Orbits::orbits_points *gLastIsoclinePoint{nullptr};
+
+// static global variables
+static int sIsoclinesTask{EVAL_ISOCLINES_NONE};
+static P4Sphere *sIsoclinesSphere{nullptr};
+static int sIsoclinesDashes{0};
+static bool sIsoclinesError{false};
+static unsigned int sIsoclinesVfIndex{0};
 
 // static functions
-static void insert_isoclines_point(double x0, double y0, double z0, int dashes);
-static bool readTaskResults(int);
-static bool read_isoclines(void (*chart)(double, double, double *));
+static void insert_isocline_vector_point(double x0, double y0, double z0,
+                                         int dashes, int index);
+static bool readTaskResults(int, int);
+static bool read_isoclines(void (*chart)(double, double, double *), int index);
 
 // function definitions
-bool evalIsoclinesStart(QWinSphere *sp, int dashes, int precision, int points)
+bool evalIsoclinesStart(P4Sphere *sp, int dashes, int precision, int points)
 {
-    if (g_VFResults.plweights_)
-        s_IsoclinesTask = EVAL_ISOCLINES_LYP_R2;
+    if (gVFResults.plweights_)
+        sIsoclinesTask = EVAL_ISOCLINES_LYP_R2;
     else
-        s_IsoclinesTask = EVAL_ISOCLINES_R2;
+        sIsoclinesTask = EVAL_ISOCLINES_R2;
 
-    s_IsoclinesError = false;
-    s_IsoclinesSphere = sp;
-    s_IsoclinesDashes = dashes;
-    return runTaskIsoclines(s_IsoclinesTask, precision, points);
+    sIsoclinesError = false;
+    sIsoclinesSphere = sp;
+    sIsoclinesDashes = dashes;
+    return runTaskIsoclines(sIsoclinesTask, precision, points,
+                            gThisVF->isoclinesVF_);
 }
 
-// returns true when finished. Then
-// run EvalIsoclinesFinish to see if error
+// returns true when finished. Then run EvalIsoclinesFinish to see if error
 // occurred or not
 bool evalIsoclinesContinue(int precision, int points)
 {
-    if (s_IsoclinesTask == EVAL_ISOCLINES_NONE)
+    if (sIsoclinesTask == EVAL_ISOCLINES_NONE)
         return true;
 
-    if (!readTaskResults(s_IsoclinesTask)) {
-        s_IsoclinesError = true;
+    if (!readTaskResults(sIsoclinesTask, gThisVF->isoclinesVF_)) {
+        sIsoclinesError = true;
         return true;
     }
-    s_IsoclinesTask++;
-    if (s_IsoclinesTask == EVAL_ISOCLINES_FINISHPOINCARE ||
-        s_IsoclinesTask == EVAL_ISOCLINES_FINISHLYAPUNOV) {
+    sIsoclinesTask++;
+    if (sIsoclinesTask == EVAL_ISOCLINES_FINISHPOINCARE ||
+        sIsoclinesTask == EVAL_ISOCLINES_FINISHLYAPUNOV) {
+        //        while (1) {
+        //            if (++sIsoclinesVfIndex >= gThisVF->numVF_)
+        //                break;
+        //            if
+        //            (!gVFResults.vf_[sIsoclinesVfIndex]->isocline_vector_.empty())
+        //                break;
+        //        }
+        //        if (sIsoclinesVfIndex >= gThisVF->numVF_)
+        // all isoclines are evaluated
         return true;
+        // retrigger new set of tasks
+        if (gVFResults.plweights_)
+            sIsoclinesTask = EVAL_ISOCLINES_LYP_R2;
+        else
+            sIsoclinesTask = EVAL_ISOCLINES_R2;
     }
-    if (!runTaskIsoclines(s_IsoclinesTask, precision, points)) {
-        s_IsoclinesError = true;
+
+    if (!runTaskIsoclines(sIsoclinesTask, precision, points,
+                          gThisVF->isoclinesVF_)) {
+        sIsoclinesError = true;
         return true;
     }
     return false; // still busy
@@ -81,69 +105,85 @@ bool evalIsoclinesContinue(int precision, int points)
 
 bool evalIsoclinesFinish() // return false in case an error occured
 {
-    int nisocs = (g_VFResults.isocline_vector_.size() - 1) % 4;
-    g_VFResults.isocline_vector_.back().color = CISOC + nisocs;
+    // set color for the last isocline of each VF
+    for (auto &vf : gVFResults.vf_) {
+        int nisocs{static_cast<int>((vf->isocline_vector_.size() - 1) % 4)};
+        if (!vf->isocline_vector_.empty())
+            vf->isocline_vector_.back().color =
+                P4ColourSettings::colour_isoclines + nisocs;
+    }
 
-    if (s_IsoclinesTask != EVAL_ISOCLINES_NONE) {
-        s_IsoclinesSphere->prepareDrawing();
-        draw_isoclines(s_IsoclinesSphere,
-                       g_VFResults.isocline_vector_.back().points,
-                       g_VFResults.isocline_vector_.back().color, 1);
-        s_IsoclinesSphere->finishDrawing();
+    if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
+        // resample isoclines to avoid drawing out of region
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
+            gThisVF->resampleIsoclines(index);
+        }
+        // start drawing the last isocline for every VF
+        sIsoclinesSphere->prepareDrawing();
+        for (auto const &vf : gVFResults.vf_) {
+            if (!vf->isocline_vector_.empty())
+                draw_isoclines(sIsoclinesSphere,
+                               vf->isocline_vector_.back().points,
+                               vf->isocline_vector_.back().color, 1);
+        }
+        sIsoclinesSphere->finishDrawing();
 
-        s_IsoclinesTask = EVAL_ISOCLINES_NONE;
+        // finish
+        sIsoclinesTask = EVAL_ISOCLINES_NONE;
 
-        if (s_IsoclinesError) {
-            s_IsoclinesError = false;
+        if (sIsoclinesError) {
+            sIsoclinesError = false;
             return false;
         }
     }
     return true;
 }
 
-bool runTaskIsoclines(int task, int precision, int points)
+bool runTaskIsoclines(int task, int precision, int points, unsigned int index)
 {
     bool value;
 
+    auto &vf = gVFResults.vf_[index];
+
     switch (task) {
     case EVAL_ISOCLINES_R2:
-        value = g_ThisVF->prepareIsoclines(
-            g_VFResults.isocline_vector_.back().r2, -1, 1, precision, points);
+        value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().r2, -1, 1,
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_U1:
-        value = g_ThisVF->prepareIsoclines(
-            g_VFResults.isocline_vector_.back().u1, 0, 1, precision, points);
+        value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u1, 0, 1,
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_V1:
-        value = g_ThisVF->prepareIsoclines(
-            g_VFResults.isocline_vector_.back().u1, -1, 0, precision, points);
+        value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u1, -1, 0,
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_U2:
-        value = g_ThisVF->prepareIsoclines(
-            g_VFResults.isocline_vector_.back().u2, 0, 1, precision, points);
+        value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u2, 0, 1,
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_V2:
-        value = g_ThisVF->prepareIsoclines(
-            g_VFResults.isocline_vector_.back().u2, -1, 0, precision, points);
+        value = gThisVF->prepareIsoclines(vf->isocline_vector_.back().u2, -1, 0,
+                                          precision, points);
         break;
     case EVAL_ISOCLINES_LYP_R2:
-        value = g_ThisVF->prepareIsoclines_LyapunovR2(precision, points);
+        value = gThisVF->prepareIsoclines_LyapunovR2(precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL1:
-        value = g_ThisVF->prepareIsoclines_LyapunovCyl(-PI_DIV4, PI_DIV4,
-                                                       precision, points);
+        value = gThisVF->prepareIsoclines_LyapunovCyl(-PI_DIV4, PI_DIV4,
+                                                      precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL2:
-        value = g_ThisVF->prepareIsoclines_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
-                                                       precision, points);
+        value = gThisVF->prepareIsoclines_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
+                                                      precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL3:
-        value = g_ThisVF->prepareIsoclines_LyapunovCyl(
-            PI - PI_DIV4, PI + PI_DIV4, precision, points);
+        value = gThisVF->prepareIsoclines_LyapunovCyl(
+            PI - PI_DIV4, PI + PI_DIV4, precision, points, index);
         break;
     case EVAL_ISOCLINES_CYL4:
-        value = g_ThisVF->prepareIsoclines_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
-                                                       precision, points);
+        value = gThisVF->prepareIsoclines_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
+                                                      precision, points, index);
         break;
     default:
         value = false;
@@ -151,47 +191,45 @@ bool runTaskIsoclines(int task, int precision, int points)
     }
 
     if (value)
-        return g_ThisVF->evaluateIsoclines();
+        return gThisVF->evaluateIsoclines();
     else
         return false;
 }
 
-static bool readTaskResults(int task)
+static bool readTaskResults(int task, int index)
 {
     bool value;
 
     switch (task) {
     case EVAL_ISOCLINES_R2:
-        value = read_isoclines(R2_to_psphere);
+        value = read_isoclines(R2_to_psphere, index);
         break;
     case EVAL_ISOCLINES_U1:
-        value = read_isoclines(U1_to_psphere);
+        value = read_isoclines(U1_to_psphere, index);
         break;
     case EVAL_ISOCLINES_V1:
-        value = read_isoclines(VV1_to_psphere);
+        value = read_isoclines(VV1_to_psphere, index);
         break;
     case EVAL_ISOCLINES_U2:
-        value = read_isoclines(U2_to_psphere);
+        value = read_isoclines(U2_to_psphere, index);
         break;
     case EVAL_ISOCLINES_V2:
-        value = read_isoclines(VV2_to_psphere);
+        value = read_isoclines(VV2_to_psphere, index);
         break;
     case EVAL_ISOCLINES_LYP_R2:
-        value = read_isoclines(rplane_plsphere0);
+        value = read_isoclines(rplane_plsphere0, index);
         break;
-    // here: the old herc files contained (the equivalent of)
-    // value = read_isoclines(rplane_psphere );
     case EVAL_ISOCLINES_CYL1:
-        value = read_isoclines(cylinder_to_plsphere);
+        value = read_isoclines(cylinder_to_plsphere, index);
         break;
     case EVAL_ISOCLINES_CYL2:
-        value = read_isoclines(cylinder_to_plsphere);
+        value = read_isoclines(cylinder_to_plsphere, index);
         break;
     case EVAL_ISOCLINES_CYL3:
-        value = read_isoclines(cylinder_to_plsphere);
+        value = read_isoclines(cylinder_to_plsphere, index);
         break;
     case EVAL_ISOCLINES_CYL4:
-        value = read_isoclines(cylinder_to_plsphere);
+        value = read_isoclines(cylinder_to_plsphere, index);
         break;
     default:
         value = false;
@@ -200,41 +238,31 @@ static bool readTaskResults(int task)
     return value;
 }
 
-void draw_isoclines(QWinSphere *spherewnd, P4ORBIT isoc, int color, int dashes)
+void draw_isoclines(P4Sphere *spherewnd,
+                    const std::vector<P4Orbits::orbits_points> &isoc, int color,
+                    int dashes)
 {
     double pcoord[3];
 
-    while (isoc != nullptr) {
-        if (isoc->dashes && dashes)
-            (*plot_l)(spherewnd, pcoord, isoc->pcoord, color);
+    for (auto const &it : isoc) {
+        if (it.dashes && dashes)
+            (*plot_l)(spherewnd, pcoord, it.pcoord, color);
         else
-            (*plot_p)(spherewnd, isoc->pcoord, color);
-        copy_x_into_y(isoc->pcoord, pcoord);
-
-        isoc = isoc->next_point;
+            (*plot_p)(spherewnd, it.pcoord, color);
+        copy_x_into_y(it.pcoord, pcoord);
     }
 }
 
-static void insert_isoclines_point(double x0, double y0, double z0, int dashes)
+static void insert_isocline_vector_point(double x0, double y0, double z0,
+                                         int dashes, int index)
 {
-    if (g_VFResults.isocline_vector_.back().points != nullptr) {
-        g_last_isoclines_point->next_point = new orbits_points;
-        g_last_isoclines_point = g_last_isoclines_point->next_point;
-    } else {
-        g_last_isoclines_point = new orbits_points;
-        g_VFResults.isocline_vector_.back().points = g_last_isoclines_point;
-    }
+    double pcoord[3]{x0, y0, z0};
 
-    g_last_isoclines_point->pcoord[0] = x0;
-    g_last_isoclines_point->pcoord[1] = y0;
-    g_last_isoclines_point->pcoord[2] = z0;
-
-    g_last_isoclines_point->dashes = dashes;
-    g_last_isoclines_point->color = CISOC;
-    g_last_isoclines_point->next_point = nullptr;
+    gVFResults.vf_[index]->isocline_vector_.back().points.emplace_back(
+        pcoord, P4ColourSettings::colour_isoclines, dashes, 0, 0);
 }
 
-static bool read_isoclines(void (*chart)(double, double, double *))
+static bool read_isoclines(void (*chart)(double, double, double *), int index)
 {
     int k;
     FILE *fp;
@@ -242,7 +270,7 @@ static bool read_isoclines(void (*chart)(double, double, double *))
     double pcoord[3];
     int d, c;
 
-    fp = fopen(QFile::encodeName(g_ThisVF->getfilename_isoclines()), "r");
+    fp = fopen(QFile::encodeName(gThisVF->getfilename_isoclines()), "r");
     if (fp == nullptr)
         return false;
 
@@ -252,8 +280,9 @@ static bool read_isoclines(void (*chart)(double, double, double *))
         while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
             k++;
             chart(x, y, pcoord);
-            insert_isoclines_point(pcoord[0], pcoord[1], pcoord[2], d);
-            d = s_IsoclinesDashes;
+            insert_isocline_vector_point(pcoord[0], pcoord[1], pcoord[2], d,
+                                         index);
+            d = sIsoclinesDashes;
         }
         for (c = getc(fp); isspace(c);)
             c = getc(fp);
@@ -265,12 +294,18 @@ static bool read_isoclines(void (*chart)(double, double, double *))
     return true;
 }
 
-void deleteLastIsocline(QWinSphere *sp)
+void deleteLastIsocline(P4Sphere *sp, unsigned int index)
 {
-    if (g_VFResults.isocline_vector_.empty())
+    //    for (auto &vf : gVFResults.vf_) {
+    //        if (vf->isocline_vector_.empty())
+    //            continue;
+    //        vf->isocline_vector_.pop_back();
+    //    }
+    if (index < 0 || index >= gThisVF->numVF_)
         return;
+    auto &vf = gVFResults.vf_[index];
+    if (!vf->isocline_vector_.empty())
+        vf->isocline_vector_.pop_back();
 
-    g_VFResults.isocline_vector_.pop_back();
-    
     sp->refresh();
 }

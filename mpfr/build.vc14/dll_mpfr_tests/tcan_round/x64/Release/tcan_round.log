@@ -1,7 +1,0 @@
-﻿  tcan_round.c
-..\..\..\tests\tcan_round.c(88): warning C4477: 'printf' : la cadena de formato '%ld' requiere un argumento de tipo 'long', pero el argumento variádico 3 tiene el tipo 'mp_size_t'
-  ..\..\..\tests\tcan_round.c(88): note: considere el uso de ' %lld' en la cadena de formato
-  ..\..\..\tests\tcan_round.c(88): note: considere el uso de ' %Id' en la cadena de formato
-  ..\..\..\tests\tcan_round.c(88): note: considere el uso de ' %I64d' en la cadena de formato
-  tcan_round.vcxproj -> C:\Users\Oscar\Downloads\mpfr\build.vc14\dll_mpfr_tests\x64\Release\tcan_round.exe
-  tcan_round.vcxproj -> C:\Users\Oscar\Downloads\mpfr\build.vc14\dll_mpfr_tests\x64\Release\tcan_round.pdb (Full PDB)

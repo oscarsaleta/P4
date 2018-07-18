@@ -42,11 +42,15 @@ macx {
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpir/dll/x64/release/ -lmpir
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mpir/dll/x64/debug/ -lmpir
 
+win32 {
 INCLUDEPATH += $$PWD/mpir/dll/x64/Release
 DEPENDPATH += $$PWD/mpir/dll/x64/Release
+}
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/mpfr/dll/x64/release/ -lmpfr
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/mpfr/dll/x64/debug/ -lmpfr
 
+win32 {
 INCLUDEPATH += $$PWD/mpfr/dll/x64/Release
 DEPENDPATH += $$PWD/mpfr/dll/x64/Release
+}

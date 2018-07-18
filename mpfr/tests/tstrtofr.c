@@ -1,6 +1,6 @@
 /* Test file for mpfr_set_str.
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -21,6 +21,10 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #include "mpfr-test.h"
+
+/* TODO: Add a test that would fail if the mpn_add_1 and the next two lines
+   were removed from strtofr.c (such a test would also probably fail before
+   the fix r12573). */
 
 static void
 check_special (void)
@@ -938,6 +942,20 @@ check_overflow (void)
       mpfr_dump (x);
       exit (1);
     }
+  mpfr_strtofr (x, "1@2305843009213693951", &s, 16, MPFR_RNDN);
+  if (s[0] != 0 || !MPFR_IS_INF (x) || !MPFR_IS_POS (x))
+    {
+      printf ("Check overflow failed (8) with:\n s=%s\n x=", s);
+      mpfr_dump (x);
+      exit (1);
+    }
+  mpfr_strtofr (x, "1@2305843009213693951", &s, 17, MPFR_RNDN);
+  if (s[0] != 0 || !MPFR_IS_INF (x) || !MPFR_IS_POS (x))
+    {
+      printf ("Check overflow failed (9) with:\n s=%s\n x=", s);
+      mpfr_dump (x);
+      exit (1);
+    }
 
   /* Check underflow */
   mpfr_strtofr (x, "123456789E-2147483646", &s, 0, MPFR_RNDN);
@@ -966,6 +984,13 @@ check_overflow (void)
   if (s[0] != 0 || !MPFR_IS_ZERO (x) || !MPFR_IS_POS (x))
     {
       printf ("Check overflow failed (7) with:\n s=%s\n x=", s);
+      mpfr_dump (x);
+      exit (1);
+    }
+  mpfr_strtofr (x, "1@-2305843009213693952", &s, 16, MPFR_RNDN);
+  if (s[0] != 0 || !MPFR_IS_ZERO (x) || !MPFR_IS_POS (x) )
+    {
+      printf ("Check underflow failed (8) with:\n s='%s'\n x=", s);
       mpfr_dump (x);
       exit (1);
     }
@@ -1077,7 +1102,7 @@ bug20081028 (void)
 }
 
 /* check that 1.23e is correctly parsed, cf
-   http://gmplib.org/list-archives/gmp-bugs/2010-March/001898.html */
+   https://gmplib.org/list-archives/gmp-bugs/2010-March/001898.html */
 static void
 test20100310 (void)
 {
@@ -1157,14 +1182,14 @@ bug20120829 (void)
       s[4+i] = 0;
       inex1 = mpfr_mul_ui (e, e, 10, MPFR_RNDN);
       MPFR_ASSERTN (inex1 == 0);
-      RND_LOOP(r)
+      RND_LOOP_NO_RNDF (r)
         {
           mpfr_rnd_t rnd = (mpfr_rnd_t) r;
 
           inex1 = mpfr_exp10 (x1, e, rnd);
-          inex1 = SIGN (inex1);
+          inex1 = VSIGN (inex1);
           inex2 = mpfr_strtofr (x2, s, NULL, 0, rnd);
-          inex2 = SIGN (inex2);
+          inex2 = VSIGN (inex2);
           /* On 32-bit machines, for i = 7, r8389, r8391 and r8394 do:
              strtofr.c:...: MPFR assertion failed: cy == 0
              r8396 is OK.
@@ -1206,10 +1231,19 @@ bug20161217 (void)
 
   mpfr_init2 (fp, 110);
   mpfr_init2 (z, 110);
+
   inex = mpfr_strtofr (fp, num, NULL, 10, MPFR_RNDN);
   MPFR_ASSERTN(inex == 0);
   mpfr_set_str_binary (z, "10001100001000010011110110011101101001010000001011011110010001010100010100100110111101000010001011001100001101E-9");
   MPFR_ASSERTN(mpfr_equal_p (fp, z));
+
+  /* try with 109 bits */
+  mpfr_set_prec (fp, 109);
+  inex = mpfr_strtofr (fp, num, NULL, 10, MPFR_RNDN);
+  MPFR_ASSERTN(inex < 0);
+  mpfr_set_str_binary (z, "10001100001000010011110110011101101001010000001011011110010001010100010100100110111101000010001011001100001100E-9");
+  MPFR_ASSERTN(mpfr_equal_p (fp, z));
+
   mpfr_clear (fp);
   mpfr_clear (z);
 }
@@ -1229,13 +1263,48 @@ bug20170308 (void)
   int inex;
 
   emin = mpfr_get_emin ();
-  mpfr_set_emin (-1073);
-  mpfr_set_emin (emin);
   mpfr_init2 (z, 53);
+  mpfr_set_emin (-1073);
+  /* with emin = -1073, the smallest positive number is 0.5*2^emin = 2^(-1074),
+     thus str should be rounded to 2^(-1074) with inex > 0 */
   inex = mpfr_strtofr (z, str, NULL, 10, MPFR_RNDN);
-  printf ("inex=%d z=", inex); mpfr_dump (z);
+  MPFR_ASSERTN(inex > 0 && mpfr_cmp_ui_2exp (z, 1, -1074) == 0);
+  mpfr_set_emin (-1074);
+  /* with emin = -1074, str should be rounded to 2^(-1075) with inex < 0 */
+  inex = mpfr_strtofr (z, str, NULL, 10, MPFR_RNDN);
   MPFR_ASSERTN(inex < 0 && mpfr_cmp_ui_2exp (z, 1, -1075) == 0);
   mpfr_clear (z);
+  mpfr_set_emin (emin);
+}
+
+static void
+coverage (void)
+{
+#if _MPFR_EXP_FORMAT >= 3 && _MPFR_PREC_FORMAT == 3 && MPFR_PREC_BITS == 64
+  char str3[] = "1@-2112009130072406892";
+  char str31[] = "1@-511170973314085831";
+  mpfr_t x;
+  int inex;
+  mpfr_exp_t emin;
+
+  /* exercise assertion cy == 0 around line 698 of strtofr.c */
+  emin = mpfr_get_emin ();
+  mpfr_set_emin (mpfr_get_emin_min ());
+  /* emin = -4611686018427387903 on a 64-bit machine */
+  mpfr_init2 (x, 1);
+  inex = mpfr_strtofr (x, str3, NULL, 3, MPFR_RNDN);
+  /* 3^-2112009130072406892 is slightly larger than (2^64)^-52303988630398057
+     thus we should get inex < 0 */
+  MPFR_ASSERTN(inex < 0);
+  MPFR_ASSERTN(mpfr_cmp_ui_2exp (x, 1, -52303988630398057 * 64) == 0);
+  inex = mpfr_strtofr (x, str31, NULL, 31, MPFR_RNDN);
+  /* 31^-511170973314085831 is slightly smaller than (2^64)^-39569396093273623
+     thus we should get inex > 0 */
+  MPFR_ASSERTN(inex > 0);
+  MPFR_ASSERTN(mpfr_cmp_ui_2exp (x, 1, -39569396093273623 * 64) == 0);
+  mpfr_clear (x);
+  mpfr_set_emin (emin);
+#endif
 }
 
 int
@@ -1243,6 +1312,7 @@ main (int argc, char *argv[])
 {
   tests_start_mpfr ();
 
+  coverage ();
   check_special();
   check_reftable ();
   check_parse ();

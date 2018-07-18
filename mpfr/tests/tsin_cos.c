@@ -1,6 +1,6 @@
 /* Test file for mpfr_sin_cos.
 
-Copyright 2000-2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 2000-2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -197,9 +197,10 @@ overflowed_sin_cos0 (void)
           if (! (mpfr_zero_p (x) && MPFR_IS_NEG (x)))
             {
               printf ("Error in overflowed_sin_cos0 (rnd = %s):\n"
-                      "  Got sin = ", mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
-              mpfr_print_binary (x);
-              printf (" instead of -0.\n");
+                      "  Got sin =  ",
+                      mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
+              mpfr_dump (x);
+              printf ("  instead of -0.\n");
               err = 1;
             }
           if (rnd == MPFR_RNDZ || rnd == MPFR_RNDD)
@@ -214,10 +215,10 @@ overflowed_sin_cos0 (void)
               if (! mpfr_equal_p (y, z))
                 {
                   printf ("Error in overflowed_sin_cos0 (rnd = %s):\n"
-                          "  Got cos = ",
+                          "  Got cos =  ",
                           mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
-                  mpfr_print_binary (y);
-                  printf (" instead of 0.11111111E%d.\n", emax);
+                  mpfr_dump (y);
+                  printf ("  instead of 0.11111111E%d.\n", emax);
                   err = 1;
                 }
             }
@@ -233,10 +234,10 @@ overflowed_sin_cos0 (void)
               if (! (mpfr_inf_p (y) && MPFR_IS_POS (y)))
                 {
                   printf ("Error in overflowed_sin_cos0 (rnd = %s):\n"
-                          "  Got cos = ",
+                          "  Got cos =  ",
                           mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
-                  mpfr_print_binary (y);
-                  printf (" instead of +Inf.\n");
+                  mpfr_dump (y);
+                  printf ("  instead of +Inf.\n");
                   err = 1;
                 }
             }
@@ -579,6 +580,8 @@ consistency (void)
           mpfr_set_si (x, (j & 2) ? 1 : -1, MPFR_RNDN);
           mpfr_set_exp (x, mpfr_get_emin ());
           rnd = (mpfr_rnd_t) (i % MPFR_RND_MAX);
+          if (rnd == MPFR_RNDF)
+            goto end;
           flags_before = 0;
           if (j & 4)
             mpfr_set_emax (-17);
@@ -586,7 +589,7 @@ consistency (void)
       else
         {
           tests_default_random (x, 256, -5, 50, 0);
-          rnd = RND_RAND ();
+          rnd = RND_RAND_NO_RNDF ();
           flags_before = (randlimb () & 1) ?
             (unsigned int) (MPFR_FLAGS_ALL ^ MPFR_FLAGS_ERANGE) :
             (unsigned int) 0;
@@ -626,6 +629,7 @@ consistency (void)
                   flags_sin, flags_cos, flags, flags_ref);
           exit (1);
         }
+    end:
       mpfr_clears (x, s1, s2, c1, c2, (mpfr_ptr) 0);
       mpfr_set_emin (emin);
       mpfr_set_emax (emax);
@@ -647,7 +651,7 @@ coverage_01032011 (void)
 
   status_f = mpfr_sincos_fast (svalf, NULL, val, MPFR_RNDN);
   status = mpfr_sin_cos (sval, cval, val, MPFR_RNDN);
-  if (! mpfr_equal_p (svalf, sval) || SIGN (status_f) != SIGN (status))
+  if (! mpfr_equal_p (svalf, sval) || VSIGN (status_f) != VSIGN (status))
     {
       printf ("mpfr_sincos_fast differ from mpfr_sin_cos result:\n"
               " sin fast is ");

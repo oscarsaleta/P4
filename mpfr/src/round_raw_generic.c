@@ -1,6 +1,6 @@
 /* mpfr_round_raw_generic -- Generic rounding function
 
-Copyright 1999-2017 Free Software Foundation, Inc.
+Copyright 1999-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -54,6 +54,10 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
  * may change in the future without notice.
  */
 
+#if !(flag == 0 || flag == 1)
+#error "flag must be 0 or 1"
+#endif
+
 int
 mpfr_round_raw_generic(
 #if flag == 0
@@ -68,7 +72,7 @@ mpfr_round_raw_generic(
 {
   mp_size_t xsize, nw;
   mp_limb_t himask, lomask, sb;
-  int rw;
+  int rw, new_use_inexp;
 #if flag == 0
   int carry;
 #endif
@@ -79,10 +83,25 @@ mpfr_round_raw_generic(
   if (use_inexp)
     MPFR_ASSERTD(inexp != ((int*) 0));
   MPFR_ASSERTD(neg == 0 || neg == 1);
+#if flag == 1
+  /* rnd_mode = RNDF is only possible for flag = 0. */
+  MPFR_ASSERTD(rnd_mode != MPFR_RNDF);
+#endif
 
-  if (flag && !use_inexp &&
-      (xprec <= yprec || MPFR_IS_LIKE_RNDZ (rnd_mode, neg)))
-    return 0;
+  if (rnd_mode == MPFR_RNDF)
+    {
+      if (use_inexp)
+        *inexp = 0;  /* make sure it has a valid value */
+      rnd_mode = MPFR_RNDZ;  /* faster */
+      new_use_inexp = 0;
+    }
+  else
+    {
+      if (flag && !use_inexp &&
+          (xprec <= yprec || MPFR_IS_LIKE_RNDZ (rnd_mode, neg)))
+        return 0;
+      new_use_inexp = use_inexp;
+    }
 
   xsize = MPFR_PREC2LIMBS (xprec);
   nw = yprec / GMP_NUMB_BITS;
@@ -104,7 +123,7 @@ mpfr_round_raw_generic(
       return 0;
     }
 
-  if (use_inexp || !MPFR_IS_LIKE_RNDZ(rnd_mode, neg))
+  if (new_use_inexp || !MPFR_IS_LIKE_RNDZ(rnd_mode, neg))
     {
       mp_size_t k = xsize - nw - 1;
 

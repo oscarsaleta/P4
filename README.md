@@ -1,7 +1,7 @@
 <!--
     This file is part of P4 
 
-    Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier, 
+    Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier, 
                              C. Herssens, J. Llibre, O. Saleta, J. Torregrosa 
 
     P4 is free software: you can redistribute it and/or modify 
@@ -18,7 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 -->
 
-# P4 (Polynomial Planar Phase Portraits) version 7.0.1
+# P4 (Polynomial Planar Phase Portraits) version 8.0.0 - alpha
+
+[![Build Status](https://travis-ci.org/oscarsaleta/P4.svg?branch=develop_p5)](https://travis-ci.org/oscarsaleta/P4)
 
 ## Description
 
@@ -54,10 +56,11 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install git`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S git`
         + (See the [git ArchWiki page](https://wiki.archlinux.org/index.php/git "Git ArchWiki page") for more information and configuration instructions).
-	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, could work for 4.6.0 but this has not been tested):
+	- Qt modules *QtCore*, *QtGui*, *QtWidgets*, *QtPrintSupport* (minimum required version 5.2.1, recommended version >= 5.5.0):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install qt5-default`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install qt5*-devel --allowerasing`
         + Arch-based (Archlinux/Antergos): `sudo pacman -S qt5-base`
+        + Any Linux distribution (recommended for getting the latest version): can be downloaded from the [Qt website](https://www.qt.io/download "Download Qt installer")
 	- `qmake` (version 3.0 recommended):
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install qt5-qmake`
         + Other distros: already installed if you followed the install instructions for Qt 5.
@@ -73,10 +76,6 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libmpfr-dev`
         + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install mpfr-devel`
         + Arch-based (Archlinux/Angergos): `sudo pacman -S gmp mpfr`
-    - Boost libraries (version 1.62.0 used in development, should work with older versions too):
-        + Debian-based (Debian/Ubuntu/Mint): `sudo apt-get install libboost-dev`
-        + Fedora-based (Fedora/Kokora/Arquetype): `sudo dnf install boost-devel`
-        + Arch-based (Archlinux/Angergos): `sudo pacman -S boost`
 * **Compilation from source using Qt Creator:**
     - Dependencies itemized above,
 	- Qt Creator IDE:
@@ -106,8 +105,6 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Download from [Qt website](https://www.qt.io/ "Qt official website"),
 	- C++ compiler: Microsoft Visual C++ Compiler (tested with versions 14.0 and 15.0).
         + Download from [Visual Studio Community](https://www.visualstudio.com/vs/cplusplus/#downloads "Visual Studio Community C++ download").
-    - Boost libraries: download and install from [Boost website](http://www.boost.org/ "Boost official website").
-
 
 ## macOS
 
@@ -132,7 +129,7 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - Qt and qmake: installed using Homebrew
         + Run in terminal `brew install qt`
-        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
+        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_): `echo 'export PATH="/usr/local/opt/qt/bin:$PATH"' >> ~/.bashrc`
 * **Installation with `compile_install_p4`**:
     - Xcode: macOS suite for software development. Install from the App Store, then open it and accept the Terms of Use.
     - *Comand line developer tools*: this adds necessary programs such as `git` and `clang` to the system.
@@ -141,11 +138,9 @@ Check [release page][latest_release] to see more detailed instructions and downl
         + Run in terminal: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
     - Qt and qmake: installed using Homebrew
         + Run in terminal `brew install qt`
-        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_)
+        + Follow the instructions (_IMPORTANT: modify the PATH as the installer suggests so the system will be able to find the libraries_): `echo 'export PATH="/usr/local/opt/qt/bin:$PATH"' >> ~/.bashrc`
     - MPFR library: installed using Homebrew
         + Run in terminal `brew install mpfr`
-    - Boost libraries (development uses version 1.62.0):
-        + Run in terminal `brew install boost`
     - _You will need to open a new terminal if you updated the PATH for the changes to take effect_
 
 

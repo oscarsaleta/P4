@@ -1,6 +1,6 @@
 /* Uniform Interface to GMP.
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -86,7 +86,13 @@ extern "C" {
  ************* Define GMP Internal Interface  *********
  ******************************************************/
 
-#ifndef MPFR_HAVE_GMP_IMPL /* Build with gmp internals */
+#ifdef MPFR_HAVE_GMP_IMPL  /* with gmp build */
+
+#define mpfr_allocate_func   (*__gmp_allocate_func)
+#define mpfr_reallocate_func (*__gmp_reallocate_func)
+#define mpfr_free_func       (*__gmp_free_func)
+
+#else  /* without gmp build (gmp-impl.h replacement) */
 
 /* The following tries to get a good version of alloca.
    See gmp-impl.h for implementation details and original version */
@@ -124,7 +130,9 @@ void *alloca (size_t);
 #define MP_SIZE_T_MIN      LONG_MIN
 #endif
 
-/* MP_LIMB macros */
+/* MP_LIMB macros.
+   Note: GMP now also has the MPN_FILL macro, and GMP's MPN_ZERO(dst,n) is
+   defined as "if (n) MPN_FILL(dst, n, 0);". */
 #define MPN_ZERO(dst, n) memset((dst), 0, (n)*MPFR_BYTES_PER_MP_LIMB)
 #define MPN_COPY(dst,src,n) \
   do                                                                  \
@@ -171,6 +179,10 @@ void *alloca (size_t);
 #define MPN_SAME_OR_DECR_P(dst, src, size)      \
   MPN_SAME_OR_DECR2_P(dst, size, src, size)
 
+#ifndef MUL_FFT_THRESHOLD
+#define MUL_FFT_THRESHOLD 8448
+#endif
+
 /* If mul_basecase or mpn_sqr_basecase are not exported, used mpn_mul instead */
 #ifndef mpn_mul_basecase
 # define mpn_mul_basecase(dst,s1,n1,s2,n2) mpn_mul((dst),(s1),(n1),(s2),(n2))
@@ -191,9 +203,16 @@ __MPFR_DECLSPEC void mpfr_assert_fail (const char *, int,
 #define SIZ(x) ((x)->_mp_size)
 #define ABSIZ(x) ABS (SIZ (x))
 #define PTR(x) ((x)->_mp_d)
+#define ALLOC(x) ((x)->_mp_alloc)
+/* For mpf numbers only. */
+#ifdef MPFR_NEED_MPF_INTERNALS
+/* Note: the EXP macro name is reserved when <errno.h> is included.
+   For compatibility with gmp-impl.h (cf --with-gmp-build), we cannot
+   change this macro, but let's define it only when we need it, where
+   <errno.h> will not be included. */
 #define EXP(x) ((x)->_mp_exp)
 #define PREC(x) ((x)->_mp_prec)
-#define ALLOC(x) ((x)->_mp_alloc)
+#endif
 
 /* For longlong.h */
 #ifdef HAVE_ATTRIBUTE_MODE
@@ -268,39 +287,9 @@ __MPFR_DECLSPEC extern const struct bases mpfr_bases[257];
    numberof_const (x))
 #endif
 
-/* Allocate func are defined in gmp-impl.h.
-   Warning: the code below fetches the GMP memory allocation functions the first
-   time one allocates some mpfr_t, and then always uses those initial functions,
-   even if the user later changes the GMP memory allocation functions with
-   mp_set_memory_functions(). This is fine as long as the user who wants to use
-   different memory allocation functions first calls mp_set_memory_functions()
-   before any call to mpfr_init or mpfr_init2.
-   For more complex usages, change #if 1 into #if 0. Warning! But in this
-   case, the user must make sure that there are no data internal to MPFR
-   allocated with the previous allocator. Freeing all the caches may be
-   necessary, but this is not guaranteed to be sufficient. */
-
-#if 1
-#undef __gmp_allocate_func
-#undef __gmp_reallocate_func
-#undef __gmp_free_func
-#define MPFR_GET_MEMFUNC                                        \
-  ((void) (MPFR_LIKELY (mpfr_allocate_func != 0) ||             \
-           (mp_get_memory_functions(&mpfr_allocate_func,        \
-                                    &mpfr_reallocate_func,      \
-                                    &mpfr_free_func), 1)))
-#define __gmp_allocate_func   (MPFR_GET_MEMFUNC, mpfr_allocate_func)
-#define __gmp_reallocate_func (MPFR_GET_MEMFUNC, mpfr_reallocate_func)
-#define __gmp_free_func       (MPFR_GET_MEMFUNC, mpfr_free_func)
-#else
-extern void * (*__gmp_allocate_func) (size_t);
-extern void * (*__gmp_reallocate_func) (void *, size_t, size_t);
-extern void (*__gmp_free_func) (void *, size_t);
-#endif
-
-__MPFR_DECLSPEC extern MPFR_THREAD_ATTR void * (*mpfr_allocate_func)   (size_t);
-__MPFR_DECLSPEC extern MPFR_THREAD_ATTR void * (*mpfr_reallocate_func) (void *, size_t, size_t);
-__MPFR_DECLSPEC extern MPFR_THREAD_ATTR void   (*mpfr_free_func)       (void *, size_t);
+__MPFR_DECLSPEC void * mpfr_allocate_func (size_t);
+__MPFR_DECLSPEC void * mpfr_reallocate_func (void *, size_t, size_t);
+__MPFR_DECLSPEC void   mpfr_free_func (void *, size_t);
 
 #if defined(WANT_GMP_INTERNALS) && defined(HAVE___GMPN_SBPI1_DIVAPPR_Q)
 #ifndef __gmpn_sbpi1_divappr_q
@@ -312,6 +301,12 @@ __MPFR_DECLSPEC mp_limb_t __gmpn_sbpi1_divappr_q (mp_limb_t*,
 #if defined(WANT_GMP_INTERNALS) && defined(HAVE___GMPN_INVERT_LIMB)
 #ifndef __gmpn_invert_limb
 __MPFR_DECLSPEC mp_limb_t __gmpn_invert_limb (mp_limb_t);
+#endif
+#endif
+
+#if defined(WANT_GMP_INTERNALS) && defined(HAVE___GMPN_RSBLSH1_N)
+#ifndef __gmpn_rsblsh1_n
+__MPFR_DECLSPEC mp_limb_t __gmpn_rsblsh1_n (mp_limb_t*, mp_limb_t*, mp_limb_t*, mp_size_t);
 #endif
 #endif
 
@@ -327,7 +322,7 @@ __MPFR_DECLSPEC void *mpfr_tmp_allocate (struct tmp_marker **,
                                          size_t);
 __MPFR_DECLSPEC void mpfr_tmp_free (struct tmp_marker *);
 
-/* Can be overriden at configure time. Useful for checking buffer overflow. */
+/* Can be overridden at configure time. Useful for checking buffer overflow. */
 #ifndef MPFR_ALLOCA_MAX
 # define MPFR_ALLOCA_MAX 16384
 #endif
@@ -342,7 +337,7 @@ __MPFR_DECLSPEC void mpfr_tmp_free (struct tmp_marker *);
 #define TMP_FREE(m) \
   (MPFR_LIKELY (tmp_marker == NULL) ? (void) 0 : mpfr_tmp_free (tmp_marker))
 
-#endif /* GMP Internal replacement */
+#endif  /* gmp-impl.h replacement */
 
 
 
@@ -446,15 +441,6 @@ typedef struct {mp_limb_t inv32;} mpfr_pi1_t;
       }                                                                 \
     (dinv).inv32 = _v;                                                  \
   } while (0)
-#endif
-
-/* mpn_copyi and mpn_copyd are new exported functions in GMP 5.
-   Defining them to memmove works in overlap cases. */
-#if !__MPFR_GMP(5,0,0)
-# undef  mpn_copyi
-# define mpn_copyi memmove
-# undef  mpn_copyd
-# define mpn_copyd memmove
 #endif
 
 /* The following macro is copied from GMP-6.1.1, file gmp-impl.h,
@@ -586,10 +572,6 @@ typedef struct {mp_limb_t inv32;} mpfr_pi1_t;
 /******************************************************
  ************* GMP Basic Pointer Types ****************
  ******************************************************/
-/* Compatibility with old GMP versions. */
-#if !__MPFR_GMP(5,0,0)
-typedef unsigned long mp_bitcnt_t;
-#endif
 
 typedef mp_limb_t *mpfr_limb_ptr;
 typedef const mp_limb_t *mpfr_limb_srcptr;

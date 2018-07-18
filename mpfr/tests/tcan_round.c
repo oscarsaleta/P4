@@ -1,6 +1,6 @@
 /* Test file for mpfr_can_round and mpfr_round_p.
 
-Copyright 1999, 2001-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -38,6 +38,11 @@ test_simple (void)
           mpfr_t b;
           int p, err, prec, inex, c;
 
+          /* TODO: Test r2 == MPFR_RNDF. The following "continue"
+             was added while this case had not been specified
+             yet, but this is no longer the case. */
+          if (r2 == MPFR_RNDF)
+            continue;
           p = 12 + (randlimb() % (2 * GMP_NUMB_BITS));
           err = p - 3;
           prec = 4;
@@ -46,8 +51,9 @@ test_simple (void)
           MPFR_ASSERTN (inex == 0);
           c = mpfr_can_round (b, err, (mpfr_rnd_t) r1, (mpfr_rnd_t) r2, prec);
           /* If r1 == r2, we can round.
+             Note: For r1, RNDF is equivalent to RNDN.
              TODO: complete this test for r1 != r2. */
-          if (r1 == r2 && !c)
+          if ((r1 == MPFR_RNDF ? MPFR_RNDN : r1) == r2 && !c)
             {
               printf ("Error in test_simple for i=%d,"
                       " err=%d r1=%s, r2=%s, p=%d\n", i, err,
@@ -85,7 +91,52 @@ check_round_p (void)
                                MPFR_RNDN, MPFR_RNDZ, p);
       if (r1 != r2)
         {
-          printf ("mpfr_round_p(%d) != mpfr_can_round(%d)!\n"
+          printf ("mpfr_round_p(%d) != mpfr_can_round(%d,RNDZ)!\n"
+                  "bn = %ld, err0 = %ld, prec = %lu\nbp = ",
+                  r1, r2, n, (long) err, (unsigned long) p);
+#ifndef MPFR_USE_MINI_GMP
+          gmp_printf ("%NX\n", buf, n);
+#endif
+          exit (1);
+        }
+      /* Same with RNDF: with rnd1=RNDN, rnd2=RNDF is converted to RNDN. */
+      r1 = mpfr_can_round_raw (buf, n, MPFR_SIGN_POS, err,
+                               MPFR_RNDN, MPFR_RNDN, p);
+      r2 = mpfr_can_round_raw (buf, n, MPFR_SIGN_POS, err,
+                               MPFR_RNDN, MPFR_RNDF, p);
+      if (r1 != r2)
+        {
+          printf ("mpfr_can_round(%d,RNDN) != mpfr_can_round(%d,RNDF)!\n"
+                  "bn = %ld, err0 = %ld, prec = %lu\nbp = ",
+                  r1, r2, n, (long) err, (unsigned long) p);
+#ifndef MPFR_USE_MINI_GMP
+          gmp_printf ("%NX\n", buf, n);
+#endif
+          exit (1);
+        }
+      /* Same with RNDF: with rnd1=RNDZ, rnd2=RNDF is converted to RNDA. */
+      r1 = mpfr_can_round_raw (buf, n, MPFR_SIGN_POS, err,
+                               MPFR_RNDZ, MPFR_RNDA, p);
+      r2 = mpfr_can_round_raw (buf, n, MPFR_SIGN_POS, err,
+                               MPFR_RNDZ, MPFR_RNDF, p);
+      if (r1 != r2)
+        {
+          printf ("mpfr_can_round(%d,RNDA) != mpfr_can_round(%d,RNDF)!\n"
+                  "bn = %ld, err0 = %ld, prec = %lu\nbp = ",
+                  r1, r2, n, (long) err, (unsigned long) p);
+#ifndef MPFR_USE_MINI_GMP
+          gmp_printf ("%NX\n", buf, n);
+#endif
+          exit (1);
+        }
+      /* Same with RNDF: with rnd1=RNDA, rnd2=RNDF is converted to RNDZ. */
+      r1 = mpfr_can_round_raw (buf, n, MPFR_SIGN_POS, err,
+                               MPFR_RNDA, MPFR_RNDZ, p);
+      r2 = mpfr_can_round_raw (buf, n, MPFR_SIGN_POS, err,
+                               MPFR_RNDA, MPFR_RNDF, p);
+      if (r1 != r2)
+        {
+          printf ("mpfr_can_round(%d,RNDZ) != mpfr_can_round(%d,RNDF)!\n"
                   "bn = %ld, err0 = %ld, prec = %lu\nbp = ",
                   r1, r2, n, (long) err, (unsigned long) p);
 #ifndef MPFR_USE_MINI_GMP
@@ -106,6 +157,8 @@ test_pow2 (mpfr_exp_t i, mpfr_prec_t px, mpfr_rnd_t r1, mpfr_rnd_t r2,
 
   mpfr_init2 (x, px);
   mpfr_set_ui_2exp (x, 1, i, MPFR_RNDN);
+  /* for mpfr_can_round, r1=RNDF is equivalent to r1=RNDN (the sign of the
+     error is not known) */
   b = !!mpfr_can_round (x, i+1, r1, r2, prec);
   /* Note: If mpfr_can_round succeeds for both
      (r1,r2) = (MPFR_RNDD,MPFR_RNDN) and
@@ -196,6 +249,11 @@ check_can_round (void)
                   RND_LOOP (rnd1)
                     RND_LOOP (rnd2)
                       {
+                        /* TODO: Test r2 == MPFR_RNDF. The following "continue"
+                           was added while this case had not been specified
+                           yet, but this is no longer the case. */
+                        if (rnd2 == MPFR_RNDF)
+                          continue;
                         mpfr_set (yinf, MPFR_IS_LIKE_RNDD (rnd1, 1) ?
                                   x : xinf, (mpfr_rnd_t) rnd2);
                         mpfr_set (ysup, MPFR_IS_LIKE_RNDU (rnd1, 1) ?
@@ -224,6 +282,36 @@ check_can_round (void)
   mpfr_clears (x, xinf, xsup, yinf, ysup, (mpfr_ptr) 0);
 }
 
+/* test of RNDNA (nearest with ties to away) */
+static void
+test_rndna (void)
+{
+  mpfr_t x;
+  int inex;
+
+  mpfr_init2 (x, 10);
+  mpfr_set_str_binary (x, "1111111101"); /* 1021 */
+  inex = mpfr_prec_round (x, 9, MPFR_RNDNA);
+  MPFR_ASSERTN(inex > 0);
+  MPFR_ASSERTN(mpfr_cmp_ui (x, 1022) == 0);
+  mpfr_set_prec (x, 10);
+  mpfr_set_str_binary (x, "1111111101"); /* 1021 */
+  inex = mpfr_prec_round (x, 9, MPFR_RNDN);
+  MPFR_ASSERTN(inex < 0);
+  MPFR_ASSERTN(mpfr_cmp_ui (x, 1020) == 0);
+  mpfr_set_prec (x, 10);
+  mpfr_set_str_binary (x, "1111111011"); /* 1019 */
+  inex = mpfr_prec_round (x, 9, MPFR_RNDNA);
+  MPFR_ASSERTN(inex > 0);
+  MPFR_ASSERTN(mpfr_cmp_ui (x, 1020) == 0);
+  mpfr_set_prec (x, 10);
+  mpfr_set_str_binary (x, "1111111011"); /* 1019 */
+  inex = mpfr_prec_round (x, 9, MPFR_RNDN);
+  MPFR_ASSERTN(inex > 0);
+  MPFR_ASSERTN(mpfr_cmp_ui (x, 1020) == 0);
+  mpfr_clear (x);
+}
+
 int
 main (void)
 {
@@ -234,6 +322,7 @@ main (void)
 
   tests_start_mpfr ();
 
+  test_rndna ();
   test_simple ();
 
   /* checks that rounds to nearest sets the last
@@ -282,8 +371,8 @@ main (void)
   mpfr_set_str (x, "0.ff4ca619c76ba69", 16, MPFR_RNDZ);
   for (i = 30; i < 99; i++)
     for (j = 30; j < 99; j++)
-      for (r1 = 0; r1 < MPFR_RND_MAX; r1++)
-        for (r2 = 0; r2 < MPFR_RND_MAX; r2++)
+      RND_LOOP (r1)
+        RND_LOOP (r2)
           {
             /* test for assertions */
             mpfr_can_round (x, i, (mpfr_rnd_t) r1, (mpfr_rnd_t) r2, j);
@@ -299,12 +388,16 @@ main (void)
   /* Tests for x = 2^i (E(x) = i+1) with error at most 1 = 2^0. */
   for (n = 0; n < 100; n++)
     {
+      /* TODO: Test r2 == MPFR_RNDF (add its support in test_pow2). The
+         exclusion below was added while this case had not been specified
+         yet, but this is no longer the case. */
       i = (randlimb() % 200) + 4;
       for (j = i - 2; j < i + 2; j++)
-        for (r1 = 0; r1 < MPFR_RND_MAX; r1++)
-          for (r2 = 0; r2 < MPFR_RND_MAX; r2++)
-            for (k = MPFR_PREC_MIN; k <= i + 2; k++)
-              test_pow2 (i, k, (mpfr_rnd_t) r1, (mpfr_rnd_t) r2, j);
+        RND_LOOP (r1)
+          RND_LOOP (r2)
+            if (r2 != MPFR_RNDF)
+              for (k = MPFR_PREC_MIN; k <= i + 2; k++)
+                test_pow2 (i, k, (mpfr_rnd_t) r1, (mpfr_rnd_t) r2, j);
     }
 
   mpfr_clear (x);

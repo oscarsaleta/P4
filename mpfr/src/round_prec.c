@@ -1,7 +1,7 @@
 /* mpfr_round_raw_generic, mpfr_round_raw2, mpfr_round_raw, mpfr_prec_round,
    mpfr_can_round, mpfr_can_round_raw -- various rounding functions
 
-Copyright 1999-2017 Free Software Foundation, Inc.
+Copyright 1999-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -28,6 +28,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #define use_inexp 1
 #include "round_raw_generic.c"
 
+/* mpfr_round_raw_2 is called from mpfr_round_raw2 */
 #define mpfr_round_raw_generic mpfr_round_raw_2
 #define flag 1
 #define use_inexp 0
@@ -74,7 +75,7 @@ mpfr_prec_round (mpfr_ptr x, mpfr_prec_t prec, mpfr_rnd_t rnd_mode)
          mpfr_size_limb_t *tmpx;
 
          /* Realloc significand */
-         tmpx = (mpfr_size_limb_t *) (*__gmp_reallocate_func)
+         tmpx = (mpfr_size_limb_t *) mpfr_reallocate_func
            (MPFR_GET_REAL_PTR(x), MPFR_MALLOC_SIZE(ow), MPFR_MALLOC_SIZE(nw));
          MPFR_SET_MANT_PTR(x, tmpx); /* mant ptr must be set
                                         before alloc size */
@@ -127,8 +128,32 @@ mpfr_prec_round (mpfr_ptr x, mpfr_prec_t prec, mpfr_rnd_t rnd_mode)
 /* assuming b is an approximation to x in direction rnd1 with error at
    most 2^(MPFR_EXP(b)-err), returns 1 if one is able to round exactly
    x to precision prec with direction rnd2, and 0 otherwise.
-
    Side effects: none.
+
+   rnd1 = RNDN and RNDF are similar: the sign of the error is unknown.
+
+   rnd2 = RNDF: assume that the user will round the approximation b
+   toward the direction of x, i.e. the opposite of rnd1 in directed
+   rounding modes, otherwise RNDN. Some details:
+
+                u   xinf        v xsup          w
+           -----|----+----------|--+------------|-----
+                     [----- x -----]
+     rnd1 = RNDD     b             |
+     rnd1 = RNDU                   b
+
+   where u, v and w are consecutive machine numbers.
+
+   * If [xinf,xsup] contains no machine numbers, then return 1.
+
+   * If [xinf,xsup] contains 2 machine numbers, then return 0.
+
+   * If [xinf,xsup] contains a single machine number, then return 1 iff
+     the rounding of b is this machine number.
+     With the above choice for the rounding of b, this will always be
+     the case if rnd1 is a directed rounding mode; said otherwise, for
+     rnd2 = RNDF and rnd1 being a directed rounding mode, return 1 iff
+     [xinf,xsup] contains at most 1 machine number.
 */
 
 int
@@ -173,10 +198,20 @@ mpfr_can_round_raw (const mp_limb_t *bp, mp_size_t bn, int neg, mpfr_exp_t err,
 
   /* Transform RNDD and RNDU to Zero / Away */
   MPFR_ASSERTD (neg == 0 || neg == 1);
+  /* transform RNDF to RNDN */
+  if (rnd1 == MPFR_RNDF)
+    rnd1 = MPFR_RNDN;
   if (rnd1 != MPFR_RNDN)
     rnd1 = MPFR_IS_LIKE_RNDZ(rnd1, neg) ? MPFR_RNDZ : MPFR_RNDA;
+  if (rnd2 == MPFR_RNDF)
+    rnd2 = (rnd1 == MPFR_RNDN) ? MPFR_RNDN :
+      MPFR_IS_LIKE_RNDZ(rnd1, neg) ? MPFR_RNDA : MPFR_RNDZ;
   if (rnd2 != MPFR_RNDN)
     rnd2 = MPFR_IS_LIKE_RNDZ(rnd2, neg) ? MPFR_RNDZ : MPFR_RNDA;
+
+  MPFR_ASSERTD (rnd2 == MPFR_RNDN ||
+                rnd2 == MPFR_RNDZ ||
+                rnd2 == MPFR_RNDA);
 
   /* For err < prec (+1 for rnd1=RNDN), we can never round correctly, since
      the error is at least 2*ulp(b) >= ulp(round(b)).
@@ -294,24 +329,8 @@ mpfr_can_round_raw (const mp_limb_t *bp, mp_size_t bn, int neg, mpfr_exp_t err,
             }
           return 1;
         }
-      else if (rnd1 == rnd2)
-        {
-          if (rnd1 == MPFR_RNDN && prec < (mpfr_prec_t) bn * GMP_NUMB_BITS)
-            {
-              /* then rnd2 = RNDN, and for prec = bn * GMP_NUMB_BITS we cannot
-                 have b the middle of two representable numbers */
-              k1 = MPFR_PREC2LIMBS (prec + 1);
-              MPFR_UNSIGNED_MINUS_MODULO(s1, prec + 1);
-              if (((bp[bn - k1] >> s1) & 1) &&
-                  mpfr_round_raw2 (bp, bn, neg, MPFR_RNDA, prec + 1) == 0)
-                /* b is representable in precision prec+1 and ends with a 1 */
-                return 0;
-              else
-                return 1;
-            }
-          else
-            return 1;
-        }
+      else if (rnd1 == rnd2) /* cases RNDZ RNDZ or RNDA RNDA: ok */
+        return 1;
       else
         return mpfr_round_raw2 (bp, bn, neg, MPFR_RNDA, prec) != 0;
     }

@@ -1,6 +1,6 @@
 /* Test file for mpfr_const_catalan.
 
-Copyright 2005-2017 Free Software Foundation, Inc.
+Copyright 2005-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -42,7 +42,7 @@ main (int argc, char *argv[])
 
   mpfr_init2 (x, 32);
   (mpfr_const_catalan) (x, MPFR_RNDN);
-  mpfr_mul_2exp (x, x, 32, MPFR_RNDN);
+  mpfr_mul_2ui (x, x, 32, MPFR_RNDN);
   if (mpfr_cmp_ui (x, 3934042271UL))
     {
       printf ("Error in const_catalan for prec=32\n");
