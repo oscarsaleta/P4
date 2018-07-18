@@ -355,8 +355,7 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ < 0 ||
-            numParams_ > MAXNUMPARAMS) {
+        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
@@ -1526,7 +1525,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
         fp << "user_precision := 8:\n"
               "try findAllSeparatingCurves() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-              "lastexception[2] );\n"
+              "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
               "finally:\n"
               "  closeallfiles();\n"
               "  if normalexit=0 then\n"
@@ -1538,7 +1537,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
     } else {
         fp << "try p4main() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-              "lastexception[2] );\n"
+              "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
               "finally:\n"
               "  closeallfiles();\n"
               "  if normalexit=0 then\n"
@@ -1628,7 +1627,7 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
 
     fp << "try prepareArbitraryCurve() catch:\n"
           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-          "lastexception[2] );\n"
+          "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
           "finally: closeallfiles();\n"
           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
           "try:\n";
@@ -1710,7 +1709,7 @@ void P4InputVF::prepareIsoclinesFile(QTextStream &fp)
 
     fp << "try prepareIsoclines() catch:\n"
           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-          "lastexception[2] );\n"
+          "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
           "finally: closeallfiles();\n"
           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
           "try:\n";
