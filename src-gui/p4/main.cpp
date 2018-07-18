@@ -40,8 +40,6 @@
     TO DO LIST:
     -----------
 
-    -   windows: create installer
-    -   toolbars can be deleted by pressing right mouse button --> avoid this
     -   poincare-lyapunov printing: improve dotted line when printing
     -   system printer support
 

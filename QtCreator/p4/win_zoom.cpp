@@ -20,6 +20,7 @@
 #include "win_zoom.h"
 
 #include "custom.h"
+#include "file_vf.h"
 #include "main.h"
 #include "p4application.h"
 #include "plot_tools.h"
@@ -28,6 +29,7 @@
 
 #include <QDesktopWidget>
 #include <QPrintDialog>
+#include <QSettings>
 #include <QToolBar>
 
 QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
@@ -37,9 +39,14 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     QToolBar *toolBar1;
     parent_ = main;
     zoomid_ = id;
+    x1_ = x1;
+    x2_ = x2;
+    y1_ = y1;
+    y2_ = y2;
 
     //    QPalette palette;
-    //    palette.setColor(backgroundRole(), QXFIGCOLOR(CBACKGROUND) );
+    //    palette.setColor(backgroundRole(), QXFIGCOLOR(bgColours::CBACKGROUND)
+    //    );
     //    setPalette(palette);
 
     if (g_p4smallicon != nullptr)
@@ -50,18 +57,20 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
 
     actClose_ = new QAction("Close", this);
     actClose_->setShortcut(Qt::ALT + Qt::Key_E);
-    connect(actClose_, SIGNAL(triggered()), this, SLOT(onBtnClose()));
+    connect(actClose_, &QAction::triggered, this, &QZoomWnd::onBtnClose);
     toolBar1->addAction(actClose_);
 
     actRefresh_ = new QAction("Refresh", this);
     actRefresh_->setShortcut(Qt::ALT + Qt::Key_R);
-    connect(actRefresh_, SIGNAL(triggered()), this, SLOT(onBtnRefresh()));
+    connect(actRefresh_, &QAction::triggered, this, &QZoomWnd::onBtnRefresh);
     toolBar1->addAction(actRefresh_);
 
     actPrint_ = new QAction("Print", this);
     actPrint_->setShortcut(Qt::ALT + Qt::Key_P);
-    connect(actPrint_, SIGNAL(triggered()), this, SLOT(onBtnPrint()));
+    connect(actPrint_, &QAction::triggered, this, &QZoomWnd::onBtnPrint);
     toolBar1->addAction(actPrint_);
+
+    connect(g_ThisVF, &QInputVF::saveSignal, this, &QZoomWnd::onSaveSignal);
 
 #ifdef TOOLTIPS
     actClose_->setToolTip(
@@ -73,7 +82,7 @@ QZoomWnd::QZoomWnd(QPlotWnd *main, int id, double x1, double y1, double x2,
     statusBar()->showMessage("Ready");
     addToolBar(Qt::TopToolBarArea, toolBar1);
 
-    sphere_ = new QWinSphere(this, statusBar(), true, x1, y1, x2, y2);
+    sphere_ = new QWinSphere(this, statusBar(), true, x1_, y1_, x2_, y2_);
     sphere_->show();
     setCentralWidget(sphere_);
     resize(NOMINALWIDTHPLOTWINDOW, NOMINALHEIGHTPLOTWINDOW);
@@ -89,6 +98,22 @@ QZoomWnd::~QZoomWnd()
 {
     delete sphere_;
     sphere_ = nullptr;
+}
+
+void QZoomWnd::onSaveSignal()
+{
+    QSettings settings(g_ThisVF->getbarefilename().append(".conf"),
+                       QSettings::NativeFormat);
+    settings.beginGroup(QString("QZoomWnd").append(zoomid_));
+    settings.setValue("id", zoomid_);
+    settings.setValue("x1", x1_);
+    settings.setValue("y1", y1_);
+    settings.setValue("x2", x2_);
+    settings.setValue("y2", y2_);
+
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
+    settings.endGroup();
 }
 
 void QZoomWnd::signalChanged(void)

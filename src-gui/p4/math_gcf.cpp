@@ -46,7 +46,7 @@ bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
 {
     if (g_VFResults.gcf_points_ != nullptr) {
         sp->prepareDrawing();
-        draw_gcf(sp, g_VFResults.gcf_points_, CBACKGROUND, s_GcfDashes);
+        draw_gcf(sp, g_VFResults.gcf_points_, bgColours::CBACKGROUND, s_GcfDashes);
         sp->finishDrawing();
         g_VFResults.deleteOrbitPoint(g_VFResults.gcf_points_);
         g_VFResults.gcf_points_ = nullptr;

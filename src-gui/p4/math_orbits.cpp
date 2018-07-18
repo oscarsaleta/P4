@@ -47,7 +47,8 @@ void integrateOrbit(QWinSphere *sphere, int dir)
                       pcoord);
         g_VFResults.current_orbit_->current_f_orbits->next_point =
             integrate_orbit(sphere, pcoord, g_VFResults.config_currentstep_,
-                            dir, CORBIT, g_VFResults.config_intpoints_, &sep);
+                            dir, bgColours::CORBIT,
+                            g_VFResults.config_intpoints_, &sep);
 
         g_VFResults.current_orbit_->current_f_orbits = sep;
         return;
@@ -60,9 +61,9 @@ void integrateOrbit(QWinSphere *sphere, int dir)
             dir = -dir;
 
     if (g_VFResults.current_orbit_->f_orbits == nullptr) {
-        g_VFResults.current_orbit_->f_orbits =
-            integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir,
-                            CORBIT, g_VFResults.config_intpoints_, &sep);
+        g_VFResults.current_orbit_->f_orbits = integrate_orbit(
+            sphere, pcoord, g_VFResults.config_step_, dir, bgColours::CORBIT,
+            g_VFResults.config_intpoints_, &sep);
     } else {
         g_VFResults.current_orbit_->current_f_orbits->next_point =
             new orbits_points;
@@ -71,11 +72,12 @@ void integrateOrbit(QWinSphere *sphere, int dir)
         copy_x_into_y(pcoord,
                       g_VFResults.current_orbit_->current_f_orbits->pcoord);
         g_VFResults.current_orbit_->current_f_orbits->dashes = 0;
-        g_VFResults.current_orbit_->current_f_orbits->color = CORBIT;
+        g_VFResults.current_orbit_->current_f_orbits->color = bgColours::CORBIT;
         g_VFResults.current_orbit_->current_f_orbits->dir = dir;
         g_VFResults.current_orbit_->current_f_orbits->next_point =
             integrate_orbit(sphere, pcoord, g_VFResults.config_step_, dir,
-                            CORBIT, g_VFResults.config_intpoints_, &sep);
+                            bgColours::CORBIT, g_VFResults.config_intpoints_,
+                            &sep);
     }
     g_VFResults.current_orbit_->current_f_orbits = sep;
 }
@@ -103,12 +105,12 @@ bool startOrbit(QWinSphere *sphere, double x, double y, bool R)
         MATHFUNC(viewcoord_to_sphere)(x, y, pcoord);
 
     copy_x_into_y(pcoord, g_VFResults.current_orbit_->pcoord);
-    g_VFResults.current_orbit_->color = CORBIT;
+    g_VFResults.current_orbit_->color = bgColours::CORBIT;
     g_VFResults.current_orbit_->f_orbits = nullptr;
     g_VFResults.current_orbit_->next_orbit = nullptr;
 
     MATHFUNC(sphere_to_viewcoord)(pcoord[0], pcoord[1], pcoord[2], ucoord);
-    sphere->drawPoint(ucoord[0], ucoord[1], CORBIT);
+    sphere->drawPoint(ucoord[0], ucoord[1], bgColours::CORBIT);
 
     return true;
 }

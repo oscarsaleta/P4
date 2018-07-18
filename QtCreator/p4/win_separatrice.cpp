@@ -87,14 +87,13 @@ QSepDlg::QSepDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    QObject::connect(btn_selectnext_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_selectnext()));
-    QObject::connect(btn_intnext_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_intnext()));
-    QObject::connect(btn_start_, SIGNAL(clicked()), this, SLOT(onbtn_start()));
-    QObject::connect(btn_cont_, SIGNAL(clicked()), this, SLOT(onbtn_cont()));
-    QObject::connect(edt_epsilon_, SIGNAL(returnPressed()), this,
-                     SLOT(onepsilon_enter()));
+    connect(btn_selectnext_, &QPushButton::clicked, this,
+            &QSepDlg::onbtn_selectnext);
+    connect(btn_intnext_, &QPushButton::clicked, this, &QSepDlg::onbtn_intnext);
+    connect(btn_start_, &QPushButton::clicked, this, &QSepDlg::onbtn_start);
+    connect(btn_cont_, &QPushButton::clicked, this, &QSepDlg::onbtn_cont);
+    connect(edt_epsilon_, &QLineEdit::returnPressed, this,
+            &QSepDlg::onepsilon_enter);
 
     // finishing
 

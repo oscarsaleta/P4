@@ -40,7 +40,6 @@ class QIntParamsDlg : public QWidget
     ~QIntParamsDlg();
     void getDataFromDlg(void);
     void updateDlgData(void);
-    void exclusiveToggle(bool, QRadioButton *, ...);
     void setCurrentStep(double curstep);
 
   private:

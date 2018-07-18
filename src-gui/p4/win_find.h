@@ -66,9 +66,6 @@ class QFindDlg : public QWidget
     //void saveSettings();
     //void readSettings();
 
-  signals:
-    void saveStateSignal();
-
   public slots:
     // void btn_maple_toggled(bool);
     // void btn_reduce_toggled(bool);
@@ -80,6 +77,8 @@ class QFindDlg : public QWidget
     void onBtnLoad();
     void onBtnSave();
     void onBtnEval();
+
+    void onSaveSignal();
 };
 
 #endif /* WIN_FIND_H */

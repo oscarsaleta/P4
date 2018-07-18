@@ -46,7 +46,6 @@
     #define QT_QPROCESS_OLD
 #endif
 
-
 class QInputVF : public QObject
 {
     Q_OBJECT
@@ -195,6 +194,10 @@ class QInputVF : public QObject
     bool evaluateIsoclines();
 
     void createProcessWindow();
+
+  signals:
+    void saveSignal();
+    void loadSignal();
 
   public slots:
     void finishEvaluation(int);

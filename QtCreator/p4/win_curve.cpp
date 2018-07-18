@@ -117,11 +117,11 @@ QCurveDlg::QCurveDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    QObject::connect(btnEvaluate_, SIGNAL(clicked()), this,
-                     SLOT(onBtnEvaluate()));
-    QObject::connect(btnPlot_, SIGNAL(clicked()), this, SLOT(onBtnPlot()));
-    QObject::connect(btnDelLast_, SIGNAL(clicked()), this, SLOT(onBtnDelLast()));
-    QObject::connect(btnDelAll_, SIGNAL(clicked()), this, SLOT(onBtnDelAll()));
+    connect(btnEvaluate_, &QPushButton::clicked, this,
+            &QCurveDlg::onBtnEvaluate);
+    connect(btnPlot_, &QPushButton::clicked, this, &QCurveDlg::onBtnPlot);
+    connect(btnDelLast_, &QPushButton::clicked, this, &QCurveDlg::onBtnDelLast);
+    connect(btnDelAll_, &QPushButton::clicked, this, &QCurveDlg::onBtnDelAll);
 
     // finishing
 
@@ -277,7 +277,7 @@ void QCurveDlg::onBtnDelLast()
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);
-    
+
     if (g_VFResults.curve_vector_.empty()) {
         btnDelAll_->setEnabled(false);
         btnDelLast_->setEnabled(false);

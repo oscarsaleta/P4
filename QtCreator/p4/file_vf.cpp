@@ -29,6 +29,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
+#include <QSettings>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -164,6 +165,8 @@ void QInputVF::reset(void)
 // -----------------------------------------------------------------------
 bool QInputVF::load(void)
 {
+    emit loadSignal();
+
     FILE *fp;
     QString fname;
     char scanbuf[2560];
@@ -367,6 +370,11 @@ bool QInputVF::checkevaluated(void)
 // -----------------------------------------------------------------------
 bool QInputVF::save(void)
 {
+    QSettings settings(getbarefilename().append(".conf"),
+                       QSettings::NativeFormat);
+    settings.clear();
+    emit saveSignal();
+
     FILE *fp;
     int i;
     QString fname;
@@ -1436,16 +1444,17 @@ void QInputVF::evaluate(void)
 
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalEvaluated);
-
         connect(proc, &QProcess::readyReadStandardOutput, this,
                 &QInputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), this, &QInputVF::catchProcessError);
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
+                this, &QInputVF::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, this,
                 &QInputVF::catchProcessError);
 #endif
-
         processfailed_ = false;
         QString pa = "External Command: ";
         pa += getMapleExe();
@@ -1536,17 +1545,17 @@ void QInputVF::evaluateCurveTable()
             connect(proc,
                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                     g_p4app, &QP4Application::signalCurveEvaluated);
-
             connect(proc, &QProcess::readyReadStandardOutput, this,
                     &QInputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-            connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
-                    &QP4Application::catchProcessError);
+            connect(proc,
+                    static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                        &QProcess::error),
+                    g_p4app, &QP4Application::catchProcessError);
 #else
             connect(proc, &QProcess::errorOccurred, g_p4app,
                     &QP4Application::catchProcessError);
 #endif
-
         }
 
         processfailed_ = false;
@@ -1634,16 +1643,16 @@ void QInputVF::evaluateIsoclinesTable()
             connect(proc,
                     static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                     g_p4app, &QP4Application::signalCurveEvaluated);
-
             connect(proc, &QProcess::readyReadStandardOutput, this,
                     &QInputVF::readProcessStdout);
 #ifdef QT_QPROCESS_OLD
-            connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
-                    &QP4Application::catchProcessError);
+            connect(proc,
+                    static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                        &QProcess::error),
+                    g_p4app, &QP4Application::catchProcessError);
 #else
             connect(proc, &QProcess::errorOccurred, g_p4app,
                     &QP4Application::catchProcessError);
-
 #endif
         }
 
@@ -2161,9 +2170,10 @@ bool QInputVF::evaluateGcf(void)
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
-                &QP4Application::catchProcessError);
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
+                g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
@@ -2569,8 +2579,10 @@ bool QInputVF::evaluateCurve(void)
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
-                &QP4Application::catchProcessError);
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
+                g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);
@@ -2862,9 +2874,10 @@ bool QInputVF::evaluateIsoclines()
         connect(proc, static_cast<void (QProcess::*)(int)>(&QProcess::finished),
                 g_p4app, &QP4Application::signalCurveEvaluated);
 #ifdef QT_QPROCESS_OLD
-
-        connect(proc, static_cast<void (QProcess::*)(QProcess::ProcessError)>(&QProcess::error), g_p4app,
-                &QP4Application::catchProcessError);
+        connect(proc,
+                static_cast<void (QProcess::*)(QProcess::ProcessError)>(
+                    &QProcess::error),
+                g_p4app, &QP4Application::catchProcessError);
 #else
         connect(proc, &QProcess::errorOccurred, g_p4app,
                 &QP4Application::catchProcessError);

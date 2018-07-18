@@ -128,13 +128,14 @@ QLimitCyclesDlg::QLimitCyclesDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    QObject::connect(btn_start_, SIGNAL(clicked()), this, SLOT(onbtn_start()));
-    QObject::connect(btn_cancel_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_cancel()));
-    QObject::connect(btn_delall_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_delall()));
-    QObject::connect(btn_dellast_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_dellast()));
+    connect(btn_start_, &QPushButton::clicked, this,
+            &QLimitCyclesDlg::onbtn_start);
+    connect(btn_cancel_, &QPushButton::clicked, this,
+            &QLimitCyclesDlg::onbtn_cancel);
+    connect(btn_delall_, &QPushButton::clicked, this,
+            &QLimitCyclesDlg::onbtn_delall);
+    connect(btn_dellast_, &QPushButton::clicked, this,
+            &QLimitCyclesDlg::onbtn_dellast);
 
     // finishing
 

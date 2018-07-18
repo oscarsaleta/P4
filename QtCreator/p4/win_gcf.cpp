@@ -104,8 +104,8 @@ QGcfDlg::QGcfDlg(QPlotWnd *plt, QWinSphere *sp)
 
     // connections
 
-    QObject::connect(btn_evaluate_, SIGNAL(clicked()), this,
-                     SLOT(onbtn_evaluate()));
+    connect(btn_evaluate_, &QPushButton::clicked, this,
+            &QGcfDlg::onbtn_evaluate);
     // finishing
 
     setP4WindowTitle(this, "GCF Plot");
