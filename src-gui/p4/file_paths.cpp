@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -17,15 +17,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "file_paths.h"
+#include "file_paths.hpp"
 
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QSettings>
+#include <QString>
 
-QByteArray Win_GetLongPathName(QByteArray);
-QByteArray Win_GetShortPathName(QByteArray);
+QByteArray win_GetLongPathName(QByteArray);
+QByteArray win_GetShortPathName(QByteArray);
 
 // -----------------------------------------------------------------------
 //                          GETDEFAULTP4PATH
@@ -62,14 +63,11 @@ QString getDefaultP4Path(void)
 
     if (f.isNull()) {
         // try to find by another means
-
         f = QApplication::applicationFilePath();
-        if (!f.isNull()) {
-            if (f.length() > 0) {
-                if (f[f.length() - 1] == QDir::separator()) {
-                    // remove trailing slash if it is present
-                    f = f.left(f.length() - 1);
-                }
+        if (!f.isEmpty()) {
+            if (f[f.length() - 1] == QDir::separator()) {
+                // remove trailing slash if it is present
+                f = f.left(f.length() - 1);
             }
         }
         QFileInfo fi0(f);
@@ -91,12 +89,10 @@ QString getDefaultP4Path(void)
             f = QDir::toNativeSeparators(fp);
     }
 
-    if (!f.isNull()) {
-        if (f.length() > 0) {
-            if (f[f.length() - 1] == QDir::separator()) {
-                // remove trailing slash if it is present
-                f = f.left(f.length() - 1);
-            }
+    if (!f.isEmpty()) {
+        if (f[f.length() - 1] == QDir::separator()) {
+            // remove trailing slash if it is present
+            f = f.left(f.length() - 1);
         }
     }
 
@@ -114,7 +110,7 @@ QString getDefaultP4TempPath(void)
     QByteArray ba_f;
 
     f = QDir::toNativeSeparators(QDir::tempPath());
-    ba_f = Win_GetLongPathName(QFile::encodeName(f));
+    ba_f = win_GetLongPathName(QFile::encodeName(f));
     return QFile::decodeName(ba_f);
 
 #else
@@ -151,11 +147,11 @@ QString getDefaultP4SumTablePath(void)
 
 QString getDefaultMathManipulator(void)
 {
-//#ifdef Q_OS_WIN
+    //#ifdef Q_OS_WIN
     return "Maple";
-//#else
-//    return "Reduce";
-//#endif
+    //#else
+    //    return "Reduce";
+    //#endif
 }
 
 // -----------------------------------------------------------------------
@@ -340,9 +336,9 @@ QString getDefaultMapleInstallation(void)
 
 void removeFile(QString fname) { QFile::remove(fname); }
 
-// --------------------------------------------------------------------
-//               Some Windows Path Functions
-// --------------------------------------------------------------------
+    // --------------------------------------------------------------------
+    //               Some Windows Path Functions
+    // --------------------------------------------------------------------
 
 #ifdef Q_OS_WIN
 
@@ -490,7 +486,7 @@ letter?
 //                          WIN_GETSHORTPATHNAME
 // -----------------------------------------------------------------------
 
-QByteArray Win_GetShortPathName(QByteArray f)
+QByteArray win_GetShortPathName(QByteArray f)
 {
     char *shortfname;
     const char *longfname;
@@ -522,7 +518,7 @@ QByteArray Win_GetShortPathName(QByteArray f)
 //                          WIN_GETLONGPATHNAME
 // -----------------------------------------------------------------------
 
-QByteArray Win_GetLongPathName(QByteArray f)
+QByteArray win_GetLongPathName(QByteArray f)
 {
     /*
         char * longfname;

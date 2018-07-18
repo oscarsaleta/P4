@@ -1,6 +1,6 @@
 /* tprintf.c -- test file for mpfr_printf and mpfr_vprintf
 
-Copyright 2008-2017 Free Software Foundation, Inc.
+Copyright 2008-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -20,7 +20,7 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
 http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
-/* Include config.h before using ANY configure macros if needed. */
+/* Needed due to the tests on HAVE_STDARG and MPFR_USE_MINI_GMP */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -29,6 +29,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #include <stdarg.h>
 
 #include <stddef.h>
+#include <errno.h>
 
 #include "mpfr-intmax.h"
 #include "mpfr-test.h"
@@ -91,22 +92,32 @@ check_vprintf (const char *fmt, ...)
   va_end (ap);
 }
 
-static void
+static unsigned int
 check_vprintf_failure (const char *fmt, ...)
 {
   va_list ap;
+  int r, e;
 
   va_start (ap, fmt);
-  if (mpfr_vprintf (fmt, ap) != -1)
-   {
-      putchar ('\n');
-      fprintf (stderr, "Error 3 in mpfr_vprintf(\"%s\", ...)\n", fmt);
-
-      va_end (ap);
-      exit (1);
-    }
-  putchar ('\n');
+  errno = 0;
+  r = mpfr_vprintf (fmt, ap);
+  e = errno;
   va_end (ap);
+
+  if (r != -1
+#ifdef EOVERFLOW
+      || e != EOVERFLOW
+#endif
+      )
+    {
+      putchar ('\n');
+      fprintf (stderr, "Error 3 in mpfr_vprintf(\"%s\", ...)\n"
+               "Got r = %d, errno = %d\n", fmt, r, e);
+      return 1;
+    }
+
+  putchar ('\n');
+  return 0;
 }
 
 /* The goal of this test is to check cases where more INT_MAX characters
@@ -120,6 +131,9 @@ check_long_string (void)
      in memory (~2.5 GB) */
   mpfr_t x;
   long large_prec = 2147483647;
+  size_t min_memory_limit, old_memory_limit;
+
+  old_memory_limit = tests_memory_limit;
 
   /* With a 32-bit (4GB) address space, a realloc failure has been noticed
      with a 2G precision (though allocating up to 4GB is possible):
@@ -134,6 +148,18 @@ check_long_string (void)
   if (large_prec > MPFR_PREC_MAX)
     large_prec = MPFR_PREC_MAX;
 
+  /* Increase tests_memory_limit if need be in order to avoid an
+     obvious failure due to insufficient memory. Note that such an
+     increase is necessary, but is not guaranteed to be sufficient
+     in all cases (e.g. with logging activated). */
+  min_memory_limit = large_prec / MPFR_BYTES_PER_MP_LIMB;
+  if (min_memory_limit > (size_t) -1 / 32)
+    min_memory_limit = (size_t) -1;
+  else
+    min_memory_limit *= 32;
+  if (tests_memory_limit > 0 && tests_memory_limit < min_memory_limit)
+    tests_memory_limit = min_memory_limit;
+
   mpfr_init2 (x, large_prec);
 
   mpfr_set_ui (x, 1, MPFR_RNDN);
@@ -141,11 +167,48 @@ check_long_string (void)
 
   if (large_prec >= INT_MAX - 512)
     {
-      check_vprintf_failure ("%Rb %512d", x, 1);
-      check_vprintf_failure ("%RA %RA %Ra %Ra %512d", x, x, x, x, 1);
+      unsigned int err = 0;
+
+#define LS1 "%Rb %512d"
+#define LS2 "%RA %RA %Ra %Ra %512d"
+
+      err |= check_vprintf_failure (LS1, x, 1);
+      err |= check_vprintf_failure (LS2, x, x, x, x, 1);
+
+      if (sizeof (long) * CHAR_BIT > 40)
+        {
+          long n1, n2;
+
+          n1 = large_prec + 517;
+          n2 = -17;
+          err |= check_vprintf_failure (LS1 "%ln", x, 1, &n2);
+          if (n1 != n2)
+            {
+              fprintf (stderr, "Error in check_long_string(\"%s\", ...)\n"
+                       "Expected n = %ld\n"
+                       "Got      n = %ld\n",
+                       LS1 "%ln", n1, n2);
+              err = 1;
+            }
+          n1 = ((large_prec - 2) / 4) * 4 + 548;
+          n2 = -17;
+          err |= check_vprintf_failure (LS2 "%ln", x, x, x, x, 1, &n2);
+          if (n1 != n2)
+            {
+              fprintf (stderr, "Error in check_long_string(\"%s\", ...)\n"
+                       "Expected n = %ld\n"
+                       "Got      n = %ld\n",
+                       LS2 "%ln", n1, n2);
+              err = 1;
+            }
+        }
+
+      if (err)
+        exit (1);
     }
 
   mpfr_clear (x);
+  tests_memory_limit = old_memory_limit;
 }
 
 static void
@@ -473,7 +536,7 @@ main (int argc, char *argv[])
       if (freopen ("/dev/null", "w", stdout) == NULL)
         {
           /* We failed to open this device, try with a dummy file */
-          if (freopen ("mpfrtest.txt", "w", stdout) == NULL)
+          if (freopen ("tprintf_out.txt", "w", stdout) == NULL)
             {
               /* Output the error message to stderr since it is not
                  a message about a wrong result in MPFR. Anyway the

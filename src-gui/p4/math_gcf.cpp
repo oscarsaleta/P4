@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -17,133 +17,173 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_gcf.h"
+#include "math_gcf.hpp"
 
-#include "custom.h"
-#include "file_vf.h"
-#include "math_charts.h"
-#include "math_p4.h"
-#include "plot_tools.h"
+#include <QFile>
 
 #include <cmath>
 
-// static global variables
-static int s_GcfTask = EVAL_GCF_NONE;
-static QWinSphere *s_GcfSphere = nullptr;
-static int s_GcfDashes = 0;
-static bool s_GcfError = false;
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4Sphere.hpp"
+#include "P4VFStudy.hpp"
+#include "custom.hpp"
+#include "math_charts.hpp"
+#include "math_p4.hpp"
+#include "plot_tools.hpp"
+#include "structures.hpp"
 
-// non-static global variables
-orbits_points *g_last_gcf_point = nullptr;
+// global variables
+P4Orbits::orbits_points *gLastGcfPoint{nullptr};
+
+// static global variables
+static int sGcfTask{EVAL_GCF_NONE};
+static P4Sphere *sGcfSphere{nullptr};
+static int sGcfDashes{0};
+static bool sGcfError{false};
+static unsigned int sGcfVfIndex{0};
 
 // static functions
-static void insert_gcf_point(double x0, double y0, double z0, int dashes);
-static bool readTaskResults(int); // , int, int, int );
-static bool read_gcf(void (*chart)(double, double, double *));
+static void insert_gcf_point(double x0, double y0, double z0, int dashes,
+                             int index);
+static bool readTaskResults(int task, int index);
+static bool read_gcf(void (*chart)(double, double, double *), int index);
 
 // function definitions
-bool evalGcfStart(QWinSphere *sp, int dashes, int points, int precis)
+bool evalGcfStart(P4Sphere *sp, int dashes, int precision, int points)
 {
-    if (g_VFResults.gcf_points_ != nullptr) {
-        sp->prepareDrawing();
-        draw_gcf(sp, g_VFResults.gcf_points_, bgColours::CBACKGROUND, s_GcfDashes);
-        sp->finishDrawing();
-        g_VFResults.deleteOrbitPoint(g_VFResults.gcf_points_);
-        g_VFResults.gcf_points_ = nullptr;
+    sp->prepareDrawing();
+    for (unsigned int r = 0; r < gThisVF->numVF_; r++) {
+        if (gVFResults.vf_[r]->gcf_points_ != nullptr) {
+            draw_gcf(sp, gVFResults.vf_[r]->gcf_points_,
+                     P4ColourSettings::colour_background, sGcfDashes);
+            delete gVFResults.vf_[r]->gcf_points_;
+            gVFResults.vf_[r]->gcf_points_ = nullptr;
+        }
     }
+    sp->finishDrawing();
 
-    if (g_VFResults.plweights_)
-        s_GcfTask = EVAL_GCF_LYP_R2;
+    if (gVFResults.plweights_)
+        sGcfTask = EVAL_GCF_LYP_R2;
     else
-        s_GcfTask = EVAL_GCF_R2;
+        sGcfTask = EVAL_GCF_R2;
 
-    s_GcfError = false;
-    s_GcfSphere = sp;
-    s_GcfDashes = dashes;
-    return runTask(s_GcfTask, points, precis);
+    sGcfError = false;
+    sGcfSphere = sp;
+    sGcfDashes = dashes;
+    return runTask(sGcfTask, precision, points, 0);
 }
 
-bool evalGcfContinue(int points, int prec) // returns true when finished.  Then
-                                           // run EvalGCfFinish to see if error
-                                           // occurred or not
+// returns true when finished.  Then run EvalGCfFinish to see if error occurred
+// or not
+bool evalGcfContinue(int precision, int points)
 {
-    if (s_GcfTask == EVAL_GCF_NONE)
+    if (sGcfTask == EVAL_GCF_NONE)
         return true;
 
-    if (!readTaskResults(s_GcfTask)) // , points, prec, memory ) )
-    {
-        s_GcfError = true;
+    if (!readTaskResults(sGcfTask, sGcfVfIndex)) {
+        sGcfError = true;
         return true;
     }
-    s_GcfTask++;
-    if (s_GcfTask == EVAL_GCF_FINISHPOINCARE ||
-        s_GcfTask == EVAL_GCF_FINISHLYAPUNOV) {
-        return true;
+    sGcfTask++;
+    if (sGcfTask == EVAL_GCF_FINISHPOINCARE ||
+        sGcfTask == EVAL_GCF_FINISHLYAPUNOV) {
+        while (1) {
+            if (++sGcfVfIndex >= gThisVF->numVF_)
+                break;
+            if (gVFResults.vf_[sGcfVfIndex]->gcf_ != nullptr)
+                break;
+        }
+        if (sGcfVfIndex >= gThisVF->numVF_)
+            // all gcfs are evaluated
+            return true;
+        // retrigger new set of tasks
+        if (gVFResults.plweights_)
+            sGcfTask = EVAL_GCF_LYP_R2;
+        else
+            sGcfTask = EVAL_GCF_R2;
     }
 
-    if (!runTask(s_GcfTask, points, prec)) {
-        s_GcfError = true;
+    if (!runTask(sGcfTask, precision, points, sGcfVfIndex)) {
+        sGcfError = true;
         return true;
     }
 
     return false; // still busy
 }
 
-bool evalGcfFinish(void) // return false in case an error occured
+bool evalGcfFinish() // return false in case an error occured
 {
-    if (s_GcfTask != EVAL_GCF_NONE) {
-        s_GcfSphere->prepareDrawing();
-        draw_gcf(s_GcfSphere, g_VFResults.gcf_points_, CSING, 1);
-        s_GcfSphere->finishDrawing();
+    if (sGcfTask != EVAL_GCF_NONE) {
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++)
+            gThisVF->resampleGcf(index);
+        sGcfSphere->prepareDrawing();
+        for (unsigned int index = 0; index < gThisVF->numVF_; index++) {
+            if (gVFResults.vf_[index]->gcf_points_ != nullptr)
+                draw_gcf(sGcfSphere, gVFResults.vf_[index]->gcf_points_,
+                         P4ColourSettings::colour_curve_singularities, 1);
+        }
+        sGcfSphere->finishDrawing();
 
-        s_GcfTask = EVAL_GCF_NONE;
+        sGcfTask = EVAL_GCF_NONE;
 
-        if (s_GcfError) {
-            s_GcfError = false;
+        if (sGcfError) {
+            sGcfError = false;
             return false;
         }
     }
     return true;
 }
 
-bool runTask(int task, int points, int prec)
+bool runTask(int task, int precision, int points, unsigned int index)
 {
     bool value;
 
+    while (gVFResults.vf_[index]->gcf_ == nullptr) {
+        if (++index == gThisVF->numVF_)
+            return false;
+    }
+    sGcfVfIndex = index;
+
     switch (task) {
     case EVAL_GCF_R2:
-        value = g_ThisVF->prepareGcf(g_VFResults.gcf_, -1, 1, prec, points);
+        value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_, -1, 1,
+                                    precision, points);
         break;
     case EVAL_GCF_U1:
-        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U1_, 0, 1, prec, points);
+        value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U1_, 0, 1,
+                                    precision, points);
         break;
     case EVAL_GCF_V1:
-        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U1_, -1, 0, prec, points);
+        value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U1_, -1, 0,
+                                    precision, points);
         break;
     case EVAL_GCF_U2:
-        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U2_, 0, 1, prec, points);
+        value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U2_, 0, 1,
+                                    precision, points);
         break;
     case EVAL_GCF_V2:
-        value = g_ThisVF->prepareGcf(g_VFResults.gcf_U2_, -1, 0, prec, points);
+        value = gThisVF->prepareGcf(gVFResults.vf_[index]->gcf_U2_, -1, 0,
+                                    precision, points);
         break;
     case EVAL_GCF_LYP_R2:
-        value = g_ThisVF->prepareGcf_LyapunovR2(prec, points);
+        value = gThisVF->prepareGcf_LyapunovR2(precision, points, index);
         break;
     case EVAL_GCF_CYL1:
-        value =
-            g_ThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, prec, points);
+        value = gThisVF->prepareGcf_LyapunovCyl(-PI_DIV4, PI_DIV4, precision,
+                                                points, index);
         break;
     case EVAL_GCF_CYL2:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4, prec,
-                                                 points);
+        value = gThisVF->prepareGcf_LyapunovCyl(PI_DIV4, PI - PI_DIV4,
+                                                precision, points, index);
         break;
     case EVAL_GCF_CYL3:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
-                                                 prec, points);
+        value = gThisVF->prepareGcf_LyapunovCyl(PI - PI_DIV4, PI + PI_DIV4,
+                                                precision, points, index);
         break;
     case EVAL_GCF_CYL4:
-        value = g_ThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4, prec,
-                                                 points);
+        value = gThisVF->prepareGcf_LyapunovCyl(-PI + PI_DIV4, -PI_DIV4,
+                                                precision, points, index);
         break;
     default:
         value = false;
@@ -151,47 +191,47 @@ bool runTask(int task, int points, int prec)
     }
 
     if (value)
-        return g_ThisVF->evaluateGcf();
+        return gThisVF->evaluateGcf();
     else
         return false;
 }
 
-static bool readTaskResults(int task) // , int points, int prec, int memory )
+static bool readTaskResults(int task, int index)
 {
     bool value;
 
     switch (task) {
     case EVAL_GCF_R2:
-        value = read_gcf(R2_to_psphere);
+        value = read_gcf(R2_to_psphere, index);
         break;
     case EVAL_GCF_U1:
-        value = read_gcf(U1_to_psphere);
+        value = read_gcf(U1_to_psphere, index);
         break;
     case EVAL_GCF_V1:
-        value = read_gcf(VV1_to_psphere);
+        value = read_gcf(VV1_to_psphere, index);
         break;
     case EVAL_GCF_U2:
-        value = read_gcf(U2_to_psphere);
+        value = read_gcf(U2_to_psphere, index);
         break;
     case EVAL_GCF_V2:
-        value = read_gcf(VV2_to_psphere);
+        value = read_gcf(VV2_to_psphere, index);
         break;
     case EVAL_GCF_LYP_R2:
-        value = read_gcf(rplane_plsphere0);
+        value = read_gcf(rplane_plsphere0, index);
         break;
     // here: the old herc files contained (the equivalent of)
-    // value = read_gcf( rplane_psphere );
+    // value = read_gcf( rplane_psphere ,index);
     case EVAL_GCF_CYL1:
-        value = read_gcf(cylinder_to_plsphere);
+        value = read_gcf(cylinder_to_plsphere, index);
         break;
     case EVAL_GCF_CYL2:
-        value = read_gcf(cylinder_to_plsphere);
+        value = read_gcf(cylinder_to_plsphere, index);
         break;
     case EVAL_GCF_CYL3:
-        value = read_gcf(cylinder_to_plsphere);
+        value = read_gcf(cylinder_to_plsphere, index);
         break;
     case EVAL_GCF_CYL4:
-        value = read_gcf(cylinder_to_plsphere);
+        value = read_gcf(cylinder_to_plsphere, index);
         break;
     default:
         value = false;
@@ -200,7 +240,7 @@ static bool readTaskResults(int task) // , int points, int prec, int memory )
     return value;
 }
 
-void draw_gcf(QWinSphere *spherewnd, struct orbits_points *sep, int color,
+void draw_gcf(P4Sphere *spherewnd, P4Orbits::orbits_points *sep, int color,
               int dashes)
 {
     double pcoord[3];
@@ -211,131 +251,53 @@ void draw_gcf(QWinSphere *spherewnd, struct orbits_points *sep, int color,
         else
             (*plot_p)(spherewnd, sep->pcoord, color);
         copy_x_into_y(sep->pcoord, pcoord);
-
-        sep = sep->next_point;
+        sep = sep->nextpt;
     }
 }
 
-static void insert_gcf_point(double x0, double y0, double z0, int dashes)
+static void insert_gcf_point(double x0, double y0, double z0, int dashes,
+                             int index)
 {
-    if (g_VFResults.gcf_points_ != nullptr) {
-        g_last_gcf_point->next_point = new orbits_points;
-        g_last_gcf_point = g_last_gcf_point->next_point;
+    double pcoord[3]{x0, y0, z0};
+
+    if (gVFResults.vf_[index]->gcf_points_ != nullptr) {
+        gLastGcfPoint->nextpt = new P4Orbits::orbits_points{
+            pcoord, P4ColourSettings::colour_curve_singularities, dashes, 0, 0};
+        gLastGcfPoint = gLastGcfPoint->nextpt;
     } else {
-        g_last_gcf_point = new orbits_points;
-        g_VFResults.gcf_points_ = g_last_gcf_point;
+        gLastGcfPoint = new P4Orbits::orbits_points{
+            pcoord, P4ColourSettings::colour_curve_singularities, dashes, 0, 0};
+        gVFResults.vf_[index]->gcf_points_ = gLastGcfPoint;
     }
-
-    g_last_gcf_point->pcoord[0] = x0;
-    g_last_gcf_point->pcoord[1] = y0;
-    g_last_gcf_point->pcoord[2] = z0;
-
-    g_last_gcf_point->dashes = dashes;
-    g_last_gcf_point->color = CSING;
-    g_last_gcf_point->next_point = nullptr;
 }
 
-static bool read_gcf(void (*chart)(double, double, double *))
+static bool read_gcf(void (*chart)(double, double, double *), int index)
 {
-    // int t;
     int k;
     FILE *fp;
     double x, y;
     double pcoord[3];
     int d, c;
 
-    fp = fopen(QFile::encodeName(g_ThisVF->getfilename_gcf()), "r");
+    fp = fopen(QFile::encodeName(gThisVF->getfilename_gcf()), "r");
     if (fp == nullptr)
         return false;
 
-    /*if (g_ThisVF->symbolicpackage_ == PACKAGE_REDUCE) {
-        // search the x-label, and check for error.
-
-        FILE *fp2;
-        fp2 = fopen(QFile::encodeName(g_ThisVF->getfilename_gcfresults()), "r");
-        if (fp == nullptr) {
-            fclose(fp);
-            return false;
-        }
-        char str[256];
-        t = 3;
-        while (!feof(fp2)) {
-            if (fscanf(fp2, "%s", str) != 1) {
-                fclose(fp2);
-                return false;
-            }
-            if (!strcmp(str, "Heap")) {
-                // Reduce ran out of memory
-                t = 3;
-                break;
-            }
-            if (!strcmp(str, "xlabel")) {
-                if (fscanf(fp2, "%s", str) != 1) {
-                    fclose(fp2);
-                    return false;
-                }
-                if (!strcmp(str, "\"x\""))
-                    t = 1; // order is ok: it is a x versus y plot
-                else
-                    t = 0; // order is reversed: it is a y versus x plot
-                break;
-            }
-        }
-        fclose(fp2);
-        if (t == 3)
-            return false;
-
-        for (uint_fast8_t cnt = 0; cnt < 8; cnt++) {
-            if (fscanf(fp, "%lf %lf", &x, &y) !=
-                1) { // seems we have to skip 8 values
-                fclose(fp);
-                return false;
-            }
-        }
-        if (t != 0)
-            chart(x, y, pcoord);
-        else
-            chart(y, x, pcoord);
-        insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], 0);
-        getc(fp);
-        getc(fp);
-        c = getc(fp);
-        while (!feof(fp)) {
-            d = 0;
-            if (c != '\n') {
-                d = 1;
-                ungetc(c, fp);
-            }
-            if (fscanf(fp, "%lf %lf", &x, &y) != 1) {
-                fclose(fp);
-                return false;
-            }
-            if (t != 0)
-                chart(x, y, pcoord);
-            else
-                chart(y, x, pcoord);
-            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
-            getc(fp);
-            getc(fp);
-            c = getc(fp);
-        }
-    } else {*/
     k = 0;
     while (1) {
         d = 0;
         while (fscanf(fp, "%lf %lf", &x, &y) == 2) {
             k++;
             chart(x, y, pcoord);
-            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d);
+            insert_gcf_point(pcoord[0], pcoord[1], pcoord[2], d, index);
             // d=1;
-            d = s_GcfDashes;
+            d = sGcfDashes;
         }
         for (c = getc(fp); isspace(c);)
             c = getc(fp);
         if (c != ',')
             break;
     }
-    //}
 
     fclose(fp);
     return true;

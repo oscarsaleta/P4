@@ -1,6 +1,6 @@
 /* Test file for mpfr_pow, mpfr_pow_ui and mpfr_pow_si.
 
-Copyright 2000-2017 Free Software Foundation, Inc.
+Copyright 2000-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -20,9 +20,7 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
 http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
-#include <float.h>
-#include <math.h>
-
+#define _MPFR_NO_DEPRECATED_ROOT
 #include "mpfr-test.h"
 
 #ifdef CHECK_EXTERNAL
@@ -438,13 +436,17 @@ check_inexact (mpfr_prec_t p)
   mpfr_urandomb (x, RANDS);
   u = randlimb () % 2;
   for (q = MPFR_PREC_MIN; q <= p; q++)
-    for (rnd = 0; rnd < MPFR_RND_MAX; rnd++)
+    RND_LOOP_NO_RNDF(rnd)
       {
         mpfr_set_prec (y, q);
         mpfr_set_prec (z, q + 10);
         mpfr_set_prec (t, q);
         inexact = mpfr_pow_ui (y, x, u, (mpfr_rnd_t) rnd);
         cmp = mpfr_pow_ui (z, x, u, (mpfr_rnd_t) rnd);
+        /* Note: that test makes no sense for RNDF, since according to the
+           reference manual, if the mpfr_can_round() call succeeds, one would
+           have to use RNDN in the mpfr_set() call below, which might give a
+           different value for t that the value y obtained above. */
         if (mpfr_can_round (z, q + 10, (mpfr_rnd_t) rnd, (mpfr_rnd_t) rnd, q))
           {
             cmp = mpfr_set (t, z, (mpfr_rnd_t) rnd) || cmp;
@@ -633,7 +635,7 @@ special (void)
   mpfr_set_inf (x, -1);
   mpfr_set_prec (y, 2 * mp_bits_per_limb);
   mpfr_set_ui (y, 1, MPFR_RNDN);
-  mpfr_mul_2exp (y, y, mp_bits_per_limb - 1, MPFR_RNDN);
+  mpfr_mul_2ui (y, y, mp_bits_per_limb - 1, MPFR_RNDN);
   /* y = 2^(mp_bits_per_limb - 1) */
   test_pow (z, x, y, MPFR_RNDN);
   MPFR_ASSERTN(mpfr_inf_p (z) && MPFR_IS_POS(z));
@@ -642,7 +644,7 @@ special (void)
   /* y = 2^(mp_bits_per_limb - 1) + epsilon */
   MPFR_ASSERTN(mpfr_inf_p (z) && MPFR_IS_POS(z));
   mpfr_nextbelow (y);
-  mpfr_div_2exp (y, y, 1, MPFR_RNDN);
+  mpfr_div_2ui (y, y, 1, MPFR_RNDN);
   mpfr_nextabove (y);
   test_pow (z, x, y, MPFR_RNDN);
   /* y = 2^(mp_bits_per_limb - 2) + epsilon */
@@ -1470,7 +1472,7 @@ bug20080721 (void)
   MPFR_ASSERTN (inex == 0);
   mpfr_set_str_binary (t[0], "-0.10101101e2");
   mpfr_set_str_binary (t[1], "-0.10101110e2");
-  RND_LOOP (rnd)
+  RND_LOOP_NO_RNDF (rnd)
     {
       int i, inex0;
 
@@ -1478,6 +1480,7 @@ bug20080721 (void)
       inex0 = i ? -1 : 1;
       mpfr_clear_flags ();
       inex = mpfr_pow (z, x, y, (mpfr_rnd_t) rnd);
+
       if (__gmpfr_flags != MPFR_FLAGS_INEXACT || ! SAME_SIGN (inex, inex0)
           || MPFR_IS_NAN (z) || mpfr_cmp (z, t[i]) != 0)
         {
@@ -1596,6 +1599,121 @@ tst20140422 (void)
   mpfr_clears (x, y, z1, z2, (mpfr_ptr) 0);
 }
 
+static void
+coverage (void)
+{
+  mpfr_t x, y, z, t, u;
+  mpfr_exp_t emin;
+  int inex;
+  int i;
+
+  /* check a corner case with prec(z)=1 */
+  mpfr_init2 (x, 2);
+  mpfr_init2 (y, 8);
+  mpfr_init2 (z, 1);
+  mpfr_set_ui_2exp (x, 3, -2, MPFR_RNDN);   /* x = 3/4 */
+  emin = mpfr_get_emin ();
+  mpfr_set_emin (-40);
+  mpfr_set_ui_2exp (y, 199, -1, MPFR_RNDN); /* y = 99.5 */
+  /* x^y ~ 0.81*2^-41 */
+  mpfr_clear_underflow ();
+  inex = mpfr_pow (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(inex > 0);
+  MPFR_ASSERTN(mpfr_cmp_ui_2exp (z, 1, -41) == 0);
+  /* there should be no underflow, since with unbounded exponent range,
+     and a precision of 1 bit, x^y is rounded to 1.0*2^-41 */
+  MPFR_ASSERTN(!mpfr_underflow_p ());
+  mpfr_set_ui_2exp (y, 201, -1, MPFR_RNDN); /* y = 100.5 */
+  /* x^y ~ 0.61*2^-41 */
+  mpfr_clear_underflow ();
+  inex = mpfr_pow (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(inex > 0);
+  MPFR_ASSERTN(mpfr_cmp_ui_2exp (z, 1, -41) == 0);
+  /* there should be an underflow, since with unbounded exponent range,
+     and a precision of 1 bit, x^y is rounded to 0.5*2^-41 */
+  MPFR_ASSERTN(mpfr_underflow_p ());
+  mpfr_set_ui_2exp (y, 203, -1, MPFR_RNDN); /* y = 101.5 */
+  /* x^y ~ 0.46*2^-41 */
+  mpfr_clear_underflow ();
+  inex = mpfr_pow (z, x, y, MPFR_RNDN);
+  MPFR_ASSERTN(inex < 0);
+  MPFR_ASSERTN(mpfr_zero_p (z) && mpfr_signbit (z) == 0);
+  MPFR_ASSERTN(mpfr_underflow_p ());
+  mpfr_clears (x, y, z, (mpfr_ptr) 0);
+  mpfr_set_emin (emin);
+
+  /* test for x = -2, y an odd integer with EXP(y) > i */
+  mpfr_inits2 (10, t, u, (mpfr_ptr) 0);
+  mpfr_set_ui_2exp (t, 1, 1UL << 8, MPFR_RNDN);
+  for (i = 8; i <= 300; i++)
+    {
+      mpfr_flags_t flags, flags_u;
+      int inex_u;
+
+      mpfr_mul_si (u, t, -2, MPFR_RNDN);  /* u = (-2)^(2^i + 1) */
+      mpfr_init2 (x, 10);
+      mpfr_init2 (y, i+1);
+      mpfr_init2 (z, 10);
+      mpfr_set_si (x, -2, MPFR_RNDN);
+      mpfr_set_ui_2exp (y, 1, i, MPFR_RNDN);
+      mpfr_nextabove (y);  /* y = 2^i + 1 */
+      if (MPFR_IS_INF (u))
+        {
+          inex_u = -1;
+          flags_u = MPFR_FLAGS_OVERFLOW | MPFR_FLAGS_INEXACT;
+        }
+      else
+        {
+          inex_u = 0;
+          flags_u = 0;
+        }
+      mpfr_clear_flags ();
+      inex = mpfr_pow (z, x, y, MPFR_RNDN);
+      flags = __gmpfr_flags;
+      if (mpfr_cmp0 (z, u) != 0 ||
+          ! SAME_SIGN (inex, inex_u) ||
+          flags != flags_u)
+        {
+          printf ("Error in coverage for (-2)^(2^%d + 1):\n", i);
+          printf ("Expected ");
+          mpfr_dump (u);
+          printf ("  with inex = %d and flags:", inex_u);
+          flags_out (flags_u);
+          printf ("Got      ");
+          mpfr_dump (z);
+          printf ("  with inex = %d and flags:", inex);
+          flags_out (flags);
+          exit (1);
+        }
+      mpfr_sqr (t, t, MPFR_RNDN);
+      mpfr_clears (x, y, z, (mpfr_ptr) 0);
+    }
+  mpfr_clears (t, u, (mpfr_ptr) 0);
+
+#if _MPFR_EXP_FORMAT >= 3 && _MPFR_PREC_FORMAT == 3 && MPFR_PREC_BITS == 64
+  /* thus an unsigned long has at least 64 bits and x will be finite */
+  {
+    mpfr_exp_t emax;
+
+    emax = mpfr_get_emax ();
+    mpfr_set_emax ((1UL << 62) - 1);
+    /* emax = 4611686018427387903 on a 64-bit machine */
+    mpfr_init2 (x, 65);
+    mpfr_init2 (y, 65);
+    mpfr_init2 (z, 64);
+    mpfr_set_ui_2exp (x, 512, 3074457345618258593UL, MPFR_RNDN);
+    mpfr_nextbelow (x);
+    mpfr_set_str_binary (y, "1.1"); /* y = 3/2 */
+    mpfr_nextabove (y);
+    inex = mpfr_pow (z, x, y, MPFR_RNDN);
+    MPFR_ASSERTN(inex > 0);
+    MPFR_ASSERTN(mpfr_inf_p (z));
+    mpfr_clears (x, y, z, (mpfr_ptr) 0);
+    mpfr_set_emax (emax);
+  }
+#endif
+}
+
 int
 main (int argc, char **argv)
 {
@@ -1603,6 +1721,7 @@ main (int argc, char **argv)
 
   tests_start_mpfr ();
 
+  coverage ();
   bug20071127 ();
   special ();
   particular_cases ();

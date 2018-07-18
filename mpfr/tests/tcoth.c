@@ -1,6 +1,6 @@
 /* Test file for mpfr_coth.
 
-Copyright 2005-2017 Free Software Foundation, Inc.
+Copyright 2005-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -141,7 +141,7 @@ underflowed_cothinf (void)
   mpfr_init2 (y, 8);
 
   for (i = -1; i <= 1; i += 2)
-    RND_LOOP (rnd)
+    RND_LOOP_NO_RNDF (rnd)
       {
         mpfr_set_inf (x, i);
         mpfr_clear_flags ();
@@ -164,11 +164,11 @@ underflowed_cothinf (void)
                MPFR_MULT_SIGN (MPFR_SIGN (x), MPFR_SIGN (y)) > 0))
           {
             printf ("Error in underflowed_cothinf (i = %d, rnd = %s):\n"
-                    "  Got ", i, mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
-            mpfr_print_binary (x);
-            printf (" instead of ");
-            mpfr_print_binary (y);
-            printf (".\n");
+                    "  Got        ", i,
+                    mpfr_print_rnd_mode ((mpfr_rnd_t) rnd));
+            mpfr_dump (x);
+            printf ("  instead of ");
+            mpfr_dump (y);
             err = 1;
           }
         if ((rnd == MPFR_RNDD ||

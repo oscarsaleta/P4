@@ -61,17 +61,18 @@
 # - save_all            boolean.  Relevant when printing information.
 
 restart;
-read( "tools.m" );
+read("tools.m");
 
-real_roots_numeric := proc( f, x )
+real_roots_numeric := proc(f, x)
     local cplx, j, k, g;
-    cplx := [fsolve( f, x, complex, fulldigits )];
+    cplx := [fsolve(f, x, complex, fulldigits)];
+    if cplx = [x=x] then cplx := []; end if;
     g := [];
     for j from 1 to nops(cplx) do
         if abs(Im(cplx[j])) <= 10^(-user_precision) then
             cplx[j] := Re(cplx[j]);
             for k from 1 to nops(g) do
-                if reduce_eeq( cplx[j], g[k] ) then break fi
+                if reduce_eeq(cplx[j], g[k]) then break fi
             od;
             if k > nops(g) then g := [op(g),cplx[j]] fi
         fi
@@ -79,7 +80,7 @@ real_roots_numeric := proc( f, x )
     sort(g)
 end:
 
-find_real_roots1 := proc( f, x )
+find_real_roots1 := proc(f, x)
     local h, ge, gn, k, b;
 
     if rounded then
@@ -88,7 +89,8 @@ find_real_roots1 := proc( f, x )
     else
         _EnvExplicit := true; _EnvAllSolutions := true;
         _EnvTryHard := true;
-        h := [solve( f, x )];
+        h := [solve(f, x)];
+        if h = [x] then h := []; end if;
         ge := [];
         gn := [];
         for k from 1 to nops(h) do
@@ -110,7 +112,7 @@ find_real_roots1 := proc( f, x )
     [convert(convert(ge,set),list),convert(convert(gn,set),list)]
 end:
 
-find_real_roots11 := proc( L, x )
+find_real_roots11 := proc(L, x)
     local f1, f2, f, g, ge, gn, ge2, gn2, j;
 
     f1 := optimizepolynomial1(L[1],x);
@@ -143,44 +145,44 @@ end:
 
 
 
-find_real_roots_numeric := proc( f, x, y )
+find_real_roots_numeric := proc(f, x, y)
     local g, h, j, k, a;
     _EnvExplicit := true;
     _EnvAllSolutions := true;
     _EnvTryHard := true;
-    h := evalf( map( allvalues, [ solve( convert(f, set), {x,y} ) ] ) );
+    h := evalf(map(allvalues, [ solve(convert(f, set), {x,y}) ]));
     g := [];
     for j from 1 to nops(h) do
         a := subs(h[j],[x,y]);
         if abs(Im(a[1])) < 10^(-user_precision) and abs(Im(a[2])) < 10^(-user_precision) then
             a := map(Re,a);
             for k from 1 to nops(g) do
-                if abs( op(1,g[k])-a[1] ) < 10^(-user_precision) and
-                    abs( op(2,g[k])-a[2] ) < 10^(-user_precision) then break fi
+                if abs(op(1,g[k])-a[1]) < 10^(-user_precision) and
+                    abs(op(2,g[k])-a[2]) < 10^(-user_precision) then break fi
             od;
             if k > nops(g) then
-                g := [op(g),a];   if nops(g)=1 then writef( "Numeric real singularities:\n" ) fi;
-                writef( "  (%g,%g) -> { x' = %g, y' = %g }\n", a[1], a[2],
-                    evalf(subs( { x=a[1], y=a[2] }, f[1] )),
-                    evalf( subs( { x=a[1], y=a[2] }, f[2] )) );
+                g := [op(g),a];   if nops(g)=1 then writef("Numeric real singularities:\n") fi;
+                writef("  (%g,%g) -> { x' = %g, y' = %g }\n", a[1], a[2],
+                    evalf(subs({ x=a[1], y=a[2] }, f[1])),
+                    evalf(subs({ x=a[1], y=a[2] }, f[2])));
         fi fi
     od;
-    if nops(g)=0 then writef( "No numeric singularities are found.\n" ) fi; g
+    if nops(g)=0 then writef("No numeric singularities are found.\n") fi; g
 end:
 
-find_real_roots := proc( f, x, y )
+find_real_roots := proc(f, x, y)
     local g, h, j, k, a, an, gn, s, sn, bn;
     _EnvExplicit := true;
     _EnvAllSolutions := true;
     _EnvTryHard := true;
-    h := map( allvalues, [ solve( convert(f, set), {x,y} ) ] );
+    h := map(allvalues, [ solve(convert(f, set), {x,y}) ]);
     g := []; gn := [];
     for j from 1 to nops(h) do
         a := subs(h[j],[x,y]); an := map(Re,evalf(a)); bn := map(Im,evalf(a));
         if abs(bn[1]) < 10^(-user_precision) and abs(bn[2]) < 10^(-user_precision) then
             for k from 1 to nops(gn) do
-                if abs( op(1,gn[k])-an[1] ) < 10^(-user_precision) and
-                    abs( op(2,gn[k])-an[2] ) < 10^(-user_precision) then break fi
+                if abs(op(1,gn[k])-an[1]) < 10^(-user_precision) and
+                    abs(op(2,gn[k])-an[2]) < 10^(-user_precision) then break fi
             od;
             if k > nops(gn) then
                 g := [op(g),a];
@@ -189,7 +191,7 @@ find_real_roots := proc( f, x, y )
     od;
     s := []; sn := [];
     for k from 1 to nops(gn) do
-        if has( op(1,g[k]), RootOf ) or has( op(2,g[k]), RootOf ) then
+        if has(op(1,g[k]), RootOf) or has(op(2,g[k]), RootOf) then
             sn := [op(sn),gn[k]]
         else
             s := [op(s),g[k]]
@@ -202,33 +204,33 @@ find_real_roots := proc( f, x, y )
     end do;
 
 
-    if nops(s) = 0 then writef( "No symbolic real singularities are found.\n" )
-        else writef( "Symbolic real singularities:\n" );
+    if nops(s) = 0 then writef("No symbolic real singularities are found.\n")
+        else writef("Symbolic real singularities:\n");
     fi;
-    for k from 1 to nops( s ) do
-        writef( "  (%g,%g) -> { x' = %g, y' = %g }\n", op(1,s[k]), op(2,s[k]),
-               evalf( subs( {x=op(1,s[k]),y=op(2,s[k])}, f[1] )),
-               evalf( subs( {x=op(1,s[k]),y=op(2,s[k])}, f[1] )) );
+    for k from 1 to nops(s) do
+        writef("  (%g,%g) -> { x' = %g, y' = %g }\n", op(1,s[k]), op(2,s[k]),
+               evalf(subs({x=op(1,s[k]),y=op(2,s[k])}, f[1])),
+               evalf(subs({x=op(1,s[k]),y=op(2,s[k])}, f[1])));
     od;
-    if nops( sn ) = 0 then
-        if nops(s) = 0 then writef( "No numeric real singularities are found.\n" );
-        else writef( "No other numeric real singularities are found.\n" );
+    if nops(sn) = 0 then
+        if nops(s) = 0 then writef("No numeric real singularities are found.\n");
+        else writef("No other numeric real singularities are found.\n");
         fi
     else
-        writef( "Numeric real singularities:\n" );
+        writef("Numeric real singularities:\n");
     fi;
-    for k from 1 to nops( sn ) do
-        writef( "  (%g,%g) -> { x' = %g, y' = %g }\n", op(1,sn[k]), op(2,sn[k]),
-               evalf( subs( {x=op(1,sn[k]),y=op(2,sn[k])}, f[1] )),
-               evalf( subs( {x=op(1,sn[k]),y=op(2,sn[k])}, f[1] )) );
+    for k from 1 to nops(sn) do
+        writef("  (%g,%g) -> { x' = %g, y' = %g }\n", op(1,sn[k]), op(2,sn[k]),
+               evalf(subs({x=op(1,sn[k]),y=op(2,sn[k])}, f[1])),
+               evalf(subs({x=op(1,sn[k]),y=op(2,sn[k])}, f[1])));
     od;
     [ s, sn ];
 end:
 
 save_all := false:
 
-save( save_all, real_roots_numeric, find_real_roots1, find_real_roots_numeric, find_real_roots, find_real_roots11,
-      "realroot.m" );
+save(save_all, real_roots_numeric, find_real_roots1, find_real_roots_numeric, find_real_roots, find_real_roots11,
+      "realroot.m");
 \end{lstlisting}
 
 \end{document}

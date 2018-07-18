@@ -1,6 +1,6 @@
 /* mpfr_cmp2 -- exponent shift when subtracting two numbers.
 
-Copyright 1999-2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 1999-2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -82,12 +82,14 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c, mpfr_prec_t *cancel)
 
           if (MPFR_UNLIKELY (bn < 0))
             {
-              if (MPFR_LIKELY (cn < 0)) /* b = c */
+              if (MPFR_LIKELY (cn < 0)) /* |b| = |c| */
                 return 0;
 
+              /* b has been read entirely, but not c. Replace b by c for the
+                 symmetric case below (only the sign differs if not 0). */
               bp = cp;
               bn = cn;
-              cn = -1;
+              cn = -1; /* to enter the following "if" */
               sign = -1;
             }
 
@@ -100,7 +102,7 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c, mpfr_prec_t *cancel)
 
               while (bp[bn] == 0)
                 {
-                  if (--bn < 0) /* b = c */
+                  if (--bn < 0) /* |b| = |c| */
                     return 0;
                   res += GMP_NUMB_BITS;
                 }
@@ -145,7 +147,7 @@ mpfr_cmp2 (mpfr_srcptr b, mpfr_srcptr c, mpfr_prec_t *cancel)
   if (MPFR_LIKELY (diff_exp < GMP_NUMB_BITS))
     {
       cc = cp[cn] >> diff_exp;
-      /* warning: a shift by GMP_NUMB_BITS may give wrong results */
+      /* warning: a shift by GMP_NUMB_BITS is not allowed by ISO C */
       if (diff_exp)
         lastc = cp[cn] << (GMP_NUMB_BITS - diff_exp);
       cn--;

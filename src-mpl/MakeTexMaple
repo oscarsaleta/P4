@@ -35,7 +35,8 @@ SOURCES       = blowup.tex	\
 		tools.tex	\
 		type.tex	\
 		weakfocus.tex	\
-		writelog.tex
+		writelog.tex   \
+        separatingcurves.tex
 
 OBJECTS       = blowup.m	\
 		gcd.m		\
@@ -47,7 +48,8 @@ OBJECTS       = blowup.m	\
 		tools.m		\
 		type.m		\
 		weakfocus.m	\
-		writelog.m
+		writelog.m  \
+        separatingcurves.m
 
 TARGET        = p4.m
 
@@ -72,7 +74,8 @@ main.m:		main.tex	\
 		tools.m		\
 		type.m		\
 		weakfocus.m	\
-		writelog.m
+		writelog.m  \
+		separatingcurves.m
 num_coeff.m:	num_coeff.tex
 p4gcf.m:	p4gcf.tex
 realroot.m:	realroot.tex
@@ -80,6 +83,7 @@ tools.m:	tools.tex
 type.m:		type.tex
 weakfocus.m:	weakfocus.tex
 writelog.m:	writelog.tex
+separatingcurves.m: separatingcurves.tex
 
 
 .PHONY: clean

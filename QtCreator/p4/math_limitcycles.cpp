@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -17,16 +17,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "math_limitcycles.h"
-
-#include "custom.h"
-#include "math_charts.h"
-#include "math_orbits.h"
-#include "math_p4.h"
-#include "plot_tools.h"
-#include "win_limitcycles.h"
+#include "math_limitcycles.hpp"
 
 #include <cmath>
+
+#include "P4LimitCyclesDlg.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4Sphere.hpp"
+#include "custom.hpp"
+#include "math_charts.hpp"
+#include "math_orbits.hpp"
+#include "math_p4.hpp"
+#include "plot_tools.hpp"
+#include "structures.hpp"
 
 // static functions
 
@@ -40,6 +43,17 @@ static bool less(double x0, double y0, double x1, double y1)
     return (0);
 }
 
+// -----------------------------------------------------------------------------
+//          eval_orbit
+// -----------------------------------------------------------------------------
+// Given a point qp and a transverse section ax+by+cz = 0, the orbit through qp
+// is integrated for a maximum number of integration points.  If meanwhile the
+// section is crossed, this is detected.  If not, false is returned.
+//
+// We need to detect two intersections (a periodic orbit needs to intersect any
+// line an even number of times).  At the second intersection it tries to locate
+// as precisely as possible the intersection point of the orbit with the
+// transverse section and stores it in pp.
 static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
                        int dir)
 {
@@ -50,86 +64,107 @@ static bool eval_orbit(double qp[3], double a, double b, double c, double pp[3],
 
     ok = false;
 
-    hhi = (double)dir * g_VFResults.config_step_;
-    h_max = g_VFResults.config_hma_;
-    h_min = g_VFResults.config_hmi_;
+    hhi = (double)dir * gVFResults.config_step_;
+    h_max = gVFResults.config_hma_;
+    h_min = gVFResults.config_hmi_;
     copy_x_into_y(qp, p1);
+
+    if (!prepareVfForIntegration(p1))
+        return false;
+
     MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    for (i = 0; i <= g_VFResults.config_lc_numpoints_; i++) {
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+    for (i = 0; i <= gVFResults.config_lc_numpoints_; i++) {
         copy_x_into_y(p2, p1);
+        if (!prepareVfForIntegration(p1))
+            return false;
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0) {
             // we have crossed the line on which the transverse section is
-            // located
-            // (a*X+b*Y+c*Z has changed sign)
-
+            // located (a*X+b*Y+c*Z has changed sign)
             ok = true;
             break;
         }
     }
 
-    if (ok) {
-        ok = 0;
+    if (!ok)
+        return false;
+
+    ok = false;
+    copy_x_into_y(p2, p1);
+
+    if (!prepareVfForIntegration(p1))
+        return false;
+
+    MATHFUNC(integrate_sphere_orbit)
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+    for (i = 0; i <= gVFResults.config_lc_numpoints_; i++) {
         copy_x_into_y(p2, p1);
+        hhi2 = hhi;
+        if (!prepareVfForIntegration(p1))
+            return false;
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-        for (i = 0; i <= g_VFResults.config_lc_numpoints_; i++) {
-            copy_x_into_y(p2, p1);
-            hhi2 = hhi;
-            MATHFUNC(integrate_sphere_orbit)
-            (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-            if ((MATHFUNC(eval_lc)(p1, a, b, c) *
-                 MATHFUNC(eval_lc)(p2, a, b, c)) <= 0) {
-                ok = 1;
-                break;
-            }
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+        if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
+            0) {
+            ok = true;
+            break;
         }
-        if (ok) {
-            if (fabs(hhi2) < fabs(hhi))
+    }
+
+    if (!ok)
+        return false;
+
+    if (fabs(hhi2) < fabs(hhi))
+        hhi = hhi2;
+
+    /* find the intersection point p3 with the poincare section with a precision
+     * of 1e-8 */
+    if ((fabs(MATHFUNC(eval_lc)(p2, a, b, c)) <= 1e-8) || fabs(hhi2) <= h_min) {
+        copy_x_into_y(p2, pp);
+    } else {
+        while (1) {
+            hhi2 = hhi / 2.0;
+            if (!prepareVfForIntegration(p1))
+                return false;
+            MATHFUNC(integrate_sphere_orbit)
+            (p1[0], p1[1], p1[2], pp, hhi2, dashes, d, h_min, fabs(hhi2));
+            if ((fabs(MATHFUNC(eval_lc)(pp, a, b, c)) <= 1e-8) ||
+                (fabs(hhi2) <= h_min))
+                break;
+            if ((MATHFUNC(eval_lc)(p1, a, b, c) *
+                 MATHFUNC(eval_lc)(pp, a, b, c)) > 0) {
+                copy_x_into_y(pp, p1);
+                hhi = (double)dir * (fabs(hhi) - fabs(hhi2));
+            } else
                 hhi = hhi2;
-
-            /* find the intersection point p3 with the poincare section
-                with a precision of 1e-8         */
-
-            if ((fabs(MATHFUNC(eval_lc)(p2, a, b, c)) <= 1e-8) ||
-                fabs(hhi2) <= h_min) {
-                copy_x_into_y(p2, pp);
-            } else {
-                while (1) {
-                    hhi2 = hhi / 2.0;
-                    MATHFUNC(integrate_sphere_orbit)
-                    (p1[0], p1[1], p1[2], pp, &hhi2, &dashes, &d, h_min,
-                     fabs(hhi2));
-                    if ((fabs(MATHFUNC(eval_lc)(pp, a, b, c)) <= 1e-8) ||
-                        (fabs(hhi2) <= h_min))
-                        break;
-                    if ((MATHFUNC(eval_lc)(p1, a, b, c) *
-                         MATHFUNC(eval_lc)(pp, a, b, c)) > 0) {
-                        copy_x_into_y(pp, p1);
-                        hhi = (double)dir * (fabs(hhi) - fabs(hhi2));
-                    } else
-                        hhi = hhi2;
-                }
-            }
         }
     }
     return ok;
 }
 
-// function definitions
-
-void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
+// -----------------------------------------------------------------------------
+//          searchLimitCycle
+// -----------------------------------------------------------------------------
+//
+// Loop to find limit cycles cutting some transverse section determined by two
+// end points.
+void searchLimitCycle(P4Sphere *spherewnd, double x0, double y0, double x1,
                       double y1, double grid)
 {
-    double z, p1[3], pf1[3], pb1[3], rf1[2], rb1[2];
+    double p1[3], pf1[3], pb1[3], rf1[2], rb1[2];
     double p2[3], pf2[3], pb2[3], rf2[2], rb2[2], p3[3];
-    double a, b, c, h1, h2, x, y;
-    int okf1, okb1, okf2, okb2, found;
-    int t = 0;
+    double grid_dx, grid_dy;
+    double a, b, c; // ax+by+c=0 defines the equation of the line of the
+                    // transverse section
+    double x, y, z;
+    bool okf1, okb1, found;
+    int counter{0}; // counter to keep steps: after so many steps, the progress
+                    // window needs to be updated
 
+    // first make sure x0 < x1:
     if (x1 < x0) {
         z = x0;
         x0 = x1;
@@ -144,15 +179,15 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
     }
 
     z = atan2(y1 - y0, x1 - x0);
-    h1 = grid * cos(z);
-    h2 = grid * sin(z);
+    grid_dx = grid * cos(z);
+    grid_dy = grid * sin(z);
     if ((z <= PI_DIV4) && (z >= -PI_DIV4)) {
-        a = (y1 - y0) / (x1 - x0);
+        a = (y1 - y0) / (x1 - x0); // abs(a) <= 1
         b = -1.0;
         c = y0 - a * x0;
     } else {
         a = -1.0;
-        b = (x1 - x0) / (y1 - y0);
+        b = (x1 - x0) / (y1 - y0); // abs(b) <= 1
         c = x0 - b * y0;
     }
 
@@ -163,69 +198,80 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
 
     MATHFUNC(R2_to_sphere)(x1, y1, p2);
 
-    found = 1;
+    found = true;
     while (found) {
-        found = 0; // assume not found
+        found = false; // assume not found
         while (1) {
-            if (++t == g_VFResults.config_lc_value_) {
-                t = 0;
+            if (++counter == gVFResults.config_lc_value_) {
+                counter = 0;
                 if (stop_search_limit()) {
-                    okf1 = 0;
-                    okb1 = 0;
+                    okf1 = false;
+                    okb1 = false;
                     break;
                 }
             }
 
             MATHFUNC(R2_to_sphere)(x0, y0, p1);
-            if (okf1)
-                okf1 = 0;
-            else {
+            if (okf1) {
+                // the flag is still set from the previous time, where we found
+                // an intersection through forward integration.  Now try
+                // backwards
+                okf1 = false;
+            } else {
+                // check if forward integration intersects the segment
                 okf1 = eval_orbit(p1, a, b, c, pf1, 1);
                 if (okf1 && MATHFUNC(less2)(p1, pf1) &&
                     MATHFUNC(less2)(pf1, p2))
                     break;
             }
-            if (okb1)
-                okb1 = 0;
-            else {
+            if (okb1) {
+                // the flag is still set from the previous time, where we found
+                // an intersection through backward integration.
+                okb1 = false;
+            } else {
+                // check if backward integration intersects the segment
                 okb1 = eval_orbit(p1, a, b, c, pb1, -1);
                 if (okb1 && MATHFUNC(less2)(p1, pb1) &&
                     MATHFUNC(less2)(pb1, p2))
                     break;
             }
+            // if both orbits intersect the line, but not on the segment, then
+            // we have spiraling behaviour, so stop early
             if (okf1 && okb1 && MATHFUNC(less2)(pf1, p1) &&
                 MATHFUNC(less2)(p2, pb1)) {
-                okf1 = 0;
-                okb1 = 0;
+                okf1 = false;
+                okb1 = false;
                 break;
             }
             if (okf1 && okb1 && MATHFUNC(less2)(p2, pf1) &&
                 MATHFUNC(less2)(pb1, p1)) {
-                okf1 = 0;
-                okb1 = 0;
+                okf1 = false;
+                okb1 = false;
                 break;
             }
 
-            x0 += h1;
-            y0 += h2;
+            // advance on the segment
+            x0 += grid_dx;
+            y0 += grid_dy;
 
             if (less(x1, y1, x0, y0)) {
-                okf1 = 0;
-                okb1 = 0;
+                // stop at the end of the segment
+                okf1 = false;
+                okb1 = false;
                 break;
             }
-            write_to_limit_window(x0, y0);
+            write_to_limit_window();
         }
-        if (okf1 || okb1) {
+        if (okf1 || okb1) { // note: they cannot be both true here
             while (1) {
                 x = x0;
                 y = y0;
-                //              write_to_limit_window(x0,y0);
-                if (++t == g_VFResults.config_lc_value_) {
-                    t = 0;
+                // write_to_limit_window();
+                if (++counter == gVFResults.config_lc_value_) {
+                    counter = 0;
                     if (stop_search_limit()) {
-                        okf1 = 0;
-                        okb1 = 0;
+                        okf1 = false;
+                        okb1 = false;
                         break;
                     }
                 }
@@ -233,24 +279,23 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
                 if (okf1) {
                     MATHFUNC(sphere_to_R2)(pf1[0], pf1[1], pf1[2], rf1);
                     while (1) {
-                        x = x + h1;
-                        y = y + h2;
+                        x = x + grid_dx;
+                        y = y + grid_dy;
                         if (less(rf1[0], rf1[1], x, y))
                             break;
                     }
                     if (less(x1, y1, x, y))
                         break;
                     MATHFUNC(R2_to_sphere)(x, y, p3);
-                    okf2 = eval_orbit(p3, a, b, c, pf2, 1);
-                    if (okf2) {
+                    if (eval_orbit(p3, a, b, c, pf2, 1)) {
                         if (MATHFUNC(less2)(pf2, p3) &&
                             MATHFUNC(less2)(p1, pf2)) {
                             MATHFUNC(sphere_to_R2)(pf2[0], pf2[1], pf2[2], rf2);
                             spherewnd->prepareDrawing();
-                            drawLimitCycle(spherewnd, (rf1[0] + rf2[0]) / 2,
-                                           (rf1[1] + rf2[1]) / 2, a, b, c);
+                            storeLimitCycle(spherewnd, (rf1[0] + rf2[0]) / 2,
+                                            (rf1[1] + rf2[1]) / 2, a, b, c);
                             spherewnd->finishDrawing();
-                            found = 1;
+                            found = true;
                             p1[0] = p3[0];
                             p1[1] = p3[1];
                             p1[2] = p3[2];
@@ -269,32 +314,31 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
                             y0 = y;
                         }
                     } else {
-                        found = 1;
+                        found = true;
                         x0 = x;
                         y0 = y;
                         break;
                     }
-                } else {
+                } else { // okb1=true
                     MATHFUNC(sphere_to_R2)(pb1[0], pb1[1], pb1[2], rb1);
                     while (1) {
-                        x = x + h1;
-                        y = y + h2;
+                        x = x + grid_dx;
+                        y = y + grid_dy;
                         if (less(rb1[0], rb1[1], x, y))
                             break;
                     }
                     if (less(x1, y1, x, y))
                         break;
                     MATHFUNC(R2_to_sphere)(x, y, p3);
-                    okb2 = eval_orbit(p3, a, b, c, pb2, -1);
-                    if (okb2) {
+                    if (eval_orbit(p3, a, b, c, pb2, -1)) {
                         if (MATHFUNC(less2)(pb2, p3) &&
                             MATHFUNC(less2)(p1, pb2)) {
                             MATHFUNC(sphere_to_R2)(pb2[0], pb2[1], pb2[2], rb2);
                             spherewnd->prepareDrawing();
-                            drawLimitCycle(spherewnd, (rb1[0] + rb2[0]) / 2,
-                                           (rb1[1] + rb2[1]) / 2, a, b, c);
+                            storeLimitCycle(spherewnd, (rb1[0] + rb2[0]) / 2,
+                                            (rb1[1] + rb2[1]) / 2, a, b, c);
                             spherewnd->finishDrawing();
-                            found = 1;
+                            found = true;
                             p1[0] = p3[0];
                             p1[1] = p3[1];
                             p1[2] = p3[2];
@@ -313,7 +357,7 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
                             y0 = y;
                         }
                     } else {
-                        found = 1;
+                        found = true;
                         x0 = x;
                         y0 = y;
                         break;
@@ -324,143 +368,144 @@ void searchLimitCycle(QWinSphere *spherewnd, double x0, double y0, double x1,
     }
 }
 
-void drawLimitCycle(QWinSphere *spherewnd, double x, double y, double a,
-                    double b, double c)
+// -----------------------------------------------------------------------------
+//          storeLimitCycle
+// -----------------------------------------------------------------------------
+// The found limit cycle is re-integrated, and stored in memory.
+// It is meanwhile drawn on the screen.
+// The limit cycle is found through forward integration.
+void storeLimitCycle(P4Sphere *spherewnd, double x, double y, double a,
+                     double b, double c)
 {
     double p1[3], p2[3];
     double hhi, h_max, h_min;
     int dashes, d;
 
-    if (g_VFResults.current_lim_cycle_ == nullptr) {
-        g_VFResults.first_lim_cycle_ = new orbits;
-        g_VFResults.current_lim_cycle_ = g_VFResults.first_lim_cycle_;
+    if (gVFResults.currentLimCycle_ == nullptr) {
+        gVFResults.firstLimCycle_ =
+            new P4Orbits::orbits{p1, P4ColourSettings::colour_limit_cycle};
+        gVFResults.currentLimCycle_ = gVFResults.firstLimCycle_;
     } else {
-        g_VFResults.current_lim_cycle_->next_orbit = new orbits;
-        g_VFResults.current_lim_cycle_ =
-            g_VFResults.current_lim_cycle_->next_orbit;
+        gVFResults.currentLimCycle_->next =
+            new P4Orbits::orbits{p1, P4ColourSettings::colour_limit_cycle};
+        gVFResults.currentLimCycle_ = gVFResults.currentLimCycle_->next;
     }
+    auto LC = gVFResults.currentLimCycle_;
 
     MATHFUNC(R2_to_sphere)(x, y, p1);
-    copy_x_into_y(p1, g_VFResults.current_lim_cycle_->pcoord);
-    g_VFResults.current_lim_cycle_->color = CLIMIT;
-    g_VFResults.current_lim_cycle_->f_orbits = nullptr;
-    g_VFResults.current_lim_cycle_->next_orbit = nullptr;
-    hhi = g_VFResults.config_step_;
-    h_max = g_VFResults.config_hma_;
-    h_min = g_VFResults.config_hmi_;
-    (*plot_p)(spherewnd, p1, CLIMIT);
+    (*plot_p)(spherewnd, p1, P4ColourSettings::colour_limit_cycle);
+
+    hhi = gVFResults.config_step_;
+    h_max = gVFResults.config_hma_;
+    h_min = gVFResults.config_hmi_;
+    if (!prepareVfForIntegration(p1))
+        return;
     MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    g_VFResults.current_lim_cycle_->f_orbits = new orbits_points;
-    g_VFResults.current_lim_cycle_->current_f_orbits =
-        g_VFResults.current_lim_cycle_->f_orbits;
-    copy_x_into_y(p2, g_VFResults.current_lim_cycle_->current_f_orbits->pcoord);
-    g_VFResults.current_lim_cycle_->current_f_orbits->color = CLIMIT;
-    g_VFResults.current_lim_cycle_->current_f_orbits->dashes =
-        g_VFResults.config_dashes_;
-    g_VFResults.current_lim_cycle_->current_f_orbits->next_point = nullptr;
-    if (g_VFResults.config_dashes_)
-        (*plot_l)(spherewnd, p1, p2, CLIMIT);
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+
+    LC->firstpt = new P4Orbits::orbits_points{
+        p2, P4ColourSettings::colour_limit_cycle, gVFResults.config_dashes_};
+    LC->currentpt = LC->firstpt;
+
+    if (gVFResults.config_dashes_)
+        (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
     else
-        (*plot_p)(spherewnd, p2, CLIMIT);
+        (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
+
     while (1) {
         copy_x_into_y(p2, p1);
         MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-        g_VFResults.current_lim_cycle_->current_f_orbits->next_point =
-            new orbits_points;
-        g_VFResults.current_lim_cycle_->current_f_orbits =
-            g_VFResults.current_lim_cycle_->current_f_orbits->next_point;
-        copy_x_into_y(p2,
-                      g_VFResults.current_lim_cycle_->current_f_orbits->pcoord);
-        g_VFResults.current_lim_cycle_->current_f_orbits->color = CLIMIT;
-        g_VFResults.current_lim_cycle_->current_f_orbits->dashes =
-            g_VFResults.config_dashes_;
-        g_VFResults.current_lim_cycle_->current_f_orbits->next_point = nullptr;
-        if (g_VFResults.config_dashes_)
-            (*plot_l)(spherewnd, p1, p2, CLIMIT);
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+
+        LC->currentpt->nextpt = new P4Orbits::orbits_points{
+            p2, P4ColourSettings::colour_limit_cycle,
+            gVFResults.config_dashes_};
+        LC->currentpt = LC->currentpt->nextpt;
+
+        if (gVFResults.config_dashes_)
+            (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
         else
-            (*plot_p)(spherewnd, p2, CLIMIT);
+            (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
 
         if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
             0)
             break;
     }
+
     copy_x_into_y(p2, p1);
-    MATHFUNC(integrate_sphere_orbit)
-    (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-    while (1) {
-        copy_x_into_y(p2, p1);
-        MATHFUNC(integrate_sphere_orbit)
-        (p1[0], p1[1], p1[2], p2, &hhi, &dashes, &d, h_min, h_max);
-        g_VFResults.current_lim_cycle_->current_f_orbits->next_point =
-            new orbits_points;
-        g_VFResults.current_lim_cycle_->current_f_orbits =
-            g_VFResults.current_lim_cycle_->current_f_orbits->next_point;
-        copy_x_into_y(p2,
-                      g_VFResults.current_lim_cycle_->current_f_orbits->pcoord);
-        g_VFResults.current_lim_cycle_->current_f_orbits->color = CLIMIT;
-        g_VFResults.current_lim_cycle_->current_f_orbits->dashes =
-            g_VFResults.config_dashes_;
-        g_VFResults.current_lim_cycle_->current_f_orbits->next_point = nullptr;
-        if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
-            0)
-            break;
-        if (g_VFResults.config_dashes_)
-            (*plot_l)(spherewnd, p1, p2, CLIMIT);
-        else
-            (*plot_p)(spherewnd, p2, CLIMIT);
-    }
-    MATHFUNC(R2_to_sphere)(x, y, p2);
-    copy_x_into_y(p2, g_VFResults.current_lim_cycle_->current_f_orbits->pcoord);
-    if (g_VFResults.config_dashes_)
-        (*plot_l)(spherewnd, p1, p2, CLIMIT);
-    else
-        (*plot_p)(spherewnd, p2, CLIMIT);
-}
-
-void drawLimitCycles(QWinSphere *spherewnd)
-{
-    struct orbits *orbit;
-
-    orbit = g_VFResults.first_lim_cycle_;
-
-    if (orbit != nullptr) {
-        do {
-            drawOrbit(spherewnd, orbit->pcoord, orbit->f_orbits, orbit->color);
-        } while ((orbit = orbit->next_orbit) != nullptr);
-    }
-}
-
-// -----------------------------------------------------------------------
-//                      DELETELASTLIMITCYCLE
-// -----------------------------------------------------------------------
-
-void deleteLastLimitCycle(QWinSphere *spherewnd)
-{
-    struct orbits *orbit1, *orbit2;
-
-    if (g_VFResults.current_lim_cycle_ == nullptr)
+    if (!prepareVfForIntegration(p1))
         return;
 
-    orbit2 = g_VFResults.current_lim_cycle_;
-    drawOrbit(spherewnd, orbit2->pcoord, orbit2->f_orbits,
+    MATHFUNC(integrate_sphere_orbit)
+    (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+
+    while (1) {
+        copy_x_into_y(p2, p1);
+        if (!prepareVfForIntegration(p1))
+            return;
+        MATHFUNC(integrate_sphere_orbit)
+        (p1[0], p1[1], p1[2], p2, hhi, dashes, d, h_min, h_max);
+
+        LC->currentpt->nextpt = new P4Orbits::orbits_points{
+            p2, P4ColourSettings::colour_limit_cycle,
+            gVFResults.config_dashes_};
+        LC->currentpt = LC->currentpt->nextpt;
+
+        if ((MATHFUNC(eval_lc)(p1, a, b, c) * MATHFUNC(eval_lc)(p2, a, b, c)) <=
+            0)
+            break;
+        if (gVFResults.config_dashes_)
+            (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
+        else
+            (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
+    }
+
+    MATHFUNC(R2_to_sphere)(x, y, p2);
+    copy_x_into_y(p2, LC->currentpt->pcoord);
+    if (gVFResults.config_dashes_)
+        (*plot_l)(spherewnd, p1, p2, P4ColourSettings::colour_limit_cycle);
+    else
+        (*plot_p)(spherewnd, p2, P4ColourSettings::colour_limit_cycle);
+}
+
+// -----------------------------------------------------------------------
+//          drawLimitCycles
+// -----------------------------------------------------------------------
+// Draw limit cycles that were calculated earlier.  This is called during
+// a repaint (but also during a print command).
+void drawLimitCycles(P4Sphere *spherewnd)
+{
+    auto orbit = gVFResults.firstLimCycle_;
+    while (orbit != nullptr) {
+        drawOrbit(spherewnd, orbit->pcoord, orbit->firstpt, orbit->color);
+        orbit = orbit->next;
+    }
+}
+
+// -----------------------------------------------------------------------
+//          deleteLastLimitCycle
+// -----------------------------------------------------------------------
+void deleteLastLimitCycle(P4Sphere *spherewnd)
+{
+    if (gVFResults.currentLimCycle_ == nullptr)
+        return;
+
+    auto orbit2 = gVFResults.currentLimCycle_;
+    drawOrbit(spherewnd, orbit2->pcoord, orbit2->firstpt,
               spherewnd->spherebgcolor_);
 
-    if (g_VFResults.first_lim_cycle_ == g_VFResults.current_lim_cycle_) {
-        g_VFResults.first_lim_cycle_ = nullptr;
-        g_VFResults.current_lim_cycle_ = nullptr;
+    if (gVFResults.firstLimCycle_ == gVFResults.currentLimCycle_) {
+        gVFResults.firstLimCycle_ = nullptr;
+        gVFResults.currentLimCycle_ = nullptr;
     } else {
-        orbit1 = g_VFResults.first_lim_cycle_;
-
+        auto orbit1 = gVFResults.firstLimCycle_;
         do {
-            g_VFResults.current_lim_cycle_ = orbit1;
-            orbit1 = orbit1->next_orbit;
+            gVFResults.currentLimCycle_ = orbit1;
+            orbit1 = orbit1->next;
         } while (orbit1 != orbit2);
-
-        g_VFResults.current_lim_cycle_->next_orbit = nullptr;
+        gVFResults.currentLimCycle_->next = nullptr;
     }
-    g_VFResults.deleteOrbitPoint(orbit2->f_orbits);
-    delete orbit2; // free( orbit2 );
-    orbit2 = nullptr;
+
+    //    delete orbit2->firstpt;
+    delete orbit2;
 }

@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp_ui and mpfr_cmp_si.
 
-Copyright 1999, 2001-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -326,7 +326,7 @@ main (void)
 
   /* corner case */
   mpfr_set_ui (x, 1, MPFR_RNDZ);
-  mpfr_mul_2exp (x, x, GMP_NUMB_BITS - 1, MPFR_RNDZ);
+  mpfr_mul_2ui (x, x, GMP_NUMB_BITS - 1, MPFR_RNDZ);
   /* now EXP(x)=GMP_NUMB_BITS */
   MPFR_ASSERTN(mpfr_cmp_si (x, 1) > 0);
 

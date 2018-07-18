@@ -1,6 +1,6 @@
 /* Test file for mpfr_cmp2.
 
-Copyright 1999-2003, 2006-2017 Free Software Foundation, Inc.
+Copyright 1999-2003, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -57,7 +57,7 @@ worst_cases (void)
   for (i = 1; i < MPFR_PREC(x); i++)
     {
       mpfr_set_ui (x, 1, MPFR_RNDN);
-      mpfr_div_2exp (y, y, 1, MPFR_RNDN); /* y = 1/2^i */
+      mpfr_div_2ui (y, y, 1, MPFR_RNDN); /* y = 1/2^i */
 
       l = 0;
       if (mpfr_cmp2 (x, y, &l) <= 0 || l != 1)
@@ -196,11 +196,9 @@ special (void)
     {
       printf ("Error in mpfr_cmp2:\n");
       printf ("x=");
-      mpfr_print_binary (x);
-      puts ("");
+      mpfr_dump (x);
       printf ("y=");
-      mpfr_print_binary (y);
-      puts ("");
+      mpfr_dump (y);
       printf ("got %lu, expected 1\n", (unsigned long) j);
       exit (1);
     }
@@ -299,6 +297,51 @@ special (void)
   mpfr_clear (y);
 }
 
+/* Compare (m,kx) and (m,ky), where (m,k) means m fixed limbs followed by
+   k zero limbs. */
+static void
+test_equal (void)
+{
+  mpfr_t w, x, y;
+  int m, kx, ky, inex;
+  mpfr_prec_t j;
+
+  for (m = 1; m <= 4; m++)
+    {
+      mpfr_init2 (w, m * GMP_NUMB_BITS);
+      for (kx = 0; kx <= 4; kx++)
+        for (ky = 0; ky <= 4; ky++)
+          {
+            do mpfr_urandomb (w, RANDS); while (mpfr_zero_p (w));
+            mpfr_init2 (x, (m + kx) * GMP_NUMB_BITS
+                        - (kx == 0 ? 0 : randlimb () % GMP_NUMB_BITS));
+            mpfr_init2 (y, (m + ky) * GMP_NUMB_BITS
+                        - (ky == 0 ? 0 : randlimb () % GMP_NUMB_BITS));
+            inex = mpfr_set (x, w, MPFR_RNDN);
+            MPFR_ASSERTN (inex == 0);
+            inex = mpfr_set (y, w, MPFR_RNDN);
+            MPFR_ASSERTN (inex == 0);
+            MPFR_ASSERTN (mpfr_equal_p (x, y));
+            if (randlimb () & 1)
+              mpfr_neg (x, x, MPFR_RNDN);
+            if (randlimb () & 1)
+              mpfr_neg (y, y, MPFR_RNDN);
+            if (mpfr_cmp2 (x, y, &j) != 0)
+              {
+                printf ("Error in test_equal for m = %d, kx = %d, ky = %d\n",
+                        m, kx, ky);
+                printf ("  x = ");
+                mpfr_dump (x);
+                printf ("  y = ");
+                mpfr_dump (y);
+                exit (1);
+              }
+            mpfr_clears (x, y, (mpfr_ptr) 0);
+          }
+      mpfr_clear (w);
+    }
+}
+
 int
 main (void)
 {
@@ -338,6 +381,8 @@ main (void)
       if (y != 0.0)
         tcmp2 (x, y, -1);
     }
+
+  test_equal ();
 
   tests_end_mpfr ();
 

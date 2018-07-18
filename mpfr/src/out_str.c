@@ -1,6 +1,6 @@
 /* mpfr_out_str -- output a floating-point number to a stream
 
-Copyright 1999, 2001-2002, 2004, 2006-2017 Free Software Foundation, Inc.
+Copyright 1999, 2001-2002, 2004, 2006-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -43,10 +43,6 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
 
   MPFR_ASSERTN (base >= 2 && base <= 62);
 
-  /* when stream=NULL, output to stdout */
-  if (stream == NULL)
-    stream = stdout;
-
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (op)))
     {
       if (MPFR_IS_NAN (op))
@@ -73,7 +69,7 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
     || fputc (*s++, stream) == EOF  /* leading digit */
     || fputc ((unsigned char) MPFR_DECIMAL_POINT, stream) == EOF
     || fputs (s, stream) == EOF;     /* trailing significand */
-  (*__gmp_free_func) (s0, l);
+  mpfr_free_func (s0, l);
   if (MPFR_UNLIKELY (err))
     return 0;
 
@@ -84,11 +80,12 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
     {
       int r;
 
-      MPFR_ASSERTN(e >= LONG_MIN);
-      MPFR_ASSERTN(e <= LONG_MAX);
+      r = fprintf (stream, (base <= 10 ?
+                            "e%" MPFR_EXP_FSPEC "d" :
+                            "@%" MPFR_EXP_FSPEC "d"), (mpfr_eexp_t) e);
 
-      r = fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), (long) e);
-      if (MPFR_UNLIKELY (r < 0))
+      /* Check error from fprintf or integer overflow (wrapping) on size_t */
+      if (MPFR_UNLIKELY (r < 0 || l + r < l))
         return 0;
 
       l += r;

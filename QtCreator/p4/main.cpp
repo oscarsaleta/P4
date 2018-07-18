@@ -3,7 +3,7 @@
  *  their phase portrait in several spaces, such as Poincaré sphere.
  *  URL: http://github.com/oscarsaleta/P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -20,12 +20,20 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "main.h"
+#include "main.hpp"
 
-#include "file_vf.h"
-#include "p4application.h"
-#include "p4settings.h"
-#include "win_settings.h"
+#include <QDebug>
+#include <QMessageBox>
+#include <QPixmap>
+#include <QPrinter>
+
+#include "P4Application.hpp"
+#include "P4FindDlg.hpp"
+#include "P4InputVF.hpp"
+#include "P4ParentStudy.hpp"
+#include "P4SettingsDlg.hpp"
+#include "P4StartDlg.hpp"
+#include "p4settings.hpp"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -33,59 +41,63 @@
 #include "../version.h"
 #endif
 
-#include <QMessageBox>
-
 /*
     ----------------------------------------------------------------------------
     TO DO LIST:
     -----------
 
-    -   windows: create installer
-    -   toolbars can be deleted by pressing right mouse button --> avoid this
     -   poincare-lyapunov printing: improve dotted line when printing
     -   system printer support
 
-    -----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 */
 
-QString g_p4Version;
-QString g_p4VersionDate;
-QString g_p4Platform;
+QString gP4version;
+QString gP4versionDate;
+QString gP4platform;
 
-bool g_action_OnlyPrepareFile =
-    false; // in the find menu (this is not saved in the .inp file)
-bool g_action_SaveAll =
-    DEFAULTSAVEALL; // in the find menu (this is not saved in the .inp file)
+// in the find menu (this is not saved in the .inp file)
+bool gActionOnlyPrepareFile = false;
+// in the find menu (this is not saved in the .inp file)
+bool gActionSaveAll = DEFAULTSAVEALL;
 
-QPixmap *g_p4smallicon = nullptr;
-QPrinter *g_p4printer = nullptr;
+QPixmap *gP4smallIcon;
+QPrinter *gP4printer;
 
-QString g_cmdLine_Filename;
-bool g_cmdLine_AutoEvaluate;
-bool g_cmdLine_AutoPlot;
-bool g_cmdLine_AutoExit;
+QString gCmdLineFilename;
+bool gCmdLineAutoEvaluate;
+bool gCmdLineAutoPlot;
+bool gCmdLineAutoExit;
 
+P4ParentStudy gVFResults;
+P4InputVF *gThisVF;
+P4StartDlg *gP4startDlg;
+P4Application *gP4app;
+
+// -----------------------------------------------------------------------
+//          Functions for handling command line options
+// -----------------------------------------------------------------------
 void handleCommandLineOption(char *arg)
 {
     while (*arg != 0) {
         if (*arg == 'e' || *arg == 'E') // auto-evaluate
         {
-            g_cmdLine_AutoEvaluate = true;
+            gCmdLineAutoEvaluate = true;
             arg++;
             continue;
         }
 
         if (*arg == 'p' || *arg == 'P') // auto-plot
         {
-            g_cmdLine_AutoPlot = true;
+            gCmdLineAutoPlot = true;
             arg++;
             continue;
         }
 
         if (*arg == 'x' || *arg == 'X') // auto-evaluate + exit
         {
-            g_cmdLine_AutoEvaluate = true;
-            g_cmdLine_AutoExit = true;
+            gCmdLineAutoEvaluate = true;
+            gCmdLineAutoExit = true;
             arg++;
             continue;
         }
@@ -103,8 +115,8 @@ void handleCommandLineArgument(char *arg)
         return;
     }
 
-    if (g_cmdLine_Filename.length() == 0) {
-        g_cmdLine_Filename = arg;
+    if (gCmdLineFilename.length() == 0) {
+        gCmdLineFilename = arg;
         return;
     }
 
@@ -113,69 +125,74 @@ void handleCommandLineArgument(char *arg)
     return;
 }
 
+// -----------------------------------------------------------------------
+//          Main function
+// -----------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
+    qSetMessagePattern("%{file}(%{line}): %{message}");
+
     int returnvalue;
     int v, i;
 
-    g_p4Platform = "";
-    g_p4Version = VERSION; // initialize version string
-    g_p4VersionDate = VERSIONDATE;
+    gP4platform = "";
+    gP4version = VERSION; // initialize version string
+    gP4versionDate = VERSIONDATE;
 
-    g_cmdLine_Filename = "";
-    g_cmdLine_AutoEvaluate = false;
-    g_cmdLine_AutoPlot = false;
-    g_cmdLine_AutoExit = false;
+    gCmdLineFilename = "";
+    gCmdLineAutoEvaluate = false;
+    gCmdLineAutoPlot = false;
+    gCmdLineAutoExit = false;
 
     for (i = 1; i < argc; i++)
         handleCommandLineArgument(argv[i]);
-    if (g_cmdLine_AutoEvaluate && g_cmdLine_Filename.length() == 0)
-        g_cmdLine_Filename = DEFAULTFILENAME;
+    if (gCmdLineAutoEvaluate && gCmdLineFilename.length() == 0)
+        gCmdLineFilename = DEFAULTFILENAME;
 
-    g_p4app = new QP4Application(argc, argv);
-    g_p4app->setOrganizationName("P4");
-    g_p4app->setOrganizationDomain("gsd.uab.cat");
-    g_p4app->setApplicationName("P4");
+    gP4app = new P4Application{argc, argv};
+    gP4app->setOrganizationName("P4");
+    gP4app->setOrganizationDomain("gsd.uab.cat");
+    gP4app->setApplicationName("P4");
 
-    g_p4app->addLibraryPath(g_p4app->applicationDirPath());
+    gP4app->addLibraryPath(gP4app->applicationDirPath());
 
-    g_p4app->setQuitOnLastWindowClosed(false);
+    gP4app->setQuitOnLastWindowClosed(false);
     v = readP4Settings();
 
-    g_p4printer = new QPrinter(QPrinter::PrinterResolution);
-    g_p4smallicon = new QPixmap();
-    if (g_p4smallicon->load(getP4BinPath() + "/p4smallicon.png") == false) {
-        delete g_p4smallicon;
-        g_p4smallicon = nullptr;
+    gP4printer = new QPrinter{QPrinter::PrinterResolution};
+    gP4smallIcon = new QPixmap{};
+    if (gP4smallIcon->load(getP4BinPath() + "/p4smallicon.ico") == false) {
+        delete gP4smallIcon;
+        gP4smallIcon = nullptr;
     }
 
-    //  g_p4app->setStyle( new QCDEStyle() );
+    //  gP4app->setStyle( new QCDEStyle() );
 
-    g_ThisVF = new QInputVF();
+    gThisVF = new P4InputVF{};
 
-    g_p4stardlg = new QStartDlg(g_cmdLine_Filename);
-    if (!g_cmdLine_AutoExit)
-        g_p4stardlg->show();
+    gP4startDlg = new P4StartDlg{gCmdLineFilename};
+    if (!gCmdLineAutoExit)
+        gP4startDlg->show();
 
-    g_p4app->setQuitOnLastWindowClosed(true);
+    gP4app->setQuitOnLastWindowClosed(true);
 
-    if (g_cmdLine_Filename.length() != 0) {
-        if (!(g_ThisVF->load())) {
-            g_cmdLine_AutoEvaluate = false;
-            g_cmdLine_AutoPlot = false;
-            if (g_cmdLine_AutoExit) {
-                delete g_p4printer;
-                g_p4printer = nullptr;
-                delete g_p4app;
-                g_p4app = nullptr;
+    if (gCmdLineFilename.length() != 0) {
+        if (!(gThisVF->load())) {
+            gCmdLineAutoEvaluate = false;
+            gCmdLineAutoPlot = false;
+            if (gCmdLineAutoExit) {
+                delete gP4printer;
+                gP4printer = nullptr;
+                delete gP4app;
+                gP4app = nullptr;
                 return (-1);
             }
         }
-        g_p4stardlg->findWindow_->onBtnLoad();
+        gP4startDlg->getFindWindowPtr()->onBtnLoad();
     }
 
     if (!v) {
-        QMessageBox::information(g_p4stardlg, "P4",
+        QMessageBox::information(gP4startDlg, "P4",
                                  "Welcome to P4.\n\n"
                                  "Since P4 did not find program settings, it "
                                  "assumes that this is the first time\n"
@@ -184,22 +201,36 @@ int main(int argc, char *argv[])
                                  "In particular, check if P4 has found the "
                                  "Command-Line Version of MAPLE.\n");
 
-        QSettingsDlg *psettings;
-        psettings = new QSettingsDlg(nullptr, 0);
+        auto psettings =
+            new P4SettingsDlg{nullptr, static_cast<Qt::WindowFlags>(0)};
         psettings->exec();
-        delete psettings;
-        psettings = nullptr;
     }
 
-    returnvalue = g_p4app->exec();
-
-    delete g_p4printer;
-    g_p4printer = nullptr;
+    returnvalue = gP4app->exec();
 
     saveP4Settings();
 
-    delete g_p4app;
-    g_p4app = nullptr;
+    if (gP4smallIcon != nullptr) {
+        delete gP4smallIcon;
+        gP4smallIcon = nullptr;
+    }
+    if (gP4printer != nullptr) {
+        delete gP4printer;
+        gP4printer = nullptr;
+    }
+    if (gP4startDlg != nullptr) {
+        delete gP4startDlg;
+        gP4startDlg = nullptr;
+    }
+    if (gP4app != nullptr) {
+        delete gP4app;
+        gP4app = nullptr;
+    }
+    if (gThisVF != nullptr) {
+        delete gThisVF;
+        gThisVF = nullptr;
+    }
+
     return returnvalue;
 }
 
@@ -207,7 +238,7 @@ int main(int argc, char *argv[])
 //                          SETP4WINDOWTITLE
 // -----------------------------------------------------------------------
 
-void setP4WindowTitle(QWidget *win, QString title)
+void setP4WindowTitle(QWidget *win, const QString &title)
 {
     win->setWindowTitle(title);
 }

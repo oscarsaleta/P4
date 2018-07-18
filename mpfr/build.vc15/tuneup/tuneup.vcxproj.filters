@@ -70,7 +70,7 @@
     <ClInclude Include="..\..\..\mpir\lib\$(IntDir)longlong.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\mpir\lib\(mpir.h">
+    <ClInclude Include="..\..\..\mpir\lib\($(IntDir)mpir.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

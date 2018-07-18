@@ -1,5 +1,0 @@
-﻿  tdiv_ui.c
-..\..\..\tests\tdiv_ui.c(225): warning C4293: '<<': recuento de desplazamientos negativo o demasiado grande; comportamiento impredecible
-..\..\..\tests\tdiv_ui.c(233): warning C4293: '<<': recuento de desplazamientos negativo o demasiado grande; comportamiento impredecible
-  tdiv_ui.vcxproj -> C:\Users\Oscar\Downloads\mpfr\build.vc14\dll_mpfr_tests\x64\Release\tdiv_ui.exe
-  tdiv_ui.vcxproj -> C:\Users\Oscar\Downloads\mpfr\build.vc14\dll_mpfr_tests\x64\Release\tdiv_ui.pdb (Full PDB)

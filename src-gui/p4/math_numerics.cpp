@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -28,22 +28,20 @@
 //
 // -----------------------------------------------------------------------
 
-#include "math_numerics.h"
-
-#include "math_p4.h"
+#include "math_numerics.hpp"
 
 #include <cfloat>
 #include <cmath>
 
-static double s_PRECISION1 = 1e-16;
-static double s_PRECISION2 = 1e-8;
+#include "math_p4.hpp"
+
+static double sPrecision1 = 1e-16;
+static double sPrecision2 = 1e-8;
 
 // -----------------------------------------------------------------------
-//								BISECTION
+//          bisection
 // -----------------------------------------------------------------------
-//
 // dx is a pointer to an array of two elements
-
 static void bisection(double (*f)(double), double *x, double e)
 {
     double fx0, fmid, xmid;
@@ -71,11 +69,9 @@ static void bisection(double (*f)(double), double *x, double e)
 }
 
 // -----------------------------------------------------------------------
-//							REGULA FALSI
+//          regula_falsi
 // -----------------------------------------------------------------------
-//
 // x is an array of two elements
-
 static double regula_falsi(double (*f)(double), double *x, double e)
 {
     double x2;
@@ -86,7 +82,7 @@ static double regula_falsi(double (*f)(double), double *x, double e)
     for (;;) {
         y = x[1] - (*f)(x[1]) * ((x[1] - x[0]) / ((*f)(x[1]) - (*f)(x[0])));
 
-        if (fabs(y - x2) < e && f(y) < s_PRECISION2)
+        if (fabs(y - x2) < e && f(y) < sPrecision2)
             break;
 
         if ((*f)(x[1]) * (*f)(y) <= 0)
@@ -101,20 +97,20 @@ static double regula_falsi(double (*f)(double), double *x, double e)
 }
 
 // -----------------------------------------------------------------------
-//								NEWTON
+//          newton
 // -----------------------------------------------------------------------
-
-double newton(double (*f)(double), double (*df)(double), double x, double e)
+static double newton(double (*f)(double), double (*df)(double), double x,
+                     double e)
 {
     double dx;
 
-    if (fabs((*f)(x)) < s_PRECISION1 && fabs((*f)(x) / (*df)(x)) < e)
+    if (fabs((*f)(x)) < sPrecision1 && fabs((*f)(x) / (*df)(x)) < e)
         return x;
 
     for (;;) {
         dx = (*f)(x) / (*df)(x);
         x -= dx;
-        if (fabs((*f)(x)) < s_PRECISION1 || fabs(dx) < e)
+        if (fabs((*f)(x)) < sPrecision1 || fabs(dx) < e)
             break;
     }
 
@@ -122,11 +118,9 @@ double newton(double (*f)(double), double (*df)(double), double x, double e)
 }
 
 // -----------------------------------------------------------------------
-//								FIND_ROOT
+//          find_root
 // -----------------------------------------------------------------------
-//
 // value is a pointer to an array of two elements
-
 double find_root(double (*f)(double), double (*df)(double), double *value)
 {
     double y;
@@ -139,10 +133,9 @@ double find_root(double (*f)(double), double (*df)(double), double *value)
 }
 
 // -----------------------------------------------------------------------
-//								RK78
+//          rk78
 // -----------------------------------------------------------------------
-
-void rk78(void (*deriv)(double *, double *), double y[2], double *hh,
+void rk78(void (*deriv)(const double *, double *), double y[2], double *hh,
           double hmi, double hma, double e1)
 {
     double beta[79], c[11], d, dd, e3, h, r[13][2], b[2], f[2];
@@ -270,66 +263,59 @@ void rk78(void (*deriv)(double *, double *), double y[2], double *hh,
         deriv(b, r[4]);
 
         for (k = 0; k < 2; ++k)
-            b[k] =
-                y[k] +
-                (beta[11] * r[0][k] + beta[14] * r[3][k] + beta[15] * r[4][k]) *
-                    h;
+            b[k] = y[k] + (beta[11] * r[0][k] + beta[14] * r[3][k] +
+                           beta[15] * r[4][k]) *
+                              h;
         deriv(b, r[5]);
 
         for (k = 0; k < 2; ++k)
-            b[k] = y[k] +
-                   (beta[16] * r[0][k] + beta[19] * r[3][k] +
-                    beta[20] * r[4][k] + beta[21] * r[5][k]) *
-                       h;
+            b[k] = y[k] + (beta[16] * r[0][k] + beta[19] * r[3][k] +
+                           beta[20] * r[4][k] + beta[21] * r[5][k]) *
+                              h;
         deriv(b, r[6]);
 
         for (k = 0; k < 2; ++k)
-            b[k] = y[k] +
-                   (beta[22] * r[0][k] + beta[26] * r[4][k] +
-                    beta[27] * r[5][k] + beta[28] * r[6][k]) *
-                       h;
+            b[k] = y[k] + (beta[22] * r[0][k] + beta[26] * r[4][k] +
+                           beta[27] * r[5][k] + beta[28] * r[6][k]) *
+                              h;
         deriv(b, r[7]);
 
         for (k = 0; k < 2; ++k)
-            b[k] =
-                y[k] +
-                (beta[29] * r[0][k] + beta[32] * r[3][k] + beta[33] * r[4][k] +
-                 beta[34] * r[5][k] + beta[35] * r[6][k] + beta[36] * r[7][k]) *
-                    h;
+            b[k] = y[k] + (beta[29] * r[0][k] + beta[32] * r[3][k] +
+                           beta[33] * r[4][k] + beta[34] * r[5][k] +
+                           beta[35] * r[6][k] + beta[36] * r[7][k]) *
+                              h;
         deriv(b, r[8]);
 
         for (k = 0; k < 2; ++k)
-            b[k] =
-                y[k] +
-                (beta[37] * r[0][k] + beta[40] * r[3][k] + beta[41] * r[4][k] +
-                 beta[42] * r[5][k] + beta[43] * r[6][k] + beta[44] * r[7][k] +
-                 beta[45] * r[8][k]) *
-                    h;
+            b[k] = y[k] + (beta[37] * r[0][k] + beta[40] * r[3][k] +
+                           beta[41] * r[4][k] + beta[42] * r[5][k] +
+                           beta[43] * r[6][k] + beta[44] * r[7][k] +
+                           beta[45] * r[8][k]) *
+                              h;
         deriv(b, r[9]);
 
         for (k = 0; k < 2; ++k)
-            b[k] =
-                y[k] +
-                (beta[46] * r[0][k] + beta[49] * r[3][k] + beta[50] * r[4][k] +
-                 beta[51] * r[5][k] + beta[52] * r[6][k] + beta[53] * r[7][k] +
-                 beta[54] * r[8][k] + beta[55] * r[9][k]) *
-                    h;
+            b[k] = y[k] + (beta[46] * r[0][k] + beta[49] * r[3][k] +
+                           beta[50] * r[4][k] + beta[51] * r[5][k] +
+                           beta[52] * r[6][k] + beta[53] * r[7][k] +
+                           beta[54] * r[8][k] + beta[55] * r[9][k]) *
+                              h;
         deriv(b, r[10]);
 
         for (k = 0; k < 2; ++k)
-            b[k] = y[k] +
-                   (beta[56] * r[0][k] + beta[61] * (r[5][k] - r[9][k]) +
-                    beta[62] * r[6][k] + beta[63] * (r[7][k] - r[8][k])) *
-                       h;
+            b[k] =
+                y[k] + (beta[56] * r[0][k] + beta[61] * (r[5][k] - r[9][k]) +
+                        beta[62] * r[6][k] + beta[63] * (r[7][k] - r[8][k])) *
+                           h;
         deriv(b, r[11]);
 
         for (k = 0; k < 2; ++k)
-            b[k] =
-                y[k] +
-                (beta[67] * r[0][k] + beta[70] * r[3][k] + beta[71] * r[4][k] +
-                 beta[72] * r[5][k] + beta[73] * r[6][k] + beta[74] * r[7][k] +
-                 beta[75] * r[8][k] + beta[76] * r[9][k] + r[11][k]) *
-                    h;
+            b[k] = y[k] + (beta[67] * r[0][k] + beta[70] * r[3][k] +
+                           beta[71] * r[4][k] + beta[72] * r[5][k] +
+                           beta[73] * r[6][k] + beta[74] * r[7][k] +
+                           beta[75] * r[8][k] + beta[76] * r[9][k] + r[11][k]) *
+                              h;
         deriv(b, r[12]);
 
         d = 0;
@@ -346,13 +332,13 @@ void rk78(void (*deriv)(double *, double *), double y[2], double *hh,
         d = d / 2;
         e3 = e1 * (1.0 + dd * 1.E-2);
         if (((fabs(h) <= hmi) || (d < e3)) && !(std::isnan(f[0])) &&
-            !(std::isnan(f[1])) && p4_finite(f[0]) && p4_finite(f[1]))
+            !(std::isnan(f[1])) && std::isfinite(f[0]) && std::isfinite(f[1]))
             break;
 
         h = h * 0.9 * sqrt(sqrt(sqrt(e3 / d)));
 
         if ((fabs(h) < hmi) || std::isnan(h) ||
-            !p4_finite(h)) /* h=hmi*h/fabs(h); */
+            !std::isfinite(h)) /* h=hmi*h/fabs(h); */
             h = hmi * direction;
     }
     if (d < e3 / 512)
@@ -365,7 +351,7 @@ void rk78(void (*deriv)(double *, double *), double y[2], double *hh,
     if (fabs(h) > hma)
         h = hma * direction;
 
-    if ((fabs(h) < hmi) || std::isnan(h) || !p4_finite(h))
+    if ((fabs(h) < hmi) || std::isnan(h) || !std::isfinite(h))
         h = hmi * direction;
     *hh = h;
 }

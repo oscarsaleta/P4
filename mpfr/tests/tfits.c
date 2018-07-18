@@ -2,7 +2,7 @@
  mpfr_fits_sint_p, mpfr_fits_slong_p, mpfr_fits_sshort_p,
  mpfr_fits_uint_p, mpfr_fits_ulong_p, mpfr_fits_ushort_p
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -22,6 +22,7 @@ along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
 http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
+/* Needed due to the inclusion of mpfr-intmax.h */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -165,9 +166,9 @@ main (void)
 
         /* Check large values (no fit) */
         mpfr_set_ui (x, ULONG_MAX, MPFR_RNDN);
-        mpfr_mul_2exp (x, x, 1, MPFR_RNDN);
+        mpfr_mul_2ui (x, x, 1, MPFR_RNDN);
         CHECK_ALL (8, !!);
-        mpfr_mul_2exp (x, x, 40, MPFR_RNDN);
+        mpfr_mul_2ui (x, x, 40, MPFR_RNDN);
         CHECK_ALL (9, !!);
 
         /* Check a non-integer number just below a power of two. */
@@ -191,7 +192,8 @@ main (void)
             int inv;
 
             mpfr_set_si_2exp (x, -i, -2, MPFR_RNDN);
-            mpfr_rint (y, x, (mpfr_rnd_t) r);
+            /* for RNDF, it fits if it fits when rounding away from zero */
+            mpfr_rint (y, x, r != MPFR_RNDF ? (mpfr_rnd_t) r : MPFR_RNDA);
             inv = MPFR_NOTZERO (y);
             FTEST (80, inv ^ !, mpfr_fits_ulong_p);
             FTEST (81,       !, mpfr_fits_slong_p);
@@ -257,7 +259,10 @@ main (void)
           mpfr_set_si_2exp (x, -i, -2, MPFR_RNDN);
           mpfr_rint (y, x, (mpfr_rnd_t) r);
           inv = MPFR_NOTZERO (y);
-          FTEST (80, inv ^ !, mpfr_fits_uintmax_p);
+          if (r != MPFR_RNDF)
+            FTEST (80, inv ^ !, mpfr_fits_uintmax_p);
+          else
+            FTEST (80, !!, mpfr_fits_uintmax_p);
           FTEST (81,       !, mpfr_fits_intmax_p);
         }
     }

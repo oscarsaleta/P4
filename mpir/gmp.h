@@ -20,6 +20,11 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #include <stddef.h>   /* This is Bill Hart's fix, but I've applied it only */
 #include <stdarg.h>   /* on Sun Studio */
 #endif 
+#if defined(__has_include)  /* should work on gcc 5.x or better, clang, VS 2015+ */
+# if __has_include(<stdint.h>)
+#  include <stdint.h>
+# endif
+#endif
 #if defined (__cplusplus)
 #include <cstddef>     /* for size_t */
 #include <iosfwd>   /* for std::istream, std::ostream, std::string */
@@ -130,18 +135,18 @@ along with the GNU MP Library.  If not, see http://www.gnu.org/licenses/.  */
 #if defined (__GNUC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(__dllexport__)
 #define __GMP_DECLSPEC_IMPORT  __declspec(__dllimport__)
-#endif
-#if defined (_MSC_VER) || defined (__BORLANDC__)
+#elif defined (_MSC_VER) || defined (__BORLANDC__) || defined (__ORANGEC__)
 #define __GMP_DECLSPEC_EXPORT  __declspec(dllexport)
 #define __GMP_DECLSPEC_IMPORT  __declspec(dllimport)
-#endif
-#ifdef __WATCOMC__
+#elif defined (__WATCOMC__)
 #define __GMP_DECLSPEC_EXPORT  __export
 #define __GMP_DECLSPEC_IMPORT  __import
-#endif
-#ifdef __IBMC__
+#elif defined (__IBMC__)
 #define __GMP_DECLSPEC_EXPORT  _Export
 #define __GMP_DECLSPEC_IMPORT  _Import
+#else
+#define __GMP_DECLSPEC_EXPORT
+#define __GMP_DECLSPEC_IMPORT
 #endif
 #if defined( _MSC_VER )
 #  if defined( MSC_BUILD_DLL )
@@ -938,7 +943,8 @@ __GMP_DECLSPEC void mpz_limbs_finish (mpz_ptr, mp_size_t);
 __GMP_DECLSPEC mpz_srcptr mpz_roinit_n (mpz_ptr, mp_srcptr, mp_size_t);
 #define MPZ_ROINIT_N(xp, xs) {{0, (xs),(xp) }}
 /****** Integer (i.e. Z) routines for intmaax_t/uintmax_t types ******/
-/* if stdint.h is available -- n.b: we do NOT include stdint.h ourselves */
+/* if stdint.h is available -- n.b: we do NOT include stdint.h on old compilers   */
+/* we DO (safely) include stdint.h on modern compilers supporting __has_include() */
 #if defined(INTMAX_MAX)
 #define __GMP_BITS_PER_UINTMAX  (8*sizeof(uintmax_t))
 #define mpz_get_ux __gmpz_get_ux

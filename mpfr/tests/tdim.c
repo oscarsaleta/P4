@@ -1,6 +1,6 @@
 /* Test file for mpfr_dim.
 
-Copyright 2004-2017 Free Software Foundation, Inc.
+Copyright 2004-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -64,7 +64,7 @@ main (void)
   mpfr_set_inf (x, -1);
   mpfr_set_ui (y, 0, MPFR_RNDN);
   mpfr_dim (z, x, y, MPFR_RNDN);
-  if (mpfr_cmp_ui (z, 0) || mpfr_sgn (z) < 0)
+  if (MPFR_NOTZERO (z) || MPFR_IS_NEG (z))
     {
       printf ("Error in mpfr_dim (-Inf, 0)\n");
       exit (1);
@@ -74,7 +74,7 @@ main (void)
   mpfr_set_inf (x, 1);
   mpfr_set_inf (y, 1);
   mpfr_dim (z, x, y, MPFR_RNDN);
-  if (mpfr_cmp_ui (z, 0) || mpfr_sgn (z) < 0)
+  if (MPFR_NOTZERO (z) || MPFR_IS_NEG (z))
     {
       printf ("Error in mpfr_dim (+Inf, +Inf)\n");
       exit (1);

@@ -1,6 +1,6 @@
 /* Test file for in-place operations.
 
-Copyright 2000-2017 Free Software Foundation, Inc.
+Copyright 2000-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -101,8 +101,8 @@ test3 (int (*testfunc)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG
-  printf("checking %s\n", foo);
+#ifdef MPFR_DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
   mpfr_init2 (ref2, prec);
@@ -125,7 +125,8 @@ test3 (int (*testfunc)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_rnd_t),
 
       if (mpfr_compare (res1, ref1))
         {
-          printf ("Error for %s(a, a, c) for ", foo);
+          printf ("Error for %s(a, a, c) with %s for ", foo,
+                  mpfr_print_rnd_mode (rnd));
           DISP("a=",ref2); DISP2(", c=",ref3);
           printf ("expected "); mpfr_dump (ref1);
           printf ("got      "); mpfr_dump (res1);
@@ -173,8 +174,8 @@ test4 (int (*testfunc)(mpfr_ptr, mpfr_srcptr, mpfr_srcptr, mpfr_srcptr,
   mpfr_t res;
   int i, j, k;
 
-#ifdef DEBUG
-  printf("checking %s\n", foo);
+#ifdef MPFR_DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref, prec);
   mpfr_init2 (op1, prec);
@@ -302,8 +303,8 @@ test2ui (int (*testfunc)(mpfr_ptr, mpfr_srcptr, unsigned long int, mpfr_rnd_t),
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG
-  printf("checking %s\n", foo);
+#ifdef MPFR_DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
   mpfr_init2 (ref2, prec);
@@ -347,8 +348,8 @@ testui2 (int (*testfunc)(mpfr_ptr, unsigned long int, mpfr_srcptr, mpfr_rnd_t),
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG
-  printf("checking %s\n", foo);
+#ifdef MPFR_DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
   mpfr_init2 (ref3, prec);
@@ -388,8 +389,8 @@ test2 (int (*testfunc)(mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG
-  printf("checking %s\n", foo);
+#ifdef MPFR_DEBUG
+  printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
   mpfr_init2 (ref2, prec);
@@ -428,7 +429,7 @@ test2a (int (*testfunc)(mpfr_ptr, mpfr_srcptr),
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG
+#ifdef MPFR_DEBUG
   printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
@@ -468,7 +469,7 @@ test3a (int (*testfunc)(mpfr_ptr, mpfr_ptr, mpfr_srcptr, mpfr_rnd_t),
   mpfr_t res1, res2;
   int i;
 
-#ifdef DEBUG
+#ifdef MPFR_DEBUG
   printf ("checking %s\n", foo);
 #endif
   mpfr_init2 (ref1, prec);
@@ -531,8 +532,8 @@ pow_int (mpfr_rnd_t rnd)
   mpfr_t res1;
   int i;
 
-#ifdef DEBUG
-  printf("pow_int\n");
+#ifdef MPFR_DEBUG
+  printf ("pow_int\n");
 #endif
   mpfr_inits2 ((randlimb () % 200) + MPFR_PREC_MIN,
                ref1, ref2, res1, (mpfr_ptr) 0);
@@ -596,8 +597,10 @@ main (void)
 
           test2ui (mpfr_add_ui, "mpfr_add_ui", p, (mpfr_rnd_t) rnd);
           test2ui (mpfr_div_2exp, "mpfr_div_2exp", p, (mpfr_rnd_t) rnd);
+          test2ui (mpfr_div_2ui, "mpfr_div_2ui", p, (mpfr_rnd_t) rnd);
           test2ui (mpfr_div_ui, "mpfr_div_ui", p, (mpfr_rnd_t) rnd);
           test2ui (mpfr_mul_2exp, "mpfr_mul_2exp", p, (mpfr_rnd_t) rnd);
+          test2ui (mpfr_mul_2ui, "mpfr_mul_2ui", p, (mpfr_rnd_t) rnd);
           test2ui (mpfr_mul_ui, "mpfr_mul_ui", p, (mpfr_rnd_t) rnd);
           test2ui (mpfr_pow_ui, "mpfr_pow_ui", p, (mpfr_rnd_t) rnd);
           test2ui (mpfr_sub_ui, "mpfr_sub_ui", p, (mpfr_rnd_t) rnd);

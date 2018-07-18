@@ -1,6 +1,6 @@
 /* mpfr_mul -- multiply two floating-point numbers
 
-Copyright 1999-2017 Free Software Foundation, Inc.
+Copyright 1999-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -163,6 +163,9 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
   mpfr_t ta, tb, tc;
   int inexact1, inexact2;
 
+  if (rnd_mode == MPFR_RNDF)
+    return mpfr_mul2 (a, b, c, rnd_mode);
+
   mpfr_init2 (ta, MPFR_PREC (a));
   mpfr_init2 (tb, MPFR_PREC (b));
   mpfr_init2 (tc, MPFR_PREC (c));
@@ -177,18 +180,25 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
     }
   else if (! mpfr_equal_p (ta, a) || ! SAME_SIGN (inexact1, inexact2))
     {
+      /* We do not have MPFR_PREC_FSPEC, so let's use mpfr_eexp_t and
+         MPFR_EXP_FSPEC since mpfr_prec_t values are guaranteed to be
+         representable in mpfr_exp_t, thus in mpfr_eexp_t. */
       fprintf (stderr, "mpfr_mul return different values for %s\n"
-               "Prec_a = %lu, Prec_b = %lu, Prec_c = %lu\nb = ",
+               "Prec_a = %" MPFR_EXP_FSPEC "d, "
+               "Prec_b = %" MPFR_EXP_FSPEC "d, "
+               "Prec_c = %" MPFR_EXP_FSPEC "d\nb = ",
                mpfr_print_rnd_mode (rnd_mode),
-               MPFR_PREC (a), MPFR_PREC (b), MPFR_PREC (c));
-      mpfr_fprint_binary (stderr, b);
-      fprintf (stderr, "\nc = ");
-      mpfr_fprint_binary (stderr, c);
-      fprintf (stderr, "\nOldMul: ");
-      mpfr_fprint_binary (stderr, ta);
-      fprintf (stderr, "\nNewMul: ");
-      mpfr_fprint_binary (stderr, a);
-      fprintf (stderr, "\nNewInexact = %d | OldInexact = %d\n",
+               (mpfr_eexp_t) MPFR_PREC (a),
+               (mpfr_eexp_t) MPFR_PREC (b),
+               (mpfr_eexp_t) MPFR_PREC (c));
+      mpfr_fdump (stderr, b);
+      fprintf (stderr, "c = ");
+      mpfr_fdump (stderr, c);
+      fprintf (stderr, "OldMul: ");
+      mpfr_fdump (stderr, ta);
+      fprintf (stderr, "NewMul: ");
+      mpfr_fdump (stderr, a);
+      fprintf (stderr, "NewInexact = %d | OldInexact = %d\n",
                inexact1, inexact2);
       MPFR_ASSERTN(0);
     }
@@ -204,6 +214,8 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
 /****** END OF CHECK *******/
 
 /* Multiply 2 mpfr_t */
+
+#if !defined(MPFR_GENERIC_ABI)
 
 /* Special code for prec(a) < GMP_NUMB_BITS and
    prec(b), prec(c) <= GMP_NUMB_BITS.
@@ -237,7 +249,7 @@ mpfr_mul_1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
          needed in asm). Make sure that GCC generates optimized code once
          it supports carry-in. */
       a0 = (a0 << 1) | (sb >> (GMP_NUMB_BITS - 1));
-      sb = sb << 1;
+      sb <<= 1;
     }
   rb = a0 & (MPFR_LIMB_ONE << (sh - 1));
   sb |= (a0 & mask) ^ rb;
@@ -272,10 +284,10 @@ mpfr_mul_1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
  rounding:
   MPFR_EXP (a) = ax; /* Don't use MPFR_SET_EXP since ax might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(ax >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -328,7 +340,7 @@ mpfr_mul_1n (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
          needed in asm). Make sure that GCC generates optimized code once
          it supports carry-in. */
       a0 = (a0 << 1) | (sb >> (GMP_NUMB_BITS - 1));
-      sb = sb << 1;
+      sb <<= 1;
     }
   rb = sb & MPFR_LIMB_HIGHBIT;
   sb = sb & ~MPFR_LIMB_HIGHBIT;
@@ -367,10 +379,10 @@ mpfr_mul_1n (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
  rounding:
   MPFR_EXP (a) = ax; /* Don't use MPFR_SET_EXP since ax might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(ax >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -456,7 +468,7 @@ mpfr_mul_2 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
       ax --;
       h = (h << 1) | (l >> (GMP_NUMB_BITS - 1));
       l = (l << 1) | (sb >> (GMP_NUMB_BITS - 1));
-      sb = sb << 1;
+      sb <<= 1;
       /* no need to shift sb2 since we only want to know if it is zero or not */
     }
   ap[1] = h;
@@ -493,10 +505,10 @@ mpfr_mul_2 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
  rounding:
   MPFR_EXP (a) = ax; /* Don't use MPFR_SET_EXP since ax might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(ax >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -590,7 +602,7 @@ mpfr_mul_3 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
       a2 = (a2 << 1) | (a1 >> (GMP_NUMB_BITS - 1));
       a1 = (a1 << 1) | (a0 >> (GMP_NUMB_BITS - 1));
       a0 = (a0 << 1) | (sb >> (GMP_NUMB_BITS - 1));
-      sb = sb << 1;
+      sb <<= 1;
       /* no need to shift sb2: we only need to know if it is zero or not */
     }
   ap[2] = a2;
@@ -630,10 +642,10 @@ mpfr_mul_3 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
  rounding:
   MPFR_EXP (a) = ax; /* Don't use MPFR_SET_EXP since ax might be < __gmpfr_emin
                         in the cases "goto rounding" above. */
-  if (rb == 0 && sb == 0)
+  if ((rb == 0 && sb == 0) || rnd_mode == MPFR_RNDF)
     {
       MPFR_ASSERTD(ax >= __gmpfr_emin);
-      return 0; /* idem than MPFR_RET(0) but faster */
+      MPFR_RET (0);
     }
   else if (rnd_mode == MPFR_RNDN)
     {
@@ -666,6 +678,8 @@ mpfr_mul_3 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode,
       MPFR_RET(MPFR_SIGN(a));
     }
 }
+
+#endif /* !defined(MPFR_GENERIC_ABI) */
 
 /* Note: mpfr_sqr will call mpfr_mul if bn > MPFR_SQR_THRESHOLD,
    in order to use Mulders' mulhigh, which is handled only here
@@ -764,7 +778,7 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
   /* Note: the exponent of the exact result will be e = bx + cx + ec with
      ec in {-1,0,1} and the following assumes that e is representable. */
 
-  /* FIXME: Useful since we do an exponent check after ?
+  /* FIXME: Useful since we do an exponent check after?
    * It is useful iff the precision is big, there is an overflow
    * and we are doing further mults...*/
 #ifdef HUGE
@@ -837,10 +851,10 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
       if (MPFR_UNLIKELY (b1 == 0))
         mpn_lshift (tmp, tmp, tn, 1); /* tn <= k, so no stack corruption */
     }
-  else
+  else /* bn >= cn and bn >= 3 */
     /* Mulders' mulhigh. This code can also be used via mpfr_sqr,
        hence the tests b != c. */
-    if (MPFR_UNLIKELY (bn > (threshold = b != c ?
+    if (MPFR_UNLIKELY (cn > (threshold = b != c ?
                              MPFR_MUL_THRESHOLD : MPFR_SQR_THRESHOLD)))
       {
         mp_limb_t *bp, *cp;
@@ -893,7 +907,9 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
               }
             else
               /* Call mpfr_mul instead of mpfr_sqr as the precision
-                 is probably still high enough. */
+                 is probably still high enough. It is thus better to call
+                 mpfr_mul again, but it should not give an infinite loop
+                 if we call mpfr_sqr. */
               return mpfr_mul (a, b_tmp, b_tmp, rnd_mode);
           }
 
@@ -930,9 +946,27 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
               }
             if (b != c)
               {
+#if GMP_NUMB_BITS <= 32
                 if (cn > n)
-                  cp --; /* FIXME: Could this happen? */
+                  cp --; /* This can only happen on a 32-bit computer,
+                            and is very unlikely to happen.
+                            Indeed, since n = MIN (an + 1, cn), with
+                            an = MPFR_LIMB_SIZE(a), we can have cn > n
+                            only when n = an + 1 < cn.
+                            We are in the case aq > p - 5, with
+                            aq = PREC(a) = an*W - sh, with W = GMP_NUMB_BITS
+                            and 0 <= sh < W, and p = n*W - ceil(log2(n+2)),
+                            thus an*W - sh > n*W - ceil(log2(n+2)) - 5.
+                            Thus n < an + (ceil(log2(n+2)) + 5 - sh)/W.
+                            To get n = an + 1, we need
+                            ceil(log2(n+2)) + 5 - sh > W, thus since sh>=0
+                            we need ceil(log2(n+2)) + 5 > W.
+                            With W=32 this can only happen for n>=2^27-1,
+                            thus for a precision of 2^32-64 for a,
+                            and with W=64 for n>=2^59-1, which would give
+                            a precision >= 2^64. */
                 else
+#endif
                   {
                     cp = MPFR_TMP_LIMBS_ALLOC (n + 1);
                     cp[0] = 0;
@@ -959,15 +993,8 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
           mpfr_mulhigh_n (tmp + k - 2 * n, bp, cp, n);
         else
           mpfr_sqrhigh_n (tmp + k - 2 * n, bp, n);
-        /* now tmp[0]..tmp[k-1] contains the product of both mantissa,
-           with tmp[k-1]>=2^(GMP_NUMB_BITS-2) */
-        /* [VL] FIXME: This cannot be true: mpfr_mulhigh_n only
-           depends on pointers and n. As k can be arbitrarily larger,
-           the result cannot depend on k. And indeed, with GMP compiled
-           with --enable-alloca=debug, valgrind was complaining, at
-           least because MPFR_RNDRAW at the end tried to compute the
-           sticky bit even when not necessary; this problem is fixed,
-           but there's at least something wrong with the comment above. */
+        /* now tmp[k-n]..tmp[k-1] contains an approximation of the n upper
+           limbs of the product, with tmp[k-1] >= 2^(GMP_NUMB_BITS-2) */
         b1 = tmp[k-1] >> (GMP_NUMB_BITS - 1); /* msb from the product */
 
         /* If the mantissas of b and c are uniformly distributed in (1/2, 1],
@@ -978,12 +1005,18 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
              tmp[k-n-1..k-1], thus we shift only those limbs */
           mpn_lshift (tmp + k - n - 1, tmp + k - n - 1, n + 1, 1);
         tmp += k - tn;
+        /* now the approximation is in tmp[tn-n]...tmp[tn-1] */
         MPFR_ASSERTD (MPFR_LIMB_MSB (tmp[tn-1]) != 0);
+
+        /* for RNDF, we simply use RNDZ, since anyway here we multiply numbers
+           with large precisions, thus the overhead of RNDZ is small */
+        if (rnd_mode == MPFR_RNDF)
+          rnd_mode = MPFR_RNDZ;
 
         /* if the most significant bit b1 is zero, we have only p-1 correct
            bits */
-        if (MPFR_UNLIKELY (!mpfr_round_p (tmp, tn, p + b1 - 1, aq
-                                          + (rnd_mode == MPFR_RNDN))))
+        if (MPFR_UNLIKELY (!mpfr_round_p (tmp, tn, p + b1 - 1,
+                                          aq + (rnd_mode == MPFR_RNDN))))
           {
             tmp -= k - tn; /* tmp may have changed, FIX IT!!!!! */
             goto full_multiply;
@@ -1008,7 +1041,7 @@ mpfr_mul (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
       }
 
   ax2 = ax + (mpfr_exp_t) (b1 - 1);
-  MPFR_RNDRAW (inexact, a, tmp, bq+cq, rnd_mode, sign, ax2++);
+  MPFR_RNDRAW (inexact, a, tmp, bq + cq, rnd_mode, sign, ax2++);
   MPFR_TMP_FREE (marker);
   MPFR_EXP (a) = ax2; /* Can't use MPFR_SET_EXP: Expo may be out of range */
   MPFR_SET_SIGN (a, sign);

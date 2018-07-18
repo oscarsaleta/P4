@@ -1,6 +1,6 @@
 /*  This file is part of P4
  *
- *  Copyright (C) 1996-2017  J.C. Artés, P. De Maesschalck, F. Dumortier
+ *  Copyright (C) 1996-2018  J.C. Artés, P. De Maesschalck, F. Dumortier
  *                           C. Herssens, J. Llibre, O. Saleta, J. Torregrosa
  *
  *  P4 is free software: you can redistribute it and/or modify
@@ -23,56 +23,64 @@
 //
 // -----------------------------------------------------------------------
 
-#include "math_polynom.h"
+#include "math_polynom.hpp"
 
-#include "file_tab.h"
+#include <QByteArray>
+#include <QString>
 
 #include <cmath>
 
+#include "structures.hpp"
+
 // -----------------------------------------------------------------------
-//                              EVAL_TERM1
+//          eval_term1
 // -----------------------------------------------------------------------
-//
 // Calculates p(t) for a polynomial p and a value t.
-
-double eval_term1(P4POLYNOM1 p, double t)
+double eval_term1(const P4Polynom::term1 *p, const double t)
 {
-    double s;
-
-    s = 0;
+    double s{0};
     while (p != nullptr) {
         if (p->exp != 0)
-            s += (p->coeff) * pow(t, (double)(p->exp));
+            s += (p->coeff) * pow(t, static_cast<double>(p->exp));
         else
             s += p->coeff;
-
         p = p->next_term1;
     }
-
     return s;
 }
 
 // -----------------------------------------------------------------------
-//                              EVAL_TERM2
+//          eval_term1 (vector version)
 // -----------------------------------------------------------------------
-//
-// Calculates f(x,y) for a polynomial f and values x and y.
-//
-// value refers to an array containing x and y: value[0]=x, value[1]=y
-
-double eval_term2(P4POLYNOM2 f, double *value)
+// Calculates p(t) for a polynomial p and a value t.
+double eval_term1(const std::vector<P4Polynom::term1> &p, const double t)
 {
-    double s;
+    double s{0};
+    for (auto const &it : p) {
+        if (it.exp != 0)
+            s += (it.coeff) * pow(t, static_cast<double>(it.exp));
+        else
+            s += it.coeff;
+    }
+    return s;
+}
 
-    s = 0;
+// -----------------------------------------------------------------------
+//          eval_term2
+// -----------------------------------------------------------------------
+// Calculates f(x,y) for a polynomial f and values x and y.
+// value refers to an array containing x and y: value[0]=x, value[1]=y
+double eval_term2(const P4Polynom::term2 *f, const double *value)
+{
+    double s{0};
     while (f != nullptr) {
         if (f->exp_x != 0 && f->exp_y != 0)
-            s += f->coeff * pow(value[0], (double)(f->exp_x)) *
-                 pow(value[1], (double)(f->exp_y));
+            s += f->coeff * pow(value[0], static_cast<double>(f->exp_x)) *
+                 pow(value[1], static_cast<double>(f->exp_y));
         else if (f->exp_x != 0)
-            s += f->coeff * pow(value[0], (double)(f->exp_x));
+            s += f->coeff * pow(value[0], static_cast<double>(f->exp_x));
         else if (f->exp_y != 0)
-            s += f->coeff * pow(value[1], (double)(f->exp_y));
+            s += f->coeff * pow(value[1], static_cast<double>(f->exp_y));
         else
             s += f->coeff;
 
@@ -83,106 +91,97 @@ double eval_term2(P4POLYNOM2 f, double *value)
 }
 
 // -----------------------------------------------------------------------
-//                              EVAL_TERM3
+//          eval_term2 (vector version)
 // -----------------------------------------------------------------------
-//
-// Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
-// of r and theta.
-//
-// value refers to an array containing r and theta: value[0]=r, value[1]=theta
-
-double eval_term3(P4POLYNOM3 F, double *value)
+// Calculates f(x,y) for a polynomial f and values x and y.
+// value refers to an array containing x and y: value[0]=x, value[1]=y
+double eval_term2(const std::vector<P4Polynom::term2> &f, const double *value)
 {
-    double s;
-    double t;
-    double Co, Si;
-
-    s = 0;
-    Co = cos(value[1]);
-    Si = sin(value[1]);
-
-    while (F != nullptr) {
-        if (F->exp_r != 0)
-            t = pow(value[0], (double)(F->exp_r));
+    double s{0};
+    for (auto const &it : f) {
+        if (it.exp_x != 0 && it.exp_y != 0)
+            s += it.coeff * pow(value[0], static_cast<double>(it.exp_x)) *
+                 pow(value[1], static_cast<double>(it.exp_y));
+        else if (it.exp_x != 0)
+            s += it.coeff * pow(value[0], static_cast<double>(it.exp_x));
+        else if (it.exp_y != 0)
+            s += it.coeff * pow(value[1], static_cast<double>(it.exp_y));
         else
-            t = 1.0;
-
-        if (F->exp_Co)
-            t *= pow(Co, (double)(F->exp_Co));
-
-        if (F->exp_Si)
-            t *= pow(Si, (double)(F->exp_Si));
-
-        s += t * F->coeff;
-        F = F->next_term3;
+            s += it.coeff;
     }
 
     return s;
 }
 
 // -----------------------------------------------------------------------
-//                              DELETE_TERM1
+//          eval_term3
 // -----------------------------------------------------------------------
-
-void delete_term1(P4POLYNOM1 p)
+// Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
+// of r and theta.
+// value refers to an array containing r and theta: value[0]=r, value[1]=theta
+double eval_term3(const P4Polynom::term3 *F, const double *value)
 {
-    P4POLYNOM1 q;
+    double s{0};
+    double t;
+    double Co{cos(value[1])};
+    double Si{sin(value[1])};
 
-    while (p != nullptr) {
-        q = p;
-        p = p->next_term1;
-        delete q;
-        q = nullptr;
+    while (F != nullptr) {
+        if (F->exp_r != 0)
+            t = pow(value[0], static_cast<double>(F->exp_r));
+        else
+            t = 1.0;
+        if (F->exp_Co != 0)
+            t *= pow(Co, static_cast<double>(F->exp_Co));
+        if (F->exp_Si != 0)
+            t *= pow(Si, static_cast<double>(F->exp_Si));
+        s += t * F->coeff;
+
+        F = F->next_term3;
     }
+    return s;
 }
 
 // -----------------------------------------------------------------------
-//                              DELETE_TERM2
+//          eval_term3 (vector version)
 // -----------------------------------------------------------------------
-
-void delete_term2(P4POLYNOM2 p)
+// Calculates F( r, cos(theta), sin(theta) ) for a polynomial f and values
+// of r and theta.
+// value refers to an array containing r and theta: value[0]=r, value[1]=theta
+double eval_term3(const std::vector<P4Polynom::term3> &F, const double *value)
 {
-    P4POLYNOM2 q;
-    while (p != nullptr) {
-        q = p;
-        p = p->next_term2;
-        delete q;
-        q = nullptr;
+    double s{0};
+    double t;
+    double Co{cos(value[1])};
+    double Si{sin(value[1])};
+
+    for (auto const &it : F) {
+        if (it.exp_r != 0)
+            t = pow(value[0], static_cast<double>(it.exp_r));
+        else
+            t = 1.0;
+        if (it.exp_Co != 0)
+            t *= pow(Co, static_cast<double>(it.exp_Co));
+        if (it.exp_Si != 0)
+            t *= pow(Si, static_cast<double>(it.exp_Si));
+        s += t * it.coeff;
     }
+    return s;
 }
 
 // -----------------------------------------------------------------------
-//                              DELETE_TERM3
+//          dumpPoly1
 // -----------------------------------------------------------------------
-
-void delete_term3(P4POLYNOM3 p)
-{
-    P4POLYNOM3 q;
-
-    while (p != nullptr) {
-        q = p;
-        p = p->next_term3;
-        delete q;
-        q = nullptr;
-    }
-}
-
-// -----------------------------------------------------------------------
-//                              DUMPPOLY1
-// -----------------------------------------------------------------------
-//
 // Make a string representation of a polynomial in one variable.
 // The variable name to be used is given as a parameter
-
-const char *dumpPoly1(P4POLYNOM1 f, const char *x)
+const char *dumpPoly1(P4Polynom::term1 *f, const char *x)
 {
     static QByteArray _s;
 
     double c;
     int cx;
-    QString s;
+    QString s{""};
     QString t;
-    s = "";
 
     if (f == nullptr)
         return "0 (null)";
@@ -190,25 +189,24 @@ const char *dumpPoly1(P4POLYNOM1 f, const char *x)
     while (f != nullptr) {
         c = f->coeff;
         cx = f->exp;
-
         if ((c != 1 && c != -1) || cx == 0) {
-            if (s.length() == 0) {
-                t.sprintf("%g", (float)c);
-            } else {
+            if (s.isEmpty())
+                t.sprintf("%g", c);
+            else {
                 if (c >= 0)
-                    t.sprintf(" + %g", (float)c);
+                    t.sprintf(" + %g", c);
                 else
-                    t.sprintf(" - %g", -(float)c);
+                    t.sprintf(" - %g", c);
             }
             s += t;
         } else {
             if (c == -1) {
-                if (s.length() == 0)
+                if (s.isEmpty())
                     s = "-";
                 else
                     s += " - ";
             } else if (c == 1) {
-                if (s.length() != 0)
+                if (!s.isEmpty())
                     s += " + ";
             }
         }
@@ -217,24 +215,19 @@ const char *dumpPoly1(P4POLYNOM1 f, const char *x)
                 t = x;
             else
                 t.sprintf("%s^%d", x, cx);
-            s += t;
         }
-
         f = f->next_term1;
     }
-
     _s = s.toLatin1();
-    return (const char *)_s;
+    return _s.constData();
 }
 
 // -----------------------------------------------------------------------
-//                              DUMPPOLY2
+//          dumpPoly2
 // -----------------------------------------------------------------------
-//
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
-
-const char *dumpPoly2(P4POLYNOM2 f, const char *x, const char *y)
+const char *dumpPoly2(P4Polynom::term2 *f, const char *x, const char *y)
 {
     static QByteArray _s;
 
@@ -253,23 +246,23 @@ const char *dumpPoly2(P4POLYNOM2 f, const char *x, const char *y)
         cy = f->exp_y;
 
         if ((c != 1 && c != -1) || (cx == 0 && cy == 0)) {
-            if (s.length() == 0) {
-                t.sprintf("%g", (float)c);
+            if (s.isEmpty()) {
+                t.sprintf("%g", c);
             } else {
                 if (c >= 0)
-                    t.sprintf(" + %g", (float)c);
+                    t.sprintf(" + %g", c);
                 else
-                    t.sprintf(" - %g", -(float)c);
+                    t.sprintf(" - %g", -c);
             }
             s += t;
         } else {
             if (c == -1) {
-                if (s.length() == 0)
+                if (s.isEmpty())
                     s = "-";
                 else
                     s += " - ";
             } else if (c == 1) {
-                if (s.length() != 0)
+                if (!s.isEmpty())
                     s += " + ";
             }
         }
@@ -287,21 +280,19 @@ const char *dumpPoly2(P4POLYNOM2 f, const char *x, const char *y)
                 t.sprintf("%s^%d", y, cy);
             s += t;
         }
-
         f = f->next_term2;
     }
     _s = s.toLatin1();
-    return (const char *)_s;
+    return _s.constData();
 }
 
 // -----------------------------------------------------------------------
-//                              DUMPPOLY3
+//          dumpPoly3
 // -----------------------------------------------------------------------
-//
 // Make a string representation of a polynomial in two variables.
 // The variable names to be used are given as a parameter
-
-const char *dumpPoly3(P4POLYNOM3 f, const char *x, const char *y, const char *z)
+const char *dumpPoly3(P4Polynom::term3 *f, const char *x, const char *y,
+                      const char *z)
 {
     static QByteArray _s;
 
@@ -322,12 +313,12 @@ const char *dumpPoly3(P4POLYNOM3 f, const char *x, const char *y, const char *z)
 
         if ((c != 1 && c != -1) || (cx == 0 && cy == 0 && cz == 0)) {
             if (s.length() == 0) {
-                t.sprintf("%g", (float)c);
+                t.sprintf("%g", c);
             } else {
                 if (c >= 0)
-                    t.sprintf(" + %g", (float)c);
+                    t.sprintf(" + %g", c);
                 else
-                    t.sprintf(" - %g", -(float)c);
+                    t.sprintf(" - %g", -c);
             }
             s += t;
         } else {
@@ -362,21 +353,19 @@ const char *dumpPoly3(P4POLYNOM3 f, const char *x, const char *y, const char *z)
                 t.sprintf("%s^%d", z, cz);
             s += t;
         }
-
         f = f->next_term3;
     }
-
     _s = s.toLatin1();
-    return (const char *)_s;
+    return _s.constData();
 }
 
-// -----------------------------------------------------------------------
-// -----------------------------------------------------------------------
-//
 // Following are used in preparation of GCF :
 
-char *printterm2(char *buf, struct term2 *f, bool isfirst, const char *x,
-                 const char *y)
+// -----------------------------------------------------------------------
+//          printterm2
+// -----------------------------------------------------------------------
+char *printterm2(char *buf, const P4Polynom::term2 *f, bool isfirst,
+                 const char *x, const char *y)
 {
     if (f->coeff == 0) {
         if (isfirst)
@@ -417,9 +406,9 @@ char *printterm2(char *buf, struct term2 *f, bool isfirst, const char *x,
     }
 
     if (isfirst)
-        sprintf(buf, "%g", (float)(f->coeff));
+        sprintf(buf, "%g", f->coeff);
     else
-        sprintf(buf, "%+g", (float)(f->coeff));
+        sprintf(buf, "%+g", f->coeff);
 
     if (f->exp_x != 0) {
         if (f->exp_x != 1)
@@ -437,8 +426,11 @@ char *printterm2(char *buf, struct term2 *f, bool isfirst, const char *x,
     return buf;
 }
 
-char *printterm3(char *buf, struct term3 *f, bool isfirst, const char *r,
-                 const char *Co, const char *Si)
+// -----------------------------------------------------------------------
+//          printterm3
+// -----------------------------------------------------------------------
+char *printterm3(char *buf, const P4Polynom::term3 *f, bool isfirst,
+                 const char *r, const char *Co, const char *Si)
 {
     if (f->coeff == 0) {
         if (isfirst)
@@ -522,4 +514,139 @@ char *printterm3(char *buf, struct term3 *f, bool isfirst, const char *r,
     }
 
     return buf;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm1
+// -----------------------------------------------------------------------
+bool readTerm1(FILE *fp, P4Polynom::term1 *p, int N)
+{
+    auto q = p;
+
+    if (N < 1)
+        return false;
+
+    if (fscanf(fp, "%d %lf", &(p->exp), &(p->coeff)) != 2 || p->exp < 0)
+        return false;
+
+    for (int i = 2; i <= N; i++) {
+        p->next_term1 = new P4Polynom::term1;
+        p = p->next_term1;
+        if (fscanf(fp, "%d %lf", &(p->exp), &(p->coeff)) != 2 || p->exp < 0) {
+            delete q->next_term1;
+            q->next_term1 = nullptr;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm1 (vector version)
+// -----------------------------------------------------------------------
+bool readTerm1(FILE *fp, std::vector<P4Polynom::term1> &p, int N)
+{
+    int exp;
+    double coeff;
+    p.clear();
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %lf", &exp, &coeff) != 2 || exp < 0)
+            return false;
+        p.emplace_back(exp, coeff);
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm2
+// -----------------------------------------------------------------------
+bool readTerm2(FILE *fp, P4Polynom::term2 *p, int N)
+{
+    auto q = p;
+
+    if (N < 1)
+        return false;
+
+    if (fscanf(fp, "%d %d %lf", &(p->exp_x), &(p->exp_y), &(p->coeff)) != 3 ||
+        p->exp_x < 0 || p->exp_y < 0)
+        return false;
+
+    for (int i = 2; i <= N; i++) {
+        p->next_term2 = new P4Polynom::term2;
+        p = p->next_term2;
+        if (fscanf(fp, "%d %d %lf", &(p->exp_x), &(p->exp_y), &(p->coeff)) !=
+                3 ||
+            p->exp_x < 0 || p->exp_y < 0) {
+            delete q->next_term2;
+            q->next_term2 = nullptr;
+            return false;
+        }
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm2 (vector version)
+// -----------------------------------------------------------------------
+bool readTerm2(FILE *fp, std::vector<P4Polynom::term2> &p, int N)
+{
+    int xx, xy;
+    double coeff;
+
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %d %lf", &xx, &xy, &coeff) != 3 || xx < 0 || xy < 0)
+            return false;
+        p.emplace_back(xx, xy, coeff);
+    }
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm3
+// -----------------------------------------------------------------------
+bool readTerm3(FILE *fp, P4Polynom::term3 *p, int N)
+{
+    auto q = p;
+
+    if (N < 1)
+        return false;
+
+    if (fscanf(fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si),
+               &(p->coeff)) != 4 ||
+        p->exp_r < 0 || p->exp_Co < 0 || p->exp_Si < 0)
+        return false;
+
+    for (int i = 2; i <= N; i++) {
+        p->next_term3 = new P4Polynom::term3;
+        p = p->next_term3;
+        if (fscanf(fp, "%d %d %d %lf", &(p->exp_r), &(p->exp_Co), &(p->exp_Si),
+                   &(p->coeff)) != 4 ||
+            p->exp_r < 0 || p->exp_Co < 0 || p->exp_Si < 0) {
+            delete q->next_term3;
+            q->next_term3 = nullptr;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// -----------------------------------------------------------------------
+//          readTerm3 (vector version)
+// -----------------------------------------------------------------------
+bool readTerm3(FILE *fp, std::vector<P4Polynom::term3> &p, int N)
+{
+    int xr, xc, xs;
+    double coeff;
+
+    for (int i = 0; i < N; i++) {
+        if (fscanf(fp, "%d %d %d %lf", &xr, &xc, &xs, &coeff) != 4 || xr < 0 ||
+            xc < 0 || xs < 0)
+            return false;
+        p.emplace_back(xr, xc, xs, coeff);
+    }
+
+    return true;
 }

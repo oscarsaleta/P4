@@ -1,6 +1,6 @@
 /* Test file for multiple mpfr.h inclusion and intmax_t related functions
 
-Copyright 2010-2017 Free Software Foundation, Inc.
+Copyright 2010-2018 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -29,7 +29,7 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #endif
 
 #ifdef MPFR_USE_MINI_GMP
-#include "mpfr-impl.h"
+#include "mpfr-test.h"
 #endif
 
 /* One of the goals of this test is to detect potential issues with the
