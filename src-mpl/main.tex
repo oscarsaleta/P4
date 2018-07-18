@@ -472,7 +472,7 @@ prepareIsoclines := proc()
     else
         user_precision := 8;
     fi;
-    rounded := user_numeric_;
+    rounded := user_numeric;
     openfile(isoclines_table);
     write_isoclines(user_isoclines);
     closefile(isoclines_table);
