@@ -54,6 +54,8 @@ class P4IsoclinesDlg : public QWidget
 
     QRadioButton *btn_dots_;
     QRadioButton *btn_dashes_;
+
+    QLineEdit *edt_vfselect_;
     QLineEdit *edt_value_;
     QLineEdit *edt_points_;
     QLineEdit *edt_precis_;

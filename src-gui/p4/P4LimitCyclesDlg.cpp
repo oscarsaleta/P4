@@ -72,18 +72,18 @@ P4LimitCyclesDlg::P4LimitCyclesDlg(P4PlotWnd *plt, P4Sphere *sp)
     btn_delall_ = new QPushButton{"Delete &All LC", this};
 
 #ifdef TOOLTIPS
-    edt_x0_->setToolTip(
-        "Start point of the transverse section.\n"
-        "You can also click on the plot window to fill this field.");
-    edt_y0_->setToolTip(
-        "Start point of the transverse section.\n"
-        "You can also click on the plot window to fill this field.");
-    edt_x1_->setToolTip(
-        "End point of the transverse section.\n"
-        "You can also click on the plot window to fill this field.");
-    edt_y1_->setToolTip(
-        "End point of the transverse section.\n"
-        "You_ can also click on the plot window to fill this field.");
+    edt_x0_->setToolTip("Start point of the transverse section.\n"
+                        "You can also Alt+click and drag on the plot\n"
+                        "window to fill this field.");
+    edt_y0_->setToolTip("Start point of the transverse section.\n"
+                        "You can also Alt+click and drag on the plot\n"
+                        "window to fill this field.");
+    edt_x1_->setToolTip("End point of the transverse section.\n"
+                        "You can also Alt+click and drag on the plot\n"
+                        "window to fill this field.");
+    edt_y1_->setToolTip("Start point of the transverse section.\n"
+                        "You can also Alt+click and drag on the plot\n"
+                        "window to fill this field.");
     spin_numpoints_->setToolTip("Number of points to integrate for each orbit");
     edt_grid_->setToolTip(
         "Diameter of intervals dividing the transverse section");

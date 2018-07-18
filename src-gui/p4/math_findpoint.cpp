@@ -53,7 +53,6 @@ static double find_distance_saddle(P4Singularities::saddle *point, double x,
     double d, pcoord[3], ucoord[2];
 
     if (point != nullptr) {
-
         do {
             if (point->position == P4Singularities::position_virtual)
                 continue;

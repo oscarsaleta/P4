@@ -203,6 +203,10 @@ void P4InputVF::reset(int n)
     vfRegions_.clear();
     numVFRegions_ = 0;
 
+    arbitraryCurve_ = QString{};
+    isoclines_ = QString{};
+    isoclinesVF_ = 0;
+
     changed_ = false;
     evaluated_ = false;
     evaluating_ = false;
@@ -227,9 +231,6 @@ void P4InputVF::reset(int n)
     }
 
     numVF_ = n;
-
-    qDebug() << "parvalue size" << parvalue_.size();
-    qDebug() << "numvf" << numVF_;
 }
 
 // -----------------------------------------------------------------------
@@ -354,8 +355,7 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ < 0 ||
-            numParams_ > MAXNUMPARAMS) {
+        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
@@ -1182,26 +1182,20 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
 // parametres a la gui
 void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
-    QString myisoclines;
     QString lbl;
     QString val;
 
-    fp << "user_isoclines := [";
-    for (auto s : isoclines_) {
-        myisoclines = convertMapleUserParameterLabels(s);
-        fp << s; // FIXME
-    }
+    auto myisoclines = convertMapleUserParameterLabels(isoclines_);
+    fp << "user_isoclines := " << myisoclines << ":\n";
 
     for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-        // FIXME: en aquest cas segur q està malament perquè hem de fer-ho amb
-        // cada VF per separat (cada VF té les seves isoclines)
-        val = convertMapleUserParameterLabels(parvalue_[0][k]);
+        val = convertMapleUserParameterLabels(parvalue_[isoclinesVF_][k]);
 
         if (lbl.length() == 0)
             continue;
 
-        if (!numeric_[0]) {
+        if (!numeric_[isoclinesVF_]) {
             fp << lbl << " := " << val << ":\n";
         } else {
             fp << lbl << " := evalf( " << val << " ):\n";
@@ -1531,7 +1525,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
         fp << "user_precision := 8:\n"
               "try findAllSeparatingCurves() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-              "lastexception[2] );\n"
+              "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
               "finally:\n"
               "  closeallfiles();\n"
               "  if normalexit=0 then\n"
@@ -1543,7 +1537,7 @@ void P4InputVF::prepareFile(QTextStream &fp, bool prepareforcurves)
     } else {
         fp << "try p4main() catch:\n"
               "  printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-              "lastexception[2] );\n"
+              "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
               "finally:\n"
               "  closeallfiles();\n"
               "  if normalexit=0 then\n"
@@ -1633,7 +1627,7 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
 
     fp << "try prepareArbitraryCurve() catch:\n"
           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-          "lastexception[2] );\n"
+          "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
           "finally: closeallfiles();\n"
           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
           "try:\n";
@@ -1645,7 +1639,6 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
 void P4InputVF::prepareIsoclinesFile(QTextStream &fp)
 {
     QString name_isoclinestab;
-    QString s;
 
     QString mainmaple;
     QString user_bindir;
@@ -1716,7 +1709,7 @@ void P4InputVF::prepareIsoclinesFile(QTextStream &fp)
 
     fp << "try prepareIsoclines() catch:\n"
           "printf( \"! Error (\%a) \%a\\n\", lastexception[1], "
-          "lastexception[2] );\n"
+          "StringTools:-FormatMessage(lastexception[2..-1]) );\n"
           "finally: closeallfiles();\n"
           "if normalexit=0 then `quit`(0); else `quit(1)` end if: end "
           "try:\n";
@@ -3200,8 +3193,6 @@ void P4InputVF::addVectorField()
     if (hasCommonInt(weakness_))
         weakness_[numVF_] = commonInt(weakness_);
 
-    qDebug() << "parvalues size:" << parvalue_.size();
-    qDebug() << "numvf" << numVF_;
     for (i = 0; i < MAXNUMPARAMS; i++)
         if (hasCommonParValue(i))
             parvalue_[numVF_][i] = commonParValue(i);
@@ -3677,12 +3668,19 @@ void P4InputVF::resampleIsoclines(int i)
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
+    //    for (auto &isoc : gVFResults.vf_[i]->isocline_vector_) {
+    //        for (auto &it = std::begin(isoc.points); it !=
+    //        std::end(isoc.points);
+    //             ++it) {
+    //            it->dashes = 0;
+    //            if (getVFIndex_sphere(it->pcoord) != i)
+    //                isoc.points.erase(it);
+    //        }
+    //    }
     for (auto &isoc : gVFResults.vf_[i]->isocline_vector_) {
-        for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
-             ++it) {
-            it->dashes = 0;
-            if (getVFIndex_sphere(it->pcoord) != i)
-                isoc.points.erase(it);
+        for (auto &pts : isoc.points) {
+            if (getVFIndex_sphere(pts.pcoord) != i)
+                pts.dashes = 0;
         }
     }
 }

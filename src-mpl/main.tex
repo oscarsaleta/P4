@@ -60,7 +60,7 @@ user_removecmd := "rm":
 user_sepexe := "separatrice":
 user_exeprefix := "cmd /c ":
 
-user_numeric := false:
+user_numeric := true:
 user_precision := 8:
 user_precision0 := 0:
 epsilon := 0.01:
@@ -87,7 +87,7 @@ user_gcf := 0:
 all_crit_points := 0:
 save_all := false:
 
-user_numeric_pieces := [false]:
+user_numeric_pieces := [true]:
 user_precision_pieces := [8]:
 epsilon_pieces := [0.01]:
 test_sep_pieces := [0]:
@@ -441,8 +441,17 @@ chooseParameterSet := proc(r)
 end proc:
 
 prepareArbitraryCurve := proc()
-    global user_curve, normalexit, rounded;
-    rounded := user_numeric;
+    global user_curve, normalexit, rounded, user_numeric, user_precision;
+    if type(user_numeric_pieces,list) then
+        user_numeric := user_numeric_pieces[1];
+    else
+        user_numeric := true;
+    fi;
+    if type(user_precision_pieces,list) then
+        user_precision := user_precision_pieces[1];
+    else
+        user_precision := 8;
+    fi;
     openfile(curve_table);
     write_curve(user_curve);
     closefile(curve_table);
@@ -452,9 +461,22 @@ prepareArbitraryCurve := proc()
 end:
 
 prepareIsoclines := proc()
-    global user_isoclines, normalexit;
+    global user_isoclines, normalexit, rounded, user_numeric, user_precision;
+    if type(user_numeric_pieces,list) then
+        user_numeric := user_numeric_pieces[1];
+    else
+        user_numeric := true;
+    fi;
+    if type(user_precision_pieces,list) then
+        user_precision := user_precision_pieces[1];
+    else
+        user_precision := 8;
+    fi;
+    rounded := user_numeric;
     openfile(isoclines_table);
     write_isoclines(user_isoclines);
+    closefile(isoclines_table);
+    openfile(terminal);
     writef("\nWe have finished writing the isoclines as C++ readable lists.\n");
     normalexit := 1;
 end:
@@ -463,7 +485,7 @@ save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
         normalexit, prepareArbitraryCurve, prepareIsoclines, "main.m");
 
 save(chooseParameterSet, ishamiltonian, p4main, CheckIfGoodPolynomial,
-        prepareArbitraryCurve,
+        prepareArbitraryCurve, prepareIsoclines,
 #tools
         Hardware_precision, reduce_coeff, write_number, reduce_llt,
         reduce_evalf, reduce_gt, reduce_gteq, reduce_eeq, reduce_nneq,

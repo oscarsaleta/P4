@@ -22,6 +22,7 @@
 #include <memory>
 
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
@@ -202,6 +203,10 @@ void P4InputVF::reset(int n)
     vfRegions_.clear();
     numVFRegions_ = 0;
 
+    arbitraryCurve_ = QString{};
+    isoclines_ = QString{};
+    isoclinesVF_ = 0;
+
     changed_ = false;
     evaluated_ = false;
     evaluating_ = false;
@@ -350,7 +355,8 @@ bool P4InputVF::load()
         if (epsilon_[0] == "(null)")
             epsilon_[0] = "";
 
-        if (fscanf(fp, "%d\n", &numParams_) != 1) {
+        if (fscanf(fp, "%u\n", &numParams_) != 1 || numParams_ < 0 ||
+            numParams_ > MAXNUMPARAMS) {
             reset(1);
             fclose(fp);
             return false;
@@ -547,40 +553,38 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             } else {
-                bool value{(flag_numeric == 0) ? false : true};
-                numeric_.push_back(std::move(value));
-                precision_.push_back(std::move(aux));
-                epsilon_.emplace_back(scanbuf);
-                value = ((flag_testsep == 0) ? false : true);
-                testsep_.push_back(std::move(value));
+                numeric_[k] = ((flag_numeric == 0) ? false : true);
+                precision_[k] = aux;
+                epsilon_[k] = QString{scanbuf};
+                testsep_[k] = ((flag_testsep == 0) ? false : true);
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                taylorlevel_.push_back(std::move(aux));
+                taylorlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                numericlevel_.push_back(std::move(aux));
+                numericlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                maxlevel_.push_back(std::move(aux));
+                maxlevel_[k] = aux;
             }
             if (fscanf(fp, "%d\n", &aux) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             } else {
-                weakness_.push_back(std::move(aux));
+                weakness_[k] = aux;
             }
 
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
@@ -588,19 +592,19 @@ bool P4InputVF::load()
                 fclose(fp);
                 return false;
             }
-            xdot_.emplace_back(scanbuf);
+            xdot_[k] = QString{scanbuf};
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            ydot_.emplace_back(scanbuf);
+            ydot_[k] = QString{scanbuf};
             if (fscanf(fp, "%[^\n]\n", scanbuf) != 1) {
                 reset(1);
                 fclose(fp);
                 return false;
             }
-            gcf_.emplace_back(scanbuf);
+            gcf_[k] = QString{scanbuf};
 
             if (xdot_[k] == "(null)")
                 xdot_[k] = "";
@@ -620,11 +624,14 @@ bool P4InputVF::load()
                 }
                 auxvec.emplace_back(scanbuf);
             }
-            parvalue_.push_back(auxvec);
-            /*for (i = numParams_; i < MAXNUMPARAMS; i++)
-                parvalue_[k].push_back(QString{});*/
+            parvalue_[k] = auxvec;
+            for (unsigned int i = numParams_; i < MAXNUMPARAMS; i++)
+                parvalue_[k].push_back(QString{});
         }
     }
+    selected_.clear();
+    selected_.push_back(0);
+    numSelected_ = 1;
 
     fclose(fp);
 
@@ -1176,26 +1183,20 @@ void P4InputVF::prepareMapleArbitraryCurve(QTextStream &fp)
 // parametres a la gui
 void P4InputVF::prepareMapleIsoclines(QTextStream &fp)
 {
-    QString myisoclines;
     QString lbl;
     QString val;
 
-    fp << "user_isoclines := [";
-    for (auto s : isoclines_) {
-        myisoclines = convertMapleUserParameterLabels(s);
-        fp << s; // FIXME
-    }
+    auto myisoclines = convertMapleUserParameterLabels(isoclines_);
+    fp << "user_isoclines := " << myisoclines << ":\n";
 
     for (unsigned int k = 0; k < numParams_; k++) {
         lbl = convertMapleUserParameterLabels(parlabel_[k]);
-        // FIXME: en aquest cas segur q està malament perquè hem de fer-ho amb
-        // cada VF per separat (cada VF té les seves isoclines)
-        val = convertMapleUserParameterLabels(parvalue_[0][k]);
+        val = convertMapleUserParameterLabels(parvalue_[isoclinesVF_][k]);
 
         if (lbl.length() == 0)
             continue;
 
-        if (!numeric_[0]) {
+        if (!numeric_[isoclinesVF_]) {
             fp << lbl << " := " << val << ":\n";
         } else {
             fp << lbl << " := evalf( " << val << " ):\n";
@@ -1639,7 +1640,6 @@ void P4InputVF::prepareArbitraryCurveFile(QTextStream &fp)
 void P4InputVF::prepareIsoclinesFile(QTextStream &fp)
 {
     QString name_isoclinestab;
-    QString s;
 
     QString mainmaple;
     QString user_bindir;

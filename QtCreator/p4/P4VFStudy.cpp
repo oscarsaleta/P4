@@ -156,32 +156,38 @@ bool P4VFStudy::readGCF(FILE *fp)
     if (degree_gcf) {
         if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
+        gcf_ = new P4Polynom::term2;
         if (!readTerm2(fp, gcf_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
+        gcf_U1_ = new P4Polynom::term2;
         if (!readTerm2(fp, gcf_U1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
+        gcf_U2_ = new P4Polynom::term2;
         if (!readTerm2(fp, gcf_U2_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
+        gcf_V1_ = new P4Polynom::term2;
         if (!readTerm2(fp, gcf_V1_, N))
             return false;
 
         if (fscanf(fp, "%d", &N) != 1 || N < 0)
             return false;
+        gcf_V2_ = new P4Polynom::term2;
         if (!readTerm2(fp, gcf_V2_, N))
             return false;
 
         if (parent_->p_ != 1 || parent_->q_ != 1) {
             if (fscanf(fp, "%d", &N) != 1 || N < 0)
                 return false;
+            gcf_C_ = new P4Polynom::term3;
             if (!readTerm3(fp, gcf_C_, N))
                 return false;
         }

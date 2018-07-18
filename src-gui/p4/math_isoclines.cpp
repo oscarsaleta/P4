@@ -60,7 +60,8 @@ bool evalIsoclinesStart(P4Sphere *sp, int dashes, int precision, int points)
     sIsoclinesError = false;
     sIsoclinesSphere = sp;
     sIsoclinesDashes = dashes;
-    return runTaskIsoclines(sIsoclinesTask, precision, points, 0);
+    return runTaskIsoclines(sIsoclinesTask, precision, points,
+                            gThisVF->isoclinesVF_);
 }
 
 // returns true when finished. Then run EvalIsoclinesFinish to see if error
@@ -137,11 +138,6 @@ bool evalIsoclinesFinish() // return false in case an error occured
 bool runTaskIsoclines(int task, int precision, int points, unsigned int index)
 {
     bool value;
-
-    while (!gVFResults.vf_[index]->isocline_vector_.empty()) {
-        if (++index == gThisVF->numVF_)
-            return false;
-    }
 
     auto &vf = gVFResults.vf_[index];
 
