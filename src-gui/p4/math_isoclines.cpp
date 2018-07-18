@@ -71,22 +71,23 @@ bool evalIsoclinesContinue(int precision, int points)
     if (sIsoclinesTask == EVAL_ISOCLINES_NONE)
         return true;
 
-    if (!readTaskResults(sIsoclinesTask, sIsoclinesVfIndex)) {
+    if (!readTaskResults(sIsoclinesTask, gThisVF->isoclinesVF_)) {
         sIsoclinesError = true;
         return true;
     }
     sIsoclinesTask++;
     if (sIsoclinesTask == EVAL_ISOCLINES_FINISHPOINCARE ||
         sIsoclinesTask == EVAL_ISOCLINES_FINISHLYAPUNOV) {
-        while (1) {
-            if (++sIsoclinesVfIndex >= gThisVF->numVF_)
-                break;
-            if (!gVFResults.vf_[sIsoclinesVfIndex]->isocline_vector_.empty())
-                break;
-        }
-        if (sIsoclinesVfIndex >= gThisVF->numVF_)
-            // all isoclines are evaluated
-            return true;
+        //        while (1) {
+        //            if (++sIsoclinesVfIndex >= gThisVF->numVF_)
+        //                break;
+        //            if
+        //            (!gVFResults.vf_[sIsoclinesVfIndex]->isocline_vector_.empty())
+        //                break;
+        //        }
+        //        if (sIsoclinesVfIndex >= gThisVF->numVF_)
+        // all isoclines are evaluated
+        return true;
         // retrigger new set of tasks
         if (gVFResults.plweights_)
             sIsoclinesTask = EVAL_ISOCLINES_LYP_R2;
@@ -95,7 +96,7 @@ bool evalIsoclinesContinue(int precision, int points)
     }
 
     if (!runTaskIsoclines(sIsoclinesTask, precision, points,
-                          sIsoclinesVfIndex)) {
+                          gThisVF->isoclinesVF_)) {
         sIsoclinesError = true;
         return true;
     }
@@ -107,8 +108,9 @@ bool evalIsoclinesFinish() // return false in case an error occured
     // set color for the last isocline of each VF
     for (auto &vf : gVFResults.vf_) {
         int nisocs{static_cast<int>((vf->isocline_vector_.size() - 1) % 4)};
-        vf->isocline_vector_.back().color =
-            P4ColourSettings::colour_isoclines + nisocs;
+        if (!vf->isocline_vector_.empty())
+            vf->isocline_vector_.back().color =
+                P4ColourSettings::colour_isoclines + nisocs;
     }
 
     if (sIsoclinesTask != EVAL_ISOCLINES_NONE) {
@@ -119,8 +121,10 @@ bool evalIsoclinesFinish() // return false in case an error occured
         // start drawing the last isocline for every VF
         sIsoclinesSphere->prepareDrawing();
         for (auto const &vf : gVFResults.vf_) {
-            draw_isoclines(sIsoclinesSphere, vf->isocline_vector_.back().points,
-                           vf->isocline_vector_.back().color, 1);
+            if (!vf->isocline_vector_.empty())
+                draw_isoclines(sIsoclinesSphere,
+                               vf->isocline_vector_.back().points,
+                               vf->isocline_vector_.back().color, 1);
         }
         sIsoclinesSphere->finishDrawing();
 
@@ -290,13 +294,18 @@ static bool read_isoclines(void (*chart)(double, double, double *), int index)
     return true;
 }
 
-void deleteLastIsocline(P4Sphere *sp)
+void deleteLastIsocline(P4Sphere *sp, unsigned int index)
 {
-    for (auto &vf : gVFResults.vf_) {
-        if (vf->isocline_vector_.empty())
-            continue;
+    //    for (auto &vf : gVFResults.vf_) {
+    //        if (vf->isocline_vector_.empty())
+    //            continue;
+    //        vf->isocline_vector_.pop_back();
+    //    }
+    if (index < 0 || index >= gThisVF->numVF_)
+        return;
+    auto &vf = gVFResults.vf_[index];
+    if (!vf->isocline_vector_.empty())
         vf->isocline_vector_.pop_back();
-    }
 
     sp->refresh();
 }
