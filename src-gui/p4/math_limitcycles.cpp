@@ -506,6 +506,6 @@ void deleteLastLimitCycle(P4Sphere *spherewnd)
         gVFResults.currentLimCycle_->next = nullptr;
     }
 
-    delete orbit2->firstpt;
+    //    delete orbit2->firstpt;
     delete orbit2;
 }

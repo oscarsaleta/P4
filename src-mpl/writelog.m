@@ -64,4 +64,4 @@ I0write_isoclinesf*6#%+isoclinesfGFchlF,F,C$>FhsF^il@%FbilFe`mCE>F_rFgilFhil?(F
 FdtFDF\jlF^]l>F][mFe\m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mF
 `]m>F][mFh[m>F][mF\\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l>F][mFi]m>F][mFh[m>F][mF
 \\m>F_rF`\mFa\m?(F/FCFCFdtFDF\jlF^]l@$Fb^mC)>F][mFg^m>F][mF`_m>F][mF\\m>F_rFd_m
-Fa\m?(F/FCFCFdtFDFf_mF^]lF,FhbmF,F,
+Fa\m?(F/FCFCFdtFDFf_mF^]lF,6&FijlF[[mFip%/user_precisionGF,F,

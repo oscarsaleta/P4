@@ -534,7 +534,7 @@ end proc:
 
 write_isoclines := proc(isoclinesf)
     local j, p, q, z1, z2, s, _co, _si, d, L, g;
-    global user_p, user_q, rounded;
+    global user_p, user_q, rounded, user_precision;
     d := ddeg(isoclinesf, x, y);
     if d = 0 then
         writef("0\n"); # write degree = 0

@@ -172,6 +172,10 @@ P4StartDlg::~P4StartDlg()
         delete viewInfiniteWindow_;
         viewInfiniteWindow_ = nullptr;
     }
+    if (helpWindow_ != nullptr) {
+        delete helpWindow_;
+        helpWindow_ = nullptr;
+    }
 }
 
 void P4StartDlg::onSaveSignal()
@@ -289,7 +293,7 @@ void P4StartDlg::onHelp()
     }
 
     if (helpWindow_ == nullptr)
-        helpWindow_ = new QTextBrowser{this};
+        helpWindow_ = new QTextBrowser{};
 
     helpWindow_->setSource(QUrl::fromLocalFile(helpname));
     helpWindow_->resize(640, 480);

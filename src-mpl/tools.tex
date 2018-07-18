@@ -281,7 +281,7 @@ end:
 
 optimizepolynomial2 := proc(f, x, y)
     local g, j, L, z;
-    global rounded;
+    global user_precision, rounded;
     g := norpoly2(f,x,y);
     if not rounded then
         g := convert(g, rational)
