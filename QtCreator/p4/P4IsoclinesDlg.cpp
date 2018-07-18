@@ -329,7 +329,23 @@ void P4IsoclinesDlg::onBtnDelLast()
 {
     plotwnd_->getDlgData();
 
-    deleteLastIsocline(mainSphere_);
+    int vf;
+    if (edt_vfselect_->text().isEmpty()) {
+        vf = 0;
+    } else {
+        bool ok;
+        vf = edt_vfselect_->text().toInt(&ok);
+        if (!ok || vf < 0 || static_cast<unsigned int>(vf) >= gThisVF->numVF_) {
+            QMessageBox::information(
+                this, "P4",
+                "The VF selection is invalid. Select a value between\n0 and "
+                "the number of vector fields in your\nconfiguration. (minus "
+                "one, since we start counting at\nzero!)");
+            return;
+        }
+    }
+
+    deleteLastIsocline(mainSphere_, vf);
 
     btnEvaluate_->setEnabled(true);
     btnPlot_->setEnabled(false);

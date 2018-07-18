@@ -3668,12 +3668,19 @@ void P4InputVF::resampleIsoclines(int i)
     if (gVFResults.separatingCurves_.empty() || gVFResults.vf_.empty())
         return;
 
+    //    for (auto &isoc : gVFResults.vf_[i]->isocline_vector_) {
+    //        for (auto &it = std::begin(isoc.points); it !=
+    //        std::end(isoc.points);
+    //             ++it) {
+    //            it->dashes = 0;
+    //            if (getVFIndex_sphere(it->pcoord) != i)
+    //                isoc.points.erase(it);
+    //        }
+    //    }
     for (auto &isoc : gVFResults.vf_[i]->isocline_vector_) {
-        for (auto it = std::begin(isoc.points); it != std::end(isoc.points);
-             ++it) {
-            it->dashes = 0;
-            if (getVFIndex_sphere(it->pcoord) != i)
-                isoc.points.erase(it);
+        for (auto &pts : isoc.points) {
+            if (getVFIndex_sphere(pts.pcoord) != i)
+                pts.dashes = 0;
         }
     }
 }
