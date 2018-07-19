@@ -20,7 +20,7 @@
 
 GITP4ROOT="D:\Oscar\git\P4"
 
-QTVER="5.9.2"
+QTVER="5.11.1"
 MSVCVER="2017_64"
 QTWINDEPLOYEXE="D:\Qt\\"$QTVER"\msvc"$MSVCVER"\bin\windeployqt.exe"
 INNOSETUPEXE="D:\Program Files (x86)\Inno Setup 5\ISCC.exe"
@@ -36,7 +36,7 @@ rm -r $DIR
 mkdir -p $DIR/bin $DIR/help $DIR/sum_tables $DIR/sumtables
 chmod 777 $DIR/sumtables
 
-BUILDDIRNAME="Desktop_Qt_5_9_2_MSVC2017_64bit"
+BUILDDIRNAME="Desktop_Qt_5_11_1_MSVC2017_64bit2"
 
 cp ../../src-mpl/p4*m $DIR/bin/
 cp ../../QtCreator/build-p4-$BUILDDIRNAME-Release/release/p4.exe $DIR/bin/
@@ -114,7 +114,7 @@ echo '; Icons' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\*.png"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\p4smallicon.ico"; DestDir: "{app}\bin"; Flags: ignoreversion' >> $SCRIPTNAME
 echo '; VC Redist' >> $SCRIPTNAME
-echo 'Source: "'$DIRWIN'\bin\vcredist_x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall' >> $SCRIPTNAME
+echo 'Source: "'$DIRWIN'\bin\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall' >> $SCRIPTNAME
 echo '; .dlls' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\*.dll"; DestDir: "{app}\bin"; Flags: onlyifdoesntexist' >> $SCRIPTNAME
 echo 'Source: "'$DIRWIN'\bin\iconengines\*.dll"; DestDir: "{app}\bin\iconengines"; Flags: onlyifdoesntexist' >> $SCRIPTNAME
@@ -127,7 +127,7 @@ echo 'Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; 
 echo 'Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; WorkingDir: "{userdocs}\P4"; IconFilename: "{app}\bin\p4smallicon.ico"' >> $SCRIPTNAME
 echo '' >> $SCRIPTNAME
 echo '[Run]' >> $SCRIPTNAME
-echo 'Filename: "{tmp}\vcredist_x64.exe"; Parameters: "/quiet /install /norestart"; WorkingDir: "{tmp}"; StatusMsg: "Installing Microsoft Visual C++ 2015 Redistributable (x64)..."' >> $SCRIPTNAME
+echo 'Filename: "{tmp}\vc_redist.x64.exe"; Parameters: "/quiet /install /norestart"; WorkingDir: "{tmp}"; StatusMsg: "Installing Microsoft Visual C++ 2015 Redistributable (x64)..."' >> $SCRIPTNAME
 echo 'Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{userdocs}\P4"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '\''&'\'', '\''&&'\'')}}"; Flags: nowait postinstall skipifsilent' >> $SCRIPTNAME
 
 "${INNOSETUPEXE}" $SCRIPTNAME
