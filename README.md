@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 -->
 
-# P4 (Polynomial Planar Phase Portraits) version 8.0.0 - beta
+# P4 (Polynomial Planar Phase Portraits) version 8.0.1 - beta
 
 [![Build Status](https://travis-ci.org/oscarsaleta/P4.svg?branch=develop_p5)](https://travis-ci.org/oscarsaleta/P4)
 
