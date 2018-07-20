@@ -63,11 +63,11 @@ seallfilesGF(>FjqF,F(6:F[oFgqF[`lF[tF\tFcpFhpFgdlFaelFdelFjqF][lF\wFcrF`\lFg\lF
 I6CheckIfGoodPolynomialf*6#%"fGF(F(F(O-Faq6$-F_oFF-%(polynomG6$%(numericG7$FYFi
 nF(F(F(F(,
 I+normalexitFaoF(,
-I6prepareArbitraryCurvef*F(F(F(F(C*@%Fiz>F][l&F[[lFX>F][lF1@%F`[l>F\w&Fb[lFX>F
-\wF]w-F\r6#%,curve_tableG-%,write_curveG6#%+user_curveG-F`rFbamF[r-Fas6#Qgn|+We
-~have~finished~writing~the~curve~as~a~C++~readable~list.|+F(>FjqF,F(6'FgamFjqF[
-oF][lF\wF(F(,
+I6prepareArbitraryCurvef*F(F(F(F(C+@%Fiz>F][l&F[[lFX>F][lF1@%F`[l>F\w&Fb[lFX>F
+\wF]w>F[oF][l-F\r6#%,curve_tableG-%,write_curveG6#%+user_curveG-F`rFcamF[r-Fas6
+#Qgn|+We~have~finished~writing~the~curve~as~a~C++~readable~list.|+F(>FjqF,F(6'F
+hamFjqF[oF][lF\wF(F(,
 I1prepareIsoclinesf*F(F(F(F(C+@%Fiz>F][lF[am>F][lF1@%F`[l>F\wF_am>F\wF]w>F[oF][
-l-F\r6#%0isoclines_tableG-%0write_isoclinesG6#%/user_isoclinesG-F`rFibmF[r-Fas6
+l-F\r6#%0isoclines_tableG-%0write_isoclinesG6#%/user_isoclinesG-F`rFjbmF[r-Fas6
 #Qjn|+We~have~finished~writing~the~isoclines~as~C++~readable~lists.|+F(>FjqF,F(
-6'F^cmFjqF[oF][lF\wF(F(
+6'F_cmFjqF[oF][lF\wF(F(
