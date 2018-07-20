@@ -452,6 +452,7 @@ prepareArbitraryCurve := proc()
     else
         user_precision := 8;
     fi;
+    rounded := user_numeric;
     openfile(curve_table);
     write_curve(user_curve);
     closefile(curve_table);
